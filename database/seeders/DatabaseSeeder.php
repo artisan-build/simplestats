@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Actions\Fortify\CreateNewUser;
+use App\Models\Project;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,11 +14,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $user = (new CreateNewUser())->create([
+            'name' => 'Zacharias Creutznacher',
+            'email' => 'zacharias.creutznacher@gmail.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'terms' => true,
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $user->switchTeam($user->personalTeam());
+
+        Project::factory()->count(10)->create([
+            'team_id' => $user->current_team_id,
+        ]);
+
+        //TODO create instances for these projects!!
     }
 }

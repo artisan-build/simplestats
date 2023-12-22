@@ -1,0 +1,10 @@
+created:
+    - database/factories/ProjectFactory.php
+    - database/factories/InstanceFactory.php
+    - database/migrations/2023_12_22_161431_create_projects_table.php
+    - database/migrations/2023_12_22_161432_create_instances_table.php
+    - app/Models/Project.php
+    - app/Models/Instance.php
+models:
+    Project: { name: string, team_id: foreign, relationships: { belongsTo: Team, hasMany: Instance } }
+    Instance: { name: string, team_id: foreign, project_id: foreign, relationships: { belongsTo: Project, hasOne: Team, morphTo: \Laravel\Sanctum\PersonalAccessToken } }
