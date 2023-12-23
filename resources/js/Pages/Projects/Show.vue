@@ -27,7 +27,7 @@ defineProps({
                 <div v-if="project.instances.length > 0">
                     <SectionBorder />
 
-                    <ActionTable :links="{}">
+                    <ActionTable :links="[]">
                         <template #title>
                             Project Instances
                         </template>

@@ -13,7 +13,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import ShowInstancesList from "@/Pages/Instances/Partials/ShowInstancesList.vue";
 
 defineProps({
-    instances: Array,
+    instances: Object,
     projects: Array,
 });
 

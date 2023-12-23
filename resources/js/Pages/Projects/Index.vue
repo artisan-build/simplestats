@@ -11,7 +11,7 @@ import ActionTable from "@/Components/ActionTable.vue";
 import {Link, useForm} from "@inertiajs/vue3";
 
 defineProps({
-    projects: Array,
+    projects: Object,
 });
 
 const createProjectForm = useForm({
