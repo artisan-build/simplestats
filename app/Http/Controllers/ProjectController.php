@@ -20,11 +20,6 @@ class ProjectController extends Controller
         return Inertia::render('Projects/Index', compact('projects'));
     }
 
-    public function create(Request $request): Response
-    {
-        return Inertia::render('Projects/Create');
-    }
-
     public function store(ProjectStoreRequest $request): RedirectResponse
     {
         Project::create($request->validated());
@@ -45,11 +40,6 @@ class ProjectController extends Controller
         ];
 
         return Inertia::render('Projects/Show', compact('project', 'permissions'));
-    }
-
-    public function edit(Request $request, Project $project): Response
-    {
-        return Inertia::render('Projects/Edit', compact('project'));
     }
 
     public function update(ProjectUpdateRequest $request, Project $project): RedirectResponse

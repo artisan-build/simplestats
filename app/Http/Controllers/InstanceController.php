@@ -22,11 +22,6 @@ class InstanceController extends Controller
         return Inertia::render('Instances/Index', compact('instances', 'projects'));
     }
 
-    public function create(Request $request): Response
-    {
-        return Inertia::render('Instances/Create');
-    }
-
     public function store(InstanceStoreRequest $request): RedirectResponse
     {
         Instance::create($request->validated());
@@ -48,11 +43,6 @@ class InstanceController extends Controller
         ];
 
         return Inertia::render('Instances/Show', compact('instance', 'projects', 'permissions'));
-    }
-
-    public function edit(Request $request, Instance $instance): Response
-    {
-        return Inertia::render('Instances/Edit', compact('instance'));
     }
 
     public function update(InstanceUpdateRequest $request, Instance $instance): RedirectResponse
