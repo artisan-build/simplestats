@@ -16,7 +16,6 @@ class ProjectController extends Controller
     public function index(Request $request): Response
     {
         $projects = Project::orderBy('created_at', 'desc')->paginate(10);
-//        $projects = Project::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Projects/Index', compact('projects'));
     }
@@ -37,16 +36,15 @@ class ProjectController extends Controller
     {
         $project->load('instances');
 
-        return Inertia::render('Projects/Show', [
-            'project' => $project,
-            'permissions' => [
-                'canAddTeamMembers' => Gate::check('addProjectMember', $project),
-                'canDeleteProject' => Gate::check('delete', $project),
-                'canRemoveProjectMembers' => Gate::check('removeProjectMember', $project),
-                'canUpdateProject' => Gate::check('update', $project),
-                'canUpdateProjectMembers' => Gate::check('updateProjectMember', $project),
-            ],
-        ]);
+        $permissions = [
+            'canAddTeamMembers' => Gate::check('addProjectMember', $project),
+            'canDeleteProject' => Gate::check('delete', $project),
+            'canRemoveProjectMembers' => Gate::check('removeProjectMember', $project),
+            'canUpdateProject' => Gate::check('update', $project),
+            'canUpdateProjectMembers' => Gate::check('updateProjectMember', $project),
+        ];
+
+        return Inertia::render('Projects/Show', compact('project', 'permissions'));
     }
 
     public function edit(Request $request, Project $project): Response

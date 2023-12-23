@@ -36,18 +36,18 @@ class InstanceController extends Controller
 
     public function show(Request $request, Instance $instance): Response
     {
-        $instance->load('instances');
+        $instance->load('project');
+        $projects = Project::orderBy('created_at', 'desc')->get();
 
-        return Inertia::render('Instances/Show', [
-            'instance' => $instance,
-            'permissions' => [
-                'canAddTeamMembers' => Gate::check('addInstanceMember', $instance),
-                'canDeleteInstance' => Gate::check('delete', $instance),
-                'canRemoveInstanceMembers' => Gate::check('removeInstanceMember', $instance),
-                'canUpdateInstance' => Gate::check('update', $instance),
-                'canUpdateInstanceMembers' => Gate::check('updateInstanceMember', $instance),
-            ],
-        ]);
+        $permissions = [
+            'canAddTeamMembers' => Gate::check('addInstanceMember', $instance),
+            'canDeleteInstance' => Gate::check('delete', $instance),
+            'canRemoveInstanceMembers' => Gate::check('removeInstanceMember', $instance),
+            'canUpdateInstance' => Gate::check('update', $instance),
+            'canUpdateInstanceMembers' => Gate::check('updateInstanceMember', $instance),
+        ];
+
+        return Inertia::render('Instances/Show', compact('instance', 'projects', 'permissions'));
     }
 
     public function edit(Request $request, Instance $instance): Response
