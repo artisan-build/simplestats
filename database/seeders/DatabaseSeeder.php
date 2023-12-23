@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Actions\Fortify\CreateNewUser;
+use App\Models\Instance;
 use App\Models\Project;
 use Illuminate\Database\Seeder;
 
@@ -24,10 +25,13 @@ class DatabaseSeeder extends Seeder
 
         $user->switchTeam($user->personalTeam());
 
-        Project::factory()->count(10)->create([
+        Project::factory()->count(5)->create([
             'team_id' => $user->current_team_id,
-        ]);
-
-        //TODO create instances for these projects!!
+        ])->each(function ($project) use ($user) {
+            Instance::factory()->count(5)->create([
+                'project_id' => $project->id,
+                'team_id' => $user->current_team_id,
+            ]);
+        });
     }
 }
