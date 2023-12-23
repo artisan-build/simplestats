@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('instances', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('team_id')->constrained();
-            $table->foreignId('project_id')->constrained();
+            $table->foreignId('team_id')->constrained()->onDelete('cascade');
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
 

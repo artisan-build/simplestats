@@ -7,6 +7,7 @@ use App\Http\Requests\ProjectUpdateRequest;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,7 +15,8 @@ class ProjectController extends Controller
 {
     public function index(Request $request): Response
     {
-        $projects = Project::all();
+        $projects = Project::orderBy('created_at', 'desc')->paginate(10);
+//        $projects = Project::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Projects/Index', compact('projects'));
     }
@@ -28,14 +30,23 @@ class ProjectController extends Controller
     {
         Project::create($request->validated());
 
-        $request->session()->flash('flash.banner', 'Projects created!');
-
-        return redirect()->route('projects.index');
+        return redirect()->back();
     }
 
     public function show(Request $request, Project $project): Response
     {
-        return Inertia::render('Projects/Show', compact('project'));
+        $project->load('instances');
+
+        return Inertia::render('Projects/Show', [
+            'project' => $project,
+            'permissions' => [
+                'canAddTeamMembers' => Gate::check('addProjectMember', $project),
+                'canDeleteProject' => Gate::check('delete', $project),
+                'canRemoveProjectMembers' => Gate::check('removeProjectMember', $project),
+                'canUpdateProject' => Gate::check('update', $project),
+                'canUpdateProjectMembers' => Gate::check('updateProjectMember', $project),
+            ],
+        ]);
     }
 
     public function edit(Request $request, Project $project): Response
@@ -47,15 +58,13 @@ class ProjectController extends Controller
     {
         $project->update($request->validated());
 
-        $request->session()->flash('flash.banner', 'Projects updated!');
-
-        return redirect()->route('projects.index');
+        return redirect()->back();
     }
 
     public function destroy(Request $request, Project $project): RedirectResponse
     {
         $project->delete();
 
-        return redirect()->route('projects.index');
+        return redirect()->route('projects.index')->banner('Project deleted: '.$project->name);
     }
 }

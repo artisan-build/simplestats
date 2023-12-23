@@ -5,15 +5,11 @@ import ActionMessage from "@/Components/ActionMessage.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InputError from "@/Components/InputError.vue";
 import FormSection from "@/Components/FormSection.vue";
-import Checkbox from "@/Components/Checkbox.vue";
 import TextInput from "@/Components/TextInput.vue";
-import {useForm} from "@inertiajs/vue3";
 import SectionBorder from "@/Components/SectionBorder.vue";
-import ActionSection from "@/Components/ActionSection.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
-import DangerButton from "@/Components/DangerButton.vue";
-import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import {ref} from "vue";
+import ActionTable from "@/Components/ActionTable.vue";
+import {Link, useForm} from "@inertiajs/vue3";
+import Pagination from "@/Components/Pagination.vue";
 
 defineProps({
     projects: Array,
@@ -23,28 +19,12 @@ const createProjectForm = useForm({
     name: '',
 });
 
-const deleteProjectForm = useForm({});
-
-const projectBeingDeleted = ref(null);
-
 const createProject = () => {
     createProjectForm.post(route('projects.store'), {
         preserveScroll: true,
         onSuccess: () => {
             createProjectForm.reset();
         },
-    });
-};
-
-const confirmProjectDeletion = (project) => {
-    projectBeingDeleted.value = project;
-};
-
-const deleteProject = () => {
-    deleteProjectForm.delete(route('projects.destroy', projectBeingDeleted.value), {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => (projectBeingDeleted.value = null),
     });
 };
 
@@ -67,7 +47,7 @@ const deleteProject = () => {
                         </template>
 
                         <template #description>
-                            Here you can create a project and then add some instances!
+                            Create a new Project and after that, add an new Instance to it!
                         </template>
 
                         <template #form>
@@ -95,67 +75,42 @@ const deleteProject = () => {
                         </template>
                     </FormSection>
 
-                    <div v-if="projects.length > 0">
+                    <div v-if="projects.total > 0">
                         <SectionBorder />
 
                         <div class="mt-10 sm:mt-0">
-                            <ActionSection>
+                            <ActionTable :links="projects.links" >
                                 <template #title>
                                     Your Projects
                                 </template>
 
                                 <template #description>
-                                    You may delete any of your existing projects if they are no longer needed.
+                                    Manage your existing Projects.
                                 </template>
 
                                 <template #content>
-                                    <div class="space-y-6">
-                                        <div v-for="project in projects" :key="project.id" class="flex items-center justify-between">
-                                            <div class="break-all dark:text-white">
+                                    <tr class="text-left font-bold">
+                                        <th class="pb-4 pt-6 px-6">Name</th>
+                                    </tr>
+                                    <tr v-for="project in projects.data" :key="project.id" class="hover:bg-gray-50 focus-within:bg-gray-50 text-gray-700">
+                                        <td class="border-t">
+                                            <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('projects.show', project.id)">
                                                 {{ project.name }}
-                                            </div>
+                                            </Link>
+                                        </td>
 
-                                            <div class="flex items-center ms-2">
-                                                <div v-if="project.last_used_ago" class="text-sm text-gray-400">
-                                                    Last used {{ project.last_used_ago }}
-                                                </div>
-
-                                                <button class="cursor-pointer ms-6 text-sm text-red-500" @click="confirmProjectDeletion(project)">
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <td class="w-px border-t">
+                                            <Link class="flex items-center px-4" :href="route('projects.show', project.id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                                </svg>
+                                            </Link>
+                                        </td>
+                                    </tr>
                                 </template>
-                            </ActionSection>
+                            </ActionTable>
                         </div>
                     </div>
-
-                    <ConfirmationModal :show="projectBeingDeleted != null" @close="projectBeingDeleted = null">
-                        <template #title>
-                            Delete Project
-                        </template>
-
-                        <template #content>
-                            Are you sure you would like to delete this Project?<br>
-                            Project: "{{ projectBeingDeleted.name }}"
-                        </template>
-
-                        <template #footer>
-                            <SecondaryButton @click="projectBeingDeleted = null">
-                                Cancel
-                            </SecondaryButton>
-
-                            <DangerButton
-                                class="ms-3"
-                                :class="{ 'opacity-25': deleteProjectForm.processing }"
-                                :disabled="deleteProjectForm.processing"
-                                @click="deleteProject"
-                            >
-                                Delete
-                            </DangerButton>
-                        </template>
-                    </ConfirmationModal>
                 </div>
             </div>
         </div>

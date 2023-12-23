@@ -22,7 +22,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->company(),
             'team_id' => Team::factory(),
         ];
     }
