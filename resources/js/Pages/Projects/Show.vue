@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DeleteProjectForm from '@/Pages/Projects/Partials/DeleteProjectForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
-import UpdateProjectNameForm from '@/Pages/Projects/Partials/UpdateProjectNameForm.vue';
+import UpdateProjectForm from '@/Pages/Projects/Partials/UpdateProjectForm.vue';
 import ShowInstancesList from "@/Pages/Instances/Partials/ShowInstancesList.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 
@@ -22,7 +22,7 @@ defineProps({
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <UpdateProjectNameForm :project="project" :permissions="permissions" />
+                <UpdateProjectForm :project="project" :permissions="permissions" />
 
                 <div v-if="project.instances.length > 0">
                     <SectionBorder />

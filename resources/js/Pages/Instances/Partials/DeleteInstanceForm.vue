@@ -7,19 +7,19 @@ import DangerButton from '@/Components/DangerButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 const props = defineProps({
-    project: Object,
+    instance: Object,
 });
 
-const confirmingProjectDeletion = ref(false);
+const confirmingInstanceDeletion = ref(false);
 const form = useForm({});
 
-const confirmProjectDeletion = () => {
-    confirmingProjectDeletion.value = true;
+const confirmInstanceDeletion = () => {
+    confirmingInstanceDeletion.value = true;
 };
 
-const deleteProject = () => {
-    form.delete(route('projects.destroy', props.project), {
-        errorBag: 'deleteProject',
+const deleteInstance = () => {
+    form.delete(route('instances.destroy', props.instance), {
+        errorBag: 'deleteInstance',
     });
 };
 </script>
@@ -27,36 +27,36 @@ const deleteProject = () => {
 <template>
     <ActionSection>
         <template #title>
-            Delete Project
+            Delete Instance
         </template>
 
         <template #description>
-            Permanently delete this project.
+            Permanently delete this instance.
         </template>
 
         <template #content>
             <div class="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-                Once a project is deleted, all of its instances and data will be permanently deleted.
+                Once a instance is deleted, all of its instances and data will be permanently deleted.
             </div>
 
             <div class="mt-5">
-                <DangerButton @click="confirmProjectDeletion">
-                    Delete Project
+                <DangerButton @click="confirmInstanceDeletion">
+                    Delete Instance
                 </DangerButton>
             </div>
 
-            <!-- Delete Project Confirmation Modal -->
-            <ConfirmationModal :show="confirmingProjectDeletion" @close="confirmingProjectDeletion = false">
+            <!-- Delete Instance Confirmation Modal -->
+            <ConfirmationModal :show="confirmingInstanceDeletion" @close="confirmingInstanceDeletion = false">
                 <template #title>
-                    Delete Project
+                    Delete Instance
                 </template>
 
                 <template #content>
-                    Are you sure you want to delete this project? Once a project is deleted, all of its instances and data will be permanently deleted.
+                    Are you sure you want to delete this instance? Once a instance is deleted, all of its instances and data will be permanently deleted.
                 </template>
 
                 <template #footer>
-                    <SecondaryButton @click="confirmingProjectDeletion = false">
+                    <SecondaryButton @click="confirmingInstanceDeletion = false">
                         Cancel
                     </SecondaryButton>
 
@@ -64,9 +64,9 @@ const deleteProject = () => {
                         class="ms-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
-                        @click="deleteProject"
+                        @click="deleteInstance"
                     >
-                        Delete Project
+                        Delete Instance
                     </DangerButton>
                 </template>
             </ConfirmationModal>

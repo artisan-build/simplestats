@@ -2,10 +2,11 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DeleteInstanceForm from '@/Pages/Instances/Partials/DeleteInstanceForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
-import UpdateInstanceNameForm from '@/Pages/Instances/Partials/UpdateInstanceNameForm.vue';
+import UpdateInstanceForm from '@/Pages/Instances/Partials/UpdateInstanceForm.vue';
 
 defineProps({
     instance: Object,
+    projects: Array,
     permissions: Object,
 });
 </script>
@@ -20,7 +21,7 @@ defineProps({
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <UpdateInstanceNameForm :instance="instance" :permissions="permissions" />
+                <UpdateInstanceForm :instance="instance" :projects="projects" :permissions="permissions" />
 
                 <template v-if="permissions.canDeleteInstance">
                     <SectionBorder />

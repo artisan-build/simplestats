@@ -6,52 +6,69 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import SelectInput from "@/Components/SelectInput.vue";
 
 const props = defineProps({
-    project: Object,
+    instance: Object,
+    projects: Array,
     permissions: Object,
 });
 
 const form = useForm({
-    name: props.project.name,
+    name: props.instance.name,
+    project_id: props.instance.project_id,
 });
 
-const updateProjectName = () => {
-    form.put(route('projects.update', props.project), {
-        errorBag: 'updateProjectName',
+const updateInstance = () => {
+    form.put(route('instances.update', props.instance), {
+        errorBag: 'updateInstance',
         preserveScroll: true,
     });
 };
 </script>
 
 <template>
-    <FormSection @submitted="updateProjectName">
+    <FormSection @submitted="updateInstance">
         <template #title>
-            Project Name
+            Instance
         </template>
 
         <template #description>
-            The project's name.
+            The Instance.
         </template>
 
         <template #form>
-            <!-- Project Name -->
+            <!-- Instance Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Project Name" />
+                <InputLabel for="name" value="Instance Name" />
 
                 <TextInput
                     id="name"
                     v-model="form.name"
                     type="text"
                     class="mt-1 block w-full"
-                    :disabled="! permissions.canUpdateProject"
+                    :disabled="! permissions.canUpdateInstance"
                 />
 
                 <InputError :message="form.errors.name" class="mt-2" />
             </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="project_id" value="Instance Project" />
+
+                <SelectInput
+                    id="project_id"
+                    v-model="form.project_id"
+                    class="mt-1 block w-full"
+                    :disabled="! permissions.canUpdateInstance"
+                    :options="projects"
+                />
+
+                <InputError :message="form.errors.project_id" class="mt-2" />
+            </div>
         </template>
 
-        <template v-if="permissions.canUpdateProject" #actions>
+        <template v-if="permissions.canUpdateInstance" #actions>
             <ActionMessage :on="form.recentlySuccessful" class="me-3">
                 Saved.
             </ActionMessage>

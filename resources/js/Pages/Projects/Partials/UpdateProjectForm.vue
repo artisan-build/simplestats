@@ -16,16 +16,16 @@ const form = useForm({
     name: props.project.name,
 });
 
-const updateProjectName = () => {
+const updateProject = () => {
     form.put(route('projects.update', props.project), {
-        errorBag: 'updateProjectName',
+        errorBag: 'updateProject',
         preserveScroll: true,
     });
 };
 </script>
 
 <template>
-    <FormSection @submitted="updateProjectName">
+    <FormSection @submitted="updateProject">
         <template #title>
             Project Name
         </template>
