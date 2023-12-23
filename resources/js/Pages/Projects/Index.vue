@@ -9,7 +9,6 @@ import TextInput from "@/Components/TextInput.vue";
 import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import {Link, useForm} from "@inertiajs/vue3";
-import Pagination from "@/Components/Pagination.vue";
 
 defineProps({
     projects: Array,

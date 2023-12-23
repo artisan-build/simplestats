@@ -9,14 +9,16 @@ import TextInput from "@/Components/TextInput.vue";
 import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import {Link, useForm} from "@inertiajs/vue3";
-import Pagination from "@/Components/Pagination.vue";
+import SelectInput from "@/Components/SelectInput.vue";
 
 defineProps({
     instances: Array,
+    projects: Array,
 });
 
 const createInstanceForm = useForm({
     name: '',
+    project_id: '',
 });
 
 const createInstance = () => {
@@ -47,7 +49,7 @@ const createInstance = () => {
                         </template>
 
                         <template #description>
-                            Here you can create a new Instance.
+                            Here you can create a new Instance for a given Project.
                         </template>
 
                         <template #form>
@@ -61,6 +63,16 @@ const createInstance = () => {
                                     autofocus
                                 />
                                 <InputError :message="createInstanceForm.errors.name" class="mt-2" />
+                            </div>
+                            <div class="col-span-6 sm:col-span-4">
+                                <InputLabel for="project_id" value="Project" />
+                                <SelectInput
+                                    id="project_id"
+                                    v-model="createInstanceForm.project_id"
+                                    class="mt-1 block w-full"
+                                    :options="projects"
+                                />
+                                <InputError :message="createInstanceForm.errors.project_id" class="mt-2" />
                             </div>
                         </template>
 
