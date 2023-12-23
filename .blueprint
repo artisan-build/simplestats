@@ -1,10 +1,22 @@
 created:
-    - database/factories/ProjectFactory.php
-    - database/factories/InstanceFactory.php
-    - database/migrations/2023_12_22_161431_create_projects_table.php
-    - database/migrations/2023_12_22_161432_create_instances_table.php
-    - app/Models/Project.php
-    - app/Models/Instance.php
+    - app/Http/Controllers/ProjectController.php
+    - app/Http/Controllers/InstanceController.php
+    - tests/Feature/Http/Controllers/ProjectControllerTest.php
+    - tests/Feature/Http/Controllers/InstanceControllerTest.php
+    - app/Http/Requests/ProjectStoreRequest.php
+    - app/Http/Requests/ProjectUpdateRequest.php
+    - app/Http/Requests/InstanceStoreRequest.php
+    - app/Http/Requests/InstanceUpdateRequest.php
+    - resources/views/project/index.blade.php
+    - resources/views/project/create.blade.php
+    - resources/views/project/show.blade.php
+    - resources/views/project/edit.blade.php
+    - resources/views/instance/index.blade.php
+    - resources/views/instance/create.blade.php
+    - resources/views/instance/show.blade.php
+    - resources/views/instance/edit.blade.php
+updated:
+    - routes/web.php
 models:
     Project: { name: string, team_id: foreign, relationships: { belongsTo: Team, hasMany: Instance } }
     Instance: { name: string, team_id: foreign, project_id: foreign, relationships: { belongsTo: Project, hasOne: Team, morphTo: \Laravel\Sanctum\PersonalAccessToken } }
