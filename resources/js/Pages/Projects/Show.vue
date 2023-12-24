@@ -24,7 +24,7 @@ defineProps({
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <UpdateProjectForm :project="project" :permissions="permissions" />
 
-                <div v-if="project.instances.length > 0">
+                <div>
                     <SectionBorder />
 
                     <ActionTable :links="[]">
@@ -37,7 +37,7 @@ defineProps({
                         </template>
 
                         <template #content>
-                            <ShowInstancesList :instances="project.instances" />
+                            <ShowInstancesList :insideProject="project" :instances="project.instances" />
                         </template>
                     </ActionTable>
                     </div>

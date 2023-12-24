@@ -12,14 +12,15 @@ import {useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import ShowInstancesList from "@/Pages/Instances/Partials/ShowInstancesList.vue";
 
-defineProps({
+const props = defineProps({
     instances: Object,
     projects: Array,
+    selectedProject: [Number, null]
 });
 
 const createInstanceForm = useForm({
     name: '',
-    project_id: '',
+    project_id: props.selectedProject ?? '',
 });
 
 const createInstance = () => {

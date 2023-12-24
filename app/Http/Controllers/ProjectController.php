@@ -22,9 +22,9 @@ class ProjectController extends Controller
 
     public function store(ProjectStoreRequest $request): RedirectResponse
     {
-        Project::create($request->validated());
+        $project = Project::create($request->validated());
 
-        return redirect()->back();
+        return redirect()->route('projects.show', $project->id)->banner('Project created: '.$project->name);
     }
 
     public function show(Request $request, Project $project): Response

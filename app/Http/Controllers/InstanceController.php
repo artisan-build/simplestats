@@ -18,15 +18,16 @@ class InstanceController extends Controller
     {
         $projects = Project::orderBy('created_at', 'desc')->get();
         $instances = Instance::orderBy('created_at', 'desc')->with('project')->paginate(10);
+        $selectedProject = $request->selected_project_id ?? null;
 
-        return Inertia::render('Instances/Index', compact('instances', 'projects'));
+        return Inertia::render('Instances/Index', compact('instances', 'projects', 'selectedProject'));
     }
 
     public function store(InstanceStoreRequest $request): RedirectResponse
     {
-        Instance::create($request->validated());
+        $instance = Instance::create($request->validated());
 
-        return redirect()->back();
+        return redirect()->route('instances.show', $instance->id)->banner('Instance created: '.$instance->name);
     }
 
     public function show(Request $request, Instance $instance): Response
