@@ -223,7 +223,7 @@ const logout = () => {
                     </div>
                 </nav>
             </div>
-            <main class="mx-auto h-full w-full p-4 md:p-6 lg:p-8 max-w-7xl">
+            <main class="mx-auto h-full w-full p-4 md:p-6 lg:p-8 max-w-screen-2xl">
                 <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-8 pb-8">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
                         <slot name="header" />
