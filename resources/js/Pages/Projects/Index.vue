@@ -46,7 +46,7 @@ const createProject = () => {
                         </template>
 
                         <template #description>
-                            Create a new Project and after that, add an new Instance to it!
+                            Create a new Project and then add a new Instance.
                         </template>
 
                         <template #form>

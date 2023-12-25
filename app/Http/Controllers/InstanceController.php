@@ -18,7 +18,7 @@ class InstanceController extends Controller
     {
         $projects = Project::orderBy('created_at', 'desc')->get();
         $instances = Instance::orderBy('created_at', 'desc')->with('project')->paginate(10);
-        $selectedProject = $request->selected_project_id ?? null;
+        $selectedProject = $request->selected_project ?? null;
 
         return Inertia::render('Instances/Index', compact('instances', 'projects', 'selectedProject'));
     }

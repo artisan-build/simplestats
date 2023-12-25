@@ -38,14 +38,14 @@ defineProps({
     <tr v-else>
         <td class="border-t" colspan="2">
             <div class="px-6 py-4">
-                No Instance created!
+                No Instance has been created for this Project yet!
             </div>
         </td>
     </tr>
     <tr v-if="insideProject">
         <td class="border-t" colspan="2">
             <div class="flex flex-row-reverse px-6 py-4 bg-gray-50 dark:bg-gray-800">
-                <PrimaryButton type="button" @click="router.visit(route('instances.index', {selected_project_id: insideProject.id}))">
+                <PrimaryButton type="button" @click="router.visit(route('instances.index', {selected_project: insideProject.id}))">
                     Create New Instance
                 </PrimaryButton>
             </div>
