@@ -14,11 +14,8 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue);
-
-        el.classList.add(...'flex min-h-screen w-full overflow-x-clip'.split(' '));
-
-        app.mount(el);
+            .use(ZiggyVue)
+            .mount(el);
     },
     progress: {
         color: '#4B5563',
