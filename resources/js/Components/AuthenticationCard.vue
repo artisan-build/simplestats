@@ -4,8 +4,13 @@
             <slot name="logo" />
         </div>
 
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+        <div class="w-full sm:max-w-lg mt-6 px-12 py-10 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <h2 class="text-2xl font-medium text-center mb-6">
+                <slot name="title" />
+            </h2>
             <slot />
         </div>
     </div>
 </template>
+<script setup>
+</script>

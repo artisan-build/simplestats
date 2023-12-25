@@ -31,6 +31,10 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
+        <template #title>
+            Register an account
+        </template>
+
         <form @submit.prevent="submit">
             <div>
                 <InputLabel for="name" value="Name" />
