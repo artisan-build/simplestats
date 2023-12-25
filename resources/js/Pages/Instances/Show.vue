@@ -18,15 +18,13 @@ defineProps({
         </template>
 
         <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <UpdateInstanceForm :instance="instance" :projects="projects" :permissions="permissions" />
+            <UpdateInstanceForm :instance="instance" :projects="projects" :permissions="permissions" />
 
-                <template v-if="permissions.canDeleteInstance">
-                    <SectionBorder />
+            <template v-if="permissions.canDeleteInstance">
+                <SectionBorder />
 
-                    <DeleteInstanceForm class="mt-10 sm:mt-0" :instance="instance" />
-                </template>
-            </div>
+                <DeleteInstanceForm class="mt-10 sm:mt-0" :instance="instance" />
+            </template>
         </div>
     </AppLayout>
 </template>

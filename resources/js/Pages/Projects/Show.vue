@@ -19,33 +19,31 @@ defineProps({
         </template>
 
         <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                <UpdateProjectForm :project="project" :permissions="permissions" />
+            <UpdateProjectForm :project="project" :permissions="permissions" />
 
-                <div>
-                    <SectionBorder />
+            <div>
+                <SectionBorder />
 
-                    <ActionTable :links="[]">
-                        <template #title>
-                            Project Instances
-                        </template>
+                <ActionTable :links="[]">
+                    <template #title>
+                        Project Instances
+                    </template>
 
-                        <template #description>
-                            Manage the Projects associated Instances.
-                        </template>
+                    <template #description>
+                        Manage the Projects associated Instances.
+                    </template>
 
-                        <template #content>
-                            <ShowInstancesList :insideProject="project" :instances="project.instances" />
-                        </template>
-                    </ActionTable>
-                    </div>
+                    <template #content>
+                        <ShowInstancesList :insideProject="project" :instances="project.instances" />
+                    </template>
+                </ActionTable>
+                </div>
 
-                <template v-if="permissions.canDeleteProject">
-                    <SectionBorder />
+            <template v-if="permissions.canDeleteProject">
+                <SectionBorder />
 
-                    <DeleteProjectForm class="mt-10 sm:mt-0" :project="project" />
-                </template>
-            </div>
+                <DeleteProjectForm class="mt-10 sm:mt-0" :project="project" />
+            </template>
         </div>
     </AppLayout>
 </template>
