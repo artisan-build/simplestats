@@ -32,7 +32,7 @@ const submit = () => {
         </template>
 
         <template #title>
-            Register an account
+            Register a new account
         </template>
 
         <form @submit.prevent="submit">
