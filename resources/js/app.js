@@ -12,10 +12,13 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
+        const app = createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue)
-            .mount(el);
+            .use(ZiggyVue);
+
+        el.classList.add(...'flex min-h-screen w-full overflow-x-clip'.split(' '));
+
+        app.mount(el);
     },
     progress: {
         color: '#4B5563',
