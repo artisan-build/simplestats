@@ -32,7 +32,8 @@ class InstanceController extends Controller
 
     public function show(Request $request, Instance $instance): Response
     {
-        $instance->load('project');
+        // TODO check permission for token...
+        $instance->load('project', 'tokens');
         $projects = Project::orderBy('created_at', 'desc')->get();
 
         $permissions = [

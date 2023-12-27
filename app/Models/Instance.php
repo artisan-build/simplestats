@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
+use App\Concerns\HasApiPlainTokens;
 use App\Concerns\HasTeamScope;
+use App\Events\InstanceCreated;
+use App\Events\InstanceDeleted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Laravel\Sanctum\HasApiTokens;
 
 class Instance extends Model
 {
     use HasFactory;
-    use HasApiTokens;
+    use HasApiPlainTokens;
     use HasTeamScope;
 
     /**
@@ -25,6 +25,11 @@ class Instance extends Model
         'name',
         'team_id',
         'project_id',
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => InstanceCreated::class,
+        'deleted' => InstanceDeleted::class,
     ];
 
     public function project(): BelongsTo
