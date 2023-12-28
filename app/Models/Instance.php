@@ -16,6 +16,8 @@ class Instance extends Model
     use HasApiPlainTokens;
     use HasTeamScope;
 
+    const TOKEN_NAME_POSTFIX = ' Token';
+
     /**
      * The attributes that are mass assignable.
      *

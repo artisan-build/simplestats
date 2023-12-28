@@ -27,7 +27,10 @@ class InstanceController extends Controller
     {
         $instance = Instance::create($request->validated());
 
-        return redirect()->route('instances.show', $instance->id)->banner('Instance created: '.$instance->name);
+        return redirect()->route('instances.show', $instance->id)->with('flash', [
+            'token' => explode('|', $instance->tokens->first()->token_plain, 2)[1],
+            'banner' => 'Instance created!',
+        ]);
     }
 
     public function show(Request $request, Instance $instance): Response
@@ -59,5 +62,28 @@ class InstanceController extends Controller
         $instance->delete();
 
         return redirect()->route('instances.index')->banner('Instance deleted: '.$instance->name);
+    }
+
+    public function tokenRegenerate(Instance $instance)
+    {
+        $instance->tokens()->delete();
+
+        $token = $instance->createTokenPlain(
+            $instance->name.Instance::TOKEN_NAME_POSTFIX,
+        );
+
+        return back()->with('flash', [
+            'token' => explode('|', $token->plainTextToken, 2)[1],
+            'banner' => 'Token regenerated!',
+        ]);
+    }
+
+    public function tokenView(Instance $instance)
+    {
+        $token = $instance->tokens()->first();
+
+        return back()->with('flash', [
+            'token' => explode('|', $token->token_plain, 2)[1],
+        ]);
     }
 }

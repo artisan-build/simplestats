@@ -36,6 +36,8 @@ Route::middleware([
     Route::resource('projects', App\Http\Controllers\ProjectController::class);
 
     Route::resource('instances', App\Http\Controllers\InstanceController::class);
+    Route::post('instances/{instance}/token-view', [App\Http\Controllers\InstanceController::class, 'tokenView'])->name('instances.token-view');
+    Route::post('instances/{instance}/token-regenerate', [App\Http\Controllers\InstanceController::class, 'tokenRegenerate'])->name('instances.token-regenerate');
 });
 
 

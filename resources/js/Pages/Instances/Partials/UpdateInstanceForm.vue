@@ -34,7 +34,7 @@ const updateInstance = () => {
         </template>
 
         <template #description>
-            The Instance.
+            The Instance details.
         </template>
 
         <template #form>
