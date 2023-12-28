@@ -20,6 +20,8 @@ defineProps({
         <div>
             <UpdateInstanceForm :instance="instance" :projects="projects" :permissions="permissions" />
 
+
+
             <template v-if="permissions.canDeleteInstance">
                 <SectionBorder />
 
