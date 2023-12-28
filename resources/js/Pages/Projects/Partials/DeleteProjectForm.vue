@@ -36,7 +36,7 @@ const deleteProject = () => {
 
         <template #content>
             <div class="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-                Once a project is deleted, all of its instances and data will be permanently deleted.
+                Once a Project is deleted, all of its Instances and data will be permanently deleted.
             </div>
 
             <div class="mt-5">
@@ -52,7 +52,7 @@ const deleteProject = () => {
                 </template>
 
                 <template #content>
-                    Are you sure you want to delete this project? Once a project is deleted, all of its instances and data will be permanently deleted.
+                    Are you sure you want to delete this Project? Once a project is deleted, all of its Instances and data will be permanently deleted.
                 </template>
 
                 <template #footer>

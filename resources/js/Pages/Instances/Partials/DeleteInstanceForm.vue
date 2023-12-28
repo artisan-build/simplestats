@@ -36,7 +36,7 @@ const deleteInstance = () => {
 
         <template #content>
             <div class="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-                Once an Instance is deleted, all of its instances and data will be permanently deleted.
+                Once an Instance is deleted, all of its data will be permanently deleted.
             </div>
 
             <div class="mt-5">
@@ -52,7 +52,7 @@ const deleteInstance = () => {
                 </template>
 
                 <template #content>
-                    Are you sure you want to delete this instance? Once an Instance is deleted, all of its instances and data will be permanently deleted.
+                    Are you sure you want to delete this instance? Once an Instance is deleted, all of its data will be permanently deleted.
                 </template>
 
                 <template #footer>
