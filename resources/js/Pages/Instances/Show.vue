@@ -4,8 +4,8 @@ import DeleteInstanceForm from '@/Pages/Instances/Partials/DeleteInstanceForm.vu
 import SectionBorder from '@/Components/SectionBorder.vue';
 import UpdateInstanceForm from '@/Pages/Instances/Partials/UpdateInstanceForm.vue';
 import ActionSection from "@/Components/ActionSection.vue";
-import {ref} from "vue";
-import {useForm} from "@inertiajs/vue3";
+import {ref, watchEffect} from "vue";
+import {useForm, usePage} from "@inertiajs/vue3";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import DangerButton from "@/Components/DangerButton.vue";
@@ -17,25 +17,31 @@ defineProps({
     permissions: Object,
 });
 
-const viewApiTokenForm = useForm({});
-const regenerateApiTokenForm = useForm({});
+const page = usePage();
 
 const displayingToken = ref(false);
-const apiTokenBeingRegenerated = ref(null);
 
-const confirmApiTokenRegeneration = (instance) => {
-    apiTokenBeingRegenerated.value = instance;
-};
+watchEffect(() => {
+    displayingToken.value = page.props.jetstream.flash.token;
+});
+
+const viewApiTokenForm = useForm({});
 
 const viewApiToken = (instance) => {
     viewApiTokenForm.post(route('instances.token-view', instance), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
-            displayingToken.value = true;
             viewApiTokenForm.reset();
         },
     });
+};
+
+const regenerateApiTokenForm = useForm({});
+const apiTokenBeingRegenerated = ref(null);
+
+const confirmApiTokenRegeneration = (instance) => {
+    apiTokenBeingRegenerated.value = instance;
 };
 
 const regenerateApiToken = () => {
@@ -44,7 +50,6 @@ const regenerateApiToken = () => {
         preserveState: true,
         onSuccess: () => {
             apiTokenBeingRegenerated.value = null;
-            displayingToken.value = true;
             regenerateApiTokenForm.reset();
         },
     });
@@ -144,7 +149,7 @@ const regenerateApiToken = () => {
                 </template>
 
                 <template #content>
-                    Are you sure you would like to regenerate this API token? Make sure to replace it afterwards in your corresponding Instance!
+                    Are you sure you would like to regenerate this API token? If you already used this token, make sure to replace it afterwards in the corresponding Instance!
                 </template>
 
                 <template #footer>

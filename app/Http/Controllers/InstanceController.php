@@ -28,7 +28,7 @@ class InstanceController extends Controller
         $instance = Instance::create($request->validated());
 
         return redirect()->route('instances.show', $instance->id)->with('flash', [
-            'token' => explode('|', $instance->tokens->first()->token_plain, 2)[1],
+            'token' => $instance->tokens->first()->token_plain_part,
             'banner' => 'Instance created!',
         ]);
     }
@@ -73,7 +73,7 @@ class InstanceController extends Controller
         );
 
         return back()->with('flash', [
-            'token' => explode('|', $token->plainTextToken, 2)[1],
+            'token' => $token->accessToken->token_plain_part,
             'banner' => 'Token regenerated!',
         ]);
     }
@@ -83,7 +83,7 @@ class InstanceController extends Controller
         $token = $instance->tokens()->first();
 
         return back()->with('flash', [
-            'token' => explode('|', $token->token_plain, 2)[1],
+            'token' => $token->token_plain_part,
         ]);
     }
 }
