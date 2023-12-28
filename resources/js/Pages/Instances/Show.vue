@@ -144,7 +144,7 @@ const regenerateApiToken = () => {
                 </template>
 
                 <template #content>
-                    Are you sure you would like to regenerate this API token?
+                    Are you sure you would like to regenerate this API token? Make sure to replace it afterwards in your corresponding Instance!
                 </template>
 
                 <template #footer>
