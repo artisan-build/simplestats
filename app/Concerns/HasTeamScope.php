@@ -6,18 +6,24 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait HasTeamScope
 {
-    public static function bootHasTeamScope()
+    /**
+     * The "current_team_id is" used when the user is authenticated in the frontend.
+     * And "team_id" is used when using the api with the instance api token.
+     */
+    public static function bootHasTeamScope(): void
     {
-        parent::addGlobalScope('team', function (Builder $query) {
-            if (auth()->check()) {
-                $query->where('team_id', auth()->user()->current_team_id);
-            }
+        if (!auth()->check()) {
+            return;
+        }
+
+        $teamId = auth()->user()->current_team_id ?? auth()->user()->team_id;
+
+        parent::addGlobalScope('team', function (Builder $query) use ($teamId) {
+            $query->where('team_id', $teamId);
         });
 
-        static::saving(function ($model) {
-            if (auth()->check()) {
-                $model->team_id = auth()->user()->current_team_id;
-            }
+        static::saving(function ($model) use ($teamId) {
+            $model->team_id = $teamId;
         });
     }
 }
