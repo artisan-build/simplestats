@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 defineProps({
     canLogin: Boolean,
@@ -12,15 +13,29 @@ defineProps({
 <template>
     <Head title="Welcome" />
 
-    <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-center bg-white dark:bg-gray-900 selection:bg-red-500 selection:text-white">
+    <div v-if="canLogin" class="bg-white">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
+            <a href="/" class="inline-flex items-center">
+                <ApplicationLogo />
+                <span class="sr-only">SimpleStats</span>
+            </a>
+
+            <div class="flex items-center gap-6">
+                <Link v-if="$page.props.auth.user" :href="route('dashboard')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
+
+                <template v-else>
+                    <Link :href="route('login')" class="font-semibold">Log in</Link>
+
+                    <Link v-if="canRegister" :href="route('register')" class="border-indigo-700 text-indigo-700 hidden rounded-md border px-8 py-3 text-center font-bold md:inline-block">Get Started</Link>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <div class="sm:flex sm:justify-center sm:items-center -mt-20 min-h-screen bg-white dark:bg-gray-900">
         <div v-if="canLogin" class="sm:fixed sm:top-0 sm:end-0 p-6 text-end z-10">
             <Link v-if="$page.props.auth.user" :href="route('dashboard')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
 
-            <template v-else>
-                <Link :href="route('login')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</Link>
-
-                <Link v-if="canRegister" :href="route('register')" class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</Link>
-            </template>
         </div>
 
         <section class="dark:bg-gray-900">
@@ -37,7 +52,7 @@ defineProps({
                         <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     </Link>
                     <a href="#" class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
-                        Speak to Sales
+                        Documentation
                     </a>
                 </div>
                 <div class="hidden lg:col-span-5 lg:flex mt-16">
