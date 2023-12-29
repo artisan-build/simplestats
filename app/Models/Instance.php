@@ -25,7 +25,6 @@ class Instance extends Model
      */
     protected $fillable = [
         'name',
-        'team_id',
         'project_id',
     ];
 

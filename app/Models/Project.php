@@ -20,17 +20,6 @@ class Project extends Model
      */
     protected $fillable = [
         'name',
-        'team_id',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'team_id' => 'integer',
     ];
 
     public function team(): BelongsTo
