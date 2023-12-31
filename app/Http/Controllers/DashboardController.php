@@ -11,12 +11,11 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        // TODO implement Lifetime and Yesterday section
         $projects = Project::orderBy('created_at', 'desc')->with([
             'instances' => function (Builder $query) {
                 $query->withCount([
                     'statsusers',
-                    'statsusers as statsusers_yesterday_count' => function (Builder $query) {
+                    'statsusers as statsusers_count_yesterday' => function (Builder $query) {
                         $query->whereDate('created_at', Carbon::yesterday());
                     },
                 ]);
