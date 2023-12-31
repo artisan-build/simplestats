@@ -2,6 +2,11 @@
 
 import DropdownLink from "@/Components/DropdownLink.vue";
 import Dropdown from "@/Components/Dropdown.vue";
+import {router} from "@inertiajs/vue3";
+
+const logout = () => {
+    router.post(route('logout'));
+};
 </script>
 
 <template>
