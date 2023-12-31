@@ -9,6 +9,7 @@ import Navigation from "@/Components/Navigation.vue";
 
 defineProps({
     title: String,
+    fullscreen: Boolean,
 });
 
 const sidebarIsOpen = ref(false);
@@ -95,7 +96,7 @@ const logout = () => {
                     </div>
                 </nav>
             </div>
-            <main class="mx-auto h-full w-full py-8 px-8 lg:px-10 xl:px-16 max-w-screen-2xl">
+            <main class="mx-auto h-full w-full p-8" :class="{'max-w-screen-2xl': ! fullscreen}">
                 <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-8 pb-8">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
                         <slot name="header" />

@@ -1,9 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import ActionTable from "@/Components/ActionTable.vue";
-import ShowInstancesList from "@/Pages/Instances/Partials/ShowInstancesList.vue";
 import {Link} from "@inertiajs/vue3";
-import SectionBorder from "@/Components/SectionBorder.vue";
 
 defineProps({
     projects: Object,
@@ -11,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Dashboard" fullscreen=true>
         <template #header>
             Dashboard
         </template>
