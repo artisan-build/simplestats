@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Concerns\HasInstanceScope;
+use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StatsUser extends Model
 {
     use HasFactory;
+    use HasTeamScope;
+    use HasInstanceScope;
+
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -16,13 +22,12 @@ class StatsUser extends Model
      * @var array
      */
     protected $fillable = [
-        'project_id',
-        'instance_id',
         'track_source',
         'track_medium',
         'track_campaign',
         'track_term',
         'track_content',
+        'created_at',
     ];
 
     public function team(): BelongsTo

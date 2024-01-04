@@ -11,22 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('stats_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id')->constrained();
-            $table->foreignId('project_id')->constrained();
-            $table->foreignId('instance_id')->constrained();
+            $table->foreignId('team_id')->constrained()->onDelete('cascade');
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
+            $table->foreignId('instance_id')->constrained()->onDelete('cascade');
+            // tracking
             $table->string('track_source')->index()->nullable();
             $table->string('track_medium')->index()->nullable();
             $table->string('track_campaign')->nullable();
             $table->string('track_term')->nullable();
             $table->string('track_content')->nullable();
-            $table->timestamps();
+            // we only need created_at here
+            $table->timestamp('created_at');
         });
-
-        Schema::enableForeignKeyConstraints();
     }
 
     /**

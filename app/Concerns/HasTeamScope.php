@@ -12,18 +12,20 @@ trait HasTeamScope
      */
     public static function bootHasTeamScope(): void
     {
-        if (!auth()->check()) {
-            return;
-        }
-
-        $teamId = auth()->user()->current_team_id ?? auth()->user()->team_id;
-
-        parent::addGlobalScope('team', function (Builder $query) use ($teamId) {
-            $query->where('team_id', $teamId);
+        parent::addGlobalScope('team', function (Builder $query) {
+            if (auth()->check()) {
+                // important check first team_id then current_team_id
+                $teamId = auth()->user()->team_id ?? auth()->user()->current_team_id;
+                $query->where('team_id', $teamId);
+            }
         });
 
-        static::saving(function ($model) use ($teamId) {
-            $model->team_id = $teamId;
+        static::saving(function ($model) {
+            if (auth()->check()) {
+                // important check first team_id then current_team_id
+                $teamId = auth()->user()->team_id ?? auth()->user()->current_team_id;
+                $model->team_id = $teamId;
+            }
         });
     }
 }
