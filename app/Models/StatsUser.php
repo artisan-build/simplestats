@@ -7,6 +7,7 @@ use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StatsUser extends Model
 {
@@ -43,5 +44,10 @@ class StatsUser extends Model
     public function instance(): BelongsTo
     {
         return $this->belongsTo(Instance::class);
+    }
+
+    public function statsLogins(): HasMany
+    {
+        return $this->hasMany(StatsLogin::class);
     }
 }

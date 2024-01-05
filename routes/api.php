@@ -15,12 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+//    Route::get('/user', function (Request $request) {
+//        return $request->user();
+//    });
 
-    Route::apiResource('stats-user', App\Http\Controllers\StatsUserController::class);
+    Route::apiResource('stats-user', \App\Http\Controllers\Api\StatsUserController::class)->only(['store']);
+    Route::apiResource('stats-login', \App\Http\Controllers\Api\StatsLoginController::class)->only(['store']);
 });
-
-
-
