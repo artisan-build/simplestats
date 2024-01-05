@@ -11,6 +11,8 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
+//        session(['foo' => 123]);
+        dd(session('foo'));
         $projects = Project::orderBy('created_at', 'desc')->with([
             'instances' => function (Builder $query) {
                 $query->withCount([

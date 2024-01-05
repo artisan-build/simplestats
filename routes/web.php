@@ -40,4 +40,9 @@ Route::middleware([
     Route::post('instances/{instance}/token-regenerate', [App\Http\Controllers\InstanceController::class, 'tokenRegenerate'])->name('instances.token-regenerate');
 });
 
+Route::get('/test', function () {
+    session(['key' => 'foo']);
+    dd(session()->all());
+});
+
 

@@ -33,11 +33,6 @@ defineProps({
     </div>
 
     <div class="sm:flex sm:justify-center sm:items-center -mt-20 min-h-screen bg-white dark:bg-gray-900">
-        <div v-if="canLogin" class="sm:fixed sm:top-0 sm:end-0 p-6 text-end z-10">
-            <Link v-if="$page.props.auth.user" :href="route('dashboard')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
-
-        </div>
-
         <section class="dark:bg-gray-900">
             <div class="grid max-w-screen-xl px-4 py-8 mb-32 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
                 <div class="mr-auto place-self-center lg:col-span-7">
