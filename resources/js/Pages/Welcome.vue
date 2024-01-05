@@ -13,7 +13,7 @@ defineProps({
 <template>
     <Head title="Welcome" />
 
-    <div v-if="canLogin" class="bg-white">
+    <div v-if="canLogin" class="bg-white z-10 relative">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
             <a href="/" class="inline-flex items-center">
                 <ApplicationLogo />
