@@ -24,8 +24,8 @@ class InstanceFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'team_id' => Team::factory(),
-            'project_id' => Project::factory(),
+            'team_id' => Team::inRandomOrder()->first()->id,
+            'project_id' => Project::inRandomOrder()->first()->id,
         ];
     }
 }

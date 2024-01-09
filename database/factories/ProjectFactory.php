@@ -23,7 +23,7 @@ class ProjectFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
-            'team_id' => Team::factory(),
+            'team_id' => Team::inRandomOrder()->first()->id,
         ];
     }
 }

@@ -6,7 +6,10 @@ namespace Database\Seeders;
 use App\Actions\Fortify\CreateNewUser;
 use App\Models\Instance;
 use App\Models\Project;
+use App\Models\StatsLogin;
 use App\Models\StatsUser;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,29 +19,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = (new CreateNewUser())->create([
-            'name' => 'Zacharias Creutznacher',
-            'email' => 'zacharias.creutznacher@gmail.com',
-            'password' => 'password',
-            'password_confirmation' => 'password',
-            'terms' => true,
-        ]);
+        $user = User::withoutEvents(function () {
+            $user = (new CreateNewUser())->create([
+                'name' => 'Zacharias Creutznacher',
+                'email' => 'zacharias.creutznacher@gmail.com',
+                'password' => 'password',
+                'password_confirmation' => 'password',
+                'terms' => true,
+            ]);
 
-        $user->switchTeam($user->personalTeam());
+            $user->switchTeam($user->personalTeam());
 
-        Project::factory()->count(2)->create([
-            'team_id' => $user->current_team_id,
-        ])->each(function (Project $project) use ($user) {
-            Instance::factory()->count(2)->create([
-                'project_id' => $project->id,
-                'team_id' => $user->current_team_id,
-            ])->each(function (Instance $instance) use ($project, $user) {
-                StatsUser::factory()->count(500)->create([
-                    'team_id' => $user->current_team_id,
-                    'project_id' => $project->id,
-                    'instance_id' => $instance->id,
-                ]);
-            });
+            return $user;
         });
+
+        Project::factory()
+            ->count(2)
+            ->for(Team::find($user->current_team_id))
+            ->has(
+                Instance::factory()
+                    ->count(2)
+                    ->has(StatsUser::factory()
+                        ->count(50)
+                        ->has(StatsLogin::factory()->count(10))
+                    )
+            )
+            ->create();
     }
 }
