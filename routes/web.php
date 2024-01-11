@@ -28,6 +28,10 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    Route::get('/test', function () {
+        dump('asdf');
+        dd(request()->user()->onTrial());
+    });
     // Dashboard
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
@@ -39,10 +43,3 @@ Route::middleware([
     Route::post('instances/{instance}/token-view', [App\Http\Controllers\InstanceController::class, 'tokenView'])->name('instances.token-view');
     Route::post('instances/{instance}/token-regenerate', [App\Http\Controllers\InstanceController::class, 'tokenRegenerate'])->name('instances.token-regenerate');
 });
-
-Route::get('/test', function () {
-    session(['key' => 'foo']);
-    dd(session()->all());
-});
-
-

@@ -14,7 +14,8 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "spatie/laravel-ray": "^1.33",
-        "tightenco/ziggy": "^1.0"
+        "tightenco/ziggy": "^1.0",
+        "laravel/spark-paddle": "^5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -75,6 +76,10 @@
             "options": {
                 "symlink": true
             }
+        },
+        "laravel/spark-paddle": {
+            "type": "composer",
+            "url": "https://spark.laravel.com"
         }
     },
     "minimum-stability": "dev",
