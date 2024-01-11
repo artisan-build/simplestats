@@ -18,7 +18,7 @@ class StatsLoginResource extends JsonResource
             'team_id' => $this->team_id,
             'project_id' => $this->project_id,
             'instance_id' => $this->instance_id,
-            'created_at' => $this->created_at,
+            'time' => $this->time,
         ];
     }
 }

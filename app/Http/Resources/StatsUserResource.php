@@ -22,7 +22,7 @@ class StatsUserResource extends JsonResource
             'track_campaign' => $this->track_campaign,
             'track_term' => $this->track_term,
             'track_content' => $this->track_content,
-            'created_at' => $this->created_at,
+            'time' => $this->time,
         ];
     }
 }

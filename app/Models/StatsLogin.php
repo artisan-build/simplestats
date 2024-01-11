@@ -28,7 +28,7 @@ class StatsLogin extends Model
      */
     protected $fillable = [
         'stats_user_id',
-        'created_at'
+        'time'
     ];
 
     public function team(): BelongsTo

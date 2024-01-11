@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('track_campaign')->nullable();
             $table->string('track_term')->nullable();
             $table->string('track_content')->nullable();
-            // we only need created_at here
-            $table->timestamp('created_at');
+            $table->timestamp('time');
         });
     }
 

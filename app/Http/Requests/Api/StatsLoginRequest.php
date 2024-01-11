@@ -21,7 +21,7 @@ class StatsLoginRequest extends FormRequest
     {
         return [
             'stats_user_id' => ['required', 'integer', 'exists:stats_users,id'],
-            'created_at' => ['required', 'date'],
+            'time' => ['required', 'date'],
         ];
     }
 }

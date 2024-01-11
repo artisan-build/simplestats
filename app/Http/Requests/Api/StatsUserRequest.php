@@ -25,7 +25,7 @@ class StatsUserRequest extends FormRequest
             'track_campaign' => ['nullable', 'string'],
             'track_term' => ['nullable', 'string'],
             'track_content' => ['nullable', 'string'],
-            'created_at' => ['required', 'date'],
+            'time' => ['required', 'date'],
         ];
     }
 }

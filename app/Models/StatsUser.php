@@ -28,7 +28,7 @@ class StatsUser extends Model
         'track_campaign',
         'track_term',
         'track_content',
-        'created_at',
+        'time',
     ];
 
     public function team(): BelongsTo

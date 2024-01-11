@@ -41,7 +41,7 @@ class StatsLoginFactory extends Factory
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
             'instance_id' => Instance::inRandomOrder()->first()->id,
-            'created_at' => $date->format('Y-m-d H:i:s'),
+            'time' => $date->format('Y-m-d H:i:s'),
         ];
     }
 }

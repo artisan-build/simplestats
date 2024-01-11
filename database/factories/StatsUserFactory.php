@@ -34,7 +34,7 @@ class StatsUserFactory extends Factory
             'track_campaign' => $this->faker->randomElement(['summer_sale_2023', 'new_product_launch', 'christmas_special', 'brand_awareness', 'customer_retention']),
             'track_term' => $this->faker->randomElement(['outdoor_apparel', 'smartphone_deals', 'yoga_mats_sale', 'free_trial_software', 'organic_foods']),
             'track_content' => $this->faker->randomElement(['top_banner', 'newsletter_main_article', 'insta_story', 'page_2_ad', 'video_ad']),
-            'created_at' => $date,
+            'time' => $date,
         ];
     }
 }
