@@ -24,14 +24,17 @@ class StatsPaymentFactory extends Factory
      */
     public function definition(): array
     {
+        $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
+        $gross = $this->faker->randomFloat(2, -100, 200);
+
         return [
-            'stats_user_id' => StatsUser::factory(),
-            'team_id' => Team::factory(),
-            'project_id' => Project::factory(),
-            'instance_id' => Instance::factory(),
-            'gross' => $this->faker->numberBetween(-10000, 10000),
-            'net' => $this->faker->numberBetween(-10000, 10000),
-            'time' => $this->faker->date(),
+            'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
+            'team_id' => Team::inRandomOrder()->first()->id,
+            'project_id' => Project::inRandomOrder()->first()->id,
+            'instance_id' => Instance::inRandomOrder()->first()->id,
+            'gross' => $gross,
+            'net' => $gross*0.8,
+            'time' => $date->format('Y-m-d H:i:s'),
         ];
     }
 }

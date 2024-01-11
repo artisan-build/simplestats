@@ -50,4 +50,9 @@ class StatsUser extends Model
     {
         return $this->hasMany(StatsLogin::class);
     }
+
+    public function statsPayments(): HasMany
+    {
+        return $this->hasMany(StatsPayment::class);
+    }
 }

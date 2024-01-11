@@ -7,6 +7,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsLogin;
+use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\Team;
 use App\Models\User;
@@ -42,8 +43,11 @@ class DatabaseSeeder extends Seeder
                     ->has(StatsUser::factory()
                         ->count(50)
                         ->has(StatsLogin::factory()->count(10))
+                        ->has(StatsPayment::factory()->count(10))
                     )
             )
             ->create();
+
+        $this->command->info(Instance::find(1)->tokens()->first()->token_plain);
     }
 }

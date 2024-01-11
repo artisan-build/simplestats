@@ -26,16 +26,6 @@ class StatsLoginFactory extends Factory
     {
         $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
 
-        // Sommerzeitumstellung - Vermeiden von 02:00 - 02:59 am letzten Sonntag im März
-        if ($date->format('m-d') == '03-26' && $date->format('H') == '02') {
-            $date->modify('+1 hour');
-        }
-
-        // Winterzeitumstellung - Vermeiden von 02:00 - 02:59 am letzten Sonntag im Oktober
-        if ($date->format('m-d') == '10-26' && $date->format('H') == '02') {
-            $date->modify('+1 hour');
-        }
-
         return [
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,
