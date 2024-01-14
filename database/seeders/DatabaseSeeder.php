@@ -34,17 +34,29 @@ class DatabaseSeeder extends Seeder
             return $user;
         });
 
-        Project::factory()
-            ->count(2)
+        Project::factory()->count(2)
             ->for(Team::find($user->current_team_id))
             ->has(
-                Instance::factory()
-                    ->count(2)
-                    ->has(StatsUser::factory()
-                        ->count(50)
-                        ->has(StatsLogin::factory()->count(10))
-                        ->has(StatsPayment::factory()->count(10))
-                    )
+                Instance::factory()->count(2)
+                    ->afterCreating(function (Instance $instance) {
+                        StatsUser::factory(rand(25, 100))->create([
+                            'project_id' => $instance->project_id,
+                            'instance_id' => $instance->id,
+                        ])
+                        ->each(function ($statsUser) use ($instance) {
+                            StatsLogin::factory(rand(0, 20))->create([
+                                'project_id' => $instance->project_id,
+                                'instance_id' => $instance->id,
+                                'stats_user_id' => $statsUser->id]
+                            );
+
+                            StatsPayment::factory(rand(0, 20))->create([
+                                'project_id' => $instance->project_id,
+                                'instance_id' => $instance->id,
+                                'stats_user_id' => $statsUser->id
+                            ]);
+                        });
+                    })
             )
             ->create();
 
