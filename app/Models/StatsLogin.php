@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasInstanceScope;
 use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,7 @@ class StatsLogin extends Model
     use HasFactory;
     use HasTeamScope;
     use HasInstanceScope;
+    use HasCounterByStatsUser;
 
     /**
      * Indicates if the model should be timestamped.

@@ -22,16 +22,6 @@ class StatsLoginController extends Controller
 
     public function store(StatsLoginRequest $request): StatsLoginResource
     {
-        $loginTime = Carbon::parse($request->time);
-        $userLoggedInToday = StatsUser::whereKey($request->stats_user_id)->withWhereHas('statsLogins', function ($query) use ($loginTime) {
-            $query->whereDate('time', '=', $loginTime->format('Y-m-d'));
-        })->first();
-
-        // If the user has already logged in today, we do not track again...
-        if ($userLoggedInToday) {
-            return new StatsLoginResource($userLoggedInToday->statsLogins->first());
-        }
-
         $statsLogin = StatsLogin::create($request->validated());
 
         return new StatsLoginResource($statsLogin);

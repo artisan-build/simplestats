@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasInstanceScope;
 use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,7 @@ class StatsPayment extends Model
     use HasFactory;
     use HasTeamScope;
     use HasInstanceScope;
+    use HasCounterByStatsUser;
 
     /**
      * Indicates if the model should be timestamped.
@@ -42,11 +44,6 @@ class StatsPayment extends Model
         'time' => 'date',
     ];
 
-    public function statsUser(): BelongsTo
-    {
-        return $this->belongsTo(StatsUser::class);
-    }
-
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
@@ -60,5 +57,10 @@ class StatsPayment extends Model
     public function instance(): BelongsTo
     {
         return $this->belongsTo(Instance::class);
+    }
+
+    public function statsUser(): BelongsTo
+    {
+        return $this->belongsTo(StatsUser::class);
     }
 }

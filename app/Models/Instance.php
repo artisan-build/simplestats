@@ -44,8 +44,18 @@ class Instance extends Model
         return $this->belongsTo(Team::class);
     }
 
-    public function statsusers(): HasMany
+    public function statsUsers(): HasMany
     {
         return $this->hasMany(StatsUser::class);
+    }
+
+    public function statsLogins(): HasMany
+    {
+        return $this->hasMany(StatsLogin::class);
+    }
+
+    public function statsPayments(): HasMany
+    {
+        return $this->hasMany(StatsPayment::class);
     }
 }

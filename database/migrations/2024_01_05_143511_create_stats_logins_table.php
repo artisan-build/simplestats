@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('instance_id')->constrained()->onDelete('cascade');
-            $table->timestamp('time');
+            $table->dateTime('time');
+            $table->integer('counter');
         });
 
         Schema::enableForeignKeyConstraints();

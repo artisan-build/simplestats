@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('track_campaign')->nullable();
             $table->string('track_term')->nullable();
             $table->string('track_content')->nullable();
-            $table->timestamp('time');
+            $table->dateTime('time');
         });
     }
 

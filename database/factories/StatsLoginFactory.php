@@ -25,7 +25,7 @@ class StatsLoginFactory extends Factory
     public function definition(): array
     {
         $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
-
+        
         return [
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,

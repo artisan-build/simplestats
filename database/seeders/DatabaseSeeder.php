@@ -44,17 +44,28 @@ class DatabaseSeeder extends Seeder
                             'instance_id' => $instance->id,
                         ])
                         ->each(function ($statsUser) use ($instance) {
-                            StatsLogin::factory(rand(0, 20))->create([
-                                'project_id' => $instance->project_id,
-                                'instance_id' => $instance->id,
-                                'stats_user_id' => $statsUser->id]
-                            );
+                            // Basiszeit definieren
+                            $baseTime = now()->subYears(2)->addDays(rand(0, 730));
 
-                            StatsPayment::factory(rand(0, 20))->create([
-                                'project_id' => $instance->project_id,
-                                'instance_id' => $instance->id,
-                                'stats_user_id' => $statsUser->id
-                            ]);
+                            // Logins erstellen
+                            for ($i = 0; $i < rand(0, 20); $i++) {
+                                StatsLogin::factory()->create([
+                                    'project_id' => $instance->project_id,
+                                    'instance_id' => $instance->id,
+                                    'stats_user_id' => $statsUser->id,
+                                    'time' => $baseTime->addDays(rand(1, 28)) // Zeit inkrementieren
+                                ]);
+                            }
+
+                            // Payments erstellen
+                            for ($i = 0; $i < rand(0, 20); $i++) {
+                                StatsPayment::factory()->create([
+                                    'project_id' => $instance->project_id,
+                                    'instance_id' => $instance->id,
+                                    'stats_user_id' => $statsUser->id,
+                                    'time' => $baseTime->addDays(rand(1, 28)) // Zeit inkrementieren
+                                ]);
+                            }
                         });
                     })
             )

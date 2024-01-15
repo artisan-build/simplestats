@@ -25,7 +25,7 @@ class StatsPaymentFactory extends Factory
     public function definition(): array
     {
         $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
-        $gross = $this->faker->randomFloat(2, -100, 200);
+        $gross = $this->faker->randomFloat(2, -10, 200);
 
         return [
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,

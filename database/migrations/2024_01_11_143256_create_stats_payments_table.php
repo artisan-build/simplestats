@@ -19,7 +19,8 @@ return new class extends Migration
             $table->foreignId('instance_id')->constrained()->onDelete('cascade');
             $table->float('gross');
             $table->float('net');
-            $table->date('time');
+            $table->dateTime('time');
+            $table->integer('counter');
         });
     }
 

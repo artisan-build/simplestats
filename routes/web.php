@@ -28,15 +28,12 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/test', function () {
-        dump('asdf');
-        dd(request()->user()->onTrial());
-    });
     // Dashboard
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);
+    Route::get('projects/{project}/stats', [App\Http\Controllers\ProjectController::class, 'stats'])->name('projects.stats');
 
     // Instances
     Route::resource('instances', App\Http\Controllers\InstanceController::class);
