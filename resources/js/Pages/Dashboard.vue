@@ -16,7 +16,7 @@ defineProps({
         <div>
             <div v-for="project in projects">
                 <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border">
-                    <table class="w-full whitespace-nowrap">
+                    <table class="w-full whitespace-nowrap text-sm">
                         <thead>
                             <tr class="text-left font-bold">
                                 <th class="p-3">{{ project.name }}</th>
@@ -35,7 +35,7 @@ defineProps({
                                 <th>Tot. Actives</th>
                                 <th>Reg. to Actives</th>
                                 <th>ARPU</th>
-                                <th>ARPPU</th>
+                                <th class="pr-2">ARPPU</th>
                                 <th class="w-1 bg-white border-y border-white"></th>
                                 <th>Regs.</th>
                                 <th>NAU</th>
@@ -46,7 +46,7 @@ defineProps({
                                 <th>MAU</th>
                                 <th>MAPU</th>
                                 <th>MAAPU</th>
-                                <th>Rev.</th>
+                                <th class="pr-2">Rev.</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,7 +63,7 @@ defineProps({
                             <td>{{ instance.stats.lifetime.TAU }}</td>
                             <td>{{ instance.stats.lifetime.REG2TAU }}</td>
                             <td>{{ instance.stats.lifetime.ARPU }}</td>
-                            <td>{{ instance.stats.lifetime.ARPPU }}</td>
+                            <td class="pr-2">{{ instance.stats.lifetime.ARPPU }}</td>
                             <td class="w-1 bg-white border-y border-white"></td>
                             <td>{{ instance.stats.yesterday.REG }}</td>
                             <td>{{ instance.stats.yesterday.NAU }}</td>
@@ -74,7 +74,7 @@ defineProps({
                             <td>{{ instance.stats.yesterday.MAU }}</td>
                             <td>{{ instance.stats.yesterday.MAPU }}</td>
                             <td>{{ instance.stats.yesterday.MAAPU }}</td>
-                            <td>{{ instance.stats.yesterday.REV }}</td>
+                            <td class="pr-2">{{ instance.stats.yesterday.REV }}</td>
                         </tr>
                         </tbody>
                     </table>
