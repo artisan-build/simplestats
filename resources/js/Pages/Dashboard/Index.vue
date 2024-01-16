@@ -55,10 +55,10 @@ defineProps({
                             class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                             :class="{'bg-gray-50': i % 2 === 1}"
                         >
-                            <StatsCols :stats="instance.stats" />
+                            <StatsCols :stats="instance.stats" :isTotal="false" />
                         </tr>
                         <tr class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
-                            <StatsCols :stats="project.stats" />
+                            <StatsCols :stats="project.stats" :isTotal="true" />
                         </tr>
                         </tbody>
                     </table>
