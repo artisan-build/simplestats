@@ -58,13 +58,15 @@ class DatabaseSeeder extends Seeder
                             }
 
                             // Payments erstellen
-                            for ($i = 0; $i < rand(0, 20); $i++) {
-                                StatsPayment::factory()->create([
-                                    'project_id' => $instance->project_id,
-                                    'instance_id' => $instance->id,
-                                    'stats_user_id' => $statsUser->id,
-                                    'time' => $baseTime->addDays(rand(1, 28)) // Zeit inkrementieren
-                                ]);
+                            if (rand(0, 9) === 0) {
+                                for ($i = 0; $i < rand(0, 20); $i++) {
+                                    StatsPayment::factory()->create([
+                                        'project_id' => $instance->project_id,
+                                        'instance_id' => $instance->id,
+                                        'stats_user_id' => $statsUser->id,
+                                        'time' => $baseTime->addDays(rand(1, 28)) // Zeit inkrementieren
+                                    ]);
+                                }
                             }
                         });
                     })
