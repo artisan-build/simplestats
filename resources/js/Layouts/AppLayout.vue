@@ -24,9 +24,9 @@ const sidebarIsOpen = ref(false);
         <div @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"></div>
 
         <aside :class="{
-                'w-72 translate-x-0 shadow-xl ring-1 ring-gray-950\/5 rtl:-translate-x-0 dark:ring-white\/10 lg:sticky': sidebarIsOpen,
-                'w-72 -translate-x-full rtl:translate-x-full lg:sticky': ! sidebarIsOpen
-            }" class="fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent lg:translate-x-0 rtl:lg:-translate-x-0 w-72 -translate-x-full rtl:translate-x-full lg:sticky">
+                'translate-x-0 shadow-xl ring-1 ring-gray-950\/5 rtl:-translate-x-0 dark:ring-white\/10 lg:sticky': sidebarIsOpen,
+                '-translate-x-full rtl:translate-x-full lg:sticky': ! sidebarIsOpen
+            }" class="w-72 fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent lg:translate-x-0 rtl:lg:-translate-x-0 -translate-x-full rtl:translate-x-full lg:sticky">
             <div class="overflow-x-clip">
                 <header class="flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm">
                     <div class="flex items-center">
