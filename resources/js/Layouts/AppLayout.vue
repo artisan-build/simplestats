@@ -13,6 +13,8 @@ defineProps({
 });
 
 const sidebarIsOpen = ref(false);
+
+const smallAside = true;
 </script>
 
 <template>
@@ -33,7 +35,10 @@ const sidebarIsOpen = ref(false);
                         <Link :href="route('dashboard')">
                             <ApplicationMark class="block h-9 w-auto" />
                         </Link>
-                        <Link :href="route('dashboard')" class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
+                        <Link :href="route('dashboard')"
+                              class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
+                              :class="{'hidden': smallAside}"
+                        >
                             SimpleStats
                         </Link>
                     </div>
