@@ -18,7 +18,7 @@ defineProps({
                 <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border">
                     <table class="w-full whitespace-nowrap text-sm">
                         <thead>
-                            <tr class="text-left font-bold">
+                            <tr class="text-left font-bold text-base">
                                 <th class="p-3">{{ project.name }}</th>
                                 <th class="w-1"></th>
                                 <th class="text-center" colspan="8">Lifetime</th>
