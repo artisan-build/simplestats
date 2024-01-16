@@ -15,7 +15,7 @@ defineProps({
 
         <div>
             <div v-for="project in projects">
-                <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border">
+                <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
                     <table class="w-full whitespace-nowrap text-sm">
                         <thead>
                             <tr class="text-left font-bold text-base">
