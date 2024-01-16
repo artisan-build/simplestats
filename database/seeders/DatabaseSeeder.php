@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         Project::factory()->count(2)
             ->for(Team::find($user->current_team_id))
             ->has(
-                Instance::factory()->count(2)
+                Instance::factory()->count(3)
                     ->afterCreating(function (Instance $instance) {
                         StatsUser::factory(rand(25, 100))->create([
                             'project_id' => $instance->project_id,
@@ -71,6 +71,24 @@ class DatabaseSeeder extends Seeder
             )
             ->create();
 
-        $this->command->info(Instance::find(1)->tokens()->first()->token_plain);
+        $this->changeEnv([
+            'SIMPLESTATS_API_TOKEN' => Instance::find(1)->tokens()->first()->token_plain,
+        ]);
+    }
+
+    protected function changeEnv($data = [])
+    {
+        if (count($data) > 0) {
+            // Pfad zur .env-Datei
+            $env = file_get_contents(base_path() . '/.env');
+
+            foreach ($data as $dataKey => $dataValue) {
+                // Ersetzen des aktuellen Werts mit dem neuen Wert
+                $env = preg_replace('/^' . $dataKey . '=.*/m', $dataKey . '=' . $dataValue, $env);
+            }
+
+            // Speichern der neuen .env-Datei
+            file_put_contents(base_path() . '/.env', $env);
+        }
     }
 }
