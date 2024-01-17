@@ -15,6 +15,8 @@ defineProps({
 const sidebarIsOpen = ref(false);
 
 const smallAside = true;
+
+const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
@@ -39,7 +41,7 @@ const smallAside = true;
                               class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
                               :class="{'hidden': smallAside}"
                         >
-                            SimpleStats
+                            {{ appName }}
                         </Link>
                     </div>
                 </header>
@@ -78,7 +80,7 @@ const smallAside = true;
                     </button>
 
                     <Link :href="route('dashboard')" class="inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
-                        SimpleStats
+                        {{ appName }}
                     </Link>
 
                     <div class="ms-auto flex items-center gap-x-4">
