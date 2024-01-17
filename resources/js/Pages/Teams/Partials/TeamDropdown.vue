@@ -11,6 +11,8 @@ const switchToTeam = (team) => {
         preserveState: false,
     });
 };
+
+const showMangeTeams = true;
 </script>
 
 <template>
@@ -32,23 +34,25 @@ const switchToTeam = (team) => {
 
         <template #content>
             <div class="w-60">
-                <!-- Team Management -->
-                <div class="block px-4 py-2 text-xs text-gray-400">
-                    Manage Team
+                <div v-if="showMangeTeams">
+                    <!-- Team Management -->
+                    <div class="block px-4 py-2 text-xs text-gray-400">
+                        Manage Team
+                    </div>
+
+                    <!-- Team Settings -->
+                    <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
+                        Team Settings
+                    </DropdownLink>
+
+                    <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
+                        Create New Team
+                    </DropdownLink>
                 </div>
 
-                <!-- Team Settings -->
-                <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
-                    Team Settings
-                </DropdownLink>
-
-                <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
-                    Create New Team
-                </DropdownLink>
-
                 <!-- Team Switcher -->
-                <template v-if="$page.props.auth.user.all_teams.length > 1">
-                    <div class="border-t border-gray-200 dark:border-gray-600" />
+                <template v-if="$page.props.auth.user.all_teams.length > 0">
+                    <div v-if="showMangeTeams" class="border-t border-gray-200 dark:border-gray-600" />
 
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         Switch Teams

@@ -91,7 +91,7 @@ const smallAside = true;
             </div>
             <main class="mx-auto h-full w-full p-8" :class="{'max-w-screen-2xl': ! fullscreen}">
                 <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-8 pb-8">
-                    <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+                    <h1 class="flex items-center justify-between w-full text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
                         <slot name="header" />
                     </h1>
                 </header>

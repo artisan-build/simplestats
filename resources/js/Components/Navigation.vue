@@ -37,7 +37,7 @@ import NavLink from "@/Components/NavLink.vue";
                         Instances
                     </NavLink>
                 </li>
-                <li class="hidden flex flex-col gap-y-1">
+                <li class="flex flex-col gap-y-1">
                     <NavLink :href="route('teams.show', $page.props.auth.user.current_team)" :active="route().current().includes('teams')">
                         <template #icon>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

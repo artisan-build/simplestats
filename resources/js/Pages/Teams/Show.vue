@@ -4,6 +4,9 @@ import DeleteTeamForm from '@/Pages/Teams/Partials/DeleteTeamForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import TeamMemberManager from '@/Pages/Teams/Partials/TeamMemberManager.vue';
 import UpdateTeamNameForm from '@/Pages/Teams/Partials/UpdateTeamNameForm.vue';
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 defineProps({
     team: Object,
@@ -15,7 +18,12 @@ defineProps({
 <template>
     <AppLayout title="Team Settings">
         <template #header>
-            Team Settings
+            <div>
+                Team: {{ team.name }}
+            </div>
+            <div v-if="$page.props.jetstream.canCreateTeams">
+                <SecondaryButton type="button" @click="$inertia.visit(route('teams.create'))">Create New Team</SecondaryButton>
+            </div>
         </template>
 
         <div>
