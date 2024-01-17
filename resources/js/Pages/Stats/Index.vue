@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {Link} from "@inertiajs/vue3";
-import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
+import StatsCols from "@/Pages/Stats/Partials/StatsCols.vue";
 
 defineProps({
     projects: Object,

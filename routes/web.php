@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StatsController;
+use App\Http\Controllers\StatsProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,8 +29,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/stats', StatsController::class)->name('stats');
+    Route::get('/stats/projects/{project}', StatsProjectController::class)->name('stats.projects');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);
