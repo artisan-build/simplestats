@@ -45,7 +45,7 @@ const logout = () => {
             </DropdownLink>
 
             <DropdownLink as="a" :href="route('spark.portal')">
-                Manage Subscription
+                Subscription
             </DropdownLink>
 
             <div class="border-t border-gray-200 dark:border-gray-600" />
