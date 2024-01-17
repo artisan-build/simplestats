@@ -54,7 +54,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
         <div class="w-screen flex flex-1 flex-col">
             <div class="sticky top-0 z-20 overflow-x-clip">
-                <nav class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8">
+                <nav class="flex h-16 items-center gap-x-4 px-4 md:px-6 lg:px-8 bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
                     <button class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="sidebarIsOpen = ! sidebarIsOpen">
                         <svg
                             class="h-6 w-6"
