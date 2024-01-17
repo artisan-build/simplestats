@@ -21,9 +21,7 @@ defineProps({
             <div>
                 Team: {{ team.name }}
             </div>
-            <div v-if="$page.props.jetstream.canCreateTeams">
-                <SecondaryButton type="button" @click="$inertia.visit(route('teams.create'))">Create New Team</SecondaryButton>
-            </div>
+            <SecondaryButton v-if="$page.props.jetstream.canCreateTeams" type="button" @click="$inertia.visit(route('teams.create'))">Create New Team</SecondaryButton>
         </template>
 
         <div>
