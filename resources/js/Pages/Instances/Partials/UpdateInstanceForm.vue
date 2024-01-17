@@ -20,7 +20,7 @@ const form = useForm({
 });
 
 const updateInstance = () => {
-    form.put(route('instances.update', props.instance), {
+    form.put(route('projects.instances.update', [props.instance.project_id, props.instance.id]), {
         errorBag: 'updateInstance',
         preserveScroll: true,
     });

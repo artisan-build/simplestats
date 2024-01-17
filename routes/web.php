@@ -33,10 +33,10 @@ Route::middleware([
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);
-    Route::get('projects/{project}/stats', [App\Http\Controllers\ProjectController::class, 'stats'])->name('projects.stats');
+//    Route::get('projects/{project}/stats', [App\Http\Controllers\ProjectController::class, 'stats'])->name('projects.stats');
 
     // Instances
-    Route::resource('instances', App\Http\Controllers\InstanceController::class);
-    Route::post('instances/{instance}/token-view', [App\Http\Controllers\InstanceController::class, 'tokenView'])->name('instances.token-view');
-    Route::post('instances/{instance}/token-regenerate', [App\Http\Controllers\InstanceController::class, 'tokenRegenerate'])->name('instances.token-regenerate');
+    Route::resource('projects.instances', App\Http\Controllers\ProjectInstanceController::class);
+    Route::post('projects/{project}/instances/{instance}/token-view', [App\Http\Controllers\ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
+    Route::post('projects/{project}/instances/{instance}/token-regenerate', [App\Http\Controllers\ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
 });

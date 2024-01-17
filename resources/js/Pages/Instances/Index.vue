@@ -15,16 +15,16 @@ import ShowInstancesList from "@/Pages/Instances/Partials/ShowInstancesList.vue"
 const props = defineProps({
     instances: Object,
     projects: Array,
-    selectedProject: [Number, null]
+    project: Object,
 });
 
 const createInstanceForm = useForm({
     name: '',
-    project_id: props.selectedProject ?? '',
+    project_id: props.project.id ?? '',
 });
 
 const createInstance = () => {
-    createInstanceForm.post(route('instances.store'), {
+    createInstanceForm.post(route('projects.instances.store', createInstanceForm.project_id), {
         preserveScroll: true,
         onSuccess: () => {
             createInstanceForm.reset();

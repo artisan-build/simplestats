@@ -18,7 +18,7 @@ const confirmInstanceDeletion = () => {
 };
 
 const deleteInstance = () => {
-    form.delete(route('instances.destroy', props.instance), {
+    form.delete(route('projects.instances.destroy', [props.instance.project_id, props.instance.id]), {
         errorBag: 'deleteInstance',
     });
 };

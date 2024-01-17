@@ -21,7 +21,7 @@ class InstanceStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'project_id' => ['required', 'integer', 'exists:Projects,id'],
+            'project_id' => ['sometimes', 'integer', 'exists:Projects,id'],
         ];
     }
 }
