@@ -60,7 +60,7 @@ class ProjectInstanceController extends Controller
     {
         $instance->delete();
 
-        return redirect()->route('projects.instances.index', $instance->project_id)->banner('Instance deleted: '.$instance->name);
+        return redirect()->route('projects.show', $instance->project_id)->banner('Instance deleted: '.$instance->name);
     }
 
     public function tokenRegenerate(Project $project, Instance $instance)
