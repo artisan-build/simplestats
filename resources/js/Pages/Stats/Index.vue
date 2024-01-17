@@ -9,7 +9,7 @@ defineProps({
 </script>
 
 <template>
-    <AppLayout title="Dashboard" fullscreen=true>
+    <AppLayout title="Dashboard" :fullscreen="true">
         <div>
             <div v-for="project in projects">
                 <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
