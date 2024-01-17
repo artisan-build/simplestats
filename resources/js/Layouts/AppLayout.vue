@@ -77,6 +77,10 @@ const smallAside = true;
                         </svg>
                     </button>
 
+                    <Link :href="route('dashboard')" class="inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
+                        SimpleStats
+                    </Link>
+
                     <div class="ms-auto flex items-center gap-x-4">
                         <div class="ms-3 relative">
                             <TeamDropdown />
