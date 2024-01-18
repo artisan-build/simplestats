@@ -25,6 +25,7 @@ class StatsService
 
     public function getStats()
     {
+//        ray()->showQueries();
         return Project::orderBy('created_at', 'desc')->with([
             'instances' => function (Builder $query) {
                 $query->withCount([
@@ -68,8 +69,7 @@ class StatsService
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
-                            $query->whereDate('time', '=', Carbon::yesterday())
-                                ->whereNot('counter', 1);
+                            $query->whereDate('time', '=', Carbon::yesterday());
                         })->whereHas('statsPayments', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
                         });
@@ -105,8 +105,7 @@ class StatsService
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
-                            $query->whereDate('time', '>=', Carbon::yesterday()->subDays(30))
-                                ->whereNot('counter', 1);
+                            $query->whereDate('time', '>=', Carbon::yesterday()->subDays(30));
                         })->whereHas('statsPayments', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
                         });
