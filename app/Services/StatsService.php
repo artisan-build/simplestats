@@ -32,7 +32,9 @@ class StatsService
                     // ! ==== Lifetime (lt) ==== !
                     'statsUsers as lt_REG',
                     'statsUsers as lt_PU' => function (Builder $query) {
-                        $query->whereHas('statsPayments');
+                        $query->whereHas('statsPayments', function (Builder $query) {
+                            $query->whereColumn('instance_id', 'instances.id');
+                        });
                     },
                     // total active users
                     'statsUsers as lt_TAU' => function (Builder $query) {

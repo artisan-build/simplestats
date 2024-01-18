@@ -11,19 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('stats_logins', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stats_user_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('stats_user_id')->index();
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('instance_id')->constrained()->onDelete('cascade');
             $table->dateTime('time');
             $table->integer('counter');
-        });
 
-        Schema::enableForeignKeyConstraints();
+            $table->foreign(['stats_user_id', 'instance_id'])
+                ->references(['id', 'instance_id'])
+                ->on('stats_users')
+                ->onDelete('cascade');
+        });
     }
 
     /**

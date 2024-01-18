@@ -18,6 +18,14 @@ class StatsUserFactory extends Factory
      */
     protected $model = StatsUser::class;
 
+    public static int $id = 1;
+
+    public function initialize()
+    {
+        self::$id = 1;
+        return $this;
+    }
+
     /**
      * Define the model's default state.
      */
@@ -26,6 +34,7 @@ class StatsUserFactory extends Factory
         $date = $this->faker->dateTimeBetween(now()->subYears(2), 'now')->format('Y-m-d H:i:s');
 
         return [
+            'id' => self::$id++,
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
             'instance_id' => Instance::inRandomOrder()->first()->id,

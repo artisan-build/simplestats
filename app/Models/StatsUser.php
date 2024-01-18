@@ -17,6 +17,8 @@ class StatsUser extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
     /**
      * The attributes that are mass assignable.
      *

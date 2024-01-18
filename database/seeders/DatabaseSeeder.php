@@ -11,6 +11,7 @@ use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\Team;
 use App\Models\User;
+use Database\Factories\StatsUserFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -39,7 +40,7 @@ class DatabaseSeeder extends Seeder
             ->has(
                 Instance::factory()->count(3)
                     ->afterCreating(function (Instance $instance) {
-                        StatsUser::factory(rand(25, 100))->create([
+                        StatsUser::factory(rand(25,100))->initialize()->create([
                             'project_id' => $instance->project_id,
                             'instance_id' => $instance->id,
                         ])

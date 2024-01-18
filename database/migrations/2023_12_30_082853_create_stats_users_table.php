@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stats_users', function (Blueprint $table) {
-            $table->id();
+            /**
+             * We can't make a primary key "id" here, cause as this is a SaaS where many instances
+             * will send their users, a stats_user_id will only be unique on a stats_user/instance basis...
+             */
+            $table->unsignedBigInteger('id');
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('instance_id')->constrained()->onDelete('cascade');
@@ -23,6 +27,8 @@ return new class extends Migration
             $table->string('track_term')->nullable();
             $table->string('track_content')->nullable();
             $table->dateTime('time');
+
+            $table->primary(['id', 'instance_id']);
         });
     }
 
