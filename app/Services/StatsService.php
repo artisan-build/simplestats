@@ -195,8 +195,8 @@ class StatsService
         $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['yesterday']['DAU'], $stats['lifetime']['REG']) * 100, 2).'%';
         $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2).'%';
         $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2).'%';
-        $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['PU']) * 100, 2);
+        $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['REG']), 2);
+        $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['PU']), 2);
 
         // Yesterday
         $stats['yesterday']['REV'] = round($stats['yesterday']['REV'], 2);
