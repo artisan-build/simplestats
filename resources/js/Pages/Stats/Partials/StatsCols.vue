@@ -19,13 +19,13 @@ defineProps({
     </td>
     <td class="w-1 bg-white border-y border-white"></td>
     <td>{{ stats.lifetime.REG }}</td>
-    <td>{{ stats.lifetime.REG2DAU }}</td>
+    <td>{{ stats.lifetime.REG2DAU }}%</td>
     <td>{{ stats.lifetime.PU }}</td>
-    <td>{{ stats.lifetime.REG2PU }}</td>
+    <td>{{ stats.lifetime.REG2PU }}%</td>
     <td>{{ stats.lifetime.TAU }}</td>
-    <td>{{ stats.lifetime.REG2TAU }}</td>
-    <td>{{ stats.lifetime.ARPU }}</td>
-    <td class="pr-2">{{ stats.lifetime.ARPPU }}</td>
+    <td>{{ stats.lifetime.REG2TAU }}%</td>
+    <td>{{ stats.lifetime.ARPU }} EUR</td>
+    <td class="pr-2">{{ stats.lifetime.ARPPU }} EUR</td>
     <td class="w-1 bg-white border-y border-white"></td>
     <td>{{ stats.yesterday.REG }}</td>
     <td>{{ stats.yesterday.NAU }}</td>
@@ -36,7 +36,7 @@ defineProps({
     <td>{{ stats.yesterday.MAU }}</td>
     <td>{{ stats.yesterday.MAPU }}</td>
     <td>{{ stats.yesterday.MAAPU }}</td>
-    <td class="pr-2">{{ stats.yesterday.REV }}</td>
+    <td class="pr-2">{{ stats.yesterday.REV }} EUR</td>
 </template>
 
 <style scoped>
