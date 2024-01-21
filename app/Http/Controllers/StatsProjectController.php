@@ -13,6 +13,8 @@ class StatsProjectController extends Controller
 {
     public function __invoke(Project $project, StatsProjectService $statsProjectService)
     {
+        $project->load('instances');
+
         $project->stats = $statsProjectService->getStats([
             'project_id' => $project->id,
             'instance_id' => null,
@@ -20,7 +22,7 @@ class StatsProjectController extends Controller
             'range_amount' => 7,
             'range_start' => now(),
         ]);
-dd($project);
+//dd($project);
         return Inertia::render('Stats/Show', compact('project'));
     }
 }

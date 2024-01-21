@@ -1,7 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {Link} from "@inertiajs/vue3";
-import StatsCols from "@/Pages/Stats/Partials/StatsCols.vue";
+import StatsOverviewCols from "@/Pages/Stats/Partials/StatsOverviewCols.vue";
 
 defineProps({
     projects: Object,
@@ -9,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <AppLayout title="Dashboard" :fullscreen="true">
+    <AppLayout title="Statistics" :fullscreen="true">
         <div>
             <div v-for="project in projects">
                 <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
@@ -48,13 +47,15 @@ defineProps({
                         </thead>
                         <tbody>
                         <tr v-if="project.instances.length > 0" v-for="(instance, i) in project.instances" :key="instance.id"
-                            class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
+                            class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                             :class="{'bg-gray-50': i % 2 === 1}"
+                            @click="$inertia.visit(route('stats.projects', project.id))"
                         >
-                            <StatsCols :stats="instance.stats" :isTotal="false" />
+                            <StatsOverviewCols :stats="instance.stats" :isTotal="false" />
                         </tr>
-                        <tr class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
-                            <StatsCols :stats="project.stats" :isTotal="true" />
+                        <tr @click="$inertia.visit(route('stats.projects', project.id))"
+                            class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
+                            <StatsOverviewCols :stats="project.stats" :isTotal="true" />
                         </tr>
                         </tbody>
                     </table>

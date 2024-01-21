@@ -214,6 +214,9 @@ class StatsProjectService
     {
         foreach ($stats as &$stat) {
             $stat = $this->statsService->groupStats($stat);
+            $stat['stats']['date'] = $stat['date'];
+            $stat['stats']['per_date']['FEE'] = round($stat['stats']['per_date']['GROSS'] - $stat['stats']['per_date']['NET'], 2);
+            $stat['stats']['per_date']['ARPDAU'] = round($this->statsService->safeDivision($stat['stats']['per_date']['NET'], $stat['stats']['per_date']['DAU']), 2);
         } unset($stat);
     }
 

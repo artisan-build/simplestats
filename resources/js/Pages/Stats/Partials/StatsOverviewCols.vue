@@ -38,7 +38,3 @@ defineProps({
     <td>{{ stats.per_date.MAAPU }}</td>
     <td class="pr-2">{{ stats.per_date.NET }} EUR</td>
 </template>
-
-<style scoped>
-
-</style>
