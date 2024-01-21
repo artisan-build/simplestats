@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
+use Carbon\CarbonImmutable;
+use Date;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Sanctum::$personalAccessTokenModel = PersonalAccessToken::class;
 
+        Date::use(CarbonImmutable::class);
         Model::preventLazyLoading(! app()->isProduction());
         Model::shouldBeStrict(! app()->isProduction());
 

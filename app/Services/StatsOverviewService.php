@@ -10,11 +10,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class StatsService
+class StatsOverviewService
 {
-    public function getProjectsOverview()
+    public function getStats()
     {
-        $projects = $this->getStats();
+        $projects = $this->getRaw();
 
         $this->groupStats($projects);
         $this->calcStatsTotalPerProject($projects);
@@ -23,7 +23,7 @@ class StatsService
         return $projects;
     }
 
-    public function getStats()
+    public function getRaw()
     {
 //        ray()->showQueries();
         return Project::orderBy('created_at', 'desc')->with([
@@ -48,10 +48,10 @@ class StatsService
                     },
 
                     // ! ==== Yesterday (yd) ==== !
-                    'statsUsers as yd_REG' => function (Builder $query) {
+                    'statsUsers as date_REG' => function (Builder $query) {
                         $query->whereDate('time', Carbon::yesterday());
                     },
-                    'statsUsers as yd_NAU' => function (Builder $query) {
+                    'statsUsers as date_NAU' => function (Builder $query) {
                         // added counter, because: https://github.com/laracraft-tech/simplestats/issues/42#nau
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -59,7 +59,7 @@ class StatsService
                                 ->where('counter', 2);
                         });
                     },
-                    'statsUsers as yd_DAU' => function (Builder $query) {
+                    'statsUsers as date_DAU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -67,7 +67,7 @@ class StatsService
                                 ->whereNot('counter', 1);
                         });
                     },
-                    'statsUsers as yd_DAPU' => function (Builder $query) {
+                    'statsUsers as date_DAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -76,7 +76,7 @@ class StatsService
                             $query->whereColumn('instance_id', 'instances.id');
                         });
                     },
-                    'statsUsers as yd_DAAPU' => function (Builder $query) {
+                    'statsUsers as date_DAAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -87,7 +87,7 @@ class StatsService
                             $query->whereDate('time', '>=', Carbon::yesterday()->subDays(20-1));
                         });
                     },
-                    'statsUsers as yd_WAU' => function (Builder $query) {
+                    'statsUsers as date_WAU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -95,7 +95,7 @@ class StatsService
                                 ->whereNot('counter', 1);
                         });
                     },
-                    'statsUsers as yd_MAU' => function (Builder $query) {
+                    'statsUsers as date_MAU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -103,7 +103,7 @@ class StatsService
                                 ->whereNot('counter', 1);
                         });
                     },
-                    'statsUsers as yd_MAPU' => function (Builder $query) {
+                    'statsUsers as date_MAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -112,7 +112,7 @@ class StatsService
                             $query->whereColumn('instance_id', 'instances.id');
                         });
                     },
-                    'statsUsers as yd_MAAPU' => function (Builder $query) {
+                    'statsUsers as date_MAAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -123,7 +123,7 @@ class StatsService
                             $query->whereDate('time', '>=', Carbon::yesterday()->subDays(20));
                         });
                     },
-                    'statsPayments as yd_REV' => function (Builder $query) {
+                    'statsPayments as date_REV' => function (Builder $query) {
                         $query->select(DB::raw("sum(net)"))->whereDate('time', Carbon::yesterday());
                     },
                 ]);
@@ -136,7 +136,7 @@ class StatsService
         $projects->transform(function (Project $project) {
             $project->instances->transform(function (Instance $instance) {
                 $result = ['stats' => []];
-                $statsPrefixes = ['lt_' => 'lifetime', 'yd_' => 'yesterday'];
+                $statsPrefixes = ['lt_' => 'lifetime', 'date_' => 'date'];
 
                 foreach ($instance->getAttributes() as $key => $value) {
                     if (Str::startsWith($key, array_keys($statsPrefixes))) {
@@ -192,14 +192,14 @@ class StatsService
     {
         // Lifetime
         $stats['lifetime']['REV'] = round($stats['lifetime']['REV'], 2);
-        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['yesterday']['DAU'], $stats['lifetime']['REG']) * 100, 2);
+        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
         $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
         $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
         $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['REG']), 2);
         $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['PU']), 2);
 
         // Yesterday
-        $stats['yesterday']['REV'] = round($stats['yesterday']['REV'], 2);
+        $stats['date']['REV'] = round($stats['date']['REV'], 2);
 
         return $stats;
     }
