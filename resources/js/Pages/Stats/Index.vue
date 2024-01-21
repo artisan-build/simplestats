@@ -1,5 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link } from '@inertiajs/vue3';
 import StatsOverviewCols from "@/Pages/Stats/Partials/StatsOverviewCols.vue";
 
 defineProps({
@@ -15,7 +16,11 @@ defineProps({
                     <table class="w-full whitespace-nowrap text-sm">
                         <thead>
                             <tr class="text-left font-bold text-base">
-                                <th class="p-3">{{ project.name }}</th>
+                                <th class="p-3">
+                                    <Link :href="route('stats.projects', project.id)" class="hover:underline">
+                                        {{ project.name }}
+                                    </Link>
+                                </th>
                                 <th class="w-1"></th>
                                 <th class="text-center" colspan="8">Lifetime</th>
                                 <th class="w-1"></th>
@@ -47,15 +52,13 @@ defineProps({
                         </thead>
                         <tbody>
                         <tr v-if="project.instances.length > 0" v-for="(instance, i) in project.instances" :key="instance.id"
-                            class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
+                            class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                             :class="{'bg-gray-50': i % 2 === 1}"
-                            @click="$inertia.visit(route('stats.projects', project.id))"
                         >
-                            <StatsOverviewCols :stats="instance.stats" :isTotal="false" />
+                            <StatsOverviewCols :stats="instance.stats" :projectId="project.id" :instanceId="instance.id" />
                         </tr>
-                        <tr @click="$inertia.visit(route('stats.projects', project.id))"
-                            class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
-                            <StatsOverviewCols :stats="project.stats" :isTotal="true" />
+                        <tr class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
+                            <StatsOverviewCols :stats="project.stats" :projectId="project.id" />
                         </tr>
                         </tbody>
                     </table>

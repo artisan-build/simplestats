@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import SectionTitle from "@/Components/SectionTitle.vue";
 
 const props = defineProps({
     href: String,
