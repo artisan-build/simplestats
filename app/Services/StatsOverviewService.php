@@ -12,6 +12,10 @@ use Illuminate\Support\Str;
 
 class StatsOverviewService
 {
+    public function __construct(
+        private StatsService $statsService
+    ) {}
+
     public function getStats()
     {
         $projects = $this->getRaw();
@@ -43,7 +47,7 @@ class StatsOverviewService
                             $query->where('counter', 2);
                         });
                     },
-                    'statsPayments as lt_REV' => function (Builder $query) {
+                    'statsPayments as lt_NET' => function (Builder $query) {
                         $query->select(DB::raw("sum(net)"));
                     },
 
@@ -123,7 +127,7 @@ class StatsOverviewService
                             $query->whereDate('time', '>=', Carbon::yesterday()->subDays(20));
                         });
                     },
-                    'statsPayments as date_REV' => function (Builder $query) {
+                    'statsPayments as date_NET' => function (Builder $query) {
                         $query->select(DB::raw("sum(net)"))->whereDate('time', Carbon::yesterday());
                     },
                 ]);
@@ -135,20 +139,7 @@ class StatsOverviewService
     {
         $projects->transform(function (Project $project) {
             $project->instances->transform(function (Instance $instance) {
-                $result = ['stats' => []];
-                $statsPrefixes = ['lt_' => 'lifetime', 'date_' => 'date'];
-
-                foreach ($instance->getAttributes() as $key => $value) {
-                    if (Str::startsWith($key, array_keys($statsPrefixes))) {
-                        $parts = explode('_', $key);
-                        $statsKey = $statsPrefixes[$parts[0].'_'];
-                        $result['stats'][$statsKey][$parts[1]] = $value;
-                    } else {
-                        $result[$key] = $value;
-                    }
-                }
-
-                return $result;
+                return $this->statsService->groupStats($instance->getAttributes());
             });
 
             return $project;
@@ -177,35 +168,14 @@ class StatsOverviewService
     private function applyStatsDetails(Collection $projects): void
     {
         $projects->transform(function (Project $project) {
-            $project['stats'] = array_merge(['name' => 'Total'], $this->addStatsDetails($project['stats']));
+            $project['stats'] = array_merge(['name' => 'Total'], $this->statsService->addStatsDetails($project['stats']));
 
             $project->instances->transform(function ($instance) {
-                $instance['stats'] = array_merge(['name' => $instance['name']], $this->addStatsDetails($instance['stats']));
+                $instance['stats'] = array_merge(['name' => $instance['name']], $this->statsService->addStatsDetails($instance['stats']));
                 return $instance;
             });
 
             return $project;
         });
-    }
-
-    private function addStatsDetails(array $stats): array
-    {
-        // Lifetime
-        $stats['lifetime']['REV'] = round($stats['lifetime']['REV'], 2);
-        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['REG']), 2);
-        $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['PU']), 2);
-
-        // Yesterday
-        $stats['date']['REV'] = round($stats['date']['REV'], 2);
-
-        return $stats;
-    }
-
-    public function safeDivision($numerator, $denominator): float|int
-    {
-        return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 }

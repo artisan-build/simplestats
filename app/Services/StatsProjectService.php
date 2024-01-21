@@ -12,15 +12,20 @@ use Illuminate\Support\Str;
 
 class StatsProjectService
 {
+    public function __construct(
+        private StatsService $statsService
+    ) {}
+
     public function getStats(array $filters = [])
     {
-        $project = $this->getRaw($filters);
-dd($project);
-        $this->groupStats($projects);
-        $this->calcStatsTotalPerProject($projects);
-        $this->applyStatsDetails($projects);
+        $stats = $this->getRaw($filters);
 
-        return $projects;
+        $this->groupStats($stats);
+//        $this->calcStatsTotalPerProject($stats);
+
+        $this->applyStatsDetails($stats);
+
+        return $stats;
     }
 
     public function getRaw(array $filters = [])
@@ -123,26 +128,26 @@ dd($project);
             FROM date_sequence ds
         ),
         # lifetime revenue
-        lt_rev AS (
+        lt_net AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (SELECT SUM(gross) FROM stats_payments WHERE DATE(time) <= ds.date) AS count
+                (SELECT SUM(net) FROM stats_payments WHERE DATE(time) <= ds.date) AS count
             FROM date_sequence ds
         )
         SELECT
             DATE_FORMAT(ds.date, ':dateFormat') as date,
-            COALESCE(date_reg.count, 0) AS date_reg,
-            COALESCE(date_nau.count, 0) AS date_nau,
-            COALESCE(date_napu.count, 0) AS date_napu,
-            COALESCE(date_dau.count, 0) AS date_dau,
-            COALESCE(date_dapu.count, 0) AS date_dapu,
-            COALESCE(date_daapu.count, 0) AS date_daapu,
-            COALESCE(date_gross.count, 0) AS date_gross,
-            COALESCE(date_net.count, 0) AS date_net,
-            COALESCE(lt_reg.count, 0) AS lt_reg,
-            COALESCE(lt_pu.count, 0) AS lt_pu,
-            COALESCE(lt_tau.count, 0) AS lt_tau,
-            COALESCE(lt_rev.count, 0) AS lt_rev
+            COALESCE(date_reg.count, 0) AS date_REG,
+            COALESCE(date_nau.count, 0) AS date_NAU,
+            COALESCE(date_napu.count, 0) AS date_NAPU,
+            COALESCE(date_dau.count, 0) AS date_DAU,
+            COALESCE(date_dapu.count, 0) AS date_DAPU,
+            COALESCE(date_daapu.count, 0) AS date_DAAPU,
+            COALESCE(date_gross.count, 0) AS date_GROSS,
+            COALESCE(date_net.count, 0) AS date_NET,
+            COALESCE(lt_reg.count, 0) AS lt_REG,
+            COALESCE(lt_pu.count, 0) AS lt_PU,
+            COALESCE(lt_tau.count, 0) AS lt_TAU,
+            COALESCE(lt_net.count, 0) AS lt_NET
         FROM
             date_sequence ds
             LEFT JOIN date_reg ON DATE_FORMAT(ds.date, ':dateFormat') = date_reg.date
@@ -156,7 +161,7 @@ dd($project);
             LEFT JOIN lt_reg ON DATE_FORMAT(ds.date, ':dateFormat') = lt_reg.date
             LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
-            LEFT JOIN lt_rev ON DATE_FORMAT(ds.date, ':dateFormat') = lt_rev.date
+            LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
         GROUP BY
             DATE_FORMAT(ds.date, ':dateFormat'),
             date_reg.count,
@@ -170,7 +175,7 @@ dd($project);
             lt_reg.count,
             lt_pu.count,
             lt_tau.count,
-            lt_rev.count
+            lt_net.count
         ORDER BY
             DATE_FORMAT(ds.date, ':dateFormat') DESC;
         ";
@@ -205,29 +210,11 @@ dd($project);
         return DB::select($sql);
     }
 
-    private function groupStats(Collection &$projects): void
+    private function groupStats(array &$stats): void
     {
-        $projects->transform(function (Project $project) {
-            $project->instances->transform(function (Instance $instance) {
-                $result = ['stats' => []];
-                $statsPrefixes = ['lt_' => 'lifetime', 'date_' => 'date'];
-
-                foreach ($instance->getAttributes() as $key => $value) {
-                    if (Str::startsWith($key, array_keys($statsPrefixes))) {
-                        $parts = explode('_', $key);
-                        $statsKey = $statsPrefixes[$parts[0].'_'];
-                        $result['stats'][$statsKey][$parts[1]] = $value;
-                    } else {
-                        $result[$key] = $value;
-                    }
-                }
-
-                return $result;
-            });
-
-            return $project;
-        });
-
+        foreach ($stats as &$stat) {
+            $stat = $this->statsService->groupStats($stat);
+        } unset($stat);
     }
 
     private function calcStatsTotalPerProject(Collection &$projects): void
@@ -248,38 +235,10 @@ dd($project);
         });
     }
 
-    private function applyStatsDetails(Collection $projects): void
+    private function applyStatsDetails(array &$stats): void
     {
-        $projects->transform(function (Project $project) {
-            $project['stats'] = array_merge(['name' => 'Total'], $this->addStatsDetails($project['stats']));
-
-            $project->instances->transform(function ($instance) {
-                $instance['stats'] = array_merge(['name' => $instance['name']], $this->addStatsDetails($instance['stats']));
-                return $instance;
-            });
-
-            return $project;
-        });
-    }
-
-    private function addStatsDetails(array $stats): array
-    {
-        // Lifetime
-        $stats['lifetime']['REV'] = round($stats['lifetime']['REV'], 2);
-        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['REG']), 2);
-        $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['REV'], $stats['lifetime']['PU']), 2);
-
-        // Yesterday
-        $stats['date']['REV'] = round($stats['date']['REV'], 2);
-
-        return $stats;
-    }
-
-    public function safeDivision($numerator, $denominator): float|int
-    {
-        return $denominator == 0 ? 0 : $numerator / $denominator;
+        foreach ($stats as &$stat) {
+            $stat['stats'] = $this->statsService->addStatsDetails($stat['stats']);
+        } unset($stat);
     }
 }

@@ -36,7 +36,7 @@ defineProps({
     <td>{{ stats.date.MAU }}</td>
     <td>{{ stats.date.MAPU }}</td>
     <td>{{ stats.date.MAAPU }}</td>
-    <td class="pr-2">{{ stats.date.REV }} EUR</td>
+    <td class="pr-2">{{ stats.date.NET }} EUR</td>
 </template>
 
 <style scoped>
