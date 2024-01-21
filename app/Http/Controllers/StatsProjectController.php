@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StatsProjectRequest;
 use App\Models\Project;
 use App\Services\StatsOverviewService;
 use App\Services\StatsProjectService;
@@ -11,7 +12,7 @@ use Inertia\Inertia;
 
 class StatsProjectController extends Controller
 {
-    public function __invoke(Project $project, StatsProjectService $statsProjectService)
+    public function __invoke(StatsProjectRequest $request, Project $project, StatsProjectService $statsProjectService)
     {
         $project->load('instances');
 
