@@ -27,16 +27,16 @@ defineProps({
     <td>{{ stats.lifetime.ARPU }} EUR</td>
     <td class="pr-2">{{ stats.lifetime.ARPPU }} EUR</td>
     <td class="w-1 bg-white border-y border-white"></td>
-    <td>{{ stats.date.REG }}</td>
-    <td>{{ stats.date.NAU }}</td>
-    <td>{{ stats.date.DAU }}</td>
-    <td>{{ stats.date.DAPU }}</td>
-    <td>{{ stats.date.DAAPU }}</td>
-    <td>{{ stats.date.WAU }}</td>
-    <td>{{ stats.date.MAU }}</td>
-    <td>{{ stats.date.MAPU }}</td>
-    <td>{{ stats.date.MAAPU }}</td>
-    <td class="pr-2">{{ stats.date.NET }} EUR</td>
+    <td>{{ stats.per_date.REG }}</td>
+    <td>{{ stats.per_date.NAU }}</td>
+    <td>{{ stats.per_date.DAU }}</td>
+    <td>{{ stats.per_date.DAPU }}</td>
+    <td>{{ stats.per_date.DAAPU }}</td>
+    <td>{{ stats.per_date.WAU }}</td>
+    <td>{{ stats.per_date.MAU }}</td>
+    <td>{{ stats.per_date.MAPU }}</td>
+    <td>{{ stats.per_date.MAAPU }}</td>
+    <td class="pr-2">{{ stats.per_date.NET }} EUR</td>
 </template>
 
 <style scoped>

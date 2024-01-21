@@ -14,7 +14,7 @@ class StatsService
     public function groupStats($stats)
     {
         $result = ['stats' => []];
-        $statsPrefixes = ['lt_' => 'lifetime', 'date_' => 'date'];
+        $statsPrefixes = ['lt_' => 'lifetime', 'pd_' => 'per_date'];
 
         foreach ($stats as $key => $value) {
             if (Str::startsWith($key, array_keys($statsPrefixes))) {
@@ -33,14 +33,14 @@ class StatsService
     {
         // Lifetime
         $stats['lifetime']['NET'] = round($stats['lifetime']['NET'], 2);
-        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
+        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['per_date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
         $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
         $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
         $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['REG']), 2);
         $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['PU']), 2);
 
-        // Date
-        $stats['date']['NET'] = round($stats['date']['NET'], 2);
+        // Per Date
+        $stats['per_date']['NET'] = round($stats['per_date']['NET'], 2);
 
         return $stats;
     }

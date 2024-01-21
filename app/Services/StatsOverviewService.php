@@ -51,11 +51,11 @@ class StatsOverviewService
                         $query->select(DB::raw("sum(net)"));
                     },
 
-                    // ! ==== Yesterday (yd) ==== !
-                    'statsUsers as date_REG' => function (Builder $query) {
+                    // ! ==== Yesterday (per date - pd short) ==== !
+                    'statsUsers as pd_REG' => function (Builder $query) {
                         $query->whereDate('time', Carbon::yesterday());
                     },
-                    'statsUsers as date_NAU' => function (Builder $query) {
+                    'statsUsers as pd_NAU' => function (Builder $query) {
                         // added counter, because: https://github.com/laracraft-tech/simplestats/issues/42#nau
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -63,7 +63,7 @@ class StatsOverviewService
                                 ->where('counter', 2);
                         });
                     },
-                    'statsUsers as date_DAU' => function (Builder $query) {
+                    'statsUsers as pd_DAU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -71,7 +71,7 @@ class StatsOverviewService
                                 ->whereNot('counter', 1);
                         });
                     },
-                    'statsUsers as date_DAPU' => function (Builder $query) {
+                    'statsUsers as pd_DAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -80,7 +80,7 @@ class StatsOverviewService
                             $query->whereColumn('instance_id', 'instances.id');
                         });
                     },
-                    'statsUsers as date_DAAPU' => function (Builder $query) {
+                    'statsUsers as pd_DAAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -91,7 +91,7 @@ class StatsOverviewService
                             $query->whereDate('time', '>=', Carbon::yesterday()->subDays(20-1));
                         });
                     },
-                    'statsUsers as date_WAU' => function (Builder $query) {
+                    'statsUsers as pd_WAU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -99,7 +99,7 @@ class StatsOverviewService
                                 ->whereNot('counter', 1);
                         });
                     },
-                    'statsUsers as date_MAU' => function (Builder $query) {
+                    'statsUsers as pd_MAU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -107,7 +107,7 @@ class StatsOverviewService
                                 ->whereNot('counter', 1);
                         });
                     },
-                    'statsUsers as date_MAPU' => function (Builder $query) {
+                    'statsUsers as pd_MAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -116,7 +116,7 @@ class StatsOverviewService
                             $query->whereColumn('instance_id', 'instances.id');
                         });
                     },
-                    'statsUsers as date_MAAPU' => function (Builder $query) {
+                    'statsUsers as pd_MAAPU' => function (Builder $query) {
                         //TODO refactor same queries (own function)
                         $query->whereHas('statsLogins', function (Builder $query) {
                             $query->whereColumn('instance_id', 'instances.id');
@@ -127,7 +127,7 @@ class StatsOverviewService
                             $query->whereDate('time', '>=', Carbon::yesterday()->subDays(20));
                         });
                     },
-                    'statsPayments as date_NET' => function (Builder $query) {
+                    'statsPayments as pd_NET' => function (Builder $query) {
                         $query->select(DB::raw("sum(net)"))->whereDate('time', Carbon::yesterday());
                     },
                 ]);

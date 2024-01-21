@@ -39,35 +39,35 @@ class StatsProjectService
             FROM date_sequence
             WHERE date < ':endDate'
         ),
-        date_reg AS (
+        pd_reg AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT id, instance_id) as count
             FROM stats_users
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate'
             GROUP BY date
         ),
         # nau: Number of unique accounts who returned on this day (=2nd login) after the registration (=1st login)
-        date_nau AS (
+        pd_nau AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
             FROM stats_logins
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' and counter = 2
             GROUP BY date
         ),
         # napu: Number of unique accounts who did their first payment on this day
-        date_napu AS (
+        pd_napu AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
             FROM stats_payments
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' and counter = 1
             GROUP BY date
         ),
         # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
-        date_dau AS (
+        pd_dau AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
             FROM stats_logins
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' and counter != 1
             GROUP BY date
         ),
         # dapu: Number of unique accounts who logged in or registered on this day and did at least one payment over lifetime (including today)
-        date_dapu AS (
+        pd_dapu AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
             FROM stats_logins
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' AND EXISTS (
@@ -79,7 +79,7 @@ class StatsProjectService
             GROUP BY date
         ),
         # daapu: Number of unique accounts who logged in or registered on this day and did at least one payment in the last 20 days (including today)
-        date_daapu AS (
+        pd_daapu AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
             FROM stats_logins
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' AND EXISTS (
@@ -93,14 +93,14 @@ class StatsProjectService
             GROUP BY date
         ),
         # gross
-        date_gross AS (
+        pd_gross AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, SUM(gross) AS count
             FROM stats_payments
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate'
             GROUP BY date
         ),
         # net
-        date_net AS (
+        pd_net AS (
             SELECT DATE_FORMAT(time, ':dateFormat') AS date, SUM(net) AS count
             FROM stats_payments
             WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate'
@@ -136,42 +136,42 @@ class StatsProjectService
         )
         SELECT
             DATE_FORMAT(ds.date, ':dateFormat') as date,
-            COALESCE(date_reg.count, 0) AS date_REG,
-            COALESCE(date_nau.count, 0) AS date_NAU,
-            COALESCE(date_napu.count, 0) AS date_NAPU,
-            COALESCE(date_dau.count, 0) AS date_DAU,
-            COALESCE(date_dapu.count, 0) AS date_DAPU,
-            COALESCE(date_daapu.count, 0) AS date_DAAPU,
-            COALESCE(date_gross.count, 0) AS date_GROSS,
-            COALESCE(date_net.count, 0) AS date_NET,
+            COALESCE(pd_reg.count, 0) AS pd_REG,
+            COALESCE(pd_nau.count, 0) AS pd_NAU,
+            COALESCE(pd_napu.count, 0) AS pd_NAPU,
+            COALESCE(pd_dau.count, 0) AS pd_DAU,
+            COALESCE(pd_dapu.count, 0) AS pd_DAPU,
+            COALESCE(pd_daapu.count, 0) AS pd_DAAPU,
+            COALESCE(pd_gross.count, 0) AS pd_GROSS,
+            COALESCE(pd_net.count, 0) AS pd_NET,
             COALESCE(lt_reg.count, 0) AS lt_REG,
             COALESCE(lt_pu.count, 0) AS lt_PU,
             COALESCE(lt_tau.count, 0) AS lt_TAU,
             COALESCE(lt_net.count, 0) AS lt_NET
         FROM
             date_sequence ds
-            LEFT JOIN date_reg ON DATE_FORMAT(ds.date, ':dateFormat') = date_reg.date
-            LEFT JOIN date_nau ON DATE_FORMAT(ds.date, ':dateFormat') = date_nau.date
-            LEFT JOIN date_napu ON DATE_FORMAT(ds.date, ':dateFormat') = date_napu.date
-            LEFT JOIN date_dau ON DATE_FORMAT(ds.date, ':dateFormat') = date_dau.date
-            LEFT JOIN date_dapu ON DATE_FORMAT(ds.date, ':dateFormat') = date_dapu.date
-            LEFT JOIN date_daapu ON DATE_FORMAT(ds.date, ':dateFormat') = date_daapu.date
-            LEFT JOIN date_gross ON DATE_FORMAT(ds.date, ':dateFormat') = date_gross.date
-            LEFT JOIN date_net ON DATE_FORMAT(ds.date, ':dateFormat') = date_net.date
+            LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
+            LEFT JOIN pd_nau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_nau.date
+            LEFT JOIN pd_napu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_napu.date
+            LEFT JOIN pd_dau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dau.date
+            LEFT JOIN pd_dapu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dapu.date
+            LEFT JOIN pd_daapu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_daapu.date
+            LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
+            LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
             LEFT JOIN lt_reg ON DATE_FORMAT(ds.date, ':dateFormat') = lt_reg.date
             LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
             LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
         GROUP BY
             DATE_FORMAT(ds.date, ':dateFormat'),
-            date_reg.count,
-            date_nau.count,
-            date_napu.count,
-            date_dau.count,
-            date_dapu.count,
-            date_daapu.count,
-            date_gross.count,
-            date_net.count,
+            pd_reg.count,
+            pd_nau.count,
+            pd_napu.count,
+            pd_dau.count,
+            pd_dapu.count,
+            pd_daapu.count,
+            pd_gross.count,
+            pd_net.count,
             lt_reg.count,
             lt_pu.count,
             lt_tau.count,
