@@ -31,6 +31,9 @@ class StatsProjectRequest extends FormRequest
                     $query->where('project_id', $this->route('project')->id);
                 }),
             ],
+            'range_type' => ['sometimes', 'string'],
+            'range_amount' => ['sometimes', 'integer'],
+            'range_start' => ['sometimes', 'date'],
         ];
     }
 }

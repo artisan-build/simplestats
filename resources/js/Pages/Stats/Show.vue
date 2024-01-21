@@ -2,15 +2,21 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {Link} from "@inertiajs/vue3";
 import StatsProjectCols from "@/Pages/Stats/Partials/StatsProjectCols.vue";
+import StatsProjectFilter from "@/Pages/Stats/Partials/StatsProjectFilter.vue";
 
 defineProps({
     project: Object,
+    filters: Object,
 });
+
 </script>
 
 <template>
     <AppLayout title="Project Statistics" :fullscreen="true">
         <div>
+            <div class="mb-10">
+                <StatsProjectFilter :project="project" :filters="filters" />
+            </div>
             <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
                 <table class="w-full whitespace-nowrap text-sm">
                     <thead>
