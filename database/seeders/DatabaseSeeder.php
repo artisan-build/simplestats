@@ -35,6 +35,26 @@ class DatabaseSeeder extends Seeder
             return $user;
         });
 
+        if (app()->isLocal()) {
+            Project::factory()->count(1)->state(['name' => 'SimpleStats'])
+                ->for(Team::find($user->current_team_id))
+                ->has(Instance::factory()->count(1)->state(['name' => 'Local'])
+                    ->afterCreating(function (Instance $instance) {
+                        StatsUser::factory(1)->initialize()->create([
+                            'id' => User::find(1)->id,
+                            'project_id' => $instance->project_id,
+                            'instance_id' => $instance->id,
+                        ]);
+                    }))->create();
+
+            $this->changeEnv([
+                'SIMPLESTATS_API_TOKEN' => Instance::find(1)->tokens()->first()->token_plain,
+            ]);
+        }
+
+        //make sure the next project gets created at least 1 sec after the first...
+        sleep(1);
+
         Project::factory()->count(2)
             ->for(Team::find($user->current_team_id))
             ->has(
@@ -73,10 +93,6 @@ class DatabaseSeeder extends Seeder
                     })
             )
             ->create();
-
-        $this->changeEnv([
-            'SIMPLESTATS_API_TOKEN' => Instance::find(1)->tokens()->first()->token_plain,
-        ]);
     }
 
     protected function changeEnv($data = [])

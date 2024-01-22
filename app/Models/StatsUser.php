@@ -25,6 +25,7 @@ class StatsUser extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'track_source',
         'track_medium',
         'track_campaign',

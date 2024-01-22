@@ -20,6 +20,7 @@ class StatsUserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id' => ['required', 'integer'],
             'track_source' => ['nullable', 'string'],
             'track_medium' => ['nullable', 'string'],
             'track_campaign' => ['nullable', 'string'],
