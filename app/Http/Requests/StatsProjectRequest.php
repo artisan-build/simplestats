@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\StatsRange;
 use App\Models\Instance;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -31,7 +32,7 @@ class StatsProjectRequest extends FormRequest
                     $query->where('project_id', $this->route('project')->id);
                 }),
             ],
-            'range_type' => ['sometimes', 'string'],
+            'range_type' => ['sometimes', Rule::enum(StatsRange::class)],
             'range_amount' => ['sometimes', 'integer'],
             'range_start' => ['sometimes', 'date'],
         ];

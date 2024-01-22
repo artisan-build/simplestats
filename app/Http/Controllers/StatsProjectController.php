@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatsRange;
 use App\Http\Requests\StatsProjectRequest;
 use App\Models\Project;
 use App\Services\StatsProjectService;
@@ -25,8 +26,13 @@ class StatsProjectController extends Controller
 
         $project->stats = $statsProjectService->getStats($filters);
 
+        // after filters are passed to "getStats" chagne the format for frontend...
         $filters['range_start'] = $filters['range_start']->format('Y-m-d');
 
-        return Inertia::render('Stats/Show', compact('project', 'filters'));
+        return Inertia::render('Stats/Show', [
+            'project' => $project,
+            'filters' => $filters,
+            'rangeTypes' => $statsProjectService->getRangeTypes(),
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StatsRange;
 use App\Models\Instance;
 use App\Models\Project;
 use Carbon\Carbon;
@@ -180,38 +181,24 @@ class StatsProjectService
             DATE_FORMAT(ds.date, ':dateFormat') DESC;
         ";
 
-        $replace = match ($filters['range_type']) {
-            'days' => [
-                $filters['range_start']->startOfDay()->subDays($filters['range_amount']-1)->format('Y-m-d'),
-                $filters['range_start']->endOfDay()->format('Y-m-d'),
-                'DAY',
-                '%Y-%m-%d'
-            ],
-            'weeks' => [
-                $filters['range_start']->startOfWeek()->subWeeks($filters['range_amount']-2)->format('Y-m-d'),
-                $filters['range_start']->endOfWeek()->format('Y-m-d'),
-                'WEEK',
-                '%Y-%v'
-            ],
-            'months' => [
-                $filters['range_start']->startOfMonth()->subMonths($filters['range_amount']-2)->format('Y-m-d'),
-                $filters['range_start']->endOfMonth()->format('Y-m-d'),
-                'MONTH',
-                '%Y-%m'
-            ],
-        };
-
-        $projectInstanceCondition = (!empty($filters['project_id'])) ? " AND project_id = {$filters['project_id']} " : "" ;
-        $projectInstanceCondition .= (!empty($filters['instance_id'])) ? " AND instance_id = {$filters['instance_id']} " : "" ;
-        $replace[] = $projectInstanceCondition;
-
         $sql = str_replace(
             [':startDate', ':endDate', ':intervalType', ':dateFormat', ' :projectInstanceCondition'],
-            $replace,
+            $this->getFilterConditions($filters),
             $sql
         );
 //dd($sql);
         return DB::select($sql);
+    }
+
+    private function getFilterConditions(array $filters): array
+    {
+        $conditions = StatsRange::conditions($filters['range_start'], $filters['range_amount'])[$filters['range_type']];
+
+        $projectInstanceCondition = (!empty($filters['project_id'])) ? " AND project_id = {$filters['project_id']} " : "" ;
+        $projectInstanceCondition .= (!empty($filters['instance_id'])) ? " AND instance_id = {$filters['instance_id']} " : "" ;
+        $conditions[] = $projectInstanceCondition;
+
+        return $conditions;
     }
 
     private function groupStats(array &$stats): void
@@ -224,6 +211,7 @@ class StatsProjectService
         } unset($stat);
     }
 
+    // TODO TOTAL
     private function calcStatsTotalPerProject(Collection &$projects): void
     {
         $projects->transform(function (Project $project) {
@@ -247,5 +235,12 @@ class StatsProjectService
         foreach ($stats as &$stat) {
             $stat['stats'] = $this->statsService->addStatsDetails($stat['stats']);
         } unset($stat);
+    }
+
+    public function getRangeTypes(): Collection
+    {
+        return collect(StatsRange::values())->transform(fn($name, $key) => [
+            'id' => $name, 'name' => ucfirst($name)
+        ]);
     }
 }
