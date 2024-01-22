@@ -24,6 +24,7 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 }));
 
 const submit = () => {
+    // the unsafe equality check is for reason...
     if (form.instance_id == '0') {
         delete form.instance_id;
     }
