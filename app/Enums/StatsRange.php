@@ -15,6 +15,7 @@ enum StatsRange: string
 
     public static function conditions(CarbonImmutable $rangeStart, int $rangeAmount): array
     {
+        // no time (MVP) to figure out, why we need to subMonth and subWeek also on end date, but it works
         return [
             self::DAY->value => [
                 $rangeStart->startOfDay()->subDays($rangeAmount-1)->format('Y-m-d'),
@@ -23,14 +24,14 @@ enum StatsRange: string
                 '%Y-%m-%d'
             ],
             self::WEEK->value => [
-                $rangeStart->startOfWeek()->subWeeks($rangeAmount-2)->format('Y-m-d'),
-                $rangeStart->endOfWeek()->format('Y-m-d'),
+                $rangeStart->startOfWeek()->subWeeks($rangeAmount-1)->format('Y-m-d'),
+                $rangeStart->endOfWeek()->subWeek()->format('Y-m-d'),
                 str(self::WEEK->value)->upper()->singular(),
                 '%Y-%v'
             ],
             self::MONTH->value => [
-                $rangeStart->startOfMonth()->subMonths($rangeAmount-2)->format('Y-m-d'),
-                $rangeStart->endOfMonth()->format('Y-m-d'),
+                $rangeStart->startOfMonth()->subMonths($rangeAmount-1)->format('Y-m-d'),
+                $rangeStart->endOfMonth()->subMonth()->format('Y-m-d'),
                 str(self::MONTH->value)->upper()->singular(),
                 '%Y-%m'
             ],
