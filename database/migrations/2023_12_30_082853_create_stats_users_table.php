@@ -21,11 +21,12 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
             // tracking
-            $table->string('track_source')->index()->nullable();
-            $table->string('track_medium')->index()->nullable();
-            $table->string('track_campaign')->nullable();
-            $table->string('track_term')->nullable();
-            $table->string('track_content')->nullable();
+            $table->foreignId('stats_track_source_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('stats_track_medium_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('stats_track_campaign_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('stats_track_term_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('stats_track_content_id')->nullable()->constrained()->nullOnDelete();
+
             $table->dateTime('time');
 
             $table->primary(['id', 'instance_id']);

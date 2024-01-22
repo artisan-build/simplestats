@@ -30,6 +30,6 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! app()->isProduction());
         Model::shouldBeStrict(! app()->isProduction());
 
-        ray()->clearScreen();
+//        ray()->clearScreen();
     }
 }
