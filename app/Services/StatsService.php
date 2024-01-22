@@ -44,4 +44,14 @@ class StatsService
 
         return $stats;
     }
+
+    public function calcStatsTotal($stats, array &$totalStats): void
+    {
+        foreach ($stats as $statCategory => $statsGroup) {
+            if (!is_array($statsGroup)) continue;
+            foreach ($statsGroup as $key => $value) {
+                $totalStats[$statCategory][$key] = ($totalStats[$statCategory][$key] ?? 0) + $value;
+            }
+        }
+    }
 }

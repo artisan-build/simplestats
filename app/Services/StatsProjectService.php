@@ -3,13 +3,8 @@
 namespace App\Services;
 
 use App\Enums\StatsRange;
-use App\Models\Instance;
-use App\Models\Project;
-use Carbon\Carbon;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class StatsProjectService
 {
@@ -22,7 +17,7 @@ class StatsProjectService
         $stats = $this->getRaw($filters);
 
         $this->groupStats($stats);
-//        $this->calcStatsTotalPerProject($stats);
+        $this->calcStatsTotal($stats);
 
         $this->applyStatsDetails($stats);
 
@@ -205,31 +200,25 @@ class StatsProjectService
     {
         foreach ($stats as &$stat) {
             $stat = $this->statsService->groupStats($stat);
-            
+
             $stat['stats']['date'] = $stat['date'];
+            unset($stat['date']);
             $stat['stats']['per_date']['GROSS'] = round($stat['stats']['per_date']['GROSS'], 2);
             $stat['stats']['per_date']['FEE'] = round($stat['stats']['per_date']['GROSS'] - $stat['stats']['per_date']['NET'], 2);
             $stat['stats']['per_date']['ARPDAU'] = round($this->statsService->safeDivision($stat['stats']['per_date']['NET'], $stat['stats']['per_date']['DAU']), 2);
         } unset($stat);
     }
 
-    // TODO TOTAL
-    private function calcStatsTotalPerProject(Collection &$projects): void
+    private function calcStatsTotal(array &$stats): void
     {
-        $projects->transform(function (Project $project) {
-            $result = [];
-            $project->instances->each(function ($instance) use (&$result) {
-                foreach ($instance['stats'] as $statCategory => $stats) {
-                    foreach ($stats as $key => $value) {
-                        $result[$statCategory][$key] = ($result[$statCategory][$key] ?? 0) + $value;
-                    }
-                }
-            });
+        $statsTotal = [];
 
-            $project->stats = $result;
+        foreach ($stats as $stat) {
+            $this->statsService->calcStatsTotal($stat['stats'], $statsTotal);
+        }
 
-            return $project;
-        });
+        $statsTotal['date'] = 'Total';
+        $stats['total']['stats'] = $statsTotal;
     }
 
     private function applyStatsDetails(array &$stats): void

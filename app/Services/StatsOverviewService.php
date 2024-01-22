@@ -149,16 +149,12 @@ class StatsOverviewService
     private function calcStatsTotalPerProject(Collection &$projects): void
     {
         $projects->transform(function (Project $project) {
-            $result = [];
-            $project->instances->each(function ($instance) use (&$result) {
-                foreach ($instance['stats'] as $statCategory => $stats) {
-                    foreach ($stats as $key => $value) {
-                        $result[$statCategory][$key] = ($result[$statCategory][$key] ?? 0) + $value;
-                    }
-                }
+            $statsTotal = [];
+            $project->instances->each(function ($instance) use (&$statsTotal) {
+                $this->statsService->calcStatsTotal($instance['stats'], $statsTotal);
             });
 
-            $project->stats = $result;
+            $project->stats = $statsTotal;
 
             return $project;
         });
