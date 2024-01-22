@@ -24,7 +24,7 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 }));
 
 const submit = () => {
-    if (form.instance_id === '0') {
+    if (form.instance_id == '0') {
         delete form.instance_id;
     }
 
@@ -71,7 +71,6 @@ const submit = () => {
                             id="range_start"
                             v-model="form.range_start"
                             class="mt-1 block"
-                            :options="rangeTypes"
                         />
                     </div>
                 </div>
