@@ -17,9 +17,9 @@ return new class extends Migration
              * will send their users, a stats_user_id will only be unique on a stats_user/instance basis...
              */
             $table->unsignedBigInteger('id');
-            $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->foreignId('instance_id')->constrained()->onDelete('cascade');
+            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
             // tracking
             $table->string('track_source')->index()->nullable();
             $table->string('track_medium')->index()->nullable();

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('stats_payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('stats_user_id')->index();
-            $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->foreignId('instance_id')->constrained()->onDelete('cascade');
+            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
             $table->float('gross');
             $table->float('net');
             $table->dateTime('time');
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->foreign(['stats_user_id', 'instance_id'])
                 ->references(['id', 'instance_id'])
                 ->on('stats_users')
-                ->onDelete('cascade');
+                ->cascadeOnDelete();
         });
     }
 
