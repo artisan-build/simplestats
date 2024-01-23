@@ -42,7 +42,9 @@ class StatsService
         }
 
         // Per Date
-        $stats['per_date']['NET'] = round($stats['per_date']['NET'], 2);
+        if (isset($stats['per_date'])) {
+            $stats['per_date']['NET'] = round($stats['per_date']['NET'], 2);
+        }
 
         return $stats;
     }

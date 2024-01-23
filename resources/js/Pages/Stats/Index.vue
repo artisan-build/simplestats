@@ -57,7 +57,13 @@ defineProps({
                         >
                             <StatsOverviewCols :stats="instance.stats" :projectId="project.id" :instanceId="instance.id" />
                         </tr>
-                        <tr class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
+                        <tr v-else>
+                            <td class="p-3 text-base" colspan="10">
+                                No Instance configured for this Project!
+                                Go <Link class="font-bold hover:underline" :href="route('projects.show', project.id)">here</Link> to add one.
+                            </td>
+                        </tr>
+                        <tr v-if="project.stats" class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
                             <StatsOverviewCols :stats="project.stats" :projectId="project.id" />
                         </tr>
                         </tbody>

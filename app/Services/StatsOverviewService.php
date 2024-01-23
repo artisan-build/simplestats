@@ -149,6 +149,9 @@ class StatsOverviewService
     private function calcStatsTotalPerProject(Collection &$projects): void
     {
         $projects->transform(function (Project $project) {
+            if ($project->instances()->count() < 2)
+                return $project;
+
             $statsTotal = [];
             $project->instances->each(function ($instance) use (&$statsTotal) {
                 $this->statsService->calcStatsTotal($instance['stats'], $statsTotal);
@@ -163,7 +166,9 @@ class StatsOverviewService
     private function applyStatsDetails(Collection $projects): void
     {
         $projects->transform(function (Project $project) {
-            $project['stats'] = array_merge(['name' => 'Total'], $this->statsService->addStatsDetails($project['stats']));
+            if (!empty($project['stats'])) {
+                $project['stats'] = array_merge(['name' => 'Total'], $this->statsService->addStatsDetails($project['stats']));
+            }
 
             $project->instances->transform(function ($instance) {
                 $instance['stats'] = array_merge(['name' => $instance['name']], $this->statsService->addStatsDetails($instance['stats']));
