@@ -30,9 +30,9 @@ class StatsProjectController extends Controller
         $project->stats = $statsProjectService->getStats($filters);
 
         $filtersFormatted = array_merge((array) $filters, [
+            'projectId' => 0, // we do not need projectId to be sent with as a parameter, it's already in the route...
             'rangeStart' => $filters->rangeStart->format('Y-m-d')
         ]);
-        unset($filtersFormatted['projectId']);
 
         // closure (do not evaluate yet)
         $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $project->id)->get()->prepend($filterAll);
