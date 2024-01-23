@@ -20,7 +20,7 @@ class StatsOverviewService
         $projects = $this->getRaw();
 
         $this->groupStats($projects);
-        $this->calcStatsTotalPerProject($projects);
+        $this->calcStatsTotal($projects);
         $this->applyStatsDetails($projects);
 
         return $projects;
@@ -146,21 +146,39 @@ class StatsOverviewService
 
     }
 
-    private function calcStatsTotalPerProject(Collection &$projects): void
+    private function calcStatsTotal(Collection &$projects): void
     {
-        $projects->transform(function (Project $project) {
-            if ($project->instances()->count() < 2)
-                return $project;
-
+        $statsOverallTotal = [];
+        $projects->transform(function (Project $project) use (&$statsOverallTotal) {
             $statsTotal = [];
             $project->instances->each(function ($instance) use (&$statsTotal) {
-                $this->statsService->calcStatsTotal($instance['stats'], $statsTotal);
+                $this->statsService->applyStatsTotal($instance['stats'], $statsTotal);
             });
 
             $project->stats = $statsTotal;
 
+            $this->statsService->applyStatsTotal($project->stats, $statsOverallTotal);
+
             return $project;
         });
+
+        if ($projects->count() > 1) {
+            $this->addOverallProject($projects, $statsOverallTotal);
+        }
+    }
+
+    private function addOverallProject(Collection $projects, array $statsOverallTotal): void
+    {
+        Project::unguard();
+
+        $projects->push(new Project([
+            'id' => 0,
+            'overallTotal' => true,
+            'name' => 'Total',
+            'stats' => $statsOverallTotal,
+        ]));
+
+        Project::reguard();
     }
 
     private function applyStatsDetails(Collection $projects): void

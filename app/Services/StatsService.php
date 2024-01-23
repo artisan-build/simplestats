@@ -49,7 +49,7 @@ class StatsService
         return $stats;
     }
 
-    public function calcStatsTotal(array $stats, array &$totalStats, array $skipCategories = []): void
+    public function applyStatsTotal(array $stats, array &$totalStats, array $skipCategories = []): void
     {
         foreach ($stats as $statCategory => $statsGroup) {
             if (in_array($statCategory, $skipCategories) || !is_array($statsGroup))
