@@ -8,7 +8,11 @@ defineProps({
     project: Object,
     filters: Object,
     rangeTypes: Array,
-    tracking: Object,
+    trackingSources: Array,
+    trackingMedia: Array,
+    trackingCampaigns: Array,
+    trackingTerms: Array,
+    trackingContents: Array,
 });
 
 </script>
@@ -21,7 +25,16 @@ defineProps({
 
         <div>
             <div class="mb-10">
-                <StatsProjectFilter :project="project" :filters="filters" :rangeTypes="rangeTypes" :tracking="tracking" />
+                <StatsProjectFilter
+                    :project="project"
+                    :filters="filters"
+                    :rangeTypes="rangeTypes"
+                    :trackingSources="trackingSources"
+                    :trackingMedia="trackingMedia"
+                    :trackingCampaigns="trackingCampaigns"
+                    :trackingTerms="trackingTerms"
+                    :trackingContents="trackingContents"
+                />
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
                 <table class="w-full whitespace-nowrap text-sm">

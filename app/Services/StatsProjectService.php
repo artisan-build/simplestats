@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\StatsRangeFilterDto;
 use App\Enums\StatsRange;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class StatsProjectService
         private StatsService $statsService
     ) {}
 
-    public function getStats(array $filters = [])
+    public function getStats(StatsRangeFilterDto $filters)
     {
         $stats = $this->getRaw($filters);
 
@@ -24,7 +25,7 @@ class StatsProjectService
         return $stats;
     }
 
-    public function getRaw(array $filters = [])
+    public function getRaw(StatsRangeFilterDto $filters)
     {
 //        dd($filters);
 //        ray()->showQueries();
@@ -219,19 +220,29 @@ class StatsProjectService
         return DB::select($sql);
     }
 
-    private function getFilterConditions(array $filters): array
+    private function getFilterConditions(StatsRangeFilterDto $filters): array
     {
-        $conditions = StatsRange::conditions($filters['range']['start'], $filters['range']['amount'])[$filters['range']['type']];
+        $conditions = StatsRange::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType];
 
-        $projectInstanceCondition = (!empty($filters['project_id'])) ? " AND stats.project_id = {$filters['project_id']} " : "" ;
-        $projectInstanceCondition .= (!empty($filters['instance_id'])) ? " AND stats.instance_id = {$filters['instance_id']} " : "" ;
+        $projectInstanceCondition = (!empty($filters->projectId)) ? " AND stats.project_id = {$filters->projectId} " : "" ;
+        $projectInstanceCondition .= (!empty($filters->instanceId)) ? " AND stats.instance_id = {$filters->instanceId} " : "" ;
         $conditions[] = $projectInstanceCondition;
 
         $trackingCondition = "";
-        if (!empty($filters['track'])) {
-            //TODO foreach
-            if (!empty($filters['track']['source'])) {
-                $trackingCondition .= " AND stats.stats_track_source_id = {$filters['track']['source']} ";
+        // it's a pyramid, each nested type my only be set if the parent exists...
+        if (!empty($filters->trackSource)) {
+            $trackingCondition .= " AND stats.stats_track_source_id = {$filters->trackSource} ";
+            if (!empty($filters->trackMedium)) {
+                $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
+                if (!empty($filters->trackCampaign)) {
+                    $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
+                    if (!empty($filters->trackTerm)) {
+                        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
+                        if (!empty($filters->trackContent)) {
+                            $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
+                        }
+                    }
+                }
             }
         }
 

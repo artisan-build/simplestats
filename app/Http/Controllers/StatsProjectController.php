@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\StatsRangeFilterDto;
 use App\Enums\StatsRange;
 use App\Http\Requests\StatsProjectRequest;
 use App\Models\Project;
+use App\Models\StatsTrackCampaign;
+use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
+use App\Models\StatsTrackTerm;
 use App\Services\StatsProjectService;
 use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
@@ -21,36 +25,38 @@ class StatsProjectController extends Controller
         $project->load('instances');
         $project->instances->prepend($filterAll);
 
-        $filters = [
-            'team_id' => $project->team_id,
-            'project_id' => $project->id,
-            'instance_id' => $request->instance_id ?? 0,
-            'range' => [
-                'type' => $request->range['type'] ?? 'days',
-                'amount' => $request->range['amount'] ?? 7,
-                'start' => (isset($request->range['start'])) ? Date::parse($request->range['start']) : now(),
-            ],
-            'track' => [
-                'source' => $request->track['source'] ?? 0,
-                'medium' => $request->track['medium'] ?? 0,
-            ]
-        ];
+        $filters = StatsRangeFilterDto::fromRequest($request);
 
         $project->stats = $statsProjectService->getStats($filters);
 
-        // after filters are passed to "getStats" chagne the format for frontend...
-        unset($filters['project_id']); // this already comes through the route
-        $filters['range']['start'] = $filters['range']['start']->format('Y-m-d');
-
-        $tracking = [];
-        $tracking['source'] = StatsTrackSource::where('project_id', $project->id)->get()->prepend($filterOrganic)->prepend($filterAll);
-        $tracking['medium'] = StatsTrackMedium::where('project_id', $project->id)->get()->prepend($filterAll);
-
-        return Inertia::render('Stats/Show', [
-            'project' => $project,
-            'filters' => $filters,
-            'rangeTypes' => $statsProjectService->getRangeTypes(),
-            'tracking' => $tracking,
+        $filtersFormatted = array_merge((array) $filters, [
+            'rangeStart' => $filters->rangeStart->format('Y-m-d')
         ]);
+        unset($filtersFormatted['projectId']);
+
+        // closure (do not evaluate yet)
+        $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $project->id)->get()->prepend($filterAll);
+        $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $project->id)->get()->prepend($filterAll);
+        $trackingTermsCallback = fn()       => StatsTrackTerm::where('project_id', $project->id)->get()->prepend($filterAll);
+        $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $project->id)->get()->prepend($filterAll);
+
+        $data = [
+            'project' => $project,
+            'filters' => $filtersFormatted,
+            'rangeTypes' => $statsProjectService->getRangeTypes(),
+            'trackingSources' => StatsTrackSource::where('project_id', $project->id)->get()->prepend($filterOrganic)->prepend($filterAll),
+            'trackingMedia'     => Inertia::lazy(fn() => $trackingMediaCallback()),
+            'trackingCampaigns' => Inertia::lazy(fn() => $trackingCampaignsCallback()),
+            'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
+            'trackingContents'  => Inertia::lazy(fn() => $trackingContentsCallback()),
+        ];
+
+        // do not lazy load if the specific tracking isset...
+        if (!empty($filters->trackSource)) $data['trackingMedia']       = $trackingMediaCallback();
+        if (!empty($filters->trackMedium)) $data['trackingCampaigns']   = $trackingCampaignsCallback();
+        if (!empty($filters->trackCampaign)) $data['trackingTerms']     = $trackingTermsCallback();
+        if (!empty($filters->trackTerm)) $data['trackingContents']      = $trackingContentsCallback();
+
+        return Inertia::render('Stats/Show', $data);
     }
 }

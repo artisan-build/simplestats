@@ -4,7 +4,11 @@ namespace App\Http\Requests;
 
 use App\Enums\StatsRange;
 use App\Models\Instance;
+use App\Models\StatsTrackCampaign;
+use App\Models\StatsTrackContent;
+use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
+use App\Models\StatsTrackTerm;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,20 +30,48 @@ class StatsProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'instance_id' => [
+            'instanceId' => [
                 'sometimes',
                 'integer',
                 Rule::exists(Instance::class, 'id')->where(function ($query) {
                     $query->where('project_id', $this->route('project')->id);
                 }),
             ],
-            'range_type' => ['sometimes', Rule::enum(StatsRange::class)],
-            'range_amount' => ['sometimes', 'integer'],
-            'range_start' => ['sometimes', 'date'],
-            'track_source' => [
+            'rangeType' => ['sometimes', Rule::enum(StatsRange::class)],
+            'rangeAmount' => ['sometimes', 'integer'],
+            'rangeStart' => ['sometimes', 'date'],
+            'trackSource' => [
                 'sometimes',
                 'integer',
                 Rule::exists(StatsTrackSource::class, 'id')->where(function ($query) {
+                    $query->where('project_id', $this->route('project')->id);
+                }),
+            ],
+            'trackMedium' => [
+                'sometimes',
+                'integer',
+                Rule::exists(StatsTrackMedium::class, 'id')->where(function ($query) {
+                    $query->where('project_id', $this->route('project')->id);
+                }),
+            ],
+            'trackCampaign' => [
+                'sometimes',
+                'integer',
+                Rule::exists(StatsTrackCampaign::class, 'id')->where(function ($query) {
+                    $query->where('project_id', $this->route('project')->id);
+                }),
+            ],
+            'trackTerm' => [
+                'sometimes',
+                'integer',
+                Rule::exists(StatsTrackTerm::class, 'id')->where(function ($query) {
+                    $query->where('project_id', $this->route('project')->id);
+                }),
+            ],
+            'trackContent' => [
+                'sometimes',
+                'integer',
+                Rule::exists(StatsTrackContent::class, 'id')->where(function ($query) {
                     $query->where('project_id', $this->route('project')->id);
                 }),
             ],

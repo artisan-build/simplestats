@@ -9,7 +9,11 @@ const props = defineProps({
     project: Object,
     filters: Object,
     rangeTypes: Array,
-    tracking: Object,
+    trackingSources: Array,
+    trackingMedia: Array,
+    trackingCampaigns: Array,
+    trackingTerms: Array,
+    trackingContents: Array,
 });
 
 const form = useForm(props.filters);
@@ -21,9 +25,11 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 
 const submit = () => {
     // the unsafe equality check is for reason...
-    if (form.instance_id == '0') {delete form.instance_id;}
-    if (form.track.source == '0') {delete form.track.source;}
-    if (form.track.medium == '0') {delete form.track.medium;}
+    for (let key in form) {
+        if (form.hasOwnProperty(key) && form[key] == '0') {
+            delete form[key];
+        }
+    }
 
     form.get(route('stats.projects', props.project.id));
 };
@@ -34,58 +40,97 @@ const submit = () => {
         <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md">
             <div class="flex gap-x-10 items-end">
                 <div>
-                    <InputLabel for="instance_id" value="Instances" />
+                    <InputLabel for="instanceId" value="Instances" />
                     <SelectInput
-                        id="instance_id"
-                        v-model="form.instance_id"
-                        class="mt-1 block"
+                        id="instanceId"
+                        v-model="form.instanceId"
+                        class="mt-1 block w-40"
                         :options="project.instances"
                     />
                 </div>
                 <div class="flex gap-x-2 items-end">
                     <div>
-                        <InputLabel for="range_amount" value="Range" />
+                        <InputLabel for="rangeAmount" value="Range" />
                         <SelectInput
-                            id="range_amount"
-                            v-model="form.range.amount"
-                            class="mt-1 block"
+                            id="rangeAmount"
+                            v-model="form.rangeAmount"
+                            class="mt-1 block w-18"
                             :options="rangeAmounts"
                         />
                     </div>
                     <div>
                         <SelectInput
-                            id="range_type"
-                            v-model="form.range.type"
-                            class="mt-1 block"
+                            id="rangeType"
+                            v-model="form.rangeType"
+                            class="mt-1 block w-28"
                             :options="rangeTypes"
                         />
                     </div>
                     <div>
                         <TextInput
                             type="date"
-                            id="range_start"
-                            v-model="form.range.start"
-                            class="mt-1 block"
+                            id="rangeStart"
+                            v-model="form.rangeStart"
+                            class="mt-1 block w-36"
                         />
                     </div>
                 </div>
                 <div class="flex gap-x-2 items-end">
-                    <div v-if="tracking && tracking.source">
-                        <InputLabel for="track_source" value="Source" />
+                    <div v-if="trackingSources">
+                        <InputLabel for="trackSource" value="Source" />
                         <SelectInput
-                            id="track_source"
-                            v-model="form.track.source"
-                            class="mt-1 block"
-                            :options="tracking.source"
+                            id="trackSource"
+                            v-model="form.trackSource"
+                            class="mt-1 block w-36"
+                            :options="trackingSources"
+                            @change="$inertia.reload({
+                                only: ['trackingMedia']
+                            })"
                         />
                     </div>
-                    <div v-if="tracking && tracking.medium">
-                        <InputLabel for="track_medium" value="Medium" />
+                    <div v-if="trackingMedia">
+                        <InputLabel for="trackMedium" value="Medium" />
                         <SelectInput
-                            id="track_medium"
-                            v-model="form.track.medium"
-                            class="mt-1 block"
-                            :options="tracking.medium"
+                            id="trackMedium"
+                            v-model="form.trackMedium"
+                            class="mt-1 block w-36"
+                            :options="trackingMedia"
+                            @change="$inertia.reload({
+                                only: ['trackingCampaigns']
+                            })"
+                        />
+                    </div>
+                    <div v-if="trackingCampaigns">
+                        <InputLabel for="trackCampaign" value="Campaign" />
+                        <SelectInput
+                            id="trackCampaign"
+                            v-model="form.trackCampaign"
+                            class="mt-1 block w-36"
+                            :options="trackingCampaigns"
+                            @change="$inertia.reload({
+                                only: ['trackingTerms']
+                            })"
+                        />
+                    </div>
+                    <div v-if="trackingTerms">
+                        <InputLabel for="trackTerm" value="Term" />
+                        <SelectInput
+                            id="trackTerm"
+                            v-model="form.trackTerm"
+                            class="mt-1 block w-36"
+                            :options="trackingTerms"
+                            @change="$inertia.reload({
+                                only: ['trackingContents']
+                            })"
+                        />
+                    </div>
+                    <div v-if="trackingContents">
+                        <InputLabel for="trackContent" value="Content" />
+                        <SelectInput
+                            id="trackContent"
+                            v-model="form.trackContent"
+                            class="mt-1 block w-36"
+                            :options="trackingContents"
                         />
                     </div>
                 </div>
