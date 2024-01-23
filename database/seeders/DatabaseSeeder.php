@@ -11,8 +11,8 @@ use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\Team;
 use App\Models\User;
-use Database\Factories\StatsUserFactory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -60,32 +60,33 @@ class DatabaseSeeder extends Seeder
             ->has(
                 Instance::factory()->count(3)
                     ->afterCreating(function (Instance $instance) {
-                        StatsUser::factory(rand(25,100))->initialize()->create([
+                        StatsUser::factory(rand(100, 300))->initialize()->create([
                             'project_id' => $instance->project_id,
                             'instance_id' => $instance->id,
                         ])
                         ->each(function ($statsUser) use ($instance) {
-                            // Basiszeit definieren
-                            $baseTime = now()->subYears(2)->addDays(rand(0, 730));
-
-                            // Logins erstellen
+                            $loginTime = Carbon::parse($statsUser->time);
                             for ($i = 0; $i < rand(0, 20); $i++) {
                                 StatsLogin::factory()->create([
                                     'project_id' => $instance->project_id,
                                     'instance_id' => $instance->id,
                                     'stats_user_id' => $statsUser->id,
-                                    'time' => $baseTime->addDays(rand(1, 28)) // Zeit inkrementieren
+                                    //The first login time is the same as registration
+                                    'time' => $loginTime,
                                 ]);
+                                // increment a random number of days for the next login
+                                $loginTime->addDays(rand(1, 28));
                             }
 
-                            // Payments erstellen
+                            $paymentTime = Carbon::parse($statsUser->time);
                             if (rand(0, 9) === 0) {
                                 for ($i = 0; $i < rand(0, 20); $i++) {
                                     StatsPayment::factory()->create([
                                         'project_id' => $instance->project_id,
                                         'instance_id' => $instance->id,
                                         'stats_user_id' => $statsUser->id,
-                                        'time' => $baseTime->addDays(rand(1, 28)) // Zeit inkrementieren
+                                        // increment a random number of days for the next payment
+                                        'time' => $paymentTime->addDays(rand(1, 28))
                                     ]);
                                 }
                             }
