@@ -77,13 +77,12 @@ defineProps({
                         </tr>
                     </thead>
                     <tbody>
-                    <tr v-if="project.stats" v-for="(stats, i) in project.stats" :key="stats.date"
-                        class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
-                        :class="{'bg-gray-50': i % 2 === 1, 'border-t': i === 'total'}"
-                    >
-                        <StatsProjectCols :stats="stats.stats" :isTotal="false" />
-                    </tr>
-
+                        <tr v-if="project.stats" v-for="(stats, i) in project.stats" :key="stats.date"
+                            class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
+                            :class="{'bg-gray-50': i % 2 === 1, 'border-t': i === 'total'}"
+                        >
+                            <StatsProjectCols :stats="stats.stats" />
+                        </tr>
                     </tbody>
                 </table>
             </div>

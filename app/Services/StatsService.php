@@ -32,12 +32,14 @@ class StatsService
     public function addStatsDetails(array $stats): array
     {
         // Lifetime
-        $stats['lifetime']['NET'] = round($stats['lifetime']['NET'], 2);
-        $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['per_date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
-        $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['REG']), 2);
-        $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['PU']), 2);
+        if (isset($stats['lifetime'])) {
+            $stats['lifetime']['NET'] = round($stats['lifetime']['NET'], 2);
+            $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['per_date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
+            $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
+            $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
+            $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['REG']), 2);
+            $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['PU']), 2);
+        }
 
         // Per Date
         $stats['per_date']['NET'] = round($stats['per_date']['NET'], 2);
@@ -45,10 +47,12 @@ class StatsService
         return $stats;
     }
 
-    public function calcStatsTotal($stats, array &$totalStats): void
+    public function calcStatsTotal(array $stats, array &$totalStats, array $skipCategories = []): void
     {
         foreach ($stats as $statCategory => $statsGroup) {
-            if (!is_array($statsGroup)) continue;
+            if (in_array($statCategory, $skipCategories) || !is_array($statsGroup))
+                continue;
+
             foreach ($statsGroup as $key => $value) {
                 $totalStats[$statCategory][$key] = ($totalStats[$statCategory][$key] ?? 0) + $value;
             }

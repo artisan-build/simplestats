@@ -274,7 +274,11 @@ class StatsProjectService
         $statsTotal = [];
 
         foreach ($stats as $stat) {
-            $this->statsService->calcStatsTotal($stat['stats'], $statsTotal);
+            $this->statsService->calcStatsTotal(
+                stats: $stat['stats'],
+                totalStats: $statsTotal,
+                skipCategories: ['lifetime']
+            );
         }
 
         $statsTotal['date'] = 'Total';
