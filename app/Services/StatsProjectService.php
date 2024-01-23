@@ -26,6 +26,7 @@ class StatsProjectService
 
     public function getRaw(array $filters = [])
     {
+//        dd($filters);
 //        ray()->showQueries();
         $sql = "
         WITH RECURSIVE date_sequence AS (
@@ -36,98 +37,124 @@ class StatsProjectService
             WHERE date < ':endDate'
         ),
         pd_reg AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT id, instance_id) as count
-            FROM stats_users
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' :projectInstanceCondition
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            FROM stats_users stats
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' :projectInstanceCondition :trackingConditions
             GROUP BY date
         ),
         # nau: Number of unique accounts who returned on this day (=2nd login) after the registration (=1st login)
         pd_nau AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
-            FROM stats_logins
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' and counter = 2 :projectInstanceCondition
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' and stats.counter = 2 :projectInstanceCondition
             GROUP BY date
         ),
         # napu: Number of unique accounts who did their first payment on this day
         pd_napu AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
-            FROM stats_payments
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' and counter = 1 :projectInstanceCondition
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_payments stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' and stats.counter = 1 :projectInstanceCondition
             GROUP BY date
         ),
         # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
         pd_dau AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
-            FROM stats_logins
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' and counter != 1 :projectInstanceCondition
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' and stats.counter != 1 :projectInstanceCondition
             GROUP BY date
         ),
         # dapu: Number of unique accounts who logged in or registered on this day and did at least one payment over lifetime (including today)
         pd_dapu AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
-            FROM stats_logins
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' AND EXISTS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' AND EXISTS (
                 SELECT 1
-                FROM stats_payments
-                WHERE stats_logins.stats_user_id = stats_payments.stats_user_id
-                AND stats_logins.instance_id = stats_payments.instance_id
+                FROM stats_payments sp
+                WHERE stats.stats_user_id = sp.stats_user_id
+                    AND stats.instance_id = sp.instance_id
             ) :projectInstanceCondition
             GROUP BY date
         ),
         # daapu: Number of unique accounts who logged in or registered on this day and did at least one payment in the last 20 days (including today)
         pd_daapu AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, COUNT(DISTINCT stats_user_id, instance_id) AS count
-            FROM stats_logins
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' AND EXISTS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' AND EXISTS (
                 SELECT 1
-                FROM stats_payments
-                WHERE stats_logins.stats_user_id = stats_payments.stats_user_id
-                AND stats_logins.instance_id = stats_payments.instance_id
-                AND DATE(stats_payments.time) >= DATE_SUB(DATE(stats_logins.time), INTERVAL 20 DAY)
-                AND DATE(stats_payments.time) <= DATE(stats_logins.time)
+                FROM stats_payments sp
+                WHERE stats.stats_user_id = sp.stats_user_id
+                    AND stats.instance_id = sp.instance_id
+                    AND DATE(sp.time) >= DATE_SUB(DATE(stats.time), INTERVAL 20 DAY)
+                    AND DATE(sp.time) <= DATE(stats.time)
             ) :projectInstanceCondition
             GROUP BY date
         ),
         # gross
         pd_gross AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, SUM(gross) AS count
-            FROM stats_payments
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' :projectInstanceCondition
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
+            FROM stats_payments stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' :projectInstanceCondition
             GROUP BY date
         ),
         # net
         pd_net AS (
-            SELECT DATE_FORMAT(time, ':dateFormat') AS date, SUM(net) AS count
-            FROM stats_payments
-            WHERE DATE(time) >= ':startDate' AND DATE(time) <= ':endDate' :projectInstanceCondition
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
+            FROM stats_payments stats
+            :trackingJoinConditions
+            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' :projectInstanceCondition
             GROUP BY date
         ),
         # lifetime regs
         lt_reg AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (SELECT COUNT(DISTINCT id, instance_id) FROM stats_users WHERE DATE(time) <= ds.date :projectInstanceCondition) AS count
+                (
+                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
+                    FROM stats_users stats
+                    WHERE DATE(stats.time) <= ds.date :projectInstanceCondition :trackingConditions
+                ) AS count
             FROM date_sequence ds
         ),
         # lifetime paying user
         lt_pu AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (SELECT COUNT(DISTINCT stats_user_id, instance_id) FROM stats_payments WHERE DATE(time) <= ds.date :projectInstanceCondition) AS count
+                (
+                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
+                    FROM stats_payments stats
+                    :trackingJoinConditions
+                    WHERE DATE(stats.time) <= ds.date :projectInstanceCondition
+                ) AS count
             FROM date_sequence ds
         ),
         # lifetime total actives
         lt_tau AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (SELECT COUNT(DISTINCT stats_user_id, instance_id) FROM stats_logins WHERE DATE(time) <= ds.date and counter = 2 :projectInstanceCondition) AS count
+                (
+                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
+                    FROM stats_logins stats
+                    :trackingJoinConditions
+                    WHERE DATE(stats.time) <= ds.date and stats.counter = 2 :projectInstanceCondition
+                ) AS count
             FROM date_sequence ds
         ),
         # lifetime revenue
         lt_net AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (SELECT SUM(net) FROM stats_payments WHERE DATE(time) <= ds.date :projectInstanceCondition) AS count
+                (
+                    SELECT SUM(stats.net)
+                    FROM stats_payments stats
+                    :trackingJoinConditions
+                    WHERE DATE(stats.time) <= ds.date :projectInstanceCondition
+                ) AS count
             FROM date_sequence ds
         )
         SELECT
@@ -176,23 +203,44 @@ class StatsProjectService
             DATE_FORMAT(ds.date, ':dateFormat') DESC;
         ";
 
-        $sql = str_replace(
-            [':startDate', ':endDate', ':intervalType', ':dateFormat', ' :projectInstanceCondition'],
+        $sql = str_replace([
+                ':startDate',
+                ':endDate',
+                ':intervalType',
+                ':dateFormat',
+                ':projectInstanceCondition',
+                ':trackingConditions',
+                ':trackingJoinConditions',
+            ],
             $this->getFilterConditions($filters),
             $sql
         );
-//dd($sql);
+
         return DB::select($sql);
     }
 
     private function getFilterConditions(array $filters): array
     {
-        $conditions = StatsRange::conditions($filters['range_start'], $filters['range_amount'])[$filters['range_type']];
+        $conditions = StatsRange::conditions($filters['range']['start'], $filters['range']['amount'])[$filters['range']['type']];
 
-        $projectInstanceCondition = (!empty($filters['project_id'])) ? " AND project_id = {$filters['project_id']} " : "" ;
-        $projectInstanceCondition .= (!empty($filters['instance_id'])) ? " AND instance_id = {$filters['instance_id']} " : "" ;
+        $projectInstanceCondition = (!empty($filters['project_id'])) ? " AND stats.project_id = {$filters['project_id']} " : "" ;
+        $projectInstanceCondition .= (!empty($filters['instance_id'])) ? " AND stats.instance_id = {$filters['instance_id']} " : "" ;
         $conditions[] = $projectInstanceCondition;
 
+        $trackingCondition = "";
+        if (!empty($filters['track'])) {
+            //TODO foreach
+            if (!empty($filters['track']['source'])) {
+                $trackingCondition .= " AND stats.stats_track_source_id = {$filters['track']['source']} ";
+            }
+        }
+
+        if (!empty($trackingCondition)) {
+            $conditions[] = $trackingCondition;
+            $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
+            $conditions[] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
+        }
+//dd($conditions);
         return $conditions;
     }
 

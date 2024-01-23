@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Concerns\HasProjectScope;
 use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StatsTrackMedium extends Model
 {
     use HasTeamScope;
-    use HasProjectScope;
 
     /**
      * The attributes that are mass assignable.

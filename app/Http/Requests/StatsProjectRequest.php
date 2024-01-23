@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\StatsRange;
 use App\Models\Instance;
+use App\Models\StatsTrackSource;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -35,6 +36,13 @@ class StatsProjectRequest extends FormRequest
             'range_type' => ['sometimes', Rule::enum(StatsRange::class)],
             'range_amount' => ['sometimes', 'integer'],
             'range_start' => ['sometimes', 'date'],
+            'track_source' => [
+                'sometimes',
+                'integer',
+                Rule::exists(StatsTrackSource::class, 'id')->where(function ($query) {
+                    $query->where('project_id', $this->route('project')->id);
+                }),
+            ],
         ];
     }
 }

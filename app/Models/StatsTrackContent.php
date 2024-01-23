@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Concerns\HasProjectScope;
 use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class StatsTrackContent extends Model
 {
     use HasTeamScope;
-    use HasProjectScope;
 
     /**
      * The attributes that are mass assignable.
