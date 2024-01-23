@@ -10,6 +10,7 @@ const props = defineProps({
     project: Object,
     filters: Object,
     rangeTypes: Array,
+    trackAllKey: Number,
     trackingSources: Array,
     trackingMedia: Array,
     trackingCampaigns: Array,
@@ -27,7 +28,7 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 const submit = () => {
     // the unsafe equality check is for reason...
     for (let key in form) {
-        if (form.hasOwnProperty(key) && form[key] == '0') {
+        if (form.hasOwnProperty(key) && form[key] == props.trackAllKey) {
             delete form[key];
         }
     }

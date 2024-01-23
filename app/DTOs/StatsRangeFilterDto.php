@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Date;
 
 readonly class StatsRangeFilterDto
 {
+    const TRACK_ALL = 0;
+    const TRACK_ORGANIC = -1;
+
     public function __construct(
         public int $projectId,
         public int $instanceId,

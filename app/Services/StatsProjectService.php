@@ -230,8 +230,10 @@ class StatsProjectService
         $trackingCondition = "";
         // it's a pyramid, each nested type my only be set if the parent exists...
         if (!empty($filters->trackSource)) {
-            $trackingCondition .= " AND stats.stats_track_source_id = {$filters->trackSource} ";
-            if (!empty($filters->trackMedium)) {
+            $trackSourceCondition = ($filters->trackSource === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} " ;
+            $trackingCondition .= " AND stats.stats_track_source_id $trackSourceCondition ";
+            // if the source is set to organic, we do not need to evaluate the other tracking codes...
+            if (!empty($filters->trackMedium) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC) {
                 $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
                 if (!empty($filters->trackCampaign)) {
                     $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
@@ -250,7 +252,7 @@ class StatsProjectService
             $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
             $conditions[] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
         }
-//dd($conditions);
+
         return $conditions;
     }
 

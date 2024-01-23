@@ -19,8 +19,8 @@ class StatsProjectController extends Controller
 {
     public function __invoke(StatsProjectRequest $request, Project $project, StatsProjectService $statsProjectService)
     {
-        $filterOrganic = ['id' => -1, 'name' => 'Organic'];
-        $filterAll = ['id' => 0, 'name' => 'All'];
+        $filterAll = ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];
+        $filterOrganic = ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic'];
 
         $project->load('instances');
         $project->instances->prepend($filterAll);
@@ -44,6 +44,7 @@ class StatsProjectController extends Controller
             'project' => $project,
             'filters' => $filtersFormatted,
             'rangeTypes' => $statsProjectService->getRangeTypes(),
+            'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
             'trackingSources' => StatsTrackSource::where('project_id', $project->id)->get()->prepend($filterOrganic)->prepend($filterAll),
             'trackingMedia'     => Inertia::lazy(fn() => $trackingMediaCallback()),
             'trackingCampaigns' => Inertia::lazy(fn() => $trackingCampaignsCallback()),
@@ -52,10 +53,10 @@ class StatsProjectController extends Controller
         ];
 
         // do not lazy load if the specific tracking isset...
-        if (!empty($filters->trackSource)) $data['trackingMedia']       = $trackingMediaCallback();
-        if (!empty($filters->trackMedium)) $data['trackingCampaigns']   = $trackingCampaignsCallback();
-        if (!empty($filters->trackCampaign)) $data['trackingTerms']     = $trackingTermsCallback();
-        if (!empty($filters->trackTerm)) $data['trackingContents']      = $trackingContentsCallback();
+        if ($filters->trackSource > StatsRangeFilterDto::TRACK_ALL)     $data['trackingMedia'] = $trackingMediaCallback();
+        if ($filters->trackMedium > StatsRangeFilterDto::TRACK_ALL)     $data['trackingCampaigns'] = $trackingCampaignsCallback();
+        if ($filters->trackCampaign > StatsRangeFilterDto::TRACK_ALL)   $data['trackingTerms'] = $trackingTermsCallback();
+        if ($filters->trackTerm > StatsRangeFilterDto::TRACK_ALL)       $data['trackingContents'] = $trackingContentsCallback();
 
         return Inertia::render('Stats/Show', $data);
     }

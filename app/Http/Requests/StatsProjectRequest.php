@@ -9,6 +9,7 @@ use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
+use App\Rules\ValidProjectModelOrNegative;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -43,37 +44,27 @@ class StatsProjectRequest extends FormRequest
             'trackSource' => [
                 'sometimes',
                 'integer',
-                Rule::exists(StatsTrackSource::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->route('project')->id);
-                }),
+                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackSource::class),
             ],
             'trackMedium' => [
                 'sometimes',
                 'integer',
-                Rule::exists(StatsTrackMedium::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->route('project')->id);
-                }),
+                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackMedium::class),
             ],
             'trackCampaign' => [
                 'sometimes',
                 'integer',
-                Rule::exists(StatsTrackCampaign::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->route('project')->id);
-                }),
+                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackCampaign::class),
             ],
             'trackTerm' => [
                 'sometimes',
                 'integer',
-                Rule::exists(StatsTrackTerm::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->route('project')->id);
-                }),
+                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackTerm::class),
             ],
             'trackContent' => [
                 'sometimes',
                 'integer',
-                Rule::exists(StatsTrackContent::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->route('project')->id);
-                }),
+                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackContent::class),
             ],
         ];
     }
