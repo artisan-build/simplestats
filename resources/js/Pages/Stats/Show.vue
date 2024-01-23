@@ -8,7 +8,7 @@ defineProps({
     project: Object,
     filters: Object,
     rangeTypes: Array,
-    tracking: Array,
+    tracking: Object,
 });
 
 </script>

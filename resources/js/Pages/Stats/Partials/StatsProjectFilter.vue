@@ -9,7 +9,7 @@ const props = defineProps({
     project: Object,
     filters: Object,
     rangeTypes: Array,
-    tracking: Array,
+    tracking: Object,
 });
 
 const form = useForm(props.filters);
@@ -23,6 +23,7 @@ const submit = () => {
     // the unsafe equality check is for reason...
     if (form.instance_id == '0') {delete form.instance_id;}
     if (form.track.source == '0') {delete form.track.source;}
+    if (form.track.medium == '0') {delete form.track.medium;}
 
     form.get(route('stats.projects', props.project.id));
 };
@@ -69,13 +70,22 @@ const submit = () => {
                     </div>
                 </div>
                 <div class="flex gap-x-2 items-end">
-                    <div>
-                        <InputLabel for="track_source" value="Campaigns" />
+                    <div v-if="tracking && tracking.source">
+                        <InputLabel for="track_source" value="Source" />
                         <SelectInput
                             id="track_source"
                             v-model="form.track.source"
                             class="mt-1 block"
                             :options="tracking.source"
+                        />
+                    </div>
+                    <div v-if="tracking && tracking.medium">
+                        <InputLabel for="track_medium" value="Medium" />
+                        <SelectInput
+                            id="track_medium"
+                            v-model="form.track.medium"
+                            class="mt-1 block"
+                            :options="tracking.medium"
                         />
                     </div>
                 </div>
