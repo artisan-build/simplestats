@@ -33,6 +33,8 @@ const submit = () => {
 
     form.get(route('stats.projects', props.project.id));
 };
+
+const fastSubmit = true;
 </script>
 
 <template>
@@ -46,6 +48,7 @@ const submit = () => {
                         v-model="form.instanceId"
                         class="mt-1 block w-40"
                         :options="project.instances"
+                        @change="fastSubmit ? submit() : null"
                     />
                 </div>
                 <div class="flex gap-x-2 items-end">
@@ -56,6 +59,7 @@ const submit = () => {
                             v-model="form.rangeAmount"
                             class="mt-1 block w-18"
                             :options="rangeAmounts"
+                            @change="fastSubmit ? submit() : null"
                         />
                     </div>
                     <div>
@@ -64,6 +68,7 @@ const submit = () => {
                             v-model="form.rangeType"
                             class="mt-1 block w-28"
                             :options="rangeTypes"
+                            @change="fastSubmit ? submit() : null"
                         />
                     </div>
                     <div>
@@ -72,6 +77,7 @@ const submit = () => {
                             id="rangeStart"
                             v-model="form.rangeStart"
                             class="mt-1 block w-36"
+                            @change="fastSubmit ? submit() : null"
                         />
                     </div>
                 </div>
@@ -83,7 +89,7 @@ const submit = () => {
                             v-model="form.trackSource"
                             class="mt-1 block w-36"
                             :options="trackingSources"
-                            @change="$inertia.reload({
+                            @change="fastSubmit ? submit() : $inertia.reload({
                                 only: ['trackingMedia']
                             })"
                         />
@@ -95,7 +101,7 @@ const submit = () => {
                             v-model="form.trackMedium"
                             class="mt-1 block w-36"
                             :options="trackingMedia"
-                            @change="$inertia.reload({
+                            @change="fastSubmit ? submit() : $inertia.reload({
                                 only: ['trackingCampaigns']
                             })"
                         />
@@ -107,7 +113,7 @@ const submit = () => {
                             v-model="form.trackCampaign"
                             class="mt-1 block w-36"
                             :options="trackingCampaigns"
-                            @change="$inertia.reload({
+                            @change="fastSubmit ? submit() : $inertia.reload({
                                 only: ['trackingTerms']
                             })"
                         />
@@ -119,7 +125,7 @@ const submit = () => {
                             v-model="form.trackTerm"
                             class="mt-1 block w-36"
                             :options="trackingTerms"
-                            @change="$inertia.reload({
+                            @change="fastSubmit ? submit() : $inertia.reload({
                                 only: ['trackingContents']
                             })"
                         />
@@ -131,11 +137,12 @@ const submit = () => {
                             v-model="form.trackContent"
                             class="mt-1 block w-36"
                             :options="trackingContents"
+                            @change="fastSubmit ? submit() : null"
                         />
                     </div>
                 </div>
                 <div>
-                    <PrimaryButton class="h-10" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <PrimaryButton v-if="!fastSubmit" class="h-10" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Submit
                     </PrimaryButton>
                 </div>

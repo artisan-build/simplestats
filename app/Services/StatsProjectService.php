@@ -27,7 +27,6 @@ class StatsProjectService
 
     public function getRaw(StatsRangeFilterDto $filters)
     {
-//        dd($filters);
 //        ray()->showQueries();
         $sql = "
         WITH RECURSIVE date_sequence AS (
