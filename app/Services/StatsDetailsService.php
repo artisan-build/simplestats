@@ -7,7 +7,7 @@ use App\Enums\StatsRange;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class StatsProjectService
+class StatsDetailsService
 {
     public function __construct(
         private StatsService $statsService
@@ -18,7 +18,7 @@ class StatsProjectService
         $stats = $this->getRaw($filters);
 
         $this->groupStats($stats);
-        $this->calcStatsTotal($stats);
+        $this->applyStatsTotal($stats);
 
         $this->applyStatsDetails($stats);
 
@@ -223,8 +223,15 @@ class StatsProjectService
     {
         $conditions = StatsRange::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType];
 
-        $projectInstanceCondition = (!empty($filters->projectId)) ? " AND stats.project_id = {$filters->projectId} " : "" ;
-        $projectInstanceCondition .= (!empty($filters->instanceId)) ? " AND stats.instance_id = {$filters->instanceId} " : "" ;
+        // add team_id is very important
+        $projectInstanceCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
+        if (!empty($filters->projectId)) {
+            $projectInstanceCondition .= " AND stats.project_id = {$filters->projectId} ";
+            if (!empty($filters->instanceId)) {
+                $projectInstanceCondition .= " AND stats.instance_id = {$filters->instanceId} ";
+            }
+        }
+
         $conditions[] = $projectInstanceCondition;
 
         $trackingCondition = "";
@@ -269,12 +276,12 @@ class StatsProjectService
         } unset($stat);
     }
 
-    private function calcStatsTotal(array &$stats): void
+    private function applyStatsTotal(array &$stats): void
     {
         $statsTotal = [];
 
         foreach ($stats as $stat) {
-            $this->statsService->applyStatsTotal(
+            $this->statsService->calcStatsTotal(
                 stats: $stat['stats'],
                 totalStats: $statsTotal,
                 skipCategories: ['lifetime']

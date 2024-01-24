@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\StatsController;
-use App\Http\Controllers\StatsProjectController;
+use App\Http\Controllers\StatsOverviewController;
+use App\Http\Controllers\StatsDetailsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,12 +29,11 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/stats', StatsController::class)->name('stats');
-    Route::get('/stats/projects/{project}', StatsProjectController::class)->name('stats.projects');
+    Route::get('/stats', StatsOverviewController::class)->name('stats');
+    Route::get('/stats/details', StatsDetailsController::class)->name('stats.details');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);
-//    Route::get('projects/{project}/stats', [App\Http\Controllers\ProjectController::class, 'stats'])->name('projects.stats');
 
     // Instances
     Route::resource('projects.instances', App\Http\Controllers\ProjectInstanceController::class);

@@ -11,7 +11,7 @@ class StatsService
         return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 
-    public function groupStats($stats)
+    public function groupStats($stats): array
     {
         $result = ['stats' => []];
         $statsPrefixes = ['lt_' => 'lifetime', 'pd_' => 'per_date'];
@@ -49,7 +49,7 @@ class StatsService
         return $stats;
     }
 
-    public function applyStatsTotal(array $stats, array &$totalStats, array $skipCategories = []): void
+    public function calcStatsTotal(array $stats, array &$totalStats, array $skipCategories = []): void
     {
         foreach ($stats as $statCategory => $statsGroup) {
             if (in_array($statCategory, $skipCategories) || !is_array($statsGroup))

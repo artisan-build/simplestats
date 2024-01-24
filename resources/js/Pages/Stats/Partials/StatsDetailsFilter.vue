@@ -7,7 +7,7 @@ import TextInput from "@/Components/TextInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps({
-    project: Object,
+    teamStats: Object,
     filters: Object,
     rangeTypes: Array,
     trackAllKey: Number,
@@ -33,7 +33,7 @@ const submit = () => {
         }
     }
 
-    form.get(route('stats.projects', props.project.id));
+    form.get(route('stats.details'));
 };
 
 const fastSubmit = true;
@@ -43,15 +43,27 @@ const fastSubmit = true;
     <form @submit.prevent="submit">
         <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md">
             <div class="flex gap-x-10 items-end">
-                <div>
-                    <InputLabel for="instanceId" value="Instances" />
-                    <SelectInput
-                        id="instanceId"
-                        v-model="form.instanceId"
-                        class="mt-1 block w-40"
-                        :options="project.instances"
-                        @change="fastSubmit ? submit() : null"
-                    />
+                <div class="flex gap-x-2 items-end">
+                    <div v-if="Object.keys(teamStats.projects).length >= 3">
+                        <InputLabel for="projectId" value="Project" />
+                        <SelectInput
+                            id="projectId"
+                            v-model="form.projectId"
+                            class="mt-1 block w-40"
+                            :options="teamStats.projects"
+                            @change="fastSubmit ? submit() : null"
+                        />
+                    </div>
+                    <div v-if="teamStats.projects[filters.projectId].instances">
+                        <InputLabel for="instanceId" value="Instance" />
+                        <SelectInput
+                            id="instanceId"
+                            v-model="form.instanceId"
+                            class="mt-1 block w-40"
+                            :options="teamStats.projects[filters.projectId].instances"
+                            @change="fastSubmit ? submit() : null"
+                        />
+                    </div>
                 </div>
                 <div class="flex gap-x-2 items-end">
                     <div>
@@ -83,7 +95,7 @@ const fastSubmit = true;
                         />
                     </div>
                 </div>
-                <div class="flex gap-x-2 items-end">
+                <div v-if="filters.projectId" class="flex gap-x-2 items-end">
                     <div v-if="trackingSources">
                         <InputLabel for="trackSource" value="Source" />
                         <SelectInput

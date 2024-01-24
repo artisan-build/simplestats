@@ -5,7 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 defineProps({
     instances: Array,
-    insideProject: [Array, null]
+    insideProject: [Object, null]
 });
 </script>
 

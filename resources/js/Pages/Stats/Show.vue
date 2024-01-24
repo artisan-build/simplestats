@@ -1,11 +1,11 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {Link} from "@inertiajs/vue3";
-import StatsProjectCols from "@/Pages/Stats/Partials/StatsProjectCols.vue";
-import StatsProjectFilter from "@/Pages/Stats/Partials/StatsProjectFilter.vue";
+import StatsDetailsCols from "@/Pages/Stats/Partials/StatsDetailsCols.vue";
+import StatsDetailsFilter from "@/Pages/Stats/Partials/StatsDetailsFilter.vue";
 
 defineProps({
-    project: Object,
+    teamStats: Object,
     filters: Object,
     rangeTypes: Array,
     trackAllKey: Number,
@@ -20,14 +20,10 @@ defineProps({
 
 <template>
     <AppLayout title="Project Statistics" :fullscreen="true">
-        <template #header>
-            {{ project.name }}
-        </template>
-
         <div>
-            <div class="mb-10">
-                <StatsProjectFilter
-                    :project="project"
+            <div class="mb-8">
+                <StatsDetailsFilter
+                    :teamStats="teamStats"
                     :filters="filters"
                     :rangeTypes="rangeTypes"
                     :trackAllKey="trackAllKey"
@@ -77,11 +73,11 @@ defineProps({
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="project.stats" v-for="(stats, i) in project.stats" :key="stats.date"
+                        <tr v-if="teamStats.stats" v-for="(stats, i) in teamStats.stats" :key="stats.date"
                             class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                             :class="{'bg-gray-50': i % 2 === 1, 'border-t': i === 'total'}"
                         >
-                            <StatsProjectCols :stats="stats.stats" />
+                            <StatsDetailsCols :stats="stats.stats" />
                         </tr>
                     </tbody>
                 </table>

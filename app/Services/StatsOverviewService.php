@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Instance;
 use App\Models\Project;
+use App\Models\Team;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -17,20 +18,19 @@ class StatsOverviewService
 
     public function getStats()
     {
-        $projects = $this->getRaw();
+        $team = $this->getRaw();
 
-        $this->groupStats($projects);
-        $this->calcStatsTotal($projects);
-        $this->applyStatsDetails($projects);
+        $this->groupStats($team);
+        $this->applyStatsTotal($team);
+        $this->applyStatsDetailsGroup($team);
 
-        return $projects;
+        return $team;
     }
 
     public function getRaw()
     {
-//        ray()->showQueries();
-        return Project::orderBy('created_at', 'desc')->with([
-            'instances' => function (Builder $query) {
+        return auth()->user()->currentTeam()->with('projects', function (Builder $query) {
+            $query->orderBy('created_at', 'desc')->with('instances', function (Builder $query) {
                 $query->withCount([
                     // ! ==== Lifetime (lt) ==== !
                     'statsUsers as lt_REG',
@@ -130,15 +130,15 @@ class StatsOverviewService
                         $query->select(DB::raw("sum(net)"))->whereDate('time', Date::yesterday());
                     },
                 ]);
-            }
-        ])->get();
+            });
+        })->get()->first();
     }
 
-    private function groupStats(Collection &$projects): void
+    private function groupStats(Team $team): void
     {
-        $projects->transform(function (Project $project) {
+        $team->projects->transform(function (Project $project) {
             $project->instances->transform(function (Instance $instance) {
-                return $this->statsService->groupStats($instance->getAttributes());
+                return (object) $this->statsService->groupStats($instance->getAttributes());
             });
 
             return $project;
@@ -146,54 +146,58 @@ class StatsOverviewService
 
     }
 
-    private function calcStatsTotal(Collection &$projects): void
+    private function applyStatsTotal(Team $team): void
     {
-        $statsOverallTotal = [];
-        $projects->transform(function (Project $project) use (&$statsOverallTotal) {
-            $statsTotal = [];
-            $project->instances->each(function ($instance) use (&$statsTotal) {
-                $this->statsService->applyStatsTotal($instance['stats'], $statsTotal);
+        $statsTeamTotal = [];
+
+        $team->projects->transform(function (Project $project) use (&$statsTeamTotal) {
+            $statsProjectTotal = [];
+
+            $project->instances->each(function (object $instance) use (&$statsProjectTotal) {
+                $this->statsService->calcStatsTotal($instance->stats, $statsProjectTotal);
             });
 
-            $project->stats = $statsTotal;
+            $project->stats = $statsProjectTotal;
 
-            $this->statsService->applyStatsTotal($project->stats, $statsOverallTotal);
+
+            $this->statsService->calcStatsTotal($project->stats, $statsTeamTotal);
 
             return $project;
         });
 
-        if ($projects->count() > 1) {
-            $this->addOverallProject($projects, $statsOverallTotal);
-        }
+        $team->stats = $statsTeamTotal;
     }
 
-    private function addOverallProject(Collection $projects, array $statsOverallTotal): void
+    private function applyStatsDetailsGroup(Team $team): void
     {
-        Project::unguard();
+        $team->name = 'Total';
+        $this->applyStatsDetails($team, 0, 'Total');
 
-        $projects->push(new Project([
-            'id' => 0,
-            'overallTotal' => true,
-            'name' => 'Total',
-            'stats' => $statsOverallTotal,
-        ]));
+        $team->projects->transform(function (Project $project) {
+            $this->applyStatsDetails($project, $project->id, 'Total');
 
-        Project::reguard();
-    }
+            $project->instances->transform(function (object $instance) {
+                $instance->instance_id = $instance->id;
+                $this->applyStatsDetails($instance, $instance->project_id, $instance->name);
 
-    private function applyStatsDetails(Collection $projects): void
-    {
-        $projects->transform(function (Project $project) {
-            if (!empty($project['stats'])) {
-                $project['stats'] = array_merge(['name' => 'Total'], $this->statsService->addStatsDetails($project['stats']));
-            }
-
-            $project->instances->transform(function ($instance) {
-                $instance['stats'] = array_merge(['name' => $instance['name']], $this->statsService->addStatsDetails($instance['stats']));
                 return $instance;
             });
 
             return $project;
         });
+    }
+
+    private function applyStatsDetails(object $item, int $projectId, string $name)
+    {
+        $item->project_id = $projectId;
+
+        if (isset($item->stats)) {
+            $item->stats = array_merge([
+                'name' => $name,
+                'project_id' => $projectId,
+            ], $this->statsService->addStatsDetails($item->stats));
+        }
+
+        unset($item->id);
     }
 }

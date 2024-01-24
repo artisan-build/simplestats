@@ -1,74 +1,27 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link } from '@inertiajs/vue3';
-import StatsOverviewCols from "@/Pages/Stats/Partials/StatsOverviewCols.vue";
+import StatsOverviewGroup from "@/Pages/Stats/Partials/StatsOverviewGroup.vue";
 
-defineProps({
-    projects: Object,
+const props = defineProps({
+    team: Object,
 });
+
+const projects = props.team.projects;
+// show overall total only if there are min 2 projects
+const showOverallTotal = (projects.length >= 2);
+// show group total only if a project has min. 2 instances
+const showGroupTotal = projects.some(project => project.instances.length >= 2);
 </script>
 
 <template>
     <AppLayout title="Statistics" :fullscreen="true">
         <div>
             <div v-for="project in projects">
-                <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
-                    <table class="w-full whitespace-nowrap text-sm">
-                        <thead>
-                            <tr class="text-left font-bold text-base">
-                                <th class="p-3">
-                                    <Link :href="route('stats.projects', project.id)" class="hover:underline">
-                                        {{ project.name }}
-                                    </Link>
-                                </th>
-                                <th class="w-1"></th>
-                                <th class="text-center" colspan="8">Lifetime</th>
-                                <th class="w-1"></th>
-                                <th class="text-center" colspan="10">Yesterday</th>
-                            </tr>
-                            <tr class="text-right font-bold text-gray-600 bg-gray-100">
-                                <th class="p-3 text-left">Instance</th>
-                                <th class="w-1 bg-white"></th>
-                                <th>Regs.</th>
-                                <th>Reg. to DAU</th>
-                                <th>Pay User</th>
-                                <th>Reg. to Pay</th>
-                                <th>Tot. Actives</th>
-                                <th>Reg. to Actives</th>
-                                <th>ARPU</th>
-                                <th class="pr-2">ARPPU</th>
-                                <th class="w-1 bg-white"></th>
-                                <th>Regs.</th>
-                                <th>NAU</th>
-                                <th>DAU</th>
-                                <th>DAPU</th>
-                                <th>DAAPU</th>
-                                <th>WAU</th>
-                                <th>MAU</th>
-                                <th>MAPU</th>
-                                <th>MAAPU</th>
-                                <th class="pr-2">Rev.</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-if="project.instances.length > 0" v-for="(instance, i) in project.instances" :key="instance.id"
-                            class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
-                            :class="{'bg-gray-50': i % 2 === 1}"
-                        >
-                            <StatsOverviewCols :stats="instance.stats" :projectId="project.id" :instanceId="instance.id" />
-                        </tr>
-                        <tr v-else-if="!project.overallTotal">
-                            <td class="p-3 text-base" colspan="10">
-                                No Instance configured for this Project!
-                                Go <Link class="font-bold hover:underline" :href="route('projects.show', project.id)">here</Link> to add one.
-                            </td>
-                        </tr>
-                        <tr v-if="project.stats && (project.instances.length > 1 || project.overallTotal)" class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
-                            <StatsOverviewCols :stats="project.stats" :projectId="project.id" />
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <StatsOverviewGroup :showGroupTotal="showGroupTotal && project.instances.length >= 1" :statsGroup="project" />
+            </div>
+            <div v-if="showOverallTotal">
+                <hr class="border my-5">
+                <StatsOverviewGroup :showGroupTotal="true" :statsGroup="team" />
             </div>
         </div>
     </AppLayout>

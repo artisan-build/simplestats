@@ -8,7 +8,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 readonly class ValidProjectModelOrNegative implements ValidationRule
 {
     public function __construct(
-        private int $projectId,
+        private ?int $projectId,
         private string $model,
     ) {}
 

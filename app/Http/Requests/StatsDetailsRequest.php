@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\StatsRange;
 use App\Models\Instance;
+use App\Models\Project;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
@@ -13,7 +14,7 @@ use App\Rules\ValidProjectModelOrNegative;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StatsProjectRequest extends FormRequest
+class StatsDetailsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,11 +32,18 @@ class StatsProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'projectId' => [
+                'sometimes',
+                'integer',
+                Rule::exists(Project::class, 'id')->where(function ($query) {
+                    $query->where('id', $this->projectId);
+                }),
+            ],
             'instanceId' => [
                 'sometimes',
                 'integer',
                 Rule::exists(Instance::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->route('project')->id);
+                    $query->where('project_id', $this->projectId);
                 }),
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRange::class)],
@@ -44,27 +52,27 @@ class StatsProjectRequest extends FormRequest
             'trackSource' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackSource::class),
+                new ValidProjectModelOrNegative($this->projectId, StatsTrackSource::class),
             ],
             'trackMedium' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackMedium::class),
+                new ValidProjectModelOrNegative($this->projectId, StatsTrackMedium::class),
             ],
             'trackCampaign' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackCampaign::class),
+                new ValidProjectModelOrNegative($this->projectId, StatsTrackCampaign::class),
             ],
             'trackTerm' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackTerm::class),
+                new ValidProjectModelOrNegative($this->projectId, StatsTrackTerm::class),
             ],
             'trackContent' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->route('project')->id, StatsTrackContent::class),
+                new ValidProjectModelOrNegative($this->projectId, StatsTrackContent::class),
             ],
         ];
     }

@@ -2,7 +2,7 @@
 
 namespace App\DTOs;
 
-use App\Http\Requests\StatsProjectRequest;
+use App\Http\Requests\StatsDetailsRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 
@@ -24,10 +24,10 @@ readonly class StatsRangeFilterDto
         public int $trackContent = 0,
     ) {}
 
-    public static function fromRequest(StatsProjectRequest $request): StatsRangeFilterDto
+    public static function fromRequest(StatsDetailsRequest $request): StatsRangeFilterDto
     {
         return new self(
-            $request->route('project')->id,
+            $request->projectId ?? 0,
             $request->instanceId ?? 0,
             $request->rangeAmount ?? 7,
             $request->rangeType ?? 'days',
