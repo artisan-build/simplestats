@@ -66,10 +66,19 @@ class StatsDetailsController extends Controller
         ];
 
         // do not lazy load if the specific tracking isset...
-        if ($filters->trackSource > StatsRangeFilterDto::TRACK_ALL)     $data['trackingMedia'] = $trackingMediaCallback();
-        if ($filters->trackMedium > StatsRangeFilterDto::TRACK_ALL)     $data['trackingCampaigns'] = $trackingCampaignsCallback();
-        if ($filters->trackCampaign > StatsRangeFilterDto::TRACK_ALL)   $data['trackingTerms'] = $trackingTermsCallback();
-        if ($filters->trackTerm > StatsRangeFilterDto::TRACK_ALL)       $data['trackingContents'] = $trackingContentsCallback();
+        // this is hierarchical, each depends on the other (also used to hide select boxes if higher tracking was set to all)
+        if ($filters->trackSource > StatsRangeFilterDto::TRACK_ALL) {
+            $data['trackingMedia'] = $trackingMediaCallback();
+            if ($filters->trackMedium > StatsRangeFilterDto::TRACK_ALL) {
+                $data['trackingCampaigns'] = $trackingCampaignsCallback();
+                if ($filters->trackCampaign > StatsRangeFilterDto::TRACK_ALL) {
+                    $data['trackingTerms'] = $trackingTermsCallback();
+                    if ($filters->trackTerm > StatsRangeFilterDto::TRACK_ALL) {
+                        $data['trackingContents'] = $trackingContentsCallback();
+                    }
+                }
+            }
+        }
 
         return Inertia::render('Stats/Show', $data);
     }

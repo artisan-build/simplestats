@@ -26,6 +26,10 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 }));
 
 const submit = () => {
+    form.get(route('stats.details'));
+};
+
+const filterChanged = () => {
     // the unsafe equality check is for reason...
     for (let key in form) {
         if (form.hasOwnProperty(key) && form[key] == props.trackAllKey) {
@@ -33,10 +37,9 @@ const submit = () => {
         }
     }
 
-    form.get(route('stats.details'));
+    submit();
 };
 
-const fastSubmit = true;
 </script>
 
 <template>
@@ -52,7 +55,7 @@ const fastSubmit = true;
                                 v-model="form.projectId"
                                 class="mt-1 block w-40"
                                 :options="teamStats.projects"
-                                @change="fastSubmit ? submit() : null"
+                                @change="filterChanged"
                             />
                         </div>
                         <div v-if="teamStats.projects[filters.projectId].instances">
@@ -62,7 +65,7 @@ const fastSubmit = true;
                                 v-model="form.instanceId"
                                 class="mt-1 block w-40"
                                 :options="teamStats.projects[filters.projectId].instances"
-                                @change="fastSubmit ? submit() : null"
+                                @change="filterChanged"
                             />
                         </div>
                     </div>
@@ -74,7 +77,7 @@ const fastSubmit = true;
                                 v-model="form.rangeAmount"
                                 class="mt-1 block w-18"
                                 :options="rangeAmounts"
-                                @change="fastSubmit ? submit() : null"
+                                @change="filterChanged"
                             />
                         </div>
                         <div>
@@ -83,7 +86,7 @@ const fastSubmit = true;
                                 v-model="form.rangeType"
                                 class="mt-1 block w-28"
                                 :options="rangeTypes"
-                                @change="fastSubmit ? submit() : null"
+                                @change="filterChanged"
                             />
                         </div>
                         <div>
@@ -92,7 +95,7 @@ const fastSubmit = true;
                                 id="rangeStart"
                                 v-model="form.rangeStart"
                                 class="mt-1 block w-36"
-                                @change="fastSubmit ? submit() : null"
+                                @change="filterChanged"
                             />
                         </div>
                     </div>
@@ -106,9 +109,7 @@ const fastSubmit = true;
                                 v-model="form.trackSource"
                                 class="mt-1 block w-36"
                                 :options="trackingSources"
-                                @change="fastSubmit ? submit() : $inertia.reload({
-                                    only: ['trackingMedia']
-                                })"
+                                @change="filterChanged"
                             />
                         </div>
                         <div v-if="trackingMedia">
@@ -118,9 +119,7 @@ const fastSubmit = true;
                                 v-model="form.trackMedium"
                                 class="mt-1 block w-36"
                                 :options="trackingMedia"
-                                @change="fastSubmit ? submit() : $inertia.reload({
-                                    only: ['trackingCampaigns']
-                                })"
+                                @change="filterChanged"
                             />
                         </div>
                         <div v-if="trackingCampaigns">
@@ -130,9 +129,7 @@ const fastSubmit = true;
                                 v-model="form.trackCampaign"
                                 class="mt-1 block w-36"
                                 :options="trackingCampaigns"
-                                @change="fastSubmit ? submit() : $inertia.reload({
-                                    only: ['trackingTerms']
-                                })"
+                                @change="filterChanged"
                             />
                         </div>
                         <div v-if="trackingTerms">
@@ -142,9 +139,7 @@ const fastSubmit = true;
                                 v-model="form.trackTerm"
                                 class="mt-1 block w-36"
                                 :options="trackingTerms"
-                                @change="fastSubmit ? submit() : $inertia.reload({
-                                    only: ['trackingContents']
-                                })"
+                                @change="filterChanged"
                             />
                         </div>
                         <div v-if="trackingContents">
@@ -154,15 +149,12 @@ const fastSubmit = true;
                                 v-model="form.trackContent"
                                 class="mt-1 block w-36"
                                 :options="trackingContents"
-                                @change="fastSubmit ? submit() : null"
+                                @change="filterChanged"
                             />
                         </div>
                     </div>
                     <div>
-                        <PrimaryButton v-if="!fastSubmit" class="h-10" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                            Submit
-                        </PrimaryButton>
-                        <SecondaryButton v-else type="submit" class="h-10" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        <SecondaryButton type="submit" class="h-10" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>
