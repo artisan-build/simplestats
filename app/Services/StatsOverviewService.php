@@ -18,13 +18,13 @@ class StatsOverviewService
 
     public function getStats()
     {
-        $team = $this->getRaw();
+        $teamStats = $this->getRaw();
 
-        $this->groupStats($team);
-        $this->applyStatsTotal($team);
-        $this->applyStatsDetailsGroup($team);
+        $this->groupStats($teamStats);
+        $this->applyStatsTotal($teamStats);
+        $this->applyStatsDetailsGroup($teamStats);
 
-        return $team;
+        return $teamStats;
     }
 
     public function getRaw()
@@ -134,9 +134,9 @@ class StatsOverviewService
         })->get()->first();
     }
 
-    private function groupStats(Team $team): void
+    private function groupStats(Team $teamStats): void
     {
-        $team->projects->transform(function (Project $project) {
+        $teamStats->projects->transform(function (Project $project) {
             $project->instances->transform(function (Instance $instance) {
                 return (object) $this->statsService->groupStats($instance->getAttributes());
             });
@@ -146,11 +146,11 @@ class StatsOverviewService
 
     }
 
-    private function applyStatsTotal(Team $team): void
+    private function applyStatsTotal(Team $teamStats): void
     {
         $statsTeamTotal = [];
 
-        $team->projects->transform(function (Project $project) use (&$statsTeamTotal) {
+        $teamStats->projects->transform(function (Project $project) use (&$statsTeamTotal) {
             $statsProjectTotal = [];
 
             $project->instances->each(function (object $instance) use (&$statsProjectTotal) {
@@ -165,15 +165,15 @@ class StatsOverviewService
             return $project;
         });
 
-        $team->stats = $statsTeamTotal;
+        $teamStats->stats = $statsTeamTotal;
     }
 
-    private function applyStatsDetailsGroup(Team $team): void
+    private function applyStatsDetailsGroup(Team $teamStats): void
     {
-        $team->name = 'Total';
-        $this->applyStatsDetails($team, 0, 'Total');
+        $teamStats->name = 'Total';
+        $this->applyStatsDetails($teamStats, 0, 'Total');
 
-        $team->projects->transform(function (Project $project) {
+        $teamStats->projects->transform(function (Project $project) {
             $this->applyStatsDetails($project, $project->id, 'Total');
 
             $project->instances->transform(function (object $instance) {

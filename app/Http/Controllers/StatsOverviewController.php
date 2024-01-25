@@ -9,8 +9,8 @@ class StatsOverviewController extends Controller
 {
     public function __invoke(StatsOverviewService $statsOverviewService)
     {
-        $team = $statsOverviewService->getStats();
-
-        return Inertia::render('Stats/Index', compact('team'));
+        return Inertia::render('Stats/Index', [
+            'teamStats' => $statsOverviewService->getStats(),
+        ]);
     }
 }
