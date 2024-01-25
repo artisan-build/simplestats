@@ -36,14 +36,20 @@ class StatsDetailsRequest extends FormRequest
                 'sometimes',
                 'integer',
                 Rule::exists(Project::class, 'id')->where(function ($query) {
-                    $query->where('id', $this->projectId);
+                    $query->where([
+                        'id' => $this->projectId,
+                        'team_id' => $this->user()->current_team_id,
+                    ]);
                 }),
             ],
             'instanceId' => [
                 'sometimes',
                 'integer',
                 Rule::exists(Instance::class, 'id')->where(function ($query) {
-                    $query->where('project_id', $this->projectId);
+                    $query->where([
+                        'project_id' => $this->projectId,
+                        'team_id' => $this->user()->current_team_id,
+                    ]);
                 }),
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRange::class)],
