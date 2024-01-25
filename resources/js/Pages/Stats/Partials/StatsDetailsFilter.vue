@@ -29,7 +29,22 @@ const submit = () => {
     form.get(route('stats.details'));
 };
 
-const filterChanged = () => {
+const checkHierachicalTracking = (trackId) => {
+    let fieldsToCheck = ['trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
+    let startIndex = fieldsToCheck.indexOf(trackId);
+
+    if (startIndex !== -1 && form[trackId] == props.trackAllKey) {
+        for (let i = startIndex + 1; i < fieldsToCheck.length; i++) {
+            form[fieldsToCheck[i]] = 0;
+        }
+    }
+};
+
+const filterChanged = (event) => {
+    if (event.target.id.startsWith('track')) {
+        checkHierachicalTracking(event.target.id);
+    }
+
     // the unsafe equality check is for reason...
     for (let key in form) {
         if (form.hasOwnProperty(key) && form[key] == props.trackAllKey) {
