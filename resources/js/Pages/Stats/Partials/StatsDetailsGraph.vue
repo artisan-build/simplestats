@@ -56,7 +56,7 @@ const chartOptions = ref({
 </script>
 
 <template>
-    <div class="relative p-2 pb-4 md:p-4 md:pb-8 bg-white dark:bg-gray-800 shadow border rounded-md">
+    <div class="relative p-4 pb-8 bg-white dark:bg-gray-800 shadow border rounded-md">
         <div class="grid gap-y-2">
             <div class="flex items-center gap-x-2">
                 <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ graph.name }}</span>

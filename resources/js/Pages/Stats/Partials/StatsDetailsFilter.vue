@@ -62,8 +62,8 @@ const filterChanged = (event) => {
     <form @submit.prevent="submit">
         <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md">
             <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
-                <div class="flex gap-x-10 items-end">
-                    <div class="flex gap-x-2 items-end">
+                <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
+                    <div class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="Object.keys(teamStats.projects).length >= 3">
                             <InputLabel for="projectId" value="Project" />
                             <SelectInput
@@ -85,7 +85,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                     </div>
-                    <div class="flex gap-x-2 items-end">
+                    <div class="flex flex-wrap gap-x-2 items-end">
                         <div>
                             <InputLabel for="rangeAmount" value="Range" />
                             <SelectInput
@@ -116,8 +116,8 @@ const filterChanged = (event) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-x-10 items-end">
-                    <div v-if="filters.projectId" class="flex gap-x-2 items-end">
+                <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
+                    <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="trackingSources">
                             <InputLabel for="trackSource" value="Source" />
                             <SelectInput
