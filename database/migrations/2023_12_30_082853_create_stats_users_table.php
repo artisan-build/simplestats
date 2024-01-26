@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('stats_track_term_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('stats_track_content_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->dateTime('time');
+            $table->date('time')->index();
 
             $table->primary(['id', 'instance_id']);
         });

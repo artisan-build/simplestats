@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
             $table->float('gross');
             $table->float('net');
-            $table->dateTime('time');
-            $table->integer('counter');
+            $table->date('time')->index();
+            $table->integer('counter')->index();
 
             $table->foreign(['stats_user_id', 'instance_id'])
                 ->references(['id', 'instance_id'])

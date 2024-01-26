@@ -39,7 +39,7 @@ class StatsDetailsService
         pd_reg AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_users stats
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' :projectInstanceCondition :trackingConditions
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' :projectInstanceCondition :trackingConditions
             GROUP BY date
         ),
         # nau: Number of unique accounts who returned on this day (=2nd login) after the registration (=1st login)
@@ -47,7 +47,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' and stats.counter = 2 :projectInstanceCondition
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' and stats.counter = 2 :projectInstanceCondition
             GROUP BY date
         ),
         # napu: Number of unique accounts who did their first payment on this day
@@ -55,7 +55,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_payments stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' and stats.counter = 1 :projectInstanceCondition
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' and stats.counter = 1 :projectInstanceCondition
             GROUP BY date
         ),
         # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
@@ -63,7 +63,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' and stats.counter != 1 :projectInstanceCondition
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' and stats.counter != 1 :projectInstanceCondition
             GROUP BY date
         ),
         # dapu: Number of unique accounts who logged in or registered on this day and did at least one payment over lifetime (including today)
@@ -71,7 +71,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' AND EXISTS (
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' AND EXISTS (
                 SELECT 1
                 FROM stats_payments sp
                 WHERE stats.stats_user_id = sp.stats_user_id
@@ -84,13 +84,13 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' AND EXISTS (
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' AND EXISTS (
                 SELECT 1
                 FROM stats_payments sp
                 WHERE stats.stats_user_id = sp.stats_user_id
                     AND stats.instance_id = sp.instance_id
-                    AND DATE(sp.time) >= DATE_SUB(DATE(stats.time), INTERVAL 20 DAY)
-                    AND DATE(sp.time) <= DATE(stats.time)
+                    AND sp.time >= DATE_SUB(stats.time, INTERVAL 20 DAY)
+                    AND sp.time <= stats.time
             ) :projectInstanceCondition
             GROUP BY date
         ),
@@ -99,7 +99,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
             FROM stats_payments stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' :projectInstanceCondition
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' :projectInstanceCondition
             GROUP BY date
         ),
         # net
@@ -107,7 +107,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
             FROM stats_payments stats
             :trackingJoinConditions
-            WHERE DATE(stats.time) >= ':startDate' AND DATE(stats.time) <= ':endDate' :projectInstanceCondition
+            WHERE stats.time >= ':startDate' AND stats.time <= ':endDate' :projectInstanceCondition
             GROUP BY date
         ),
         # lifetime regs
@@ -117,7 +117,7 @@ class StatsDetailsService
                 (
                     SELECT COUNT(DISTINCT stats.id, stats.instance_id)
                     FROM stats_users stats
-                    WHERE DATE(stats.time) <= ds.date :projectInstanceCondition :trackingConditions
+                    WHERE stats.time <= ds.date :projectInstanceCondition :trackingConditions
                 ) AS count
             FROM date_sequence ds
         ),
@@ -129,7 +129,7 @@ class StatsDetailsService
                     SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
                     FROM stats_payments stats
                     :trackingJoinConditions
-                    WHERE DATE(stats.time) <= ds.date :projectInstanceCondition
+                    WHERE stats.time <= ds.date :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
         ),
@@ -141,7 +141,7 @@ class StatsDetailsService
                     SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
                     FROM stats_logins stats
                     :trackingJoinConditions
-                    WHERE DATE(stats.time) <= ds.date and stats.counter = 2 :projectInstanceCondition
+                    WHERE stats.time <= ds.date and stats.counter = 2 :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
         ),
@@ -153,7 +153,7 @@ class StatsDetailsService
                     SELECT SUM(stats.net)
                     FROM stats_payments stats
                     :trackingJoinConditions
-                    WHERE DATE(stats.time) <= ds.date :projectInstanceCondition
+                    WHERE stats.time <= ds.date :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
         )

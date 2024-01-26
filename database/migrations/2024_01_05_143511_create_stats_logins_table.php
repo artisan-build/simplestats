@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
-            $table->dateTime('time');
-            $table->integer('counter');
+            $table->date('time')->index();
+            $table->integer('counter')->index();
 
             $table->foreign(['stats_user_id', 'instance_id'])
                 ->references(['id', 'instance_id'])
