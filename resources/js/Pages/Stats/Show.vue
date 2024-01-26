@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {Link} from "@inertiajs/vue3";
 import StatsDetailsCols from "@/Pages/Stats/Partials/StatsDetailsCols.vue";
 import StatsDetailsFilter from "@/Pages/Stats/Partials/StatsDetailsFilter.vue";
+import StatsDetailsGraphs from "@/Pages/Stats/Partials/StatsDetailsGraphs.vue";
 
 defineProps({
     teamStats: Object,
@@ -21,6 +22,9 @@ defineProps({
 <template>
     <AppLayout title="Project Statistics" :fullscreen="true">
         <div>
+            <div class="mb-8">
+                <StatsDetailsGraphs :teamStats="teamStats" />
+            </div>
             <div class="mb-8">
                 <StatsDetailsFilter
                     :teamStats="teamStats"

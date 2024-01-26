@@ -20,9 +20,10 @@ const props = defineProps({
 
 const form = useForm(props.filters);
 
-const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
-    id: (i + 1).toString(),
-    name: (i + 1).toString()
+const rangeAmounts = Array.from({ length: 60 - 2 }, (_, i) => ({
+    // start from min 3 days cause smaller would break the charts, and it not really makes sense...
+    id: (i + 3).toString(),
+    name: (i + 3).toString()
 }));
 
 const submit = () => {

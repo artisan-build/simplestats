@@ -1,0 +1,45 @@
+<script setup>
+
+import StatsDetailsGraph from "@/Pages/Stats/Partials/StatsDetailsGraph.vue";
+
+const props = defineProps({
+    teamStats: Object,
+});
+
+const extractStatsData4Graph = (statsCategory, statsKey) => {
+    return Object.values(props.teamStats.stats).reduce((acc, item, key) => {
+        // skip the first entry (cause the current day/week/month is not finished yet and would always down the chart) and total
+        if (!(key === 0 || item.stats.date === 'Total')) {
+            acc.series.push(item.stats[statsCategory][statsKey]);
+            acc.categories.push(item.stats.date);
+        }
+
+        return acc;
+    }, { series: [], categories: [] });
+};
+
+const graphs = [{
+        name: 'Regs.',
+        unit: '',
+        data: extractStatsData4Graph('per_date', 'REG'),
+    }, {
+        name: 'DAU',
+        unit: '',
+        data: extractStatsData4Graph('per_date', 'DAU'),
+    }, {
+        name: 'Revenue',
+        unit: 'EUR',
+        data: extractStatsData4Graph('per_date', 'NET'),
+    }, {
+        name: 'ARPU',
+        unit: 'EUR',
+        data: extractStatsData4Graph('lifetime', 'ARPU'),
+    }
+];
+</script>
+
+<template>
+    <div class="grid gap-6 grid-cols-2 md:grid-cols-4">
+        <StatsDetailsGraph v-for="graph in graphs" :graph="graph" />
+    </div>
+</template>
