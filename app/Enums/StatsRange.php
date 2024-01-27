@@ -18,21 +18,27 @@ enum StatsRange: string
         // no time (MVP) to figure out, why we need to subMonth and subWeek also on end date, but it works
         return [
             self::DAY->value => [
-                $rangeStart->startOfDay()->subDays($rangeAmount-1)->format('Y-m-d'),
+                $rangeStart->startOfDay()->subDays($rangeAmount)->format('Y-m-d'),
+                $rangeStart->startOfDay()->format('Y-m-d'),
                 $rangeStart->endOfDay()->format('Y-m-d'),
                 str(self::DAY->value)->upper()->singular(),
+                'ds.date', // the end of the current interval
                 '%Y-%m-%d'
             ],
             self::WEEK->value => [
                 $rangeStart->startOfWeek()->subWeeks($rangeAmount-1)->format('Y-m-d'),
-                $rangeStart->endOfWeek()->subWeek()->format('Y-m-d'),
+                $rangeStart->startOfWeek()->format('Y-m-d'),
+                $rangeStart->endOfWeek()->format('Y-m-d'),
                 str(self::WEEK->value)->upper()->singular(),
+                'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
                 '%Y-%v'
             ],
             self::MONTH->value => [
                 $rangeStart->startOfMonth()->subMonths($rangeAmount-1)->format('Y-m-d'),
-                $rangeStart->endOfMonth()->subMonth()->format('Y-m-d'),
+                $rangeStart->startOfMonth()->format('Y-m-d'),
+                $rangeStart->endOfMonth()->format('Y-m-d'),
                 str(self::MONTH->value)->upper()->singular(),
+                'LAST_DAY(ds.date)', // the end of the current interval
                 '%Y-%m'
             ],
         ];
