@@ -225,7 +225,7 @@ class StatsDetailsService
 
     private function getFilterConditions(StatsRangeFilterDto $filters): array
     {
-        $conditions = StatsRange::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType];
+        $conditions = StatsRange::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
         // add team_id is very important
         $projectInstanceCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
