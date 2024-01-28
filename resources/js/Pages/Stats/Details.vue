@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import {Link} from "@inertiajs/vue3";
 import StatsDetailsCols from "@/Pages/Stats/Partials/StatsDetailsCols.vue";
 import StatsDetailsFilter from "@/Pages/Stats/Partials/StatsDetailsFilter.vue";
-import StatsDetailsGraphs from "@/Pages/Stats/Partials/StatsDetailsGraphs.vue";
+import StatsDetailsTop from "@/Pages/Stats/Partials/StatsDetailsTop.vue";
 
 defineProps({
     viewModes: Array,
@@ -24,7 +24,7 @@ defineProps({
     <AppLayout title="Project Statistics" :fullscreen="true">
         <div>
             <div class="mb-8">
-                <StatsDetailsGraphs :teamStats="teamStats" />
+                <StatsDetailsTop :viewMode="filters.viewMode" :teamStats="teamStats" />
             </div>
             <div class="mb-8">
                 <StatsDetailsFilter

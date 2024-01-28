@@ -1,5 +1,4 @@
 <script setup>
-
 import StatsDetailsGraph from "@/Pages/Stats/Partials/StatsDetailsGraph.vue";
 
 const props = defineProps({
@@ -45,10 +44,9 @@ const graphs = [
         data: extractStatsData4Graph('lifetime', 'ARPU'),
     }
 ];
+
 </script>
 
 <template>
-    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsDetailsGraph v-for="graph in graphs" :graph="graph" />
-    </div>
+    <StatsDetailsGraph v-for="graph in graphs" :graph="graph" />
 </template>

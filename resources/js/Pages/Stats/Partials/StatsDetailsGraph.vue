@@ -88,11 +88,11 @@ const chartOptions = ref({
     },
     yaxis: {
         labels: {
-            show: false // Y-Achsenbeschriftungen deaktivieren
+            show: false
         }
     },
     tooltip: {
-        enabled: false // Tooltips deaktivieren
+        enabled: false
     },
     grid: {
         show: false,
