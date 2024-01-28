@@ -22,11 +22,11 @@ defineProps({
     <td class="pr-2">{{ stats.per_date.ARPDAU.toFixed(2).toString().concat(' EUR') }}</td>
     <td class="w-1 bg-white border-y border-white"></td>
     <td>{{ stats.lifetime?.REG ?? '-' }}</td>
-    <td>{{ stats.lifetime?.REG2DAU.toString().concat('%') ?? '-' }}</td>
+    <td>{{ stats.lifetime?.REG2DAU.toFixed(2).toString().concat('%') ?? '-' }}</td>
     <td>{{ stats.lifetime?.PU ?? '-' }}</td>
-    <td>{{ stats.lifetime?.REG2PU.toString().concat('%') ?? '-' }}</td>
+    <td>{{ stats.lifetime?.REG2PU.toFixed(2).toString().concat('%') ?? '-' }}</td>
     <td>{{ stats.lifetime?.TAU ?? '-' }}</td>
-    <td>{{ stats.lifetime?.REG2TAU.toString().concat('%') ?? '-' }}</td>
+    <td>{{ stats.lifetime?.REG2TAU.toFixed(2).toString().concat('%') ?? '-' }}</td>
     <td>{{ stats.lifetime?.ARPU.toFixed(2).toString().concat(' EUR') ?? '-' }}</td>
     <td>{{ stats.lifetime?.ARPPU.toFixed(2).toString().concat(' EUR') ?? '-' }}</td>
     <td class="pr-2">{{ stats.lifetime?.NET.toFixed(2).toString().concat(' EUR') ?? '-' }}</td>
