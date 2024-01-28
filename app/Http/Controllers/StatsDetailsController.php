@@ -84,6 +84,6 @@ class StatsDetailsController extends Controller
             }
         }
 
-        return Inertia::render('Stats/Show', $data);
+        return Inertia::render('Stats/Details', $data);
     }
 }
