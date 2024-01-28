@@ -8,8 +8,8 @@ const props = defineProps({
 
 const extractStatsData4Graph = (statsCategory, fields) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
-        // skip total
-        if (!(item.stats.date === 'Total')) {
+        // skip total and the first entry (cause the current day/week/month is not finished yet and would always down the chart)
+        if (!(key === 0 || item.stats.date === 'Total')) {
             for (let field of fields) {
                 if (!(field.key in acc.series)) {
                     acc.series[field.key] = {
