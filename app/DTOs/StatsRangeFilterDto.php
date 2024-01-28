@@ -31,7 +31,7 @@ readonly class StatsRangeFilterDto
             $request->projectId ?? 0,
             $request->instanceId ?? 0,
             $request->rangeAmount ?? 7,
-            StatsRange::from($request->rangeType) ?? StatsRange::DAY,
+            StatsRange::from($request->rangeType ?? StatsRange::DAY->value),
             Date::parse($request->rangeStart ?? now()),
             $request->trackSource ?? 0,
             $request->trackMedium ?? 0,
