@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\StatsRangeFilterDto;
 use App\Enums\StatsRange;
+use App\Enums\ViewMode;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -301,6 +302,13 @@ class StatsDetailsService
         foreach ($stats as &$stat) {
             $stat['stats'] = $this->statsService->addStatsDetails($stat['stats']);
         } unset($stat);
+    }
+
+    public function getViewModes(): Collection
+    {
+        return collect(ViewMode::values())->transform(fn($name, $key) => [
+            'id' => $name, 'name' => ucfirst($name)
+        ]);
     }
 
     public function getRangeTypes(): Collection

@@ -27,6 +27,11 @@ class StatsDetailsController extends Controller
 
         // do this before prepend all filter...
         $teamStats->totalProjectsCount = $teamStats->projects->count(); // here we use the alreay loaded collection
+
+        if ($teamStats->totalProjectsCount < 1) {
+            return  redirect()->route('projects.index');
+        }
+
         $teamStats->totalInstancesCount = $teamStats->instances()->count(); // here we use the relationship
 
         // we need to do prepend before keyBy('id')
@@ -58,6 +63,7 @@ class StatsDetailsController extends Controller
         $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($filterAll);
 
         $data = [
+            'viewModes' => $statsDetailsService->getViewModes(),
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,
             'rangeTypes' => $statsDetailsService->getRangeTypes(),

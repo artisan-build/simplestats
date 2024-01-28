@@ -1,6 +1,9 @@
 <script setup>
 
 import NavLink from "@/Components/NavLink.vue";
+import {usePage} from "@inertiajs/vue3";
+
+const page = usePage();
 </script>
 
 <template>
@@ -17,7 +20,7 @@ import NavLink from "@/Components/NavLink.vue";
                         Dashboard
                     </NavLink>
                 </li>
-                <li class="flex flex-col gap-y-1">
+                <li class="flex flex-col gap-y-1" v-if="page.props.projectsCount > 1">
                     <NavLink :href="route('stats.overview')" :active="route().current().startsWith('stats.overview')">
                         <template #icon>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

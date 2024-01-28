@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\StatsRange;
+use App\Enums\ViewMode;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsTrackCampaign;
@@ -32,6 +33,7 @@ class StatsDetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'viewMode' => ['sometimes', Rule::enum(ViewMode::class)],
             'projectId' => [
                 'sometimes',
                 'integer',

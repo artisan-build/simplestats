@@ -3,6 +3,7 @@
 namespace App\DTOs;
 
 use App\Enums\StatsRange;
+use App\Enums\ViewMode;
 use App\Http\Requests\StatsDetailsRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -13,6 +14,7 @@ readonly class StatsRangeFilterDto
     const TRACK_ORGANIC = -1;
 
     public function __construct(
+        public ViewMode $viewMode,
         public int $projectId,
         public int $instanceId,
         public int $rangeAmount,
@@ -28,6 +30,7 @@ readonly class StatsRangeFilterDto
     public static function fromRequest(StatsDetailsRequest $request): StatsRangeFilterDto
     {
         return new self(
+            ViewMode::from($request->viewMode ?? ViewMode::SIMPLE->value),
             $request->projectId ?? 0,
             $request->instanceId ?? 0,
             $request->rangeAmount ?? 7,

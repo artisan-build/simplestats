@@ -6,6 +6,7 @@ import StatsDetailsFilter from "@/Pages/Stats/Partials/StatsDetailsFilter.vue";
 import StatsDetailsGraphs from "@/Pages/Stats/Partials/StatsDetailsGraphs.vue";
 
 defineProps({
+    viewModes: Array,
     teamStats: Object,
     filters: Object,
     rangeTypes: Array,
@@ -27,6 +28,7 @@ defineProps({
             </div>
             <div class="mb-8">
                 <StatsDetailsFilter
+                    :viewModes="viewModes"
                     :teamStats="teamStats"
                     :filters="filters"
                     :rangeTypes="rangeTypes"

@@ -15,6 +15,7 @@ const showGroupTotal = projects.some(project => project.instances.length >= 2);
 
 <template>
     <AppLayout title="Statistics" :fullscreen="true">
+        <template #header>Overview</template>
         <div>
             <div v-for="project in projects">
                 <StatsOverviewGroup :showGroupTotal="showGroupTotal && project.instances.length >= 1" :statsGroup="project" />
