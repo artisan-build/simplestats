@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             return $user;
         });
 
-        if (app()->isLocal()) {
+        if (!app()->isProduction()) {
             Project::factory()->count(1)->state(['name' => 'SimpleStats'])
                 ->for(Team::find($user->current_team_id))
                 ->has(Instance::factory()->count(1)->state(['name' => 'Local'])
