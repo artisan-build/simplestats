@@ -40,7 +40,7 @@ const extractStatsData4Graph = (statsCategory, fields) => {
 
 const charts = [
     {
-        name: 'Date',
+        name: 'By Date',
         data: extractStatsData4Graph('per_date', [
             {key: 'REG', visible: true},
             {key: 'NAU', visible: false},
