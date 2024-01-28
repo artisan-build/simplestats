@@ -43,13 +43,4 @@ enum StatsRange: string
             ],
         ];
     }
-
-    public static function ranges()
-    {
-        return [
-            self::DAY->value => range(1,90),
-            self::WEEK->value => range(1,54),
-            self::MONTH->value => range(1,12),
-        ];
-    }
 }
