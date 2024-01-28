@@ -9,7 +9,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laracraft-tech/laravel-useful-additions": "^3.4",
-        "laracraft-tech/simplestats-client": "dev-main",
+        "simplestats-io/laravel-client": "dev-main",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.2",
         "laravel/sanctum": "^3.3",
@@ -72,9 +72,9 @@
         }
     },
     "repositories": {
-        "laracraft-tech/simplestats-client": {
+        "simplestats-io/laravel-client": {
             "type": "path",
-            "url": "./packages/laracraft-tech/simplestats-client",
+            "url": "./packages/simplestats-io/laravel-client",
             "options": {
                 "symlink": true
             }
