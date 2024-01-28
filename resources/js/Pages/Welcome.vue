@@ -25,7 +25,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             </a>
 
             <div class="flex items-center gap-6">
-                <Link v-if="$page.props.auth.user" :href="route('stats')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
+                <Link v-if="$page.props.auth.user" :href="route('stats.overview')" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
 
                 <template v-else>
                     <Link :href="route('login')" class="font-semibold">Log in</Link>

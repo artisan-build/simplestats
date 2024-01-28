@@ -46,6 +46,10 @@ const filterChanged = (event) => {
         checkHierachicalTracking(event.target.id);
     }
 
+    if (event.target.id === 'projectId') {
+        form.instanceId = 0;
+    }
+
     // the unsafe equality check is for reason...
     for (let key in form) {
         if (form.hasOwnProperty(key) && form[key] == props.trackAllKey) {
@@ -63,8 +67,15 @@ const filterChanged = (event) => {
         <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md">
             <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
                 <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
-                    <div class="flex flex-wrap gap-x-2 items-end">
-                        <div v-if="Object.keys(teamStats.projects).length >= 3">
+                    <div v-if="!(teamStats.totalProjectsCount === 1 && teamStats.totalInstancesCount == 1)" class="flex flex-wrap gap-x-2 items-end">
+                        <div v-if="teamStats.totalProjectsCount === 0">
+                            <InputLabel for="projectId" value="Project" />
+                            <PrimaryButton class="h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" type="button" @click="$inertia.get(route('projects.index'))">
+                                Create first Project
+                            </PrimaryButton>
+                        </div>
+                        <!-- if teamStats.totalProjectsCount === 1 we do not need to show the create button and also not the project dropdown, cause there is only one -->
+                        <div v-if="teamStats.totalProjectsCount >= 2">
                             <InputLabel for="projectId" value="Project" />
                             <SelectInput
                                 id="projectId"
@@ -74,7 +85,7 @@ const filterChanged = (event) => {
                                 @change="filterChanged"
                             />
                         </div>
-                        <div v-if="teamStats.projects[filters.projectId].instances">
+                        <div v-if="teamStats.projects[filters.projectId].instances && teamStats.totalInstancesCount > 0">
                             <InputLabel for="instanceId" value="Instance" />
                             <SelectInput
                                 id="instanceId"
@@ -83,6 +94,12 @@ const filterChanged = (event) => {
                                 :options="teamStats.projects[filters.projectId].instances"
                                 @change="filterChanged"
                             />
+                        </div>
+                        <div v-if="teamStats.totalProjectsCount >= 1 && teamStats.totalInstancesCount === 0">
+                            <InputLabel for="instanceId" value="Instance" />
+                            <PrimaryButton class="h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" type="button" @click="$inertia.get(route('projects.show', Object.values(teamStats.projects)[1].id))">
+                                Create first Instance
+                            </PrimaryButton>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-x-2 items-end">

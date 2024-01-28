@@ -39,7 +39,7 @@ const createInstance = () => {
 
         <template #form>
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="New Instance Name" />
+                <InputLabel for="name" value="Create New Instance" />
                 <TextInput
                     id="name"
                     v-model="createInstanceForm.name"

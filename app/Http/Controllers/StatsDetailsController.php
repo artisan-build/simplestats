@@ -25,6 +25,10 @@ class StatsDetailsController extends Controller
             });
         })->get()->first();
 
+        // do this before prepend all filter...
+        $teamStats->totalProjectsCount = $teamStats->projects->count(); // here we use the alreay loaded collection
+        $teamStats->totalInstancesCount = $teamStats->instances()->count(); // here we use the relationship
+
         // we need to do prepend before keyBy('id')
         $teamStats->projects->prepend($filterAll);
 

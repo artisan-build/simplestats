@@ -29,7 +29,7 @@ const increaseTypes = {
     "0": {
         unit: '',
         color: '#fdbb74',
-        description: 'constant',
+        description: 'stable',
         tailClass: 'text-orange-600',
         icon: ScaleIcon,
     },

@@ -56,7 +56,7 @@ const props = defineProps({
                 <StatsOverviewCols :stats="instance.stats" :projectId="instance.project_id" :instanceId="instance.instance_id" />
             </tr>
             <tr v-else-if="statsGroup.project_id !== 0">
-                <td class="p-3 text-base" colspan="10">
+                <td class="p-3 text-base text-red-600" colspan="10">
                     No Instance configured for this Project!
                     Go <Link class="font-bold hover:underline" :href="route('projects.show', statsGroup.project_id)">here</Link> to add one.
                 </td>
