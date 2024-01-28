@@ -14,6 +14,10 @@ let preSeriesData = props.graph.data.series[props.graph.data.series.length - 2];
 
 let increase = (((lastSeriesData - preSeriesData) / preSeriesData) * 100);
 
+if (props.graph.unit !== '') {
+    lastSeriesData = lastSeriesData.toFixed(2);
+}
+
 if (isNaN(increase)) {
     increase = 0;
 }
