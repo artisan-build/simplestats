@@ -15,11 +15,11 @@ class StatsPaymentResource extends JsonResource
         return [
             'id' => $this->id,
             'stats_user_id' => $this->stats_user_id,
-            'team_id' => $this->team_id,
             'project_id' => $this->project_id,
             'instance_id' => $this->instance_id,
             'gross' => $this->gross,
             'net' => $this->net,
+            'currency' => $this->currency,
             'time' => $this->time,
         ];
     }

@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use \Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
-class PersonalAccessToken extends \Laravel\Sanctum\PersonalAccessToken
+class PersonalAccessToken extends SanctumPersonalAccessToken
 {
     public function __construct(array $attributes = [])
     {

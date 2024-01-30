@@ -23,6 +23,7 @@ class StatsPaymentRequest extends FormRequest
             'stats_user_id' => ['required', 'integer', 'exists:stats_users,id'],
             'gross' => ['required', 'numeric'],
             'net' => ['required', 'numeric'],
+            'currency' => ['required', 'string'],
             'time' => ['required', 'date'],
         ];
     }

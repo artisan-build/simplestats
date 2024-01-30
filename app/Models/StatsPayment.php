@@ -32,6 +32,7 @@ class StatsPayment extends Model
         'stats_user_id',
         'gross',
         'net',
+        'currency',
         'time',
     ];
 

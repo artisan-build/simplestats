@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
             $table->float('gross');
             $table->float('net');
+            $table->string('currency', 3);
             $table->date('time')->index();
             $table->integer('counter')->index();
 

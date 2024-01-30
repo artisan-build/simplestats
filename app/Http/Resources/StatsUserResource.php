@@ -14,7 +14,6 @@ class StatsUserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'team_id' => $this->team_id,
             'project_id' => $this->project_id,
             'instance_id' => $this->instance_id,
             'stats_track_source_id' => $this->stats_track_source_id,
