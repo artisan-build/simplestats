@@ -11,6 +11,7 @@ use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
@@ -23,8 +24,8 @@ class DatabaseSeeder extends Seeder
     {
         $user = User::withoutEvents(function () {
             $user = (new CreateNewUser())->create([
-                'name' => 'Zacharias Creutznacher',
-                'email' => 'zacharias.creutznacher@gmail.com',
+                'name' => 'Demo User',
+                'email' => 'demo@simplestats.io',
                 'password' => 'password',
                 'password_confirmation' => 'password',
                 'terms' => true,
@@ -35,7 +36,7 @@ class DatabaseSeeder extends Seeder
             return $user;
         });
 
-        if (!app()->isProduction()) {
+        if (app()->isLocal()) {
             Project::factory()->count(1)->state(['name' => 'SimpleStats'])
                 ->for(Team::find($user->current_team_id))
                 ->has(Instance::factory()->count(1)->state(['name' => 'Local'])
@@ -56,11 +57,19 @@ class DatabaseSeeder extends Seeder
         sleep(1);
 
         Project::factory()->count(2)
+            ->state(new Sequence(
+                ['name' => 'My cool SaaS'],
+                ['name' => 'My great App'],
+            ))
             ->for(Team::find($user->current_team_id))
             ->has(
-                Instance::factory()->count(3)
+                Instance::factory()->count(2)
+                    ->state(new Sequence(
+                        ['name' => 'US'],
+                        ['name' => 'EU'],
+                    ))
                     ->afterCreating(function (Instance $instance) {
-                        StatsUser::factory(rand(100, 300))->initialize()->create([
+                        StatsUser::factory(rand(100,300))->initialize()->create([
                             'project_id' => $instance->project_id,
                             'instance_id' => $instance->id,
                         ])
