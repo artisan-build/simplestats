@@ -35,12 +35,12 @@ const graphs = [
     },
     {
         name: 'Revenue (N)',
-        unit: 'EUR',
+        unit: 'USD',
         data: extractStatsData4Graph('per_date', 'NET'),
     },
     {
         name: 'ARPU',
-        unit: 'EUR',
+        unit: 'USD',
         data: extractStatsData4Graph('lifetime', 'ARPU'),
     }
 ];

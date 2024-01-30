@@ -23,11 +23,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $user = User::withoutEvents(function () {
+            $testUser = config('app.test.user');
             $user = (new CreateNewUser())->create([
-                'name' => 'Demo User',
-                'email' => 'demo@simplestats.io',
-                'password' => 'password',
-                'password_confirmation' => 'password',
+                'name' => $testUser['name'],
+                'email' => $testUser['email'],
+                'password' => $testUser['password'],
+                'password_confirmation' => $testUser['password'],
                 'terms' => true,
             ]);
 
