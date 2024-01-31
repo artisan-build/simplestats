@@ -62,7 +62,7 @@ return [
         Features::profilePhotos(),
 //        Features::api(),
         Features::teams(['invitations' => true]),
-        Features::accountDeletion(),
+        (env('APP_ENV') !== 'demo') ? Features::accountDeletion() : null,
     ],
 
     /*

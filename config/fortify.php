@@ -145,7 +145,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        (env('COMING_SOON')) ? null : Features::registration(),
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::updateProfileInformation(),

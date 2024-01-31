@@ -18,9 +18,10 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+    return Inertia::render('Home/LandingPage', [
+        'comingSoon' => config('app.coming_soon'),
+        'canLogin' => Route::has('login') && !config('app.coming_soon'),
+        'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
     ]);
 });
 

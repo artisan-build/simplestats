@@ -5,6 +5,8 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
+    'coming_soon' => env('COMING_SOON', false),
+
     'test' => [
         'user' => [
             'name' => 'John Doe',
