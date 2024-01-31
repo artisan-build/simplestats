@@ -19,8 +19,7 @@ class Kernel extends ConsoleKernel
                 ->before(fn() => Artisan::call('down'))
                 ->after(fn() => Artisan::call('up'))
                 ->runInBackground()
-                ->withoutOverlapping()
-                ->onOneServer();
+                ->withoutOverlapping();
         }
     }
 
