@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\StatsOverviewController;
 use App\Http\Controllers\StatsDetailsController;
 use Illuminate\Foundation\Application;
@@ -24,6 +25,8 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
     ]);
 });
+
+Route::post('early-subscription', EarlySubscriptionController::class)->name('early-subscription');
 
 Route::middleware([
     'auth:sanctum',

@@ -13,7 +13,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('login'));
+    form.post(route('early-subscription'), {
+        onSuccess: () => form.reset('email'),
+    });
 };
 
 const appName = import.meta.env.VITE_APP_NAME;
@@ -51,7 +53,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </div>
             </nav>
 
-            <section class="flex items-center flex-1 -mt-20">
+            <section class="flex items-center flex-1">
                 <div class="flex flex-col w-full ">
                     <h1 class="text-5xl font-extrabold text-center lg:text-7xl 2xl:text-8xl">
                         <span class="text-transparent bg-gradient-to-br bg-clip-text from-indigo-500 via-indigo-500 to-sky-500 dark:from-indigo-200 dark:via-indigo-300 dark:to-sky-500">
@@ -71,22 +73,30 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </p>
 
                     <div class="flex flex-col mt-8 space-y-3 sm:-mx-2 sm:flex-row sm:justify-center sm:space-y-0">
-                        <form @submit.prevent="submit" class="flex items-center">
-                            <TextInput
-                                id="email"
-                                v-model="form.email"
-                                type="email"
-                                class="block w-full h-10"
-                                required
-                                autofocus
-                                placeholder="Email"
-                            />
-                            <InputError class="mt-2" :message="form.errors.email" />
+                        <form @submit.prevent="submit">
+                            <div class="flex items-center">
+                                <TextInput
+                                    id="email"
+                                    v-model="form.email"
+                                    type="email"
+                                    class="block w-full h-10"
+                                    required
+                                    autofocus
+                                    placeholder="Email"
+                                />
 
-                            <PrimaryButton class="ml-4 h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600">
-                                Notify&nbsp;Me
-                            </PrimaryButton>
+                                <PrimaryButton class="ml-4 h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                    Notify&nbsp;Me
+                                </PrimaryButton>
+                            </div>
                         </form>
+                    </div>
+
+                    <div class="text-center h-20 mt-3">
+                                <span v-show="form.wasSuccessful" class="text-green-600 text-sm">
+                                    Thank you for subscribing!<br>We'll send you an email when the app is about to launch.
+                                </span>
+                        <InputError :message="form.errors.email" />
                     </div>
                 </div>
             </section>
