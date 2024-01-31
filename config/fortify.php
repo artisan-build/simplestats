@@ -146,10 +146,10 @@ return [
 
     'features' => [
         (env('APP_ENV') === 'demo' || env('COMING_SOON')) ? null : Features::registration(),
-        (env('APP_ENV') === 'demo') ? null : Features::resetPasswords(),
-        (env('APP_ENV') === 'demo') ? null : Features::emailVerification(),
-        (env('APP_ENV') === 'demo') ? null : Features::updateProfileInformation(),
-        (env('APP_ENV') === 'demo') ? null : Features::updatePasswords(),
+        Features::resetPasswords(),
+        Features::emailVerification(),
+        Features::updateProfileInformation(),
+        Features::updatePasswords(),
 //        Features::twoFactorAuthentication([
 //            'confirm' => true,
 //            'confirmPassword' => true,
