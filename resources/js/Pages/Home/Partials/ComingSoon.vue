@@ -34,7 +34,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <form action="https://demo.simplestats.io" method="GET" target="_blank">
+                    <form action="https://demo.simplestats.io/login" method="GET" target="_blank">
                         <SecondaryButton type="submit" class="mr-5 relative">
                             Show Demo
                             <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1">
