@@ -21,7 +21,7 @@ defineProps({
 </script>
 
 <template>
-    <AppLayout title="Project Statistics" :fullscreen="true">
+    <AppLayout title="Details" :fullscreen="true">
         <div>
             <div class="mb-8">
                 <StatsDetailsTop :viewMode="filters.viewMode" :teamStats="teamStats" />

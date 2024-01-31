@@ -14,7 +14,7 @@ const showGroupTotal = projects.some(project => project.instances.length >= 2);
 </script>
 
 <template>
-    <AppLayout title="Statistics" :fullscreen="true">
+    <AppLayout title="Overview" :fullscreen="true">
         <template #header>Overview</template>
         <div>
             <div v-for="project in projects">
