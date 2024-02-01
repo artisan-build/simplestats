@@ -61,7 +61,7 @@ const features = [
 </script>
 
 <template>
-    <div class="max-w-screen-xl lg:flex lg:flex-wrap lg:justify-around xl:mt-6 xl:px-8">
+    <div id="features" class="max-w-screen-xl lg:flex lg:flex-wrap lg:justify-around xl:mt-6 xl:px-8">
         <div v-for="feature in features" class="mt-10 flex w-full max-w-md lg:w-1/3 lg:flex-col lg:p-5">
             <div class="mr-4 flex items-center gap-x-5 lg:mr-0 text-indigo-600">
                 <component class="h-10 w-10" :is="feature.icon" />
