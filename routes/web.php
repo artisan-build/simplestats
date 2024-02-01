@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EarlySubscriptionController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StatsOverviewController;
 use App\Http\Controllers\StatsDetailsController;
 use Illuminate\Foundation\Application;
@@ -18,13 +19,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Home/LandingPage', [
-        'comingSoon' => config('app.coming_soon'),
-        'canLogin' => Route::has('login') && !config('app.coming_soon'),
-        'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
-    ]);
-});
+Route::get('/', HomeController::class);
 
 Route::post('early-subscription', EarlySubscriptionController::class)->name('early-subscription');
 

@@ -6,6 +6,7 @@ import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import Features from "@/Pages/Home/Partials/Features.vue";
 
 
 const form = useForm({
@@ -53,65 +54,52 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </div>
             </nav>
 
-            <section class="flex items-center flex-1">
-                <div class="flex flex-col w-full ">
-                    <h1 class="text-5xl font-extrabold text-center lg:text-7xl 2xl:text-8xl">
-                        <span class="text-transparent bg-gradient-to-br bg-clip-text from-indigo-500 via-indigo-500 to-sky-500 dark:from-indigo-200 dark:via-indigo-300 dark:to-sky-500">
-                            Coming
-                        </span>
+            <section class="mt-40">
+                <h1 class="text-5xl font-extrabold text-center lg:text-7xl 2xl:text-8xl">
+                    <span class="text-transparent bg-gradient-to-br bg-clip-text from-indigo-500 via-indigo-500 to-sky-500 dark:from-indigo-200 dark:via-indigo-300 dark:to-sky-500">
+                        Coming
+                    </span>
 
-                        <span class="text-transparent bg-gradient-to-tr bg-clip-text from-indigo-500 via-pink-500 to-red-500 dark:from-sky-300 dark:via-pink-300 dark:to-red-500">
-                            Soon
-                        </span>
-                    </h1>
+                    <span class="text-transparent bg-gradient-to-tr bg-clip-text from-indigo-500 via-pink-500 to-red-500 dark:from-sky-300 dark:via-pink-300 dark:to-red-500">
+                        Soon
+                    </span>
+                </h1>
 
-                    <p class="max-w-3xl mx-auto mt-6 text-lg text-center text-gray-700 dark:text-white md:text-xl">
-                        The missing statistic tool for <strong>Laravel</strong> apps.<br>Get highly detailed user, payment and campaign statistics in no time!
-                    </p>
-                    <p class="max-w-3xl mx-auto mt-5 text-sm text-gray-500 text-center">
-                        (For Laravel apps the setup will be super simple, but the API will basically work for every client!)
-                    </p>
+                <p class="max-w-3xl mx-auto mt-6 text-lg text-center text-gray-700 dark:text-white md:text-xl">
+                    The missing statistic tool for <strong>Laravel</strong> apps.<br>Get highly detailed user, revenue and campaign statistics in no time!
+                </p>
 
-                    <div class="flex flex-col mt-8 space-y-3 sm:-mx-2 sm:flex-row sm:justify-center sm:space-y-0">
-                        <form @submit.prevent="submit">
-                            <div class="flex items-center">
-                                <TextInput
-                                    id="email"
-                                    v-model="form.email"
-                                    type="email"
-                                    class="block w-full h-10"
-                                    required
-                                    autofocus
-                                    placeholder="Email"
-                                />
+                <div class="flex flex-col mt-8 space-y-3 sm:-mx-2 sm:flex-row sm:justify-center sm:space-y-0">
+                    <form @submit.prevent="submit">
+                        <div class="flex items-center">
+                            <TextInput
+                                id="email"
+                                v-model="form.email"
+                                type="email"
+                                class="block w-full h-10"
+                                required
+                                autofocus
+                                placeholder="Email"
+                            />
 
-                                <PrimaryButton class="ml-4 h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                    Notify&nbsp;Me
-                                </PrimaryButton>
-                            </div>
-                        </form>
-                    </div>
+                            <PrimaryButton class="ml-4 h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                Notify&nbsp;Me
+                            </PrimaryButton>
+                        </div>
+                    </form>
+                </div>
 
-                    <div class="text-center h-20 mt-3">
-                                <span v-show="form.wasSuccessful" class="text-green-600 text-sm">
-                                    Thank you for subscribing!<br>We'll send you an email when the app is about to launch.
-                                </span>
-                        <InputError :message="form.errors.email" />
-                    </div>
+                <div class="text-center h-20 mt-3">
+                    <span v-show="form.wasSuccessful" class="text-green-600 text-sm">
+                        Thank you for subscribing!<br>We'll send you an email when the app is about to launch.
+                    </span>
+                    <InputError :message="form.errors.email" />
                 </div>
             </section>
 
-            <footer v-if="false" class="flex flex-col items-center mt-12 sm:flex-row sm:justify-between">
-                <a href="#" class="text-gray-700 transition-colors duration-300 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400"> Privacy Policy </a>
-
-                <div class="mt-4 -mx-4 md:mt-0">
-                    <a href="#" class="px-4 text-gray-700 transition-colors duration-300 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400"> Facebook</a>
-
-                    <a href="#" class="px-4 text-gray-700 transition-colors duration-300 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400">Instagram</a>
-
-                    <a href="#" class="px-4 text-gray-700 transition-colors duration-300 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400"> LinkedIn</a>
-                </div>
-            </footer>
+            <section class="flex justify-center px-4 pb-32">
+                <Features />
+            </section>
         </div>
     </section>
 </template>
