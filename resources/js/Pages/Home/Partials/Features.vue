@@ -15,47 +15,47 @@ const features = [
     {
         "icon": LightBulbIcon,
         "title": "Different",
-        "descr": "Most analytic tools show you data like visits, views and page impressions. Everything beyond that, you need to integrate manually. That's where SimpleStats shines, it gives you super-powers without the integration-hustle."
+        "descr": "Most analytic tools show you data like visits, views, and page impressions. Everything beyond that, you need to integrate manually. That's where SimpleStats shines; it gives you superpowers without the integration hustle."
     },
     {
         "icon": RocketLaunchIcon,
         "title": "Simple",
-        "descr": "All you need to do to get SimpleStats running: Install a composer package, adjust the config to your needs, create an account and add the token to your env. Congrats you're ready to analyze your campaigns and users!"
+        "descr": "All you need to do to get SimpleStats up and running is: Install a composer package, adjust the config to your needs, create an account, and add the token to your env file. Congrats, you're ready to analyze your campaigns and users!"
     },
     {
         "icon": LaravelIcon,
         "title": "Laravel",
-        "descr": "Since the statistic tool and the composer client package is tailored precisely to Laravel, it can collect very interesting and important data without any additional complexity for you as the integrator."
+        "descr": "Since the statistics tool and the composer client package are tailored precisely to Laravel, they can collect very interesting and important data without any additional complexity for you as the integrator of the package."
     },
     {
         "icon": CodeBracketIcon,
         "title": "API",
-        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you like to use to tool, even if you're not using Laravel, just trigger the API requests manually."
+        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually."
     },
     {
         "icon": MapPinIcon,
         "title": "UTMs and Referrers",
-        "descr": "Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it's super easy to see which of your marketing activities leads to revenue. You can simply analyse the ROI of your campaigns in the dashboard!"
+        "descr": "Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it's super easy to see which of your marketing activities leads to revenue. You can simply analyze the ROI of your campaigns from the dashboard!"
     },
     {
         "icon": ChartBarIcon,
         "title": "KPIs",
-        "descr": "Here are a few of the KPIs that the tool makes available to you: Registrations, Daily Active Users, New Active Paying Users, Average Revenue per User, Paying User, Revenue and much more. Everything filterable by date and UTMs!"
+        "descr": "Here are a few of the KPIs that the tool provides: Registrations, Daily Active Users, New Active Paying Users, Average Revenue per User, Paying User, Revenue and much more. Everything filterable by date and UTMs!"
     },
     {
         "icon": ShieldCheckIcon,
         "title": "Privacy",
-        "descr": "We're fully privacy compliant! No cookies are needed or stored. You can trust SimpleStats, it respects your privacy and will never share your data."
+        "descr": "We are fully committed to privacy compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."
     },
     {
         "icon": UserGroupIcon,
         "title": "Collaborate",
-        "descr": "Create a team, invite your co-workers and assign permissions to them. Each team is tenancy-separated and therefore will ensure a very secure and robust data integration!"
+        "descr": "Collaborate by creating a team, inviting your co-workers to your projects, and assigning permissions to them. Each team is separated by tenancy, ensuring highly secure and robust data integration!"
     },
     {
         "icon": GiftIcon,
         "title": "Free",
-        "descr": "There will always be a free plan! If your business grows, you can support us with a subscription. We would love to help you analyzing your campaigns. No need to enter credit card information at the registration."
+        "descr": "There will always be a free plan! If your business grows, you can support us with by subscribing. We would love to help you analyzing your campaigns. No need to enter credit card information at the registration."
     }
 ];
 </script>
