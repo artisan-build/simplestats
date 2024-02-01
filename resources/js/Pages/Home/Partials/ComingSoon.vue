@@ -63,7 +63,8 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </h1>
 
                 <p class="max-w-3xl mx-auto mt-6 text-lg text-center text-gray-700 dark:text-white md:text-xl">
-                    The missing statistic tool for <strong>Laravel</strong> apps.<br>Get highly detailed user, revenue and campaign statistics in no time!
+                    The missing statistic tool for <strong>Laravel</strong> apps.<br>
+                    Get highly detailed user, revenue and campaign statistics in no time!
                 </p>
 
                 <div class="flex flex-col mt-8 space-y-3 sm:-mx-2 sm:flex-row sm:justify-center sm:space-y-0">

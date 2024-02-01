@@ -44,7 +44,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             </h1>
             <p class="mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
                 Get highly detailed user, revenue and campaign statistics in no time.<br>
-                Start knowing your users today!
+                Start knowing your users and campaigns today!
             </p>
             <Link v-if="canRegister" :href="route('register')" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
                 Get started
