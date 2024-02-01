@@ -29,7 +29,7 @@ watchEffect(() => {
 const viewApiTokenForm = useForm({});
 
 const viewApiToken = (instance) => {
-    viewApiTokenForm.post(route('projects.instances.token-view', [instance.project_id, instance.id]), {
+    viewApiTokenForm.get(route('projects.instances.token-view', [instance.project_id, instance.id]), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
@@ -46,7 +46,7 @@ const confirmApiTokenRegeneration = (instance) => {
 };
 
 const regenerateApiToken = () => {
-    regenerateApiTokenForm.post(route('projects.instances.token-regenerate', [apiTokenBeingRegenerated.value.project_id, apiTokenBeingRegenerated.value.id]), {
+    regenerateApiTokenForm.get(route('projects.instances.token-regenerate', [apiTokenBeingRegenerated.value.project_id, apiTokenBeingRegenerated.value.id]), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
