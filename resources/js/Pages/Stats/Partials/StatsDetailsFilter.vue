@@ -35,7 +35,7 @@ const checkHierachicalTracking = (trackId) => {
     let fieldsToCheck = ['trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
     let startIndex = fieldsToCheck.indexOf(trackId);
 
-    if (startIndex !== -1 && form[trackId] == props.trackAllKey) {
+    if (startIndex !== -1 && form[trackId] <= props.trackAllKey) {
         for (let i = startIndex + 1; i < fieldsToCheck.length; i++) {
             form[fieldsToCheck[i]] = 0;
         }
