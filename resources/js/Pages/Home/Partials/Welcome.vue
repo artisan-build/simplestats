@@ -24,7 +24,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             <div class="flex items-center gap-6">
                 <Link :href="'#features'" class="">Features</Link>
 
-                <Link href="#" class="">Docs</Link>
+                <a href="/docs">Docs</a>
 
                 <Link v-if="$page.props.auth.user" :href="route('stats.details')" class=" text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</Link>
 

@@ -37,9 +37,12 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </a>
                 </div>
 
-                <div class="flex items-center justify-between">
+                <div class="flex items-center gap-x-5 justify-between">
+                    <div>
+                        <a href="#features">Features</a>
+                    </div>
                     <form action="https://demo.simplestats.io/login" method="GET" target="_blank">
-                        <SecondaryButton type="submit" class="mr-5 relative">
+                        <SecondaryButton type="submit" class="relative">
                             Show Demo
                             <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
@@ -51,7 +54,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </div>
             </nav>
 
-            <section class="mt-40">
+            <section class="mt-32">
                 <h1 class="text-5xl font-extrabold text-center lg:text-7xl 2xl:text-8xl">
                     <span class="text-transparent bg-gradient-to-br bg-clip-text from-indigo-500 via-indigo-500 to-sky-500 dark:from-indigo-200 dark:via-indigo-300 dark:to-sky-500">
                         Coming
@@ -92,6 +95,12 @@ const appName = import.meta.env.VITE_APP_NAME;
                         Thank you for subscribing!<br>We'll send you an email when the app is about to launch.
                     </span>
                     <InputError :message="form.errors.email" />
+                </div>
+            </section>
+
+            <section class="mt-5 flex justify-center px-4 md:mt-12 xl:mt-0">
+                <div class="w-full max-w-screen-xl xl:p-8 xl:py-16">
+                    <img src="images/screenshot.png" class="w-full rounded sm:rounded-lg md:rounded-xl shadow-xl border" alt="Screenshot">
                 </div>
             </section>
 

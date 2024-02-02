@@ -6,15 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "binarytorch/larecipe": "^2.6",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laracraft-tech/laravel-useful-additions": "^3.4",
-        "simplestats-io/laravel-client": "dev-main",
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.2",
         "laravel/sanctum": "^3.3",
         "laravel/spark-paddle": "^5.0",
         "laravel/tinker": "^2.8",
+        "simplestats-io/laravel-client": "dev-main",
         "spatie/laravel-ray": "^1.33",
         "tightenco/ziggy": "^1.0"
     },
