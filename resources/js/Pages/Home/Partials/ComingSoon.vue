@@ -83,7 +83,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                                 placeholder="Email"
                             />
 
-                            <PrimaryButton class="ml-4 h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                            <PrimaryButton class="ml-4 h-10" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                                 Notify&nbsp;Me
                             </PrimaryButton>
                         </div>

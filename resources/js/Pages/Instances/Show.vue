@@ -64,7 +64,7 @@ const regenerateApiToken = () => {
                 Instance: {{ instance.name }}
             </div>
             <div>
-                <PrimaryButton class="h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" type="button" @click="$inertia.get(route('stats.details', {projectId: instance.project_id, instanceId: instance.id}))">
+                <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('stats.details', {projectId: instance.project_id, instanceId: instance.id}))">
                     Go to Stats
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />

@@ -83,7 +83,7 @@ const filterChanged = (event) => {
                     <div v-if="!(teamStats.totalProjectsCount === 1 && teamStats.totalInstancesCount == 1)" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="teamStats.totalProjectsCount === 0">
                             <InputLabel for="projectId" value="Project" />
-                            <PrimaryButton class="h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" type="button" @click="$inertia.get(route('projects.index'))">
+                            <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.index'))">
                                 Create first Project
                             </PrimaryButton>
                         </div>
@@ -110,7 +110,7 @@ const filterChanged = (event) => {
                         </div>
                         <div v-if="teamStats.totalProjectsCount >= 1 && teamStats.totalInstancesCount === 0">
                             <InputLabel for="instanceId" value="Instance" />
-                            <PrimaryButton class="h-10 bg-indigo-500 hover:bg-indigo-600 focus:bg-indigo-600" type="button" @click="$inertia.get(route('projects.show', Object.values(teamStats.projects)[1].id))">
+                            <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.show', Object.values(teamStats.projects)[1].id))">
                                 Create first Instance
                             </PrimaryButton>
                         </div>
