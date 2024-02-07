@@ -30,19 +30,6 @@ class JetstreamServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Fortify::loginView(function () {
-            $data = [
-                'canResetPassword' => Route::has('password.request'),
-                'status' => session('status'),
-            ];
-
-            if (! app()->isProduction()) {
-                $data['testUser'] = config('app.test.user');
-            }
-
-            return Inertia::render('Auth/Login', $data);
-        });
-
         $this->configurePermissions();
 
         Jetstream::createTeamsUsing(CreateTeam::class);

@@ -25,12 +25,12 @@ class StatsDetailsController extends Controller
             });
         })->get()->first();
 
-        // do this before prepend all filter...
+        // do this before prepend all filters...
         $teamStats->totalProjectsCount = $teamStats->projects->count(); // here we use the alreay loaded collection
 
-        if ($teamStats->totalProjectsCount < 1) {
-            return  redirect()->route('projects.index');
-        }
+//        if ($teamStats->totalProjectsCount < 1) {
+//            return  redirect()->route('projects.index');
+//        }
 
         $teamStats->totalInstancesCount = $teamStats->instances()->count(); // here we use the relationship
 

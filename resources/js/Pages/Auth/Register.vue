@@ -7,12 +7,18 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {onMounted} from "vue";
+
+const props = defineProps({
+    params: Object
+});
 
 const form = useForm({
     name: '',
-    email: '',
+    email: props.params.invitationMail ?? '',
     password: '',
     password_confirmation: '',
+    accept_invitation_link: props.params.acceptInvitationLink ?? '',
     terms: false,
 });
 
@@ -32,7 +38,8 @@ const submit = () => {
         </template>
 
         <template #title>
-            Register a new account
+            Register a new account<br>
+            <span class="text-sm text-gray-500" v-if="params.teamName">and join the following team: {{ params.teamName }}</span>
         </template>
 
         <form @submit.prevent="submit">
@@ -102,6 +109,15 @@ const submit = () => {
                 </InputLabel>
             </div>
 
+            <div>
+                <TextInput
+                    id="accept_invitation_link"
+                    v-model="form.accept_invitation_link"
+                    type="hidden"
+                    autocomplete="accept_invitation_link"
+                />
+            </div>
+
             <div class="flex items-center justify-end mt-4">
                 <Link :href="route('login')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
                     Already registered?
@@ -111,6 +127,8 @@ const submit = () => {
                     Register
                 </PrimaryButton>
             </div>
+
+            <InputError class="mt-2" :message="form.errors.accept_invitation_link" />
         </form>
     </AuthenticationCard>
 </template>

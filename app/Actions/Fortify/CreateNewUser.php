@@ -4,11 +4,15 @@ namespace App\Actions\Fortify;
 
 use App\Models\Team;
 use App\Models\User;
+use App\Rules\SignedUrl;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
+use Laravel\Jetstream\TeamInvitation;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -26,19 +30,51 @@ class CreateNewUser implements CreatesNewUsers
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
+            'accept_invitation_link' => ['nullable', new SignedUrl()]
         ])->validate();
 
-        return DB::transaction(function () use ($input) {
-            return tap(User::create([
+        $invitation = false;
+        $invitationRequest = false;
+
+        if (! empty($input['accept_invitation_link'])) {
+            $invitationRequest = Request::create($input['accept_invitation_link']);
+            $id = explode('/', $invitationRequest->getPathInfo())[2];
+            $invitation = TeamInvitation::findOrFail($id);
+
+            Validator::make(array_merge($input, ['invitation_mail' => $invitation->email]), [
+                'email' => ['same:invitation_mail'],
+            ])->validate();
+        }
+
+        return DB::transaction(function () use ($input, $invitationRequest, $invitation) {
+            $createUser = [
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
-            ]), function (User $user) {
+            ];
+
+            return tap(User::create($createUser), function (User $user) use ($invitationRequest, $invitation) {
+                // create the users personal team
                 $this->createTeam($user);
+
+                if ($invitationRequest && $invitation) {
+                    $this->acceptTeamInvitation($invitationRequest, $invitation);
+                }
             });
         });
     }
 
+    /**
+     * Accepts a team invitation
+     *
+     * @param Request $request
+     * @param TeamInvitation $invitation
+     */
+    protected function acceptTeamInvitation(Request $request, TeamInvitation $invitation): void
+    {
+        $teamInvitation = app(TeamInvitationController::class);
+        $teamInvitation->accept($request, $invitation->id);
+    }
     /**
      * Create a personal team for the user.
      */
