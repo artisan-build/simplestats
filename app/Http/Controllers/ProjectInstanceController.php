@@ -67,8 +67,10 @@ class ProjectInstanceController extends Controller
         return redirect()->route('projects.show', $instance->project_id)->banner('Instance deleted: '.$instance->name);
     }
 
-    public function tokenRegenerate(Project $project, Instance $instance)
+    public function tokenRegenerate(Request $request, Project $project, Instance $instance, StatefulGuard $guard)
     {
+        app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+
         $instance->tokens()->delete();
 
         $token = $instance->createTokenPlain(

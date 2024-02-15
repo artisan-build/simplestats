@@ -11,6 +11,8 @@ import DialogModal from "@/Components/DialogModal.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
+import InputError from "@/Components/InputError.vue";
 
 defineProps({
     instance: Object,
@@ -38,7 +40,9 @@ const viewApiToken = (instance) => {
     });
 };
 
-const regenerateApiTokenForm = useForm({});
+const regenerateApiTokenForm = useForm({
+    password: '',
+});
 const apiTokenBeingRegenerated = ref(null);
 
 const confirmApiTokenRegeneration = (instance) => {
@@ -160,6 +164,21 @@ const regenerateApiToken = () => {
 
                 <template #content>
                     Are you sure you would like to regenerate this API token? If you already used this token, make sure to replace it afterwards in the corresponding Instance!
+                    Please enter your password to confirm you would like to permanently delete this instance.
+
+                    <div class="mt-4">
+                        <TextInput
+                            ref="passwordInput"
+                            v-model="regenerateApiTokenForm.password"
+                            type="password"
+                            class="mt-1 block w-3/4"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            @keyup.enter="regenerateApiToken"
+                        />
+
+                        <InputError :message="regenerateApiTokenForm.errors.password" class="mt-2" />
+                    </div>
                 </template>
 
                 <template #footer>
