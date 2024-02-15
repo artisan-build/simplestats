@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CheckPasswordConfirmation;
 use App\Http\Requests\InstanceStoreRequest;
 use App\Http\Requests\InstanceUpdateRequest;
 use App\Models\Instance;
 use App\Models\Project;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -56,8 +58,10 @@ class ProjectInstanceController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Request $request, Project $project, Instance $instance): RedirectResponse
+    public function destroy(Request $request, Project $project, Instance $instance, StatefulGuard $guard): RedirectResponse
     {
+        app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+
         $instance->delete();
 
         return redirect()->route('projects.show', $instance->project_id)->banner('Instance deleted: '.$instance->name);

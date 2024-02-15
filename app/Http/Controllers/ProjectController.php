@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CheckPasswordConfirmation;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Models\Project;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Fortify\Actions\ConfirmPassword;
 
 class ProjectController extends Controller
 {
@@ -52,8 +56,10 @@ class ProjectController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Request $request, Project $project): RedirectResponse
+    public function destroy(Request $request, Project $project, StatefulGuard $guard): RedirectResponse
     {
+        app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+
         $project->delete();
 
         return redirect()->route('projects.index')->banner('Project deleted: '.$project->name);
