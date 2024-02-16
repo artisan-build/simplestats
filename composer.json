@@ -13,7 +13,7 @@
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^4.2",
         "laravel/sanctum": "^3.3",
-        "laravel/spark-paddle": "^5.0",
+        "laravel/spark-paddle": "^5.1",
         "laravel/tinker": "^2.8",
         "simplestats-io/laravel-client": "dev-main",
         "spatie/laravel-ray": "^1.33",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "884f6ccf0d1090c821b79299fb135327",
+    "content-hash": "28933767766fed88075c59444b32f649",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4413,7 +4413,7 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/simplestats-io/laravel-client",
-                "reference": "c26afd1f8007771539b97b82eaec36f7d30e06d9"
+                "reference": "0515b430957ee474a8d858a535202369cbbc8ef6"
             },
             "require": {
                 "illuminate/contracts": "^9.0 || ^10.0",
