@@ -22,6 +22,7 @@ class SubscriptionService
                 'short_description' => $item['short_description'],
                 'price_monthly' => $planPrices[$item['monthly_id']]->formatted_unit_totals['total'] ?? '0',
                 'price_yearly' => $planPrices[$item['yearly_id']]->formatted_unit_totals['total'] ?? '0',
+                'yearly_incentive' => $item['yearly_incentive'] ?? 0,
                 'features' => $item['features'],
                 'promoted' => $item['promoted'] ?? false,
             ];

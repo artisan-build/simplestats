@@ -1,9 +1,28 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
+import {computed, ref} from "vue";
 
 defineProps({
     plans: Array,
+});
+
+const selectedInterval = ref('monthly');
+
+const getIntervalClass = (interval) => {
+    if (selectedInterval.value === interval) {
+        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-100 bg-indigo-500 rounded-md';
+    } else {
+        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-gray-200 dark:hover:bg-gray-800 bg-transparent rounded-md hover:bg-gray-200';
+    }
+};
+
+const priceIntervalKey = computed(() => {
+    return selectedInterval.value === 'monthly' ? 'price_monthly' : 'price_yearly';
+});
+
+const priceIntervalString = computed(() => {
+    return selectedInterval.value === 'monthly' ? 'Month' : 'Year';
 });
 
 </script>
@@ -18,26 +37,31 @@ defineProps({
             <div class="text-center -mt-10 mb-10">
                 <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-gray-700">
                     <div class="sm:-mx-0.5 flex">
-                        <button class="focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-100 bg-indigo-500 rounded-md">Monthly</button>
-                        <button class="focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-gray-200 dark:hover:bg-gray-800 bg-transparent rounded-md hover:bg-gray-200">Yearly</button>
+                        <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">Monthly</button>
+                        <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">Yearly</button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'lg:grid-cols-'+plans.length">
+            <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+plans.length/2+' lg:grid-cols-'+plans.length">
                 <div v-for="plan in plans"
                      class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-gray-800"
                      :class="plan.promoted ? 'bg-gray-700' : 'hover:bg-gray-200'"
                 >
-                    <p class="text-2xl font-medium dark:text-gray-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
-                        {{ plan.name }}
-                    </p>
+                    <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-gray-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
+                        <div>{{ plan.name }}</div>
+                        <div v-if="selectedInterval === 'yearly' && plan.yearly_incentive !== 0">
+                            <div class="text-sm bg-green-400 px-2 py-1 rounded text-gray-800">
+                                {{ plan.yearly_incentive }}
+                            </div>
+                        </div>
+                    </div>
 
                     <h4 class="mt-2 text-3xl font-semibold text-gray-800 dark:text-gray-100" :class="{'text-gray-100': plan.promoted}">
-                        <span v-if="plan.price_monthly !== '0'">
-                            {{ plan.price_monthly.replace(/\.00$/, '') }}
+                        <span v-if="plan[priceIntervalKey] !== '0'">
+                            {{ plan[priceIntervalKey].replace(/\.00$/, '') }}
                             <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
-                                / Month
+                                / {{ priceIntervalString }}
                             </span>
                         </span>
                         <span v-else>
