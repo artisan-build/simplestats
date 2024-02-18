@@ -5,8 +5,7 @@ import ComingSoon from "@/Pages/Home/Partials/ComingSoon.vue";
 
 defineProps({
     comingSoon: Boolean,
-    canLogin: Boolean,
-    canRegister: Boolean,
+    plans: Array,
 });
 </script>
 
@@ -14,9 +13,9 @@ defineProps({
     <Head title="Welcome" />
 
     <div v-if="comingSoon">
-        <ComingSoon />
+        <ComingSoon :plans="plans" />
     </div>
     <div v-else>
-        <Welcome :canLogin="canLogin" :canRegister="canRegister" />
+        <Welcome :plans="plans" />
     </div>
 </template>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -11,12 +12,11 @@ class HomeController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, SubscriptionService $subscriptionService)
     {
         return Inertia::render('Home/LandingPage', [
             'comingSoon' => config('app.coming_soon'),
-            'canLogin' => Route::has('login') && !config('app.coming_soon'),
-            'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
+            'plans' => $subscriptionService->getFrontendPlans(),
         ]);
     }
 }

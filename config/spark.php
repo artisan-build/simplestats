@@ -1,8 +1,11 @@
 <?php
 
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 
 return [
+
+    'dashboard_url' => RouteServiceProvider::HOME,
 
     /*
     |--------------------------------------------------------------------------
@@ -93,32 +96,93 @@ return [
         'user' => [
             'model' => User::class,
 
-            'trial_days' => 5,
+            'trial_days' => 0,
 
             'default_interval' => 'monthly',
 
             'plans' => [
                 [
-                    'name' => 'Hobby',
-                    'short_description' => 'Hobby subscription',
+                    'name' => 'Basic',
+                    'short_description' => 'Starter to get in touch. Explore the strength of statistics. No card required.',
+                    'monthly_id' => 0,
+                    'yearly_id' => 0,
+                    'features' => [
+                        '1 Project',
+                        '1 Instance',
+                        '1,000 Users',
+                        '100 Payments',
+                        '5,000 Logins',
+                    ],
+                    'options' => [
+                        'projects' => 1,
+                        'instances' => 1,
+                        'users' => 1_000,
+                        'payments' => 100,
+                        'logins' => 5_000,
+                    ],
+                    'archived' => true,
+                ],
+                [
+                    'name' => 'Plus',
+                    'short_description' => 'Advanced marketeer with strong ambitions and great plans to expand.',
                     'monthly_id' => env('SPARK_HOBBY_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_HOBBY_YEARLY_PLAN'),
                     'features' => [
-                        'Feature 1',
-                        'Feature 2',
-                        'Feature 3',
+                        '2 Projects',
+                        '5 Instances',
+                        '100,000 Users',
+                        '50,000 Payments',
+                        '500,000 Logins',
+                    ],
+                    'options' => [
+                        'projects' => 2,
+                        'instances' => 5,
+                        'users' => 100_000,
+                        'payments' => 50_000,
+                        'logins' => 500_000,
                     ],
                     'archived' => false,
                 ],
                 [
-                    'name' => 'Growth',
-                    'short_description' => 'Growth subscription',
+                    'name' => 'Business',
+                    'short_description' => 'Finally see which of your marketing activities leads to revenue.',
                     'monthly_id' => env('SPARK_GROWTH_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_GROWTH_YEARLY_PLAN'),
                     'features' => [
-                        'Feature 4',
-                        'Feature 5',
-                        'Feature 6',
+                        '8 Projects',
+                        '20 Instances',
+                        '1,000,000 Users',
+                        '500,00 Payments',
+                        '5,000,000 Logins',
+                    ],
+                    'options' => [
+                        'projects' => 8,
+                        'instances' => 20,
+                        'users' => 1_000_000,
+                        'payments' => 500_000,
+                        'logins' => 5_000_000,
+                    ],
+                    'archived' => false,
+                    'promoted' => true,
+                ],
+                [
+                    'name' => 'Enterprise',
+                    'short_description' => 'Get an unlimited high level overview of your marketing efforts.',
+                    'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
+                    'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
+                    'features' => [
+                        '20 Projects',
+                        '100 Instances',
+                        '10,000,000 Users',
+                        'Unlimited Payments',
+                        'Unlimited Logins',
+                    ],
+                    'options' => [
+                        'projects' => 20,
+                        'instances' => 100,
+                        'users' => 10_000_000,
+                        'payments' => -1,
+                        'logins' => -1,
                     ],
                     'archived' => false,
                 ],

@@ -7,7 +7,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
-    <link href="https://fonts.bunny.net/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
@@ -26,6 +26,12 @@
         }
     </style>
     @endif
+
+    <style>
+        .font-sans {
+            font-family: Figtree, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+    </style>
 
     @inertiaHead
 </head>

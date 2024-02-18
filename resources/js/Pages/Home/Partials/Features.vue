@@ -10,6 +10,7 @@ import {
 } from "@heroicons/vue/24/outline/index.js";
 
 import LaravelIcon from "@/Components/CustomIcons/LaravelIcon.vue";
+import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
 const features = [
     {
@@ -61,21 +62,28 @@ const features = [
 </script>
 
 <template>
-    <div id="features" class="max-w-screen-xl lg:flex lg:flex-wrap lg:justify-around xl:mt-6 xl:px-8">
-        <div v-for="feature in features" class="mt-10 flex w-full max-w-md lg:w-1/3 lg:flex-col lg:p-5">
-            <div class="mr-4 flex items-center gap-x-5 lg:mr-0 text-indigo-600">
-                <component class="h-10 w-10" :is="feature.icon" />
-                <h4 class="text-sm font-semibold text-gray-800 lg:text-lg xl:text-xl">
-                    {{ feature.title }}
-                </h4>
-            </div>
-            <div class="lg:mt-5">
-                <p class="mt-2 text-xs leading-normal text-gray-600 lg:text-sm xl:text-base">
-                    {{ feature.descr }}
-                </p>
-            </div>
+    <section class="flex justify-center">
+        <div class="max-w-screen-md lg:max-w-screen-xl">
+            <SectionHeader id="features">
+                What makes us&nbsp;<span class="text-indigo-500">unique</span>
+            </SectionHeader>
+             <div class="grid gap-x-14  grid gap-y-10 lg:gap-y-20 lg:grid-cols-3 px-6">
+                <div v-for="feature in features">
+                    <div class="mr-4 flex items-center gap-x-5 lg:mr-0 text-indigo-600">
+                        <component class="h-10 w-10" :is="feature.icon" />
+                        <h4 class="text-sm font-semibold text-gray-800 lg:text-lg xl:text-xl">
+                            {{ feature.title }}
+                        </h4>
+                    </div>
+                    <div class="lg:mt-5">
+                        <p class="mt-2 leading-normal text-gray-600 text-base">
+                            {{ feature.descr }}
+                        </p>
+                    </div>
+                </div>
+             </div>
         </div>
-    </div>
+    </section>
 </template>
 
 <style scoped>

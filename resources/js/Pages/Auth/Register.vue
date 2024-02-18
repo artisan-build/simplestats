@@ -10,7 +10,7 @@ import TextInput from '@/Components/TextInput.vue';
 import {onMounted} from "vue";
 
 const props = defineProps({
-    params: Object
+    params: Object,
 });
 
 const form = useForm({

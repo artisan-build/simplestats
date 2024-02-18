@@ -4,11 +4,15 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
-import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Features from "@/Pages/Home/Partials/Features.vue";
 import TwitterLink from "@/Components/TwitterLink.vue";
+import Pricing from "@/Pages/Home/Partials/Pricing.vue";
+import Screenshot from "@/Pages/Home/Partials/Screenshot.vue";
 
+defineProps({
+    plans: Array,
+});
 
 const form = useForm({
     email: '',
@@ -40,6 +44,9 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <div class="flex items-center gap-x-5 justify-between">
                     <div>
                         <a href="#features">Features</a>
+                    </div>
+                    <div>
+                        <a href="#pricing">Pricing</a>
                     </div>
                     <form action="https://demo.simplestats.io/login" method="GET" target="_blank">
                         <SecondaryButton type="submit" class="relative">
@@ -98,15 +105,11 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </div>
             </section>
 
-            <section class="mt-5 flex justify-center px-4 md:mt-12 xl:mt-0">
-                <div class="w-full max-w-screen-xl xl:p-8 xl:py-16">
-                    <img src="images/screenshot.png" class="w-full rounded sm:rounded-lg md:rounded-xl shadow-xl border" alt="Screenshot">
-                </div>
-            </section>
+            <Screenshot />
 
-            <section class="flex justify-center px-4 pb-32">
-                <Features />
-            </section>
+            <Features />
+
+            <Pricing :plans="plans" />
         </div>
     </section>
 </template>

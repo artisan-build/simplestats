@@ -4,7 +4,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 </script>
 
 <template>
-    <Link :href="'/'">
+    <Link class="hidden" :href="'/'">
         <ApplicationLogo />
     </Link>
 </template>

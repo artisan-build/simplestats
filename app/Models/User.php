@@ -13,6 +13,7 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
 use Spark\Billable;
+use Spark\Spark;
 
 class User extends Authenticatable implements TrackableUser
 {

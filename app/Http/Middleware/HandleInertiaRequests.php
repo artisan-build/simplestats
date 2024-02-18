@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -37,7 +38,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $merge = [];
+        $merge = [
+            'canLogin' => Route::has('login') && !config('app.coming_soon'),
+            'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
+        ];
 
         if (auth()->user()) {
             $merge['projectsCount'] = auth()->user()->currentTeam->projects()->count();

@@ -14,7 +14,7 @@ const props = defineProps({
     testUser: {
         type: Object,
         default: {},
-    }
+    },
 });
 
 const form = useForm({

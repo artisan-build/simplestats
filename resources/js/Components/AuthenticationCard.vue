@@ -1,5 +1,11 @@
+<script setup>
+import Header from "@/Pages/Home/Partials/Header.vue";
+</script>
+
 <template>
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-white dark:bg-gray-900">
+    <Header />
+
+    <div class="min-h-screen flex flex-col sm:py-32 items-center bg-white dark:bg-gray-900">
         <div>
             <slot name="logo" />
         </div>
@@ -12,5 +18,3 @@
         </div>
     </div>
 </template>
-<script setup>
-</script>
