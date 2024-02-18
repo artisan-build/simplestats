@@ -22,7 +22,7 @@ const priceIntervalKey = computed(() => {
 });
 
 const priceIntervalString = computed(() => {
-    return selectedInterval.value === 'monthly' ? 'Month' : 'Year';
+    return selectedInterval.value === 'monthly' ? 'month' : 'year';
 });
 
 </script>
@@ -37,8 +37,8 @@ const priceIntervalString = computed(() => {
             <div class="text-center -mt-10 mb-10">
                 <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-gray-700">
                     <div class="sm:-mx-0.5 flex">
-                        <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">Monthly</button>
-                        <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">Yearly</button>
+                        <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">monthly</button>
+                        <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">yearly</button>
                     </div>
                 </div>
             </div>
