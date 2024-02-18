@@ -127,7 +127,7 @@ return [
                     'short_description' => 'Advanced marketeer with strong ambitions and great plans to expand.',
                     'monthly_id' => env('SPARK_HOBBY_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_HOBBY_YEARLY_PLAN'),
-                    'yearly_incentive' => 'Save 12%',
+                    'yearly_incentive' => 'Save 13%',
                     'features' => [
                         '2 Projects',
                         '5 Instances',
@@ -172,7 +172,7 @@ return [
                     'short_description' => 'Get an unlimited high level overview of your marketing efforts.',
                     'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
-                    'yearly_incentive' => 'Save 19%',
+                    'yearly_incentive' => 'Save 16%',
                     'features' => [
                         '20 Projects',
                         '100 Instances',
