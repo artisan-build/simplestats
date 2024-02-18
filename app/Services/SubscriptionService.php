@@ -17,11 +17,14 @@ class SubscriptionService
         $planPrices = $this->getPlanIdToPrices($planIds);
 
         return $plans->map(function ($item) use ($planPrices) {
+//            if (isset($planPrices[$item['monthly_id']])) dd($planPrices[$item['yearly_id']]);
             return [
                 'name' => $item['name'],
                 'short_description' => $item['short_description'],
                 'price_monthly' => $planPrices[$item['monthly_id']]->formatted_unit_totals['total'] ?? '0',
                 'price_yearly' => $planPrices[$item['yearly_id']]->formatted_unit_totals['total'] ?? '0',
+                'tax_mode_monthly' => $planPrices[$item['monthly_id']]->price['tax_mode'] ?? '',
+                'tax_mode_yearly' => $planPrices[$item['yearly_id']]->price['tax_mode'] ?? '',
                 'yearly_incentive' => $item['yearly_incentive'] ?? 0,
                 'features' => $item['features'],
                 'promoted' => $item['promoted'] ?? false,

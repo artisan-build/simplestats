@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {computed, ref} from "vue";
 
-defineProps({
+const props = defineProps({
     plans: Array,
 });
 
@@ -21,10 +21,13 @@ const priceIntervalKey = computed(() => {
     return selectedInterval.value === 'monthly' ? 'price_monthly' : 'price_yearly';
 });
 
+const taxIntervalKey = computed(() => {
+    return selectedInterval.value === 'monthly' ? 'tax_mode_monthly' : 'tax_mode_yearly';
+});
+
 const priceIntervalString = computed(() => {
     return selectedInterval.value === 'monthly' ? 'month' : 'year';
 });
-
 </script>
 
 <template>
@@ -61,7 +64,7 @@ const priceIntervalString = computed(() => {
                         <span v-if="plan[priceIntervalKey] !== '0'">
                             {{ plan[priceIntervalKey].replace(/\.00$/, '') }}
                             <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
-                                / {{ priceIntervalString }}
+                                / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
                             </span>
                         </span>
                         <span v-else>
@@ -88,9 +91,12 @@ const priceIntervalString = computed(() => {
                     </Link>
                 </div>
             </div>
-<!--            <div class="mt-10 text-center text-gray-400">-->
-<!--                If these plans do not fit your needs, please <a class="underline" href="mailto:contact@laracraft.tech">contact us</a>-->
-<!--            </div>-->
+            <div class="hidden mt-10 text-center text-gray-400">
+                If these plans do not fit your needs, please <a class="underline" href="mailto:contact@laracraft.tech">contact us</a>
+            </div>
+            <div v-if="props.plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length" class="mt-10 text-center text-gray-400">
+                * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
+            </div>
         </div>
     </section>
 </template>

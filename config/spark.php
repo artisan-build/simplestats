@@ -120,7 +120,7 @@ return [
                         'payments' => 100,
                         'logins' => 5_000,
                     ],
-                    'archived' => true,
+                    'archived' => true, //free plan
                 ],
                 [
                     'name' => 'Plus',
