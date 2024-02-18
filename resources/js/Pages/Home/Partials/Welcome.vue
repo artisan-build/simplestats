@@ -16,7 +16,7 @@ defineProps({
     <div class="min-h-screen">
         <section class="text-center pt-24">
             <h1 class="mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-                The missing statistic tool<br/>for&nbsp;<span class="text-indigo-500">Laravel</span> apps.
+                The missing statistic tool<br/>for your&nbsp;<span class="text-indigo-500">Laravel</span> app.
             </h1>
             <p class="mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
                 Get highly detailed user, revenue and campaign statistics in no time.<br>

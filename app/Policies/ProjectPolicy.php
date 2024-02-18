@@ -23,7 +23,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $user->belongsToProject($project);
+        return $user->hasTeamPermission($project->team, 'action:read');
     }
 
     /**
@@ -31,7 +31,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->hasTeamPermission($user->currentTeam, 'action:create');
     }
 
     /**
@@ -39,31 +39,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->ownsTeam($project->team);
-    }
-
-    /**
-     * Determine whether the user can add project members.
-     */
-    public function addProjectMember(User $user, Project $project): bool
-    {
-        return $user->ownsTeam($project->team);
-    }
-
-    /**
-     * Determine whether the user can update project member permissions.
-     */
-    public function updateProjectMember(User $user, Project $project): bool
-    {
-        return $user->ownsTeam($project->team);
-    }
-
-    /**
-     * Determine whether the user can remove project members.
-     */
-    public function removeProjectMember(User $user, Project $project): bool
-    {
-        return $user->ownsTeam($project->team);
+        return $user->hasTeamPermission($project->team, 'action:update');
     }
 
     /**
@@ -71,6 +47,6 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return $user->ownsTeam($project->team);
+        return $user->hasTeamPermission($project->team, 'action:delete');
     }
 }

@@ -36,19 +36,23 @@ class ProjectInstanceController extends Controller
 
     public function show(Request $request, Project $project, Instance $instance): Response
     {
-        // TODO check permission for token...
-        $instance->load('project', 'tokens');
+        $instance->load('project');
+
+        if (Gate::check('viewInstanceToken', $instance)) {
+            $instance->load('tokens');
+        }
+
         $projects = Project::orderBy('created_at', 'desc')->get();
 
-        $permissions = [
-            'canAddTeamMembers' => Gate::check('addInstanceMember', $instance),
-            'canDeleteInstance' => Gate::check('delete', $instance),
-            'canRemoveInstanceMembers' => Gate::check('removeInstanceMember', $instance),
-            'canUpdateInstance' => Gate::check('update', $instance),
-            'canUpdateInstanceMembers' => Gate::check('updateInstanceMember', $instance),
-        ];
-
-        return Inertia::render('Instances/Show', compact('instance', 'projects', 'permissions'));
+        return Inertia::render('Instances/Show', [
+            'instance' => $instance,
+            'projects' => $projects,
+            'permissions' => [
+                'canDeleteInstance' => Gate::check('delete', $instance),
+                'canUpdateInstance' => Gate::check('update', $instance),
+                'canRegenerateInstanceToken' => Gate::check('regenerateInstanceToken', $instance),
+            ]
+        ]);
     }
 
     public function update(InstanceUpdateRequest $request, Project $project, Instance $instance): RedirectResponse
@@ -69,6 +73,8 @@ class ProjectInstanceController extends Controller
 
     public function tokenRegenerate(Request $request, Project $project, Instance $instance, StatefulGuard $guard)
     {
+        $this->authorize('regenerateInstanceToken', $instance);
+
         app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
 
         $instance->tokens()->delete();
@@ -85,6 +91,8 @@ class ProjectInstanceController extends Controller
 
     public function tokenView(Project $project, Instance $instance)
     {
+        $this->authorize('viewInstanceToken', $instance);
+
         $token = $instance->tokens()->first();
 
         return back()->with('flash', [

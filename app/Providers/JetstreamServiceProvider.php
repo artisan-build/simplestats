@@ -49,20 +49,23 @@ class JetstreamServiceProvider extends ServiceProvider
         Jetstream::defaultApiTokenPermissions(['read']);
 
         Jetstream::role('admin', 'Administrator', [
-            'create',
-            'read',
-            'update',
-            'delete',
-        ])->description('Administrator users can perform any action.');
+            'action:teamPermission',
+            'action:create',
+            'action:read',
+            'action:readSensitives',
+            'action:update',
+            'action:delete',
+        ])->description('An Administrator can view all content and perform any action, except for deleting a non-owned Team.');
 
         Jetstream::role('editor', 'Editor', [
-            'read',
-            'create',
-            'update',
-        ])->description('Editor users have the ability to read, create, and update.');
+            'action:create',
+            'action:read',
+            'action:readSensitives',
+            'action:update',
+        ])->description('An Editor can view all content and perform read, create, and update operations, expect for Team settings.');
 
         Jetstream::role('viewer', 'Viewer', [
-            'read',
-        ])->description('Viewer users have the ability to read and view all content but cannot create, update, or delete.');
+            'action:read',
+        ])->description('A Viewer can view all non-sensitive content but cannot perform create, update, or delete operations.');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\CheckPasswordConfirmation;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Models\Instance;
 use App\Models\Project;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,11 +19,21 @@ use Laravel\Fortify\Actions\ConfirmPassword;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Project::class, 'project');
+    }
+
     public function index(Request $request): Response
     {
         $projects = Project::orderBy('created_at', 'desc')->paginate(10);
 
-        return Inertia::render('Projects/Index', compact('projects'));
+        return Inertia::render('Projects/Index', [
+            'projects' => $projects,
+            'permissions' => [
+                'canCreateProject' => Gate::check('create', Project::class),
+            ]
+        ]);
     }
 
     public function store(ProjectStoreRequest $request): RedirectResponse
@@ -38,15 +49,14 @@ class ProjectController extends Controller
             $query->orderBy('created_at', 'DESC');
         }]);
 
-        $permissions = [
-            'canAddTeamMembers' => Gate::check('addProjectMember', $project),
-            'canDeleteProject' => Gate::check('delete', $project),
-            'canRemoveProjectMembers' => Gate::check('removeProjectMember', $project),
-            'canUpdateProject' => Gate::check('update', $project),
-            'canUpdateProjectMembers' => Gate::check('updateProjectMember', $project),
-        ];
-
-        return Inertia::render('Projects/Show', compact('project', 'permissions'));
+        return Inertia::render('Projects/Show', [
+            'project' => $project,
+            'permissions' => [
+                'canDeleteProject' => Gate::check('delete', $project),
+                'canUpdateProject' => Gate::check('update', $project),
+                'canCreateInstance' => Gate::check('create', Instance::class),
+            ],
+        ]);
     }
 
     public function update(ProjectUpdateRequest $request, Project $project): RedirectResponse

@@ -13,12 +13,19 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {EyeIcon, KeyIcon, PencilIcon} from "@heroicons/vue/16/solid/index.js";
 
 const props = defineProps({
     team: Object,
     availableRoles: Array,
     userPermissions: Object,
 });
+
+const roleIcons = {
+    'admin': KeyIcon,
+    'editor': PencilIcon,
+    'viewer': EyeIcon,
+};
 
 const page = usePage();
 
@@ -144,6 +151,7 @@ const displayableRole = (role) => {
                                     <!-- Role Name -->
                                     <div class="flex items-center">
                                         <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': addTeamMemberForm.role == role.key}">
+                                            <component class="inline-block h-4 w-4" :is="roleIcons[role.key]" />
                                             {{ role.name }}
                                         </div>
 

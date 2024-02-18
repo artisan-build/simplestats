@@ -23,7 +23,7 @@ class InstancePolicy
      */
     public function view(User $user, Instance $instance): bool
     {
-        return $user->belongsToInstance($instance);
+        return $user->hasTeamPermission($instance->team, 'action:read');
     }
 
     /**
@@ -31,7 +31,7 @@ class InstancePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->hasTeamPermission($user->currentTeam, 'action:create');
     }
 
     /**
@@ -39,31 +39,7 @@ class InstancePolicy
      */
     public function update(User $user, Instance $instance): bool
     {
-        return $user->ownsTeam($instance->team);
-    }
-
-    /**
-     * Determine whether the user can add instance members.
-     */
-    public function addInstanceMember(User $user, Instance $instance): bool
-    {
-        return $user->ownsTeam($instance->team);
-    }
-
-    /**
-     * Determine whether the user can update instance member permissions.
-     */
-    public function updateInstanceMember(User $user, Instance $instance): bool
-    {
-        return $user->ownsTeam($instance->team);
-    }
-
-    /**
-     * Determine whether the user can remove instance members.
-     */
-    public function removeInstanceMember(User $user, Instance $instance): bool
-    {
-        return $user->ownsTeam($instance->team);
+        return $user->hasTeamPermission($instance->team, 'action:update');
     }
 
     /**
@@ -71,6 +47,16 @@ class InstancePolicy
      */
     public function delete(User $user, Instance $instance): bool
     {
-        return $user->ownsTeam($instance->team);
+        return $user->hasTeamPermission($instance->team, 'action:delete');
+    }
+
+    public function regenerateInstanceToken(User $user, Instance $instance): bool
+    {
+        return $user->hasTeamPermission($instance->team, 'action:delete');
+    }
+
+    public function viewInstanceToken(User $user, Instance $instance): bool
+    {
+        return $user->hasTeamPermission($instance->team, 'action:readSensitives');
     }
 }

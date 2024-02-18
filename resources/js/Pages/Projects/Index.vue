@@ -12,6 +12,7 @@ import {Link, useForm} from "@inertiajs/vue3";
 
 defineProps({
     projects: Object,
+    permissions: Object,
 });
 
 const createProjectForm = useForm({
@@ -37,7 +38,7 @@ const createProject = () => {
 
         <div>
             <div>
-                <FormSection @submitted="createProject">
+                <FormSection v-if="permissions.canCreateProject" @submitted="createProject">
                     <template #title>
                         Create new Project
                     </template>
@@ -72,7 +73,7 @@ const createProject = () => {
                 </FormSection>
 
                 <div v-if="projects.total > 0">
-                    <SectionBorder />
+                    <SectionBorder v-if="permissions.canCreateProject" />
 
                     <div class="mt-10 sm:mt-0">
                         <ActionTable :links="projects.links" >

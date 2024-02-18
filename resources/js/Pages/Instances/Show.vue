@@ -80,7 +80,7 @@ const regenerateApiToken = () => {
         <div>
             <UpdateInstanceForm :instance="instance" :projects="projects" :permissions="permissions" />
 
-            <div v-if="instance.tokens.length > 0">
+            <div v-if="instance.tokens && instance.tokens.length > 0">
                 <SectionBorder />
 
                 <div class="mt-10 sm:mt-0">
@@ -116,7 +116,7 @@ const regenerateApiToken = () => {
                                             Token
                                         </button>
 
-                                        <button class="cursor-pointer ms-6 text-sm text-red-500" @click="confirmApiTokenRegeneration(instance)">
+                                        <button v-if="permissions.canRegenerateInstanceToken" class="cursor-pointer ms-6 text-sm text-red-500" @click="confirmApiTokenRegeneration(instance)">
                                             Regenerate
                                         </button>
                                     </div>
