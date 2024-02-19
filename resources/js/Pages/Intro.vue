@@ -34,7 +34,9 @@ const submit = () => {
                 </div>
                 <FormWizard color="#716bdd" @on-complete="submit" step-size="xs">
                     <TabContent class="pt-10 pb-20 text-center" title="Name">
-                        <div class="text-xl font-medium mb-10">What is the name of your Team/Company?</div>
+                        <div class="text-xl font-medium mb-10">
+                            What is the name of your Team/Company?
+                        </div>
 
                         <TextInput
                             id="team"
@@ -45,8 +47,8 @@ const submit = () => {
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Currency">
                         <div class="text-xl font-medium mb-10">
-                            What is the currency of your Team/Company?<br>
-                            All tracked multi-currency payments are getting converted to this currency on a daily exchange rate.
+                            What is the currency of your Team/Company?
+                            <p class="text-base">All tracked multi-currency payments are getting converted to your currency on a daily exchange rate.</p>
                         </div>
 
                         <TextInput
@@ -58,7 +60,9 @@ const submit = () => {
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Project">
-                        <div class="text-xl font-medium mb-10">How should your first Project be called?</div>
+                        <div class="text-xl font-medium mb-10">
+                            What should your first Project be called?
+                        </div>
 
                         <TextInput
                             id="project"
@@ -70,8 +74,8 @@ const submit = () => {
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Instance">
                         <div class="text-xl font-medium mb-10">
-                            Each of your Projects may contain multiple Instances.<br>
                             What should your first Instance be called?
+                            <p class="text-base">Each of your Projects may contain multiple Instances.</p>
                         </div>
 
                         <TextInput
@@ -79,7 +83,7 @@ const submit = () => {
                             v-model="form.instance"
                             type="text"
                             class="mt-1 inline-block w-3/5"
-                            placeholder="US East"
+                            placeholder="US East or International"
                         />
                     </TabContent>
                 </FormWizard>
