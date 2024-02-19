@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IntroController;
 use App\Http\Controllers\StatsOverviewController;
 use App\Http\Controllers\StatsDetailsController;
 use Illuminate\Foundation\Application;
@@ -28,8 +29,9 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/stats/overview', StatsOverviewController::class)->name('stats.overview');
-    Route::get('/stats/details', StatsDetailsController::class)->name('stats.details');
+    Route::get('intro', IntroController::class)->name('intro');
+    Route::get('stats/overview', StatsOverviewController::class)->name('stats.overview');
+    Route::get('stats/details', StatsDetailsController::class)->name('stats.details');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);

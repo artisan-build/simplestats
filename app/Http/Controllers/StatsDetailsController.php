@@ -19,7 +19,7 @@ class StatsDetailsController extends Controller
         $filterAll = ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];
         $filterOrganic = ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic'];
 
-        $teamStats = auth()->user()->currentTeam()->with('projects', function ($query) use ($request) {
+        $teamStats = $request->user()->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
                 $query->where('project_id', $request->projectId);
             });
@@ -27,11 +27,6 @@ class StatsDetailsController extends Controller
 
         // do this before prepend all filters...
         $teamStats->totalProjectsCount = $teamStats->projects->count(); // here we use the alreay loaded collection
-
-//        if ($teamStats->totalProjectsCount < 1) {
-//            return  redirect()->route('projects.index');
-//        }
-
         $teamStats->totalInstancesCount = $teamStats->instances()->count(); // here we use the relationship
 
         // we need to do prepend before keyBy('id')

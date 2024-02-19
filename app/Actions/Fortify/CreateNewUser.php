@@ -36,6 +36,7 @@ class CreateNewUser implements CreatesNewUsers
         $invitation = false;
         $invitationRequest = false;
 
+        // before creating the new user, validate his invitation if one is set...
         if (! empty($input['accept_invitation_link'])) {
             $invitationRequest = Request::create($input['accept_invitation_link']);
             $id = explode('/', $invitationRequest->getPathInfo())[2];
@@ -75,6 +76,7 @@ class CreateNewUser implements CreatesNewUsers
         $teamInvitation = app(TeamInvitationController::class);
         $teamInvitation->accept($request, $invitation->id);
     }
+
     /**
      * Create a personal team for the user.
      */

@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\DisableMutateEndpointsInDemoEnv;
+use App\Http\Middleware\ForwardToIntro;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +41,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             DisableMutateEndpointsInDemoEnv::class,
+            ForwardToIntro::class,
         ],
 
         'api' => [
