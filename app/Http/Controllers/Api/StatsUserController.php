@@ -18,6 +18,7 @@ class StatsUserController extends Controller
 
     public function store(StatsUserRequest $request): StatsUserResource
     {
+//        dd($request->user()->team->owner->sparkPlan());
         $statsUser = StatsUser::create($request->validated());
 
         return new StatsUserResource($statsUser);

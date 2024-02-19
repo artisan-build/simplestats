@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CheckPasswordConfirmation;
-use App\Http\Requests\InstanceStoreRequest;
-use App\Http\Requests\InstanceUpdateRequest;
+use App\Http\Requests\InstanceRequest;
 use App\Models\Instance;
 use App\Models\Project;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -16,6 +15,11 @@ use Inertia\Response;
 
 class ProjectInstanceController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Instance::class, 'instance');
+    }
+
     public function index(Request $request, Project $project): Response
     {
         $projects = Project::orderBy('created_at', 'desc')->get();
@@ -24,7 +28,7 @@ class ProjectInstanceController extends Controller
         return Inertia::render('Instances/Index', compact('instances', 'projects', 'project'));
     }
 
-    public function store(InstanceStoreRequest $request, Project $project): RedirectResponse
+    public function store(InstanceRequest $request, Project $project): RedirectResponse
     {
         $instance = $project->instances()->create($request->validated());
 
@@ -55,7 +59,7 @@ class ProjectInstanceController extends Controller
         ]);
     }
 
-    public function update(InstanceUpdateRequest $request, Project $project, Instance $instance): RedirectResponse
+    public function update(InstanceRequest $request, Project $project, Instance $instance): RedirectResponse
     {
         $instance->update($request->validated());
 

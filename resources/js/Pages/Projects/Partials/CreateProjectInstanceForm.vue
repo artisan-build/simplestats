@@ -10,6 +10,7 @@ import {useForm} from "@inertiajs/vue3";
 
 const props = defineProps({
     project: Object,
+    permissions: Object,
 });
 
 const createInstanceForm = useForm({
@@ -45,6 +46,7 @@ const createInstance = () => {
                     v-model="createInstanceForm.name"
                     type="text"
                     class="mt-1 block w-full"
+                    :disabled="! permissions.canCreateInstance"
                 />
                 <InputError :message="createInstanceForm.errors.name" class="mt-2" />
             </div>
@@ -55,9 +57,12 @@ const createInstance = () => {
                 Created.
             </ActionMessage>
 
-            <PrimaryButton :class="{ 'opacity-25': createInstanceForm.processing }" :disabled="createInstanceForm.processing">
+            <PrimaryButton v-if="permissions.canCreateInstance" :class="{ 'opacity-25': createInstanceForm.processing }" :disabled="createInstanceForm.processing">
                 Create
             </PrimaryButton>
+            <p v-else class="text-sm text-red-500">
+                You are not allowed to create more instances due to plan or role limitations!
+            </p>
         </template>
     </FormSection>
 </template>

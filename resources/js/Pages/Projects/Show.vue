@@ -34,7 +34,7 @@ defineProps({
             <SectionBorder />
 
             <div class="mb-6">
-                <CreateProjectInstanceForm v-if="permissions.canCreateInstance" :project="project" />
+                <CreateProjectInstanceForm :permissions="permissions" :project="project" />
             </div>
 
             <div>

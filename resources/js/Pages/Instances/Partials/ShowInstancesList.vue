@@ -40,7 +40,7 @@ defineProps({
     </tr>
     <tr v-else>
         <td class="border-t" colspan="2">
-            <div class="px-6 py-4 text-red-600">
+            <div class="px-6 py-4 text-red-600 text-sm">
                 No Instance has been created for this Project yet!
             </div>
         </td>

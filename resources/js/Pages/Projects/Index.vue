@@ -38,7 +38,7 @@ const createProject = () => {
 
         <div>
             <div>
-                <FormSection v-if="permissions.canCreateProject" @submitted="createProject">
+                <FormSection @submitted="createProject">
                     <template #title>
                         Create new Project
                     </template>
@@ -56,6 +56,7 @@ const createProject = () => {
                                 type="text"
                                 class="mt-1 block w-full"
                                 autofocus
+                                :disabled="! permissions.canCreateProject"
                             />
                             <InputError :message="createProjectForm.errors.name" class="mt-2" />
                         </div>
@@ -66,14 +67,17 @@ const createProject = () => {
                             Created.
                         </ActionMessage>
 
-                        <PrimaryButton :class="{ 'opacity-25': createProjectForm.processing }" :disabled="createProjectForm.processing">
+                        <PrimaryButton v-if="permissions.canCreateProject" :class="{ 'opacity-25': createProjectForm.processing }" :disabled="createProjectForm.processing">
                             Create
                         </PrimaryButton>
+                        <p v-else class="text-sm text-red-500">
+                            You are not allowed to create more projects due to plan or role limitations!
+                        </p>
                     </template>
                 </FormSection>
 
                 <div v-if="projects.total > 0">
-                    <SectionBorder v-if="permissions.canCreateProject" />
+                    <SectionBorder />
 
                     <div class="mt-10 sm:mt-0">
                         <ActionTable :links="projects.links" >

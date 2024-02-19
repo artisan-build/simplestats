@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CheckPasswordConfirmation;
-use App\Http\Requests\ProjectStoreRequest;
-use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Requests\ProjectRequest;
 use App\Models\Instance;
 use App\Models\Project;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -36,7 +35,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function store(ProjectStoreRequest $request): RedirectResponse
+    public function store(ProjectRequest $request): RedirectResponse
     {
         $project = Project::create($request->validated());
 
@@ -59,7 +58,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(ProjectUpdateRequest $request, Project $project): RedirectResponse
+    public function update(ProjectRequest $request, Project $project): RedirectResponse
     {
         $project->update($request->validated());
 

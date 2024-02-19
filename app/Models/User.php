@@ -13,7 +13,7 @@ use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
 use Spark\Billable;
-use Spark\Spark;
+use Spark\Plan;
 
 class User extends Authenticatable implements TrackableUser
 {
@@ -23,7 +23,9 @@ class User extends Authenticatable implements TrackableUser
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    use Billable;
+    use Billable {
+        sparkPlan as aliasSparkPlan;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -67,5 +69,23 @@ class User extends Authenticatable implements TrackableUser
     public function getTrackingTime(): CarbonInterface
     {
         return $this->{self::CREATED_AT};
+    }
+
+    public function sparkPlan(): Plan
+    {
+        if (!($plan = $this->aliasSparkPlan())) {
+            // Fallback to "Free" plan
+            $planConfig = current(config('spark.billables.user.plans'));
+
+            $plan = (new Plan($planConfig['name'], 0))
+                ->interval('monthly')
+                ->incentive($planConfig['monthly_incentive'] ?? '', $planConfig['yearly_incentive'] ?? '')
+                ->shortDescription($planConfig['short_description'])
+                ->features($planConfig['features'])
+                ->options($planConfig['options'] ?? [])
+                ->status(isset($planConfig['archived']) ? ! $planConfig['archived'] : true);
+        }
+
+        return $plan;
     }
 }

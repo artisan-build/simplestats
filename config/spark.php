@@ -96,12 +96,11 @@ return [
         'user' => [
             'model' => User::class,
 
-            'trial_days' => 0,
-
             'default_interval' => 'monthly',
 
             'plans' => [
                 [
+                    //free plan must be the first in the array
                     'name' => 'Basic',
                     'short_description' => 'Starter to get in touch. Explore the strength of statistics. No card required.',
                     'monthly_id' => 0,
@@ -120,7 +119,7 @@ return [
                         'payments' => 100,
                         'logins' => 5_000,
                     ],
-                    'archived' => true, //free plan
+                    'archived' => true,
                 ],
                 [
                     'name' => 'Plus',

@@ -31,7 +31,8 @@ class InstancePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasTeamPermission($user->currentTeam, 'action:create');
+        return $user->hasTeamPermission($user->currentTeam, 'action:create')
+            && Instance::count() < $user->currentTeam->owner->sparkPlan()->options['instances'];
     }
 
     /**
