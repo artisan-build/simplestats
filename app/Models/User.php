@@ -75,7 +75,9 @@ class User extends Authenticatable implements TrackableUser
     {
         if (!($plan = $this->aliasSparkPlan())) {
             // Fallback to "Free" plan
-            $planConfig = current(config('spark.billables.user.plans'));
+            $plans = config('spark.billables.user.plans');
+            // local every user gets the highest plan by default :D
+            $planConfig = (app()->isLocal()) ? end($plans) : current($plans);
 
             $plan = (new Plan($planConfig['name'], 0))
                 ->interval('monthly')

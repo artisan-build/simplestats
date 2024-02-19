@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
 
         if (auth()->user()) {
             $merge['projectsCount'] = auth()->user()->currentTeam->projects()->count();
+            $merge['introPassed'] = auth()->user()->currentTeam->instances()->count() > 0;
         }
 
         return array_merge(parent::share($request), $merge);

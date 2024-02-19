@@ -15,8 +15,10 @@
         "laravel/sanctum": "^3.3",
         "laravel/spark-paddle": "^5.1",
         "laravel/tinker": "^2.8",
+        "league/iso3166": "^4.3",
         "simplestats-io/laravel-client": "dev-main",
         "spatie/laravel-ray": "^1.33",
+        "spatie/laravel-validation-rules": "^3.3",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {

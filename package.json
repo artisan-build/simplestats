@@ -21,6 +21,7 @@
     "dependencies": {
         "@heroicons/vue": "^2.1.1",
         "apexcharts": "^3.45.2",
-        "vue3-apexcharts": "^1.4.4"
+        "vue3-apexcharts": "^1.4.4",
+        "vue3-form-wizard": "^0.2.3"
     }
 }

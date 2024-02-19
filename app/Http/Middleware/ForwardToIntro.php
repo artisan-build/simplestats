@@ -16,7 +16,9 @@ class ForwardToIntro
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->getRequestUri() === RouteServiceProvider::HOME && $request->user()->currentTeam->projects()->count() < 1) {
+        if ($request->getRequestUri() === RouteServiceProvider::HOME &&
+            $request->user()->currentTeam->instances()->count() < 1
+        ) {
             return redirect()->route('intro');
         }
 

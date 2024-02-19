@@ -71,7 +71,7 @@ const createProject = () => {
                             Create
                         </PrimaryButton>
                         <p v-else class="text-sm text-red-500">
-                            You are not allowed to create more projects due to plan or role limitations!
+                            You are not allowed to create new projects due to plan or role limitations!
                         </p>
                     </template>
                 </FormSection>

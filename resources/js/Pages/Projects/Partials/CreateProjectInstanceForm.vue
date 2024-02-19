@@ -61,7 +61,7 @@ const createInstance = () => {
                 Create
             </PrimaryButton>
             <p v-else class="text-sm text-red-500">
-                You are not allowed to create more instances due to plan or role limitations!
+                You are not allowed to create new instances due to plan or role limitations!
             </p>
         </template>
     </FormSection>

@@ -29,7 +29,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('intro', IntroController::class)->name('intro');
+    Route::any('intro', IntroController::class)->name('intro');
     Route::get('stats/overview', StatsOverviewController::class)->name('stats.overview');
     Route::get('stats/details', StatsDetailsController::class)->name('stats.details');
 

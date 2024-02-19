@@ -47,7 +47,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </header>
             </div>
 
-            <nav v-if="$page.props.projectsCount > 0" class="flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8" style="scrollbar-gutter: stable">
+            <nav v-if="$page.props.introPassed" class="flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8" style="scrollbar-gutter: stable">
                 <Navigation />
             </nav>
         </aside>
@@ -84,7 +84,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </Link>
 
                     <div class="ms-auto flex items-center gap-x-4">
-                        <div v-if="$page.props.projectsCount > 0" class="ms-3 relative">
+                        <div v-if="$page.props.introPassed" class="ms-3 relative">
                             <TeamDropdown />
                         </div>
 
