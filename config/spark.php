@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use App\Services\SubscriptionService;
 
 return [
 
@@ -183,8 +184,8 @@ return [
                         'projects' => 20,
                         'instances' => 100,
                         'users' => 10_000_000,
-                        'payments' => -1,
-                        'logins' => -1,
+                        'payments' => SubscriptionService::UNLIMITED_AMOUNT,
+                        'logins' => SubscriptionService::UNLIMITED_AMOUNT,
                     ],
                     'archived' => false,
                 ],

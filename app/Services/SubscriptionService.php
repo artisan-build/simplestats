@@ -10,6 +10,8 @@ use Laravel\Paddle\Cashier;
 
 class SubscriptionService
 {
+    const UNLIMITED_AMOUNT = -1;
+
     public function getFrontendPlans(string $billableType = 'user'): Collection
     {
         $plans = collect(config("spark.billables.$billableType")['plans']);
