@@ -3,7 +3,6 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import {FormWizard,TabContent} from "vue3-form-wizard";
 import 'vue3-form-wizard/dist/style.css';
 import {useForm} from "@inertiajs/vue3";
-import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 
@@ -91,3 +90,9 @@ const submit = () => {
         </div>
     </AppLayout>
 </template>
+
+<style>
+.wizard-footer-left {
+    display: none;
+}
+</style>
