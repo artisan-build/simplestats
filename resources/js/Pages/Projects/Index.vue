@@ -67,12 +67,12 @@ const createProject = () => {
                             Created.
                         </ActionMessage>
 
-                        <PrimaryButton v-if="permissions.canCreateProject" :class="{ 'opacity-25': createProjectForm.processing }" :disabled="createProjectForm.processing">
+                        <PrimaryButton v-tooltip="!permissions.canCreateProject ? 'You are not allowed to create new Projects due to plan or role limitations!' : ''"
+                                       :class="{ 'opacity-25': createProjectForm.processing }"
+                                       :disabled="createProjectForm.processing || !permissions.canCreateProject"
+                        >
                             Create
                         </PrimaryButton>
-                        <p v-else class="text-sm text-red-500">
-                            You are not allowed to create new projects due to plan or role limitations!
-                        </p>
                     </template>
                 </FormSection>
 
