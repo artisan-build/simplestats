@@ -15,6 +15,8 @@ return [
         ],
     ],
 
+    'plan_auto_max' => env('PLAN_AUTO_MAX', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
