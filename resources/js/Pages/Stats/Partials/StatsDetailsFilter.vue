@@ -65,7 +65,8 @@ const filterChanged = (event) => {
 
 <template>
     <form @submit.prevent="submit">
-        <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md">
+<!--    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md"> without box it's actually better-->
+        <div>
             <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
                 <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
                     <div class="flex flex-wrap gap-x-2 items-end">
