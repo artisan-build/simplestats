@@ -23,10 +23,10 @@ class IntroRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'team' => ['sometimes', 'required', 'string'],
+            'team' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
             'currency' => ['sometimes', 'required', new Currency()],
-            'project' => ['sometimes', 'required', 'string'],
-            'instance' => ['sometimes', 'required', 'string'],
+            'project' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
+            'instance' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
         ];
     }
 }

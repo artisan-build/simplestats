@@ -20,7 +20,7 @@ class InstanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'unique:instances'],
+            'name' => ['required', 'string', 'unique:instances', 'min:1', 'max:30'],
             'project_id' => ['sometimes', 'integer', 'exists:Projects,id'],
         ];
     }
