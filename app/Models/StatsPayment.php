@@ -33,6 +33,9 @@ class StatsPayment extends Model
         'gross',
         'net',
         'currency',
+        'orig_gross',
+        'orig_net',
+        'orig_currency',
         'time',
     ];
 

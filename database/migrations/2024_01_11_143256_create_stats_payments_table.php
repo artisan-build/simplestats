@@ -20,6 +20,9 @@ return new class extends Migration
             $table->float('gross');
             $table->float('net');
             $table->string('currency', 3);
+            $table->float('orig_gross')->nullable();
+            $table->float('orig_net')->nullable();
+            $table->string('orig_currency', 3)->nullable();
             $table->date('time')->index();
             $table->integer('counter')->index();
 
