@@ -102,7 +102,7 @@ return [
             'plans' => [
                 [
                     //free plan must be the first in the array
-                    'name' => 'Basic',
+                    'name' => 'Free',
                     'short_description' => 'Starter to get in touch. Explore the strength of statistics. No card required.',
                     'monthly_id' => 0,
                     'yearly_id' => 0,

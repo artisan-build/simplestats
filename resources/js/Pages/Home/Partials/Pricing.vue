@@ -60,19 +60,14 @@ const priceIntervalString = computed(() => {
                         </div>
                     </div>
 
-                    <h4 class="mt-2 text-3xl font-semibold text-gray-800 dark:text-gray-100" :class="{'text-gray-100': plan.promoted}">
-                        <span v-if="plan[priceIntervalKey] !== '0'">
-                            {{ plan[priceIntervalKey].replace(/\.00$/, '') }}
-                            <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
-                                / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
-                            </span>
-                        </span>
-                        <span v-else>
-                            Free
+                    <h4 class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
+                        {{ plan[priceIntervalKey].replace(/\.00$/, '') }}
+                        <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
+                            / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
                         </span>
                     </h4>
 
-                    <p class="mt-4 text-gray-500 dark:text-gray-300" :class="{'text-gray-100': plan.promoted}">
+                    <p class="mt-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         {{ plan.short_description }}
                     </p>
 
@@ -82,7 +77,7 @@ const priceIntervalString = computed(() => {
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                             </svg>
 
-                            <span class="mx-4 text-gray-700 dark:text-gray-300" :class="{'text-gray-100': plan.promoted}">{{ feature }}</span>
+                            <span class="mx-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">{{ feature }}</span>
                         </div>
                     </div>
 
