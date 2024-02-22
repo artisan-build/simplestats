@@ -62,7 +62,7 @@ const props = defineProps({
                 </td>
             </tr>
             <tr v-if="showGroupTotal" class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right border-t">
-                <StatsOverviewCols :stats="statsGroup.stats" :projectId="statsGroup.project_id" />
+                <StatsCols :stats="statsGroup.stats" :projectId="statsGroup.project_id" />
             </tr>
             </tbody>
         </table>
