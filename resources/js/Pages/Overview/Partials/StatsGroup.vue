@@ -1,5 +1,5 @@
 <script setup>
-import StatsOverviewCols from "@/Pages/Stats/Partials/StatsOverviewCols.vue";
+import StatsCols from "@/Pages/Overview/Partials/StatsCols.vue";
 import {Link} from "@inertiajs/vue3";
 
 const props = defineProps({
@@ -53,7 +53,7 @@ const props = defineProps({
                 class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                 :class="{'bg-gray-50': i % 2 === 1}"
             >
-                <StatsOverviewCols :stats="instance.stats" :projectId="instance.project_id" :instanceId="instance.instance_id" />
+                <StatsCols :stats="instance.stats" :projectId="instance.project_id" :instanceId="instance.instance_id" />
             </tr>
             <tr v-else-if="statsGroup.project_id !== 0">
                 <td class="p-3 text-base text-red-600" colspan="10">

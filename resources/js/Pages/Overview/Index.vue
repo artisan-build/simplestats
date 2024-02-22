@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import StatsOverviewGroup from "@/Pages/Stats/Partials/StatsOverviewGroup.vue";
+import StatsGroup from "@/Pages/Overview/Partials/StatsGroup.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -18,11 +18,11 @@ const showGroupTotal = projects.some(project => project.instances.length >= 2);
         <template #header>Quick Overview</template>
         <div>
             <div v-for="project in projects">
-                <StatsOverviewGroup :showGroupTotal="showGroupTotal && project.instances.length >= 1" :statsGroup="project" />
+                <StatsGroup :showGroupTotal="showGroupTotal && project.instances.length >= 1" :statsGroup="project" />
             </div>
             <div v-if="showOverallTotal">
                 <hr class="border my-5">
-                <StatsOverviewGroup :showGroupTotal="true" :statsGroup="teamStats" />
+                <StatsGroup :showGroupTotal="true" :statsGroup="teamStats" />
             </div>
         </div>
     </AppLayout>

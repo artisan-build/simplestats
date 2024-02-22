@@ -3,7 +3,7 @@
 use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IntroController;
-use App\Http\Controllers\StatsOverviewController;
+use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +30,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::any('intro', IntroController::class)->name('intro');
-    Route::get('stats/overview', StatsOverviewController::class)->name('stats.overview');
+    Route::get('overview', OverviewController::class)->name('stats.overview');
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     // Projects
