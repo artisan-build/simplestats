@@ -18,10 +18,7 @@ defineProps({
 <template>
     <AppLayout title="Team Settings">
         <template #header>
-            <div>
-                Team: {{ team.name }}
-            </div>
-            <SecondaryButton v-if="$page.props.jetstream.canCreateTeams" type="button" @click="$inertia.get(route('teams.create'))">Create New Team</SecondaryButton>
+            {{ team.name }}
         </template>
 
         <div>

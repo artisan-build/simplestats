@@ -22,6 +22,7 @@ defineProps({
 
 <template>
     <AppLayout title="Details" :fullscreen="true">
+        <template #header>Dashboard</template>
         <div>
             <div class="mb-8">
                 <StatsDetailsTop :viewMode="filters.viewMode" :teamStats="teamStats" />

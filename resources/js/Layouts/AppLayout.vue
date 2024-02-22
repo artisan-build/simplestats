@@ -9,7 +9,10 @@ import Navigation from "@/Components/Navigation.vue";
 
 defineProps({
     title: String,
-    fullscreen: Boolean,
+    fullscreen: {
+        type: Boolean,
+        default: true,
+    },
 });
 
 const sidebarIsOpen = ref(false);
@@ -79,9 +82,14 @@ const appName = import.meta.env.VITE_APP_NAME;
                         </svg>
                     </button>
 
-                    <Link :href="route('stats.details')" class="inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
-                        {{ appName }}
-                    </Link>
+                    <div class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
+                        <Link :href="route('stats.details')">
+                            {{ appName }}
+                        </Link>
+                        <span v-if="$slots.header" class="text-gray-600">
+                            /&nbsp;<slot name="header" />
+                        </span>
+                    </div>
 
                     <div class="ms-auto flex items-center gap-x-4">
                         <div v-if="$page.props.introPassed" class="ms-3 relative">
@@ -96,12 +104,6 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </nav>
             </div>
             <main class="mx-auto h-full w-full p-8" :class="{'max-w-screen-2xl': ! fullscreen}">
-                <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-8 pb-8">
-                    <h1 class="flex items-center justify-between w-full text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
-                        <slot name="header" />
-                    </h1>
-                </header>
-
                 <slot />
             </main>
         </div>
