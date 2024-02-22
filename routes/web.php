@@ -4,7 +4,7 @@ use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\StatsOverviewController;
-use App\Http\Controllers\StatsDetailsController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,7 +31,7 @@ Route::middleware([
 ])->group(function () {
     Route::any('intro', IntroController::class)->name('intro');
     Route::get('stats/overview', StatsOverviewController::class)->name('stats.overview');
-    Route::get('stats/details', StatsDetailsController::class)->name('stats.details');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);

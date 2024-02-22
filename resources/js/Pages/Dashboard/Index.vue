@@ -1,9 +1,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {Link} from "@inertiajs/vue3";
-import StatsDetailsCols from "@/Pages/Stats/Partials/StatsDetailsCols.vue";
-import StatsDetailsFilter from "@/Pages/Stats/Partials/StatsDetailsFilter.vue";
-import StatsDetailsTop from "@/Pages/Stats/Partials/StatsDetailsTop.vue";
+import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
+import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
+import StatsTop from "@/Pages/Dashboard/Partials/StatsTop.vue";
 
 defineProps({
     viewModes: Array,
@@ -21,14 +20,14 @@ defineProps({
 </script>
 
 <template>
-    <AppLayout title="Details" :fullscreen="true">
+    <AppLayout title="Dashboard" :fullscreen="true">
         <template #header>Dashboard</template>
         <div>
             <div class="mb-8">
-                <StatsDetailsTop :viewMode="filters.viewMode" :teamStats="teamStats" />
+                <StatsTop :viewMode="filters.viewMode" :teamStats="teamStats" />
             </div>
             <div class="mb-8">
-                <StatsDetailsFilter
+                <StatsFilter
                     :viewModes="viewModes"
                     :teamStats="teamStats"
                     :filters="filters"
@@ -84,7 +83,7 @@ defineProps({
                             class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                             :class="{'bg-gray-50': i % 2 === 1, 'border-t': i === 'total'}"
                         >
-                            <StatsDetailsCols :stats="stats.stats" />
+                            <StatsCols :stats="stats.stats" />
                         </tr>
                     </tbody>
                 </table>

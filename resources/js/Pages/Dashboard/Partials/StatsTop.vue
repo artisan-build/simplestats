@@ -1,6 +1,6 @@
 <script setup>
-import StatsDetailsGraphs from "@/Pages/Stats/Partials/StatsDetailsGraphs.vue";
-import StatsDetailsCharts from "@/Pages/Stats/Partials/StatsDetailsCharts.vue";
+import StatsGraphs from "@/Pages/Dashboard/Partials/StatsGraphs.vue";
+import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 
 const props = defineProps({
     viewMode: String,
@@ -11,9 +11,9 @@ const props = defineProps({
 
 <template>
     <div v-if="viewMode === 'simple'" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsDetailsGraphs :teamStats="teamStats" />
+        <StatsGraphs :teamStats="teamStats" />
     </div>
     <div v-else class="grid gap-8 grid-cols-1 lg:grid-cols-2 -mb-4">
-        <StatsDetailsCharts :teamStats="teamStats" />
+        <StatsCharts :teamStats="teamStats" />
     </div>
 </template>

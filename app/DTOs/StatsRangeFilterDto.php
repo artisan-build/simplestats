@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use App\Enums\StatsRange;
 use App\Enums\ViewMode;
-use App\Http\Requests\StatsDetailsRequest;
+use App\Http\Requests\DashboardRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 
@@ -27,7 +27,7 @@ readonly class StatsRangeFilterDto
         public int $trackContent = 0,
     ) {}
 
-    public static function fromRequest(StatsDetailsRequest $request): StatsRangeFilterDto
+    public static function fromRequest(DashboardRequest $request): StatsRangeFilterDto
     {
         return new self(
             ViewMode::from($request->viewMode ?? ViewMode::SIMPLE->value),

@@ -15,7 +15,7 @@ const props = defineProps({
             <thead>
             <tr class="text-left font-bold text-base">
                 <th class="p-3">
-                    <Link :href="route('stats.details', (statsGroup.project_id) ? {projectId: statsGroup.project_id} : {})" class="hover:underline">
+                    <Link :href="route('dashboard', (statsGroup.project_id) ? {projectId: statsGroup.project_id} : {})" class="hover:underline">
                         {{ statsGroup.name }}
                     </Link>
                 </th>

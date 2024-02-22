@@ -37,10 +37,10 @@ const appName = import.meta.env.VITE_APP_NAME;
             <div class="overflow-x-clip">
                 <header class="flex h-16 items-center bg-white px-4 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm">
                     <div class="flex items-center">
-                        <Link :href="route('stats.details')">
+                        <Link :href="route('dashboard')">
                             <ApplicationMark class="block h-9 w-auto" />
                         </Link>
-                        <Link :href="route('stats.details')"
+                        <Link :href="route('dashboard')"
                               class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
                               :class="{'hidden': smallAside}"
                         >
@@ -83,7 +83,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </button>
 
                     <div class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
-                        <Link :href="route('stats.details')">
+                        <Link :href="route('dashboard')">
                             {{ appName }}
                         </Link>
                         <span v-if="$slots.header" class="text-gray-600">

@@ -1,7 +1,6 @@
 <script setup>
 import {ref, defineComponent, onMounted} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, ScaleIcon} from "@heroicons/vue/20/solid/index.js";
 
 const ApexChart = defineComponent(VueApexCharts);
 

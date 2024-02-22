@@ -1,5 +1,5 @@
 <script setup>
-import StatsDetailsGraph from "@/Pages/Stats/Partials/StatsDetailsGraph.vue";
+import StatsGraph from "@/Pages/Dashboard/Partials/StatsGraph.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -48,5 +48,5 @@ const graphs = [
 </script>
 
 <template>
-    <StatsDetailsGraph v-for="graph in graphs" :graph="graph" />
+    <StatsGraph v-for="graph in graphs" :graph="graph" />
 </template>

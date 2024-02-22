@@ -1,6 +1,5 @@
 <script setup>
-import StatsDetailsGraph from "@/Pages/Stats/Partials/StatsDetailsGraph.vue";
-import StatsDetailsChart from "@/Pages/Stats/Partials/StatsDetailsChart.vue";
+import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -72,5 +71,5 @@ const charts = [
 </script>
 
 <template>
-    <StatsDetailsChart v-for="chart in charts" :chart="chart" />
+    <StatsChart v-for="chart in charts" :chart="chart" />
 </template>

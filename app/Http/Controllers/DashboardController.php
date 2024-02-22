@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsRangeFilterDto;
-use App\Http\Requests\StatsDetailsRequest;
+use App\Http\Requests\DashboardRequest;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
@@ -12,9 +12,9 @@ use App\Models\StatsTrackTerm;
 use App\Services\StatsDetailsService;
 use Inertia\Inertia;
 
-class StatsDetailsController extends Controller
+class DashboardController extends Controller
 {
-    public function __invoke(StatsDetailsRequest $request, StatsDetailsService $statsDetailsService)
+    public function __invoke(DashboardRequest $request, StatsDetailsService $statsDetailsService)
     {
         $filterAll = ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];
         $filterOrganic = ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic'];
@@ -85,6 +85,6 @@ class StatsDetailsController extends Controller
             }
         }
 
-        return Inertia::render('Stats/Details', $data);
+        return Inertia::render('Dashboard/Index', $data);
     }
 }

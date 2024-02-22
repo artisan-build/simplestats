@@ -28,7 +28,7 @@ const rangeAmounts = Array.from({ length: 60 - 2 }, (_, i) => ({
 }));
 
 const submit = () => {
-    form.get(route('stats.details'));
+    form.get(route('dashboard'));
 };
 
 const checkHierachicalTracking = (trackId) => {
