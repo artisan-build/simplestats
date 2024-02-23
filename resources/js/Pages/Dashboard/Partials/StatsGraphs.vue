@@ -1,5 +1,6 @@
 <script setup>
 import StatsGraph from "@/Pages/Dashboard/Partials/StatsGraph.vue";
+import {formatCurrency, formatNumber} from "@/Helpers/NumberHelpers.js";
 
 const props = defineProps({
     teamStats: Object,
@@ -25,22 +26,22 @@ const extractStatsData4Graph = (statsCategory, statsKey) => {
 const graphs = [
     {
         name: 'Regs.',
-        unit: '',
+        formatter: formatNumber,
         data: extractStatsData4Graph('per_date', 'REG'),
     },
     {
         name: 'DAU',
-        unit: '',
+        formatter: formatNumber,
         data: extractStatsData4Graph('per_date', 'DAU'),
     },
     {
         name: 'Revenue (N)',
-        unit: 'USD',
+        formatter: formatCurrency,
         data: extractStatsData4Graph('per_date', 'NET'),
     },
     {
         name: 'ARPU',
-        unit: 'USD',
+        formatter: formatCurrency,
         data: extractStatsData4Graph('lifetime', 'ARPU'),
     }
 ];

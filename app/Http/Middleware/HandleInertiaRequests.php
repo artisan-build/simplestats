@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Number;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -44,8 +45,10 @@ class HandleInertiaRequests extends Middleware
         ];
 
         if (auth()->user()) {
-            $merge['projectsCount'] = auth()->user()->currentTeam->projects()->count();
-            $merge['introPassed'] = auth()->user()->currentTeam->instances()->count() > 0;
+            $currentTeam = auth()->user()->currentTeam;
+            $merge['projectsCount'] = $currentTeam->projects()->count();
+            $merge['introPassed'] = $currentTeam->instances()->count() > 0;
+            $merge['teamCurrency'] = $currentTeam->currency;
         }
 
         return array_merge(parent::share($request), $merge);

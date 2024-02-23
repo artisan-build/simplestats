@@ -14,10 +14,6 @@ let preSeriesData = props.graph.data.series[props.graph.data.series.length - 2];
 
 let increase = (((lastSeriesData - preSeriesData) / preSeriesData) * 100);
 
-if (props.graph.unit !== '') {
-    lastSeriesData = lastSeriesData.toFixed(2);
-}
-
 if (isNaN(increase)) {
     increase = 0;
 }
@@ -107,7 +103,10 @@ const chartOptions = ref({
                 <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ graph.name }}</span>
             </div>
             <div class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{ lastSeriesData.toString().concat(' ' + graph.unit) }}
+                {{ (graph.formatter.name === 'formatNumber')
+                    ? graph.formatter(lastSeriesData, {notation: 'compact'})
+                    : graph.formatter(lastSeriesData, $page.props.teamCurrency, {notation: 'compact'})
+                }}
             </div>
             <div class="flex items-center gap-x-1 text-sm" :class="increaseType.tailClass">
                 <span v-if="increase !== '0'">{{ Math.abs(increase).toString().concat(increaseType.unit) }}</span>
