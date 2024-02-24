@@ -25,6 +25,18 @@ class DashboardRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $projects = $this->user()->currentTeam->projects();
+
+        //make the tracking filter work and set the projectId manually if only one project exists...
+        if ($projects->count() === 1) {
+            $this->merge([
+                'projectId' => $projects->first()->id,
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
