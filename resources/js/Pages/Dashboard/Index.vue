@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsTop from "@/Pages/Dashboard/Partials/StatsTop.vue";
+import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 
 defineProps({
     viewModes: Array,
@@ -58,17 +59,17 @@ defineProps({
                             <th class="border-r border-gray-200 pr-1">Regs.</th>
                             <th class="border-r border-gray-200 pr-1">NAU</th>
                             <th class="border-r border-gray-200 pr-1">NAPU</th>
-                            <th class="border-r border-gray-200 pr-1">DAU</th>
-                            <th class="border-r border-gray-200 pr-1">DAPU</th>
-                            <th class="border-r border-gray-200 pr-1">DAAPU</th>
+                            <th class="border-r border-gray-200 pr-1">{{ XAU(filters.rangeType) }}</th>
+                            <th class="border-r border-gray-200 pr-1">{{ XAPU(filters.rangeType) }}</th>
+                            <th class="border-r border-gray-200 pr-1">{{ XAAPU(filters.rangeType) }}</th>
                             <th class="w-1 bg-white"></th>
                             <th class="border-r border-gray-200 pr-1">Gross</th>
                             <th class="border-r border-gray-200 pr-1">Net</th>
                             <th class="border-r border-gray-200 pr-1">Fee</th>
-                            <th class="border-r border-gray-200 pr-1">ARPDAU</th>
+                            <th class="border-r border-gray-200 pr-1">{{ ARPXAU(filters.rangeType) }}</th>
                             <th class="w-1 bg-white"></th>
                             <th class="border-r border-gray-200 pr-1">Regs.</th>
-                            <th class="border-r border-gray-200 pr-1">Reg. to DAU</th>
+                            <th class="border-r border-gray-200 pr-1">Reg. to {{ XAU(filters.rangeType) }}</th>
                             <th class="border-r border-gray-200 pr-1">Pay User</th>
                             <th class="border-r border-gray-200 pr-1">Reg. to Pay</th>
                             <th class="border-r border-gray-200 pr-1">Tot. Actives</th>
