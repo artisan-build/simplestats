@@ -34,7 +34,7 @@ class StatsPaymentFactory extends Factory
             'instance_id' => Instance::inRandomOrder()->first()->id,
             'gross' => $gross,
             'net' => $gross*0.8,
-            'currency' => 'USD',
+            'currency' => 'EUR',
             'time' => $date->format('Y-m-d H:i:s'),
         ];
     }
