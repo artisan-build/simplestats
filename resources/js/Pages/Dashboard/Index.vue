@@ -52,30 +52,30 @@ defineProps({
                             <th class="w-1"></th>
                             <th class="text-center" colspan="9">Lifetime</th>
                         </tr>
-                        <tr class="text-right font-bold text-gray-600 bg-gray-100">
+                        <tr class="text-center font-bold text-gray-600 bg-gray-100">
                             <th class="p-3 text-left">Date</th>
                             <th class="w-1 bg-white"></th>
-                            <th>Regs.</th>
-                            <th>NAU</th>
-                            <th>NAPU</th>
-                            <th>DAU</th>
-                            <th>DAPU</th>
-                            <th class="pr-2">DAAPU</th>
+                            <th class="border-r border-gray-200 pr-1">Regs.</th>
+                            <th class="border-r border-gray-200 pr-1">NAU</th>
+                            <th class="border-r border-gray-200 pr-1">NAPU</th>
+                            <th class="border-r border-gray-200 pr-1">DAU</th>
+                            <th class="border-r border-gray-200 pr-1">DAPU</th>
+                            <th class="border-r border-gray-200 pr-1">DAAPU</th>
                             <th class="w-1 bg-white"></th>
-                            <th>Gross</th>
-                            <th>Net</th>
-                            <th>Fee</th>
-                            <th class="pr-2">ARPDAU</th>
+                            <th class="border-r border-gray-200 pr-1">Gross</th>
+                            <th class="border-r border-gray-200 pr-1">Net</th>
+                            <th class="border-r border-gray-200 pr-1">Fee</th>
+                            <th class="border-r border-gray-200 pr-1">ARPDAU</th>
                             <th class="w-1 bg-white"></th>
-                            <th>Regs.</th>
-                            <th>Reg. to DAU</th>
-                            <th>Pay User</th>
-                            <th>Reg. to Pay</th>
-                            <th>Tot. Actives</th>
-                            <th>Reg. to Active</th>
-                            <th>ARPU</th>
-                            <th>ARPPU</th>
-                            <th class="pr-2">Rev.</th>
+                            <th class="border-r border-gray-200 pr-1">Regs.</th>
+                            <th class="border-r border-gray-200 pr-1">Reg. to DAU</th>
+                            <th class="border-r border-gray-200 pr-1">Pay User</th>
+                            <th class="border-r border-gray-200 pr-1">Reg. to Pay</th>
+                            <th class="border-r border-gray-200 pr-1">Tot. Actives</th>
+                            <th class="border-r border-gray-200 pr-1">Reg. to Active</th>
+                            <th class="border-r border-gray-200 pr-1">ARPU</th>
+                            <th class="border-r border-gray-200 pr-1">ARPPU</th>
+                            <th class="pr-2">Rev. (N)</th>
                         </tr>
                     </thead>
                     <tbody>

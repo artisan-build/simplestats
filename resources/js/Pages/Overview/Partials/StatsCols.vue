@@ -33,23 +33,23 @@ defineProps({
         </span>
     </td>
     <td class="w-1 bg-white border-y border-white"></td>
-    <td>{{ formatNumber(stats.lifetime.REG) }}</td>
-    <td>{{ formatPercent(stats.lifetime.REG2DAU) }}</td>
-    <td>{{ formatNumber(stats.lifetime.PU) }}</td>
-    <td>{{ formatPercent(stats.lifetime.REG2PU) }}</td>
-    <td>{{ formatNumber(stats.lifetime.TAU) }}</td>
-    <td>{{ formatPercent(stats.lifetime.REG2TAU) }}</td>
-    <td>{{ formatCurrency(stats.lifetime.ARPU, $page.props.teamCurrency) }}</td>
-    <td class="pr-2">{{ formatCurrency(stats.lifetime.ARPPU, $page.props.teamCurrency) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.lifetime.REG) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatPercent(stats.lifetime.REG2DAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.lifetime.PU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatPercent(stats.lifetime.REG2PU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.lifetime.TAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatPercent(stats.lifetime.REG2TAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatCurrency(stats.lifetime.ARPU, $page.props.teamCurrency) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatCurrency(stats.lifetime.ARPPU, $page.props.teamCurrency) }}</td>
     <td class="w-1 bg-white border-y border-white"></td>
-    <td>{{ formatNumber(stats.per_date.REG) }}</td>
-    <td>{{ formatNumber(stats.per_date.NAU) }}</td>
-    <td>{{ formatNumber(stats.per_date.DAU) }}</td>
-    <td>{{ formatNumber(stats.per_date.DAPU) }}</td>
-    <td>{{ formatNumber(stats.per_date.DAAPU) }}</td>
-    <td>{{ formatNumber(stats.per_date.WAU) }}</td>
-    <td>{{ formatNumber(stats.per_date.MAU) }}</td>
-    <td>{{ formatNumber(stats.per_date.MAPU) }}</td>
-    <td>{{ formatNumber(stats.per_date.MAAPU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.REG) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.NAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.DAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.DAPU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.DAAPU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.WAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.MAU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.MAPU) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.MAAPU) }}</td>
     <td class="pr-2">{{ formatCurrency(stats.per_date.NET, $page.props.teamCurrency) }}</td>
 </template>
