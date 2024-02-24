@@ -36,7 +36,8 @@ class SubscriptionService
 
     public function getPlanIdToPrices(Collection $planIds): Collection
     {
-        $ttl = (app()->isProduction()) ? 86400 : 0 ;
+        // sometimes when I work on it, I put the ttl in local mode to 0
+        $ttl = (app()->isProduction()) ? 86400 : 86400 ;
 
         return Cache::remember('paddle-prices', $ttl, function () use ($planIds) {
             return Cashier::previewPrices($planIds, [
