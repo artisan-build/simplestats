@@ -53,7 +53,7 @@ defineProps({
                             <th class="text-center" colspan="9">Lifetime</th>
                         </tr>
                         <tr class="text-center font-bold text-gray-600 bg-gray-100">
-                            <th class="p-3 text-left">Date</th>
+                            <th class="border-r border-gray-200 p-3 text-left">Date</th>
                             <th class="w-1 bg-white"></th>
                             <th class="border-r border-gray-200 pr-1">Regs.</th>
                             <th class="border-r border-gray-200 pr-1">NAU</th>

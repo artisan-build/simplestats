@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <td class="p-3 text-left">{{ stats.date }}</td>
+    <td class="border-r border-gray-100 p-3 text-left">{{ stats.date }}</td>
     <td class="w-1 bg-white border-y border-white"></td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.REG) }}</td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.NAU) }}</td>
