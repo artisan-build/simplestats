@@ -17,6 +17,8 @@ use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
+    const DEFAULT_CURRENCY = 'EUR';
+
     /**
      * Seed the application's database.
      */
@@ -33,6 +35,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             $user->switchTeam($user->personalTeam());
+            $user->currentTeam->update(['currency' => self::DEFAULT_CURRENCY]);
 
             return $user;
         });
@@ -95,6 +98,7 @@ class DatabaseSeeder extends Seeder
                                         'project_id' => $instance->project_id,
                                         'instance_id' => $instance->id,
                                         'stats_user_id' => $statsUser->id,
+                                        'currency' => self::DEFAULT_CURRENCY,
                                         // increment a random number of days for the next payment
                                         'time' => $paymentTime->addDays(rand(1, 28))
                                     ]);
