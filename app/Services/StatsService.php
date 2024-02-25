@@ -34,6 +34,7 @@ class StatsService
         // Lifetime
         if (isset($stats['lifetime'])) {
             $stats['lifetime']['NET'] = round($stats['lifetime']['NET'], 2);
+            $stats['lifetime']['GROSS'] = round($stats['lifetime']['GROSS'], 2);
             $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['per_date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
             $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
             $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
@@ -44,6 +45,7 @@ class StatsService
         // Per Date
         if (isset($stats['per_date'])) {
             $stats['per_date']['NET'] = round($stats['per_date']['NET'], 2);
+            $stats['per_date']['GROSS'] = round($stats['per_date']['GROSS'], 2);
         }
 
         return $stats;

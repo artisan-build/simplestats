@@ -144,12 +144,24 @@ class StatsDetailsService
                 ) AS count
             FROM date_sequence ds
         ),
-        # lifetime revenue
+        # lifetime net revenue
         lt_net AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
                 (
                     SELECT SUM(stats.net)
+                    FROM stats_payments stats
+                    :trackingJoinConditions
+                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
+                ) AS count
+            FROM date_sequence ds
+        ),
+        # lifetime gross revenue
+        lt_gross AS (
+            SELECT
+                DATE_FORMAT(ds.date, ':dateFormat') AS date,
+                (
+                    SELECT SUM(stats.gross)
                     FROM stats_payments stats
                     :trackingJoinConditions
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition
@@ -169,7 +181,8 @@ class StatsDetailsService
             COALESCE(lt_reg.count, 0) AS lt_REG,
             COALESCE(lt_pu.count, 0) AS lt_PU,
             COALESCE(lt_tau.count, 0) AS lt_TAU,
-            COALESCE(lt_net.count, 0) AS lt_NET
+            COALESCE(lt_net.count, 0) AS lt_NET,
+            COALESCE(lt_gross.count, 0) AS lt_GROSS
         FROM
             date_sequence ds
             LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
@@ -184,6 +197,7 @@ class StatsDetailsService
             LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
             LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
+            LEFT JOIN lt_gross ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross.date
         GROUP BY
             DATE_FORMAT(ds.date, ':dateFormat'),
             pd_reg.count,
@@ -197,7 +211,8 @@ class StatsDetailsService
             lt_reg.count,
             lt_pu.count,
             lt_tau.count,
-            lt_net.count
+            lt_net.count,
+            lt_gross.count
         ORDER BY
             DATE_FORMAT(ds.date, ':dateFormat') DESC;
         ";

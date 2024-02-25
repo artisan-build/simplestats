@@ -44,12 +44,12 @@ const chartOptions = ref({
             show: false,
         },
     },
-    // legend: {
-    //     show: true,
-    //     customHTML: function(seriesName, opts) {
-    //         return '<span style="color: #00E396;"><i class="fas fa-bicycle"></i> ' + seriesName + '</span>';
-    //     }
-    // },
+    legend: {
+        show: true,
+        // customHTML: function(seriesName, opts) {
+        //     return '<span style="color: #00E396;"><i class="fas fa-bicycle"></i> ' + seriesName + '</span>';
+        // }
+    },
     // colors: [increaseType.color],
     dataLabels: {
         enabled: false

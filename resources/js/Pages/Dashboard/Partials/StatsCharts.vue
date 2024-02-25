@@ -73,6 +73,7 @@ const charts = {
             formatter: formatCurrency,
             data: extractStatsData4Chart('lifetime', [
                 {key: 'NET', visible: true},
+                {key: 'GROSS', visible: false},
                 {key: 'ARPU', visible: false},
                 {key: 'ARPPU', visible: false},
             ]),
