@@ -1,20 +1,23 @@
-const lang = navigator.language;
+// const locale = 'en-US'; //test
+const locale = navigator.language;
 
 export function formatNumber(value, additionalOptions) {
     if (typeof value !== 'number' || isNaN(value)) {
         return '-';
     }
 
-    let options = {};
+    let options = {
+        notation: 'compact',
+    };
 
     if (additionalOptions && typeof additionalOptions === 'object') {
         options = { ...options, ...additionalOptions };
     }
 
-    return new Intl.NumberFormat(lang, options).format(value);
+    return new Intl.NumberFormat(locale, options).format(value);
 }
 
-export function formatCurrency(value, currency, additionalOptions) {
+export function formatCurrency(value, additionalOptions, currency) {
     if (typeof value !== 'number' || isNaN(value)) {
         return '-';
     }
@@ -24,13 +27,14 @@ export function formatCurrency(value, currency, additionalOptions) {
         currency: currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
+        notation: 'compact',
     };
 
     if (additionalOptions && typeof additionalOptions === 'object') {
         options = { ...options, ...additionalOptions };
     }
 
-    return new Intl.NumberFormat(lang, options).format(value);
+    return new Intl.NumberFormat(locale, options).format(value);
 }
 
 export function formatPercent(value, additionalOptions) {
@@ -47,5 +51,15 @@ export function formatPercent(value, additionalOptions) {
         options = { ...options, ...additionalOptions };
     }
 
-    return new Intl.NumberFormat(lang, options).format(value)+'%';
+    return new Intl.NumberFormat(locale, options).format(value)+'%';
+}
+
+export function formatDate(date, rangeType) {
+    if (rangeType === 'days') {
+        return new Date(date).toLocaleString(locale, { month: 'short', day: 'numeric' });
+    } else if (rangeType === 'months') {
+        return new Date(date).toLocaleString(locale, { month: 'short', year: '2-digit' });
+    }
+
+    return date;
 }

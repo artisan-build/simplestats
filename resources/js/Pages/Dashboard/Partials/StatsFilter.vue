@@ -7,7 +7,6 @@ import TextInput from "@/Components/TextInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps({
-    viewModes: Array,
     teamStats: Object,
     filters: Object,
     rangeTypes: Array,
@@ -67,20 +66,8 @@ const filterChanged = (event) => {
     <form @submit.prevent="submit">
 <!--    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md"> without box it's actually better-->
         <div>
-            <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
+            <div class="flex flex-wrap w-full gap-x-10 gap-y-5 items-end">
                 <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
-                    <div class="flex flex-wrap gap-x-2 items-end">
-                        <div>
-                            <InputLabel for="viewMode" value="View" />
-                            <SelectInput
-                                id="viewMode"
-                                v-model="form.viewMode"
-                                class="mt-1 block w-28"
-                                :options="viewModes"
-                                @change="filterChanged"
-                            />
-                        </div>
-                    </div>
                     <div v-if="!(teamStats.totalProjectsCount === 1 && teamStats.totalInstancesCount == 1)" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="teamStats.totalProjectsCount === 0">
                             <InputLabel for="projectId" value="Project" />

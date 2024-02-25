@@ -58,7 +58,6 @@ class DashboardController extends Controller
         $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($filterAll);
 
         $data = [
-            'viewModes' => $statsDetailsService->getViewModes(),
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,
             'rangeTypes' => $statsDetailsService->getRangeTypes(),

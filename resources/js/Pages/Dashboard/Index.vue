@@ -2,11 +2,10 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
-import StatsTop from "@/Pages/Dashboard/Partials/StatsTop.vue";
+import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 
 defineProps({
-    viewModes: Array,
     teamStats: Object,
     filters: Object,
     rangeTypes: Array,
@@ -25,11 +24,7 @@ defineProps({
         <template #header>Dashboard</template>
         <div>
             <div class="mb-8">
-                <StatsTop :viewMode="filters.viewMode" :teamStats="teamStats" />
-            </div>
-            <div class="mb-8">
                 <StatsFilter
-                    :viewModes="viewModes"
                     :teamStats="teamStats"
                     :filters="filters"
                     :rangeTypes="rangeTypes"
@@ -40,6 +35,11 @@ defineProps({
                     :trackingTerms="trackingTerms"
                     :trackingContents="trackingContents"
                 />
+            </div>
+            <div class="mb-8">
+                <div class="grid gap-8 grid-cols-1 lg:grid-cols-2">
+                    <StatsCharts :rangeType="filters.rangeType" :teamStats="teamStats" />
+                </div>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
                 <table class="w-full whitespace-nowrap text-sm">
@@ -84,7 +84,7 @@ defineProps({
                             class="hover:bg-gray-100 focus-within:bg-gray-50 text-gray-700 text-right"
                             :class="{'bg-gray-50': i % 2 === 1, 'border-t': i === 'total'}"
                         >
-                            <StatsCols :stats="stats.stats" />
+                            <StatsCols :rangeType="filters.rangeType" :stats="stats.stats" />
                         </tr>
                     </tbody>
                 </table>

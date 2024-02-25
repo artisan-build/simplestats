@@ -10,7 +10,6 @@ defineProps({
         default: null,
     },
 });
-
 </script>
 
 <template>
@@ -39,8 +38,8 @@ defineProps({
     <td class="border-r border-gray-100 pr-1">{{ formatPercent(stats.lifetime.REG2PU) }}</td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.lifetime.TAU) }}</td>
     <td class="border-r border-gray-100 pr-1">{{ formatPercent(stats.lifetime.REG2TAU) }}</td>
-    <td class="border-r border-gray-100 pr-1">{{ formatCurrency(stats.lifetime.ARPU, $page.props.teamCurrency) }}</td>
-    <td class="border-r border-gray-100 pr-1">{{ formatCurrency(stats.lifetime.ARPPU, $page.props.teamCurrency) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatCurrency(stats.lifetime.ARPU, {}, $page.props.teamCurrency) }}</td>
+    <td class="border-r border-gray-100 pr-1">{{ formatCurrency(stats.lifetime.ARPPU, {}, $page.props.teamCurrency) }}</td>
     <td class="w-1 bg-white border-y border-white"></td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.REG) }}</td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.NAU) }}</td>
@@ -51,5 +50,5 @@ defineProps({
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.MAU) }}</td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.MAPU) }}</td>
     <td class="border-r border-gray-100 pr-1">{{ formatNumber(stats.per_date.MAAPU) }}</td>
-    <td class="pr-2">{{ formatCurrency(stats.per_date.NET, $page.props.teamCurrency) }}</td>
+    <td class="pr-2">{{ formatCurrency(stats.per_date.NET, {}, $page.props.teamCurrency) }}</td>
 </template>
