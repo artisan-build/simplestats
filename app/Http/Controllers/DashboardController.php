@@ -16,9 +16,6 @@ class DashboardController extends Controller
 {
     public function __invoke(DashboardRequest $request, StatsDetailsService $statsDetailsService)
     {
-        $filterAll = ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];
-        $filterOrganic = ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic'];
-
         $teamStats = $request->user()->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
                 $query->where('project_id', $request->projectId);
@@ -30,14 +27,14 @@ class DashboardController extends Controller
         $teamStats->totalInstancesCount = $teamStats->instances()->count(); // here we use the relationship
 
         // we need to do prepend before keyBy('id')
-        $teamStats->projects->prepend($filterAll);
+        $teamStats->projects->prepend($statsDetailsService->getAllFilterFor('Projects'));
 
         // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
         // this would not update $teamStats cause of laravel intern relation management...
         $projects = $teamStats->projects->keyBy('id');
         if ($selectedProject = $projects[$request->projectId] ?? false) {
             // we need to do prepend before keyBy('id')
-            $selectedProject->instances->prepend($filterAll);
+            $selectedProject->instances->prepend($statsDetailsService->getAllFilterFor('Instances'));
             $selectedProject->setRelation('instances', $selectedProject->instances->keyBy('id'));
         }
 
@@ -52,17 +49,19 @@ class DashboardController extends Controller
         ]);
 
         // closure (do not evaluate yet)
-        $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($filterAll);
-        $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $filters->projectId)->get()->prepend($filterAll);
-        $trackingTermsCallback = fn()       => StatsTrackTerm::where('project_id', $filters->projectId)->get()->prepend($filterAll);
-        $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($filterAll);
+        $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Media'));
+        $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Campaigns'));
+        $trackingTermsCallback = fn()       => StatsTrackTerm::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Terms'));
+        $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Content'));
+
+        $filterOrganic = $statsDetailsService->getOrganicFilter();
 
         $data = [
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
-            'trackingSources' => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($filterOrganic)->prepend($filterAll),
+            'trackingSources' => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($filterOrganic)->prepend($statsDetailsService->getAllFilterFor('Sources')),
             'trackingMedia'     => Inertia::lazy(fn() => $trackingMediaCallback()),
             'trackingCampaigns' => Inertia::lazy(fn() => $trackingCampaignsCallback()),
             'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),

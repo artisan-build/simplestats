@@ -70,14 +70,14 @@ const filterChanged = (event) => {
                 <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
                     <div v-if="!(teamStats.totalProjectsCount === 1 && teamStats.totalInstancesCount == 1)" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="teamStats.totalProjectsCount === 0">
-                            <InputLabel for="projectId" value="Project" />
+                            <InputLabel class="hidden" for="projectId" value="Project" />
                             <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.index'))">
                                 Create first Project
                             </PrimaryButton>
                         </div>
                         <!-- if teamStats.totalProjectsCount === 1 we do not need to show the create button and also not the project dropdown, cause there is only one -->
                         <div v-if="teamStats.totalProjectsCount >= 2">
-                            <InputLabel for="projectId" value="Project" />
+                            <InputLabel class="hidden" for="projectId" value="Project" />
                             <SelectInput
                                 id="projectId"
                                 v-model="form.projectId"
@@ -87,7 +87,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                         <div v-if="teamStats.projects[filters.projectId].instances && teamStats.totalInstancesCount > 0">
-                            <InputLabel for="instanceId" value="Instance" />
+                            <InputLabel class="hidden" for="instanceId" value="Instance" />
                             <SelectInput
                                 id="instanceId"
                                 v-model="form.instanceId"
@@ -97,7 +97,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                         <div v-if="teamStats.totalProjectsCount >= 1 && teamStats.totalInstancesCount === 0">
-                            <InputLabel for="instanceId" value="Instance" />
+                            <InputLabel class="hidden" for="instanceId" value="Instance" />
                             <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.show', Object.values(teamStats.projects)[1].id))">
                                 Create first Instance
                             </PrimaryButton>
@@ -105,7 +105,7 @@ const filterChanged = (event) => {
                     </div>
                     <div class="flex flex-wrap gap-x-2 items-end">
                         <div>
-                            <InputLabel for="rangeAmount" value="Range" />
+                            <InputLabel class="hidden" for="rangeAmount" value="Range" />
                             <SelectInput
                                 id="rangeAmount"
                                 v-model="form.rangeAmount"
@@ -137,7 +137,7 @@ const filterChanged = (event) => {
                 <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
                     <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="trackingSources">
-                            <InputLabel for="trackSource" value="Source" />
+                            <InputLabel class="hidden" for="trackSource" value="Source" />
                             <SelectInput
                                 id="trackSource"
                                 v-model="form.trackSource"
@@ -147,7 +147,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                         <div v-if="trackingMedia">
-                            <InputLabel for="trackMedium" value="Medium" />
+                            <InputLabel class="hidden" for="trackMedium" value="Medium" />
                             <SelectInput
                                 id="trackMedium"
                                 v-model="form.trackMedium"
@@ -157,7 +157,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                         <div v-if="trackingCampaigns">
-                            <InputLabel for="trackCampaign" value="Campaign" />
+                            <InputLabel class="hidden" for="trackCampaign" value="Campaign" />
                             <SelectInput
                                 id="trackCampaign"
                                 v-model="form.trackCampaign"
@@ -167,7 +167,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                         <div v-if="trackingTerms">
-                            <InputLabel for="trackTerm" value="Term" />
+                            <InputLabel class="hidden" for="trackTerm" value="Term" />
                             <SelectInput
                                 id="trackTerm"
                                 v-model="form.trackTerm"
@@ -177,7 +177,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                         <div v-if="trackingContents">
-                            <InputLabel for="trackContent" value="Content" />
+                            <InputLabel class="hidden" for="trackContent" value="Content" />
                             <SelectInput
                                 id="trackContent"
                                 v-model="form.trackContent"
@@ -187,7 +187,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                     </div>
-                    <div>
+                    <div class="hidden">
                         <SecondaryButton type="submit" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />

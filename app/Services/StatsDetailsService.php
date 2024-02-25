@@ -324,4 +324,14 @@ class StatsDetailsService
             'id' => $name, 'name' => ucfirst($name)
         ]);
     }
+
+    public function getAllFilterFor(string $type): array
+    {
+        return ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All '.$type];
+    }
+
+    public function getOrganicFilter(): array
+    {
+        return ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic'];
+    }
 }
