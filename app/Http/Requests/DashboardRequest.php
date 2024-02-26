@@ -30,9 +30,17 @@ class DashboardRequest extends FormRequest
 
         //make the tracking filter work and set the projectId manually if only one project exists...
         if ($projects->count() === 1) {
+            $project = $projects->first();
             $this->merge([
-                'projectId' => $projects->first()->id,
+                'projectId' => $project->id,
             ]);
+
+            $instances = $project->instances();
+            if ($instances->count() === 1) {
+                $this->merge([
+                    'instanceId' => $instances->first()->id,
+                ]);
+            }
         }
     }
 

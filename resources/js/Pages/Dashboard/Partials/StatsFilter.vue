@@ -68,15 +68,8 @@ const filterChanged = (event) => {
         <div>
             <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-end">
                 <div class="flex flex-wrap gap-x-8 gap-y-5 items-end">
-                    <div v-if="!(teamStats.totalProjectsCount === 1 && teamStats.totalInstancesCount == 1)" class="flex flex-wrap gap-x-2 items-end">
-                        <div v-if="teamStats.totalProjectsCount === 0">
-                            <InputLabel class="hidden" for="projectId" value="Project" />
-                            <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.index'))">
-                                Create first Project
-                            </PrimaryButton>
-                        </div>
-                        <!-- if teamStats.totalProjectsCount === 1 we do not need to show the create button and also not the project dropdown, cause there is only one -->
-                        <div v-if="teamStats.totalProjectsCount >= 2">
+                    <div class="flex flex-wrap gap-x-2 items-end">
+                        <div>
                             <InputLabel class="hidden" for="projectId" value="Project" />
                             <SelectInput
                                 id="projectId"
