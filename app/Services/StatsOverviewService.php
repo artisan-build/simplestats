@@ -50,6 +50,9 @@ class StatsOverviewService
                     'statsPayments as lt_NET' => function (Builder $query) {
                         $query->select(DB::raw("sum(net)"));
                     },
+                    'statsPayments as lt_GROSS' => function (Builder $query) {
+                        $query->select(DB::raw("sum(gross)"));
+                    },
 
                     // ! ==== Yesterday (per date - pd short) ==== !
                     'statsUsers as pd_REG' => function (Builder $query) {
@@ -129,6 +132,9 @@ class StatsOverviewService
                     },
                     'statsPayments as pd_NET' => function (Builder $query) {
                         $query->select(DB::raw("sum(net)"))->where('time', Date::yesterday());
+                    },
+                    'statsPayments as pd_GROSS' => function (Builder $query) {
+                        $query->select(DB::raw("sum(gross)"))->where('time', Date::yesterday());
                     },
                 ]);
             });

@@ -49,26 +49,31 @@ const extractStatsData4Chart = (statsCategory, fields) => {
 const charts = {
     per_date: [
         {
-            name: 'Revenue by Period',
-            // nameShort: 'NAU',
+            name: 'New Revenue',
             formatter: formatCurrency,
             data: extractStatsData4Chart('per_date', [
                 {key: 'NET', initialVisible: true, title: 'Net Revenue', color: '#93c5fd', formatter: formatCurrency, customClass: 'rounded-bl-md',},
                 {key: 'GROSS', initialVisible: false, title: 'Gross Revenue', color: '#60a5fa', formatter: formatCurrency,},
                 // {key: 'FEE', initialVisible: false, title: 'Fees', color: '#ffb3ba', formatter: formatCurrency,},
-                {key: 'ARPDAU', initialVisible: false, title: 'Avg. Revenue Per ' + XAU(props.rangeType), color: '#fce04c', formatter: formatCurrency, customClass: 'rounded-br-md',},
+                {key: 'ARPDAU', initialVisible: false, title: 'ARP' + XAU(props.rangeType), color: '#fce04c', formatter: formatCurrency, customClass: 'rounded-br-md',},
             ]),
         },
         {
-            name: 'Users by Period',
+            name: 'New Users',
             formatter: formatNumber,
             data: extractStatsData4Chart('per_date', [
-                {key: 'REG', initialVisible: true, title: 'Registrations', color: '#87efac', formatter: formatNumber,},
-                {key: 'NAU', initialVisible: false, title: 'New Active Users', color: '#22c55d', formatter: formatNumber,},
-                {key: 'NAPU', initialVisible: false, title: 'New Active Paying Users', color: '#17803d', formatter: formatNumber,},
-                {key: 'DAU', initialVisible: false, title: XAU(props.rangeType, true), color: '#fbd44c', formatter: formatNumber, customClass: 'rounded-bl-md',},
-                {key: 'DAPU', initialVisible: false, title: XAPU(props.rangeType, true), color: '#fbbf24', formatter: formatNumber,},
-                {key: 'DAAPU', initialVisible: false, title: XAAPU(props.rangeType, true), color: '#f59e0c', formatter: formatNumber, customClass: 'rounded-br-md',},
+                {key: 'REG', initialVisible: true, title: 'New Regs.', color: '#87efac', formatter: formatNumber, customClass: 'rounded-bl-md',},
+                {key: 'NAU', initialVisible: false, title: 'NAU', color: '#22c55d', formatter: formatNumber,},
+                {key: 'NAPU', initialVisible: false, title: 'NAPU', color: '#17803d', formatter: formatNumber, customClass: 'rounded-br-md',},
+            ]),
+        },
+        {
+            name: XAU(props.rangeType, true),
+            formatter: formatNumber,
+            data: extractStatsData4Chart('per_date', [
+                {key: 'DAU', initialVisible: true, title: XAU(props.rangeType), color: '#fbd44c', formatter: formatNumber, customClass: 'rounded-bl-md',},
+                {key: 'DAPU', initialVisible: false, title: XAPU(props.rangeType), color: '#fbbf24', formatter: formatNumber,},
+                {key: 'DAAPU', initialVisible: false, title: XAAPU(props.rangeType), color: '#f59e0c', formatter: formatNumber, customClass: 'rounded-br-md',},
             ]),
         },
     ],
@@ -79,18 +84,24 @@ const charts = {
             data: extractStatsData4Chart('lifetime', [
                 {key: 'NET', initialVisible: true, title: 'Net Revenue', color: '#93c5fd', formatter: formatCurrency, customClass: 'rounded-bl-md',},
                 // {key: 'GROSS', initialVisible: false, title: 'Gross Revenue', color: '#60a5fa', formatter: formatCurrency,},
-                {key: 'ARPU', initialVisible: false, title: 'Avg. Revenue Per User', color: '#facc14', formatter: formatCurrency,},
-                {key: 'ARPPU', initialVisible: false, title: 'Avg. Revenue Per Paying User', color: '#ebb305', formatter: formatCurrency, customClass: 'rounded-br-md',},
+                {key: 'ARPU', initialVisible: false, title: 'ARPU', color: '#facc14', formatter: formatCurrency,},
+                {key: 'ARPPU', initialVisible: false, title: 'ARPPU', color: '#ebb305', formatter: formatCurrency, customClass: 'rounded-br-md',},
             ]),
         },
         {
             name: 'Lifetime Users',
             formatter: formatNumber,
             data: extractStatsData4Chart('lifetime', [
-                {key: 'REG', initialVisible: true, title: 'Registrations', color: '#87efac', formatter: formatNumber,},
+                {key: 'REG', initialVisible: true, title: 'Total Regs.', color: '#87efac', formatter: formatNumber, customClass: 'rounded-bl-md',},
                 {key: 'PU', initialVisible: false, title: 'Paying Users', color: '#a6f3fc', formatter: formatNumber,},
-                {key: 'TAU', initialVisible: false, title: 'Total Active Users', color: '#c7d2fe', formatter: formatNumber,},
-                {key: 'REG2DAU', initialVisible: false, title: 'Reg. to ' + XAU(props.rangeType), color: '#49de80', formatter: formatPercent, customClass: 'rounded-bl-md',},
+                {key: 'TAU', initialVisible: false, title: 'Total Actives', color: '#c7d2fe', formatter: formatNumber, customClass: 'rounded-br-md',},
+            ]),
+        },
+        {
+            name: 'Reg. Conversion',
+            formatter: formatNumber,
+            data: extractStatsData4Chart('lifetime', [
+                {key: 'REG2DAU', initialVisible: true, title: 'Reg. to ' + XAU(props.rangeType), color: '#49de80', formatter: formatPercent, customClass: 'rounded-bl-md',},
                 {key: 'REG2PU', initialVisible: false, title: 'Reg. to Pay', color: '#67e8f9', formatter: formatPercent,},
                 {key: 'REG2TAU', initialVisible: false, title: 'Reg. to Active', color: '#a5b4fb', formatter: formatPercent, customClass: 'rounded-br-md',},
             ]),
@@ -100,10 +111,8 @@ const charts = {
 </script>
 
 <template>
-    <div class="grid gap-8 grid-cols-1">
+    <div class="grid gap-8 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
         <StatsChart v-for="chart in charts.per_date" :chart="chart" />
-    </div>
-    <div class="grid gap-8 grid-cols-1">
         <StatsChart v-for="chart in charts.lifetime" :chart="chart" />
     </div>
 </template>

@@ -80,21 +80,26 @@ const getStyle = () => {
                 {{ serie.name }}
             </div>
             <div :class="increaseType.tailClass">
-                <component class="inline-block h-6 w-6 ml-2" :is="increaseType.icon" />
+                <component class="inline-block h-5 w-5" :is="increaseType.icon" />
             </div>
         </div>
         <div class="flex justify-between items-center">
-            <div class="text-xl font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{ serie.formatter(lastSerieData, {}, $page.props.teamCurrency) }}
+            <div class="text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
+                {{ (serie.formatter.name === 'formatCurrency')
+                    ? serie.formatter(lastSerieData, {
+                        minimumFractionDigits: (lastSerieData >= 20) ? 0 : 2,
+                        maximumFractionDigits: (lastSerieData >= 20) ? 0 : 2,
+                    }, $page.props.teamCurrency)
+                    : serie.formatter(lastSerieData, {}, $page.props.teamCurrency)}}
             </div>
-            <div class="text-lg font-bold" :class="increaseType.tailClass">
+            <div class="text-sm font-bold" :class="increaseType.tailClass">
                     <span v-if="increase !== 0">
                         {{ increaseType.formatter(increase, {
                         minimumFractionDigits: (increase >= 10) ? 1 : 2,
                         maximumFractionDigits: (increase >= 10) ? 1 : 2,
                     }) }}
                     </span>
-                <span v-else class="text-base">stable</span>
+                <span v-else class="text-sm">stable</span>
             </div>
         </div>
     </button>

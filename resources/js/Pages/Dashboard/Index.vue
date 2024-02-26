@@ -37,7 +37,7 @@ defineProps({
                 />
             </div>
             <div class="mb-8">
-                <div class="grid gap-8 grid-cols-1 lg:grid-cols-2">
+                <div class="grid gap-8 grid-cols-1">
                     <StatsCharts :rangeType="filters.rangeType" :teamStats="teamStats" />
                 </div>
             </div>
