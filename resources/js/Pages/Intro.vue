@@ -28,7 +28,7 @@ const submit = () => {
         <div class="flex justify-center pt-20">
             <div class="w-3/4">
                 <h1 class="text-4xl font-medium mb-20 text-center">Just a few more steps...</h1>
-                <div v-if="form.errors" class="mb-5">
+                <div v-if="form.errors" class="mb-5 text-center">
                     <InputError v-for="error in form.errors" :message="error+'&nbsp;'" class="inline-block" />
                 </div>
                 <FormWizard color="#716bdd" @on-complete="submit" step-size="xs">
@@ -47,7 +47,7 @@ const submit = () => {
                     <TabContent class="pt-10 pb-20 text-center" title="Currency">
                         <div class="text-xl font-medium mb-10">
                             What is the currency of your Team/Company?
-                            <p class="text-base">All tracked multi-currency payments are getting converted to your currency on a daily exchange rate.</p>
+                            <p class="text-base">All tracked multi-currency payments are converted to your currency at the daily exchange rate.</p>
                         </div>
 
                         <TextInput

@@ -13,6 +13,7 @@ const switchToTeam = (team) => {
 };
 
 const showMangeTeams = true;
+const hideMenu = import.meta.env.VITE_HIDE_MENU === 'true';
 </script>
 
 <template>
@@ -43,6 +44,10 @@ const showMangeTeams = true;
                     <!-- Team Settings -->
                     <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
                         Team Settings
+                    </DropdownLink>
+
+                    <DropdownLink v-if="hideMenu" :href="route('projects.index')">
+                        Project Settings
                     </DropdownLink>
 
                     <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">

@@ -5,6 +5,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import {Link} from "@inertiajs/vue3";
 
 const props = defineProps({
     teamStats: Object,
@@ -64,10 +65,9 @@ const filterChanged = (event) => {
 
 <template>
     <form @submit.prevent="submit">
-<!--    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow border rounded-md"> without box it's actually better-->
         <div>
-            <div class="flex flex-wrap w-full gap-x-10 gap-y-5 items-end">
-                <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
+            <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-end">
+                <div class="flex flex-wrap gap-x-8 gap-y-5 items-end">
                     <div v-if="!(teamStats.totalProjectsCount === 1 && teamStats.totalInstancesCount == 1)" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="teamStats.totalProjectsCount === 0">
                             <InputLabel class="hidden" for="projectId" value="Project" />
@@ -134,7 +134,7 @@ const filterChanged = (event) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-x-10 gap-y-5 items-end">
+                <div class="flex flex-wrap gap-x-8 gap-y-5 items-end">
                     <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-end">
                         <div v-if="trackingSources">
                             <InputLabel class="hidden" for="trackSource" value="Source" />
@@ -187,7 +187,7 @@ const filterChanged = (event) => {
                             />
                         </div>
                     </div>
-                    <div class="hidden">
+                    <div class="">
                         <SecondaryButton type="submit" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
