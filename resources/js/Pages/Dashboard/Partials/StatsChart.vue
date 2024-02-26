@@ -3,35 +3,18 @@ import {ref, defineComponent, onMounted} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {formatCurrency} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
+import StatsButton from "@/Pages/Dashboard/Partials/StatsButton.vue";
 
 const ApexChart = defineComponent(VueApexCharts);
 
 const props = defineProps({
     chart: Object,
-    increaseTypes: Object,
 });
 
 const page = usePage();
 
 const chartInstance = ref(null);
 const series = ref(props.chart.data.series);
-
-const firstSeriesData = props.chart.data.series[0].data;
-
-let lastSeriesData = firstSeriesData[firstSeriesData.length - 1];
-let preSeriesData = firstSeriesData[firstSeriesData.length - 2];
-
-let increase = (((lastSeriesData - preSeriesData) / preSeriesData) * 100);
-
-if (isNaN(increase)) {
-    increase = 0;
-}
-
-if (increase === Infinity) {
-    increase = 100;
-}
-
-const increaseType = props.increaseTypes[Math.sign(increase).toString()];
 
 const chartOptions = ref({
     chart: {
@@ -42,13 +25,22 @@ const chartOptions = ref({
         },
         toolbar: {
             show: false,
+            offsetY: 12,
+        },
+    },
+    title: {
+        text: props.chart.name,
+        align: 'center',
+        offsetY: 12,
+        style: {
+            fontSize: '18px',
+            fontWeight: '500',
+            fontFamily: 'Figtree, ui-sans-serif',
+            color: '#374151'
         },
     },
     legend: {
-        show: true,
-        // customHTML: function(seriesName, opts) {
-        //     return '<span style="color: #00E396;"><i class="fas fa-bicycle"></i> ' + seriesName + '</span>';
-        // }
+        show: false,
     },
     // colors: [increaseType.color],
     dataLabels: {
@@ -111,40 +103,18 @@ onMounted(() => {
 </script>
 
 <template>
-
-    <div class="bg-white dark:bg-gray-800 border rounded-md">
-        <div class="px-4 mt-4 flex justify-between items-center">
-            <h3 class="font-bold text-lg text-gray-500 dark:text-gray-400">
-                {{ chart.name }}
-                <span v-if="chart.nameShort" class="font-bold italic">({{ chart.nameShort }})</span>
-            </h3>
-            <div class="flex">
-                <div class="text-2xl text-right font-semibold tracking-tight text-gray-950 dark:text-white">
-                    {{chart.formatter(lastSeriesData, {}, $page.props.teamCurrency) }}
-                </div>
-                <div class="ml-2 flex items-center justify-end text-lg font-bold" :class="increaseType.tailClass">
-                    (
-                        <span v-if="increase !== 0">
-                            {{ increaseType.formatter(increase, {
-                                minimumFractionDigits: (increase >= 10) ? 1 : 2,
-                                maximumFractionDigits: (increase >= 10) ? 1 : 2,
-                            }) }}
-                        </span>
-                        <span v-else>stable</span>
-                        <span class="hidden ml-2">{{ increaseType.description }}</span>
-                        <component class="inline-block h-6 w-6 ml-2" :is="increaseType.icon" />
-                    )
-                </div>
-            </div>
-        </div>
+    <div class="dark:bg-gray-800 border shadow-md rounded-md">
         <div class="pl-2">
             <ApexChart
                 ref="chartInstance"
-                class="-my-2 invisible"
+                class="invisible"
                 type="area"
                 :height="chartOptions.chart.height"
                 :options="chartOptions"
                 :series="series" />
+        </div>
+        <div class="grid grid-cols-3 border-t">
+            <StatsButton v-for="serie in series" :serie="serie" :chartInstance="chartInstance" />
         </div>
     </div>
 </template>
