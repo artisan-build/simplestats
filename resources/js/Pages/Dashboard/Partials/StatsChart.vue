@@ -95,11 +95,10 @@ const chartOptions = ref({
 
 onMounted(() => {
     setTimeout(() => {
-        props.chart.data.series.forEach(item => !item.visible ? chartInstance.value.hideSeries(item.name) : null);
+        props.chart.data.series.forEach(serie => !serie.initialVisible ? chartInstance.value.hideSeries(serie.name) : null);
         chartInstance.value.$el.classList.remove('invisible');
     }, 0);
 });
-
 </script>
 
 <template>

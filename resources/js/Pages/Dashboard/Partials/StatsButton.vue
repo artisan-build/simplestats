@@ -2,13 +2,17 @@
 import {formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
 import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, ScaleIcon} from "@heroicons/vue/20/solid/index.js";
 import {usePage} from "@inertiajs/vue3";
+import {onMounted, ref} from "vue";
 
 const props = defineProps({
     serie: Object,
+    chartGroup: String,
     chartInstance: Object,
 });
 
 const page = usePage();
+
+const serieVisible = ref(props.serie.initialVisible);
 
 let lastSerieData = props.serie.data[props.serie.data.length - 1];
 let preSerieData = props.serie.data[props.serie.data.length - 2];
@@ -46,10 +50,31 @@ const increaseTypes = {
 
 const increaseType = increaseTypes[Math.sign(increase).toString()];
 
+const toggleChart = () => {
+    serieVisible.value = ! serieVisible.value;
+    props.chartInstance.toggleSeries(props.serie.name);
+};
+
+const getClass = () => {
+    return  props.serie.customClass;
+};
+
+const activeStyle = 'border-color: '+props.serie.color;
+
+const getStyle = () => {
+    let style = 'background-color: '+props.serie.color+'40;';
+
+    if (serieVisible.value) {
+        style += ' '+activeStyle;
+    }
+
+    return style;
+};
+
 </script>
 
 <template>
-    <button class="p-4 text-left border-2 border-transparent" @click="chartInstance.toggleSeries(serie.name)" :style="'background-color: '+serie.color+'40;'">
+    <button class="p-3 text-left border-2 border-transparent hover:brightness-90" :class="getClass()" @click="toggleChart" :style="getStyle()">
         <div class="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-400">
             <div>
                 {{ serie.name }}
@@ -69,7 +94,7 @@ const increaseType = increaseTypes[Math.sign(increase).toString()];
                         maximumFractionDigits: (increase >= 10) ? 1 : 2,
                     }) }}
                     </span>
-                <span v-else>stable</span>
+                <span v-else class="text-base">stable</span>
             </div>
         </div>
     </button>

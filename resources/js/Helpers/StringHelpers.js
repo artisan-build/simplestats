@@ -8,7 +8,7 @@ export function XAU(type, long) {
     let period = periodMap[type];
     let short = period.charAt(0).toUpperCase() + 'AU';
     if (long === true) {
-        return period+' Active User ('+short+')';
+        return period+' Active Users ('+short+')';
     } else {
         return short;
     }
