@@ -111,7 +111,7 @@ const charts = {
 </script>
 
 <template>
-    <div class="grid gap-8 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
+    <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
         <StatsChart v-for="chart in charts.per_date" :chart="chart" />
         <StatsChart v-for="chart in charts.lifetime" :chart="chart" />
     </div>
