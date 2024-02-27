@@ -66,9 +66,9 @@ const filterChanged = (event) => {
 <template>
     <form @submit.prevent="submit">
         <div>
-            <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-end">
-                <div class="flex flex-wrap gap-x-8 gap-y-5 items-end">
-                    <div class="flex flex-wrap gap-x-2 items-end">
+            <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-center">
+                <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">
+                    <div class="flex flex-wrap gap-x-2 items-center">
                         <div>
                             <InputLabel class="hidden" for="projectId" value="Project" />
                             <SelectInput
@@ -96,7 +96,7 @@ const filterChanged = (event) => {
                             </PrimaryButton>
                         </div>
                     </div>
-                    <div class="flex flex-wrap gap-x-2 items-end">
+                    <div class="flex flex-wrap gap-x-2 items-center">
                         <div>
                             <InputLabel class="hidden" for="rangeAmount" value="Range" />
                             <SelectInput
@@ -127,8 +127,11 @@ const filterChanged = (event) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-x-8 gap-y-5 items-end">
-                    <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-end">
+                <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">
+                    <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-center">
+                        <div v-if="trackingSources" class="text-base font-medium text-gray-600 pt-1">
+                            UTMs:
+                        </div>
                         <div v-if="trackingSources">
                             <InputLabel class="hidden" for="trackSource" value="Source" />
                             <SelectInput

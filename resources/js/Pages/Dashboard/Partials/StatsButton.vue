@@ -6,7 +6,7 @@ import {onMounted, ref} from "vue";
 
 const props = defineProps({
     serie: Object,
-    formatter: Object,
+    formatter: Function,
     chartInstance: Object,
 });
 

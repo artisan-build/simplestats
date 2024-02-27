@@ -49,7 +49,7 @@ class DashboardController extends Controller
         ]);
 
         // closure (do not evaluate yet)
-        $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Media'));
+        $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Mediums'));
         $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Campaigns'));
         $trackingTermsCallback = fn()       => StatsTrackTerm::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Terms'));
         $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Content'));
