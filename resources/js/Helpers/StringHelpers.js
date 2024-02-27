@@ -6,31 +6,28 @@ const periodMap = {
 
 export function XAU(type, long) {
     let period = periodMap[type];
-    let short = period.charAt(0).toUpperCase() + 'AU';
     if (long === true) {
-        return period+' Active Users ('+short+')';
+        return period+' Active Users';
     } else {
-        return short;
+        return period.charAt(0).toUpperCase() + 'AU';
     }
 }
 
 export function XAPU(type, long) {
     let period = periodMap[type];
-    let short = period.charAt(0).toUpperCase() + 'APU';
     if (long === true) {
-        return XAU(type)+' Paying ('+short+')';
+        return XAU(type)+' Paying';
     } else {
-        return short;
+        return period.charAt(0).toUpperCase() + 'APU';
     }
 }
 
 export function XAAPU(type, long) {
     let period = periodMap[type];
-    let short = period.charAt(0).toUpperCase() + 'AAPU';
     if (long === true) {
-        return XAU(type)+' Active Paying ('+short+')';
+        return XAU(type)+' Active Paying';
     } else {
-        return short;
+        return period.charAt(0).toUpperCase() + 'AAPU';
     }
 }
 
