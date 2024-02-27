@@ -6,7 +6,7 @@ import {onMounted, ref} from "vue";
 
 const props = defineProps({
     serie: Object,
-    chartGroup: String,
+    formatter: Object,
     chartInstance: Object,
 });
 
@@ -29,7 +29,7 @@ if (increase === Infinity) {
 
 const increaseTypes = {
     "0": {
-        formatter: formatNumber,
+        f: formatNumber,
         description: 'stable',
         tailClass: 'text-yellow-600',
         icon: ScaleIcon,
@@ -85,12 +85,12 @@ const getStyle = () => {
         </div>
         <div class="flex justify-between items-center">
             <div class="text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{ (serie.formatter.name === 'formatCurrency')
-                    ? serie.formatter(lastSerieData, {
+                {{ (formatter.name === 'formatCurrency')
+                    ? formatter(lastSerieData, {
                         minimumFractionDigits: (lastSerieData >= 20) ? 0 : 2,
                         maximumFractionDigits: (lastSerieData >= 20) ? 0 : 2,
                     }, $page.props.teamCurrency)
-                    : serie.formatter(lastSerieData, {}, $page.props.teamCurrency)}}
+                    : formatter(lastSerieData, {}, $page.props.teamCurrency)}}
             </div>
             <div class="text-sm font-bold" :class="increaseType.tailClass">
                     <span v-if="increase !== 0">

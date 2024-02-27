@@ -113,7 +113,7 @@ onMounted(() => {
                 :series="series" />
         </div>
         <div class="grid grid-cols-3 border-t">
-            <StatsButton v-for="serie in series" :serie="serie" :chartInstance="chartInstance" />
+            <StatsButton v-for="serie in series" :serie="serie" :formatter="chart.formatter" :chartInstance="chartInstance" />
         </div>
     </div>
 </template>
