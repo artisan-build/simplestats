@@ -16,7 +16,7 @@ export function XAU(type, long) {
 export function XAPU(type, long) {
     let period = periodMap[type];
     if (long === true) {
-        return XAU(type)+' Paying';
+        return period+' Active Paying User';
     } else {
         return period.charAt(0).toUpperCase() + 'APU';
     }
@@ -25,7 +25,7 @@ export function XAPU(type, long) {
 export function XAAPU(type, long) {
     let period = periodMap[type];
     if (long === true) {
-        return XAU(type)+' Active Paying';
+        return period+' Active - Active Paying User';
     } else {
         return period.charAt(0).toUpperCase() + 'AAPU';
     }

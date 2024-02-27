@@ -2,11 +2,14 @@
 import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
 import {formatCurrency, formatNumber, formatPercent, formatDate} from "@/Helpers/NumberHelpers.js";
 import {XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
+import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 
 const props = defineProps({
     teamStats: Object,
     rangeType: String,
 });
+
+const kpiDefs = getKpiDefinitions(props.rangeType);
 
 const extractStatsData4Chart = (statsCategory, fields) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
@@ -51,63 +54,86 @@ const charts = {
         {
             name: 'New Revenue',
             formatter: formatCurrency,
-            data: extractStatsData4Chart('per_date', [
-                {key: 'NET', initialVisible: true, title: 'Net Revenue', color: '#93c5fd', customClass: 'rounded-bl-md',},
-                {key: 'GROSS', initialVisible: false, title: 'Gross Revenue', color: '#60a5fa',},
-                // {key: 'FEE', initialVisible: false, title: 'Fees', color: '#ffb3ba',},
-                {key: 'ARPDAU', initialVisible: false, title: 'ARP' + XAU(props.rangeType), color: '#fce04c', customClass: 'rounded-br-md',},
-            ]),
+            data: [
+                {key: 'NET', initialVisible: true, color: '#93c5fd', customClass: 'rounded-bl-md',},
+                {key: 'GROSS', initialVisible: false, color: '#60a5fa',},
+                // {key: 'FEE', initialVisible: false, color: '#ffb3ba',},
+                {key: 'ARPDAU', initialVisible: false, color: '#fce04c', customClass: 'rounded-br-md',},
+            ],
         },
         {
             name: 'New Users',
             formatter: formatNumber,
-            data: extractStatsData4Chart('per_date', [
-                {key: 'REG', initialVisible: true, title: 'New Regs.', color: '#87efac', customClass: 'rounded-bl-md',},
-                {key: 'NAU', initialVisible: false, title: 'NAU', color: '#22c55d',},
-                {key: 'NAPU', initialVisible: false, title: 'NAPU', color: '#17803d', customClass: 'rounded-br-md',},
-            ]),
+            data: [
+                {key: 'REG', initialVisible: true, color: '#87efac', customClass: 'rounded-bl-md',},
+                {key: 'NAU', initialVisible: false, color: '#22c55d',},
+                {key: 'NAPU', initialVisible: false, color: '#17803d', customClass: 'rounded-br-md',},
+            ],
         },
         {
             name: XAU(props.rangeType, true),
             formatter: formatNumber,
-            data: extractStatsData4Chart('per_date', [
-                {key: 'DAU', initialVisible: true, title: XAU(props.rangeType), color: '#fbd44c', customClass: 'rounded-bl-md',},
-                {key: 'DAPU', initialVisible: false, title: XAPU(props.rangeType), color: '#fbbf24',},
-                {key: 'DAAPU', initialVisible: false, title: XAAPU(props.rangeType), color: '#f59e0c', customClass: 'rounded-br-md',},
-            ]),
+            data: [
+                {key: 'DAU', initialVisible: true, color: '#fbd44c', customClass: 'rounded-bl-md',},
+                {key: 'DAPU', initialVisible: false, color: '#fbbf24',},
+                {key: 'DAAPU', initialVisible: false, color: '#f59e0c', customClass: 'rounded-br-md',},
+            ],
         },
     ],
     lifetime: [
         {
             name: 'Lifetime Revenue',
             formatter: formatCurrency,
-            data: extractStatsData4Chart('lifetime', [
-                {key: 'NET', initialVisible: true, title: 'Net Revenue', color: '#93c5fd', customClass: 'rounded-bl-md',},
-                // {key: 'GROSS', initialVisible: false, title: 'Gross Revenue', color: '#60a5fa',},
-                {key: 'ARPU', initialVisible: false, title: 'ARPU', color: '#facc14',},
-                {key: 'ARPPU', initialVisible: false, title: 'ARPPU', color: '#ebb305', customClass: 'rounded-br-md',},
-            ]),
+            data: [
+                {key: 'NET', initialVisible: true, color: '#93c5fd', customClass: 'rounded-bl-md',},
+                // {key: 'GROSS', initialVisible: false, color: '#60a5fa',},
+                {key: 'ARPU', initialVisible: false, color: '#facc14',},
+                {key: 'ARPPU', initialVisible: false, color: '#ebb305', customClass: 'rounded-br-md',},
+            ],
         },
         {
             name: 'Lifetime Users',
             formatter: formatNumber,
-            data: extractStatsData4Chart('lifetime', [
-                {key: 'REG', initialVisible: true, title: 'Total Regs.', color: '#87efac', customClass: 'rounded-bl-md',},
-                {key: 'PU', initialVisible: false, title: 'Paying Users', color: '#a6f3fc',},
-                {key: 'TAU', initialVisible: false, title: 'Total Actives', color: '#c7d2fe', customClass: 'rounded-br-md',},
-            ]),
+            data: [
+                {key: 'REG', initialVisible: true, color: '#87efac', customClass: 'rounded-bl-md',},
+                {key: 'PU', initialVisible: false, color: '#a6f3fc',},
+                {key: 'TAU', initialVisible: false, color: '#c7d2fe', customClass: 'rounded-br-md',},
+            ],
         },
         {
             name: 'Reg. Conversion',
             formatter: formatPercent,
-            data: extractStatsData4Chart('lifetime', [
-                {key: 'REG2DAU', initialVisible: true, title: 'Reg. to ' + XAU(props.rangeType), color: '#49de80', customClass: 'rounded-bl-md',},
-                {key: 'REG2PU', initialVisible: false, title: 'Reg. to Pay', color: '#67e8f9',},
-                {key: 'REG2TAU', initialVisible: false, title: 'Reg. to Active', color: '#a5b4fb', customClass: 'rounded-br-md',},
-            ]),
+            data: [
+                {key: 'REG2DAU', initialVisible: true, color: '#49de80', customClass: 'rounded-bl-md',},
+                {key: 'REG2PU', initialVisible: false, color: '#67e8f9',},
+                {key: 'REG2TAU', initialVisible: false, color: '#a5b4fb', customClass: 'rounded-br-md',},
+            ],
         },
     ],
 };
+
+Object.keys(charts).forEach(category => {
+    charts[category].forEach(function(chartGroup) {
+        let info = ``;
+
+        chartGroup.data.forEach(function(data) {
+            let kpiDef = kpiDefs[category][data.key];
+
+            let title = (kpiDef.long) ? `${kpiDef.long} (${kpiDef.short})`: `${kpiDef.short}` ;
+            info += `<div class="text-sm">
+                        <div class="font-bold text-green-300">${title}</div>
+                        <div>${kpiDef.description}</div>
+                     </div>`;
+
+            data.title = kpiDef.short;
+        });
+
+
+        chartGroup.info = info;
+
+        chartGroup.data = extractStatsData4Chart(category, chartGroup.data);
+    });
+});
 </script>
 
 <template>
