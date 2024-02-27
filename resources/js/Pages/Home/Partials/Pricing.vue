@@ -46,6 +46,8 @@ const priceIntervalString = computed(() => {
                 </div>
             </div>
 
+            <!-- the JIT Compiler from tailwindcss cant recognize things like this "md:grid-cols-'+plans.length/2+'" so we need to put the classes here manually so that the exists --->
+            <div class="hidden md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
             <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+plans.length/2+' lg:grid-cols-'+plans.length">
                 <div v-for="plan in plans"
                      class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-gray-800"
