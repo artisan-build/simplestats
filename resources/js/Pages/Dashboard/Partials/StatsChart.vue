@@ -62,6 +62,7 @@ const chartOptions = ref({
         opposite: true,
         labels: {
             formatter: function (value) {
+                // en-US format, so that we get compact values very early
                 if (props.chart.formatter.name === 'formatCurrency') {
                     return new Intl.NumberFormat('en-US', {
                         style: "currency",
@@ -70,13 +71,20 @@ const chartOptions = ref({
                         maximumFractionDigits: (value >= 1000) ? 1 : 0,
                         notation: 'compact',
                     }).format(value);
-                } else {
+                } else if (props.chart.formatter.name === 'formatNumber') {
                     return new Intl.NumberFormat('en-US', {
                         minimumFractionDigits: (value >= 1000) ? 1 : 0,
                         maximumFractionDigits: (value >= 1000) ? 1 : 0,
                         notation: 'compact',
                     }).format(value);
+                } else if (props.chart.formatter.name === 'formatPercent') {
+                    return props.chart.formatter(value, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                    }, page.props.teamCurrency);
                 }
+
+                return props.chart.formatter(value, {}, page.props.teamCurrency);
             }
         }
     },
