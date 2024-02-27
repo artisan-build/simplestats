@@ -31,13 +31,14 @@ const submit = () => {
     form.get(route('dashboard'));
 };
 
+const trackFields = ['trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
+
 const checkHierachicalTracking = (trackId) => {
-    let fieldsToCheck = ['trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
-    let startIndex = fieldsToCheck.indexOf(trackId);
+    let startIndex = trackFields.indexOf(trackId);
 
     if (startIndex !== -1 && form[trackId] <= props.trackAllKey) {
-        for (let i = startIndex + 1; i < fieldsToCheck.length; i++) {
-            form[fieldsToCheck[i]] = 0;
+        for (let i = startIndex + 1; i < trackFields.length; i++) {
+            form[trackFields[i]] = props.trackAllKey;
         }
     }
 };
@@ -47,8 +48,12 @@ const filterChanged = (event) => {
         checkHierachicalTracking(event.target.id);
     }
 
+    // if a project changes, we need to reset some values, which may no longer relate to the new selected project
     if (event.target.id === 'projectId') {
-        form.instanceId = 0;
+        form.instanceId = props.trackAllKey;
+        trackFields.forEach(function(trackField) {
+            form[trackField] = props.trackAllKey;
+        });
     }
 
     // the unsafe equality check is for reason...
