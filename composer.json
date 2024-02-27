@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.2",
         "ashallendesign/laravel-exchange-rates": "^7.2",
-        "binarytorch/larecipe": "^2.6",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laracraft-tech/laravel-useful-additions": "^3.4",
