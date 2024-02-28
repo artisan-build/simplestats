@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IntroController;
@@ -21,7 +22,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', HomeController::class);
-
+Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 Route::post('early-subscription', EarlySubscriptionController::class)->name('early-subscription');
 
 Route::middleware([

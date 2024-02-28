@@ -21,3 +21,5 @@ yarn-error.log
 /draft.yaml
 /.blueprint
 /packages
+docs/.vitepress/dist
+docs/.vitepress/cache
