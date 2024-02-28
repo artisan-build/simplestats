@@ -24,7 +24,7 @@ export function getKpiDefinitions(rangeType) {
                 description: 'The average revenue per ' + XAU(rangeType, true),
             },
             REG: {
-                short: 'New Regs.',
+                short: 'Regs.',
                 description: 'Number of new registrations at this '+periodName+'.',
             },
             NAU: {

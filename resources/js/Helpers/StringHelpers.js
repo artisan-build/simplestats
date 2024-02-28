@@ -1,4 +1,4 @@
-const periodMap = {
+export const periodMap = {
     days: 'Daily',
     weeks: 'Weekly',
     months: 'Monthly',

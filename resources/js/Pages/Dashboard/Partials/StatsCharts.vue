@@ -1,7 +1,7 @@
 <script setup>
 import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
 import {formatCurrency, formatNumber, formatPercent, formatDate} from "@/Helpers/NumberHelpers.js";
-import {XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
+import { periodMap, XAU} from "@/Helpers/StringHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 
 const props = defineProps({
@@ -14,7 +14,8 @@ const kpiDefs = getKpiDefinitions(props.rangeType);
 const extractStatsData4Chart = (statsCategory, fields) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
         // skip total and the first entry (cause the current day/week/month is not finished yet and would always down the chart)
-        if (!(key === 0 || item.stats.date === 'Total')) {
+        let skipFirstEntry = statsCategory !== 'lifetime' && key === 0;
+        if (!(skipFirstEntry || item.stats.date === 'Total')) {
             for (let field of fields) {
                 if (!(field.key in acc.series)) {
                     acc.series[field.key] = {
@@ -52,7 +53,7 @@ const extractStatsData4Chart = (statsCategory, fields) => {
 const charts = {
     per_date: [
         {
-            name: 'New Revenue',
+            name: periodMap[props.rangeType] + ' Revenue',
             formatter: formatCurrency,
             data: [
                 {key: 'NET', initialVisible: true, color: '#93c5fd', customClass: 'rounded-bl-md',},
@@ -62,7 +63,7 @@ const charts = {
             ],
         },
         {
-            name: 'New Users',
+            name: periodMap[props.rangeType] + ' Registraions',
             formatter: formatNumber,
             data: [
                 {key: 'REG', initialVisible: true, color: '#87efac', customClass: 'rounded-bl-md',},
@@ -101,7 +102,7 @@ const charts = {
             ],
         },
         {
-            name: 'Reg. Conversion',
+            name: 'Lifetime Conversion',
             formatter: formatPercent,
             data: [
                 {key: 'REG2DAU', initialVisible: true, color: '#49de80', customClass: 'rounded-bl-md',},
@@ -120,7 +121,7 @@ Object.keys(charts).forEach(category => {
             let kpiDef = kpiDefs[category][data.key];
 
             let title = (kpiDef.long) ? `${kpiDef.long} (${kpiDef.short})`: `${kpiDef.short}` ;
-            info += `<div class="text-sm">
+            info += `<div>
                         <div class="font-bold text-green-300">${title}</div>
                         <div>${kpiDef.description}</div>
                      </div>`;
