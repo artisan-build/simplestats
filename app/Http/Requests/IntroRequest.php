@@ -12,7 +12,7 @@ class IntroRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->currentTeam->projects()->count() <= 0;
     }
 
     /**

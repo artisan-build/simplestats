@@ -24,13 +24,15 @@ class IntroController extends Controller
                 'currency' => $request->currency,
             ]);
 
-            Project::create([
+            $project = Project::create([
                 'name' => $request->project,
-            ])->instances()->create([
+            ]);
+
+            $instance = $project->instances()->create([
                 'name' => $request->instance,
             ]);
 
-            return redirect(RouteServiceProvider::HOME)->with('flash', [
+            return redirect()->route('projects.instances.token-view', [$project, $instance])->with('flash', [
                 'banner' => 'Team settings saved!',
             ]);
         }
