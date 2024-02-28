@@ -1,8 +1,6 @@
 <script setup>
 import {Link} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-
-const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
@@ -10,9 +8,6 @@ const appName = import.meta.env.VITE_APP_NAME;
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
             <Link href="/" class="inline-flex items-center">
                 <ApplicationLogo />
-                <span class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
-                    {{ appName }}
-                </span>
             </Link>
 
             <div class="flex items-center gap-6">

@@ -39,7 +39,7 @@ const hideMenu = import.meta.env.VITE_HIDE_MENU === 'true';
                 <header class="flex h-16 items-center bg-white px-4 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm">
                     <div class="flex items-center">
                         <Link :href="route('dashboard')">
-                            <ApplicationMark class="block h-9 w-auto" />
+                            <ApplicationMark class="block w-auto" />
                         </Link>
                         <Link :href="route('dashboard')"
                               class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white"
@@ -86,8 +86,7 @@ const hideMenu = import.meta.env.VITE_HIDE_MENU === 'true';
                     <div class="text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
                         <span>
                             <Link :href="route('dashboard')">
-                                <ApplicationMark v-if="hideMenu" class="inline-block h-9 -mt-1 mr-1 -ml-2" />
-                                {{ appName }}
+                                <ApplicationMark v-if="hideMenu" />
                             </Link>
                         </span>
                         <span v-if="$slots.header && ! hideMenu" class="text-gray-600">

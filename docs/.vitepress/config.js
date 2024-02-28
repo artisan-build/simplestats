@@ -1,29 +1,26 @@
-import { defineConfig } from 'vitepress'
+import {defineConfig} from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
     base: '/docs/',
-  title: "SimpleStats",
-  description: "The missing statistic tool for your Laravel app",
-  themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+    title: "SimpleStats",
+    description: "The missing statistic tool for your Laravel app",
+    head: [
+        ['link', { rel: 'icon', href: '../favicon.ico' }]
     ],
-
-    sidebar: [
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      }
-    ],
-
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
-    ]
-  }
+    themeConfig: {
+        logo: '../svg/logo.svg',
+        siteTitle: false,
+        search: {
+            provider: 'local'
+        },
+        sidebar: [
+            {
+                text: 'Examples',
+                items: [
+                    {text: 'Introduction', link: '/introduction'}
+                ]
+            }
+        ],
+    }
 })
