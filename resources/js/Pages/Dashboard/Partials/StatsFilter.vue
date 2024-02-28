@@ -74,6 +74,7 @@ const chartDescription = `
         Note that the ${periodRange} charts are missing the latest period.
         That's because the latest period is not finished yet!
         This would always pull the chart graphs at the latest period downwards, and it makes a comparison with the previous data not useful.
+        If you're still interested into the latest data, check out the details table below...
     </div>
 </div>
 `;
