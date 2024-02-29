@@ -146,7 +146,7 @@ return [
                 ],
                 [
                     'name' => 'Business',
-                    'short_description' => 'Finally see which of your marketing activities leads to revenue.',
+                    'short_description' => 'Finally see which of your campaign activities are generating revenue.',
                     'monthly_id' => env('SPARK_GROWTH_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_GROWTH_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 15%',
