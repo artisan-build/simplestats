@@ -36,20 +36,27 @@ const highligtTeam = route().current().includes('teams') || (route().current().i
 
         <template #content>
             <div class="w-60">
+                <DropdownLink :href="route('dashboard')">
+                    Dashboard
+                </DropdownLink>
+
                 <div v-if="showMangeTeams">
                     <!-- Team Management -->
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         Manage Team
                     </div>
 
-                    <!-- Team Settings -->
-                    <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
-                        Team Settings
+                    <DropdownLink :href="route('projects.index')">
+                        Projects
                     </DropdownLink>
 
-                    <DropdownLink v-if="hideMenu" :href="route('projects.index')">
-                        Project Settings
+                    <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
+                        Settings
                     </DropdownLink>
+
+<!--                    <DropdownLink :href="route('import')">-->
+<!--                        Import-->
+<!--                    </DropdownLink>-->
 
                     <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
                         Create New Team

@@ -6,9 +6,20 @@ use Carbon\CarbonInterface;
 use Illuminate\Foundation\Auth\User;
 use \Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePayment;
+use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
 
-class Transaction extends PaddleTransaction implements TrackablePayment
+class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
 {
+    public function passTrackingCondition(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED;
+    }
+
+    public function getTrackingConditionFields(): array
+    {
+        return ['status'];
+    }
+
     public function getTrackingUser(): User
     {
         return $this->billable;

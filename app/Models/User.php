@@ -12,10 +12,11 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
+use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
-class User extends Authenticatable implements TrackableUser
+class User extends Authenticatable implements TrackableUserWithCondition
 {
     use HasApiTokens;
     use HasFactory;
@@ -65,6 +66,16 @@ class User extends Authenticatable implements TrackableUser
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function passTrackingCondition(): bool
+    {
+        return $this->email_verified_at != NULL;
+    }
+
+    public function getTrackingConditionFields(): array
+    {
+        return ['email_verified_at'];
+    }
 
     public function getTrackingTime(): CarbonInterface
     {
