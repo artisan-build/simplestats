@@ -95,8 +95,8 @@ const getStyle = () => {
             <div class="text-sm font-bold" :class="increaseType.tailClass">
                     <span v-if="increase !== 0">
                         {{ increaseType.formatter(increase, {
-                        minimumFractionDigits: (increase >= 10) ? 1 : 2,
-                        maximumFractionDigits: (increase >= 10) ? 1 : 2,
+                        minimumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
+                        maximumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
                     }) }}
                     </span>
                 <span v-else class="text-sm">stable</span>
