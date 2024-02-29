@@ -35,9 +35,6 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <div class="flex items-center justify-between">
                     <a href="/" class="inline-flex items-center">
                         <ApplicationLogo />
-                        <span class="ml-3 inline-flex text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white">
-                            {{ appName }}
-                        </span>
                     </a>
                 </div>
 
