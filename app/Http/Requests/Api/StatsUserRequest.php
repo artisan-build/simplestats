@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Validators\StatsUserValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StatsUserRequest extends FormRequest
@@ -19,14 +20,6 @@ class StatsUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'id' => ['required', 'integer'],
-            'track_source' => ['nullable', 'string'],
-            'track_medium' => ['nullable', 'string'],
-            'track_campaign' => ['nullable', 'string'],
-            'track_term' => ['nullable', 'string'],
-            'track_content' => ['nullable', 'string'],
-            'time' => ['required', 'date'],
-        ];
+        return (new StatsUserValidator())->rules();
     }
 }

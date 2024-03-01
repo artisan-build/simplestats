@@ -16,7 +16,7 @@ use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
-class User extends Authenticatable implements TrackableUserWithCondition
+class User extends Authenticatable implements TrackableUser
 {
     use HasApiTokens;
     use HasFactory;

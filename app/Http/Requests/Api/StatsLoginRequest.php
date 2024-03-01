@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Validators\StatsLoginValidator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StatsLoginRequest extends FormRequest
@@ -19,9 +20,6 @@ class StatsLoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'stats_user_id' => ['required', 'integer', 'exists:stats_users,id'],
-            'time' => ['required', 'date'],
-        ];
+        return (new StatsLoginValidator())->rules();
     }
 }
