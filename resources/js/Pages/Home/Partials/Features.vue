@@ -45,13 +45,13 @@ const features = [
     },
     {
         "icon": ShieldCheckIcon,
-        "title": "Privacy",
+        "title": "Privacy and GDPR",
         "descr": "We are fully committed to privacy compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."
     },
     {
         "icon": UserGroupIcon,
         "title": "Collaborate",
-        "descr": "Collaborate by creating a team, inviting your co-workers to your projects, and assigning permissions to them. Each team is separated by tenancy, ensuring highly secure and robust data integration!"
+        "descr": "Collaborate by creating a team, inviting your co-workers to your projects, and assigning permissions to them. Each team is separated by tenancy, ensuring highly secure, robust and solid data integration!"
     },
     {
         "icon": GiftIcon,
