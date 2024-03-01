@@ -73,7 +73,12 @@ class DatabaseSeeder extends Seeder
                         ['name' => 'EU'],
                     ))
                     ->afterCreating(function (Instance $instance) {
-                        StatsUser::factory(rand(100,300))->initialize()->create([
+                        // our ids are not auto increment, as they will be sent by the client,
+                        // so for tests we need to put a self-auto-incremented value here...
+                        StatsUser::factory()->initialize();
+                        StatsPayment::factory()->initialize();
+
+                        StatsUser::factory(rand(100,300))->create([
                             'project_id' => $instance->project_id,
                             'instance_id' => $instance->id,
                         ])

@@ -52,6 +52,7 @@ class StatsPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id' => ['required', 'integer'],
             'stats_user_id' => ['required', 'integer', 'exists:stats_users,id'],
             'gross' => ['required', 'numeric'],
             'net' => ['required', 'numeric'],

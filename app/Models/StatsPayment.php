@@ -23,12 +23,15 @@ class StatsPayment extends Model
      */
     public $timestamps = false;
 
+    public $incrementing = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
+        'id',
         'stats_user_id',
         'gross',
         'net',

@@ -8,7 +8,7 @@ use \Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePayment;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
 
-class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
+class Transaction extends PaddleTransaction implements TrackablePayment
 {
     public function passTrackingCondition(): bool
     {

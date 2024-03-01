@@ -19,6 +19,14 @@ class StatsPaymentFactory extends Factory
      */
     protected $model = StatsPayment::class;
 
+    public static int $id = 1;
+
+    public function initialize()
+    {
+        self::$id = 1;
+        return $this;
+    }
+
     /**
      * Define the model's default state.
      */
@@ -28,6 +36,7 @@ class StatsPaymentFactory extends Factory
         $gross = $this->faker->randomFloat(2, -10, 200);
 
         return [
+            'id' => self::$id++,
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,

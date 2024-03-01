@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stats_payments', function (Blueprint $table) {
-            $table->id();
+            /**
+             * We can't make a primary key "id" here, cause as this is a SaaS where many instances
+             * will send their payments, a stats_payment_id will only be unique on a stats_payment/instance basis...
+             */
+            $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('stats_user_id')->index();
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
@@ -25,6 +29,8 @@ return new class extends Migration
             $table->string('orig_currency', 3)->nullable();
             $table->date('time')->index();
             $table->integer('counter')->index();
+
+            $table->primary(['id', 'instance_id']);
 
             $table->foreign(['stats_user_id', 'instance_id'])
                 ->references(['id', 'instance_id'])
