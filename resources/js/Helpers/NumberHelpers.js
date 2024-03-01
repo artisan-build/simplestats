@@ -17,10 +17,17 @@ export function formatNumber(value, additionalOptions) {
     return new Intl.NumberFormat(locale, options).format(value);
 }
 
+export function centCent2Currency(value) {
+    // convert cents to full eur/usd ...
+    return value / 100;
+}
+
 export function formatCurrency(value, additionalOptions, currency) {
     if (typeof value !== 'number' || isNaN(value)) {
         return '-';
     }
+
+    value = centCent2Currency(value);
 
     let options = {
         style: "currency",
