@@ -17,7 +17,7 @@ export function formatNumber(value, additionalOptions) {
     return new Intl.NumberFormat(locale, options).format(value);
 }
 
-export function centCent2Currency(value) {
+export function cent2Currency(value) {
     // convert cents to full eur/usd ...
     return value / 100;
 }
@@ -27,7 +27,7 @@ export function formatCurrency(value, additionalOptions, currency) {
         return '-';
     }
 
-    value = centCent2Currency(value);
+    value = cent2Currency(value);
 
     let options = {
         style: "currency",

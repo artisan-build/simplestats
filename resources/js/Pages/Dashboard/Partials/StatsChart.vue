@@ -1,7 +1,7 @@
 <script setup>
 import {ref, defineComponent, onMounted} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import {centCent2Currency, formatCurrency} from "@/Helpers/NumberHelpers.js";
+import {cent2Currency, formatCurrency} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
 import StatsButton from "@/Pages/Dashboard/Partials/StatsButton.vue";
 
@@ -62,7 +62,7 @@ const chartOptions = ref({
         opposite: true,
         labels: {
             formatter: function (value) {
-                value = centCent2Currency(value);
+                value = cent2Currency(value);
                 // en-US format, so that we get compact values very early
                 if (props.chart.formatter.name === 'formatCurrency') {
                     return new Intl.NumberFormat('en-US', {
