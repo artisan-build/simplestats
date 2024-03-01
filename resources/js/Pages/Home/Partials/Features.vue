@@ -45,7 +45,7 @@ const features = [
     },
     {
         "icon": ShieldCheckIcon,
-        "title": "Privacy and GDPR",
+        "title": "Privacy",
         "descr": "We are fully committed to privacy compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."
     },
     {
