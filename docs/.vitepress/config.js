@@ -18,7 +18,8 @@ export default defineConfig({
             {
                 text: 'Examples',
                 items: [
-                    {text: 'Introduction', link: '/introduction'}
+                    {text: 'Introduction', link: '/introduction'},
+                    {text: 'Data Import', link: '/data-import'},
                 ]
             }
         ],
