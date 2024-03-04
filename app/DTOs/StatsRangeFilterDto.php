@@ -2,7 +2,7 @@
 
 namespace App\DTOs;
 
-use App\Enums\StatsRange;
+use App\Enums\StatsRangeType;
 use App\Http\Requests\DashboardRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -16,7 +16,7 @@ readonly class StatsRangeFilterDto
         public int $projectId,
         public int $instanceId,
         public int $rangeAmount,
-        public StatsRange $rangeType,
+        public StatsRangeType $rangeType,
         public CarbonImmutable $rangeStart,
         public int $trackSource = 0,
         public int $trackMedium = 0,
@@ -31,7 +31,7 @@ readonly class StatsRangeFilterDto
             $request->projectId ?? 0,
             $request->instanceId ?? 0,
             $request->rangeAmount ?? 7,
-            StatsRange::from($request->rangeType ?? StatsRange::DAY->value),
+            StatsRangeType::from($request->rangeType ?? StatsRangeType::DAY->value),
             Date::parse($request->rangeStart ?? now()),
             $request->trackSource ?? 0,
             $request->trackMedium ?? 0,

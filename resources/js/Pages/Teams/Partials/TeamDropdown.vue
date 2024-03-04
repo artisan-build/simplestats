@@ -54,9 +54,9 @@ const highligtTeam = route().current().includes('teams') || (route().current().i
                         Settings
                     </DropdownLink>
 
-<!--                    <DropdownLink :href="route('import')">-->
-<!--                        Import-->
-<!--                    </DropdownLink>-->
+                    <DropdownLink :href="route('data-import.index')">
+                        Data Import
+                    </DropdownLink>
 
                     <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
                         Create New Team

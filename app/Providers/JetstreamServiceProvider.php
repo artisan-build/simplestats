@@ -50,6 +50,7 @@ class JetstreamServiceProvider extends ServiceProvider
 
         Jetstream::role('admin', 'Administrator', [
             'action:teamPermission',
+            'action:importPermission',
             'action:create',
             'action:read',
             'action:readSensitives',

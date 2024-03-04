@@ -6,9 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +31,9 @@ Route::middleware([
     Route::any('intro', IntroController::class)->name('intro');
     Route::get('overview', OverviewController::class)->name('stats.overview');
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    // Data Import
+    Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store', 'destroy']);
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);

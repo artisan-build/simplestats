@@ -5,14 +5,6 @@ import SectionBorder from '@/Components/SectionBorder.vue';
 import UpdateProjectForm from '@/Pages/Projects/Partials/UpdateProjectForm.vue';
 import ShowInstancesList from "@/Pages/Instances/Partials/ShowInstancesList.vue";
 import ActionTable from "@/Components/ActionTable.vue";
-import InputError from "@/Components/InputError.vue";
-import FormSection from "@/Components/FormSection.vue";
-import TextInput from "@/Components/TextInput.vue";
-import ActionMessage from "@/Components/ActionMessage.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import SelectInput from "@/Components/SelectInput.vue";
-import {useForm} from "@inertiajs/vue3";
 import CreateProjectInstanceForm from "@/Pages/Projects/Partials/CreateProjectInstanceForm.vue";
 
 defineProps({

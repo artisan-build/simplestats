@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\StatsRange;
+use App\Enums\StatsRangeType;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsTrackCampaign;
@@ -57,7 +57,6 @@ class DashboardRequest extends FormRequest
                 'integer',
                 Rule::exists(Project::class, 'id')->where(function ($query) {
                     $query->where([
-                        'id' => $this->projectId,
                         'team_id' => $this->user()->current_team_id,
                     ]);
                 }),
@@ -72,7 +71,7 @@ class DashboardRequest extends FormRequest
                     ]);
                 }),
             ],
-            'rangeType' => ['sometimes', Rule::enum(StatsRange::class)],
+            'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
             'rangeStart' => ['sometimes', 'date'],
             'trackSource' => [

@@ -5,3 +5,13 @@
 [x-cloak] {
     display: none;
 }
+
+a.simpleLink {
+    @apply text-indigo-600;
+}
+
+a.simpleLink:hover {
+    @apply text-indigo-800;
+    @apply font-medium;
+    @apply underline;
+}

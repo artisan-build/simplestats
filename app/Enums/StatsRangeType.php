@@ -5,7 +5,7 @@ namespace App\Enums;
 use Carbon\CarbonImmutable;
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
-enum StatsRange: string
+enum StatsRangeType: string
 {
     use UsefulEnums;
 
