@@ -17,9 +17,9 @@ class StatsPaymentValidator extends BaseValidator
         }
 
         // check if we have to convert currencies
-        $teamCurrency = auth()->team->currency;
+        $teamCurrency = auth()->user()->team->currency;
         if ($input['currency'] != $teamCurrency) {
-            $exchangeRate = app(ExchangeRateService::class)->getFor(now(), $input['currency'], auth()->team->currency);
+            $exchangeRate = app(ExchangeRateService::class)->getFor(now(), $input['currency'], auth()->user()->team->currency);
             $input = array_merge($input, [
                 'orig_gross' => $input['gross'],
                 'orig_net' => $input['net'],
