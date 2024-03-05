@@ -17,7 +17,7 @@ defineProps({
 const getTrackedJobStatusOptions = (trackedJob) => {
     const statusOptions = {
         icon: '',
-        text: '',
+        text: trackedJob.status,
         color: '',
         svgClass: '',
     };
@@ -27,23 +27,15 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         case 'retrying':
         case 'started':
             statusOptions.icon = ArrowPathIcon;
-            statusOptions.text = 'processing';
             statusOptions.color = 'text-indigo-600';
             statusOptions.svgClass = 'animate-spin';
             break;
         case 'finished':
             statusOptions.icon = CheckCircleIcon;
-            statusOptions.text = 'completed';
             statusOptions.color = 'text-green-600';
             break;
         case 'failed':
             statusOptions.icon = XCircleIcon;
-            statusOptions.text = 'failed';
-            statusOptions.color = 'text-red-600';
-            break;
-        case 'aborted':
-            statusOptions.icon = XCircleIcon;
-            statusOptions.text = 'aborted';
             statusOptions.color = 'text-red-600';
             break;
     }
@@ -81,7 +73,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                     <th class="pb-4 pt-6 px-6">Status</th>
                                     <th class="pb-4 pt-6 px-6">Type</th>
                                     <th class="pb-4 pt-6 px-6">Creator</th>
-                                    <th class="pb-4 pt-6 px-6">Rows Count</th>
+                                    <th class="pb-4 pt-6 px-6">Rows imported</th>
                                     <th class="pb-4 pt-6 px-6">From Id</th>
                                     <th class="pb-4 pt-6 px-6">To Id</th>
                                 </tr>
@@ -89,14 +81,25 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                     <td class="border-t px-6 py-4">
                                         <div v-tooltip.left="dataImport.tracked_job.output" class="flex items-center" :class="getTrackedJobStatusOptions(dataImport.tracked_job).color">
                                             <div class="mr-4">
-                                                <component :class="getTrackedJobStatusOptions(dataImport.tracked_job).svgClass" class="inline-block h-6 w-6" :is="getTrackedJobStatusOptions(dataImport.tracked_job).icon" />
+                                                <component
+                                                    :class="getTrackedJobStatusOptions(dataImport.tracked_job).svgClass"
+                                                    class="inline-block h-6 w-6" :is="getTrackedJobStatusOptions(dataImport.tracked_job).icon"
+                                                />
                                             </div>
                                             <div>
                                                 <div class="font-medium">
                                                     Import {{ getTrackedJobStatusOptions(dataImport.tracked_job).text }}
                                                 </div>
                                                 <div class="text-sm">
-                                                    {{ (dataImport.tracked_job.finished_at) ? new Date(dataImport.tracked_job.finished_at).toLocaleString() : '...' }}
+                                                    <span v-if="dataImport.tracked_job.finished_at">
+                                                        At {{ new Date(dataImport.tracked_job.finished_at).toLocaleString() }}
+                                                    </span>
+                                                    <span v-else-if="dataImport.tracked_job.started_at">
+                                                        At {{ new Date(dataImport.tracked_job.started_at).toLocaleString() }}
+                                                    </span>
+                                                    <span v-else>
+                                                        At {{ new Date(dataImport.tracked_job.created_at).toLocaleString() }}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
