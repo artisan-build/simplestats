@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasInstanceScope;
+use App\Concerns\HasStatsUserAssurance;
 use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,7 @@ class StatsPayment extends Model
     use HasTeamScope;
     use HasInstanceScope;
     use HasCounterByStatsUser;
+    use HasStatsUserAssurance;
 
     /**
      * Indicates if the model should be timestamped.
