@@ -7,8 +7,11 @@ import FormSection from "@/Components/FormSection.vue";
 import InputError from "@/Components/InputError.vue";
 import {useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import FileInput from "@/Components/FileInput.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import DangerButton from "@/Components/DangerButton.vue";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 
 const props = defineProps({
     filters: Object,
@@ -30,8 +33,14 @@ const createDataImport = () => {
         preserveScroll: true,
         onSuccess: () => {
             createDataImportForm.reset();
+            dataImportBeeingCreated.value = false;
         },
     });
+};
+
+const dataImportBeeingCreated = ref(false);
+const confirmDataImportCreation = () => {
+    dataImportBeeingCreated.value = true;
 };
 
 const instancesOfSelectedProject = computed(() => {
@@ -88,7 +97,7 @@ const instancesOfSelectedProject = computed(() => {
             </div>
 
             <div v-if="createDataImportForm.instance_id" class="col-span-6 sm:col-span-4">
-                <InputLabel for="type" value="Type" />
+                <InputLabel for="type" value="Import Type" />
                 <SelectInput
                     id="type"
                     v-model="createDataImportForm.type"
@@ -99,7 +108,7 @@ const instancesOfSelectedProject = computed(() => {
             </div>
 
             <div v-if="createDataImportForm.type" class="col-span-6 sm:col-span-4">
-                <InputLabel for="file" value="File" />
+                <InputLabel for="file" value="Import File" />
 
                 <FileInput
                     id="file"
@@ -107,10 +116,6 @@ const instancesOfSelectedProject = computed(() => {
                     class="mt-1 block w-full"
                 />
                 <InputError :message="createDataImportForm.errors.file" class="mt-2" />
-
-                <progress v-if="createDataImportForm.progress" :value="createDataImportForm.progress.percentage" max="100">
-                    {{ createDataImportForm.progress.percentage }}%
-                </progress>
             </div>
         </template>
 
@@ -123,12 +128,45 @@ const instancesOfSelectedProject = computed(() => {
                 <PrimaryButton v-tooltip="!permissions.canCreateDataImport ? 'You are not allowed to create new Data Imports due to plan or role limitations!' : ''"
                                :class="{ 'opacity-25': createDataImportForm.processing }"
                                :disabled="createDataImportForm.processing || !permissions.canCreateDataImport"
+                               @click="confirmDataImportCreation"
+                               type="button"
                 >
                     Start Import
                 </PrimaryButton>
             </div>
         </template>
     </FormSection>
+
+    <!-- Delete Instance Confirmation Modal -->
+    <ConfirmationModal :show="dataImportBeeingCreated" @close="dataImportBeeingCreated = false">
+        <template #title>
+            Create Data Import
+        </template>
+
+        <template #content>
+            Do you really want to import this file with the following settings:<br>
+            <br>
+            <strong>Project:</strong> {{ projects.filter((project) => project.id == createDataImportForm.project_id)[0].name }}<br>
+            <strong>Instance:</strong> {{ instances.filter((instance) => instance.id == createDataImportForm.instance_id)[0].name }}<br>
+            <strong>Import Type:</strong> {{ createDataImportForm.type }}<br>
+            <strong>Import File:</strong> {{ createDataImportForm.file.name }}<br>
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="dataImportBeeingCreated = false">
+                Cancel
+            </SecondaryButton>
+
+            <PrimaryButton
+                class="ms-3"
+                :class="{ 'opacity-25': createDataImportForm.processing }"
+                :disabled="createDataImportForm.processing"
+                @click="createDataImport"
+            >
+                Confirm Import
+            </PrimaryButton>
+        </template>
+    </ConfirmationModal>
 </template>
 
 <style scoped>

@@ -52,7 +52,7 @@ class DataImportRequest extends FormRequest
             ],
             'file' => [
                 'required',
-                File::types(['xls', 'xlsx']),
+                File::types(['xls', 'xlsx', 'csv']),
             ],
         ];
     }

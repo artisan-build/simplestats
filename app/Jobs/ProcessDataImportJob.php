@@ -20,6 +20,6 @@ class ProcessDataImportJob implements ShouldQueue
     public function handle(): void
     {
         sleep(10);
-        100/0;
+//        100/0;
     }
 }
