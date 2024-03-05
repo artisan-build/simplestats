@@ -71,6 +71,8 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                             <template #content>
                                 <tr class="text-left font-bold">
                                     <th class="pb-4 pt-6 px-6">Status</th>
+                                    <th class="pb-4 pt-6 px-6">Project</th>
+                                    <th class="pb-4 pt-6 px-6">Instance</th>
                                     <th class="pb-4 pt-6 px-6">Type</th>
                                     <th class="pb-4 pt-6 px-6">Creator</th>
                                     <th class="pb-4 pt-6 px-6">Rows imported</th>
@@ -103,6 +105,12 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                                 </div>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td class="border-t px-6 py-4 focus:text-indigo-500">
+                                        {{ dataImport.project.name }}
+                                    </td>
+                                    <td class="border-t px-6 py-4 focus:text-indigo-500">
+                                        {{ dataImport.instance.name }}
                                     </td>
                                     <td class="border-t px-6 py-4 focus:text-indigo-500">
                                         {{ dataImport.type }}
