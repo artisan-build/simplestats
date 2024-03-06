@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 
 abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading, WithBatchInserts
 {
-    const BATCH_CHUNK_SIZE = 3;
+    const BATCH_CHUNK_SIZE = 1000;
 
     public int $counter = 0;
     public int $idFrom = 0;
