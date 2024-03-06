@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Concerns\HasInstanceScope;
 use App\Concerns\HasTeamScope;
 use App\Enums\DataImportType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

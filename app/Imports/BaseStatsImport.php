@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading, WithBatchInserts
+abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading //, WithBatchInserts
 {
     const BATCH_CHUNK_SIZE = 1000;
 

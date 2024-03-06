@@ -7,6 +7,8 @@ use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
 use App\Mail\DataImportSuccessful;
 use App\Models\DataImport;
+use App\Models\Instance;
+use App\Models\User;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

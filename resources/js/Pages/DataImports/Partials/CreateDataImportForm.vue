@@ -72,12 +72,14 @@ const currentImportNotFinishedYet = props.dataImports.total > 0 && props.dataImp
         </template>
 
         <template #description>
+            Though it's not mandatory, but highly recommended to first import the user data and only then the corresponding payment/login data.<br>
+            <br>
             If your user and payment data has any conditions to count as a valid entry,
             for instance only if the user has verified his email or only if the payment has a certain status like "success",
             make sure to provide only these data in the import file.
-            Also make sure to send us the currency of payments in cents.<br>
+            Also make sure to send us the currency of your payments in cents.<br>
             <br>
-            Learn more about the import here: <a class="simpleLink" href="/docs/data-import.html" target="_blank">Data Import</a>
+            Learn more here: <a class="simpleLink" href="/docs/data-import.html" target="_blank">Data Import</a>
         </template>
 
         <template #form>
