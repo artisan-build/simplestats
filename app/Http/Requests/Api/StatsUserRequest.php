@@ -15,6 +15,11 @@ class StatsUserRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge((new StatsUserValidator())->prepareForValidation($this->all()));
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */

@@ -15,6 +15,11 @@ class StatsLoginRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge((new StatsLoginValidator())->prepareForValidation($this->all()));
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */

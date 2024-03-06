@@ -8,7 +8,7 @@ class StatsLoginValidator extends BaseValidator
     {
         return [
             'stats_user_id' => ['required', 'integer'],
-            'time' => ['required', 'date'],
+            'time' => ['required', 'date_format:Y-m-d'],
         ];
     }
 }

@@ -50,7 +50,7 @@ class StatsPaymentValidator extends BaseValidator
             'orig_gross' => ['sometimes', 'numeric'],
             'orig_net' => ['sometimes', 'numeric'],
             'orig_currency' => ['sometimes', new Currency()],
-            'time' => ['required', 'date'],
+            'time' => ['required', 'date_format:Y-m-d'],
         ];
     }
 }
