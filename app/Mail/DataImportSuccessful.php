@@ -28,6 +28,8 @@ class DataImportSuccessful extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.data-import-successful')->subject(__('Data Import Successful'));
+        $subject = ucfirst($this->dataImport->type->value).' '.__('Data Import Successful');
+
+        return $this->markdown('emails.data-import-successful')->subject($subject);
     }
 }

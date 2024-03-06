@@ -28,6 +28,8 @@ class DataImportFailed extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.data-import-failed')->subject(__('Data Import Failed'));
+        $subject = ucfirst($this->dataImport->type->value).' '.__('Data Import Failed');
+
+        return $this->markdown('emails.data-import-failed')->subject($subject);
     }
 }

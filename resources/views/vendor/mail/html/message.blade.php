@@ -8,7 +8,10 @@
 </x-slot:header>
 
 {{-- Body --}}
+
+<div style="word-wrap: break-word; overflow-wrap: break-word;">
 {{ $slot }}
+</div>
 
 {{-- Subcopy --}}
 @isset($subcopy)

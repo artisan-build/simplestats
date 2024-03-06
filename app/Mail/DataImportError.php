@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Crypt;
 
 class DataImportError extends Mailable
 {
@@ -28,6 +29,12 @@ class DataImportError extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.data-import-error')->subject(__('Data Import Error'));
+        $subject = ucfirst($this->dataImport->type->value).' '.__('Data Import Error');
+
+        $data = [
+            'errorCode' => Crypt::encryptString($this->dataImport->id),
+        ];
+
+        return $this->markdown('emails.data-import-error', $data)->subject($subject);
     }
 }
