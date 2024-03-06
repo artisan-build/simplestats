@@ -7,7 +7,7 @@ use App\Models\StatsPayment;
 use App\Validators\StatsPaymentValidator;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 
-class StatsPaymentsImport extends BaseStatsImport // implements WithUpserts
+class StatsPaymentsImport extends BaseStatsImport implements WithUpserts
 {
     public function __construct(DataImport $dataImport)
     {
