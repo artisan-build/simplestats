@@ -21,7 +21,6 @@ trait HasTeamScope
         });
 
         static::saving(function ($model) {
-            ray(auth()->user());
             if (auth()->check()) {
                 // important check first team_id then current_team_id
                 $teamId = auth()->user()->team_id ?? auth()->user()->current_team_id;
