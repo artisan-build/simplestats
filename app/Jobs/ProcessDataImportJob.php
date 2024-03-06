@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Imports\BaseStatsImport;
 use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
 use App\Mail\DataImportSuccessful;
@@ -45,17 +46,11 @@ class ProcessDataImportJob implements ShouldQueue
 
         try {
             Excel::import($importer, $this->filepath);
-            $this->model->trackedJob->finished_at = now();
+            $this->processPostImportBeforeMails($importer);
             Mail::to($this->model->createdBy->email)->send(new DataImportSuccessful($this->model));
         } catch (Throwable $e) {
-            $this->model->update([
-                'rows_imported' => $importer->counter,
-                'id_from' => $importer->idFrom,
-                'id_to' => $importer->idTo,
-            ]);
-
+            $this->processPostImportBeforeMails($importer);
             $this->model->trackedJob->output = $e->getMessage();
-            $this->model->trackedJob->finished_at = now();
 
             // higher exceptions must be listed before Throwable, else it's always true
             match(true) {
@@ -67,5 +62,16 @@ class ProcessDataImportJob implements ShouldQueue
         } finally {
             Storage::disk('local')->delete($this->filepath);
         }
+    }
+
+    private function processPostImportBeforeMails(BaseStatsImport $importer): void
+    {
+        $this->model->update([
+            'rows_imported' => $importer->counter,
+            'id_from' => $importer->idFrom,
+            'id_to' => $importer->idTo,
+        ]);
+
+        $this->model->trackedJob->finished_at = now();
     }
 }

@@ -39,14 +39,18 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
 
         $this->idTo = $row['id'] ?? 0;
 
-        // prepare validation tweaks data as we need/want it here
-        return new $this->modelClass(array_merge([
-                'team_id' => $this->dataImport->team_id,
-                'project_id' => $this->dataImport->project_id,
-                'instance_id' => $this->dataImport->instance_id,
-            ],
-            $this->validator->prepareForValidation($row),
-        ));
+        // team, project, instance id are normally set dynamically
+        // this is safe, as we've validated the rows/cols before...
+        return $this->modelClass::unguarded(function () use ($row) {
+            // prepare validation tweaks data as we need/want it here
+            return new $this->modelClass(array_merge([
+                    'team_id' => $this->dataImport->team_id,
+                    'project_id' => $this->dataImport->project_id,
+                    'instance_id' => $this->dataImport->instance_id,
+                ],
+                $this->validator->prepareForValidation($row),
+            ));
+        });
     }
 
     public function prepareForValidation($data, $index): array

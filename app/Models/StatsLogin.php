@@ -32,11 +32,6 @@ class StatsLogin extends Model
      */
     protected $fillable = [
         'stats_user_id',
-        // in non-cli env these are always set/overwritten by the auth user (check HasInstanceScope and HasTeamScope)
-        'team_id',
-        'project_id',
-        'instance_id',
-        // in non-cli env these are always set/overwritten by the auth user (check HasInstanceScope and HasTeamScope)
         'time'
     ];
 

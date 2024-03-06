@@ -5,11 +5,13 @@ namespace App\Models;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
+use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
@@ -100,5 +102,16 @@ class User extends Authenticatable implements TrackableUser
         }
 
         return $plan;
+    }
+
+    // Compatibility for auth()->team() checks in request/validator classes,
+    // Which may be performed by the auth instance (api) or the auth user (normal request)
+    public function team(): BelongsTo
+    {
+        if (is_null($this->current_team_id) && $this->id) {
+            $this->switchTeam($this->personalTeam());
+        }
+
+        return $this->belongsTo(Jetstream::teamModel(), 'current_team_id');
     }
 }
