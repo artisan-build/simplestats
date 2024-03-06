@@ -72,7 +72,7 @@ const currentImportNotFinishedYet = props.dataImports.total > 0 && props.dataImp
         </template>
 
         <template #description>
-            Though it's not mandatory, but highly recommended to first import the user data and only then the corresponding payment/login data.<br>
+            Though it is not mandatory, it's highly recommended to first import the user data and only then the corresponding payment/login data.<br>
             <br>
             If your user and payment data has any conditions to count as a valid entry,
             for instance only if the user has verified his email or only if the payment has a certain status like "success",
