@@ -12,12 +12,15 @@ import FileInput from "@/Components/FileInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
+import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
 
 const props = defineProps({
     filters: Object,
     projects: Array,
     instances: Array,
+    dataImports: Object,
     importTypes: Array,
+    mimeTypes: Array,
     permissions: Object,
 });
 
@@ -31,6 +34,9 @@ const createDataImportForm = useForm({
 const createDataImport = () => {
     createDataImportForm.post(route('data-import.store'), {
         preserveScroll: true,
+        onError: () => {
+            dataImportBeeingCreated.value = false;
+        },
         onSuccess: () => {
             createDataImportForm.reset();
             dataImportBeeingCreated.value = false;
@@ -56,6 +62,7 @@ const instancesOfSelectedProject = computed(() => {
     return instances;
 });
 
+const currentImportNotFinishedYet = props.dataImports.total > 0 && props.dataImports.data[0].tracked_job.finished_at === null;
 </script>
 
 <template>
@@ -74,7 +81,15 @@ const instancesOfSelectedProject = computed(() => {
         </template>
 
         <template #form>
-            <div class="col-span-6 sm:col-span-4">
+            <div v-if="currentImportNotFinishedYet" class="col-span-6">
+                <WarningBox>
+                    You can only create <strong>one</strong> import at a time.
+                    Please wait until this import has finished before starting another data import.
+                    We'll send you an <strong>email</strong> as soon as the current import is complete!
+                    Depending on the amount of data, this may take from minutes to hours.
+                </WarningBox>
+            </div>
+            <div v-else class="col-span-6 sm:col-span-4">
                 <InputLabel for="project_id" value="Project" />
                 <SelectInput
                     id="project_id"
@@ -108,7 +123,7 @@ const instancesOfSelectedProject = computed(() => {
             </div>
 
             <div v-if="createDataImportForm.type" class="col-span-6 sm:col-span-4">
-                <InputLabel for="file" value="Import File" />
+                <InputLabel for="file" :value="`Import File (${mimeTypes.join(', ')})`" />
 
                 <FileInput
                     id="file"

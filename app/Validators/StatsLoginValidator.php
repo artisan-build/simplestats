@@ -7,7 +7,7 @@ class StatsLoginValidator extends BaseValidator
     public function rules(): array
     {
         return [
-            'stats_user_id' => ['required', 'integer', 'exists:stats_users,id'],
+            'stats_user_id' => ['required', 'integer'],
             'time' => ['required', 'date'],
         ];
     }

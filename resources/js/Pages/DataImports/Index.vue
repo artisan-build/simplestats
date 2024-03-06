@@ -11,6 +11,7 @@ defineProps({
     instances: Array,
     dataImports: Object,
     importTypes: Array,
+    mimeTypes: Array,
     permissions: Object,
 });
 
@@ -53,7 +54,15 @@ const getTrackedJobStatusOptions = (trackedJob) => {
 
         <div>
             <div>
-                <CreateDataImportForm :importTypes="importTypes" :filters="filters" :permissions="permissions" :projects="projects" :instances="instances" />
+                <CreateDataImportForm
+                    :filters="filters"
+                    :projects="projects"
+                    :instances="instances"
+                    :dataImports="dataImports"
+                    :importTypes="importTypes"
+                    :mimeTypes="mimeTypes"
+                    :permissions="permissions"
+                />
 
                 <div v-if="dataImports.total > 0">
                     <SectionBorder />
@@ -81,7 +90,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                 </tr>
                                 <tr v-for="dataImport in dataImports.data" :key="dataImport.id">
                                     <td class="border-t px-6 py-4">
-                                        <div v-tooltip.left="dataImport.tracked_job.output" class="flex items-center" :class="getTrackedJobStatusOptions(dataImport.tracked_job).color">
+                                        <div class="flex items-center" :class="getTrackedJobStatusOptions(dataImport.tracked_job).color">
                                             <div class="mr-4">
                                                 <component
                                                     :class="getTrackedJobStatusOptions(dataImport.tracked_job).svgClass"
@@ -122,10 +131,10 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                         {{ dataImport.rows_count ?? '...' }}
                                     </td>
                                     <td class="border-t px-6 py-4 focus:text-indigo-500">
-                                        {{ dataImport.from_id ?? '...' }}
+                                        {{ dataImport.id_from ?? '...' }}
                                     </td>
                                     <td class="border-t px-6 py-4 focus:text-indigo-500">
-                                        {{ dataImport.to_id ?? '...' }}
+                                        {{ dataImport.id_to ?? '...' }}
                                     </td>
                                 </tr>
                             </template>

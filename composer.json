@@ -16,6 +16,7 @@
         "laravel/spark-paddle": "^5.1",
         "laravel/tinker": "^2.8",
         "league/iso3166": "^4.3",
+        "maatwebsite/excel": "^3.1",
         "mateusjunges/laravel-trackable-jobs": "^1.6",
         "simplestats-io/laravel-client": "dev-main",
         "spatie/laravel-ray": "^1.33",

@@ -11,6 +11,8 @@ use Illuminate\Validation\Rule;
 
 class DataImportRequest extends FormRequest
 {
+    const MIMETYPES = ['xls', 'xlsx', 'csv', 'txt'];
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -52,7 +54,7 @@ class DataImportRequest extends FormRequest
             ],
             'file' => [
                 'required',
-                File::types(['xls', 'xlsx', 'csv']),
+                File::types(self::MIMETYPES),
             ],
         ];
     }

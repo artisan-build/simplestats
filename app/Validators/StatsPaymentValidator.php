@@ -43,7 +43,7 @@ class StatsPaymentValidator extends BaseValidator
     {
         return [
             'id' => ['required', 'integer'],
-            'stats_user_id' => ['required', 'integer', 'exists:stats_users,id'],
+            'stats_user_id' => ['required', 'integer'],
             'gross' => ['required', 'numeric'],
             'net' => ['required', 'numeric'],
             'currency' => ['required', new Currency()],
