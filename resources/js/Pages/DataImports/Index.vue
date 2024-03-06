@@ -128,7 +128,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                         {{ dataImport.created_by.name }}
                                     </td>
                                     <td class="border-t px-6 py-4 focus:text-indigo-500">
-                                        {{ dataImport.rows_count ?? '...' }}
+                                        {{ dataImport.rows_imported ?? '...' }}
                                     </td>
                                     <td class="border-t px-6 py-4 focus:text-indigo-500">
                                         {{ dataImport.id_from ?? '...' }}

@@ -27,7 +27,7 @@ class DataImport extends Model
         'id_from',
         'id_to',
         'type',
-        'rows_count',
+        'rows_imported',
     ];
 
     public function team(): BelongsTo

@@ -49,7 +49,7 @@ class ProcessDataImportJob implements ShouldQueue
             Mail::to($this->model->createdBy->email)->send(new DataImportSuccessful($this->model));
         } catch (Throwable $e) {
             $this->model->update([
-                'rows_count' => $importer->counter,
+                'rows_imported' => $importer->counter,
                 'id_from' => $importer->idFrom,
                 'id_to' => $importer->idTo,
             ]);

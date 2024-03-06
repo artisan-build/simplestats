@@ -34,7 +34,7 @@ class DataImportFactory extends Factory
             'id_from' => $this->faker->numberBetween(-10000, 10000),
             'id_to' => $this->faker->numberBetween(-10000, 10000),
             'type' => $this->faker->word(),
-            'rows_count' => $this->faker->numberBetween(-10000, 10000),
+            'rows_imported' => $this->faker->numberBetween(-10000, 10000),
         ];
     }
 }

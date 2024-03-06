@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('type');
             $table->integer('id_from')->nullable();
             $table->integer('id_to')->nullable();
-            $table->integer('rows_count')->nullable();
+            $table->integer('rows_imported')->nullable();
             $table->timestamps();
         });
     }
