@@ -84,7 +84,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                                     <th class="pb-4 pt-6 px-6">Instance</th>
                                     <th class="pb-4 pt-6 px-6">Type</th>
                                     <th class="pb-4 pt-6 px-6">Creator</th>
-                                    <th class="pb-4 pt-6 px-6">Rows imported</th>
+                                    <th class="pb-4 pt-6 px-6">Rows</th>
                                     <th class="pb-4 pt-6 px-6">From Id</th>
                                     <th class="pb-4 pt-6 px-6">To Id</th>
                                 </tr>
