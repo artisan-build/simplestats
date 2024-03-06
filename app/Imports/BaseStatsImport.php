@@ -2,6 +2,8 @@
 
 namespace App\Imports;
 
+use App\Concerns\HasCounterByStatsUser;
+use App\Concerns\HasStatsUserAssurance;
 use App\Models\DataImport;
 use App\Validators\BaseValidator;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -10,7 +12,7 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading //, WithBatchInserts
+abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading, WithBatchInserts
 {
     const BATCH_CHUNK_SIZE = 1000;
 
@@ -22,7 +24,13 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         protected DataImport $dataImport,
         protected string $modelClass,
         protected BaseValidator $validator
-    ) {}
+    ) {
+        // https://docs.laravel-excel.com/3.1/imports/validation.html#database-transactions
+        // We need to make inbetween db updates, so we disable transactions.
+        // As we anyway use Batches and Chunks and only the current batch is wrapped in a transaction,
+        // it has not really a difference...
+        config(['excel.transactions.handler' => 'null']);
+    }
 
     /**
     * @param array $row
@@ -32,24 +40,35 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     public function model(array $row)
     {
         $this->counter++;
-
-        if ($this->counter === 1) {
-            $this->idFrom = $row['id'] ?? 0;
-        }
-
+        if ($this->counter === 1) {$this->idFrom = $row['id'] ?? 0;}
         $this->idTo = $row['id'] ?? 0;
+
+        $modelConcerns = class_uses(new $this->modelClass());
 
         // team, project, instance id are normally set dynamically
         // this is safe, as we've validated the rows/cols before...
-        return $this->modelClass::unguarded(function () use ($row) {
+        return $this->modelClass::unguarded(function () use ($row, $modelConcerns) {
+            $uniqueInstance = [
+                'team_id' => $this->dataImport->team_id,
+                'project_id' => $this->dataImport->project_id,
+                'instance_id' => $this->dataImport->instance_id,
+            ];
+
             // prepare validation tweaks data as we need/want it here
-            return new $this->modelClass(array_merge([
-                    'team_id' => $this->dataImport->team_id,
-                    'project_id' => $this->dataImport->project_id,
-                    'instance_id' => $this->dataImport->instance_id,
-                ],
-                $this->validator->prepareForValidation($row),
-            ));
+            $data = array_merge($this->validator->prepareForValidation($row), $uniqueInstance);
+
+            $model = new $this->modelClass($data);
+
+            // as batch in/upsert does not use eloquent we have to add these things manually
+            if (in_array(HasCounterByStatsUser::class, $modelConcerns)) {
+                $model->counter = $model->getCounter();
+            }
+
+            if (in_array(HasStatsUserAssurance::class, $modelConcerns)) {
+                $model->ensureStatsUser($uniqueInstance);
+            }
+
+            return $model;
         });
     }
 
