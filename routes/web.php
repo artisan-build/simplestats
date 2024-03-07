@@ -33,7 +33,8 @@ Route::middleware([
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     // Data Import
-    Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store']);
+    Route::post('data-import/{data_import}/cancel', [App\Http\Controllers\DataImportController::class, 'cancel'])->name('data-import.cancel');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);

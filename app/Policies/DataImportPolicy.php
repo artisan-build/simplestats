@@ -40,7 +40,7 @@ class DataImportPolicy
      */
     public function update(User $user, DataImport $dataImport): bool
     {
-        return $user->hasTeamPermission($dataImport->team, 'action:update');
+        return $user->hasTeamPermission($dataImport->team, 'action:importPermission');
     }
 
     /**
@@ -48,6 +48,14 @@ class DataImportPolicy
      */
     public function delete(User $user, DataImport $dataImport): bool
     {
-        return $user->hasTeamPermission($dataImport->team, 'action:delete');
+        return $user->hasTeamPermission($dataImport->team, 'action:importPermission');
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function cancel(User $user, DataImport $dataImport): bool
+    {
+        return $user->hasTeamPermission($dataImport->team, 'action:importPermission');
     }
 }

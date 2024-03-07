@@ -4,8 +4,10 @@ namespace App\Imports;
 
 use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasStatsUserAssurance;
+use App\Exceptions\ImportCanceledException;
 use App\Models\DataImport;
 use App\Validators\BaseValidator;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -33,12 +35,17 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     }
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param  array  $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     * @throws ImportCanceledException
+     */
     public function model(array $row)
     {
+        if (Cache::get('cancel_data_import_'.$this->dataImport->id)) {
+            throw new ImportCanceledException();
+        }
+
         $this->counter++;
         if ($this->counter === 1) {$this->idFrom = $row['id'] ?? 0;}
         $this->idTo = $row['id'] ?? 0;

@@ -8,12 +8,14 @@ use App\Jobs\ProcessDataImportJob;
 use App\Models\DataImport;
 use App\Models\Instance;
 use App\Models\Project;
+use Cache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Junges\TrackableJobs\Models\TrackedJob;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
 
@@ -81,13 +83,31 @@ class DataImportController extends Controller
         $filepath = $file->store('imports', 'local');
         dispatch(new ProcessDataImportJob($import, $filepath));
 
+        // w8 till the dispatched job is tracked
+        sleep(1);
+
         return redirect()->route('data-import.index')->banner('Import started');
     }
 
-    public function destroy(Request $request, DataImport $dataImport): RedirectResponse
-    {
-        $dataImport->delete();
+//    public function destroy(Request $request, DataImport $dataImport): RedirectResponse
+//    {
+//        $dataImport->delete();
+//
+//        return redirect()->route('data-import.index')->banner('Import aborted');
+//    }
 
-        return redirect()->route('data-import.index')->banner('Import aborted');
+    public function cancel(Request $request, DataImport $dataImport): RedirectResponse
+    {
+        $this->authorize('cancel', $dataImport);
+
+        Cache::put('cancel_data_import_'.$dataImport->id, true);
+
+        // set rough defaults (the job is actually canceld in the queue)
+        $dataImport->trackedJob->update([
+            'status' => TrackedJob::STATUS_FAILED,
+            'finished_at' => now(),
+        ]);
+
+        return redirect()->route('data-import.index')->banner('Import canceled');
     }
 }

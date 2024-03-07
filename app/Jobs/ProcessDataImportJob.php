@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\ImportCanceledException;
 use App\Imports\BaseStatsImport;
+use App\Mail\DataImportCanceled;
 use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
 use App\Mail\DataImportSuccessful;
@@ -56,6 +58,7 @@ class ProcessDataImportJob implements ShouldQueue
 
             // higher exceptions must be listed before Throwable, else it's always true
             match(true) {
+                $e instanceof ImportCanceledException => Mail::to($this->model->createdBy->email)->send(new DataImportCanceled($this->model)),
                 $e instanceof ValidationException => Mail::to($this->model->createdBy->email)->send(new DataImportFailed($this->model)),
                 $e instanceof Throwable => Mail::to($this->model->createdBy->email)->send(new DataImportError($this->model)),
             };
