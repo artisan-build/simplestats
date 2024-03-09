@@ -6,7 +6,7 @@ use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasStatsUserAssurance;
 use App\Exceptions\ImportCanceledException;
 use App\Models\DataImport;
-use App\Validators\BaseValidator;
+use App\Validators\BaseStatsValidator;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -25,7 +25,7 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     public function __construct(
         protected DataImport $dataImport,
         protected string $modelClass,
-        protected BaseValidator $validator
+        protected BaseStatsValidator $validator
     ) {
         // https://docs.laravel-excel.com/3.1/imports/validation.html#database-transactions
         // We need to make inbetween db updates, so we disable transactions.

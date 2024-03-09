@@ -6,7 +6,7 @@ use App\Services\ExchangeRateService;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ValidationRules\Rules\Currency;
 
-class StatsPaymentValidator extends BaseValidator
+class StatsPaymentValidator extends BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
@@ -38,13 +38,13 @@ class StatsPaymentValidator extends BaseValidator
 
         if (isset($input['net']))          $input['net'] = round($input['net'], 2);
         if (isset($input['orig_net']))     $input['orig_net'] = round($input['orig_net'], 2);
-        
+
         return $input;
     }
 
     public function rules(): array
     {
-        return [
+        return array_merge(parent::rules(), [
             'id' => ['required', 'integer'],
             'stats_user_id' => ['required', 'integer'],
             'gross' => ['required', 'numeric'],
@@ -53,7 +53,6 @@ class StatsPaymentValidator extends BaseValidator
             'orig_gross' => ['sometimes', 'numeric'],
             'orig_net' => ['sometimes', 'numeric'],
             'orig_currency' => ['sometimes', new Currency()],
-            'time' => ['required', 'date_format:Y-m-d'],
-        ];
+        ]);
     }
 }

@@ -2,13 +2,12 @@
 
 namespace App\Validators;
 
-class StatsLoginValidator extends BaseValidator
+class StatsLoginValidator extends BaseStatsValidator
 {
     public function rules(): array
     {
-        return [
+        return array_merge(parent::rules(), [
             'stats_user_id' => ['required', 'integer'],
-            'time' => ['required', 'date_format:Y-m-d'],
-        ];
+        ]);
     }
 }

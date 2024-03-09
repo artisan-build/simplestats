@@ -4,7 +4,7 @@ namespace App\Validators;
 
 use Illuminate\Support\Facades\Validator;
 
-class BaseValidator
+class BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
@@ -13,7 +13,10 @@ class BaseValidator
 
     public function rules(): array
     {
-        return [];
+        // we do not allow logging in the future
+        return [
+            'time' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
+        ];
     }
 
     public function validate($input): void
