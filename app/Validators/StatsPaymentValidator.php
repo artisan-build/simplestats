@@ -12,7 +12,10 @@ class StatsPaymentValidator extends BaseValidator
     {
         // if the currency is not valid, we do not check if we have to convert it...
         // it will fail anyway in the request validation...
-        if (Validator::make(['currency' => $input['currency']], ['currency' => new Currency()])->fails()) {
+        if (Validator::make(
+            ['currency' => $input['currency']],
+            ['currency' => new Currency()]
+        )->fails()) {
             return $input;
         }
 
@@ -35,7 +38,7 @@ class StatsPaymentValidator extends BaseValidator
 
         if (isset($input['net']))          $input['net'] = round($input['net'], 2);
         if (isset($input['orig_net']))     $input['orig_net'] = round($input['orig_net'], 2);
-
+        
         return $input;
     }
 
