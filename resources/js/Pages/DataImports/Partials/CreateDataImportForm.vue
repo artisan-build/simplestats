@@ -4,13 +4,13 @@ import InputLabel from "@/Components/InputLabel.vue";
 import ActionMessage from "@/Components/ActionMessage.vue";
 import FormSection from "@/Components/FormSection.vue";
 import InputError from "@/Components/InputError.vue";
-import {useForm, Link} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import {computed, ref} from "vue";
 import FileInput from "@/Components/FileInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
+import CancelDataImportWarning from "@/Pages/DataImports/Partials/CancelDataImportWarning.vue";
 
 const props = defineProps({
     filters: Object,
@@ -85,21 +85,7 @@ const currentImportNotFinishedYet = computed(() => {
 
         <template #form>
             <div v-if="currentImportNotFinishedYet" class="col-span-6">
-                <WarningBox>
-                    You can only create <strong>one</strong> import at a time.
-                    Please wait until this import has finished before starting another data import.
-                    We'll send you an <strong>email</strong> as soon as the current import is complete!
-                    Depending on the amount of data, this may take from minutes to hours.
-                    <div v-if="permissions.canCreateDataImport" class="mt-6">
-                    <Link class="text-red-700 hover:underline font-medium text-base" :href="route('data-import.cancel', props.dataImports.data[0])" method="post" as="button" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-
-                        Click here to cancel the current data import!
-                    </Link>
-                    </div>
-                </WarningBox>
+                <CancelDataImportWarning :permissions="permissions" :dataImports="dataImports" />
             </div>
             <div v-else class="col-span-6 sm:col-span-4">
                 <InputLabel for="project_id" value="Project" />

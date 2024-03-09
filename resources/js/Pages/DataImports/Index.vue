@@ -29,10 +29,12 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         case 'started':
             statusOptions.icon = ArrowPathIcon;
             statusOptions.color = 'text-indigo-600';
+            statusOptions.text = 'processing';
             statusOptions.svgClass = 'animate-spin';
             break;
         case 'finished':
             statusOptions.icon = CheckCircleIcon;
+            statusOptions.text = 'completed';
             statusOptions.color = 'text-green-600';
             break;
         case 'failed':
