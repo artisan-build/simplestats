@@ -8,6 +8,7 @@ use App\Exceptions\ImportCanceledException;
 use App\Models\DataImport;
 use App\Validators\BaseStatsValidator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -46,6 +47,8 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
             Cache::forget('cancel_data_import_'.$this->dataImport->id);
             throw new ImportCanceledException();
         }
+
+        Gate::authorize('create', $this->modelClass);
 
         $this->counter++;
         if ($this->counter === 1) {$this->idFrom = $row['id'] ?? 0;}

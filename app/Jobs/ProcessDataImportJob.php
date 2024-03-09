@@ -54,16 +54,16 @@ class ProcessDataImportJob implements ShouldQueue
         try {
             Excel::import($importer, $this->filepath);
             $this->processPostImportBeforeMails($importer);
-            Mail::to($this->model->createdBy->email)->send(new DataImportCompleted($this->model));
+            Mail::to($this->model->createdBy->email)->queue(new DataImportCompleted($this->model));
         } catch (Throwable $e) {
             $this->processPostImportBeforeMails($importer);
             $this->model->trackedJob->output = $e->getMessage();
 
             // higher exceptions must be listed before Throwable, else it's always true
             match(true) {
-                $e instanceof ImportCanceledException => Mail::to($this->model->createdBy->email)->send(new DataImportCanceled($this->model)),
-                $e instanceof ValidationException => Mail::to($this->model->createdBy->email)->send(new DataImportFailed($this->model)),
-                $e instanceof Throwable => Mail::to($this->model->createdBy->email)->send(new DataImportError($this->model)),
+                $e instanceof ImportCanceledException => Mail::to($this->model->createdBy->email)->queue(new DataImportCanceled($this->model)),
+                $e instanceof ValidationException => Mail::to($this->model->createdBy->email)->queue(new DataImportFailed($this->model)),
+                $e instanceof Throwable => Mail::to($this->model->createdBy->email)->queue(new DataImportError($this->model)),
             };
 
             throw $e;
