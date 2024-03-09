@@ -46,12 +46,12 @@ const highligtTeam = route().current().includes('teams') || (route().current().i
                         Manage Team
                     </div>
 
-                    <DropdownLink :href="route('projects.index')">
-                        Projects
+                    <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
+                        Team
                     </DropdownLink>
 
-                    <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
-                        Settings
+                    <DropdownLink :href="route('projects.index')">
+                        Projects
                     </DropdownLink>
 
                     <DropdownLink :href="route('data-import.index')">

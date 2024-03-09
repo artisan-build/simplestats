@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Jobs\QueuedVerifyEmailJob;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +19,7 @@ use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
-class User extends Authenticatable implements TrackableUser
+class User extends Authenticatable implements MustVerifyEmail, TrackableUser
 {
     use HasApiTokens;
     use HasFactory;
@@ -68,6 +69,12 @@ class User extends Authenticatable implements TrackableUser
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function sendEmailVerificationNotification(): void
+    {
+        //dispactches the job to the queue passing it this User object
+        QueuedVerifyEmailJob::dispatch($this);
+    }
 
     public function passTrackingCondition(): bool
     {

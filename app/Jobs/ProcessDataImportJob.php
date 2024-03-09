@@ -7,7 +7,7 @@ use App\Imports\BaseStatsImport;
 use App\Mail\DataImportCanceled;
 use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
-use App\Mail\DataImportSuccessful;
+use App\Mail\DataImportCompleted;
 use App\Models\DataImport;
 use App\Models\Instance;
 use App\Models\User;
@@ -37,6 +37,8 @@ class ProcessDataImportJob implements ShouldQueue
 
     public function __construct(DataImport $dataImport, string $filepath)
     {
+        $this->onQueue('low');
+
         $this->__baseConstruct($dataImport);
         $this->filepath = $filepath;
     }
@@ -46,12 +48,16 @@ class ProcessDataImportJob implements ShouldQueue
      */
     public function handle(): void
     {
+        // As this job uses the Trackable trait, we already track the output of these jobs,
+        // and as we do not retry those, there is no need to also store it in the failed jobs table.
+        config()->set('queue.failed.driver', null);
+
         $importer = $this->model->type->getImporter($this->model);
 
         try {
             Excel::import($importer, $this->filepath);
             $this->processPostImportBeforeMails($importer);
-            Mail::to($this->model->createdBy->email)->send(new DataImportSuccessful($this->model));
+            Mail::to($this->model->createdBy->email)->send(new DataImportCompleted($this->model));
         } catch (Throwable $e) {
             $this->processPostImportBeforeMails($importer);
             $this->model->trackedJob->output = $e->getMessage();

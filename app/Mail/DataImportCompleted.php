@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class DataImportSuccessful extends Mailable
+class DataImportCompleted extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -28,8 +28,8 @@ class DataImportSuccessful extends Mailable
      */
     public function build()
     {
-        $subject = ucfirst($this->dataImport->type->value).' '.__('Data Import Successful');
+        $subject = ucfirst($this->dataImport->type->value).' '.__('Data Import Completed');
 
-        return $this->markdown('emails.data-import-successful')->subject($subject);
+        return $this->markdown('emails.data-import-completed')->subject($subject);
     }
 }

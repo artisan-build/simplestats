@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
                 'terms' => true,
             ]);
 
+            $user->markEmailAsVerified();
+
             $user->switchTeam($user->personalTeam());
             $user->currentTeam->update(['currency' => self::DEFAULT_CURRENCY]);
 

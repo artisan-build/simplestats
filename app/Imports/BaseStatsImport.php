@@ -43,6 +43,7 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     public function model(array $row)
     {
         if (Cache::get('cancel_data_import_'.$this->dataImport->id)) {
+            Cache::forget('cancel_data_import_'.$this->dataImport->id);
             throw new ImportCanceledException();
         }
 
