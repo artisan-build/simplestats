@@ -29,6 +29,7 @@ class SubscriptionService
                 'tax_mode_yearly' => $planPrices[$item['yearly_id']]->price['tax_mode'] ?? '',
                 'yearly_incentive' => $item['yearly_incentive'] ?? 0,
                 'features' => $item['features'],
+                'options' => $item['options'],
                 'promoted' => $item['promoted'] ?? false,
             ];
         });

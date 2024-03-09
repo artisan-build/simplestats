@@ -51,6 +51,7 @@ class DataImportController extends Controller
             'filters' => $request->all(),
             'permissions' => [
                 'canCreateDataImport' => Gate::check('create', DataImport::class),
+                'canCancelDataImport' => Gate::check('cancel', DataImport::class),
             ]
         ]);
     }
