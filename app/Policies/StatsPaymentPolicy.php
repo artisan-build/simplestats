@@ -21,6 +21,6 @@ class StatsPaymentPolicy
         if ($allowedPayments === SubscriptionService::UNLIMITED_AMOUNT)
             return true;
 
-        return StatsPayment::count() < $allowedPayments;
+        return StatsPayment::withoutGlobalScope('instance')->count() < $allowedPayments;
     }
 }

@@ -21,6 +21,6 @@ class StatsUserPolicy
         if ($allowedUsers === SubscriptionService::UNLIMITED_AMOUNT)
             return true;
 
-        return StatsUser::count() < $allowedUsers;
+        return StatsUser::withoutGlobalScope('instance')->count() < $allowedUsers;
     }
 }

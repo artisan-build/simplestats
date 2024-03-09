@@ -21,6 +21,6 @@ class StatsLoginPolicy
         if ($allowedLogins === SubscriptionService::UNLIMITED_AMOUNT)
             return true;
 
-        return StatsLogin::count() < $allowedLogins;
+        return StatsLogin::withoutGlobalScope('instance')->count() < $allowedLogins;
     }
 }
