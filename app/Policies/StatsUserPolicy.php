@@ -14,9 +14,9 @@ class StatsUserPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(Instance $instance): bool
+    public function create(): bool
     {
-        $allowedUsers = $instance->team->owner->sparkPlan()->options['users'];
+        $allowedUsers = auth()->user()->team->owner->sparkPlan()->options['users'];
 
         if ($allowedUsers === SubscriptionService::UNLIMITED_AMOUNT)
             return true;

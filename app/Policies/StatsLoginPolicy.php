@@ -14,9 +14,9 @@ class StatsLoginPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(Instance $instance): bool
+    public function create(): bool
     {
-        $allowedLogins = $instance->team->owner->sparkPlan()->options['logins'];
+        $allowedLogins = auth()->user()->team->owner->sparkPlan()->options['logins'];
 
         if ($allowedLogins === SubscriptionService::UNLIMITED_AMOUNT)
             return true;

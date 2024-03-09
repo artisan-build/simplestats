@@ -14,9 +14,9 @@ class StatsPaymentPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(Instance $instance): bool
+    public function create(): bool
     {
-        $allowedPayments = $instance->team->owner->sparkPlan()->options['payments'];
+        $allowedPayments = auth()->user()->team->owner->sparkPlan()->options['payments'];
 
         if ($allowedPayments === SubscriptionService::UNLIMITED_AMOUNT)
             return true;

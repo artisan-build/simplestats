@@ -48,6 +48,7 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
             throw new ImportCanceledException();
         }
 
+        // check if the users team plan has the rights to create more stats records...
         Gate::authorize('create', $this->modelClass);
 
         $this->counter++;
