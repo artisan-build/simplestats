@@ -11,6 +11,7 @@ import FileInput from "@/Components/FileInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import CancelDataImportWarning from "@/Pages/DataImports/Partials/CancelDataImportWarning.vue";
+import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
 
 const props = defineProps({
     filters: Object,
@@ -84,8 +85,13 @@ const currentImportNotFinishedYet = computed(() => {
         </template>
 
         <template #form>
-            <div v-if="currentImportNotFinishedYet" class="col-span-6">
-                <CancelDataImportWarning :permissions="permissions" :dataImports="dataImports" />
+            <div v-if="! permissions.canCreateDataImport" class="col-span-6">
+                <WarningBox>
+                    You are not allowed to create Data Imports due to plan or role limitations!
+                </WarningBox>
+            </div>
+            <div v-else-if="currentImportNotFinishedYet" class="col-span-6">
+                <CancelDataImportWarning :dataImports="dataImports" />
             </div>
             <div v-else class="col-span-6 sm:col-span-4">
                 <InputLabel for="project_id" value="Project" />

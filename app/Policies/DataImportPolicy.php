@@ -54,7 +54,7 @@ class DataImportPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Determine whether the user can cancel the model.
      */
     public function cancel(User $user, DataImport $dataImport): bool
     {

@@ -9,7 +9,6 @@ import DangerButton from "@/Components/DangerButton.vue";
 
 const props = defineProps({
     dataImports: Object,
-    permissions: Object,
 });
 
 const cancelDataImportForm = useForm({});
@@ -35,7 +34,7 @@ const confirmDataImportCancelation = () => {
         Please wait until this import has finished before starting another data import.
         We'll send you an <strong>email</strong> as soon as the current import is complete!
         Depending on the amount of data, this may take from minutes to hours.
-        <div v-if="permissions.canCancelDataImport" class="mt-6">
+        <div class="mt-6">
             <form @submit.prevent="confirmDataImportCancelation">
                 <button type="submit" class="text-red-700 hover:underline font-medium text-base">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 inline-block mr-1">
