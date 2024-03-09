@@ -15,7 +15,7 @@ class DataImportPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasTeamPermission($user->currentTeam, 'action:importPermission');
+        return true;
     }
 
     /**
@@ -23,7 +23,7 @@ class DataImportPolicy
      */
     public function view(User $user, DataImport $dataImport): bool
     {
-        return $user->hasTeamPermission($dataImport->team, 'action:importPermission');
+        return true;
     }
 
     /**
