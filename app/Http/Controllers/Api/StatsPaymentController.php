@@ -16,7 +16,7 @@ class StatsPaymentController extends Controller
 
     public function store(StatsPaymentRequest $request): StatsPaymentResource
     {
-        $statsPayment = StatsPayment::create($request->validated());
+        $statsPayment = StatsPayment::updateOrCreate(['id' => $request->id], $request->validated());
 
         return new StatsPaymentResource($statsPayment);
     }

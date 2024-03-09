@@ -16,7 +16,7 @@ class StatsUserController extends Controller
 
     public function store(StatsUserRequest $request): StatsUserResource
     {
-        $statsUser = StatsUser::create($request->validated());
+        $statsUser = StatsUser::updateOrCreate(['id' => $request->id], $request->validated());
 
         return new StatsUserResource($statsUser);
     }

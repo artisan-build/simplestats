@@ -16,6 +16,7 @@ class StatsLoginController extends Controller
 
     public function store(StatsLoginRequest $request): StatsLoginResource
     {
+        // on logins, we do not do a updateOrCreate, cause the client not sends ids, which makes not really sense for logins.
         $statsLogin = StatsLogin::create($request->validated());
 
         return new StatsLoginResource($statsLogin);
