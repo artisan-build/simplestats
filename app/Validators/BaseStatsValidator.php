@@ -58,7 +58,7 @@ class BaseStatsValidator
             $countLeft = ($statsModel::withoutGlobalScope('instance')->count() + $rowsCount) - $allowedCount;
 
             throw ValidationException::withMessages([
-                'file' => ["Too many data to import! You have only $countLeft {$importType->value} left to track in your plan."],
+                'file' => ["Too many data to import! You have only $countLeft {$importType->value} left to track. Consider upgrading your plan!"],
             ]);
         }
     }
