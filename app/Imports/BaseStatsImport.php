@@ -35,6 +35,9 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         config(['excel.transactions.handler' => 'null']);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
     public function getModelClass(): string
     {
         return $this->modelClass;

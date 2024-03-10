@@ -19,6 +19,11 @@ class StatsPaymentValidator extends BaseStatsValidator
             return $input;
         }
 
+        // these fields need to exist for the batch import upsert
+        if (! isset($input['orig_gross'])) $input['orig_gross'] = null;
+        if (! isset($input['orig_net'])) $input['orig_net'] = null;
+        if (! isset($input['orig_currency'])) $input['orig_currency'] = null;
+
         // check if we have to convert currencies
         $teamCurrency = auth()->user()->team->currency;
         if ($input['currency'] != $teamCurrency) {
@@ -50,9 +55,9 @@ class StatsPaymentValidator extends BaseStatsValidator
             'gross' => ['required', 'numeric'],
             'net' => ['required', 'numeric'],
             'currency' => ['required', new Currency()],
-            'orig_gross' => ['sometimes', 'numeric'],
-            'orig_net' => ['sometimes', 'numeric'],
-            'orig_currency' => ['sometimes', new Currency()],
+            'orig_gross' => ['sometimes', 'nullable', 'numeric'],
+            'orig_net' => ['sometimes', 'nullable', 'numeric'],
+            'orig_currency' => ['sometimes', 'nullable', new Currency()],
         ]);
     }
 }

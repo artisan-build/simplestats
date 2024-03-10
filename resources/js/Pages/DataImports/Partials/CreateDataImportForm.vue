@@ -10,12 +10,12 @@ import {computed, ref} from "vue";
 import FileInput from "@/Components/FileInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import CancelDataImportWarning from "@/Pages/DataImports/Partials/CancelDataImportWarning.vue";
 import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
 
 const props = defineProps({
     filters: Object,
     projects: Array,
+
     instances: Array,
     dataImports: Object,
     importTypes: Array,
@@ -91,7 +91,12 @@ const currentImportNotFinishedYet = computed(() => {
                 </WarningBox>
             </div>
             <div v-else-if="currentImportNotFinishedYet" class="col-span-6">
-                <CancelDataImportWarning :dataImports="dataImports" />
+                <WarningBox>
+                    You can only create <strong>one</strong> import at a time.
+                    Please wait until this import has finished before starting another data import.
+                    We'll send you an <strong>email</strong> as soon as the current import is complete!
+                    Depending on the amount of data, this may take from minutes to hours.
+                </WarningBox>
             </div>
             <div v-else class="col-span-6 sm:col-span-4">
                 <InputLabel for="project_id" value="Project" />
@@ -163,7 +168,7 @@ const currentImportNotFinishedYet = computed(() => {
         </template>
 
         <template #content>
-            Do you really want to import this file with the following settings:<br>
+            Do you really want to import this file with the following settings?<br>
             <br>
             <strong>Project:</strong> {{ projects.filter((project) => project.id == createDataImportForm.project_id)[0].name }}<br>
             <strong>Instance:</strong> {{ instances.filter((instance) => instance.id == createDataImportForm.instance_id)[0].name }}<br>

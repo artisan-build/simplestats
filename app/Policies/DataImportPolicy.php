@@ -61,4 +61,13 @@ class DataImportPolicy
         return $user->hasTeamPermission($dataImport->team, 'action:importPermission')
             && $user->currentTeam->owner->sparkPlan()->options['data_import'];
     }
+
+    /**
+     * Determine whether the user can rollback the import.
+     */
+    public function rollback(User $user, DataImport $dataImport): bool
+    {
+        return $user->hasTeamPermission($dataImport->team, 'action:importPermission')
+            && $user->currentTeam->owner->sparkPlan()->options['data_import'];
+    }
 }

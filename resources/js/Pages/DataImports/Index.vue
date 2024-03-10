@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import CreateDataImportForm from "@/Pages/DataImports/Partials/CreateDataImportForm.vue";
-import DataImportListRow from "@/Pages/DataImports/Partials/DataImportListRow.vue";
+import DataImportListRow from "@/Pages/DataImports/Partials/ShowDataImportRow.vue";
 
 defineProps({
     filters: Object,
@@ -50,17 +50,18 @@ defineProps({
 
                             <template #content>
                                 <tr class="text-left font-bold">
-                                    <th class="pb-4 pt-6 px-6">Status</th>
-                                    <th class="pb-4 pt-6 px-6">Project</th>
-                                    <th class="pb-4 pt-6 px-6">Instance</th>
-                                    <th class="pb-4 pt-6 px-6">Type</th>
-                                    <th class="pb-4 pt-6 px-6">Creator</th>
-                                    <th class="pb-4 pt-6 px-6">Rows</th>
-                                    <th class="pb-4 pt-6 px-6">From Id</th>
-                                    <th class="pb-4 pt-6 px-6">To Id</th>
+                                    <th class="pb-2 pt-3 px-3">Status</th>
+                                    <th class="pb-2 pt-3 px-3">Project</th>
+                                    <th class="pb-2 pt-3 px-3">Instance</th>
+<!--                                    <th class="pb-2 pt-3 px-3">Type</th>-->
+                                    <th class="pb-2 pt-3 px-3">Creator</th>
+                                    <th class="pb-2 pt-3 px-3">Rows</th>
+                                    <th class="pb-2 pt-3 px-3">From Id</th>
+                                    <th class="pb-2 pt-3 px-3">To Id</th>
+                                    <th class="pb-2 pt-3 px-3">Action</th>
                                 </tr>
                                 <tr v-for="dataImport in dataImports.data" :key="dataImport.id">
-                                    <DataImportListRow :dataImport="dataImport" />
+                                    <DataImportListRow :projects="projects" :instances="instances" :dataImport="dataImport" />
                                 </tr>
                             </template>
                         </ActionTable>

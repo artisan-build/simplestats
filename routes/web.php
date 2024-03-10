@@ -35,6 +35,7 @@ Route::middleware([
     // Data Import
     Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store']);
     Route::post('data-import/{data_import}/cancel', [App\Http\Controllers\DataImportController::class, 'cancel'])->name('data-import.cancel');
+    Route::post('data-import/{data_import}/rollback', [App\Http\Controllers\DataImportController::class, 'rollback'])->name('data-import.rollback');
 
     // Projects
     Route::resource('projects', App\Http\Controllers\ProjectController::class);

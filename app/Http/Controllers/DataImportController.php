@@ -99,7 +99,7 @@ class DataImportController extends Controller
         return redirect()->route('data-import.index')->banner('Import started');
     }
 
-    public function cancel(Request $request, DataImport $dataImport): RedirectResponse
+    public function cancel(DataImport $dataImport): RedirectResponse
     {
         $this->authorize('cancel', $dataImport);
 
@@ -112,5 +112,21 @@ class DataImportController extends Controller
         ]);
 
         return redirect()->route('data-import.index')->banner('Import canceled');
+    }
+
+    public function rollback(DataImport $dataImport): RedirectResponse
+    {
+        $this->authorize('rollback', $dataImport);
+
+        $model = $dataImport->type->getImporter($dataImport)->getModelClass();
+
+        $model::whereBetween('id', [$dataImport->id_from, $dataImport->id_to])->delete();
+
+        $dataImport->trackedJob->update([
+            'status' => 'rolled back',
+            'finished_at' => now(),
+        ]);
+
+        return redirect()->route('data-import.index')->banner('Import rolled back');
     }
 }
