@@ -54,8 +54,13 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         }
 
         $this->counter++;
-        if ($this->counter === 1) {$this->idFrom = $row['id'] ?? 0;}
-        $this->idTo = $row['id'] ?? 0;
+
+        // make from/to work also if the order is not correct...
+        if (empty($this->idFrom)) $this->idFrom = $row['id'];
+        if (empty($this->idTo)) $this->idTo = $row['id'];
+
+        if ($row['id'] < $this->idFrom) $this->idFrom = $row['id'];
+        if ($row['id'] > $this->idTo) $this->idTo = $row['id'];
 
         // check if the users team plan has the rights to create more stats records...
         Gate::authorize('create', [$this->modelClass, $this->counter]);
