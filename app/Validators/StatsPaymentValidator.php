@@ -3,6 +3,7 @@
 namespace App\Validators;
 
 use App\Services\ExchangeRateService;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ValidationRules\Rules\Currency;
 
@@ -27,7 +28,7 @@ class StatsPaymentValidator extends BaseStatsValidator
         // check if we have to convert currencies
         $teamCurrency = auth()->user()->team->currency;
         if ($input['currency'] != $teamCurrency) {
-            $exchangeRate = app(ExchangeRateService::class)->getFor(now(), $input['currency'], auth()->user()->team->currency);
+            $exchangeRate = app(ExchangeRateService::class)->getFor(CarbonImmutable::parse($input['time']), $input['currency'], auth()->user()->team->currency);
             $input = array_merge($input, [
                 'orig_gross' => $input['gross'],
                 'orig_net' => $input['net'],
