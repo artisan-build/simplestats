@@ -46,6 +46,20 @@ class BaseStatsValidator
         }
     }
 
+    /**
+     * This approach is unfortunately not compatible with upsert!
+     * We count what's the plan limit, then we count the current data in the db
+     * and then we count how much data/rows would be imported new.
+     * But it is not clear here which of the imported data will be an upsert (cause the id is already in our system).
+     * So we can't really measure how  much more data with the current plan is allowed.
+     * For now, we leave it like this and use it as a indicator for new data, but as I wrote,
+     * it is not 100% correct, especially if it would be an upsert...
+     *
+     * @param  UploadedFile  $file
+     * @param  string  $statsModel
+     * @param  DataImportType  $importType
+     * @return void
+     */
     public function validateImportCount(UploadedFile $file, string $statsModel, DataImportType $importType): void
     {
         // read file without importing
