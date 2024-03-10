@@ -53,6 +53,7 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
             throw new ImportCanceledException();
         }
 
+        // TODO this may be an performance issue? on 100k data import we would do 100k queries.
         // check if the users team plan has the rights to create more stats records...
         Gate::authorize('create', [$this->modelClass, $this->counter]);
 
