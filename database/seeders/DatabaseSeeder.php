@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,6 +25,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Cache::clear();
+
         $user = User::withoutEvents(function () {
             $testUser = config('app.test.user');
             $user = (new CreateNewUser())->create([

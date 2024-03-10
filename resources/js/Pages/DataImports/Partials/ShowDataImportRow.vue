@@ -119,13 +119,13 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         {{ dataImport.created_by.name }}
     </td>
     <td class="border-t px-3 py-2 focus:text-indigo-500">
-        {{ dataImport.rows_imported ?? '...' }}
+        {{ dataImport.rows_imported ?? 0 }}
     </td>
     <td class="border-t px-3 py-2 focus:text-indigo-500">
-        {{ dataImport.id_from ?? '...' }}
+        {{ dataImport.id_from ?? 0 }}
     </td>
     <td class="border-t px-3 py-2 focus:text-indigo-500">
-        {{ dataImport.id_to ?? '...' }}
+        {{ dataImport.id_to ?? 0 }}
     </td>
     <td class="border-t px-3 py-2 focus:text-indigo-500">
         <PrimaryButton v-if="! dataImport.tracked_job.finished_at" @click="confirmDataImportAction('cancel')">
@@ -153,7 +153,9 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                     <strong>Project:</strong> {{ projects.filter((project) => project.id == dataImport.project_id)[0].name }}<br>
                     <strong>Instance:</strong> {{ instances.filter((instance) => instance.id == dataImport.instance_id)[0].name }}<br>
                     <strong>Import Type:</strong> {{ dataImport.type }}<br>
-                    <strong>Rows:</strong> {{ dataImport.rows_imported }} rows - from id {{ dataImport.id_from }} to {{ dataImport.id_to }}<br>
+                    <span v-if="dataImport.rows_imported > 0">
+                        <strong>Rows:</strong> {{ dataImport.rows_imported }} rows - from id {{ dataImport.id_from }} to {{ dataImport.id_to }}<br>
+                    </span>
                 </template>
 
                 <template #footer>

@@ -45,6 +45,9 @@ class ProcessDataImportJob implements ShouldQueue
      */
     public function handle(): void
     {
+        // make auth stuff work in this dispatched/context-less job
+        auth()->setUser($this->model->createdBy);
+
         // As this job uses the Trackable trait, we already track the output of these jobs,
         // and as we do not retry those, there is no need to also store it in the failed jobs table.
         config()->set('queue.failed.driver', null);
