@@ -53,6 +53,9 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
             throw new ImportCanceledException();
         }
 
+        // check if the users team plan has the rights to create more stats records...
+        Gate::authorize('create', [$this->modelClass, $this->counter]);
+
         $this->counter++;
 
         // make from/to work also if the order is not correct...
@@ -61,9 +64,6 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
 
         if ($row['id'] < $this->idFrom) $this->idFrom = $row['id'];
         if ($row['id'] > $this->idTo) $this->idTo = $row['id'];
-
-        // check if the users team plan has the rights to create more stats records...
-        Gate::authorize('create', [$this->modelClass, $this->counter]);
 
         $modelConcerns = class_uses(new $this->modelClass());
 
