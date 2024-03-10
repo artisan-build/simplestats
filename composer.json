@@ -29,6 +29,7 @@
         "laravel-shift/blueprint": "^2.9",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
+        "laravel/telescope": "^4.17",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
         "pestphp/pest": "^2.0",
@@ -64,7 +65,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/telescope"
+            ]
         }
     },
     "config": {

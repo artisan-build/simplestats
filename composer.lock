@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60a2cebac2e143958ab5e99c7b7b16ec",
+    "content-hash": "833c847aa9ad4134c84cc1104b73fed0",
     "packages": [
         {
             "name": "ashallendesign/laravel-exchange-rates",
@@ -4878,7 +4878,7 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/simplestats-io/laravel-client",
-                "reference": "d7eb9abb66b9b3159058ca887e00979be05f967a"
+                "reference": "b5c11c28e26e92227779e6a301d8f349552a8d05"
             },
             "require": {
                 "illuminate/contracts": "^9.0 || ^10.0",
@@ -9524,6 +9524,77 @@
                 "source": "https://github.com/laravel/sail"
             },
             "time": "2024-01-21T17:13:42+00:00"
+        },
+        {
+            "name": "laravel/telescope",
+            "version": "v4.17.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/telescope.git",
+                "reference": "2d453dc629b27e8cf39fb1217aba062f8c54e690"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/telescope/zipball/2d453dc629b27e8cf39fb1217aba062f8c54e690",
+                "reference": "2d453dc629b27e8cf39fb1217aba062f8c54e690",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "laravel/framework": "^8.37|^9.0|^10.0",
+                "php": "^8.0",
+                "symfony/var-dumper": "^5.0|^6.0"
+            },
+            "require-dev": {
+                "ext-gd": "*",
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "laravel/octane": "^1.4",
+                "orchestra/testbench": "^6.0|^7.0|^8.0",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Telescope\\TelescopeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Telescope\\": "src/",
+                    "Laravel\\Telescope\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Mohamed Said",
+                    "email": "mohamed@laravel.com"
+                }
+            ],
+            "description": "An elegant debug assistant for the Laravel framework.",
+            "keywords": [
+                "debugging",
+                "laravel",
+                "monitoring"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/telescope/issues",
+                "source": "https://github.com/laravel/telescope/tree/v4.17.6"
+            },
+            "time": "2024-02-08T15:04:38+00:00"
         },
         {
             "name": "maximebf/debugbar",
