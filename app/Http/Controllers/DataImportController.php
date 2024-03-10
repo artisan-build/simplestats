@@ -36,6 +36,20 @@ class DataImportController extends Controller
             'trackedJob'
         ])->orderBy('created_at', 'desc')->paginate(10);
 
+        // if for some reason the import has no tracked job (shouldn't happen) and one, so that FE/Vue parses...
+        $items = collect($imports->items());
+        if ($items->isNotEmpty() && ! $items->first()->getRelation('trackedJob')) {
+            TrackedJob::unguarded(function () use ($items) {
+                $items->first()->setRelation('trackedJob', new TrackedJob([
+                    'status' => 'unknown',
+                    'created_at' => $items->first()->created_at,
+                ]));
+            });
+
+            $imports->setCollection($items);
+        }
+        unset($items);
+
         $projects = Project::orderBy('created_at', 'desc')->get()->prepend(['id' => 0, 'name' => 'Please Select']);
         $instances = Instance::orderBy('created_at', 'desc')->get();
 
