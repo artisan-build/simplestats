@@ -12,15 +12,20 @@ class StatsLoginPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can create models.
+     * Determine whether the auth model can create models.
+     * Auth Model can be instance (rest api with personal instance access token) or auth user
+     *
+     * @param $authModel
+     * @param  int  $delta
+     * @return bool
      */
-    public function create(): bool
+    public function create($authModel, int $delta = 0): bool
     {
-        $allowedLogins = auth()->user()->team->owner->sparkPlan()->options['logins'];
+        $allowedLogins = $authModel->team->owner->sparkPlan()->options['logins'];
 
         if ($allowedLogins === SubscriptionService::UNLIMITED_AMOUNT)
             return true;
 
-        return StatsLogin::withoutGlobalScope('instance')->count() < $allowedLogins;
+        return StatsLogin::withoutGlobalScope('instance')->count()+$delta < $allowedLogins;
     }
 }

@@ -12,15 +12,20 @@ class StatsPaymentPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the user can create models.
+     * Determine whether the auth model can create models.
+     * Auth Model can be instance (rest api with personal instance access token) or auth user
+     *
+     * @param $authModel
+     * @param  int  $delta
+     * @return bool
      */
-    public function create(): bool
+    public function create($authModel, int $delta = 0): bool
     {
-        $allowedPayments = auth()->user()->team->owner->sparkPlan()->options['payments'];
+        $allowedPayments = $authModel->team->owner->sparkPlan()->options['payments'];
 
         if ($allowedPayments === SubscriptionService::UNLIMITED_AMOUNT)
             return true;
 
-        return StatsPayment::withoutGlobalScope('instance')->count() < $allowedPayments;
+        return StatsPayment::withoutGlobalScope('instance')->count()+$delta < $allowedPayments;
     }
 }

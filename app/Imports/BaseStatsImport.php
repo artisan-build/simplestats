@@ -35,6 +35,11 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         config(['excel.transactions.handler' => 'null']);
     }
 
+    public function getModelClass(): string
+    {
+        return $this->modelClass;
+    }
+
     /**
      * @param  array  $row
      *
@@ -48,12 +53,12 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
             throw new ImportCanceledException();
         }
 
-        // check if the users team plan has the rights to create more stats records...
-        Gate::authorize('create', $this->modelClass);
-
         $this->counter++;
         if ($this->counter === 1) {$this->idFrom = $row['id'] ?? 0;}
         $this->idTo = $row['id'] ?? 0;
+
+        // check if the users team plan has the rights to create more stats records...
+        Gate::authorize('create', [$this->modelClass, $this->counter]);
 
         $modelConcerns = class_uses(new $this->modelClass());
 

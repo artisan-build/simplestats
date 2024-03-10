@@ -8,6 +8,7 @@ use App\Jobs\ProcessDataImportJob;
 use App\Models\DataImport;
 use App\Models\Instance;
 use App\Models\Project;
+use App\Validators\BaseStatsValidator;
 use Cache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,27 +63,22 @@ class DataImportController extends Controller
         $file = $validated['file'];
         unset($validated['file']);
 
-        $sheet = Excel::toArray(new HeadingRowImport(), $file);
-        $headings = $sheet[0][0];
-
-        $import = new DataImport(array_merge([
+        $dataImport = new DataImport(array_merge([
             'created_by' => $request->user()->id,
         ], $validated));
 
-        $importer = DataImportType::from($request->type)->getImporter($import);
-        $allowedFields = array_keys($importer->rules());
+        $importType = DataImportType::from($validated['type']);
+        $importer = $importType->getImporter($dataImport);
 
-        if (!empty(array_diff($headings, $allowedFields))) {
-            throw ValidationException::withMessages([
-                'file' => ['Only the following fields are allowed: '.implode(', ', $allowedFields)],
-            ]);
-        }
+        $baseValidator = app(BaseStatsValidator::class);
+        $baseValidator->validateImportFields($file, array_keys($importer->rules()));
+        $baseValidator->validateImportCount($file, $importer->getModelClass(), $importType);
 
-        // only after header validation is done, we start the import...
-        $import->save();
+        // only additional validation is done, we start the import...
+        $dataImport->save();
 
         $filepath = $file->store('imports', 'local');
-        dispatch(new ProcessDataImportJob($import, $filepath));
+        dispatch(new ProcessDataImportJob($dataImport, $filepath));
 
         // w8 till the dispatched job is tracked
         sleep(1);
