@@ -52,7 +52,6 @@ class DataImportController extends Controller
             'filters' => $request->all(),
             'permissions' => [
                 'canCreateDataImport' => Gate::check('create', DataImport::class),
-                'canCancelDataImport' => Gate::check('cancel', DataImport::orderBy('created_at', 'desc')->first()),
             ]
         ]);
     }
@@ -85,13 +84,6 @@ class DataImportController extends Controller
 
         return redirect()->route('data-import.index')->banner('Import started');
     }
-
-//    public function destroy(Request $request, DataImport $dataImport): RedirectResponse
-//    {
-//        $dataImport->delete();
-//
-//        return redirect()->route('data-import.index')->banner('Import aborted');
-//    }
 
     public function cancel(Request $request, DataImport $dataImport): RedirectResponse
     {
