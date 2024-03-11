@@ -131,7 +131,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         <PrimaryButton v-if="! dataImport.tracked_job.finished_at" @click="confirmDataImportAction('cancel')">
             Cancel
         </PrimaryButton>
-        <DangerButton v-else-if="dataImport.tracked_job.status !== 'rolled back'" @click="confirmDataImportAction('rollback')">
+        <DangerButton v-else-if="dataImport.tracked_job.status !== 'rolled back' && dataImport.rows_imported > 0" @click="confirmDataImportAction('rollback')">
             Rollback
         </DangerButton>
         <span v-else>
