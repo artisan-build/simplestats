@@ -3,7 +3,7 @@
 namespace App\Validators;
 
 use App\Enums\DataImportType;
-use App\Imports\CountImportRows;
+use App\Models\DataImport;
 use Gate;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
@@ -34,12 +34,11 @@ class BaseStatsValidator
         )->validate();
     }
 
-    public function validateImportFields(UploadedFile $file, array $allowedFields): void
+    public function validateImportFields(DataImport $dataImport, array $importFields): void
     {
-        $sheet = Excel::toArray(new HeadingRowImport(), $file);
-        $headings = $sheet[0][0];
+        $allowedFields = array_keys($dataImport->type->getImporter($dataImport)->rules());
 
-        if (!empty(array_diff($headings, $allowedFields))) {
+        if (! empty(array_diff($importFields, $allowedFields))) {
             throw ValidationException::withMessages([
                 'file' => ['Only the following fields are allowed: '.implode(', ', $allowedFields)],
             ]);
@@ -51,28 +50,21 @@ class BaseStatsValidator
      * We count what's the plan limit, then we count the current data in the db
      * and then we count how much data/rows would be imported new.
      * But it is not clear here which of the imported data will be an upsert (cause the id is already in our system).
-     * So we can't really measure how  much more data with the current plan is allowed.
-     * For now, we leave it like this and use it as a indicator for new data, but as I wrote,
-     * it is not 100% correct, especially if it would be an upsert...
-     *
-     * @param  UploadedFile  $file
-     * @param  string  $statsModel
-     * @param  DataImportType  $importType
-     * @return void
+     * So we can't really measure how much more data with the current plan is allowed.
+     * For now, we leave it like this and use it as an indicator for new data, but as I wrote,
+     * it is not 100% correct, especially if it is an upsert...
      */
-    public function validateImportCount(UploadedFile $file, string $statsModel, DataImportType $importType): void
+    public function validateImportCount(DataImport $dataImport): void
     {
-        // read file without importing
-        $countRows = new CountImportRows();
-        Excel::import($countRows, $file);
-        $rowsCount = $countRows->rowsCount;
+        $importRowsCount = $dataImport->rows_max;
+        $statsModel = $dataImport->type->getImporter($dataImport)->getModelClass();
 
-        if (! Gate::check('create', [$statsModel, $rowsCount])) {
-            $allowedCount = auth()->user()->team->owner->sparkPlan()->options[$importType->value];
-            $countLeft = ($statsModel::withoutGlobalScope('instance')->count() + $rowsCount) - $allowedCount;
+        if (! Gate::check('create', [$statsModel, $importRowsCount])) {
+            $allowedCount = auth()->user()->team->owner->sparkPlan()->options[$dataImport->type->value];
+            $countLeft = ($statsModel::withoutGlobalScope('instance')->count() + $importRowsCount) - $allowedCount;
 
             throw ValidationException::withMessages([
-                'file' => ["Too many data to import! You have only $countLeft {$importType->value} left to track. Consider upgrading your plan!"],
+                'file' => ["Too many data to import! You have only $countLeft {$dataImport->type->value} left to track. Consider upgrading your plan!"],
             ]);
         }
     }

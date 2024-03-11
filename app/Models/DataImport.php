@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasTeamScope;
 use App\Enums\DataImportType;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,11 +24,24 @@ class DataImport extends Model
         'project_id',
         'instance_id',
         'created_by',
+        'type',
+        'rows_max',
+        'rows_imported',
         'id_from',
         'id_to',
-        'type',
-        'rows_imported',
     ];
+
+    protected $appends = [
+        'rows_progress'
+    ];
+
+    public function rowsProgress(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => round(($this->rows_imported / $this->rows_max) * 100),
+        );
+
+    }
 
     public function team(): BelongsTo
     {

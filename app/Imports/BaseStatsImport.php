@@ -23,6 +23,8 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     public int $idFrom = 0;
     public int $idTo = 0;
 
+    private int $counterUpdateStep = 0;
+
     public function __construct(
         protected DataImport $dataImport,
         protected string $modelClass,
@@ -33,6 +35,8 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         // As we anyway use Batches and Chunks and only the current batch is wrapped in a transaction,
         // it has not really a difference...
         config(['excel.transactions.handler' => 'null']);
+
+        $this->counterUpdateStep = max(1, floor($this->dataImport->rows_max / 100));
     }
 
     /**
@@ -69,6 +73,11 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         if ($row['id'] < $this->idFrom) $this->idFrom = $row['id'];
         if ($row['id'] > $this->idTo) $this->idTo = $row['id'];
 
+        // limit the interval of the rows_imported value, so that we do not need to make thousands of queries here.
+        if ($this->counter % $this->counterUpdateStep == 0 || $this->counter == $this->dataImport->rows_max) {
+            $this->updateProgress();
+        }
+
         $modelConcerns = class_uses(new $this->modelClass());
 
         // team, project, instance id are normally set dynamically
@@ -85,7 +94,7 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
 
             $model = new $this->modelClass($data);
 
-            // as batch in/upsert does not use eloquent we have to add these things manually
+            // as batch in/upsert does not use eloquent, we have to add these things manually
             if (in_array(HasCounterByStatsUser::class, $modelConcerns)) {
                 $model->counter = $model->getCounter();
             }
@@ -96,6 +105,15 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
 
             return $model;
         });
+    }
+
+    public function updateProgress(): void
+    {
+        $this->dataImport->update([
+            'rows_imported' => $this->counter,
+            'id_from' => $this->idFrom,
+            'id_to' => $this->idTo,
+        ]);
     }
 
     public function prepareForValidation($data, $index): array

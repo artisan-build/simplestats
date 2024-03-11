@@ -82,11 +82,14 @@ const getTrackedJobStatusOptions = (trackedJob) => {
 <template>
     <td class="border-t w-px px-3 py-2">
         <div class="flex items-center" :class="getTrackedJobStatusOptions(dataImport.tracked_job).color">
-            <div class="mr-4">
+            <div class="mr-4 text-center">
                 <component
                     :class="getTrackedJobStatusOptions(dataImport.tracked_job).svgClass"
                     class="inline-block h-6 w-6" :is="getTrackedJobStatusOptions(dataImport.tracked_job).icon"
                 />
+                <span v-if="! dataImport.tracked_job.finished_at" class="block">
+                    {{ dataImport.rows_progress }}%
+                </span>
             </div>
             <div>
                 <div class="text-sm">

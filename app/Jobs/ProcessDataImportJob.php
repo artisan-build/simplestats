@@ -56,10 +56,10 @@ class ProcessDataImportJob implements ShouldQueue
 
         try {
             Excel::import($importer, $this->filepath);
-            $this->processPostImportBeforeMails($importer);
+            $this->processPostImport($importer);
             Mail::to($this->model->createdBy->email)->queue(new DataImportCompleted($this->model));
         } catch (Throwable $e) {
-            $this->processPostImportBeforeMails($importer);
+            $this->processPostImport($importer);
             $this->model->trackedJob->output = $e->getMessage();
 
             // higher exceptions must be listed before Throwable, else it's always true
@@ -75,13 +75,9 @@ class ProcessDataImportJob implements ShouldQueue
         }
     }
 
-    private function processPostImportBeforeMails(BaseStatsImport $importer): void
+    private function processPostImport(BaseStatsImport $importer): void
     {
-        $this->model->update([
-            'rows_imported' => $importer->counter,
-            'id_from' => $importer->idFrom,
-            'id_to' => $importer->idTo,
-        ]);
+        $importer->updateProgress();
 
         $this->model->trackedJob->finished_at = now();
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\DataImportType;
+use App\Helpers\ImportHelper;
 use App\Http\Requests\DataImportRequest;
 use App\Jobs\ProcessDataImportJob;
 use App\Models\DataImport;
@@ -13,12 +14,10 @@ use Cache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Junges\TrackableJobs\Models\TrackedJob;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\HeadingRowImport;
 
 class DataImportController extends Controller
 {
@@ -78,14 +77,12 @@ class DataImportController extends Controller
 
         $dataImport = new DataImport(array_merge([
             'created_by' => $request->user()->id,
+            'rows_max' => ImportHelper::countImportRows($file),
         ], $validated));
 
-        $importType = DataImportType::from($validated['type']);
-        $importer = $importType->getImporter($dataImport);
-
         $baseValidator = app(BaseStatsValidator::class);
-        $baseValidator->validateImportFields($file, array_keys($importer->rules()));
-        $baseValidator->validateImportCount($file, $importer->getModelClass(), $importType);
+        $baseValidator->validateImportFields($dataImport, ImportHelper::getImportFields($file));
+        $baseValidator->validateImportCount($dataImport);
 
         // only additional validation is done, we start the import...
         $dataImport->save();

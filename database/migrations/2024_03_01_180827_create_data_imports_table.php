@@ -18,9 +18,10 @@ return new class extends Migration
             $table->foreignId('instance_id')->constrained();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->string('type');
+            $table->integer('rows_max');
+            $table->integer('rows_imported')->nullable();
             $table->integer('id_from')->nullable();
             $table->integer('id_to')->nullable();
-            $table->integer('rows_imported')->nullable();
             $table->timestamps();
         });
     }

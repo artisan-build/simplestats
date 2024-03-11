@@ -4,8 +4,10 @@ import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import CreateDataImportForm from "@/Pages/DataImports/Partials/CreateDataImportForm.vue";
 import DataImportListRow from "@/Pages/DataImports/Partials/ShowDataImportRow.vue";
+import {onMounted, onUnmounted, watch} from "vue";
+import { router } from '@inertiajs/vue3'
 
-defineProps({
+const props = defineProps({
     filters: Object,
     projects: Array,
     instances: Array,
@@ -15,6 +17,36 @@ defineProps({
     permissions: Object,
 });
 
+let intervalId = null;
+
+const checkAndReload = () => {
+    if (props.dataImports.total > 0 && !props.dataImports.data[0].tracked_job.finished_at) {
+        if (intervalId === null) { // Stelle sicher, dass der Interval nicht mehrfach gesetzt wird
+            intervalId = setInterval(function () {
+                router.reload({ preserveState: true, preserveScroll: true });
+            }, 2000);
+        }
+    } else {
+        if (intervalId !== null) {
+            clearInterval(intervalId);
+            intervalId = null; // Setze intervalId zurück, um sicherzustellen, dass der Interval richtig gecleared wird
+        }
+    }
+};
+
+onMounted(() => {
+    checkAndReload(); // Prüfe beim Mounten
+});
+
+onUnmounted(() => {
+    if (intervalId !== null) {
+        clearInterval(intervalId);
+    }
+});
+
+watch(() => props.dataImports.data, (newVal, oldVal) => {
+    checkAndReload(); // Prüfe bei jeder Änderung der Daten
+}, { deep: true }); // `deep` ist hier wichtig, um tiefe Änderungen zu überwachen
 </script>
 
 <template>
@@ -59,6 +91,11 @@ defineProps({
                                     <th class="pb-2 pt-3 px-3">From Id</th>
                                     <th class="pb-2 pt-3 px-3">To Id</th>
                                     <th class="pb-2 pt-3 px-3">Action</th>
+                                </tr>
+                                <tr v-if="! dataImports.data[0].tracked_job.finished_at">
+                                    <td colspan="8" class="border-t">
+                                        <div class="h-1 bg-indigo-400 transition-all" :style="`width: ${dataImports.data[0].rows_progress}%;`"></div>
+                                    </td>
                                 </tr>
                                 <tr v-for="dataImport in dataImports.data" :key="dataImport.id">
                                     <DataImportListRow :projects="projects" :instances="instances" :dataImport="dataImport" />
