@@ -1,0 +1,74 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Enums\DataImportType;
+use App\Jobs\ProcessDataImportJob;
+use App\Models\DataImport;
+use App\Models\Project;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Junges\TrackableJobs\Models\TrackedJob;
+
+class DataImportSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $firstUser = User::first();
+        auth()->setUser($firstUser);
+
+        $firstProject = Project::with('instances')->first();
+
+        DataImport::unguard();
+
+        DataImport::create([
+            'project_id' => $firstProject->id,
+            'instance_id' => $firstProject->instances->first()->id,
+            'created_by' => $firstUser->id,
+            'type' => DataImportType::USERS,
+            'rows_max' => 8921,
+            'rows_imported' => 8921,
+            'id_from' => 1,
+            'id_to' => 8921,
+            'created_at' => now()->subHours(10),
+        ])->trackedJob()->create([
+            'name' => ProcessDataImportJob::class,
+            'status' => TrackedJob::STATUS_FINISHED,
+            'started_at' => now()->subHours(10),
+            'finished_at' => now()->subHours(8),
+        ]);
+
+        DataImport::create([
+            'project_id' => $firstProject->id,
+            'instance_id' => $firstProject->instances->first()->id,
+            'created_by' => $firstUser->id,
+            'type' => DataImportType::PAYMENTS,
+            'rows_max' => 2132,
+            'rows_imported' => 698,
+            'id_from' => 1,
+            'id_to' => 698,
+            'created_at' => now()->subHours(7),
+        ])->trackedJob()->create([
+            'name' => ProcessDataImportJob::class,
+            'status' => TrackedJob::STATUS_FAILED,
+            'started_at' => now()->subHours(7),
+            'finished_at' => now()->subHours(6),
+        ]);
+
+        DataImport::create([
+            'project_id' => $firstProject->id,
+            'instance_id' => $firstProject->instances->first()->id,
+            'created_by' => $firstUser->id,
+            'type' => DataImportType::PAYMENTS,
+            'rows_max' => 2132,
+            'rows_imported' => 1587,
+            'id_from' => 1,
+            'id_to' => 1587,
+            'created_at' => now()->subHours(5),
+        ])->trackedJob()->create([
+            'name' => ProcessDataImportJob::class,
+            'status' => TrackedJob::STATUS_STARTED,
+            'started_at' => now()->subHours(5),
+        ]);
+    }
+}

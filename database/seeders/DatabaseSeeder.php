@@ -45,6 +45,8 @@ class DatabaseSeeder extends Seeder
             return $user;
         });
 
+        auth()->setUser($user);
+
         if (app()->isLocal()) {
             Project::factory()->count(1)->state(['name' => 'SimpleStats'])
                 ->for(Team::find($user->current_team_id))
@@ -118,6 +120,10 @@ class DatabaseSeeder extends Seeder
                     })
             )
             ->create();
+
+        $this->call([
+            DataImportSeeder::class,
+        ]);
     }
 
     protected function changeEnv($data = [])
