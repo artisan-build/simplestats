@@ -34,6 +34,11 @@ class DeleteUser implements DeletesUsers
             $this->deleteTeams($user);
             $user->deleteProfilePhoto();
             $user->tokens->each->delete();
+
+            if (optional($user->subscription())->recurring()) {
+                $user->subscription()->cancelNow();
+            }
+
             $user->delete();
         });
     }

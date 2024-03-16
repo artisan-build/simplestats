@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('data_imports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id')->constrained();
-            $table->foreignId('project_id')->constrained();
-            $table->foreignId('instance_id')->constrained();
+            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('instance_id')->constrained()->cascadeOnDelete();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->string('type');
             $table->integer('rows_max');
