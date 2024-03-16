@@ -32,7 +32,7 @@ class ProjectPolicy
     public function create(User $user): bool
     {
         return $user->hasTeamPermission($user->currentTeam, 'action:create')
-            && Project::count() < $user->currentTeam->owner->sparkPlan()->options['projects'];
+            && Project::count() < $user->currentTeam->owner->sparkPlan()->options[Project::class];
     }
 
     /**

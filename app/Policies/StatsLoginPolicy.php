@@ -21,7 +21,7 @@ class StatsLoginPolicy
      */
     public function create($authModel, int $delta = 0): bool
     {
-        $allowedLogins = $authModel->team->owner->sparkPlan()->options['logins'];
+        $allowedLogins = $authModel->team->owner->sparkPlan()->options[StatsLogin::class];
 
         if ($allowedLogins === SubscriptionService::UNLIMITED_AMOUNT)
             return true;

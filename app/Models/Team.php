@@ -53,4 +53,19 @@ class Team extends JetstreamTeam
     {
         return $this->hasMany(Instance::class);
     }
+
+    public function statsUsers(): HasMany
+    {
+        return $this->hasMany(StatsUser::class);
+    }
+
+    public function statsLogins(): HasMany
+    {
+        return $this->hasMany(StatsLogin::class);
+    }
+
+    public function statsPayments(): HasMany
+    {
+        return $this->hasMany(StatsPayment::class);
+    }
 }

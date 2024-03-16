@@ -28,8 +28,9 @@ class SubscriptionService
                 'tax_mode_monthly' => $planPrices[$item['monthly_id']]->price['tax_mode'] ?? '',
                 'tax_mode_yearly' => $planPrices[$item['yearly_id']]->price['tax_mode'] ?? '',
                 'yearly_incentive' => $item['yearly_incentive'] ?? 0,
-                'features' => $item['features'],
-                'options' => $item['options'],
+                // do not show/expose FQN to FE...
+                'features' => collect($item['features'])->mapWithKeys(fn($item, $key) => [class_basename($key) => $item]),
+                'options' => collect($item['options'])->mapWithKeys(fn($item, $key) => [class_basename($key) => $item]),
                 'promoted' => $item['promoted'] ?? false,
             ];
         });

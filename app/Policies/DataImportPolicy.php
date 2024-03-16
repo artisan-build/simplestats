@@ -32,7 +32,7 @@ class DataImportPolicy
     public function create(User $user): bool
     {
         return $user->hasTeamPermission($user->currentTeam, 'action:importPermission')
-            && $user->currentTeam->owner->sparkPlan()->options['data_import'];
+            && $user->currentTeam->owner->sparkPlan()->options[DataImport::class];
     }
 
     /**
@@ -41,7 +41,7 @@ class DataImportPolicy
     public function update(User $user, DataImport $dataImport): bool
     {
         return $user->hasTeamPermission($dataImport->team, 'action:importPermission')
-            && $user->currentTeam->owner->sparkPlan()->options['data_import'];
+            && $user->currentTeam->owner->sparkPlan()->options[DataImport::class];
     }
 
     /**
@@ -50,7 +50,7 @@ class DataImportPolicy
     public function delete(User $user, DataImport $dataImport): bool
     {
         return $user->hasTeamPermission($dataImport->team, 'action:importPermission')
-            && $user->currentTeam->owner->sparkPlan()->options['data_import'];
+            && $user->currentTeam->owner->sparkPlan()->options[DataImport::class];
     }
 
     /**
@@ -59,7 +59,7 @@ class DataImportPolicy
     public function cancel(User $user, DataImport $dataImport): bool
     {
         return $user->hasTeamPermission($dataImport->team, 'action:importPermission')
-            && $user->currentTeam->owner->sparkPlan()->options['data_import'];
+            && $user->currentTeam->owner->sparkPlan()->options[DataImport::class];
     }
 
     /**
@@ -68,6 +68,6 @@ class DataImportPolicy
     public function rollback(User $user, DataImport $dataImport): bool
     {
         return $user->hasTeamPermission($dataImport->team, 'action:importPermission')
-            && $user->currentTeam->owner->sparkPlan()->options['data_import'];
+            && $user->currentTeam->owner->sparkPlan()->options[DataImport::class];
     }
 }

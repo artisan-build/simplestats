@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\DataImport;
+use App\Models\Instance;
+use App\Models\Project;
+use App\Models\StatsLogin;
+use App\Models\StatsPayment;
+use App\Models\StatsUser;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Services\SubscriptionService;
@@ -99,6 +105,7 @@ return [
 
             'default_interval' => 'monthly',
 
+            // always make sure that the plan structure is compatible with the plan eligibility check in the SparkServiceProvider...
             'plans' => [
                 [
                     //free plan must be the first in the array
@@ -107,20 +114,20 @@ return [
                     'monthly_id' => 0,
                     'yearly_id' => 0,
                     'features' => [
-                        'projects' => '1 Project',
-                        'instances' => '1 Instance',
-                        'users' => '1,000 Users',
-                        'payments' => '100 Payments',
-                        'logins' => '5,000 Logins',
-                        'data_import' => 'Data Import',
+                        Project::class => '1 Project',
+                        Instance::class => '1 Instance',
+                        StatsUser::class => '1,000 Users',
+                        StatsPayment::class => '100 Payments',
+                        StatsLogin::class => '5,000 Logins',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
-                        'projects' => 1,
-                        'instances' => 1,
-                        'users' => 1_000,
-                        'payments' => 100,
-                        'logins' => 5_000,
-                        'data_import' => false,
+                        Project::class => 1,
+                        Instance::class => 1,
+                        StatsUser::class => 1_000,
+                        StatsPayment::class => 100,
+                        StatsLogin::class => 5_000,
+                        DataImport::class => false,
                     ],
                     'archived' => true,
                 ],
@@ -131,20 +138,20 @@ return [
                     'yearly_id' => env('SPARK_HOBBY_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 13%',
                     'features' => [
-                        'projects' => '2 Projects',
-                        'instances' => '5 Instances',
-                        'users' => '100,000 Users',
-                        'payments' => '50,000 Payments',
-                        'logins' => '500,000 Logins',
-                        'data_import' => 'Data Import',
+                        Project::class => '2 Projects',
+                        Instance::class => '5 Instances',
+                        StatsUser::class => '100,000 Users',
+                        StatsPayment::class => '50,000 Payments',
+                        StatsLogin::class => '500,000 Logins',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
-                        'projects' => 2,
-                        'instances' => 5,
-                        'users' => 100_000,
-                        'payments' => 50_000,
-                        'logins' => 500_000,
-                        'data_import' => true,
+                        Project::class => 2,
+                        Instance::class => 5,
+                        StatsUser::class => 100_000,
+                        StatsPayment::class => 50_000,
+                        StatsLogin::class => 500_000,
+                        DataImport::class => true,
                     ],
                     'archived' => false,
                 ],
@@ -155,20 +162,20 @@ return [
                     'yearly_id' => env('SPARK_GROWTH_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 15%',
                     'features' => [
-                        'projects' => '8 Projects',
-                        'instances' => '20 Instances',
-                        'users' => '1,000,000 Users',
-                        'payments' => '500,00 Payments',
-                        'logins' => '5,000,000 Logins',
-                        'data_import' => 'Data Import',
+                        Project::class => '8 Projects',
+                        Instance::class => '20 Instances',
+                        StatsUser::class => '1,000,000 Users',
+                        StatsPayment::class => '500,00 Payments',
+                        StatsLogin::class => '5,000,000 Logins',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
-                        'projects' => 8,
-                        'instances' => 20,
-                        'users' => 1_000_000,
-                        'payments' => 500_000,
-                        'logins' => 5_000_000,
-                        'data_import' => true,
+                        Project::class => 8,
+                        Instance::class => 20,
+                        StatsUser::class => 1_000_000,
+                        StatsPayment::class => 500_000,
+                        StatsLogin::class => 5_000_000,
+                        DataImport::class => true,
                     ],
                     'archived' => false,
                     'promoted' => true,
@@ -180,20 +187,20 @@ return [
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 16%',
                     'features' => [
-                        'projects' => '20 Projects',
-                        'instances' => '100 Instances',
-                        'users' => '10,000,000 Users',
-                        'payments' => 'Unlimited Payments',
-                        'logins' => 'Unlimited Logins',
-                        'data_import' => 'Data Import',
+                        Project::class => '20 Projects',
+                        Instance::class => '100 Instances',
+                        StatsUser::class => '10,000,000 Users',
+                        StatsPayment::class => 'Unlimited Payments',
+                        StatsLogin::class => 'Unlimited Logins',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
-                        'projects' => 20,
-                        'instances' => 100,
-                        'users' => 10_000_000,
-                        'payments' => SubscriptionService::UNLIMITED_AMOUNT,
-                        'logins' => SubscriptionService::UNLIMITED_AMOUNT,
-                        'data_import' => true,
+                        Project::class => 20,
+                        Instance::class => 100,
+                        StatsUser::class => 10_000_000,
+                        StatsPayment::class => SubscriptionService::UNLIMITED_AMOUNT,
+                        StatsLogin::class => SubscriptionService::UNLIMITED_AMOUNT,
+                        DataImport::class => true,
                     ],
                     'archived' => false,
                 ],

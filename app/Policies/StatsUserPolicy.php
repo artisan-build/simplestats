@@ -21,7 +21,7 @@ class StatsUserPolicy
      */
     public function create($authModel, int $delta = 0): bool
     {
-        $allowedUsers = $authModel->team->owner->sparkPlan()->options['users'];
+        $allowedUsers = $authModel->team->owner->sparkPlan()->options[StatsUser::class];
 
         if ($allowedUsers === SubscriptionService::UNLIMITED_AMOUNT)
             return true;

@@ -60,7 +60,7 @@ class BaseStatsValidator
         $statsModel = $dataImport->type->getImporter($dataImport)->getModelClass();
 
         if (! Gate::check('create', [$statsModel, $importRowsCount])) {
-            $allowedCount = auth()->user()->team->owner->sparkPlan()->options[$dataImport->type->value];
+            $allowedCount = auth()->user()->team->owner->sparkPlan()->options[$dataImport->type->getModel()];
             $countLeft = ($statsModel::withoutGlobalScope('instance')->count() + $importRowsCount) - $allowedCount;
 
             throw ValidationException::withMessages([
