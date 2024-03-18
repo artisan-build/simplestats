@@ -85,7 +85,8 @@ class DatabaseSeeder extends Seeder
                         StatsUser::factory()->initialize();
                         StatsPayment::factory()->initialize();
 
-                        StatsUser::factory(rand(100,300))->create([
+                        $count = $this->getUserSeedCount();
+                        StatsUser::factory(rand($count['from'],$count['to']))->create([
                             'project_id' => $instance->project_id,
                             'instance_id' => $instance->id,
                         ])
@@ -140,5 +141,13 @@ class DatabaseSeeder extends Seeder
             // Speichern der neuen .env-Datei
             file_put_contents(base_path() . '/.env', $env);
         }
+    }
+
+    protected function getUserSeedCount(): array
+    {
+        return [
+            'from' => app()->isLocal() ? 100 : 500,
+            'to' => app()->isLocal() ? 300 : 1000,
+        ];
     }
 }
