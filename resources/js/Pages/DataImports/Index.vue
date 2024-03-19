@@ -6,6 +6,7 @@ import CreateDataImportForm from "@/Pages/DataImports/Partials/CreateDataImportF
 import DataImportListRow from "@/Pages/DataImports/Partials/ShowDataImportRow.vue";
 import {onMounted, onUnmounted, watch} from "vue";
 import { router } from '@inertiajs/vue3'
+import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
 
 const props = defineProps({
     filters: Object,
@@ -92,7 +93,14 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
                                     <th class="pb-2 pt-3 px-3">To Id</th>
                                     <th class="pb-2 pt-3 px-3">Action</th>
                                 </tr>
-                                <tr v-if="! dataImports.data[0].tracked_job.finished_at">
+                                <tr v-if="dataImports.data[0].tracked_job.status === 'failed'">
+                                    <td colspan="8" class="border-t">
+                                        <WarningBox>
+                                            Something went wrong with your latest Data Import, please check your mails for more details!
+                                        </WarningBox>
+                                    </td>
+                                </tr>
+                                <tr v-else-if="! dataImports.data[0].tracked_job.finished_at">
                                     <td colspan="8" class="border-t">
                                         <div class="h-1 bg-indigo-400 transition-all" :style="`width: ${dataImports.data[0].rows_progress}%;`"></div>
                                     </td>

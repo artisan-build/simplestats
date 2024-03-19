@@ -29,6 +29,7 @@ class ProcessDataImportJob implements ShouldQueue
 
     // do not retry on failure
     public int $tries = 1;
+    public ?int $timeout = null;
 
     public string $filepath;
 
