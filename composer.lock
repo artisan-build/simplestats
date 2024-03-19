@@ -2110,17 +2110,17 @@
         },
         {
             "name": "laravel/spark-paddle",
-            "version": "v5.1.4",
+            "version": "v5.1.5",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/spark-paddle.git",
-                "reference": "6a4452a19824855cbd337ab5624ac84fe8d4c57b"
+                "reference": "2c295f24ddf5cc49fb914a8bd6a6d9701a0fc528"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://spark.laravel.com/dist/laravel/spark-paddle/laravel-spark-paddle-6a4452a19824855cbd337ab5624ac84fe8d4c57b-zip-04f5a1.zip",
-                "reference": "6a4452a19824855cbd337ab5624ac84fe8d4c57b",
-                "shasum": "eacb107b311a668b5d2e1504fc189eacb345c1e9"
+                "url": "https://spark.laravel.com/dist/laravel/spark-paddle/laravel-spark-paddle-2c295f24ddf5cc49fb914a8bd6a6d9701a0fc528-zip-43b330.zip",
+                "reference": "2c295f24ddf5cc49fb914a8bd6a6d9701a0fc528",
+                "shasum": "6c06b703aa701801f363ef5f7d4645526353cbb5"
             },
             "require": {
                 "ext-bcmath": "*",
@@ -2175,10 +2175,10 @@
                 "scaffolding"
             ],
             "support": {
-                "source": "https://github.com/laravel/spark-paddle/tree/v5.1.4",
+                "source": "https://github.com/laravel/spark-paddle/tree/v5.1.5",
                 "issues": "https://github.com/laravel/spark-paddle/issues"
             },
-            "time": "2024-03-18T16:32:35+00:00"
+            "time": "2024-03-19T16:24:28+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -4877,11 +4877,13 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/simplestats-io/laravel-client",
-                "reference": "2838a0195e95cb07844f4c2e684839b0d0cd91f3"
+                "reference": "fa2efd493cfcf338ff75d14a2de4865732698fa7"
             },
             "require": {
+                "guzzlehttp/guzzle": "^7.8",
                 "illuminate/contracts": "^9.0 || ^10.0 || ^11.0",
                 "illuminate/database": "^9.0 || ^10.0 || ^11.0",
+                "illuminate/http": "^9.0 || ^10.0 || ^11.0",
                 "illuminate/support": "^9.0 || ^10.0 || ^11.0",
                 "nesbot/carbon": "^2.66",
                 "php": "^8.1",
