@@ -61,10 +61,10 @@ class BaseStatsValidator
 
         if (! Gate::check('create', [$statsModel, $importRowsCount])) {
             $allowedCount = auth()->user()->team->owner->sparkPlan()->options[$dataImport->type->getModel()];
-            $countLeft = ($statsModel::withoutGlobalScope('instance')->count() + $importRowsCount) - $allowedCount;
+            $countLeft = abs($allowedCount - $statsModel::withoutGlobalScope('instance')->count());
 
             throw ValidationException::withMessages([
-                'file' => ["Too many data to import! You have only $countLeft {$dataImport->type->value} left to track. Consider upgrading your plan!"],
+                'file' => ["You're exceeding the import limit! Your attempt to import $importRowsCount rows exceeds your remaining quota of $countLeft rows. Please consider upgrading your plan to import more rows."],
             ]);
         }
     }

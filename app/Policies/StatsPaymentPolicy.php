@@ -2,9 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Instance;
 use App\Models\StatsPayment;
-use App\Models\StatsUser;
 use App\Services\SubscriptionService;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -22,7 +20,7 @@ class StatsPaymentPolicy
      */
     public function create($authModel, int $delta = 0): bool
     {
-        $allowedPayments = $authModel->team->owner->sparkPlan()->options[StatsUser::class];
+        $allowedPayments = $authModel->team->owner->sparkPlan()->options[StatsPayment::class];
 
         if ($allowedPayments === SubscriptionService::UNLIMITED_AMOUNT)
             return true;

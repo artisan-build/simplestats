@@ -97,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUser
             // Fallback to "Free" plan
             $plans = config('spark.billables.user.plans');
             // local every user gets the highest plan by default :D
-            $planConfig = (app()->isLocal() && config('app.plan_auto_max')) ? end($plans) : current($plans);
+            $planConfig = (app()->isLocal() && config('app.plan_auto_max')) ? $plans[count($plans)-1] : $plans[0];
 
             $plan = (new Plan($planConfig['name'], 0))
                 ->interval('monthly')
