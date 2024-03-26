@@ -3,6 +3,7 @@
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\DashboardController;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', HomeController::class);
+Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 Route::post('early-subscription', EarlySubscriptionController::class)->name('early-subscription');
 

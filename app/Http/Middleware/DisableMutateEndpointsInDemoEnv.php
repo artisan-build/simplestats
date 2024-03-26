@@ -19,7 +19,11 @@ class DisableMutateEndpointsInDemoEnv
             return $next($request);
         }
 
-        if ($request->isMethod('get') || $request->is('login') || $request->is('logout') || $request->is('spark/*')) {
+        if ($request->isMethod('get') ||
+            $request->is('login') ||
+            $request->is('logout') ||
+            $request->is('spark/*')
+        ) {
             return $next($request);
         }
 

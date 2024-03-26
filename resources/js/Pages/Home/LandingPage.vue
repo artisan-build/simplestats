@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import Welcome from "@/Pages/Home/Partials/Welcome.vue";
 import ComingSoon from "@/Pages/Home/Partials/ComingSoon.vue";
+import Footer from "@/Components/Footer.vue";
 
 defineProps({
     comingSoon: Boolean,
@@ -18,4 +19,6 @@ defineProps({
     <div v-else>
         <Welcome :plans="plans" />
     </div>
+
+    <Footer />
 </template>

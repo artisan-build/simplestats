@@ -6,6 +6,7 @@ import Banner from '@/Components/Banner.vue';
 import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import Navigation from "@/Components/Navigation.vue";
+import Footer from "@/Components/Footer.vue";
 
 defineProps({
     title: String,
@@ -112,4 +113,6 @@ const hideMenu = import.meta.env.VITE_HIDE_MENU === 'true';
             </main>
         </div>
     </div>
+
+    <Footer />
 </template>

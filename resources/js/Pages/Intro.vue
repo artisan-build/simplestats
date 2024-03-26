@@ -24,7 +24,7 @@ const submit = () => {
 
 <template>
 
-    <AppLayout title="Projects">
+    <AppLayout title="Intro">
         <div class="flex justify-center pt-20">
             <div class="w-3/4">
                 <h1 class="text-4xl font-medium mb-20 text-center">Just a few more steps...</h1>
