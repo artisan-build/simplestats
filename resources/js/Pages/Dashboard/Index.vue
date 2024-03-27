@@ -4,6 +4,7 @@ import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
+import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
 
 defineProps({
     teamStats: Object,
@@ -15,6 +16,7 @@ defineProps({
     trackingCampaigns: Array,
     trackingTerms: Array,
     trackingContents: Array,
+    subscriptionPlanAlarm: Array,
 });
 
 </script>
@@ -22,6 +24,9 @@ defineProps({
 <template>
     <AppLayout title="Dashboard" :fullscreen="true">
         <template #header>Dashboard</template>
+        <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
+            <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
+        </div>
         <div>
             <div class="mb-8">
                 <StatsFilter

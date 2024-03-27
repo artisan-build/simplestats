@@ -2,15 +2,19 @@
 
 namespace App\Services;
 
+use App\Mail\SubscriptionPlanAlarm;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Number;
-use Illuminate\Support\Str;
 use Laravel\Paddle\Cashier;
 
 class SubscriptionService
 {
     const UNLIMITED_AMOUNT = -1;
+    const ALARM_PERCENTAGE = 80;
 
     public function getFrontendPlans(string $billableType = 'user'): Collection
     {
@@ -46,5 +50,32 @@ class SubscriptionService
                 'customer_ip_address' => request()->ip(),
             ])->mapWithKeys(fn($item) => [$item->price['id'] => $item]);
         });
+    }
+
+    public function checkPlanAlarm(User $teamOwner, bool $sendMail = false): array
+    {
+        $teamPlan = $teamOwner->sparkPlan();
+
+        $alarms = [];
+        foreach ($teamPlan->options as $featureType => $featureAmount) {
+            $featureTypeBase = class_basename($featureType);
+            if (! str($featureTypeBase)->startsWith('Stats') || $featureAmount === self::UNLIMITED_AMOUNT) {
+                continue;
+            }
+
+            /** @var $featureType Model */
+            $currentAmount = $featureType::withoutGlobalScope('instance')->count();
+            $currentPercent = round($currentAmount / $featureAmount * 100, 0);
+
+            if ($currentPercent > self::ALARM_PERCENTAGE) {
+                $alarms[] = "You reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.";
+            }
+        }
+
+        if (! empty($alarms) && $sendMail) {
+            Mail::to($teamOwner->email)->send(new SubscriptionPlanAlarm($teamOwner, $alarms));
+        }
+
+        return $alarms;
     }
 }

@@ -10,11 +10,12 @@ use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
 use App\Services\StatsDetailsService;
+use App\Services\SubscriptionService;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function __invoke(DashboardRequest $request, StatsDetailsService $statsDetailsService)
+    public function __invoke(DashboardRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
     {
         $teamStats = $request->user()->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
@@ -66,6 +67,7 @@ class DashboardController extends Controller
             'trackingCampaigns' => Inertia::lazy(fn() => $trackingCampaignsCallback()),
             'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
             'trackingContents'  => Inertia::lazy(fn() => $trackingContentsCallback()),
+            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($request->user()->team->owner)
         ];
 
         // do not lazy load if the specific tracking isset...
