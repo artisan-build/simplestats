@@ -134,8 +134,8 @@ return [
                 [
                     'name' => 'Plus',
                     'short_description' => 'Advanced marketeer with strong ambitions and great plans to expand.',
-                    'monthly_id' => env('SPARK_HOBBY_MONTHLY_PLAN'),
-                    'yearly_id' => env('SPARK_HOBBY_YEARLY_PLAN'),
+                    'monthly_id' => env('SPARK_PLUS_MONTHLY_PLAN'),
+                    'yearly_id' => env('SPARK_PLUS_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 13%',
                     'features' => [
                         Project::class => '2 Projects',
@@ -158,8 +158,8 @@ return [
                 [
                     'name' => 'Business',
                     'short_description' => 'Finally see which of your campaign activities are generating revenue.',
-                    'monthly_id' => env('SPARK_GROWTH_MONTHLY_PLAN'),
-                    'yearly_id' => env('SPARK_GROWTH_YEARLY_PLAN'),
+                    'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
+                    'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 15%',
                     'features' => [
                         Project::class => '8 Projects',
@@ -183,8 +183,8 @@ return [
                 [
                     'name' => 'Enterprise',
                     'short_description' => 'Get an unlimited high level overview of your marketing efforts.',
-                    'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
-                    'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
+                    'monthly_id' => env('SPARK_ENTERPRISE_MONTHLY_PLAN'),
+                    'yearly_id' => env('SPARK_ENTERPRISE_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 16%',
                     'features' => [
                         Project::class => '20 Projects',
