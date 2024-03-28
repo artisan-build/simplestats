@@ -11,6 +11,7 @@ class StatsPaymentValidator extends BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
+        $team = auth()->user()->team;
         // if the currency is not valid, we do not check if we have to convert it...
         // it will fail anyway in the request validation...
         if (Validator::make(
@@ -20,15 +21,22 @@ class StatsPaymentValidator extends BaseStatsValidator
             return $input;
         }
 
+        if (! $team->owner->sparkPlan()->options['MultiCurrency']) {
+            Validator::make(
+                ['currency' => $input['currency']],
+                ['currency' => 'in:'.$team->currency]
+            )->validate();
+        }
+
         // these fields need to exist for the batch import upsert
         if (! isset($input['orig_gross'])) $input['orig_gross'] = null;
         if (! isset($input['orig_net'])) $input['orig_net'] = null;
         if (! isset($input['orig_currency'])) $input['orig_currency'] = null;
 
         // check if we have to convert currencies
-        $teamCurrency = auth()->user()->team->currency;
+        $teamCurrency = $team->currency;
         if ($input['currency'] != $teamCurrency) {
-            $exchangeRate = app(ExchangeRateService::class)->getFor(CarbonImmutable::parse($input['time']), $input['currency'], auth()->user()->team->currency);
+            $exchangeRate = app(ExchangeRateService::class)->getFor(CarbonImmutable::parse($input['time']), $input['currency'], $team->currency);
             $input = array_merge($input, [
                 'orig_gross' => $input['gross'],
                 'orig_net' => $input['net'],

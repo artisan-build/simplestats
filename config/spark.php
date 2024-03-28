@@ -120,6 +120,7 @@ return [
                         StatsPayment::class => '1,000 Payments',
                         StatsLogin::class => '10,000 Logins',
                         DataImport::class => 'Data Import',
+                        'MultiCurrency' => 'Multi Currency Support',
                     ],
                     'options' => [
                         Project::class => 1,
@@ -128,6 +129,7 @@ return [
                         StatsPayment::class => 1_000,
                         StatsLogin::class => 10_000,
                         DataImport::class => false,
+                        'MultiCurrency' => false,
                     ],
                     'archived' => true,
                 ],
@@ -144,6 +146,7 @@ return [
                         StatsPayment::class => '50,000 Payments',
                         StatsLogin::class => '500,000 Logins',
                         DataImport::class => 'Data Import',
+                        'MultiCurrency' => 'Multi Currency Support',
                     ],
                     'options' => [
                         Project::class => 2,
@@ -152,6 +155,7 @@ return [
                         StatsPayment::class => 50_000,
                         StatsLogin::class => 500_000,
                         DataImport::class => true,
+                        'MultiCurrency' => true,
                     ],
                     'archived' => false,
                 ],
@@ -168,6 +172,7 @@ return [
                         StatsPayment::class => '500,00 Payments',
                         StatsLogin::class => '5,000,000 Logins',
                         DataImport::class => 'Data Import',
+                        'MultiCurrency' => 'Multi Currency Support',
                     ],
                     'options' => [
                         Project::class => 8,
@@ -176,6 +181,7 @@ return [
                         StatsPayment::class => 500_000,
                         StatsLogin::class => 5_000_000,
                         DataImport::class => true,
+                        'MultiCurrency' => true,
                     ],
                     'archived' => false,
                     'promoted' => true,
@@ -193,6 +199,7 @@ return [
                         StatsPayment::class => 'Unlimited Payments',
                         StatsLogin::class => 'Unlimited Logins',
                         DataImport::class => 'Data Import',
+                        'MultiCurrency' => 'Multi Currency Support',
                     ],
                     'options' => [
                         Project::class => 20,
@@ -201,6 +208,7 @@ return [
                         StatsPayment::class => SubscriptionService::UNLIMITED_AMOUNT,
                         StatsLogin::class => SubscriptionService::UNLIMITED_AMOUNT,
                         DataImport::class => true,
+                        'MultiCurrency' => true,
                     ],
                     'archived' => false,
                 ],
