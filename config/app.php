@@ -15,7 +15,7 @@ return [
         ],
     ],
 
-    'plan_auto_max' => env('PLAN_AUTO_MAX', false),
+    'plan_auto_max_users' => explode(',', env('PLAN_AUTO_MAX_USERS', '')),
 
     /*
     |--------------------------------------------------------------------------
