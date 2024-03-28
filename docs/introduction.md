@@ -1,6 +1,6 @@
 # Introduction
 
-SimpleStats is a lightweight and simple statistic tool for Laravel applications.
+SimpleStats is a lightweight and simple statistics tool for Laravel applications.
 It is not about just visits, views and page impressions,
 it shows you exactly where your users coming from and how your users perform.
 By default, you can track and filter everything by UTM codes,

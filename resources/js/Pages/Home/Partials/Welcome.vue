@@ -16,14 +16,14 @@ defineProps({
     <div class="min-h-screen">
         <section class="text-center pt-24">
             <h1 class="mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-<!--                V1 A simple and GDPR-compliant<br>statistical tool for <span class="text-indigo-500">Laravel</span>.-->
-                The missing statistic tool<br/>for your&nbsp;<span class="text-indigo-500">Laravel</span> app.
-<!--                V3 A simple statistical tool for <span class="text-indigo-500">Laravel</span><br>to check the ROI of your campaigns in seconds.-->
+<!--                V1 A simple and GDPR-compliant<br>statistics tool for <span class="text-indigo-500">Laravel</span>.-->
+                The missing statistics tool<br/>for your&nbsp;<span class="text-indigo-500">Laravel</span> app.
+<!--                V3 A simple statistics tool for <span class="text-indigo-500">Laravel</span><br>to check the ROI of your campaigns in seconds.-->
             </h1>
             <p class="mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
 <!--                V1 Get highly detailed user, revenue and campaign statistics in no time.<br>-->
 <!--                Start knowing your users and campaigns today!-->
-                A lightweight and GDPR-compliant statistical tool for Laravel,<br>
+                A lightweight and GDPR-compliant statistics tool for Laravel,<br>
                 quickly reveals marketing ROI and user conversion efficiency with a minimal setup.
 <!--                V3 Quickly reveal marketing ROI and<br>user conversion efficiency with a minimal setup.-->
             </p>
