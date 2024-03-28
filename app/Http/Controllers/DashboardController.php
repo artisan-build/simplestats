@@ -57,6 +57,7 @@ class DashboardController extends Controller
 
         $filterOrganic = $statsDetailsService->getOrganicFilter();
 
+        $teamOwner = $request->user()->team->owner;
         $data = [
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,
@@ -67,7 +68,8 @@ class DashboardController extends Controller
             'trackingCampaigns' => Inertia::lazy(fn() => $trackingCampaignsCallback()),
             'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
             'trackingContents'  => Inertia::lazy(fn() => $trackingContentsCallback()),
-            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($request->user()->team->owner)
+            'showFreePlanWarning' => $teamOwner->sparkPlan()->name === SubscriptionService::PLAN_FREE,
+            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($teamOwner)
         ];
 
         // do not lazy load if the specific tracking isset...

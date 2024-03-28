@@ -109,7 +109,7 @@ return [
             'plans' => [
                 [
                     //free plan must be the first in the array
-                    'name' => 'Free',
+                    'name' => SubscriptionService::PLAN_FREE,
                     'short_description' => 'Starter to get in touch. Explore the strength of statistics. No card required.',
                     'monthly_id' => 0,
                     'yearly_id' => 0,
@@ -134,7 +134,7 @@ return [
                     'archived' => true,
                 ],
                 [
-                    'name' => 'Plus',
+                    'name' => SubscriptionService::PLAN_PLUS,
                     'short_description' => 'Advanced marketeer with strong ambitions and great plans to expand.',
                     'monthly_id' => env('SPARK_PLUS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_PLUS_YEARLY_PLAN'),
@@ -160,7 +160,7 @@ return [
                     'archived' => false,
                 ],
                 [
-                    'name' => 'Business',
+                    'name' => SubscriptionService::PLAN_BUSINESS,
                     'short_description' => 'Finally see which of your campaign activities are generating revenue.',
                     'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
@@ -187,7 +187,7 @@ return [
                     'promoted' => true,
                 ],
                 [
-                    'name' => 'Enterprise',
+                    'name' => SubscriptionService::PLAN_ENTERPRISE,
                     'short_description' => 'Get an unlimited high level overview of your marketing efforts.',
                     'monthly_id' => env('SPARK_ENTERPRISE_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_ENTERPRISE_YEARLY_PLAN'),

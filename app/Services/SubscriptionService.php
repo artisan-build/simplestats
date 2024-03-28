@@ -13,6 +13,11 @@ use Laravel\Paddle\Cashier;
 
 class SubscriptionService
 {
+    const PLAN_FREE = 'Free';
+    const PLAN_PLUS = 'Plus';
+    const PLAN_BUSINESS = 'Business';
+    const PLAN_ENTERPRISE = 'Enterprise';
+
     const UNLIMITED_AMOUNT = -1;
     const ALARM_PERCENTAGE = 80;
 

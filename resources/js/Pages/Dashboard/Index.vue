@@ -4,6 +4,7 @@ import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
+import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
 
 defineProps({
@@ -16,14 +17,17 @@ defineProps({
     trackingCampaigns: Array,
     trackingTerms: Array,
     trackingContents: Array,
+    showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
 });
-
 </script>
 
 <template>
     <AppLayout title="Dashboard" :fullscreen="true">
         <template #header>Dashboard</template>
+        <div v-if="showFreePlanWarning">
+            <FreePlanWarning />
+        </div>
         <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
