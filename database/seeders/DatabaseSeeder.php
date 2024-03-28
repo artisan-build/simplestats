@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
         $user = User::withoutEvents(function () {
             $testUser = config('app.test.user');
-            $user = (new CreateNewUser())->create([
+            $user = app(CreateNewUser::class)->create([
                 'name' => $testUser['name'],
                 'email' => $testUser['email'],
                 'password' => $testUser['password'],
