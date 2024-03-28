@@ -11,6 +11,7 @@ class PersonalAccessToken extends SanctumPersonalAccessToken
     {
         parent::__construct($attributes);
 
+        $this->hidden[] = 'token_plain';
         $this->casts['token_plain'] = 'encrypted';
     }
 
