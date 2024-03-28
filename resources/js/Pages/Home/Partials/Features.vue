@@ -36,7 +36,7 @@ const features = [
     {
         "icon": MapPinIcon,
         "title": "UTMs and Referrers",
-        "descr": "Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it lets you seamlessly check the ROI of each of your campaigns and so you can see where you can buy the cheapest users or on which channel users perform best!"
+        "descr": "Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it lets you seamlessly check the ROI of each of your campaigns and so you can see where you can buy the cheapest users or from which channel users perform best!"
     },
     {
         "icon": ChartBarIcon,
