@@ -20,6 +20,7 @@ class DisableMutateEndpointsInDemoEnv
         }
 
         if ($request->isMethod('get') ||
+            $request->is('intro') ||
             $request->is('login') ||
             $request->is('logout') ||
             $request->is('spark/*')
