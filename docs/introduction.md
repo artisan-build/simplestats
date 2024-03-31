@@ -8,7 +8,7 @@ finally get an overview which of your marketing efforts leads to revenue!
 This lets you seamlessly check the **ROI** of each of your campaigns in seconds and
 allows you to see where you can buy the cheapest users or from which channel users perform best! Everything is completely **GDPR-compliant** and can be achieved with a very low and simple installation setup.
 
-![Dashboard](./screenshot.png)
+![Dashboard](/screenshot.png)
 
 ## How does it work?
 
@@ -47,7 +47,7 @@ On our dashboard, we provide you with the following KPIs.
 | **MAPU**   | Monthly Active Paying Users        | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)                |
 | **MAAPU**  | Monthly Active Active Paying Users | Number of unique users who logged in or registered during the given '+periodName+' and did at least one payment in the last 20 days (including the selected period) |
 
-### KPIs over Lifetime
+### KPIs over lifetime
 
 | Key         | Short                           | Description                                                                |
 |-------------|---------------------------------|----------------------------------------------------------------------------|
