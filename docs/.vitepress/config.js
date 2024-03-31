@@ -14,14 +14,31 @@ export default defineConfig({
         search: {
             provider: 'local'
         },
+        outline: 'deep',
         sidebar: [
             {
-                text: 'Examples',
+                text: 'Getting Started',
                 items: [
                     {text: 'Introduction', link: '/introduction'},
-                    {text: 'Data Import', link: '/data-import'},
+                    {text: 'Installation', link: '/installation'},
                 ]
-            }
+            },
+            {
+                text: 'Tracking',
+                items: [
+                    {text: 'Track Users', link: '/track-users'},
+                    {text: 'Track Logins', link: '/track-logins'},
+                    {text: 'Track Payments', link: '/track-payments'},
+                    {text: 'API Communication', link: '/api-communication'},
+                ]
+            },
+            {
+                text: 'Advanced',
+                items: [
+                    {text: 'Data Import', link: '/data-import'},
+                    {text: 'API Documentation', link: '/api-documentation'},
+                ]
+            },
         ],
     }
 })

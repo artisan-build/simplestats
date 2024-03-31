@@ -55,7 +55,7 @@ const submit = () => {
                             v-model="form.currency"
                             type="text"
                             class="mt-1 inline-block w-3/5"
-                            placeholder="USD"
+                            placeholder="e.g. USD"
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Project">
@@ -68,7 +68,7 @@ const submit = () => {
                             v-model="form.project"
                             type="text"
                             class="mt-1 inline-block w-3/5"
-                            placeholder="My great SaaS"
+                            placeholder="e.g. My great SaaS"
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Instance">
@@ -82,7 +82,7 @@ const submit = () => {
                             v-model="form.instance"
                             type="text"
                             class="mt-1 inline-block w-3/5"
-                            placeholder="US East or International"
+                            placeholder="e.g. US East or International"
                         />
                     </TabContent>
                 </FormWizard>
