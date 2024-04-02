@@ -58,6 +58,8 @@ On our dashboard, we provide you with the following KPIs.
 | **PU**      | Paying Users                    | Number of paying users over lifetime.                                      |
 | **TAU**     | Total Active Users              | Number of users who logged in at least twice over lifetime.                |
 | **REG2DAU** | Reg. to DAU                     | Percentage of registered users who become DAUs                             |
+| **REG2WAU** | Reg. to WAU                     | Percentage of registered users who become WAUs                             |
+| **REG2MAU** | Reg. to MAU                     | Percentage of registered users who become MAUs                             |
 | **REG2PU**  | Reg. to Pay                     | Percentage of registered users who become paying user.                     |
 | **REG2TAU** | Reg. to Active                  | Percentage of registered users who become active.                          |
 
