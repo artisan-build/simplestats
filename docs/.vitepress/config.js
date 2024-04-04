@@ -26,9 +26,10 @@ export default defineConfig({
             {
                 text: 'Tracking',
                 items: [
-                    {text: 'Track Users', link: '/track-users'},
-                    {text: 'Track Logins', link: '/track-logins'},
-                    {text: 'Track Payments', link: '/track-payments'},
+                    {text: 'How to track a new user', link: '/how-to-track-a-new-user'},
+                    {text: 'How to track a new login', link: '/how-to-track-a-new-login'},
+                    {text: 'How to track a new payment', link: '/how-to-track-a-new-payment'},
+                    {text: 'Tracking Codes', link: '/tracking-codes'},
                     {text: 'API Communication', link: '/api-communication'},
                 ]
             },

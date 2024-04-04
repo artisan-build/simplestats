@@ -13,7 +13,7 @@ allows you to see where you can buy the cheapest users or from which channel use
 ## How does it work?
 
 ### API Communication
-Basically all we do is provide a [composer package](/installation), which allows you to simply define and set your [User](/track-users) and [Payment](track-payments) model and [Login](/track-logins) event in the package config file. Then we listen if a new user or payment gets created or a login event occurs, and we send an [API call](/api-communication) to our service. 
+Basically all we do is provide a [composer package](/installation), which allows you to simply define and set your [User](/how-to-track-a-new-user) and [Payment](how-to-track-a-new-payment) model and [Login](/how-to-track-a-new-login) event in the package config file. Then we listen if a new user or payment gets created or a login event occurs, and we send an [API call](/api-communication) to our service. 
 
 ### Data Visualisation
 
