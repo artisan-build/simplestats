@@ -35,8 +35,8 @@ export default defineConfig({
             {
                 text: 'Advanced',
                 items: [
+                    {text: 'Queue', link: '/queue'},
                     {text: 'Data Import', link: '/data-import'},
-                    {text: 'API Communication', link: '/api-communication'},
                     {text: 'API Documentation', link: '/api-documentation'},
                 ]
             },
