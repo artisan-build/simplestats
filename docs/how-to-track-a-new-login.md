@@ -1,7 +1,6 @@
 # How to track a new login
 
-We **proactively** track each login to your application, by listening to the default Laravel login event: `Illuminate\Auth\Events\Login`. This allows us to filter the data in our dashboard by certain time periods and check how the users perform over _days, weeks and months_.
-
+We **automatically** track every successful login to your application by tapping into Laravel's built-in `Illuminate\Auth\Events\Login` event. This hands-off approach ensures that you don't need to track these events manually. Leveraging this data, our dashboard provides the ability to filter user activities over a specified time period, enabling a comprehensive analysis of user behavior trends across _days, weeks, and months_. This detailed insight aids in understanding and optimizing user engagement over time.
 
 ## Configuration
 

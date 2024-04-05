@@ -30,13 +30,13 @@ export default defineConfig({
                     {text: 'How to track a new login', link: '/how-to-track-a-new-login'},
                     {text: 'How to track a new payment', link: '/how-to-track-a-new-payment'},
                     {text: 'Tracking Codes', link: '/tracking-codes'},
-                    {text: 'API Communication', link: '/api-communication'},
                 ]
             },
             {
                 text: 'Advanced',
                 items: [
                     {text: 'Data Import', link: '/data-import'},
+                    {text: 'API Communication', link: '/api-communication'},
                     {text: 'API Documentation', link: '/api-documentation'},
                 ]
             },
