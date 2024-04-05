@@ -6,7 +6,7 @@ By default, you can track and filter everything by **UTM** codes,
 which allows you a granular analyzation of your marketing **campaigns** to
 finally get an overview which of your marketing efforts leads to revenue!
 This lets you seamlessly check the **ROI** of each of your campaigns in seconds and
-allows you to see where you can buy the cheapest users or from which channel users perform best! Everything is completely **GDPR-compliant** and can be achieved with a very low and simple installation setup.
+allows you to see where you can buy the cheapest users or from which channel users perform best! Everything is completely **GDPR-compliant** and can be achieved with a very small and simple installation setup.
 
 ![Dashboard](/screenshot.png)
 
