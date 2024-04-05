@@ -3,7 +3,7 @@
 To **avoid** the tracking API calls to _SimpleStats_ **blocking** the request and for fault tolerance and retries, we **highly** recommend making use of Laravel's built-in [queue service](https://laravel.com/docs/11.x/queues).
 
 ::: warning
-Should you still prefer to not use the queue, you can skip this section and head over to the next page of our documentation. But be aware if something went wrong during API communication, you may **lose** important tracking data information!
+Should you still prefer to not use the queue, you can skip this section and head over to the next page of our documentation. But be aware if something went wrong during API communication, you may **lose** important tracking **data** information!
 :::
 
 ## Configuration
