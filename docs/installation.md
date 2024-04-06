@@ -8,6 +8,10 @@ You can install the **client** package via composer:
 composer require simplestats-io/laravel-client
 ```
 
+::: info
+At the moment, the following Laravel **versions** are supported: _9, 10 and 11_
+:::
+
 ## Configuration
 
 After you registered an **account** and obtained an API token by creating a project and an instance, you should publish the config and set your `SIMPLESTATS_API_TOKEN` in your `.env` file.
