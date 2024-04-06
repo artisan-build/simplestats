@@ -19,11 +19,11 @@ Here you can define to which queue the tracking **API calls** should be **dispat
 
 ## Job Monitoring
 
-It's important to know if your queue is **running** and if the API calls are getting dispatched **successfully**. If you want something light-weight, we highly recommend spaties [laravel-failed-job-monitor](https://github.com/spatie/laravel-failed-job-monitor) package, which can notify you via mail or Slack when a queued job fails. If you want something more **robust**, you may use [Horizon](https://laravel.com/docs/11.x/horizon), Laravel's native queue monitoring service!
+It's important to know if your queue is **running** and if the API calls are getting dispatched **successfully**. If you want something light-weight, we highly recommend spaties [laravel-failed-job-monitor](https://github.com/spatie/laravel-failed-job-monitor) package, which can notify you via mail or Slack when a queued job fails. If you want something more **robust**, you may use [Horizon](https://laravel.com/docs/11.x/horizon), Laravel's incredible powerful native queue monitoring service!
 
 ## Fault Tolerance and Retries
 
-Despite our best efforts to maintain continuous availability, the complex nature of API communications means that **interruptions can occur** for various reasons, ranging from network issues on your end to temporary outages of our service. To mitigate these challenges, we've designed the job that communicates with our API to be **resilient**, automatically retrying failed API calls multiple times with specified intervals between attempts. This strategy helps **safeguard** against data loss during unexpected disruptions in communication.
+Despite our best efforts to maintain continuous availability, the complex nature of API communications means that **interruptions can occur** for various reasons, ranging from network issues on your end to temporary outages of our service. To mitigate these challenges, we've designed the _**Job**_ that communicates with our API to be **resilient**, automatically retrying failed API calls multiple times with specified intervals between attempts. This strategy helps **safeguard** against data loss during unexpected disruptions in communication.
 
 In the event you suspect data was not captured due to prolonged service interruptions, our [Data Import](data-import.md) feature provides a straightforward way to synchronize the missing information with our system, ensuring your statistics remain complete and accurate.
 

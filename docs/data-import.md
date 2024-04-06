@@ -1,85 +1,44 @@
 # Data Import
 
-This page demonstrates some of the built-in markdown extensions provided by VitePress.
-
-## Syntax Highlighting
-
-VitePress provides Syntax Highlighting powered by [Shiki](https://github.com/shikijs/shiki), with additional features like line-highlighting:
-
-**Input**
-
-````md
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-````
-
-**Output**
-
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-
-## Custom Containers
-
-**Input**
-
-```md
-::: info
-This is an info box.
-:::
-
-::: tip
-This is a tip.
-:::
-
-::: warning
-This is a warning.
-:::
-
-::: danger
-This is a dangerous warning.
-:::
-
-::: details
-This is a details block.
-:::
-```
-
-**Output**
+Integrating _SimpleStats_ into an existing project doesn't mean leaving behind your historical data. Recognizing the value of your application's past insights, we've developed the Data Import feature. This functionality enables a smooth transition by allowing you to seamlessly **import** your **existing data** into _SimpleStats_, ensuring that you retain access to all historical metrics and insights.
 
 ::: info
-This is an info box.
+The Data Import feature is not available for the free subscription plan.
 :::
 
-::: tip
-This is a tip.
-:::
+## Supported Formats
+
+The Data Import supports the following file formats: _**xls, xlsx**_ and _**csv**_.
+
+## Import Users
+
+Though it is not mandatory, it's highly recommended to **first** import the **user data** and only then the corresponding payment data.
+
+To start an import, you have to provide a supported file format containing the user data to import. Therefore, you may run the following SQL query on your users table and export the output.
+
+The query may look like this:
+
+```sql
+SELECT id, created_at as time FROM users WHERE 1;
+```
+
+track fields nicht vergessen
 
 ::: warning
-This is a warning.
+If your users have any **conditions** to count as "valid", for instance only if they verified their email address, make sure to provide only these data in the import file.
 :::
+
+EXAMPLE SQL QUERIES FÜR MIT CONDITION UND OHNE
+
+### Simulate Natural Login Behavior (SNLB)
 
 ::: danger
-This is a dangerous warning.
+Coming soon
 :::
 
-::: details
-This is a details block.
+## Import Payments
+
+
+::: warning
+If your payment data has any conditions to count as "valid", for instance only if the payment reached a certain status like "success", make sure to provide only these data in the import file. Also make sure to send us the currency of your payments in cents.
 :::
-
-## More
-
-Check out the documentation for the [full list of markdown extensions](https://vitepress.dev/guide/markdown).

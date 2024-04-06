@@ -13,7 +13,7 @@ composer require simplestats-io/laravel-client
 After you registered an **account** and obtained an API token by creating a project and an instance, you should publish the config and set your `SIMPLESTATS_API_TOKEN` in your `.env` file.
 
 ::: info
-The **token** will be displayed right after you have created an instance or you may view it **again** inside the app on the instance page by confirming your password.
+The **token** will be displayed right after you've created an instance or you may view it **again** inside the app on the instance page.
 :::
 
 Publish the config file with:

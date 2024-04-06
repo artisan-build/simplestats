@@ -26,7 +26,7 @@ Only the tracking params listed here are getting tracked and associated with a u
 :::
 
 ::: danger
-The keys must be named _source, medium, campaign, term and content_!
+The keys of the array must be named _source, medium, campaign, term and content_!
 :::
 
 ## Valid Tracking URLs

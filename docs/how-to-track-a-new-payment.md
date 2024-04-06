@@ -71,7 +71,7 @@ class Transaction extends Model implements TrackablePayment
     }
 
     /**
-     * The ISO-4217 currency code currency of the payment.
+     * The ISO-4217 currency code of the payment.
      * E.g.: EUR, USD, GBP, etc...
      */
     public function getTrackingCurrency(): string
@@ -89,13 +89,17 @@ Now each time a new **Transaction** model gets created, an API request is sent t
 You may tweak the defined methods to your needs and apply any logic you need there!
 :::
 
+::: warning
+In addition, your trachable payment model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
+:::
+
 ::: danger
 Remember that **Gross** and **Net** must return cents!
 :::
 
 ### With Condition
 
-Sometimes you may not want to count a newly created payment immediately as a "valid" one. For such cases, the `TrackablePaymentWithCondition` interface is designed to be utilized. Use it if you want to track/count a new payment only when a certain condition is fulfilled, such as the payment _status_ has switched from "pending" to "success".
+Sometimes you may not want to count a newly created payment immediately as a "valid" one. For such cases, the `TrackablePaymentWithCondition` contract is designed to be utilized. Use it if you want to track/count a new payment only when a certain condition is fulfilled, such as the payment _status_ has switched from "pending" to "success".
 
 ```php
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
@@ -105,7 +109,7 @@ class Transaction extends Model implements TrackablePaymentWithCondition
     // ...
 
     /**
-     * The condition that should be met in order to track the payment.
+     * The condition that should be fulfilled in order to track the payment.
      */
     public function passTrackingCondition(): bool
     {

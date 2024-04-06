@@ -52,9 +52,13 @@ Now each time a new **User** model gets created, an API request is sent to _Simp
 You may tweak the `getTrackingTime` method to your needs. For instance, if your `created_at` field is named differently you have to ajust it in the method.
 :::
 
+::: warning
+In addition, your trachable user model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
+:::
+
 ### With Condition
 
-Sometimes you may not want to count a newly created user immediately as a "valid" registration. For such cases, the `TrackableUserWithCondition` interface is designed to be utilized. Use it if you want to track/count a new registration only when a certain condition is fulfilled, such as the user has verified their email address.
+Sometimes you may not want to count a newly created user immediately as a "valid" registration. For such cases, the `TrackableUserWithCondition` contract is designed to be utilized. Use it if you want to track/count a new registration only when a certain condition is fulfilled, such as the user has verified their email address.
 
 ```php
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
@@ -64,7 +68,7 @@ class User extends Authenticatable implements TrackableUserWithCondition
     // ...
 
     /**
-     * The condition that should be met in order to track the user.
+     * The condition that should be fulfilled in order to track the user.
      */
     public function passTrackingCondition(): bool
     {
