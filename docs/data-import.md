@@ -19,7 +19,7 @@ To start an import, you have to provide a supported file format containing the u
 The query may look like this:
 
 ```sql
-SELECT id, created_at as time FROM users WHERE 1;
+SELECT id, created_at as `time` FROM users WHERE 1;
 ```
 
 track fields nicht vergessen

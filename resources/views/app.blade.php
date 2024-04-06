@@ -4,6 +4,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <meta name="description" content="The missing statistics tool for your Laravel app. A lightweight and GDPR-compliant statistics tool for Laravel, quickly reveals marketing ROI and user conversion with a very simple setup.">
+
+        <meta property="og:title" content="{{ config('app.name', 'Laravel') }}">
+        <meta property="og:description" content="The missing statistics tool for your Laravel app. A lightweight and GDPR-compliant statistics tool for Laravel, quickly reveals marketing ROI and user conversion with a very simple setup.">
+        <meta property="og:image" content="/images/screenshot.png">
+        <meta property="og:type" content="website">
+
+        <meta property="twitter:title" content="{{ config('app.name', 'Laravel') }}">
+        <meta property="twitter:description" content="The missing statistics tool for your Laravel app. A lightweight and GDPR-compliant statistics tool for Laravel, quickly reveals marketing ROI and user conversion with a very simple setup.">
+        <meta property="twitter:image" content="/images/screenshot.png">
+        <meta name="twitter:card" content="summary_large_image">
+
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
