@@ -8,7 +8,9 @@ In order to use the API, you should authenticate your request by including your 
 
 `Authorization: Bearer API_TOKEN_HERE`
 
+::: tip
 You'll receive an API token after creating a new instance, our you can find your existing API tokens inside the app on the instance page.
+:::
 
 ## Headers
 

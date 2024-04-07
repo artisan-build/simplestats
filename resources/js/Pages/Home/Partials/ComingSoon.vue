@@ -45,6 +45,9 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <div>
                         <a href="#pricing">Pricing</a>
                     </div>
+                    <div class="px-3">
+                        <a href="/docs">Docs</a>
+                    </div>
                     <form action="https://demo.simplestats.io/login" method="GET" target="_blank">
                         <SecondaryButton type="submit" class="relative">
                             Show Demo

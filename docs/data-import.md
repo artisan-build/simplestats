@@ -3,7 +3,7 @@
 Integrating _SimpleStats_ into an existing project doesn't mean leaving behind your historical data. Recognizing the value of your application's past insights, we've developed the Data Import feature. This functionality enables a smooth transition by allowing you to seamlessly **import** your **existing data** into _SimpleStats_, ensuring that you retain access to all historical metrics and insights. 
 
 ::: info
-The Data Import feature is not available for the free subscription plan.
+The Data Import feature is not available on the free subscription plan.
 :::
 
 ## Supported Formats
@@ -74,7 +74,7 @@ The first row of your import file must be a **heading row** (_a row in which eac
 
 ### Simulated Natural Login Behavior (SNLB)
 
-_Coming soon_: In many cases, historical login data for users isn't readily available. To address this, we're introducing an upcoming feature that allows for the optional inclusion of a `last_known_activity` field. This field could correspond to the `updated_at` attribute, a `last_login` field, or any similar date in your `users` table.
+_Coming soon_: In many cases, historical login data for users isn't readily available. To address this, we're introducing an upcoming feature that allows for the optional inclusion of a `last_known_activity` field. This field could correspond to the `updated_at` attribute, a `last_login` field, or any similar date in your `users` table that best approximates the user's most recent activity.
 
 By supplying this information, we will generate simulated login entries to mimic natural login patterns, based on the assumption that each user logged in at least **once a week** from their registration date to their _last known activity_. This enhancement aims to provide a richer, more accurate representation of your historical user engagement over time.
 

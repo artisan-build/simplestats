@@ -31,7 +31,7 @@ The keys of the array must be named _source, medium, campaign, term and content_
 
 ## Valid Tracking URLs
 
-So regarding the current config above, these URL params would be tracked and associated with the user on a registration:
+So regarding the current config above, these URL params would be tracked and associated with the user at a registration:
 ```
 https://example.com?utm_source=twitter&utm_medium=desktop
 https://example.com?utm_source=twitter&utm_medium=mobile
@@ -40,7 +40,7 @@ https://example.com?ref=google&adGroup=banner
 
 ## Invalid Tracking URLs
 
-And these will be not (cause they are not defined in the config):
+And these would be not (cause they aren't defined in the config):
 ```
 https://example.com?my_source=twitter&my_medium=desktop
 https://example.com?my_ref=google&group=banner
