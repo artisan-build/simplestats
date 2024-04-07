@@ -53,7 +53,7 @@ You may tweak the `getTrackingTime` method to your needs. For instance, if your 
 :::
 
 ::: warning
-In addition, your trachable user model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
+In addition, your trackable user model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
 :::
 
 ### With Condition

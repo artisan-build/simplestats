@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Project;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\SubscriptionService;

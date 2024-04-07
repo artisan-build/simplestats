@@ -90,16 +90,16 @@ You may tweak the defined methods to your needs and apply any logic you need the
 :::
 
 ::: warning
-In addition, your trachable payment model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
+In addition, your trackable payment model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
 :::
 
 ::: danger
 Remember that **Gross** and **Net** must return cents!
 :::
 
-### With Condition
+### With Condition  
 
-Sometimes you may not want to count a newly created payment immediately as a "valid" one. For such cases, the `TrackablePaymentWithCondition` contract is designed to be utilized. Use it if you want to track/count a new payment only when a certain condition is fulfilled, such as the payment _status_ has switched from "pending" to "success".
+Sometimes you may not want to count a newly created payment immediately as a "valid" one. For such cases, the `TrackablePaymentWithCondition` contract is designed to be utilized. Use it if you want to track/count a new payment only when a certain condition is fulfilled, such as the payment _status_ has switched from "pending" to "completed".
 
 ```php
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
@@ -113,7 +113,7 @@ class Transaction extends Model implements TrackablePaymentWithCondition
      */
     public function passTrackingCondition(): bool
     {
-        return $this->status === 'success';
+        return $this->status === 'completed';
     }
 
     /**
@@ -129,7 +129,7 @@ class Transaction extends Model implements TrackablePaymentWithCondition
 ```
 
 :::info
-Now, as soon as the payment _status_ switches from "pending" to "success", the payment gets tracked and counted. You may tweak these methods completely to your needs!
+Now, as soon as the payment _status_ switches from "pending" to "completed", the payment gets tracked and counted. You may tweak these methods completely to your needs!
 :::
 
 ::: tip

@@ -49,6 +49,8 @@ At the moment, only the create-endpoints are available.
 
 **Parameters**
 
+[//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "IMPORT USER" PAGE.)
+
 | Key      | Type                 | Description                                                                        |
 |----------|----------------------|------------------------------------------------------------------------------------|
 | **id**   | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)               |
@@ -130,6 +132,8 @@ At the moment, only the create-endpoints are available.
 `POST /api/v1/stats-payment`
 
 **Parameters**
+
+[//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "IMPORT PAYMENT" PAGE.)
 
 | Key               | Type                 | Description                                                                      |
 |-------------------|----------------------|----------------------------------------------------------------------------------|
