@@ -1,12 +1,24 @@
 # Introduction
 
-**SimpleStats** is a lightweight and simple statistics tool for Laravel applications. It is **NOT** just about **visits, views and page impressions**,
-it shows you exactly where your users coming from and how your users perform.
-By default, you can track and filter everything by **UTM** codes,
-which allows you a granular analyzation of your marketing **campaigns** to
-finally get an overview which of your marketing efforts leads to revenue!
-This lets you seamlessly check the **ROI** of each of your campaigns in seconds and
-allows you to see where you can buy the cheapest users or from which channel users perform best! Everything is completely **GDPR-compliant** and can be achieved with a very small and simple installation setup.
+[//]: # (**SimpleStats** is a lightweight and simple statistics tool for Laravel applications.)
+
+[//]: # (It is **NOT** just about **visits, views and page impressions**,)
+
+[//]: # (it shows you exactly where your users coming from and how your users perform.)
+
+[//]: # (You can track and filter everything by **UTM** codes,)
+
+[//]: # (which allows you a granular analyzation of your marketing **campaigns** to)
+
+[//]: # (finally get an overview which of your marketing efforts leads to revenue!)
+
+[//]: # (This lets you seamlessly check the **ROI** of each of your campaigns in seconds and)
+
+[//]: # (allows you to see where you can buy the cheapest users or from which channel users perform best!)
+
+[//]: # (Everything is completely **GDPR-compliant** and can be achieved with a very small and simple installation setup.)
+
+_**SimpleStats**_ is a streamlined statistics tool tailored for **Laravel** applications, transcending mere counts of visits, views, and page impressions. It offers **precise insights** into user origins and behaviors. With default tracking and filtering via **UTM** codes, you gain detailed analysis of **marketing** campaigns, identifying which efforts drive **revenue**. Effortlessly evaluate campaign **ROI**, discover cost-effective user acquisition channels, and pinpoint the most effective performance channels. _SimpleStats_ ensures full **GDPR compliance** and a minimalistic and straightforward installation process.
 
 ![Dashboard](/screenshot.png)
 
