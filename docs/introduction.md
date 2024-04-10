@@ -25,9 +25,9 @@ On our dashboard, we provide you with the following KPIs.
 
 | Key        | Short                              | Description                                                                                                                                                         |
 |------------|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **NET**    | Net Revenue                        | Net Revenue for the selected period.                                                                                                                                |
-| **GROSS**  | Gross Revenue                      | oss Revenue at this Net Revenue for the selected period.                                                                                                            |
-| **ARPDAU** | Average Revenue Per DAU            | The average revenue per DAU                                                                                                                                         |
+| **NET**    | Net revenue                        | Net revenue for the selected period.                                                                                                                                |
+| **GROSS**  | Gross revenue                      | Gross revenue for the selected period.                                                                                                                              |
+| **ARPDAU** | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                         |
 | **REG**    | Registrations                      | Number of new registrations for the selected period.                                                                                                                |
 | **NAU**    | New Active Users                   | Number of unique users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                             |
 | **NAPU**   | New Active Paying Users            | Number of unique users who did their first payment at the selected period.                                                                                          |
@@ -45,9 +45,9 @@ On our dashboard, we provide you with the following KPIs.
 
 | Key         | Short                           | Description                                                                |
 |-------------|---------------------------------|----------------------------------------------------------------------------|
-| **NET**     | Net Revenue                     | Net Revenue over lifetime.                                                 |
-| **ARPU**    | Average Revenue Per User        | The average revenue per User (how much is a user/lead/reg worth in money). |
-| **ARPPU**   | Average Revenue Per Paying User | The average revenue per paying User.                                       |
+| **NET**     | Net revenue                     | Net revenue over lifetime.                                                 |
+| **ARPU**    | Average revenue Per User        | The average revenue per User (how much is a user/lead/reg worth in money). |
+| **ARPPU**   | Average revenue Per Paying User | The average revenue per paying User.                                       |
 | **REG**     | Total Registrations             | Number of registrations over lifetime.                                     |
 | **PU**      | Paying Users                    | Number of paying users over lifetime.                                      |
 | **TAU**     | Total Active Users              | Number of users who logged in at least twice over lifetime.                |
