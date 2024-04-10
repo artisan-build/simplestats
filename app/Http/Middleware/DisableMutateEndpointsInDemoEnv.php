@@ -23,7 +23,8 @@ class DisableMutateEndpointsInDemoEnv
             $request->is('intro') ||
             $request->is('login') ||
             $request->is('logout') ||
-            $request->is('spark/*')
+            $request->is('spark/*') ||
+            $request->is('paddle/*')
         ) {
             return $next($request);
         }
