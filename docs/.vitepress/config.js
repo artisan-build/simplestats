@@ -9,9 +9,8 @@ export default defineConfig({
         ['link', { rel: 'icon', href: '../favicon.ico' }]
     ],
     themeConfig: {
-        logo: '../svg/logo.svg',
+        logo: '../svg/logo_only.svg',
         logoLink: { link: '/', target: '_self' },
-        siteTitle: false,
         search: {
             provider: 'local'
         },
