@@ -47,6 +47,7 @@ export default defineConfig({
                     {text: 'API Documentation', link: '/api-documentation'},
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
+                    {text: 'Contribution', link: '/contribution'},
                 ]
             },
         ],
