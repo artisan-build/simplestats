@@ -19,7 +19,12 @@ You can invite co-workers to your **team** and assign roles, such as _Administra
 
 ## KPIs
  
-On our dashboard, we provide you with the following KPIs.
+On our dashboard, we provide you with the following [KPIs](https://en.wikipedia.org/wiki/Performance_indicator).
+
+::: info
+Don't worry if you do not understand the list below immediately.
+It's easier to understand it when you see it in action on the dashboard. 
+:::
 
 ### KPIs over time period
 
@@ -57,3 +62,6 @@ On our dashboard, we provide you with the following KPIs.
 | **REG2PU**  | Reg. to Pay                     | Percentage of registered users who become paying user.                     |
 | **REG2TAU** | Reg. to Active                  | Percentage of registered users who become active.                          |
 
+## Help
+
+Do you have a question? Feel free to reach out to us if you need some [help](https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g).

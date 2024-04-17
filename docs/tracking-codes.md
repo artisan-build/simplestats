@@ -29,6 +29,10 @@ Only the tracking params listed here are getting tracked and associated with a u
 The keys of the array must be named _source, medium, campaign, term and content_!
 :::
 
+:::info
+User payments are exclusively associated with the tracking params (campaigns) from their registration. Individual payments cannot be associated with separate tracking codes.
+:::
+
 ## Valid Tracking URLs
 
 So regarding the current config above, these URL params would be tracked and associated with the user at a registration:

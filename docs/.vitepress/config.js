@@ -15,6 +15,14 @@ export default defineConfig({
             provider: 'local'
         },
         outline: 'deep',
+        nav: [
+            { text: 'Help', link: 'https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g' },
+            { text: 'Demo', link: 'https://demo.simplestats.io' },
+        ],
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/simplestats-io/laravel-client' },
+            { icon: 'twitter', link: 'https://twitter.com/SimpleStats_io' },
+        ],
         sidebar: [
             {
                 text: 'Getting Started',
@@ -38,6 +46,7 @@ export default defineConfig({
                     {text: 'Queue', link: '/queue'},
                     {text: 'Data Import', link: '/data-import'},
                     {text: 'API Documentation', link: '/api-documentation'},
+                    {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                 ]
             },
         ],
