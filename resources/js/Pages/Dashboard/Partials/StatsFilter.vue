@@ -71,8 +71,8 @@ const periodRange = periodSingular[props.filters.rangeType];
 const chartDescription = `
     <div class="font-bold text-green-300">Current ${periodRange}</div>
     <div>
-        As the current ${periodRange} may not be finished yet, the graphs could go drastically downwards.
-        The gray background on the ${periodRange} chart is indicating the current ${periodRange} is not finished yet!
+        As the current ${periodRange} may not be finished yet, the graphs could drastically go downwards.
+        The gray background on the ${periodRange} chart is indicating that the current ${periodRange} is not finished yet!
     </div>
 </div>
 `;
