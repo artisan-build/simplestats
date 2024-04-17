@@ -44,9 +44,9 @@ export default defineConfig({
                 text: 'Advanced',
                 items: [
                     {text: 'Queue', link: '/queue'},
-                    {text: 'Data Import', link: '/data-import'},
                     {text: 'API Documentation', link: '/api-documentation'},
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
+                    {text: 'How to import existing data', link: '/how-to-import-existing-data'},
                 ]
             },
         ],

@@ -25,5 +25,5 @@ It's important to know if your queue is **running** and if the API calls are get
 
 Despite our best efforts to maintain continuous availability, the complex nature of API communications means that **interruptions can occur** for various reasons, ranging from network issues on your end to temporary outages of our service. To mitigate these challenges, we've designed the _**Job**_ that communicates with our API to be **resilient**, automatically retrying failed API calls multiple times with specified intervals between attempts. This strategy helps **safeguard** against data loss during unexpected disruptions in communication.
 
-In the event you suspect data was not captured due to prolonged service interruptions, our [Data Import](data-import.md) feature provides a straightforward way to synchronize the missing information with our system, ensuring your statistics remain complete and accurate.
+In the event you suspect data was not captured due to prolonged service interruptions, our [Data Import](how-to-import-existing-data) feature provides a straightforward way to synchronize the missing information with our system, ensuring your statistics remain complete and accurate.
 

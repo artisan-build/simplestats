@@ -1,6 +1,6 @@
-# Data Import
+# How to import existing data
 
-Integrating _SimpleStats_ into an existing project doesn't mean leaving behind your historical data. Recognizing the value of your application's past insights, we've developed the Data Import feature. This functionality enables a smooth transition by allowing you to seamlessly **import** your **existing data** into _SimpleStats_, ensuring that you retain access to all historical metrics and insights. 
+Integrating _SimpleStats_ into your existing application doesn't mean leaving behind your historical data. Recognizing the value of your application's past insights, we've developed the **Data Import** feature. This functionality enables a smooth transition by allowing you to seamlessly **import** your **existing data** into _SimpleStats_, ensuring that you retain access to all historical metrics and insights. 
 
 ::: info
 The Data Import feature is not available on the free subscription plan.
