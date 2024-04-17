@@ -10,6 +10,7 @@ export default defineConfig({
     ],
     themeConfig: {
         logo: '../svg/logo.svg',
+        logoLink: { link: '/', target: '_self' },
         siteTitle: false,
         search: {
             provider: 'local'

@@ -169,7 +169,7 @@ return [
                         Project::class => '8 Projects',
                         Instance::class => '20 Instances',
                         StatsUser::class => '1,000,000 Users',
-                        StatsPayment::class => '500,00 Payments',
+                        StatsPayment::class => '500,000 Payments',
                         StatsLogin::class => '5,000,000 Logins',
                         DataImport::class => 'Data Import',
                         'MultiCurrency' => 'Multi Currency Support',

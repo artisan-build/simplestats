@@ -23,23 +23,23 @@ On our dashboard, we provide you with the following KPIs.
 
 ### KPIs over time period
 
-| Key        | Short                              | Description                                                                                                                                                         |
-|------------|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **NET**    | Net revenue                        | Net revenue for the selected period.                                                                                                                                |
-| **GROSS**  | Gross revenue                      | Gross revenue for the selected period.                                                                                                                              |
-| **ARPDAU** | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                         |
-| **REG**    | Registrations                      | Number of new registrations for the selected period.                                                                                                                |
-| **NAU**    | New Active Users                   | Number of unique users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                             |
-| **NAPU**   | New Active Paying Users            | Number of unique users who did their first payment at the selected period.                                                                                          |
-| **DAU**    | Daily Active Users                 | Number of unique users who logged in at the selected period (without 1st login = registration).                                                                     |
-| **DAPU**   | Daily Active Paying Users          | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)                |
-| **DAAPU**  | Daily Active Active Paying Users   | Number of unique users who logged in or registered during the given '+periodName+' and did at least one payment in the last 20 days (including the selected period) |
-| **WAU**    | Weekly Active Users                | Number of unique users who logged in at the selected period (without 1st login = registration).                                                                     |
-| **WAPU**   | Weekly Active Paying Users         | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)                |
-| **WAAPU**  | Weekly Active Active Paying Users  | Number of unique users who logged in or registered during the given '+periodName+' and did at least one payment in the last 20 days (including the selected period) |
-| **MAU**    | Monthly Active Users               | Number of unique users who logged in at the selected period (without 1st login = registration).                                                                     |
-| **MAPU**   | Monthly Active Paying Users        | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)                |
-| **MAAPU**  | Monthly Active Active Paying Users | Number of unique users who logged in or registered during the given '+periodName+' and did at least one payment in the last 20 days (including the selected period) |
+| Key        | Short                              | Description                                                                                                                                                 |
+|------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **NET**    | Net revenue                        | Net revenue for the selected period.                                                                                                                        |
+| **GROSS**  | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |
+| **ARPDAU** | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                 |
+| **REG**    | Registrations                      | Number of new registrations for the selected period.                                                                                                        |
+| **NAU**    | New Active Users                   | Number of unique users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |
+| **NAPU**   | New Active Paying Users            | Number of unique users who did their first payment at the selected period.                                                                                  |
+| **DAU**    | Daily Active Users                 | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
+| **DAPU**   | Daily Active Paying Users          | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
+| **DAAPU**  | Daily Active Active Paying Users   | Number of unique users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
+| **WAU**    | Weekly Active Users                | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
+| **WAPU**   | Weekly Active Paying Users         | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
+| **WAAPU**  | Weekly Active Active Paying Users  | Number of unique users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
+| **MAU**    | Monthly Active Users               | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
+| **MAPU**   | Monthly Active Paying Users        | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
+| **MAAPU**  | Monthly Active Active Paying Users | Number of unique users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
 
 ### KPIs over lifetime
 
