@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsRangeFilterDto;
+use App\Enums\StatsRangeType;
 use App\Http\Requests\DashboardRequest;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
@@ -42,7 +43,6 @@ class DashboardController extends Controller
         $teamStats->setRelation('projects', $projects);
 
         $filters = StatsRangeFilterDto::fromRequest($request);
-
         $teamStats->stats = $statsDetailsService->getStats($filters);
 
         $filtersFormatted = array_merge((array) $filters, [
@@ -62,6 +62,7 @@ class DashboardController extends Controller
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
+            'rangeCurrent' => now()->format(StatsRangeType::dateFormats()[$filters->rangeType->value]['php']),
             'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
             'trackingSources' => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($filterOrganic)->prepend($statsDetailsService->getAllFilterFor('Sources')),
             'trackingMedia'     => Inertia::lazy(fn() => $trackingMediaCallback()),

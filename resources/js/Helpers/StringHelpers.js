@@ -4,6 +4,12 @@ export const periodMap = {
     months: 'Monthly',
 };
 
+export const periodSingular = {
+    days: 'day',
+    weeks: 'week',
+    months: 'month',
+};
+
 export function XAU(type, long) {
     let period = periodMap[type];
     if (long === true) {

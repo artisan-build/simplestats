@@ -1,7 +1,7 @@
 <script setup>
 import {ref, defineComponent, onMounted} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import {cent2Currency, formatCurrency} from "@/Helpers/NumberHelpers.js";
+import {cent2Currency, formatCurrency, formatDate} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
 import StatsButton from "@/Pages/Dashboard/Partials/StatsButton.vue";
 
@@ -9,12 +9,14 @@ const ApexChart = defineComponent(VueApexCharts);
 
 const props = defineProps({
     chart: Object,
+    type: String,
 });
 
 const page = usePage();
 
 const chartInstance = ref(null);
 const series = ref(props.chart.data.series);
+const categories = props.chart.data.categories;
 
 const chartOptions = ref({
     chart: {
@@ -53,7 +55,7 @@ const chartOptions = ref({
     },
     xaxis: {
         type: 'string',
-        categories: props.chart.data.categories,
+        categories: categories,
         tooltip: {
             enabled: false,
         },
@@ -99,8 +101,35 @@ const chartOptions = ref({
     grid: {
         show: true,
         // borderColor: '#f1f1f1',
-    }
+    },
 });
+
+const previousPeriod = categories[categories.length - 2];
+const latestPeriod = categories[categories.length - 1];
+const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.rangeType);
+
+if (props.type === 'per_date' && latestPeriod === currentPeriod) {
+    chartOptions.value.annotations = {
+        xaxis: [
+            {
+                x: previousPeriod,
+                x2: latestPeriod,
+                fillColor: '#DDDDDD',
+                // label: {
+                //     text: 'current',
+                //     position: 'bottom', // Position des Labels
+                //     // orientation: 'horizontal', // Ausrichtung des Labels
+                //     // offsetX: 0, // Horizontal verschieben
+                //     // offsetY: 0, // Vertikal verschieben
+                //     style: {
+                //         color: '#000',
+                //         background: '#B3F7CA'
+                //     }
+                // }
+            }
+        ]
+    };
+}
 
 onMounted(() => {
     setTimeout(() => {

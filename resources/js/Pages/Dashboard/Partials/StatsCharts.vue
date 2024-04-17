@@ -11,27 +11,27 @@ const props = defineProps({
 
 const kpiDefs = getKpiDefinitions(props.rangeType);
 
-const extractStatsData4Chart = (statsCategory, fields) => {
+const extractStatsData4Chart = (statsCategory, statsGroups) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
-        // skip total and the first entry (cause the current day/week/month is not finished yet and would always down the chart)
-        let skipFirstEntry = statsCategory !== 'lifetime' && key === 0;
-        if (!(skipFirstEntry || item.stats.date === 'Total')) {
-            for (let field of fields) {
-                if (!(field.key in acc.series)) {
-                    acc.series[field.key] = {
+        // skip total
+        let skipFirstEntry = item.stats.date === 'Total';
+        if (! skipFirstEntry) {
+            for (let group of statsGroups) {
+                if (!(group.key in acc.series)) {
+                    acc.series[group.key] = {
                         // chart specific
                         data: [],
-                        name: field.title ?? field.key,
-                        initialVisible: field.initialVisible,
-                        color: field.color ?? '',
+                        name: group.title ?? group.key,
+                        initialVisible: group.initialVisible,
+                        color: group.color ?? '',
                         // extras...
-                        key: field.key,
-                        formatter: field.formatter,
-                        customClass: field.customClass ?? '',
+                        key: group.key,
+                        formatter: group.formatter,
+                        customClass: group.customClass ?? '',
                     };
                 }
 
-                acc.series[field.key].data.push(item.stats[statsCategory][field.key]);
+                acc.series[group.key].data.push(item.stats[statsCategory][group.key]);
             }
 
             acc.categories.push(formatDate(item.stats.date, props.rangeType));
@@ -135,11 +135,12 @@ Object.keys(charts).forEach(category => {
         chartGroup.data = extractStatsData4Chart(category, chartGroup.data);
     });
 });
+console.log(charts.per_date)
 </script>
 
 <template>
     <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
-        <StatsChart v-for="chart in charts.per_date" :chart="chart" />
-        <StatsChart v-for="chart in charts.lifetime" :chart="chart" />
+        <StatsChart v-for="chart in charts.per_date" :chart="chart" type="per_date" />
+        <StatsChart v-for="chart in charts.lifetime" :chart="chart" type="lifetime" />
     </div>
 </template>

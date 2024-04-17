@@ -14,8 +14,8 @@ const page = usePage();
 
 const serieVisible = ref(props.serie.initialVisible);
 
-let lastSerieData = props.serie.data[props.serie.data.length - 1];
-let preSerieData = props.serie.data[props.serie.data.length - 2];
+let lastSerieData = props.serie.data[props.serie.data.length - 2];
+let preSerieData = props.serie.data[props.serie.data.length - 3];
 
 let increase = (((lastSerieData - preSerieData) / preSerieData) * 100);
 

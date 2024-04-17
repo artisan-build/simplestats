@@ -5,7 +5,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import {periodMap} from "@/Helpers/StringHelpers.js";
+import {periodSingular} from "@/Helpers/StringHelpers.js";
 
 const props = defineProps({
     teamStats: Object,
@@ -66,15 +66,13 @@ const filterChanged = (event) => {
     submit();
 };
 
-const periodRange = periodMap[props.filters.rangeType];
+const periodRange = periodSingular[props.filters.rangeType];
 
 const chartDescription = `
-    <div class="font-bold text-green-300">${periodRange} vs Lifetime</div>
+    <div class="font-bold text-green-300">Current ${periodRange}</div>
     <div>
-        Note that the ${periodRange} charts are missing the latest period.
-        That's because the latest period is not finished yet!
-        This would always pull the chart graphs at the latest period downwards, and it makes a comparison with the previous data not useful.
-        For the latest data, check out the details table below...
+        As the current ${periodRange} may not be finished yet, the graphs could go drastically downwards.
+        The gray background on the ${periodRange} chart is indicating the current ${periodRange} is not finished yet!
     </div>
 </div>
 `;

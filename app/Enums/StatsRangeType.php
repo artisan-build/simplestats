@@ -16,6 +16,7 @@ enum StatsRangeType: string
     public static function conditions(CarbonImmutable $rangeStart, int $rangeAmount): array
     {
         $rangeAmount -= 1;
+
         return [
             self::DAY->value => [
                 $rangeStart->startOfDay()->subDays($rangeAmount)->format('Y-m-d'),
@@ -23,7 +24,7 @@ enum StatsRangeType: string
                 $rangeStart->endOfDay()->format('Y-m-d'),
                 str(self::DAY->value)->upper()->singular(),
                 'ds.date', // the end of the current interval
-                '%Y-%m-%d'
+                self::dateFormats()[self::DAY->value]['mysql'],
             ],
             self::WEEK->value => [
                 $rangeStart->startOfWeek()->subWeeks($rangeAmount)->format('Y-m-d'),
@@ -31,7 +32,7 @@ enum StatsRangeType: string
                 $rangeStart->endOfWeek()->format('Y-m-d'),
                 str(self::WEEK->value)->upper()->singular(),
                 'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
-                '%Y-%v'
+                self::dateFormats()[self::WEEK->value]['mysql'],
             ],
             self::MONTH->value => [
                 $rangeStart->startOfMonth()->subMonths($rangeAmount)->format('Y-m-d'),
@@ -39,7 +40,25 @@ enum StatsRangeType: string
                 $rangeStart->endOfMonth()->format('Y-m-d'),
                 str(self::MONTH->value)->upper()->singular(),
                 'LAST_DAY(ds.date)', // the end of the current interval
-                '%Y-%m'
+                self::dateFormats()[self::MONTH->value]['mysql'],
+            ],
+        ];
+    }
+
+    public static function dateFormats(): array
+    {
+        return [
+            self::DAY->value => [
+                'mysql' => '%Y-%m-%d',
+                'php' => 'Y-m-d',
+            ],
+            self::WEEK->value => [
+                'mysql' => '%Y-%v',
+                'php' => 'o-W',
+            ],
+            self::MONTH->value => [
+                'mysql' => '%Y-%m',
+                'php' => 'Y-m',
             ],
         ];
     }
