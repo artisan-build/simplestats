@@ -1,23 +1,26 @@
 <script setup>
 import {formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
 import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, ScaleIcon} from "@heroicons/vue/20/solid/index.js";
-import {usePage} from "@inertiajs/vue3";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 
 const props = defineProps({
     serie: Object,
     formatter: Function,
     chartInstance: Object,
+    hasCurrent: Boolean,
 });
-
-const page = usePage();
 
 const serieVisible = ref(props.serie.initialVisible);
 
-let lastSerieData = props.serie.data[props.serie.data.length - 2];
-let preSerieData = props.serie.data[props.serie.data.length - 3];
+let latestSerieData = props.serie.data[props.serie.data.length - 1];
+let previousSerieData = props.serie.data[props.serie.data.length - 2];
 
-let increase = (((lastSerieData - preSerieData) / preSerieData) * 100);
+if (props.hasCurrent && previousSerieData > 0) {
+    latestSerieData = props.serie.data[props.serie.data.length - 2];
+    previousSerieData = props.serie.data[props.serie.data.length - 3];
+}
+
+let increase = (((latestSerieData - previousSerieData) / previousSerieData) * 100);
 
 if (isNaN(increase)) {
     increase = 0;
@@ -86,11 +89,11 @@ const getStyle = () => {
         <div class="flex justify-between items-center">
             <div class="text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
                 {{ (formatter.name === 'formatCurrency')
-                    ? formatter(lastSerieData, {
-                        minimumFractionDigits: (lastSerieData >= 20) ? 0 : 2,
-                        maximumFractionDigits: (lastSerieData >= 20) ? 0 : 2,
+                    ? formatter(latestSerieData, {
+                        minimumFractionDigits: (latestSerieData >= 20) ? 0 : 2,
+                        maximumFractionDigits: (latestSerieData >= 20) ? 0 : 2,
                     }, $page.props.teamCurrency)
-                    : formatter(lastSerieData, {}, $page.props.teamCurrency)}}
+                    : formatter(latestSerieData, {}, $page.props.teamCurrency)}}
             </div>
             <div class="text-sm font-bold" :class="increaseType.tailClass">
                     <span v-if="increase !== 0">

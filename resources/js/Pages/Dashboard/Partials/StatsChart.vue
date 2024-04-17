@@ -104,11 +104,12 @@ const chartOptions = ref({
     },
 });
 
-const previousPeriod = categories[categories.length - 2];
 const latestPeriod = categories[categories.length - 1];
+const previousPeriod = categories[categories.length - 2];
 const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.rangeType);
+const hasCurrentPeriod = props.type === 'per_date' && latestPeriod === currentPeriod;
 
-if (props.type === 'per_date' && latestPeriod === currentPeriod) {
+if (hasCurrentPeriod) {
     chartOptions.value.annotations = {
         xaxis: [
             {
@@ -160,6 +161,7 @@ onMounted(() => {
                          :serie="serie"
                          :formatter="chart.formatter"
                          :chartInstance="chartInstance"
+                         :has-current="hasCurrentPeriod"
             />
         </div>
     </div>
