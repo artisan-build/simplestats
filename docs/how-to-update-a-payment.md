@@ -1,20 +1,20 @@
 # How to update an already tracked payment
 
 ::: tip
-Before continue, make sure to get familiar with the [How to track a new payment](how-to-track-a-new-payment.md) section!
+Before continue, make sure to get familiar with the [How to track new payment](how-to-track-a-new-payment.md) documentation!
 :::
 
 There are several scenarios in which updating a previously tracked payment might be necessary. Below are a few examples:
 
 :::info
-For this guide lets assume your payment model is called `Transaction`.
+For this guide, lets assume your model which holds your payment data is called `Transaction`.
 :::
 
 ## Listen for Changes
 
-Consider a scenario where a `Transaction` has been marked as "completed" and successfully tracked. If now for any reason, the `total` of the transaction changes subsequently, it is essential to update this information in _SimpleStats_ to maintain accurate records.
+Consider a scenario where a `Transaction` has been marked as "completed" and successfully tracked. If now for any reason, the `total` of the transaction changes subsequently, it is essential to update this information in _SimpleStats_ to maintain accurate records. For this you can listen for any changes made to your `Transaction` model by listing the fields in the `getTrackingConditionFields` method.
 
-To achieve this, proceed as follows:
+To update the `gross` and `net` on our site, when your models `total` changes, the implementation might look as follows:
 
 ```php
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
