@@ -4,7 +4,7 @@ import {defineConfig} from 'vitepress'
 export default defineConfig({
     base: '/docs/',
     title: "SimpleStats",
-    description: "The missing statistics tool for your Laravel app",
+    description: "The missing statistics tool for your Laravel application",
     head: [
         ['link', { rel: 'icon', href: '../favicon.ico' }]
     ],
