@@ -1,6 +1,6 @@
 # Tracking Codes
 
-In your [published](installation.html#configuration) _SimpleStats_ config file, you can set your tracking parameters.
+In your [published](installation.html#configuration) _SimpleStats_ config file, you can set your tracking codes.
 
 We already set some classical defaults for you, but you're free to completely change them to your needs. 
 
@@ -29,10 +29,6 @@ Only the tracking params listed here are getting tracked and associated with a u
 The keys of the array must be named _source, medium, campaign, term and content_!
 :::
 
-:::info
-User payments are exclusively associated with the tracking params (campaigns) from their registration. Individual payments cannot be associated with separate tracking codes.
-:::
-
 ## Valid Tracking URLs
 
 So regarding the current config above, these URL params would be tracked and associated with the user at a registration:
@@ -52,6 +48,10 @@ https://example.com?my_ref=google&group=banner
 
 ## HTTP Referer Fallback
 
-In instances where a user navigates to your application without any tracking parameters attached to the URL, the **HTTP referer**, when available, is utilized as the **default** source.
+In instances where a user navigates to your application without any tracking codes attached to the URL, the **HTTP referer**, when available, is utilized as the **default** source.
 
 This scenario often arises when individuals link to your app from their blogs or websites without embedding UTM codes in the URL. Ordinarily, the absence of UTM parameters would obscure the origin of these visitors. However, by leveraging the HTTP referer, you can still ascertain the referring site, ensuring **valuable insights** into your traffic _sources_ are not lost.
+
+## Payment Association with Tracking Codes
+
+New payments are **exclusively** associated with the tracking codes (campaigns) from the user’s registration. Individual payments cannot be associated with separate tracking codes. For example, if a user registers with a `utm_source` value of "facebook", all future payments by that user will be associated with the "facebook" campaign. This gives you the indication of how your campain is performing.

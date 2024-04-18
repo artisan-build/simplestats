@@ -14,7 +14,7 @@ For this guide, lets assume your model which holds your payment data is called `
 
 Consider a scenario where a `Transaction` has been marked as "completed" and successfully tracked. If now for any reason, the `total` of the transaction changes subsequently, it is essential to update this information in _SimpleStats_ to maintain accurate records. For this you can listen for any changes made to your `Transaction` model by listing the fields in the `getTrackingConditionFields` method.
 
-To update the `gross` and `net` on our site, when your models `total` changes, the implementation might look as follows:
+To update the `gross` and `net` on our site, when your model's `total` changes, the implementation might look as follows:
 
 ```php
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
