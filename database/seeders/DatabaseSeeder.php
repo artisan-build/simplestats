@@ -67,18 +67,22 @@ class DatabaseSeeder extends Seeder
         //make sure the next project gets created at least 1 sec after the first...
         sleep(1);
 
-        Project::factory()->count(2)
-            ->state(new Sequence(
-                ['name' => 'My cool SaaS'],
-                ['name' => 'My great App'],
-            ))
+        $projects = [
+//            ['name' => 'My cool SaaS'],
+            ['name' => 'My great App'],
+        ];
+
+        $instances = [
+            ['name' => 'US'],
+            ['name' => 'EU'],
+        ];
+
+        Project::factory()->count(count($projects))
+            ->state(new Sequence(...$projects))
             ->for(Team::find($user->current_team_id))
             ->has(
-                Instance::factory()->count(2)
-                    ->state(new Sequence(
-                        ['name' => 'US'],
-                        ['name' => 'EU'],
-                    ))
+                Instance::factory()->count(count($instances))
+                    ->state(new Sequence(...$instances))
                     ->afterCreating(function (Instance $instance) {
                         // our ids are not auto increment, as they will be sent by the client,
                         // so for tests we need to put a self-auto-incremented value here...
