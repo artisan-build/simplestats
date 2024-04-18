@@ -19,7 +19,7 @@ use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
-class User extends Authenticatable implements MustVerifyEmail, TrackableUser
+class User extends Authenticatable implements MustVerifyEmail, TrackableUserWithCondition
 {
     use HasApiTokens;
     use HasFactory;

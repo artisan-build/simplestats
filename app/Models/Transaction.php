@@ -8,7 +8,7 @@ use \Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePayment;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
 
-class Transaction extends PaddleTransaction implements TrackablePayment
+class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
 {
     public function passTrackingCondition(): bool
     {
@@ -37,7 +37,7 @@ class Transaction extends PaddleTransaction implements TrackablePayment
 
     public function getTrackingNet(): float
     {
-        return $this->total - $this->tax - (0.05 * $this->total + 0.50);
+        return $this->total - $this->tax;
     }
 
     public function getTrackingCurrency(): string
