@@ -145,7 +145,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        (env('APP_ENV') === 'demo') ? null : Features::registration(),
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::updateProfileInformation(),
