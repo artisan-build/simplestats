@@ -117,9 +117,9 @@ class Transaction extends Model implements TrackablePaymentWithCondition
     }
 
     /**
-     * The field(s) we should listen for changes to recheck the condition.
+     * The field(s) we should watch for changes to recheck the condition.
      */
-    public function watchedTrackingFields(): array
+    public function watchTrackingFields(): array
     {
         return ['status'];
     }

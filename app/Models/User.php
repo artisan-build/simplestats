@@ -81,7 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
         return $this->email_verified_at != NULL;
     }
 
-    public function watchedTrackingFields(): array
+    public function watchTrackingFields(): array
     {
         return ['email_verified_at'];
     }
