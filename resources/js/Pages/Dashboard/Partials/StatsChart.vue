@@ -64,9 +64,9 @@ const chartOptions = ref({
         opposite: true,
         labels: {
             formatter: function (value) {
-                value = cent2Currency(value);
                 // en-US format, so that we get compact values very early
                 if (props.chart.formatter.name === 'formatCurrency') {
+                    value = cent2Currency(value);
                     return new Intl.NumberFormat('en-US', {
                         style: "currency",
                         currency: page.props.teamCurrency,
