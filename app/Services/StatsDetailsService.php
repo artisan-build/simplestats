@@ -27,6 +27,8 @@ class StatsDetailsService
 
     public function getRaw(StatsRangeFilterDto $filters)
     {
+        $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
+
         $sql = "
         WITH RECURSIVE date_sequence AS (
             SELECT ':startDateStart' AS date
@@ -46,7 +48,7 @@ class StatsDetailsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter = 2 :projectInstanceCondition
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter = $nauLoginCounter :projectInstanceCondition
             GROUP BY date
         ),
         # napu: Number of unique accounts who did their first payment on this day
@@ -140,7 +142,7 @@ class StatsDetailsService
                     SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
                     FROM stats_logins stats
                     :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd and stats.counter = 2 :projectInstanceCondition
+                    WHERE stats.time <= :intervalEnd and stats.counter = $nauLoginCounter :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
         ),

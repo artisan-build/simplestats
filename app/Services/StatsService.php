@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 
 class StatsService
 {
+    const NAU_LOGIN_COUNTER = 2;
+
     public function safeDivision($numerator, $denominator): float|int
     {
         return $denominator == 0 ? 0 : $numerator / $denominator;
