@@ -21,9 +21,15 @@ class StatsLoginController extends Controller
         // also only to the second login (to check NAU after reg. on the same day) we save logins at the same day,
         // else we only save one login per day
 
-        if (! StatsLogin::where('counter', StatsService::NAU_LOGIN_COUNTER)->exists()) {
+        if (! StatsLogin::where([
+            'stats_user_id' => $request->stats_user_id,
+            'counter' => StatsService::NAU_LOGIN_COUNTER
+        ])->exists()) {
             $statsLogin = StatsLogin::create($request->validated());
-        } elseif (! $statsLogin = StatsLogin::whereDate('time', $request->time)->first()) {
+        } elseif (! $statsLogin = StatsLogin::where([
+            'stats_user_id' => $request->stats_user_id,
+            'time' => $request->time
+        ])->first()) {
             $statsLogin = StatsLogin::create($request->validated());
         }
 
