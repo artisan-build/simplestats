@@ -27,17 +27,21 @@ readonly class StatsRangeFilterDto
 
     public static function fromRequest(DashboardRequest $request): StatsRangeFilterDto
     {
+        $rangeType = StatsRangeType::from(auth()->user()->selected_range_type->value ?? StatsRangeType::DAY->value);
+        $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
+        $rangeStart = Date::parse($request->rangeStart ?? now());
+
         return new self(
-            $request->projectId ?? 0,
-            $request->instanceId ?? 0,
-            $request->rangeAmount ?? 7,
-            StatsRangeType::from($request->rangeType ?? StatsRangeType::DAY->value),
-            Date::parse($request->rangeStart ?? now()),
-            $request->trackSource ?? 0,
-            $request->trackMedium ?? 0,
-            $request->trackCampaign ?? 0,
-            $request->trackTerm ?? 0,
-            $request->trackContent ?? 0,
+            projectId: $request->projectId ?? 0,
+            instanceId: $request->instanceId ?? 0,
+            rangeAmount: $rangeAmount,
+            rangeType: $rangeType,
+            rangeStart: $rangeStart,
+            trackSource: $request->trackSource ?? 0,
+            trackMedium: $request->trackMedium ?? 0,
+            trackCampaign: $request->trackCampaign ?? 0,
+            trackTerm: $request->trackTerm ?? 0,
+            trackContent: $request->trackContent ?? 0,
         );
     }
 }

@@ -18,7 +18,15 @@ class DashboardController extends Controller
 {
     public function __invoke(DashboardRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
     {
-        $teamStats = $request->user()->currentTeam()->with('projects', function ($query) use ($request) {
+        $user = $request->user();
+
+        if ($request->has('rangeType') && $user->selected_range_type != $request->rangeType) {
+            $user->update([
+                'selected_range_type' => $request->rangeType,
+            ]);
+        }
+
+        $teamStats = $user->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
                 $query->where('project_id', $request->projectId);
             });
@@ -57,7 +65,7 @@ class DashboardController extends Controller
 
         $filterOrganic = $statsDetailsService->getOrganicFilter();
 
-        $teamOwner = $request->user()->team->owner;
+        $teamOwner = $user->team->owner;
         $data = [
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,

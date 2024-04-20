@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StatsRangeType;
 use App\Jobs\QueuedVerifyEmailJob;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -37,7 +38,10 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
+        'selected_range_type',
     ];
 
     /**
@@ -59,6 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'selected_range_type' => StatsRangeType::class,
     ];
 
     /**

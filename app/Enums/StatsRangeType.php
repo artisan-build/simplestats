@@ -62,4 +62,14 @@ enum StatsRangeType: string
             ],
         ];
     }
+
+    public function defaultRangeAmount(): int
+    {
+        return match($this) {
+            self::DAY => 7,
+            self::WEEK => 4,
+            self::MONTH => 6,
+            default => throw new \Exception('Unexpected match value'),
+        };
+    }
 }
