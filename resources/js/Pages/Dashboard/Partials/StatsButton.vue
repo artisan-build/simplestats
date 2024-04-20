@@ -90,8 +90,8 @@ const getStyle = () => {
             <div class="text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
                 {{ (formatter === 'currency')
                     ? formatMap[formatter](latestSerieData, {
-                        minimumFractionDigits: (latestSerieData >= 20) ? 0 : 2,
-                        maximumFractionDigits: (latestSerieData >= 20) ? 0 : 2,
+                        minimumFractionDigits: (latestSerieData >= 10000) ? 0 : 2,
+                        maximumFractionDigits: (latestSerieData >= 10000) ? 0 : 2,
                     }, $page.props.teamCurrency)
                     : formatMap[formatter](latestSerieData, {}, $page.props.teamCurrency)}}
             </div>
