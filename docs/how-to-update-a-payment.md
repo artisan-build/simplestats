@@ -12,7 +12,7 @@ For this guide, lets assume your model which holds your payment data is called `
 
 ## Listen for Changes
 
-Consider a scenario where a `Transaction` has been marked as "completed" and successfully tracked. If now for any reason, the `total` of the transaction changes subsequently, it is essential to update this information in _SimpleStats_ to maintain accurate records. For this you can listen for any changes made to your `Transaction` model by listing the fields in the `getTrackingConditionFields` method.
+Consider a scenario where a `Transaction` has been marked as "completed" and successfully tracked. If now for any reason, the `total` of the transaction changes subsequently, it is essential to update this information in _SimpleStats_ to maintain accurate records. For this you can listen for any changes made to your `Transaction` model by listing the fields in the `watchedTrackingFields` method.
 
 To update the `gross` and `net` on our site, when your model's `total` changes, the implementation might look as follows:
 
@@ -50,7 +50,7 @@ class Transaction extends Model implements TrackablePaymentWithCondition
     /**
      * The field(s) we should listen for changes to recheck the condition.
      */
-    public function getTrackingConditionFields(): array
+    public function watchedTrackingFields(): array
     {
         return ['status', 'total'];
     }
@@ -109,7 +109,7 @@ class Transaction extends Model implements TrackablePaymentWithCondition
     /**
      * The field(s) we should listen for changes to recheck the condition.
      */
-    public function getTrackingConditionFields(): array
+    public function watchedTrackingFields(): array
     {
         return ['status', 'total', 'refunded_at'];
     }

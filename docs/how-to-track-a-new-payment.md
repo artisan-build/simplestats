@@ -119,7 +119,7 @@ class Transaction extends Model implements TrackablePaymentWithCondition
     /**
      * The field(s) we should listen for changes to recheck the condition.
      */
-    public function getTrackingConditionFields(): array
+    public function watchedTrackingFields(): array
     {
         return ['status'];
     }
@@ -139,3 +139,7 @@ You can check as many fields as you like and apply any logic you want here.
 ## Multi Currency Support
 
 Upon registering with _SimpleStats_, you'll be prompted to select a default currency for your team/company. For services, shops, or applications that operate across multiple currencies, **our API** seamlessly handles the conversion. Any transactions made in foreign currencies are automatically **converted** to your team's default currency, using a **daily exchange rate**. This feature ensures that all financial data is standardized and accurately reflects in your analytics, simplifying the management of international transactions.
+
+::: info
+_Multi Currency Support_ is not available on the free subscription plan.
+:::

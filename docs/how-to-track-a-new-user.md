@@ -78,7 +78,7 @@ class User extends Authenticatable implements TrackableUserWithCondition
     /**
      * The field(s) we should listen for changes to recheck the condition.
      */
-    public function getTrackingConditionFields(): array
+    public function watchedTrackingFields(): array
     {
         return ['email_verified_at'];
     }

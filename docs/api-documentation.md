@@ -41,7 +41,8 @@ _SimpleStats_ uses standard HTTP response codes to communicate the outcome of **
 
 ## Endpoints
 
-At the moment, only the create-endpoints are available. 
+At the moment, only the `create` endpoints are available.
+But if the `id` already exists on our side, the record gets updated with the new data.
 
 ### Create User
 

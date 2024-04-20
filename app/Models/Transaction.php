@@ -15,7 +15,7 @@ class Transaction extends PaddleTransaction implements TrackablePaymentWithCondi
         return $this->status === self::STATUS_COMPLETED;
     }
 
-    public function getTrackingConditionFields(): array
+    public function watchedTrackingFields(): array
     {
         return ['status'];
     }
