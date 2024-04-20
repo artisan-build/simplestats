@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Actions\Fortify\CreateNewUser;
+use App\Enums\StatsRangeType;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsLogin;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
                 'email' => $testUser['email'],
                 'password' => $testUser['password'],
                 'password_confirmation' => $testUser['password'],
+                'selected_range_type' => StatsRangeType::MONTH,
                 'terms' => true,
             ]);
 

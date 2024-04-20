@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Enums\StatsRangeType;
 use App\Models\Team;
 use App\Models\User;
 use App\Rules\SignedUrl;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
@@ -29,6 +31,7 @@ class CreateNewUser implements CreatesNewUsers
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
+            'selected_range_type' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
             'accept_invitation_link' => ['nullable', new SignedUrl()]
         ])->validate();
@@ -53,6 +56,10 @@ class CreateNewUser implements CreatesNewUsers
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
             ];
+
+            if (isset($input['selected_range_type'])) {
+                $createUser['selected_range_type'] = $input['selected_range_type'];
+            }
 
             return tap(User::create($createUser), function (User $user) use ($invitationRequest, $invitation) {
                 // create the users personal team
