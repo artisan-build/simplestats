@@ -1,11 +1,11 @@
 <script setup>
-import {formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
+import {formatNumber, formatPercent, formatMap} from "@/Helpers/NumberHelpers.js";
 import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, ScaleIcon} from "@heroicons/vue/20/solid/index.js";
 import {ref} from "vue";
 
 const props = defineProps({
     serie: Object,
-    formatter: Function,
+    formatter: String,
     chartInstance: Object,
     hasCurrent: Boolean,
 });
@@ -88,12 +88,12 @@ const getStyle = () => {
         </div>
         <div class="flex justify-between items-center">
             <div class="text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{ (formatter.name === 'formatCurrency')
-                    ? formatter(latestSerieData, {
+                {{ (formatter === 'currency')
+                    ? formatMap[formatter](latestSerieData, {
                         minimumFractionDigits: (latestSerieData >= 20) ? 0 : 2,
                         maximumFractionDigits: (latestSerieData >= 20) ? 0 : 2,
                     }, $page.props.teamCurrency)
-                    : formatter(latestSerieData, {}, $page.props.teamCurrency)}}
+                    : formatMap[formatter](latestSerieData, {}, $page.props.teamCurrency)}}
             </div>
             <div class="text-sm font-bold" :class="increaseType.tailClass">
                     <span v-if="increase !== 0">

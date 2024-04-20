@@ -1,6 +1,13 @@
 // const locale = 'en-US'; //test
 const locale = navigator.language;
 
+export const formatMap = {
+    'number': formatNumber,
+    'currency': formatCurrency,
+    'percent': formatPercent,
+    'date': formatDate,
+};
+
 export function formatNumber(value, additionalOptions) {
     if (typeof value !== 'number' || isNaN(value)) {
         return '-';

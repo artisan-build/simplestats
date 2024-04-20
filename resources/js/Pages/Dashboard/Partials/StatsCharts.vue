@@ -1,6 +1,6 @@
 <script setup>
 import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
-import {formatCurrency, formatNumber, formatPercent, formatDate} from "@/Helpers/NumberHelpers.js";
+import {formatDate} from "@/Helpers/NumberHelpers.js";
 import { periodMap, XAU} from "@/Helpers/StringHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 
@@ -54,7 +54,7 @@ const charts = {
     per_date: [
         {
             name: periodMap[props.rangeType] + ' Revenue',
-            formatter: formatCurrency,
+            formatter: 'currency',
             data: [
                 {key: 'NET', initialVisible: true, color: '#93c5fd', customClass: 'rounded-bl-md',},
                 {key: 'GROSS', initialVisible: false, color: '#60a5fa',},
@@ -64,7 +64,7 @@ const charts = {
         },
         {
             name: periodMap[props.rangeType] + ' Registraions',
-            formatter: formatNumber,
+            formatter: 'number',
             data: [
                 {key: 'REG', initialVisible: true, color: '#87efac', customClass: 'rounded-bl-md',},
                 {key: 'NAU', initialVisible: false, color: '#22c55d',},
@@ -73,7 +73,7 @@ const charts = {
         },
         {
             name: XAU(props.rangeType, true),
-            formatter: formatNumber,
+            formatter: 'number',
             data: [
                 {key: 'DAU', initialVisible: true, color: '#fbd44c', customClass: 'rounded-bl-md',},
                 {key: 'DAPU', initialVisible: false, color: '#fbbf24',},
@@ -84,7 +84,7 @@ const charts = {
     lifetime: [
         {
             name: 'Lifetime Revenue',
-            formatter: formatCurrency,
+            formatter: 'currency',
             data: [
                 {key: 'NET', initialVisible: true, color: '#93c5fd', customClass: 'rounded-bl-md',},
                 // {key: 'GROSS', initialVisible: false, color: '#60a5fa',},
@@ -94,7 +94,7 @@ const charts = {
         },
         {
             name: 'Lifetime Users',
-            formatter: formatNumber,
+            formatter: 'number',
             data: [
                 {key: 'REG', initialVisible: true, color: '#87efac', customClass: 'rounded-bl-md',},
                 {key: 'PU', initialVisible: false, color: '#a6f3fc',},
@@ -103,7 +103,7 @@ const charts = {
         },
         {
             name: 'Lifetime Conversion',
-            formatter: formatPercent,
+            formatter: 'percent',
             data: [
                 {key: 'REG2DAU', initialVisible: true, color: '#49de80', customClass: 'rounded-bl-md',},
                 {key: 'REG2PU', initialVisible: false, color: '#67e8f9',},
@@ -135,7 +135,6 @@ Object.keys(charts).forEach(category => {
         chartGroup.data = extractStatsData4Chart(category, chartGroup.data);
     });
 });
-console.log(charts.per_date)
 </script>
 
 <template>
