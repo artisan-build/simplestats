@@ -12,6 +12,9 @@
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
 
+        {{-- change this also in docs vitepress config.js --}}
+        <link rel="canonical" href="https://simplestats.io">
+
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->

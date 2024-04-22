@@ -6,7 +6,8 @@ export default defineConfig({
     title: "SimpleStats",
     description: "The missing statistics tool for your Laravel application",
     head: [
-        ['link', { rel: 'icon', href: '../favicon.ico' }]
+        ['link', { rel: 'icon', href: '../favicon.ico' }],
+        ['meta', { name: 'canonical', href: 'https://simplestats.io' }],
     ],
     themeConfig: {
         logo: '../svg/logo_only.svg',
