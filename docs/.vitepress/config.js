@@ -6,7 +6,7 @@ export default defineConfig({
     title: "SimpleStats",
     description: "The missing statistics tool for your Laravel application",
     head: [
-        ['link', { rel: 'icon', href: '../favicon.ico' }],
+        ['link', { rel: 'icon', href: '/favicon.ico' }],
     ],
     transformPageData(pageData) {
         const canonicalUrl = `https://simplestats.io/docs/${pageData.relativePath}`
