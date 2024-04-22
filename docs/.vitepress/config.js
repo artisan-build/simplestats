@@ -7,8 +7,18 @@ export default defineConfig({
     description: "The missing statistics tool for your Laravel application",
     head: [
         ['link', { rel: 'icon', href: '../favicon.ico' }],
-        ['meta', { name: 'canonical', href: 'https://simplestats.io' }],
     ],
+    transformPageData(pageData) {
+        const canonicalUrl = `https://simplestats.io/docs/${pageData.relativePath}`
+            .replace(/index\.md$/, '')
+            .replace(/\.md$/, '.html')
+
+        pageData.frontmatter.head ??= []
+        pageData.frontmatter.head.push([
+            'link',
+            { rel: 'canonical', href: canonicalUrl }
+        ])
+    },
     themeConfig: {
         logo: '../svg/logo_only.svg',
         logoLink: { link: '/', target: '_self' },
