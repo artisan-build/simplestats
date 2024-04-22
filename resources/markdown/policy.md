@@ -248,6 +248,16 @@ We will let You know via email and/or a prominent notice on Our Service, prior t
 
 You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
 
+## Data Protection Officer
+
+For any questions related to privacy and data protection, our Data Protection Officer is available to assist you. You can contact our Data Protection Officer, Mrs. Elisabeth Wintergerst, via the following details:
+
+**Email**: hello@leto.games
+
+**Mailing Address**: Elisabeth Wintergerst Rechtsanwältin - Brunnengasse 12, 87629 Füssen
+
+Ms. Elisabeth Wintergerst is responsible for overseeing compliance with data protection laws and regulations within our company and for providing information and advice regarding your data protection rights.
+
 ## Contact Us
 
 If you have any questions about this Privacy Policy, You can contact us:
