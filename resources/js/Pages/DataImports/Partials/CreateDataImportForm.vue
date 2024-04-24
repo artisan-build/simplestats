@@ -81,7 +81,7 @@ const currentImportNotFinishedYet = computed(() => {
             make sure to provide only these data in the import file.
             Also make sure to send us the currency of your payments in cents.<br>
             <br>
-            Learn more here: <a class="simpleLink" href="/docs/data-import.html" target="_blank">Data Import</a>
+            Learn more here: <a class="simpleLink" href="/docs/how-to-import-existing-data.html" target="_blank">Data Import</a>
         </template>
 
         <template #form>

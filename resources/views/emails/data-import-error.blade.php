@@ -6,5 +6,5 @@
     <br>
     Please contact the support or recheck the data structure of your import file!<br>
     <br>
-    Learn more here: <a href="{{ config('app.url') }}/docs/data-import.html" target="_blank">Data Import</a>
+    Learn more here: <a href="{{ config('app.url') }}/docs/how-to-import-existing-data.html" target="_blank">Data Import</a>
 @endcomponent

@@ -12,5 +12,5 @@
     Import started at: {{ $dataImport->trackedJob->created_at }}<br>
     Import canceled at: {{ $dataImport->trackedJob->finished_at }}<br>
     <br>
-    Learn more here: <a href="{{ config('app.url') }}/docs/data-import.html" target="_blank">Data Import</a>
+    Learn more here: <a href="{{ config('app.url') }}/docs/how-to-import-existing-data.html" target="_blank">Data Import</a>
 @endcomponent
