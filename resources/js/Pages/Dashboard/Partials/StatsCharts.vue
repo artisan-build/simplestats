@@ -63,7 +63,7 @@ const charts = {
             ],
         },
         {
-            name: periodMap[props.rangeType] + ' Registraions',
+            name: periodMap[props.rangeType] + ' Registrations',
             formatter: 'number',
             data: [
                 {key: 'REG', initialVisible: true, color: '#87efac', customClass: 'rounded-bl-md',},
