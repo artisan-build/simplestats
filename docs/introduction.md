@@ -2,7 +2,13 @@
 
 _**SimpleStats**_ is a streamlined statistics tool tailored for **Laravel** applications, transcending mere counts of visits, views, and page impressions. It offers **precise insights** into user origins and behaviors. With default tracking and filtering via [UTM](https://en.wikipedia.org/wiki/UTM_parameters) codes, you gain detailed analysis of **marketing** campaigns, identifying which efforts drive **revenue**. Effortlessly evaluate campaign **ROI**, discover cost-effective user acquisition channels, and pinpoint the most effective performance channels. _SimpleStats_ ensures full **GDPR compliance** and a minimalistic and straightforward installation process.
 
-![Dashboard](/screenshot.png)
+[//]: # (![Dashboard]&#40;/screenshot.png&#41;)
+
+<video width="100%" controls>
+  <source src="/how-to-setup-simplestats.mov" type="video/mp4">
+  Ihr Browser unterstützt das Video-Tag nicht.
+</video>
+
 
 ## How does it work?
 
