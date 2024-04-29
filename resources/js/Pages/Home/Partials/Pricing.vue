@@ -31,7 +31,7 @@ const priceIntervalString = computed(() => {
 </script>
 
 <template>
-    <section class="mb-32 flex justify-center">
+    <section class="flex justify-center">
         <div class="max-w-screen-xl">
             <SectionHeader id="pricing">
                 Subscribe at your&nbsp;<span class="text-indigo-500">scale</span>
@@ -101,8 +101,8 @@ const priceIntervalString = computed(() => {
                  class="mt-10 text-center text-gray-400">
                 * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
             </div>
-            <div class="mt-4 text-sm text-center text-gray-400">
-                If these plans do not fit your needs, please <a class="underline" href="mailto:simplestats@laracraft.tech">contact us</a>.
+            <div class="mt-4 text-base text-center text-gray-600">
+                If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact us</a>!
             </div>
         </div>
     </section>

@@ -13,6 +13,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
             <div class="flex items-center gap-6">
                 <a href="/#features" class="">Features</a>
                 <a href="/#pricing" class="">Pricing</a>
+                <a href="/#self-hosted" class="">Self-Hosted</a>
 
                 <a href="/docs" class="px-3">Docs</a>
 
