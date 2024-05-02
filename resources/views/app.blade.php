@@ -31,6 +31,8 @@
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
+
+        <script defer data-domain="simplestats.io" src="https://plausible.io/js/script.js"></script>
     </head>
     <body class="font-sans min-h-screen bg-white dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
         @inertia
