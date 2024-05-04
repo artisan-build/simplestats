@@ -74,12 +74,12 @@ const currentImportNotFinishedYet = computed(() => {
         </template>
 
         <template #description>
-            Though it is not mandatory, it's highly recommended to first import the user data and only then the corresponding payment data.<br>
+            Although it is not required, we highly recommend importing user data before the corresponding payment data.<br>
             <br>
-            If your user and payment data has any conditions to count as a valid entry,
-            for instance only if the user has verified his email or only if the payment has a certain status like "success",
-            make sure to provide only these data in the import file.
-            Also make sure to send us the currency of your payments in cents.<br>
+            If your user and payment data must meet certain conditions to be considered valid,
+            such as users having verified email addresses or payments having a specific status like 'success',
+            please ensure that only this data is included in the import file. Additionally,
+            please provide the currency value of your payments in cents.<br>
             <br>
             Learn more here: <a class="simpleLink" href="/docs/how-to-import-existing-data.html" target="_blank">Data Import</a>
         </template>
