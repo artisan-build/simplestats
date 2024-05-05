@@ -111,8 +111,7 @@ const hideMenu = import.meta.env.VITE_HIDE_MENU === 'true';
             <main class="mx-auto h-full w-full p-8" :class="{'max-w-screen-2xl': ! fullscreen}">
                 <slot />
             </main>
+            <Footer />
         </div>
     </div>
-
-    <Footer />
 </template>
