@@ -23,3 +23,5 @@ yarn-error.log
 /packages
 docs/.vitepress/dist
 docs/.vitepress/cache
+/current
+/releases
