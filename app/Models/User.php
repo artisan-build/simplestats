@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
@@ -31,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
     use Billable {
         sparkPlan as aliasSparkPlan;
     }
+    use Impersonate;
 
     /**
      * The attributes that are mass assignable.
@@ -125,5 +127,11 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
         }
 
         return $this->belongsTo(Jetstream::teamModel(), 'current_team_id');
+    }
+
+    public function canImpersonate()
+    {
+        // For example
+        return $this->is_admin == 1;
     }
 }

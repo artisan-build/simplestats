@@ -30,6 +30,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    Route::impersonate();
+
     Route::any('intro', IntroController::class)->name('intro');
     Route::get('overview', OverviewController::class)->name('stats.overview');
     Route::get('dashboard', DashboardController::class)->name('dashboard');

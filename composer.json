@@ -8,8 +8,10 @@
         "php": "^8.2",
         "ext-zip": "*",
         "ashallendesign/laravel-exchange-rates": "^7.2",
+        "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^1.0",
+        "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.0",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.0",
@@ -23,8 +25,7 @@
         "spatie/laravel-backup": "^8.6",
         "spatie/laravel-ray": "^1.33",
         "spatie/laravel-validation-rules": "^3.3",
-        "tightenco/ziggy": "^1.0",
-        "fakerphp/faker": "^1.9.1"
+        "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
