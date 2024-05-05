@@ -26,10 +26,12 @@ class Kernel extends ConsoleKernel
         # in areas where daylight saving time changes occur, as this causes sometimes a
         # double backup or (worse) no backup at all.
 
-        $schedule->command('backup:clean')->daily()->at('01:00');
-        $schedule->command('backup:run')->daily()->at('01:30');
+        if (app()->isProduction()) {
+            $schedule->command('backup:clean')->daily()->at('01:00');
+            $schedule->command('backup:run')->daily()->at('01:30');
 
-        $schedule->command('app:check-subscription-plan-alarm')->weekly()->at('3:30');
+            $schedule->command('app:check-subscription-plan-alarm')->weekly()->at('3:30');
+        }
     }
 
     /**
