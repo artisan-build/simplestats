@@ -83,7 +83,7 @@
     "repositories": {
         "simplestats-io/laravel-client": {
             "type": "path",
-            "url": "./packages/simplestats-io/laravel-client",
+            "url": "packages/simplestats-io/laravel-client",
             "options": {
                 "symlink": true
             }
