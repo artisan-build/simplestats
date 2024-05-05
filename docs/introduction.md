@@ -4,7 +4,7 @@ _**SimpleStats**_ is a streamlined statistics tool tailored for **Laravel** appl
 
 [//]: # (![Dashboard]&#40;/screenshot.png&#41;)
 
-<video width="100%" controls poster="/screenshot.png">
+<video width="100%" controls poster="https://simplestats.io/images/screenshot.png">
   <source src="https://simplestats.io/storage/intro.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
