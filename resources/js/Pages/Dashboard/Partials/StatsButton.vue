@@ -77,17 +77,17 @@ const getStyle = () => {
 </script>
 
 <template>
-    <button class="p-3 text-left border-2 border-transparent hover:brightness-90" :class="getClass()" @click="toggleChart" :style="getStyle()">
+    <button class="p-2 sm:p-3 text-left border-2 border-transparent hover:brightness-90" :class="getClass()" @click="toggleChart" :style="getStyle()">
         <div class="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-400">
             <div>
                 {{ serie.name }}
             </div>
-            <div :class="increaseType.tailClass">
+            <div class="hidden sm:block" :class="increaseType.tailClass">
                 <component class="inline-block h-5 w-5" :is="increaseType.icon" />
             </div>
         </div>
         <div class="flex justify-between items-center">
-            <div class="text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
+            <div class="text-md sm:text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
                 {{ (formatter === 'currency')
                     ? formatMap[formatter](latestSerieData, {
                         minimumFractionDigits: (latestSerieData >= 10000) ? 0 : 2,

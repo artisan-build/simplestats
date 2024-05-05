@@ -98,10 +98,10 @@ const priceIntervalString = computed(() => {
                 </div>
             </div>
             <div v-if="props.plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length"
-                 class="mt-10 text-center text-gray-400">
+                 class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
                 * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
             </div>
-            <div class="mt-4 text-base text-center text-gray-600">
+            <div class="mt-4 text-base text-center text-gray-600 px-4 sm:pm-0">
                 If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact us</a>!
             </div>
         </div>

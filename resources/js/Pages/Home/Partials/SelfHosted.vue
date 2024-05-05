@@ -6,9 +6,9 @@ const appName = import.meta.env.VITE_APP_NAME;
 
 <template>
     <section class="mb-32 flex justify-center">
-        <div class="max-w-screen-xl">
+        <div class="max-w-screen-xl px-4 sm:pm-0">
             <SectionHeader id="self-hosted">
-                Take full control with&nbsp;<span class="text-indigo-500">Self-Hosted</span>&nbsp;
+                Take full control with&nbsp;<span class="text-indigo-500">Self-Hosted</span>
             </SectionHeader>
 
             <div class="text-center -mt-10 max-w-2xl m-auto">
@@ -24,7 +24,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </p>
 
                 <div class="inline-flex w-full mt-10 sm:w-auto">
-                    <a href="mailto:simplestats@laracraft.tech" class="block text-center w-full px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
+                    <a href="mailto:simplestats@laracraft.tech" class="block text-center w-full px-4 py-2 mt-10 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
                         Contact Sales
                     </a>
                 </div>
