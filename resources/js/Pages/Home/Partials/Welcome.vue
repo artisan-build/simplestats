@@ -30,7 +30,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 <!--                which quickly reveals marketing ROI and user conversion with a very simple setup.-->
 <!--                V3 Quickly reveal marketing ROI and<br>user conversion efficiency with a minimal setup.-->
                 Transcending mere counts of visits, views and page impressions and discover in-depth metrics<br>
-                like Daily Active Users, New Paying Users, campaign ROI and much more!
+                like Registrations, Daily Active Users, New Paying Users, campaign ROI and much more!
             </p>
             <Link v-if="$page.props.canRegister" :href="route('register')" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
                 Get started
