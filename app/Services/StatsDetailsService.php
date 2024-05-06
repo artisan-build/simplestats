@@ -329,7 +329,7 @@ class StatsDetailsService
 
     public function getAllFilterFor(string $type): array
     {
-        return ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All '.$type];
+        return ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];//.$type];
     }
 
     public function getOrganicFilter(): array
