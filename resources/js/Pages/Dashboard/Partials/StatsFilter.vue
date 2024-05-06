@@ -33,21 +33,7 @@ const submit = () => {
 
 const trackFields = ['trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
 
-const checkHierachicalTracking = (trackId) => {
-    let startIndex = trackFields.indexOf(trackId);
-
-    if (startIndex !== -1 && form[trackId] <= props.trackAllKey) {
-        for (let i = startIndex + 1; i < trackFields.length; i++) {
-            form[trackFields[i]] = props.trackAllKey;
-        }
-    }
-};
-
 const filterChanged = (event) => {
-    if (event.target.id.startsWith('track')) {
-        checkHierachicalTracking(event.target.id);
-    }
-
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
     if (event.target.id === 'projectId') {
         form.instanceId = props.trackAllKey;
@@ -64,6 +50,16 @@ const filterChanged = (event) => {
     }
 
     submit();
+};
+
+const extendTracking = (event) => {
+    form.extendedTracking = 1;
+    filterChanged(event);
+};
+
+const shortTracking = (event) => {
+    form.extendedTracking = 0;
+    filterChanged(event);
 };
 
 const periodRange = periodSingular[props.filters.rangeType];
@@ -186,7 +182,16 @@ const chartDescription = `
                                 @change="filterChanged"
                             />
                         </div>
-                        <div v-if="trackingTerms">
+                        <div v-if="! filters.extendedTracking">
+                            <InputLabel for="extendTracking" value="&nbsp;" />
+                            <SecondaryButton type="button" @click="extendTracking" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
+                                    <path d="M8.75 3.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z" />
+                                </svg>
+                                <span class="ml-2 hidden">Extend</span>
+                            </SecondaryButton>
+                        </div>
+                        <div v-if="filters.extendedTracking">
                             <InputLabel for="trackTerm" value="Term" />
                             <SelectInput
                                 id="trackTerm"
@@ -196,7 +201,7 @@ const chartDescription = `
                                 @change="filterChanged"
                             />
                         </div>
-                        <div v-if="trackingContents">
+                        <div v-if="filters.extendedTracking">
                             <InputLabel for="trackContent" value="Content" />
                             <SelectInput
                                 id="trackContent"
@@ -206,10 +211,19 @@ const chartDescription = `
                                 @change="filterChanged"
                             />
                         </div>
+                        <div v-if="filters.extendedTracking">
+                            <InputLabel for="shortTracking" value="&nbsp;" />
+                            <SecondaryButton type="button" @click="shortTracking" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
+                                    <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" />
+                                </svg>
+                                <span class="ml-2 hidden">Short</span>
+                            </SecondaryButton>
+                        </div>
                     </div>
                     <div class="">
                         <InputLabel for="refresh" value="&nbsp;" />
-                        <SecondaryButton type="submit" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        <SecondaryButton type="submit" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                             </svg>

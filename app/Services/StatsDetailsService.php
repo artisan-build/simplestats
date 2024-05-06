@@ -256,24 +256,16 @@ class StatsDetailsService
         $conditions[] = $projectInstanceCondition;
 
         $trackingCondition = "";
-        // it's a pyramid, each nested type my only be set if the parent exists...
+
         if (!empty($filters->trackSource)) {
-            $trackSourceCondition = ($filters->trackSource === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} " ;
+            $trackSourceCondition = ($filters->trackSource === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} ";
             $trackingCondition .= " AND stats.stats_track_source_id $trackSourceCondition ";
-            // if the source is set to organic, we do not need to evaluate the other tracking codes...
-            if (!empty($filters->trackMedium) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC) {
-                $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
-                if (!empty($filters->trackCampaign)) {
-                    $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
-                    if (!empty($filters->trackTerm)) {
-                        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
-                        if (!empty($filters->trackContent)) {
-                            $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
-                        }
-                    }
-                }
-            }
         }
+
+        if (!empty($filters->trackMedium) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)      $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
+        if (!empty($filters->trackCampaign) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)    $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
+        if (!empty($filters->trackTerm) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
+        if (!empty($filters->trackContent) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)     $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
 
         if (!empty($trackingCondition)) {
             $conditions[] = $trackingCondition;
@@ -334,6 +326,6 @@ class StatsDetailsService
 
     public function getOrganicFilter(): array
     {
-        return ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic'];
+        return ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic traffic'];
     }
 }

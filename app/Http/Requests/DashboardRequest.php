@@ -99,6 +99,10 @@ class DashboardRequest extends FormRequest
                 'integer',
                 new ValidProjectModelOrNegative($this->projectId, StatsTrackContent::class),
             ],
+            'extendedTracking' => [
+                'sometimes',
+                'integer'
+            ]
         ];
     }
 }

@@ -58,12 +58,11 @@ class DashboardController extends Controller
         ]);
 
         // closure (do not evaluate yet)
+        $trackingSourceCallback = fn()      => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getOrganicFilter())->prepend($statsDetailsService->getAllFilterFor('Sources'));
         $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Mediums'));
         $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Campaigns'));
         $trackingTermsCallback = fn()       => StatsTrackTerm::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Terms'));
         $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Content'));
-
-        $filterOrganic = $statsDetailsService->getOrganicFilter();
 
         $teamOwner = $user->team->owner;
         $data = [
@@ -72,9 +71,9 @@ class DashboardController extends Controller
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format(StatsRangeType::dateFormats()[$filters->rangeType->value]['php']),
             'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
-            'trackingSources' => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($filterOrganic)->prepend($statsDetailsService->getAllFilterFor('Sources')),
-            'trackingMedia'     => Inertia::lazy(fn() => $trackingMediaCallback()),
-            'trackingCampaigns' => Inertia::lazy(fn() => $trackingCampaignsCallback()),
+            'trackingSources' => $trackingSourceCallback(),
+            'trackingMedia'     => $trackingMediaCallback(),
+            'trackingCampaigns' => $trackingCampaignsCallback(),
             'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
             'trackingContents'  => Inertia::lazy(fn() => $trackingContentsCallback()),
             'showFreePlanWarning' => $teamOwner->sparkPlan()->name === SubscriptionService::PLAN_FREE,
@@ -82,19 +81,8 @@ class DashboardController extends Controller
         ];
 
         // do not lazy load if the specific tracking isset...
-        // this is hierarchical, each depends on the other (also used to hide select boxes if higher tracking was set to all)
-        if ($filters->trackSource > StatsRangeFilterDto::TRACK_ALL) {
-            $data['trackingMedia'] = $trackingMediaCallback();
-            if ($filters->trackMedium > StatsRangeFilterDto::TRACK_ALL) {
-                $data['trackingCampaigns'] = $trackingCampaignsCallback();
-                if ($filters->trackCampaign > StatsRangeFilterDto::TRACK_ALL) {
-                    $data['trackingTerms'] = $trackingTermsCallback();
-                    if ($filters->trackTerm > StatsRangeFilterDto::TRACK_ALL) {
-                        $data['trackingContents'] = $trackingContentsCallback();
-                    }
-                }
-            }
-        }
+        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)   $data['trackingTerms'] = $trackingTermsCallback();
+        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)       $data['trackingContents'] = $trackingContentsCallback();
 
         return Inertia::render('Dashboard/Index', $data);
     }

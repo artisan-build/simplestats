@@ -23,6 +23,7 @@ readonly class StatsRangeFilterDto
         public int $trackCampaign = 0,
         public int $trackTerm = 0,
         public int $trackContent = 0,
+        public bool $extendedTracking = false,
     ) {}
 
     public static function fromRequest(DashboardRequest $request): StatsRangeFilterDto
@@ -42,6 +43,7 @@ readonly class StatsRangeFilterDto
             trackCampaign: $request->trackCampaign ?? 0,
             trackTerm: $request->trackTerm ?? 0,
             trackContent: $request->trackContent ?? 0,
+            extendedTracking: $request->extendedTracking ?? false,
         );
     }
 }
