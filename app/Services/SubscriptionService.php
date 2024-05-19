@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\SubscriptionPlanAlarm;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -57,8 +58,9 @@ class SubscriptionService
         });
     }
 
-    public function checkPlanAlarm(User $teamOwner, bool $sendMail = false): array
+    public function checkPlanAlarm(Team $team, bool $sendMail = false): array
     {
+        $teamOwner = $team->owner;
         $teamPlan = $teamOwner->sparkPlan();
 
         $alarms = [];
@@ -69,7 +71,8 @@ class SubscriptionService
             }
 
             /** @var $featureType Model */
-            $currentAmount = $featureType::withoutGlobalScope('instance')->count();
+            // as this is also called in the cronjob (here we have no team), we need to apply the team_id manually
+            $currentAmount = $featureType::where('team_id', $team->id)->withoutGlobalScope('instance')->count();
             $currentPercent = round($currentAmount / $featureAmount * 100, 0);
 
             if ($currentPercent > self::ALARM_PERCENTAGE) {

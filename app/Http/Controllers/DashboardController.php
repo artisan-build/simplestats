@@ -77,7 +77,7 @@ class DashboardController extends Controller
             'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
             'trackingContents'  => Inertia::lazy(fn() => $trackingContentsCallback()),
             'showFreePlanWarning' => $teamOwner->sparkPlan()->name === SubscriptionService::PLAN_FREE,
-            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($teamOwner)
+            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team)
         ];
 
         // do not lazy load if the specific tracking isset...
