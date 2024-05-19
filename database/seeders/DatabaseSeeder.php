@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
                 'password_confirmation' => $testUser['password'],
                 'selected_range_type' => StatsRangeType::MONTH,
                 'terms' => true,
+                'is_admin' => app()->isLocal(),
             ]);
 
             $user->markEmailAsVerified();
