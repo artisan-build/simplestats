@@ -51,11 +51,9 @@ class StatsAggregationsService
         if ($aggregatedData->isEmpty()) {
             $aggregatedData = $this->getRawData($filterConditions);
             $this->storeAggregatedData($aggregatedData, $filters);
-        } else {
-            if ($missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filterConditions)) {
-                $aggregatedData->merge($missingAggregatedData);
-                $this->storeAggregatedData($missingAggregatedData, $filters);
-            }
+        } elseif ($missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filterConditions)) {
+            $aggregatedData->merge($missingAggregatedData);
+            $this->storeAggregatedData($missingAggregatedData, $filters);
         }
 
         return $aggregatedData->sortKeysDesc();
