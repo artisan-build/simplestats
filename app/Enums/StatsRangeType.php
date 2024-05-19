@@ -9,6 +9,8 @@ enum StatsRangeType: string
 {
     use UsefulEnums;
 
+    const DATE_FORMAT = 'Y-m-d';
+
     case DAY = 'days';
     case WEEK = 'weeks';
     case MONTH = 'months';
@@ -19,28 +21,28 @@ enum StatsRangeType: string
 
         return [
             self::DAY->value => [
-                $rangeStart->startOfDay()->subDays($rangeAmount)->format('Y-m-d'),
-                $rangeStart->startOfDay()->format('Y-m-d'),
-                $rangeStart->endOfDay()->format('Y-m-d'),
-                str(self::DAY->value)->upper()->singular(),
-                'ds.date', // the end of the current interval
-                self::dateFormats()[self::DAY->value]['mysql'],
+                'startDateStart' => $rangeStart->startOfDay()->subDays($rangeAmount)->format(self::DATE_FORMAT),
+                'endDateStart' => $rangeStart->startOfDay()->format(self::DATE_FORMAT),
+                'endDateEnd' => $rangeStart->endOfDay()->format(self::DATE_FORMAT),
+                'intervalType' => str(self::DAY->value)->upper()->singular(),
+                'intervalEnd' => 'ds.date', // the end of the current interval
+                'dateFormat' => self::dateFormats()[self::DAY->value]['mysql'],
             ],
             self::WEEK->value => [
-                $rangeStart->startOfWeek()->subWeeks($rangeAmount)->format('Y-m-d'),
-                $rangeStart->startOfWeek()->format('Y-m-d'),
-                $rangeStart->endOfWeek()->format('Y-m-d'),
-                str(self::WEEK->value)->upper()->singular(),
-                'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
-                self::dateFormats()[self::WEEK->value]['mysql'],
+                'startDateStart' => $rangeStart->startOfWeek()->subWeeks($rangeAmount)->format(self::DATE_FORMAT),
+                'endDateStart' => $rangeStart->startOfWeek()->format(self::DATE_FORMAT),
+                'endDateEnd' => $rangeStart->endOfWeek()->format(self::DATE_FORMAT),
+                'intervalType' => str(self::WEEK->value)->upper()->singular(),
+                'intervalEnd' => 'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
+                'dateFormat' => self::dateFormats()[self::WEEK->value]['mysql'],
             ],
             self::MONTH->value => [
-                $rangeStart->startOfMonth()->subMonths($rangeAmount)->format('Y-m-d'),
-                $rangeStart->startOfMonth()->format('Y-m-d'),
-                $rangeStart->endOfMonth()->format('Y-m-d'),
-                str(self::MONTH->value)->upper()->singular(),
-                'LAST_DAY(ds.date)', // the end of the current interval
-                self::dateFormats()[self::MONTH->value]['mysql'],
+                'startDateStart' => $rangeStart->startOfMonth()->subMonths($rangeAmount)->format(self::DATE_FORMAT),
+                'endDateStart' => $rangeStart->startOfMonth()->format(self::DATE_FORMAT),
+                'endDateEnd' => $rangeStart->endOfMonth()->format(self::DATE_FORMAT),
+                'intervalType' => str(self::MONTH->value)->upper()->singular(),
+                'intervalEnd' => 'LAST_DAY(ds.date)', // the end of the current interval
+                'dateFormat' => self::dateFormats()[self::MONTH->value]['mysql'],
             ],
         ];
     }
