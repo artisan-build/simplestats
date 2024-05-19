@@ -34,7 +34,7 @@ const submit = () => {
                 <FormWizard color="#716bdd" @on-complete="submit" step-size="xs">
                     <TabContent class="pt-10 pb-20 text-center" title="Name">
                         <div class="text-xl font-medium mb-10">
-                            What is the name of your Team/Company?
+                            What is the name of your team/company?
                         </div>
 
                         <TextInput
@@ -46,7 +46,7 @@ const submit = () => {
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Currency">
                         <div class="text-xl font-medium mb-10">
-                            What is the currency of your Team/Company?
+                            What is the currency of your team/company?
                             <p class="text-base">All tracked multi-currency payments are converted to your currency at the daily exchange rate.</p>
                         </div>
 
@@ -60,7 +60,7 @@ const submit = () => {
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Project">
                         <div class="text-xl font-medium mb-10">
-                            What should your first Project be called?
+                            What should your first project be called?
                         </div>
 
                         <TextInput
@@ -73,8 +73,8 @@ const submit = () => {
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Instance">
                         <div class="text-xl font-medium mb-10">
-                            What should your first Instance be called?
-                            <p class="text-base">Each of your Projects may contain multiple Instances.</p>
+                            What should your first instance be called?
+                            <p class="text-base">Each of your projects may contain multiple instances.</p>
                         </div>
 
                         <TextInput
