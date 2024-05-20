@@ -3,27 +3,16 @@
 namespace App\Models;
 
 use App\Concerns\HasCounterByStatsUser;
-use App\Concerns\HasInstanceScope;
 use App\Concerns\HasStatsUserAssurance;
-use App\Concerns\HasTeamScope;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Observers\StatsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StatsLogin extends Model
+#[ObservedBy(StatsObserver::class)]
+class StatsLogin extends BaseStat
 {
-    use HasFactory;
-    use HasTeamScope;
-    use HasInstanceScope;
     use HasCounterByStatsUser;
     use HasStatsUserAssurance;
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -34,21 +23,6 @@ class StatsLogin extends Model
         'stats_user_id',
         'time'
     ];
-
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
-    }
-
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
-    }
-
-    public function instance(): BelongsTo
-    {
-        return $this->belongsTo(Instance::class);
-    }
 
     public function statsUser(): BelongsTo
     {

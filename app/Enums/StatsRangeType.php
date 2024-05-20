@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
@@ -26,7 +27,7 @@ enum StatsRangeType: string
                 'endDateEnd' => $rangeStart->endOfDay()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::DAY->value)->upper()->singular(),
                 'intervalEnd' => 'ds.date', // the end of the current interval
-                'dateFormat' => self::dateFormats()[self::DAY->value]['mysql'],
+                'dateFormat' => self::DAY->dateFormat()['mysql'],
             ],
             self::WEEK->value => [
                 'startDateStart' => $rangeStart->startOfWeek()->subWeeks($rangeAmount)->format(self::DATE_FORMAT),
@@ -34,7 +35,7 @@ enum StatsRangeType: string
                 'endDateEnd' => $rangeStart->endOfWeek()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::WEEK->value)->upper()->singular(),
                 'intervalEnd' => 'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
-                'dateFormat' => self::dateFormats()[self::WEEK->value]['mysql'],
+                'dateFormat' => self::WEEK->dateFormat()['mysql'],
             ],
             self::MONTH->value => [
                 'startDateStart' => $rangeStart->startOfMonth()->subMonths($rangeAmount)->format(self::DATE_FORMAT),
@@ -42,27 +43,38 @@ enum StatsRangeType: string
                 'endDateEnd' => $rangeStart->endOfMonth()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::MONTH->value)->upper()->singular(),
                 'intervalEnd' => 'LAST_DAY(ds.date)', // the end of the current interval
-                'dateFormat' => self::dateFormats()[self::MONTH->value]['mysql'],
+                'dateFormat' => self::MONTH->dateFormat()['mysql'],
             ],
         ];
     }
 
-    public static function dateFormats(): array
+    public function dateFormat(): array
     {
-        return [
-            self::DAY->value => [
+        return match($this) {
+            self::DAY => [
                 'mysql' => '%Y-%m-%d',
                 'php' => 'Y-m-d',
             ],
-            self::WEEK->value => [
+            self::WEEK => [
                 'mysql' => '%Y-%v',
                 'php' => 'o-W',
             ],
-            self::MONTH->value => [
+            self::MONTH => [
                 'mysql' => '%Y-%m',
                 'php' => 'Y-m',
             ],
-        ];
+            default => throw new \Exception('Unexpected match value'),
+        };
+    }
+
+    public function rangeStart(CarbonImmutable $date): CarbonImmutable
+    {
+        return match($this) {
+            self::DAY => $date->startOfDay(),
+            self::WEEK => $date->startOfWeek(),
+            self::MONTH => $date->startOfMonth(),
+            default => throw new \Exception('Unexpected match value'),
+        };
     }
 
     public function defaultRangeAmount(): int

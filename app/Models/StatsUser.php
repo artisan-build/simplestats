@@ -2,21 +2,13 @@
 
 namespace App\Models;
 
-use App\Concerns\HasInstanceScope;
-use App\Concerns\HasTeamScope;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Observers\StatsObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class StatsUser extends Model
+#[ObservedBy(StatsObserver::class)]
+class StatsUser extends BaseStat
 {
-    use HasFactory;
-    use HasTeamScope;
-    use HasInstanceScope;
-
-    public $timestamps = false;
-
     public $incrementing = false;
 
     /**
@@ -57,21 +49,6 @@ class StatsUser extends Model
                 unset($user->$property);
             }
         });
-    }
-
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
-    }
-
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
-    }
-
-    public function instance(): BelongsTo
-    {
-        return $this->belongsTo(Instance::class);
     }
 
     public function statsLogins(): HasMany

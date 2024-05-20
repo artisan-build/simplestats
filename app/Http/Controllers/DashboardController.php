@@ -69,7 +69,7 @@ class DashboardController extends Controller
             'teamStats' => $teamStats,
             'filters' => $filtersFormatted,
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
-            'rangeCurrent' => now()->format(StatsRangeType::dateFormats()[$filters->rangeType->value]['php']),
+            'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
             'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
             'trackingSources' => $trackingSourceCallback(),
             'trackingMedia'     => $trackingMediaCallback(),

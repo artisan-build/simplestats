@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\DTOs\StatsRangeFilterDto;
 use App\Enums\StatsRangeType;
+use App\Models\BaseStat;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -39,14 +41,17 @@ class StatsAggregationsService
     {
         $filterConditions = $this->getFilterConditions($filters);
 
-        $aggregatedData = $this->formatAggregatedData(
-            StatsAggregation::whereBetween('time', [
-                $filterConditions['startDateStart'],
-                $filterConditions['endDateEnd']
-            ])->where('filter_hash', $filters->makeHash())
-                ->orderBy('time', 'desc')
-                ->pluck('data')
-        );
+        $aggregatedDataKeyedById = StatsAggregation::whereBetween('time', [
+            $filterConditions['startDateStart'],
+            $filterConditions['endDateEnd']
+        ])->where('filter_hash', $filters->makeHash())
+            ->orderBy('time', 'desc')
+            ->pluck('data', 'id');
+
+        // we need to update this information, so that we can delete aggregations which are older than x days...
+        StatsAggregation::whereIn('id', $aggregatedDataKeyedById->keys())->update(['selected_at' => now()]);
+
+        $aggregatedData = $this->formatAggregatedData($aggregatedDataKeyedById);
 
         if ($aggregatedData->isEmpty()) {
             $aggregatedData = $this->getRawData($filterConditions);
@@ -55,7 +60,7 @@ class StatsAggregationsService
             $missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filterConditions);
 
             if ($missingAggregatedData->isNotEmpty()) {
-                $aggregatedData->merge($missingAggregatedData);
+                $aggregatedData = $aggregatedData->merge($missingAggregatedData);
                 $this->storeAggregatedData($missingAggregatedData, $filters);
             }
         }
@@ -344,5 +349,47 @@ class StatsAggregationsService
         // convert the objects to arrays for consistency
         $array = json_decode(json_encode(DB::select($sql)), true);
         return $this->formatAggregatedData(collect($array));
+    }
+
+    /**
+     * If a stat updates, every data above the stat time is invalid, so we need to delete it.
+     * Same counts for data-imports.
+     *
+     * @param  BaseStat  $stat
+     * @return void
+     * @throws Exception
+     */
+    public function invalidateByStatsUpdate(BaseStat $stat): void
+    {
+        foreach (StatsRangeType::cases() as $case) {
+            // it's important to convert the time to the corresponding range types (days, weeks, months)
+            // for instance: if the update time is 2024-05-15 you'll also want to delete form its corresponding week,
+            // which starts at 2024-05-13 (same counts for months)
+            $start = $case->rangeStart($stat->time)->format(StatsRangeType::DATE_FORMAT);
+
+            StatsAggregation::where([
+                ['time', '>=', $start],
+                ['type', '=', $case->value],
+            ])->where(function ($query) use ($stat) {
+                // stats must be re-aggregated on team basis
+                $query->where([
+                    ['team_id', '=', $stat->team_id],
+                    ['project_id', '=', null],
+                    ['instance_id', '=', null],
+                // stats must be re-aggregated on project basis
+                ])->orWhere([
+                    ['team_id', '=', $stat->team_id],
+                    ['project_id', '=', $stat->project_id],
+                    ['instance_id', '=', null],
+                // stats must be re-aggregated on instance basis
+                ])->orWhere([
+                    ['team_id', '=', $stat->team_id],
+                    ['project_id', '=', $stat->project_id],
+                    ['instance_id', '=', $stat->instance_id],
+                ]);
+            })->delete();
+            // other projects and instances aggregations will remain
+            // but unfortunately we have to re-aggregate the whole team
+        }
     }
 }
