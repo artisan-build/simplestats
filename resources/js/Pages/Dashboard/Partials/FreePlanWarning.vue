@@ -8,8 +8,8 @@ const appName = import.meta.env.VITE_APP_NAME;
 <template>
     <div class="flex justify-between items-center px-5 py-3 bg-blue-500 text-white rounded-md mb-6">
         <div>
-            With the free plan of {{ appName }} you can only track a limited amount of users.
-            <Link class="font-bold" :href="route('spark.portal')">Upgrade</Link> your plan to enable limitless tracking!
+            With the free plan of {{ appName }} you can only track a <a href="/#pricing" target="_blank" class="font-bold underline">limited</a> amount of users.
+            <Link class="font-bold underline" :href="route('spark.portal')">Upgrade</Link> your plan to enable limitless tracking!
         </div>
         <div>
             <SecondaryButton @click="$inertia.visit(route('spark.portal'))">
