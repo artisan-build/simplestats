@@ -9,6 +9,7 @@ use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
 use App\Mail\DataImportCompleted;
 use App\Models\DataImport;
+use App\Services\StatsAggregationsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -72,6 +73,7 @@ class ProcessDataImportJob implements ShouldQueue
 
             throw $e;
         } finally {
+            $this->invalidateStatsAggregations($importer);
             Storage::disk('local')->delete($this->filepath);
         }
     }
@@ -81,5 +83,22 @@ class ProcessDataImportJob implements ShouldQueue
         $importer->updateProgress();
 
         $this->model->trackedJob->finished_at = now();
+    }
+
+    private function invalidateStatsAggregations(BaseStatsImport $importer): void
+    {
+        $modelClass = $importer->getModelClass();
+
+        $modelClass::unguard();
+        // we fake a stats model, cause we need it as the parameter here...
+        $stat = new $modelClass([
+            'team_id' => $this->model->team_id,
+            'project_id' => $this->model->project_id,
+            'instance_id' => $this->model->instance_id,
+            'time' => $importer->getLowestImportedDate()
+        ]);
+        $modelClass::reguard();
+
+        app(StatsAggregationsService::class)->invalidateByStatsUpdate($stat);
     }
 }

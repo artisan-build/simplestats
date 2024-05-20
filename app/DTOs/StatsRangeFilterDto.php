@@ -46,4 +46,24 @@ readonly class StatsRangeFilterDto
             extendedTracking: $request->extendedTracking ?? false,
         );
     }
+
+    public function makeHash(): string
+    {
+        return md5(json_encode([
+            $this->getTeamId(),
+            $this->projectId,
+            $this->instanceId,
+            $this->rangeType,
+            $this->trackSource,
+            $this->trackMedium,
+            $this->trackCampaign,
+            $this->trackTerm,
+            $this->trackContent,
+        ]));
+    }
+
+    public function getTeamId()
+    {
+        return auth()->user()->currentTeam->id;
+    }
 }

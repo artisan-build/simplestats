@@ -7,6 +7,7 @@ use App\Concerns\HasStatsUserAssurance;
 use App\Exceptions\ImportCanceledException;
 use App\Models\DataImport;
 use App\Validators\BaseStatsValidator;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -23,6 +24,9 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     public int $idFrom = 0;
     public int $idTo = 0;
 
+    // we need to take track of the lowest imported data (for aggregation invalidation)
+    private CarbonImmutable $lowestImportedDate;
+
     private int $counterUpdateStep = 0;
 
     public function __construct(
@@ -37,6 +41,13 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         config(['excel.transactions.handler' => 'null']);
 
         $this->counterUpdateStep = max(1, floor($this->dataImport->rows_max / 100));
+
+        $this->lowestImportedDate = now()->toImmutable();
+    }
+
+    public function getLowestImportedDate()
+    {
+        return $this->lowestImportedDate;
     }
 
     /**
@@ -72,6 +83,11 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
 
         if ($row['id'] < $this->idFrom) $this->idFrom = $row['id'];
         if ($row['id'] > $this->idTo) $this->idTo = $row['id'];
+
+        $time = CarbonImmutable::parse($row['time']);
+        if ($this->lowestImportedDate->gt($time)) {
+            $this->lowestImportedDate = $time;
+        }
 
         // limit the interval of the rows_imported value, so that we do not need to make thousands of queries here.
         if ($this->counter % $this->counterUpdateStep == 0 || $this->counter == $this->dataImport->rows_max) {

@@ -32,6 +32,8 @@ class Kernel extends ConsoleKernel
 
             $schedule->command('app:check-subscription-plan-alarm')->weekly()->at('3:30');
         }
+
+        $schedule->command('app:clear-old-stats-aggregations')->weekly()->at('4:00');
     }
 
     /**
