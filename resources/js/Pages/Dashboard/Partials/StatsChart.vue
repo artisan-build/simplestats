@@ -141,7 +141,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="dark:bg-gray-800 border shadow-md rounded-md">
+    <div class="bg-white dark:bg-gray-800 border shadow-md rounded-md">
         <div class="pl-2 relative">
             <div v-tooltip.right="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chart.info}</div>`, html: true }" class="absolute top-1.5 right-1.5 text-gray-400 z-10">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

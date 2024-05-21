@@ -36,7 +36,7 @@
             <script defer data-domain="simplestats.io" src="https://plausible.io/js/script.js"></script>
         @endif
     </head>
-    <body class="font-sans min-h-screen bg-white dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
+    <body class="font-sans min-h-screen bg-gray-50 dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
         @inertia
 
 
