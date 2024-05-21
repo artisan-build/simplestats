@@ -209,5 +209,23 @@ return [
                 'maxProcesses' => 2,
             ],
         ],
+
+        'testing' => [
+            'supervisor-1' => [
+                'maxProcesses' => 2,
+            ],
+        ],
+
+        'demo' => [
+            'supervisor-1' => [
+                'maxProcesses' => 2,
+            ],
+        ],
+
+        'dev' => [
+            'supervisor-1' => [
+                'maxProcesses' => 2,
+            ],
+        ],
     ],
 ];
