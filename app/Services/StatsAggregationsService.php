@@ -7,7 +7,9 @@ use App\Enums\StatsRangeType;
 use App\Models\BaseStat;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
+use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +59,7 @@ class StatsAggregationsService
             $aggregatedData = $this->getRawData($filterConditions);
             $this->storeAggregatedData($aggregatedData, $filters);
         } else {
-            $missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filterConditions);
+            $missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filters);
 
             if ($missingAggregatedData->isNotEmpty()) {
                 $aggregatedData = $aggregatedData->merge($missingAggregatedData);
@@ -110,26 +112,60 @@ class StatsAggregationsService
      * every data above may not be properly evaluated. So we "getRawData" of all data above the date.
      *
      * @param  Collection  $aggregatedData
-     * @param  array  $filterConditions
+     * @param  StatsRangeFilterDto  $filters
      * @return Collection
      */
-    private function getMissingAggregatedData(Collection $aggregatedData, array $filterConditions): Collection
+    private function getMissingAggregatedData(Collection $aggregatedData, StatsRangeFilterDto $filters): Collection
     {
-        $period = CarbonPeriod::create(
+        $filterConditions = $this->getFilterConditions($filters);
+
+        $period = array_reverse(CarbonPeriodImmutable::create(
             $filterConditions['startDateStart'],
             '1 '.$filterConditions['intervalType']->value,
             $filterConditions['endDateStart']
-        );
+        )->toArray());
+
+        $aggregatedDataSorted = $aggregatedData->sortKeys();
+
+        $startDate = $aggregatedDataSorted->keys()->first();
+        $endDate = $aggregatedDataSorted->keys()->last();
+
+        $missingBeforePeriod = [];
+        $missingAfterPeriod = [];
 
         foreach ($period as $date) {
-            $dateFormat = $date->format(StatsRangeType::DATE_FORMAT);
-            if (!isset($aggregatedData[$dateFormat])) {
-                $filterConditions['startDateStart'] = $dateFormat;
-                return $this->getRawData($filterConditions);
+            $date = CarbonImmutable::parse($date);
+
+            if ($date->lt($startDate)) {
+                $missingAfterPeriod[] = $date;
+            } elseif ($date->gt($endDate)) {
+                $missingBeforePeriod[] = $date;
             }
         }
 
-        return collect();
+        $missingAggregatedData = collect();
+
+        if (! empty($missingBeforePeriod)) {
+            // modify the original filter and adjust range amount and start
+            $filtersBefore = new StatsRangeFilterDto(...array_merge((array) $filters, [
+                'rangeAmount' => count($missingBeforePeriod),
+                'rangeStart' => current($missingBeforePeriod),
+            ]));
+
+            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersBefore)));
+        }
+
+        if (! empty($missingAfterPeriod)) {
+            // modify the original filter and adjust range amount and start
+            $filtersAfter = new StatsRangeFilterDto(...array_merge((array) $filters, [
+                'rangeAmount' => count($missingAfterPeriod),
+                'rangeStart' => current($missingAfterPeriod),
+            ]));
+
+            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersAfter)));
+        }
+
+        return $missingAggregatedData;
     }
 
     public function getRawData(array $filterConditions): Collection
