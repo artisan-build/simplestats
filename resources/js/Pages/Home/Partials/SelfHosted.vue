@@ -5,7 +5,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
-    <section class="mb-32 flex justify-center">
+    <section class="pb-32 flex justify-center">
         <div class="max-w-screen-xl px-4 sm:pm-0">
             <SectionHeader id="self-hosted">
                 Take full control with&nbsp;<span class="text-indigo-500">Self-Hosted</span>

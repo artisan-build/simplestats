@@ -16,7 +16,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 <template>
     <Header />
 
-    <div class="min-h-screen">
+    <div class="min-h-screen bg-white">
         <section class="text-center pt-24">
             <h1 class="mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
 <!--                V1 A simple and GDPR-compliant<br>statistics tool for <span class="text-indigo-500">Laravel</span>.-->
