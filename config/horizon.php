@@ -216,6 +216,12 @@ return [
             ],
         ],
 
+        'test' => [
+            'supervisor-1' => [
+                'maxProcesses' => 2,
+            ],
+        ],
+
         'demo' => [
             'supervisor-1' => [
                 'maxProcesses' => 2,
