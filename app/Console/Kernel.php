@@ -34,6 +34,8 @@ class Kernel extends ConsoleKernel
         }
 
         $schedule->command('app:clear-old-stats-aggregations')->weekly()->at('4:00');
+
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
     }
 
     /**

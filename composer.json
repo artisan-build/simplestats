@@ -14,6 +14,7 @@
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.0",
         "laravel/framework": "^11.0",
+        "laravel/horizon": "^5.24",
         "laravel/jetstream": "^5.0",
         "laravel/sanctum": "^4.0",
         "laravel/spark-paddle": "^5.1",
