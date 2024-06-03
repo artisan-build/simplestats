@@ -88,12 +88,18 @@ const getStyle = () => {
         </div>
         <div class="flex justify-between items-center">
             <div class="text-md sm:text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
-                {{ (formatter === 'currency')
-                    ? formatMap[formatter](latestSerieData, {
-                        minimumFractionDigits: (latestSerieData >= 10000) ? 0 : 2,
-                        maximumFractionDigits: (latestSerieData >= 10000) ? 0 : 2,
-                    }, $page.props.teamCurrency)
-                    : formatMap[formatter](latestSerieData, {}, $page.props.teamCurrency)}}
+                <span v-if="formatter === 'percent'">
+                    {{ formatMap[formatter](latestSerieData, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }, $page.props.teamCurrency) }}
+                </span>
+                <span v-else>
+                    {{ formatMap[formatter](latestSerieData, {
+                        minimumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
+                        maximumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
+                    }, $page.props.teamCurrency) }}
+                </span>
             </div>
             <div class="text-sm font-bold" :class="increaseType.tailClass">
                     <span v-if="increase !== 0">

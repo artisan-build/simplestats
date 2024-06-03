@@ -1,5 +1,6 @@
-// const locale = 'en-US'; //test
-const locale = navigator.language;
+//set en locale for all, else the formating of the StatsButton and StatsCharts will be too bad
+const locale = 'en-US';
+// const locale = navigator.language;
 
 export const formatMap = {
     'number': formatNumber,
