@@ -13,7 +13,7 @@
         <meta property="og:type" content="website">
 
         {{-- change this also in docs vitepress config.js --}}
-        <link rel="canonical" href="https://simplestats.io{{ request()->getRequestUri() }}">
+        <link rel="canonical" href="https://simplestats.io{{ request()->getPathInfo() }}">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
