@@ -65,10 +65,14 @@ const chartOptions = ref({
         labels: {
             formatter: function (value) {
                 if (props.chart.formatter === 'percent') {
-                    value = cent2Currency(value);
                     return formatMap[props.chart.formatter](value, {
                         minimumFractionDigits: 1,
                         maximumFractionDigits: 1,
+                    }, page.props.teamCurrency);
+                } else if (props.chart.formatter === 'currency') {
+                    return formatMap[props.chart.formatter](value, {
+                        minimumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
+                        maximumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
                     }, page.props.teamCurrency);
                 } else {
                     return formatMap[props.chart.formatter](value, {
@@ -82,16 +86,15 @@ const chartOptions = ref({
     tooltip: {
         y: {
             formatter: function(value) {
-                if (props.chart.formatter === 'percent') {
-                    value = cent2Currency(value);
-                    return formatMap[props.chart.formatter](value, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }, page.props.teamCurrency);
-                } else {
+                if (props.chart.formatter === 'number') {
                     return formatMap[props.chart.formatter](value, {
                         minimumFractionDigits: (value >= 1000) ? 2 : 0,
                         maximumFractionDigits: (value >= 1000) ? 2 : 0,
+                    }, page.props.teamCurrency);
+                } else {
+                    return formatMap[props.chart.formatter](value, {
+                        minimumFractionDigits: (value === 0) ? 0 : 2,
+                        maximumFractionDigits: (value === 0) ? 0 :2,
                     }, page.props.teamCurrency);
                 }
             }
