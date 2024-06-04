@@ -28,9 +28,4 @@ class StatsTrackContent extends Model
     {
         return $this->belongsTo(Project::class);
     }
-
-    public function instance(): BelongsTo
-    {
-        return $this->belongsTo(Instance::class);
-    }
 }
