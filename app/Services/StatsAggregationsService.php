@@ -87,6 +87,11 @@ class StatsAggregationsService
 
         $trackingCondition = "";
 
+        if (!empty($filters->trackCountry)) {
+            $trackCountryCondition = ($filters->trackCountry === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackCountry} ";
+            $trackingCondition .= " AND stats.stats_track_country_id $trackCountryCondition ";
+        }
+
         if (!empty($filters->trackSource)) {
             $trackSourceCondition = ($filters->trackSource === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} ";
             $trackingCondition .= " AND stats.stats_track_source_id $trackSourceCondition ";

@@ -8,6 +8,8 @@ class StatsUserValidator extends BaseStatsValidator
     {
         return array_merge(parent::rules(), [
             'id' => ['required', 'integer'],
+            'ip' => ['nullable', 'ip'],
+            'user_agent' => ['nullable', 'string'],
             'track_source' => ['nullable', 'string'],
             'track_medium' => ['nullable', 'string'],
             'track_campaign' => ['nullable', 'string'],

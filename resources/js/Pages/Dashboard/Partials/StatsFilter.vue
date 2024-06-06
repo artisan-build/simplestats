@@ -12,6 +12,7 @@ const props = defineProps({
     filters: Object,
     rangeTypes: Array,
     trackAllKey: Number,
+    trackingCountries: Array,
     trackingSources: Array,
     trackingMedia: Array,
     trackingCampaigns: Array,
@@ -31,7 +32,7 @@ const submit = () => {
     form.get(route('dashboard'));
 };
 
-const trackFields = ['trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
+const trackFields = ['trackCountry', 'trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
 
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
@@ -154,6 +155,16 @@ const chartDescription = `
                 </div>
                 <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">
                     <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-center">
+                        <div v-if="trackingCountries">
+                            <InputLabel for="trackCountry" value="Country" />
+                            <SelectInput
+                                id="trackCountry"
+                                v-model="form.trackCountry"
+                                class="mt-1 block w-36"
+                                :options="trackingCountries"
+                                @change="filterChanged"
+                            />
+                        </div>
                         <div v-if="trackingSources">
                             <InputLabel for="trackSource" value="Source" />
                             <SelectInput

@@ -79,8 +79,8 @@ class StatsDetailsService
         return ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];//.$type];
     }
 
-    public function getOrganicFilter(): array
+    public function getOrganicFilter(string $name = 'Direct / Unknown'): array
     {
-        return ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => 'Organic traffic'];
+        return ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => $name];
     }
 }

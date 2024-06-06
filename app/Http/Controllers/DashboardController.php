@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsRangeFilterDto;
-use App\Enums\StatsRangeType;
 use App\Http\Requests\DashboardRequest;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
+use App\Models\StatsTrackCountry;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
@@ -58,6 +58,7 @@ class DashboardController extends Controller
         ]);
 
         // closure (do not evaluate yet)
+        $trackingCountryCallback = fn()     => StatsTrackCountry::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getOrganicFilter('Unknown'))->prepend($statsDetailsService->getAllFilterFor('Countries'));
         $trackingSourceCallback = fn()      => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getOrganicFilter())->prepend($statsDetailsService->getAllFilterFor('Sources'));
         $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Mediums'));
         $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Campaigns'));
@@ -71,7 +72,8 @@ class DashboardController extends Controller
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
             'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
-            'trackingSources' => $trackingSourceCallback(),
+            'trackingCountries' => $trackingCountryCallback(),
+            'trackingSources'   => $trackingSourceCallback(),
             'trackingMedia'     => $trackingMediaCallback(),
             'trackingCampaigns' => $trackingCampaignsCallback(),
             'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
@@ -81,8 +83,8 @@ class DashboardController extends Controller
         ];
 
         // do not lazy load if the specific tracking isset...
-        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)   $data['trackingTerms'] = $trackingTermsCallback();
-        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)       $data['trackingContents'] = $trackingContentsCallback();
+        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)    $data['trackingTerms'] = $trackingTermsCallback();
+        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)    $data['trackingContents'] = $trackingContentsCallback();
 
         return Inertia::render('Dashboard/Index', $data);
     }

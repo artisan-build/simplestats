@@ -12,6 +12,7 @@ defineProps({
     filters: Object,
     rangeTypes: Array,
     trackAllKey: Number,
+    trackingCountries: Array,
     trackingSources: Array,
     trackingMedia: Array,
     trackingCampaigns: Array,
@@ -38,6 +39,7 @@ defineProps({
                     :filters="filters"
                     :rangeTypes="rangeTypes"
                     :trackAllKey="trackAllKey"
+                    :trackingCountries="trackingCountries"
                     :trackingSources="trackingSources"
                     :trackingMedia="trackingMedia"
                     :trackingCampaigns="trackingCampaigns"

@@ -38,6 +38,7 @@ class StatsUserFactory extends Factory
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
             'instance_id' => Instance::inRandomOrder()->first()->id,
+            'track_country' => $this->faker->randomElement([null, 'Germany', 'China', 'United States', 'Brazil', 'Nigeria', 'Australia']),
             'track_source' => $this->faker->randomElement([null, 'twitter', 'newsletter', 'facebook', 'affiliate_partner', 'instagram']),
             'time' => $date,
         ];

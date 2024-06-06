@@ -7,6 +7,7 @@ use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
+use App\Models\StatsTrackCountry;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
@@ -74,6 +75,11 @@ class DashboardRequest extends FormRequest
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
             'rangeStart' => ['sometimes', 'date'],
+            'trackCountry' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModelOrNegative($this->projectId, StatsTrackCountry::class),
+            ],
             'trackSource' => [
                 'sometimes',
                 'integer',
