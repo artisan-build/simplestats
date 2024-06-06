@@ -75,8 +75,21 @@ class SubscriptionService
             $currentAmount = $featureType::where('team_id', $team->id)->withoutGlobalScope('instance')->count();
             $currentPercent = round($currentAmount / $featureAmount * 100, 0);
 
+            // this can only happen if the subscription can't be renewed
+            if ($currentPercent >= 100) {
+                $alarms[0] = [
+                    'percent' => $currentPercent,
+                    'text' => "It seems like your subscription is canceled or could not be renewed automatically! You're now back on the free plan and reached the tracking limit. We will stop tracking and storing your data!"
+                ];
+
+                break;
+            }
+
             if ($currentPercent > self::ALARM_PERCENTAGE) {
-                $alarms[] = "You reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.";
+                $alarms[] = [
+                    'percent' => $currentPercent,
+                    'text' => "You reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.",
+                ];
             }
         }
 

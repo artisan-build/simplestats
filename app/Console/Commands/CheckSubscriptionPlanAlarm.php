@@ -28,6 +28,8 @@ class CheckSubscriptionPlanAlarm extends Command
     public function handle()
     {
         Team::with('owner')->get()->each(function($team) {
+            if (empty($team->owner)) return;
+            $team->owner->load('subscriptions');
             app(SubscriptionService::class)->checkPlanAlarm($team, true);
         });
     }
