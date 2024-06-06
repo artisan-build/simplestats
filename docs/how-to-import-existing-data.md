@@ -28,6 +28,9 @@ The following fields are allowed:
 |----------|----------------------|------------------------------------------------------------------------------------|
 | **id**   | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)               |
 | **time** | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d`, before or equal `today` |
+| **ip**             | _string_ `nullable`  | The `ip` of the user.                                                                            |
+| **user_agent**     | _string_ `nullable`  | The `user_agent` of the user.                                                                    |
+| **track_country**  | _string_ `nullable`  | The tracking `country` of the user. (If the `ip` is set, we take the country that refers to it.) |
 | **track_source** | _string_ `nullable`  | The tracking `source` of the user.                                                 |
 | **track_medium** | _string_ `nullable`  | The tracking `medium` of the user.                                                 |
 | **track_campaign** | _string_ `nullable`  | The tracking `campaign` of the user.                                               |

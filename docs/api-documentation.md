@@ -54,21 +54,25 @@ But if the `id` already exists on our side, the record gets updated with the new
 
 [//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "IMPORT USER" PAGE.)
 
-| Key      | Type                 | Description                                                                        |
-|----------|----------------------|------------------------------------------------------------------------------------|
-| **id**   | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)               |
-| **time** | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d`, before or equal `today` |
-| **track_source** | _string_ `nullable`  | The tracking `source` of the user.                                                 |
-| **track_medium** | _string_ `nullable`  | The tracking `medium` of the user.                                                 |
-| **track_campaign** | _string_ `nullable`  | The tracking `campaign` of the user.                                               |
-| **track_term** | _string_ `nullable`  | The tracking `term` of the user.                                                   |
-| **track_content** | _string_ `nullable`  | The tracking `content` of the user.                                                |
+| Key                | Type                 | Description                                                                                      |
+|--------------------|----------------------|--------------------------------------------------------------------------------------------------|
+| **id**             | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                             |
+| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d`, before or equal `today`               |
+| **ip**             | _string_ `nullable`  | The `ip` of the user.                                                                            |
+| **user_agent**     | _string_ `nullable`  | The `user_agent` of the user.                                                                    |
+| **track_country**  | _string_ `nullable`  | The tracking `country` of the user. (If the `ip` is set, we take the country that refers to it.) |
+| **track_source**   | _string_ `nullable`  | The tracking `source` of the user.                                                               |
+| **track_medium**   | _string_ `nullable`  | The tracking `medium` of the user.                                                               |
+| **track_campaign** | _string_ `nullable`  | The tracking `campaign` of the user.                                                             |
+| **track_term**     | _string_ `nullable`  | The tracking `term` of the user.                                                                 |
+| **track_content**  | _string_ `nullable`  | The tracking `content` of the user.                                                              |
 
 **Payload**
 
 ```json
 {
     "id": 1,
+    "ip": "87.123.45.67",
     "track_source": "test",
     "time": "2024-04-04"
 }
@@ -82,7 +86,9 @@ But if the `id` already exists on our side, the record gets updated with the new
         "id": "1",
         "project_id": 1,
         "instance_id": 1,
-        "stats_track_source_id": 1,
+        "ip": 1,
+        "stats_track_source_id": "87.123.45.67",
+        "stats_track_country_id": 1, // germany
         "stats_track_medium_id": null,
         "stats_track_campaign_id": null,
         "stats_track_term_id": null,

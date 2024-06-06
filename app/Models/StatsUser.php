@@ -45,7 +45,6 @@ class StatsUser extends BaseStat
         parent::boot();
 
         static::creating(function ($statsUser) {
-            dump($statsUser);
             foreach (self::$trackingTypes as $property => $class) {
                 if (!empty($statsUser->$property)) {
                     $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
@@ -71,10 +70,12 @@ class StatsUser extends BaseStat
     public function ip(): Attribute
     {
         return Attribute::make(
+            // every time the ip is set, we also set the country
             set: function(string $value) {
-                $this->track_country = Location::get($value)->countryName;
-                dump($this->track_country, $value);
-                return $value;
+                return [
+                    'ip' => $value,
+                    'track_country' => Location::get($value)->countryName,
+                ];
             },
         );
     }
