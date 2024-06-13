@@ -31,10 +31,6 @@
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
-
-        @if(app()->isProduction())
-            <script defer data-domain="simplestats.io" src="https://plausible.io/js/script.js"></script>
-        @endif
     </head>
     <body class="font-sans min-h-screen bg-gray-50 dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
         @impersonating($guard = null)
