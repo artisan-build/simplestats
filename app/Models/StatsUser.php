@@ -74,7 +74,7 @@ class StatsUser extends BaseStat
             set: function(string $value) {
                 return [
                     'ip' => $value,
-                    'track_country' => Location::get($value)->countryName,
+                    'track_country' => Location::get($value)?->countryName,
                 ];
             },
         );
