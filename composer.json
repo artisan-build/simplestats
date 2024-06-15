@@ -10,6 +10,7 @@
         "ashallendesign/laravel-exchange-rates": "^7.2",
         "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.2",
+        "hisorange/browser-detect": "^5.0",
         "inertiajs/inertia-laravel": "^1.0",
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.0",

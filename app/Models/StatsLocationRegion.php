@@ -6,7 +6,7 @@ use App\Concerns\HasTeamScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StatsTrackCountry extends Model
+class StatsLocationRegion extends Model
 {
     use HasTeamScope;
 

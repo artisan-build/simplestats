@@ -38,7 +38,12 @@ class StatsUserFactory extends Factory
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
             'instance_id' => Instance::inRandomOrder()->first()->id,
-            'track_country' => $this->faker->randomElement([null, 'Germany', 'China', 'United States', 'Brazil', 'Nigeria', 'Australia']),
+            'location_country' => $this->faker->randomElement([null, 'Germany', 'China', 'United States', 'Brazil', 'Nigeria', 'Australia']),
+            'location_region' => $this->faker->randomElement([null, 'Bavaria', 'Beijing', 'New York', 'São Paulo', 'Rivers', 'New South Wales']),
+            'location_city' => $this->faker->randomElement([null, 'Berlin', 'Shanghai', 'Albany', 'Rio de Janeiro', 'Port Harcourt', 'Sydney']),
+            'device_type' => $this->faker->randomElement([null, 'Desktop', 'Mobile', 'Tablet']),
+            'device_platform' => $this->faker->randomElement([null, 'Mac', 'Windows', 'iOS', 'Ubuntu']),
+            'device_browser' => $this->faker->randomElement([null, 'Chrome', 'Safari', 'Firefox', 'Microsoft Edge']),
             'track_source' => $this->faker->randomElement([null, 'twitter', 'newsletter', 'facebook', 'affiliate_partner', 'instagram']),
             'time' => $date,
         ];

@@ -32,7 +32,7 @@ const submit = () => {
     form.get(route('dashboard'));
 };
 
-const trackFields = ['trackCountry', 'trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
+const trackFields = ['locationCountry', 'trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
 
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
@@ -156,10 +156,10 @@ const chartDescription = `
                 <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">
                     <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-center">
                         <div v-if="trackingCountries">
-                            <InputLabel for="trackCountry" value="Country" />
+                            <InputLabel for="locationCountry" value="Country" />
                             <SelectInput
-                                id="trackCountry"
-                                v-model="form.trackCountry"
+                                id="locationCountry"
+                                v-model="form.locationCountry"
                                 class="mt-1 block w-36"
                                 :options="trackingCountries"
                                 @change="filterChanged"
