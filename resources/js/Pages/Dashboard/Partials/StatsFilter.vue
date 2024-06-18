@@ -100,7 +100,7 @@ const teamChanged = () => {
                         <div class="flex flex-wrap gap-x-2 items-center">
                             <template v-for="statsGroup in statsGroups">
                                 <template v-for="group in statsGroup">
-                                    <div v-if="filters[group.type]" class="bg-white border rounded-md p-2 mt-1">
+                                    <div v-if="filters[group.type]" class="bg-indigo-100 border rounded-md p-2 mt-1">
                                         {{ group.title }} is <strong>{{ statsGroupNames[group.type] }}</strong>
                                         <button class="ml-1" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block hover:text-indigo-600">
