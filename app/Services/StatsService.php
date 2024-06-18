@@ -46,14 +46,35 @@ class StatsService
         return collect(self::$statsTypes);
     }
 
-    public static function getStatsTypesCamel(): Collection
+    public static function getStatsTypesCamel(array $skip = []): Collection
     {
-        return collect(self::$statsTypes)->map(function ($types) {
-            return collect($types)->map(function ($item) {
-                unset($item['model']);
+        return collect(self::$statsTypes)->map(function ($types) use ($skip) {
+            return collect($types)->map(function ($item) use ($skip) {
+                if (!empty($skip)) foreach ($skip as $key) {unset($item[$key]);}
+
                 $item['type'] = str($item['type'])->camel()->toString();
                 return $item;
             });
+        });
+    }
+
+    public static function getStatsTypesCamelFlat(): Collection
+    {
+        return collect(self::getStatsTypesCamel())->flatMap(function ($item) {
+            return $item->pluck('type');
+        });
+    }
+
+    public static function getFilterStatsTypeNames(StatsFilterDto $filters): Collection
+    {
+        return collect(self::getStatsTypesCamel())->flatMap(function ($item) {
+            return collect($item)->pluck('model', 'type');
+        })->mapWithKeys(function ($model, $type) use ($filters) {
+            if (!empty($filters->$type)) {
+                return [$type => $model::find($filters->$type)->name];
+            }
+
+            return [];
         });
     }
 

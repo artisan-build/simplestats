@@ -131,9 +131,7 @@ class StatsFilterRequest extends FormRequest
             'groupType' => [
                 'sometimes',
                 'string',
-                Rule::in(collect(StatsService::getStatsTypesCamel())->flatMap(function ($item) {
-                    return $item->pluck('type');
-                })->toArray())
+                Rule::in(StatsService::getStatsTypesCamelFlat()->toArray())
             ],
         ];
     }

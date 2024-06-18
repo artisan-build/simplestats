@@ -9,6 +9,8 @@ import {periodSingular} from "@/Helpers/StringHelpers.js";
 
 const props = defineProps({
     teamStats: Object,
+    statsGroups: Object,
+    statsGroupNames: Object,
     filters: Object,
     rangeTypes: Array,
 });
@@ -93,15 +95,23 @@ const teamChanged = () => {
                                     @change="filterChanged"
                                 />
                             </div>
-                            <div v-if="teamStats.totalProjectsCount >= 1 && teamStats.totalInstancesCount === 0">
-                                <InputLabel class="hidden" for="instanceId" value="Instance" />
-                                <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.show', Object.values(teamStats.projects)[1].id))">
-                                    Create first Instance
-                                </PrimaryButton>
-                            </div>
                         </div>
-    <!--                </div>-->
-    <!--                <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">-->
+
+                        <div class="flex flex-wrap gap-x-2 items-center">
+                            <template v-for="statsGroup in statsGroups">
+                                <template v-for="group in statsGroup">
+                                    <div v-if="filters[group.type]" class="bg-white border rounded-md p-2 mt-1">
+                                        {{ group.title }} is <strong>{{ statsGroupNames[group.type] }}</strong>
+                                        <button class="ml-1" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block hover:text-indigo-600">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+
                         <div class="flex flex-wrap gap-x-2 items-center">
                             <div>
                                 <InputLabel class="hidden" for="rangeStart" value="Start from" />
@@ -140,18 +150,16 @@ const teamChanged = () => {
                                     </svg>
                                 </div>
                             </div>
+                            <div class="">
+                                <InputLabel class="hidden" for="refresh" value="&nbsp;" />
+                                <SecondaryButton type="submit" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    <span class="ml-2 hidden">Refresh</span>
+                                </SecondaryButton>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">
-                    <div class="">
-                        <InputLabel class="hidden" for="refresh" value="&nbsp;" />
-                        <SecondaryButton type="submit" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                            </svg>
-                            <span class="ml-2 hidden">Refresh</span>
-                        </SecondaryButton>
                     </div>
                 </div>
             </div>

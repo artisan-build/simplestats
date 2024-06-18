@@ -8,7 +8,7 @@ const page = usePage();
 </script>
 
 <template>
-    <div class="flex flex-col gap-y-1">
+    <div class="flex flex-col gap-y-1"  style="scrollbar-gutter: stable;">
         <div class="overflow-x-clip">
             <header class="pt-8 pb-7 dark:bg-gray-900 text-center">
                 <Link class="inline-block mt-2" :href="route('dashboard')">

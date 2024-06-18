@@ -12,6 +12,7 @@ defineProps({
     teamStats: Object,
     filters: Object,
     statsGroups: Object,
+    statsGroupNames: Object,
     rangeTypes: Array,
     showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
@@ -31,6 +32,8 @@ defineProps({
             <div class="sticky top-0 p-4 -m-4 mb-4 bg-gray-50 z-20">
                 <StatsFilter
                     :teamStats="teamStats"
+                    :statsGroups="statsGroups"
+                    :statsGroupNames="statsGroupNames"
                     :filters="filters"
                     :rangeTypes="rangeTypes"
                 />
