@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\DTOs\StatsRangeFilterDto;
+use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Models\BaseStat;
 use App\Models\StatsAggregation;
@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\DB;
 
 class StatsAggregationsService
 {
-    public function storeAggregatedData(Collection $data, StatsRangeFilterDto $filters): void
+    public function storeAggregatedData(Collection $data, StatsFilterDto $filters): void
     {
+        if (! config('app.stats_aggregation_enabled'))
+            return;
+
         $upsertData = $data->map(function ($item) use ($filters) {
             return [
                 'team_id' => $filters->getTeamId(),
@@ -39,7 +42,60 @@ class StatsAggregationsService
         return $aggregatedData->keyBy('date_clear');
     }
 
-    public function getAggregatedData(StatsRangeFilterDto $filters): Collection
+    public function getAggregatedGroupedData(StatsFilterDto $filters, string $groupType): Collection
+    {
+        $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
+        $groupTypeSnake = str($groupType)->snake()->toString();
+        $statsType = 'stats_'.$groupTypeSnake.'_id';
+
+        $statsTable = "stats_".str($groupTypeSnake)->plural()->toString();
+
+        $sql = "
+        WITH pd_reg AS (
+            SELECT st.name, stats.$statsType as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            FROM stats_users stats
+            LEFT JOIN $statsTable st ON stats.$statsType = st.id
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
+            GROUP BY stats.$statsType
+        ),
+        # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
+        pd_dau AS (
+            SELECT su.$statsType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter != $nauLoginCounter :projectInstanceCondition
+            GROUP BY su.$statsType
+        ),
+        # net
+        pd_net AS (
+            SELECT su.$statsType as type_id, SUM(stats.net) AS count
+            FROM stats_payments stats
+            RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+            GROUP BY su.$statsType
+        )
+        SELECT
+            pd_reg.name,
+            pd_reg.type_id,
+            COALESCE(pd_reg.count, 0) AS reg,
+            COALESCE(pd_dau.count, 0) AS mau,
+            COALESCE(ROUND(pd_net.count, 2), 0) AS net
+        FROM
+            pd_reg
+                LEFT JOIN pd_dau ON pd_reg.type_id = pd_dau.type_id
+                LEFT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
+        ORDER BY net DESC
+        ";
+
+        $filterConditions = $this->getFilterConditions($filters);
+
+        $sql = strtr($sql, $this->formatFilter($filterConditions));
+//echo nl2br($sql);die;
+        // convert the objects to arrays for consistency
+        return collect(json_decode(json_encode(DB::select($sql)), true));
+    }
+
+    public function getAggregatedData(StatsFilterDto $filters): Collection
     {
         $filterConditions = $this->getFilterConditions($filters);
 
@@ -70,7 +126,7 @@ class StatsAggregationsService
         return $aggregatedData->sortKeysDesc();
     }
 
-    private function getFilterConditions(StatsRangeFilterDto $filters): array
+    private function getFilterConditions(StatsFilterDto $filters): array
     {
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
@@ -88,24 +144,52 @@ class StatsAggregationsService
         $trackingCondition = "";
 
         if (!empty($filters->locationCountry)) {
-            $locationCountryCondition = ($filters->locationCountry === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationCountry} ";
+            $locationCountryCondition = ($filters->locationCountry === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationCountry} ";
             $trackingCondition .= " AND stats.stats_location_country_id $locationCountryCondition ";
         }
 
+        if (!empty($filters->locationRegion)) {
+            $locationRegionCondition = ($filters->locationRegion === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationRegion} ";
+            $trackingCondition .= " AND stats.stats_location_region_id $locationRegionCondition ";
+        }
+
+        if (!empty($filters->locationCity)) {
+            $locationCityCondition = ($filters->locationCity === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationCity} ";
+            $trackingCondition .= " AND stats.stats_location_city_id $locationCityCondition ";
+        }
+
+        if (!empty($filters->deviceType)) {
+            $deviceTypeCondition = ($filters->deviceType === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->deviceType} ";
+            $trackingCondition .= " AND stats.stats_device_type_id $deviceTypeCondition ";
+        }
+
+        if (!empty($filters->devicePlatform)) {
+            $devicePlatformCondition = ($filters->devicePlatform === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->devicePlatform} ";
+            $trackingCondition .= " AND stats.stats_device_platform_id $devicePlatformCondition ";
+        }
+
+        if (!empty($filters->deviceBrowser)) {
+            $deviceBrowserCondition = ($filters->deviceBrowser === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->deviceBrowser} ";
+            $trackingCondition .= " AND stats.stats_device_browser_id $deviceBrowserCondition ";
+        }
+
         if (!empty($filters->trackSource)) {
-            $trackSourceCondition = ($filters->trackSource === StatsRangeFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} ";
+            $trackSourceCondition = ($filters->trackSource === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} ";
             $trackingCondition .= " AND stats.stats_track_source_id $trackSourceCondition ";
         }
 
-        if (!empty($filters->trackMedium) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)      $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
-        if (!empty($filters->trackCampaign) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)    $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
-        if (!empty($filters->trackTerm) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
-        if (!empty($filters->trackContent) && $filters->trackSource !== StatsRangeFilterDto::TRACK_ORGANIC)     $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
+        if (!empty($filters->trackMedium) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)      $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
+        if (!empty($filters->trackCampaign) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)    $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
+        if (!empty($filters->trackTerm) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
+        if (!empty($filters->trackContent) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)     $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
 
         if (!empty($trackingCondition)) {
             $conditions['trackingConditions'] = $trackingCondition;
             $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
             $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
+        } else {
+            $conditions['trackingConditions'] = "";
+            $conditions['trackingJoinConditions'] = "";
         }
 
         return $conditions;
@@ -117,10 +201,10 @@ class StatsAggregationsService
      * every data above may not be properly evaluated. So we "getRawData" of all data above the date.
      *
      * @param  Collection  $aggregatedData
-     * @param  StatsRangeFilterDto  $filters
+     * @param  StatsFilterDto  $filters
      * @return Collection
      */
-    private function getMissingAggregatedData(Collection $aggregatedData, StatsRangeFilterDto $filters): Collection
+    private function getMissingAggregatedData(Collection $aggregatedData, StatsFilterDto $filters): Collection
     {
         $filterConditions = $this->getFilterConditions($filters);
 
@@ -152,7 +236,7 @@ class StatsAggregationsService
 
         if (! empty($missingBeforePeriod)) {
             // modify the original filter and adjust range amount and start
-            $filtersBefore = new StatsRangeFilterDto(...array_merge((array) $filters, [
+            $filtersBefore = new StatsFilterDto(...array_merge((array) $filters, [
                 'rangeAmount' => count($missingBeforePeriod),
                 'rangeStart' => current($missingBeforePeriod),
             ]));
@@ -162,7 +246,7 @@ class StatsAggregationsService
 
         if (! empty($missingAfterPeriod)) {
             // modify the original filter and adjust range amount and start
-            $filtersAfter = new StatsRangeFilterDto(...array_merge((array) $filters, [
+            $filtersAfter = new StatsFilterDto(...array_merge((array) $filters, [
                 'rangeAmount' => count($missingAfterPeriod),
                 'rangeStart' => current($missingAfterPeriod),
             ]));
@@ -349,43 +433,11 @@ class StatsAggregationsService
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
             LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
             LEFT JOIN lt_gross ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross.date
-        GROUP BY
-            DATE_FORMAT(ds.date, ':dateFormat'),
-            DATE_FORMAT(ds.date, '%Y-%m-%d'),
-            pd_reg.count,
-            pd_nau.count,
-            pd_napu.count,
-            pd_dau.count,
-            pd_dapu.count,
-            pd_daapu.count,
-            pd_gross.count,
-            pd_net.count,
-            lt_reg.count,
-            lt_pu.count,
-            lt_tau.count,
-            lt_net.count,
-            lt_gross.count
         ORDER BY
             DATE_FORMAT(ds.date, ':dateFormat') DESC;
         ";
 
-        // endDate may be a month x.
-        // endDateStart will be the start of the endDate month (e.g., 2024-01-01), and
-        // endDateEnd will be the end of the endDate month (e.g., 2024-01-31)
-        $sql = str_replace([
-            ':startDateStart',
-            ':endDateStart',
-            ':endDateEnd',
-            ':intervalType',
-            ':intervalEnd',
-            ':dateFormat',
-            ':projectInstanceCondition',
-            ':trackingConditions',
-            ':trackingJoinConditions',
-        ],
-            $filterConditions,
-            $sql
-        );
+        $sql = strtr($sql, $this->formatFilter($filterConditions));
 
         // convert the objects to arrays for consistency
         $array = json_decode(json_encode(DB::select($sql)), true);
@@ -432,5 +484,12 @@ class StatsAggregationsService
             // other projects and instances aggregations will remain
             // but unfortunately we have to re-aggregate the whole team
         }
+    }
+
+    private function formatFilter(array $filterConditions): array
+    {
+        return collect($filterConditions)->mapWithKeys(function ($value, $key) {
+            return [':'.$key => $value];
+        })->toArray();
     }
 }

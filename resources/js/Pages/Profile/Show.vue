@@ -6,6 +6,7 @@ import SectionBorder from '@/Components/SectionBorder.vue';
 import TwoFactorAuthenticationForm from '@/Pages/Profile/Partials/TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm.vue';
+import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 
 defineProps({
     confirmsTwoFactorAuthentication: Boolean,
@@ -20,6 +21,13 @@ defineProps({
         </template>
 
         <div>
+            <div class="mb-10">
+                <div class="flex items-center">
+                    <div class="mr-2 font-medium">Manage Account:</div>
+                    <ProfileDropdown />
+                </div>
+            </div>
+
             <div v-if="$page.props.jetstream.canUpdateProfileInformation">
                 <UpdateProfileInformationForm :user="$page.props.auth.user" />
 

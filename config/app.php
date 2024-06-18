@@ -5,8 +5,6 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
-    'coming_soon' => env('COMING_SOON', false),
-
     'test' => [
         'user' => [
             'name' => 'John Doe',
@@ -18,6 +16,8 @@ return [
     'plan_auto_max_users' => explode(',', env('PLAN_AUTO_MAX_USERS', '')),
 
     'admin_mail' => env('ADMIN_MAIL', 'admin@laracraft.tech'),
+
+    'stats_aggregation_enabled' => env('STATS_AGGREGATION_ENABLED', true),
 
     /*
     |--------------------------------------------------------------------------

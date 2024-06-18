@@ -4,9 +4,7 @@ import DeleteTeamForm from '@/Pages/Teams/Partials/DeleteTeamForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import TeamMemberManager from '@/Pages/Teams/Partials/TeamMemberManager.vue';
 import UpdateTeamNameForm from '@/Pages/Teams/Partials/UpdateTeamNameForm.vue';
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
+import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 
 defineProps({
     team: Object,
@@ -22,6 +20,13 @@ defineProps({
         </template>
 
         <div>
+            <div v-if="$page.props.auth.user.all_teams.length > 1" class="mb-10">
+                <div class="flex items-center">
+                    <div class="mr-2 font-medium">Team:</div>
+                    <TeamDropdown />
+                </div>
+            </div>
+
             <UpdateTeamNameForm :team="team" :permissions="permissions" />
 
             <TeamMemberManager

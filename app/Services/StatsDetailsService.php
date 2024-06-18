@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\DTOs\StatsRangeFilterDto;
+use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -15,7 +15,7 @@ class StatsDetailsService
         private StatsAggregationsService $statsAggregationsService,
     ) {}
 
-    public function getStats(StatsRangeFilterDto $filters)
+    public function getStats(StatsFilterDto $filters)
     {
         $stats = $this->getRaw($filters);
 
@@ -27,7 +27,7 @@ class StatsDetailsService
         return $stats;
     }
 
-    public function getRaw(StatsRangeFilterDto $filters): array
+    public function getRaw(StatsFilterDto $filters): array
     {
         return $this->statsAggregationsService->getAggregatedData($filters)->toArray();
     }
@@ -76,11 +76,11 @@ class StatsDetailsService
 
     public function getAllFilterFor(string $type): array
     {
-        return ['id' => StatsRangeFilterDto::TRACK_ALL, 'name' => 'All'];//.$type];
+        return ['id' => StatsFilterDto::TRACK_ALL, 'name' => 'All'];//.$type];
     }
 
     public function getOrganicFilter(string $name = 'Direct / Unknown'): array
     {
-        return ['id' => StatsRangeFilterDto::TRACK_ORGANIC, 'name' => $name];
+        return ['id' => StatsFilterDto::TRACK_ORGANIC, 'name' => $name];
     }
 }

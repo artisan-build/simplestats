@@ -13,12 +13,11 @@ const switchToTeam = (team) => {
 };
 
 const showMangeTeams = true;
-const hideMenu = import.meta.env.VITE_HIDE_MENU === 'true';
-const highligtTeam = route().current().includes('teams') || (route().current().includes('projects') && hideMenu);
+const highligtTeam = route().current().includes('teams') || (route().current().includes('projects'));
 </script>
 
 <template>
-    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
+    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="left" width="60">
         <template #trigger>
             <span class="inline-flex rounded-md">
                 <button type="button"
@@ -36,36 +35,20 @@ const highligtTeam = route().current().includes('teams') || (route().current().i
 
         <template #content>
             <div class="w-60">
-                <DropdownLink :href="route('dashboard')">
-                    Dashboard
-                </DropdownLink>
-
-                <div v-if="showMangeTeams">
+                <div v-if="showMangeTeams && $page.props.jetstream.canCreateTeams" class="border-b border-gray-200 dark:border-gray-600">
                     <!-- Team Management -->
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         Manage Team
                     </div>
 
-                    <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
-                        Team
-                    </DropdownLink>
-
-                    <DropdownLink :href="route('projects.index')">
-                        Projects
-                    </DropdownLink>
-
-                    <DropdownLink :href="route('data-import.index')">
-                        Data Import
-                    </DropdownLink>
-
-                    <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
+                    <DropdownLink :href="route('teams.create')">
                         Create New Team
                     </DropdownLink>
                 </div>
 
                 <!-- Team Switcher -->
                 <template v-if="$page.props.auth.user.all_teams.length > 0">
-                    <div v-if="showMangeTeams" class="border-t border-gray-200 dark:border-gray-600" />
+                    <div v-if="showMangeTeams" />
 
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         Switch Teams

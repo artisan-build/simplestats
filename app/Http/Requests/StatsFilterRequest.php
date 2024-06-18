@@ -5,17 +5,24 @@ namespace App\Http\Requests;
 use App\Enums\StatsRangeType;
 use App\Models\Instance;
 use App\Models\Project;
+use App\Models\StatsDeviceBrowser;
+use App\Models\StatsDevicePlatform;
+use App\Models\StatsDeviceType;
+use App\Models\StatsLocationCity;
+use App\Models\StatsLocationRegion;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsLocationCountry;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
-use App\Rules\ValidProjectModelOrNegative;
+use App\Models\StatsUser;
+use App\Rules\ValidProjectModel;
+use App\Services\StatsService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class DashboardRequest extends FormRequest
+class StatsFilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -56,59 +63,78 @@ class DashboardRequest extends FormRequest
             'projectId' => [
                 'sometimes',
                 'integer',
-                Rule::exists(Project::class, 'id')->where(function ($query) {
-                    $query->where([
-                        'team_id' => $this->user()->current_team_id,
-                    ]);
-                }),
+                new ValidProjectModel($this->projectId, Project::class),
             ],
             'instanceId' => [
                 'sometimes',
                 'integer',
-                Rule::exists(Instance::class, 'id')->where(function ($query) {
-                    $query->where([
-                        'project_id' => $this->projectId,
-                        'team_id' => $this->user()->current_team_id,
-                    ]);
-                }),
+                new ValidProjectModel($this->projectId, Instance::class),
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
             'rangeStart' => ['sometimes', 'date'],
-            'locationCountry' => [
-                'sometimes',
-                'integer',
-                new ValidProjectModelOrNegative($this->projectId, StatsLocationCountry::class),
-            ],
             'trackSource' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->projectId, StatsTrackSource::class),
+                new ValidProjectModel($this->projectId, StatsTrackSource::class),
             ],
             'trackMedium' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->projectId, StatsTrackMedium::class),
+                new ValidProjectModel($this->projectId, StatsTrackMedium::class),
             ],
             'trackCampaign' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->projectId, StatsTrackCampaign::class),
+                new ValidProjectModel($this->projectId, StatsTrackCampaign::class),
             ],
             'trackTerm' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->projectId, StatsTrackTerm::class),
+                new ValidProjectModel($this->projectId, StatsTrackTerm::class),
             ],
             'trackContent' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModelOrNegative($this->projectId, StatsTrackContent::class),
+                new ValidProjectModel($this->projectId, StatsTrackContent::class),
             ],
-            'extendedTracking' => [
+            'locationCountry' => [
                 'sometimes',
-                'integer'
-            ]
+                'integer',
+                new ValidProjectModel($this->projectId, StatsLocationCountry::class),
+            ],
+            'locationRegion' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsLocationRegion::class),
+            ],
+            'locationCity' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsLocationCity::class),
+            ],
+            'deviceType' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsDeviceType::class),
+            ],
+            'devicePlatform' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsDevicePlatform::class),
+            ],
+            'deviceBrowser' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsDeviceBrowser::class),
+            ],
+            'groupType' => [
+                'sometimes',
+                'string',
+                Rule::in(collect(StatsService::getStatsTypesCamel())->flatMap(function ($item) {
+                    return $item->pluck('type');
+                })->toArray())
+            ],
         ];
     }
 }

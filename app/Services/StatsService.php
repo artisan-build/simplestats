@@ -2,11 +2,73 @@
 
 namespace App\Services;
 
+use App\DTOs\StatsFilterDto;
+use App\Models\StatsDeviceBrowser;
+use App\Models\StatsDevicePlatform;
+use App\Models\StatsDeviceType;
+use App\Models\StatsLocationCity;
+use App\Models\StatsLocationCountry;
+use App\Models\StatsLocationRegion;
+use App\Models\StatsTrackCampaign;
+use App\Models\StatsTrackContent;
+use App\Models\StatsTrackMedium;
+use App\Models\StatsTrackSource;
+use App\Models\StatsTrackTerm;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class StatsService
 {
     const NAU_LOGIN_COUNTER = 2;
+
+    protected static array $statsTypes = [
+        'track' => [
+            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source'],
+            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium'],
+            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign'],
+            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term'],
+            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content'],
+        ],
+        'location' => [
+            ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries'],
+            ['model' => StatsLocationRegion::class, 'type' => 'location_region', 'title' => 'Regions'],
+            ['model' => StatsLocationCity::class, 'type' => 'location_city', 'title' => 'Cities'],
+        ],
+        'device' => [
+            ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser'],
+            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS'],
+            ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size'],
+        ],
+    ];
+
+    public static function getStatsTypes(): Collection
+    {
+        return collect(self::$statsTypes);
+    }
+
+    public static function getStatsTypesCamel(): Collection
+    {
+        return collect(self::$statsTypes)->map(function ($types) {
+            return collect($types)->map(function ($item) {
+                unset($item['model']);
+                $item['type'] = str($item['type'])->camel()->toString();
+                return $item;
+            });
+        });
+    }
+
+    public static function formatFilters(StatsFilterDto $filters): array
+    {
+        $formatted = collect((array) $filters)->merge([
+            'rangeStart' => $filters->rangeStart->format('Y-m-d')
+        ])->filter()->toArray(); //remove 0 values
+
+        // project and instance must have a default value...
+        if (!isset($formatted['projectId'])) $formatted['projectId'] = 0;
+        if (!isset($formatted['instanceId'])) $formatted['instanceId'] = 0;
+
+        return $formatted;
+    }
 
     public function safeDivision($numerator, $denominator): float|int
     {

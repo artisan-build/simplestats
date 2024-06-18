@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\DTOs\StatsRangeFilterDto;
-use App\Http\Requests\DashboardRequest;
-use App\Models\StatsTrackCampaign;
-use App\Models\StatsTrackContent;
-use App\Models\StatsLocationCountry;
-use App\Models\StatsTrackMedium;
-use App\Models\StatsTrackSource;
-use App\Models\StatsTrackTerm;
+use App\DTOs\StatsFilterDto;
+use App\Http\Requests\StatsFilterRequest;
+use App\Models\StatsUser;
 use App\Services\StatsDetailsService;
+use App\Services\StatsService;
 use App\Services\SubscriptionService;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function __invoke(DashboardRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
+    public function __invoke(StatsFilterRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
     {
         $user = $request->user();
 
@@ -42,7 +38,8 @@ class DashboardController extends Controller
         // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
         // this would not update $teamStats cause of laravel intern relation management...
         $projects = $teamStats->projects->keyBy('id');
-        if ($selectedProject = $projects[$request->projectId] ?? false) {
+        if ($request->projectId && $projects[$request->projectId]['id'] !== StatsFilterDto::TRACK_ALL) {
+            $selectedProject = $projects[$request->projectId];
             // we need to do prepend before keyBy('id')
             $selectedProject->instances->prepend($statsDetailsService->getAllFilterFor('Instances'));
             $selectedProject->setRelation('instances', $selectedProject->instances->keyBy('id'));
@@ -50,41 +47,21 @@ class DashboardController extends Controller
 
         $teamStats->setRelation('projects', $projects);
 
-        $filters = StatsRangeFilterDto::fromRequest($request);
+        $filters = StatsFilterDto::fromRequest($request);
         $teamStats->stats = $statsDetailsService->getStats($filters);
-
-        $filtersFormatted = array_merge((array) $filters, [
-            'rangeStart' => $filters->rangeStart->format('Y-m-d')
-        ]);
-
-        // closure (do not evaluate yet)
-        $trackingCountryCallback = fn()     => StatsLocationCountry::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getOrganicFilter('Unknown'))->prepend($statsDetailsService->getAllFilterFor('Countries'));
-        $trackingSourceCallback = fn()      => StatsTrackSource::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getOrganicFilter())->prepend($statsDetailsService->getAllFilterFor('Sources'));
-        $trackingMediaCallback = fn()       => StatsTrackMedium::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Mediums'));
-        $trackingCampaignsCallback = fn()   => StatsTrackCampaign::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Campaigns'));
-        $trackingTermsCallback = fn()       => StatsTrackTerm::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Terms'));
-        $trackingContentsCallback = fn()    => StatsTrackContent::where('project_id', $filters->projectId)->get()->prepend($statsDetailsService->getAllFilterFor('Content'));
 
         $teamOwner = $user->team->owner;
         $data = [
+            'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
-            'filters' => $filtersFormatted,
+            'filters' => StatsService::formatFilters($filters),
+            'statsGroups' => StatsService::getStatsTypesCamel(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
-            'trackAllKey' => StatsRangeFilterDto::TRACK_ALL,
-            'trackingCountries' => $trackingCountryCallback(),
-            'trackingSources'   => $trackingSourceCallback(),
-            'trackingMedia'     => $trackingMediaCallback(),
-            'trackingCampaigns' => $trackingCampaignsCallback(),
-            'trackingTerms'     => Inertia::lazy(fn() => $trackingTermsCallback()),
-            'trackingContents'  => Inertia::lazy(fn() => $trackingContentsCallback()),
+            'trackAllKey' => StatsFilterDto::TRACK_ALL,
             'showFreePlanWarning' => $teamOwner->sparkPlan()->name === SubscriptionService::PLAN_FREE,
             'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team)
         ];
-
-        // do not lazy load if the specific tracking isset...
-        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)    $data['trackingTerms'] = $trackingTermsCallback();
-        if ($filters->extendedTracking > StatsRangeFilterDto::TRACK_ALL)    $data['trackingContents'] = $trackingContentsCallback();
 
         return Inertia::render('Dashboard/Index', $data);
     }

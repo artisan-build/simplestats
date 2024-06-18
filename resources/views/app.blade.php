@@ -32,7 +32,7 @@
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
-    <body class="font-sans min-h-screen bg-gray-50 dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
+    <body class="font-sans min-h-screen bg-white dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
         @impersonating($guard = null)
             <div class="w-full bg-red-200 px-20 py-2 text-center">
                 Attention: you are impersonating user <span class="font-bold">{{ auth()->user()->name }}</span>

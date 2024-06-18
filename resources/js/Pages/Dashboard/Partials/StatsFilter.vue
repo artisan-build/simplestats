@@ -1,5 +1,5 @@
 <script setup>
-import {useForm} from "@inertiajs/vue3";
+import {router, useForm, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -11,14 +11,9 @@ const props = defineProps({
     teamStats: Object,
     filters: Object,
     rangeTypes: Array,
-    trackAllKey: Number,
-    trackingCountries: Array,
-    trackingSources: Array,
-    trackingMedia: Array,
-    trackingCampaigns: Array,
-    trackingTerms: Array,
-    trackingContents: Array,
 });
+
+const page = usePage();
 
 const form = useForm(props.filters);
 
@@ -32,35 +27,13 @@ const submit = () => {
     form.get(route('dashboard'));
 };
 
-const trackFields = ['locationCountry', 'trackSource', 'trackMedium', 'trackCampaign', 'trackTerm', 'trackContent'];
-
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
     if (event.target.id === 'projectId') {
-        form.instanceId = props.trackAllKey;
-        trackFields.forEach(function(trackField) {
-            form[trackField] = props.trackAllKey;
-        });
-    }
-
-    // the unsafe equality check is for reason...
-    for (let key in form) {
-        if (form.hasOwnProperty(key) && form[key] == props.trackAllKey) {
-            delete form[key];
-        }
+        form.instanceId = 0;
     }
 
     submit();
-};
-
-const extendTracking = (event) => {
-    form.extendedTracking = 1;
-    filterChanged(event);
-};
-
-const shortTracking = (event) => {
-    form.extendedTracking = 0;
-    filterChanged(event);
 };
 
 const periodRange = periodSingular[props.filters.rangeType];
@@ -74,6 +47,13 @@ const chartDescription = `
 </div>
 `;
 
+const teamChanged = () => {
+    router.put(route('current-team.update'), {
+        team_id: page.props.auth.user.current_team_id,
+    }, {
+        preserveState: false,
+    });
+};
 </script>
 
 <template>
@@ -83,8 +63,18 @@ const chartDescription = `
                 <div class="flex-grow">
                     <div class="flex flex-wrap gap-x-8 gap-y-5 items-center justify-between">
                         <div class="flex flex-wrap gap-x-2 items-center">
+                            <div v-if="$page.props.auth.user.all_teams.length > 1">
+                                <InputLabel class="hidden" for="teamId" value="Team" />
+                                <SelectInput
+                                    id="teamId"
+                                    v-model="$page.props.auth.user.current_team_id"
+                                    class="mt-1 block w-40"
+                                    :options="$page.props.auth.user.all_teams"
+                                    @change="teamChanged"
+                                />
+                            </div>
                             <div>
-                                <InputLabel for="projectId" value="Project" />
+                                <InputLabel class="hidden" for="projectId" value="Project" />
                                 <SelectInput
                                     id="projectId"
                                     v-model="form.projectId"
@@ -94,7 +84,7 @@ const chartDescription = `
                                 />
                             </div>
                             <div v-if="teamStats.projects[filters.projectId].instances && teamStats.totalInstancesCount > 0">
-                                <InputLabel for="instanceId" value="Instance" />
+                                <InputLabel class="hidden" for="instanceId" value="Instance" />
                                 <SelectInput
                                     id="instanceId"
                                     v-model="form.instanceId"
@@ -104,7 +94,7 @@ const chartDescription = `
                                 />
                             </div>
                             <div v-if="teamStats.totalProjectsCount >= 1 && teamStats.totalInstancesCount === 0">
-                                <InputLabel for="instanceId" value="Instance" />
+                                <InputLabel class="hidden" for="instanceId" value="Instance" />
                                 <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('projects.show', Object.values(teamStats.projects)[1].id))">
                                     Create first Instance
                                 </PrimaryButton>
@@ -114,7 +104,7 @@ const chartDescription = `
     <!--                <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">-->
                         <div class="flex flex-wrap gap-x-2 items-center">
                             <div>
-                                <InputLabel for="rangeStart" value="Start from" />
+                                <InputLabel class="hidden" for="rangeStart" value="Start from" />
                                 <TextInput
                                     type="date"
                                     id="rangeStart"
@@ -124,7 +114,7 @@ const chartDescription = `
                                 />
                             </div>
                             <div>
-                                <InputLabel for="rangeAmount" value="Last" />
+                                <InputLabel class="hidden" for="rangeAmount" value="Last" />
                                 <SelectInput
                                     id="rangeAmount"
                                     v-model="form.rangeAmount"
@@ -134,7 +124,7 @@ const chartDescription = `
                                 />
                             </div>
                             <div>
-                                <InputLabel for="rangeType" value="&nbsp;" />
+                                <InputLabel class="hidden" for="rangeType" value="&nbsp;" />
                                 <SelectInput
                                     id="rangeType"
                                     v-model="form.rangeType"
@@ -144,7 +134,7 @@ const chartDescription = `
                                 />
                             </div>
                             <div class="hidden sm:block">
-                                <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400 mt-5">
+                                <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
@@ -154,88 +144,8 @@ const chartDescription = `
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-x-8 gap-y-5 items-center">
-                    <div v-if="filters.projectId" class="flex flex-wrap gap-x-2 items-center">
-                        <div v-if="trackingCountries">
-                            <InputLabel for="locationCountry" value="Country" />
-                            <SelectInput
-                                id="locationCountry"
-                                v-model="form.locationCountry"
-                                class="mt-1 block w-36"
-                                :options="trackingCountries"
-                                @change="filterChanged"
-                            />
-                        </div>
-                        <div v-if="trackingSources">
-                            <InputLabel for="trackSource" value="Source" />
-                            <SelectInput
-                                id="trackSource"
-                                v-model="form.trackSource"
-                                class="mt-1 block w-36"
-                                :options="trackingSources"
-                                @change="filterChanged"
-                            />
-                        </div>
-                        <div v-if="trackingMedia">
-                            <InputLabel for="trackMedium" value="Medium" />
-                            <SelectInput
-                                id="trackMedium"
-                                v-model="form.trackMedium"
-                                class="mt-1 block w-36"
-                                :options="trackingMedia"
-                                @change="filterChanged"
-                            />
-                        </div>
-                        <div v-if="trackingCampaigns">
-                            <InputLabel for="trackCampaign" value="Campaign" />
-                            <SelectInput
-                                id="trackCampaign"
-                                v-model="form.trackCampaign"
-                                class="mt-1 block w-36"
-                                :options="trackingCampaigns"
-                                @change="filterChanged"
-                            />
-                        </div>
-                        <div v-if="! filters.extendedTracking">
-                            <InputLabel for="extendTracking" value="&nbsp;" />
-                            <SecondaryButton type="button" @click="extendTracking" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-                                    <path d="M8.75 3.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z" />
-                                </svg>
-                                <span class="ml-2 hidden">Extend</span>
-                            </SecondaryButton>
-                        </div>
-                        <div v-if="filters.extendedTracking">
-                            <InputLabel for="trackTerm" value="Term" />
-                            <SelectInput
-                                id="trackTerm"
-                                v-model="form.trackTerm"
-                                class="mt-1 block w-36"
-                                :options="trackingTerms"
-                                @change="filterChanged"
-                            />
-                        </div>
-                        <div v-if="filters.extendedTracking">
-                            <InputLabel for="trackContent" value="Content" />
-                            <SelectInput
-                                id="trackContent"
-                                v-model="form.trackContent"
-                                class="mt-1 block w-36"
-                                :options="trackingContents"
-                                @change="filterChanged"
-                            />
-                        </div>
-                        <div v-if="filters.extendedTracking">
-                            <InputLabel for="shortTracking" value="&nbsp;" />
-                            <SecondaryButton type="button" @click="shortTracking" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4">
-                                    <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" />
-                                </svg>
-                                <span class="ml-2 hidden">Short</span>
-                            </SecondaryButton>
-                        </div>
-                    </div>
                     <div class="">
-                        <InputLabel for="refresh" value="&nbsp;" />
+                        <InputLabel class="hidden" for="refresh" value="&nbsp;" />
                         <SecondaryButton type="submit" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />

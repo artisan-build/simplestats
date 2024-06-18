@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
+import StatsGroupCharts from "@/Pages/Dashboard/Partials/StatsGroupCharts.vue";
 import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
@@ -10,14 +11,8 @@ import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAl
 defineProps({
     teamStats: Object,
     filters: Object,
+    statsGroups: Object,
     rangeTypes: Array,
-    trackAllKey: Number,
-    trackingCountries: Array,
-    trackingSources: Array,
-    trackingMedia: Array,
-    trackingCampaigns: Array,
-    trackingTerms: Array,
-    trackingContents: Array,
     showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
 });
@@ -38,13 +33,6 @@ defineProps({
                     :teamStats="teamStats"
                     :filters="filters"
                     :rangeTypes="rangeTypes"
-                    :trackAllKey="trackAllKey"
-                    :trackingCountries="trackingCountries"
-                    :trackingSources="trackingSources"
-                    :trackingMedia="trackingMedia"
-                    :trackingCampaigns="trackingCampaigns"
-                    :trackingTerms="trackingTerms"
-                    :trackingContents="trackingContents"
                 />
             </div>
             <div class="mb-8">
@@ -52,7 +40,12 @@ defineProps({
                     <StatsCharts :rangeType="filters.rangeType" :teamStats="teamStats" />
                 </div>
             </div>
-            <div class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
+            <div v-if="filters.projectId" class="mb-8">
+                <div class="grid gap-8 grid-cols-1">
+                    <StatsGroupCharts :filters="filters" :statsGroups="statsGroups" />
+                </div>
+            </div>
+            <div v-if="0" class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
                 <table class="w-full whitespace-nowrap text-sm">
                     <thead>
                         <tr class="text-left font-bold text-base">

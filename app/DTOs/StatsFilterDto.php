@@ -3,11 +3,11 @@
 namespace App\DTOs;
 
 use App\Enums\StatsRangeType;
-use App\Http\Requests\DashboardRequest;
+use App\Http\Requests\StatsFilterRequest;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 
-readonly class StatsRangeFilterDto
+readonly class StatsFilterDto
 {
     const TRACK_ALL = 0;
     const TRACK_ORGANIC = -1;
@@ -18,16 +18,20 @@ readonly class StatsRangeFilterDto
         public int $rangeAmount,
         public StatsRangeType $rangeType,
         public CarbonImmutable $rangeStart,
-        public int $locationCountry = 0,
         public int $trackSource = 0,
         public int $trackMedium = 0,
         public int $trackCampaign = 0,
         public int $trackTerm = 0,
         public int $trackContent = 0,
-        public bool $extendedTracking = false,
+        public int $locationCountry = 0,
+        public int $locationRegion = 0,
+        public int $locationCity = 0,
+        public int $deviceType = 0,
+        public int $devicePlatform = 0,
+        public int $deviceBrowser = 0,
     ) {}
 
-    public static function fromRequest(DashboardRequest $request): StatsRangeFilterDto
+    public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
     {
         $rangeType = StatsRangeType::from(auth()->user()->selected_range_type->value ?? StatsRangeType::DAY->value);
         $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
@@ -40,12 +44,16 @@ readonly class StatsRangeFilterDto
             rangeType: $rangeType,
             rangeStart: $rangeStart,
             trackSource: $request->trackSource ?? 0,
-            locationCountry: $request->locationCountry ?? 0,
             trackMedium: $request->trackMedium ?? 0,
             trackCampaign: $request->trackCampaign ?? 0,
             trackTerm: $request->trackTerm ?? 0,
             trackContent: $request->trackContent ?? 0,
-            extendedTracking: $request->extendedTracking ?? false,
+            locationCountry: $request->locationCountry ?? 0,
+            locationRegion: $request->locationRegion ?? 0,
+            locationCity: $request->locationCity ?? 0,
+            deviceType: $request->deviceType ?? 0,
+            devicePlatform: $request->devicePlatform ?? 0,
+            deviceBrowser: $request->deviceBrowser ?? 0,
         );
     }
 
@@ -56,12 +64,17 @@ readonly class StatsRangeFilterDto
             $this->projectId,
             $this->instanceId,
             $this->rangeType,
-            $this->locationCountry,
             $this->trackSource,
             $this->trackMedium,
             $this->trackCampaign,
             $this->trackTerm,
             $this->trackContent,
+            $this->locationCountry,
+            $this->locationRegion,
+            $this->locationCity,
+            $this->deviceType,
+            $this->devicePlatform,
+            $this->deviceBrowser,
         ]));
     }
 

@@ -40,7 +40,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $merge = [
-            'canLogin' => Route::has('login') && !config('app.coming_soon'),
+            'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
         ];
 

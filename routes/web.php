@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\DocsController;
-use App\Http\Controllers\EarlySubscriptionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\StatsGroupedController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class);
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
-Route::post('early-subscription', EarlySubscriptionController::class)->name('early-subscription');
 
 Route::middleware([
     'auth:sanctum',
@@ -35,6 +34,7 @@ Route::middleware([
     Route::any('intro', IntroController::class)->name('intro');
     Route::get('overview', OverviewController::class)->name('stats.overview');
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('stats/grouped', StatsGroupedController::class)->name('stats.grouped');
 
     // Data Import
     Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store']);

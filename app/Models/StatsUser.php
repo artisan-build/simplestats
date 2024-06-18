@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Observers\StatsObserver;
+use App\Services\StatsService;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,33 +38,22 @@ class StatsUser extends BaseStat
         'time',
     ];
 
-    protected static array $trackingTypes = [
-        'location_country' => StatsLocationCountry::class,
-        'location_region' => StatsLocationRegion::class,
-        'location_city' => StatsLocationCity::class,
-        'device_type' => StatsDeviceType::class,
-        'device_platform' => StatsDevicePlatform::class,
-        'device_browser' => StatsDeviceBrowser::class,
-        'track_source' => StatsTrackSource::class,
-        'track_medium' => StatsTrackMedium::class,
-        'track_campaign' => StatsTrackCampaign::class,
-        'track_term' => StatsTrackTerm::class,
-        'track_content' => StatsTrackContent::class,
-    ];
-
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($statsUser) {
-            foreach (self::$trackingTypes as $property => $class) {
-                if (!empty($statsUser->$property)) {
-                    $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
-                    $statsProperty = "stats_{$property}_id";
-                    $class::unguard();
-                    $statsUser->$statsProperty = $class::where($trackSource)->first()?->id ?? $class::create($trackSource)->id;
+            foreach (StatsService::getStatsTypes() as $statsTypes) {
+                foreach ($statsTypes as $item) {
+                    $property = $item['type'];
+                    if (!empty($statsUser->$property)) {
+                        $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
+                        $statsProperty = "stats_{$property}_id";
+                        $item['class']::unguard();
+                        $statsUser->$statsProperty = $item['class']::where($trackSource)->first()?->id ?? $item['class']::create($trackSource)->id;
+                    }
+                    unset($statsUser->$property);
                 }
-                unset($statsUser->$property);
             }
         });
     }

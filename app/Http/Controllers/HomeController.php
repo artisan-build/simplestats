@@ -15,7 +15,6 @@ class HomeController extends Controller
     public function __invoke(Request $request, SubscriptionService $subscriptionService)
     {
         return Inertia::render('Home/LandingPage', [
-            'comingSoon' => config('app.coming_soon'),
             'plans' => $subscriptionService->getFrontendPlans(),
         ]);
     }
