@@ -62,7 +62,7 @@ class StatsAggregationsService
         pd_dau AS (
             SELECT su.$statsType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id
+            :trackingJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter != $nauLoginCounter :projectInstanceCondition
             GROUP BY su.$statsType
         ),
@@ -70,7 +70,7 @@ class StatsAggregationsService
         pd_net AS (
             SELECT su.$statsType as type_id, SUM(stats.net) AS count
             FROM stats_payments stats
-            RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id
+            :trackingJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY su.$statsType
         )
@@ -89,8 +89,12 @@ class StatsAggregationsService
 
         $filterConditions = $this->getFilterConditions($filters);
 
+        if (empty($filterConditions['trackingJoinConditions'])) {
+            $filterConditions['trackingJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
+        }
+
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-//echo nl2br($sql);die;
+
         // convert the objects to arrays for consistency
         return collect(json_decode(json_encode(DB::select($sql)), true));
     }
