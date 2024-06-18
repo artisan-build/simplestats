@@ -28,7 +28,7 @@ defineProps({
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
         <div>
-            <div class="mb-8">
+            <div class="sticky top-0 p-4 -m-4 mb-4 bg-gray-50 z-20">
                 <StatsFilter
                     :teamStats="teamStats"
                     :filters="filters"
