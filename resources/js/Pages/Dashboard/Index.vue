@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
-import StatsGroupCharts from "@/Pages/Dashboard/Partials/StatsGroupCharts.vue";
+import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups.vue";
 import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
@@ -13,6 +13,7 @@ defineProps({
     filters: Object,
     statsGroups: Object,
     statsGroupNames: Object,
+    statsGroupsSelected: Object,
     rangeTypes: Array,
     showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
@@ -45,7 +46,7 @@ defineProps({
             </div>
             <div v-if="filters.projectId" class="mb-8">
                 <div class="grid gap-8 grid-cols-1">
-                    <StatsGroupCharts :filters="filters" :statsGroups="statsGroups" />
+                    <StatsGroups :filters="filters" :statsGroups="statsGroups" :statsGroupsSelected="statsGroupsSelected" />
                 </div>
             </div>
             <div v-if="0" class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">

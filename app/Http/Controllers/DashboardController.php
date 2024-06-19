@@ -57,6 +57,7 @@ class DashboardController extends Controller
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
+            'statsGroupsSelected' => session()->get('selectedGroupTypes') ?? [],
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
             'trackAllKey' => StatsFilterDto::TRACK_ALL,

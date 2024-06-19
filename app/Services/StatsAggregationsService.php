@@ -42,42 +42,42 @@ class StatsAggregationsService
         return $aggregatedData->keyBy('date_clear');
     }
 
-    public function getAggregatedGroupedData(StatsFilterDto $filters, string $groupType): Collection
+    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType): Collection
     {
         $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
-        $groupTypeSnake = str($groupType)->snake()->toString();
-        $statsType = 'stats_'.$groupTypeSnake.'_id';
+        $statsTypeSnake = str($statsType)->snake()->toString();
+        $statsDBType = 'stats_'.$statsTypeSnake.'_id';
 
-        $statsTable = "stats_".str($groupTypeSnake)->plural()->toString();
+        $statsTable = "stats_".str($statsTypeSnake)->plural()->toString();
 
         $sql = "
         WITH pd_reg AS (
-            SELECT st.name, stats.$statsType as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT st.name, stats.$statsDBType as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_users stats
-            LEFT JOIN $statsTable st ON stats.$statsType = st.id
+            LEFT JOIN $statsTable st ON stats.$statsDBType = st.id
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
-            GROUP BY stats.$statsType
+            GROUP BY stats.$statsDBType
         ),
         # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
         pd_dau AS (
-            SELECT st.name, su.$statsType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            SELECT st.name, su.$statsDBType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            LEFT JOIN $statsTable st ON su.$statsType = st.id
+            LEFT JOIN $statsTable st ON su.$statsDBType = st.id
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter != $nauLoginCounter :projectInstanceCondition
-            GROUP BY su.$statsType
+            GROUP BY su.$statsDBType
         ),
         # net
         pd_net AS (
-            SELECT st.name, su.$statsType as type_id, SUM(stats.net) AS count
+            SELECT st.name, su.$statsDBType as type_id, SUM(stats.net) AS count
             FROM stats_payments stats
             :trackingJoinConditions
-            LEFT JOIN $statsTable st ON su.$statsType = st.id
+            LEFT JOIN $statsTable st ON su.$statsDBType = st.id
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
-            GROUP BY su.$statsType
+            GROUP BY su.$statsDBType
         )
         SELECT
-            COALESCE(pd_reg.name, pd_net.name, pd_dau.name) AS name,
+            COALESCE(pd_reg.name, pd_net.name, pd_dau.name, 'Other') AS name,
             COALESCE(pd_reg.type_id, pd_net.type_id, pd_dau.type_id) AS type_id,
             COALESCE(pd_reg.count, 0) AS reg,
             COALESCE(pd_dau.count, 0) AS mau,

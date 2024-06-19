@@ -49,8 +49,8 @@ class StatsUser extends BaseStat
                     if (!empty($statsUser->$property)) {
                         $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
                         $statsProperty = "stats_{$property}_id";
-                        $item['class']::unguard();
-                        $statsUser->$statsProperty = $item['class']::where($trackSource)->first()?->id ?? $item['class']::create($trackSource)->id;
+                        $item['model']::unguard();
+                        $statsUser->$statsProperty = $item['model']::where($trackSource)->first()?->id ?? $item['model']::create($trackSource)->id;
                     }
                     unset($statsUser->$property);
                 }
@@ -75,9 +75,9 @@ class StatsUser extends BaseStat
             set: function(string $value) {
                 if ($position = Location::get($value)) {
                     return [
-                        'location_country' => $position->countryName,
-                        'location_region' => $position->regionName,
-                        'location_city' => $position->cityName,
+                        'location_country' => "$position->countryName ($position->countryCode)",
+                        'location_region' => "$position->regionName ($position->countryCode)",
+                        'location_city' => "$position->cityName ($position->countryCode)",
                     ];
                 }
 
@@ -93,9 +93,16 @@ class StatsUser extends BaseStat
             set: function(string $value) {
                 if ($browser = Browser::parse($value)) {
                     return [
-                        'device_type' => $browser->deviceType(),
-                        'device_platform' => $browser->platformFamily(),
-                        'device_browser' => $browser->browserFamily(),
+                        'device_type' => $browser->deviceType() ?? 'Other',
+                        'device_platform' => $browser->platformFamily() ?? 'Other',
+                        'device_browser' => match (true) {
+                            $browser->isChrome() => 'Chrome',
+                            $browser->isFirefox() => 'Firefox',
+                            $browser->isOpera() => 'Opera',
+                            $browser->isSafari() => 'Safari',
+                            $browser->isEdge() => 'Microsoft Edge',
+                            default => null,
+                        },
                     ];
                 }
 

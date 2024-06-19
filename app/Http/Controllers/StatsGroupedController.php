@@ -11,9 +11,13 @@ class StatsGroupedController extends Controller
 {
     public function __invoke(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
     {
+        if (isset($request->groupType)) {
+            session()->put('selectedGroupTypes.'.$request->groupType, $request->statsType);
+        }
+
         return $statsAggregationsService->getAggregatedGroupedData(
             StatsFilterDto::fromRequest($request),
-            $request->groupType,
+            $request->statsType,
         );
     }
 }

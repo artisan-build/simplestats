@@ -2,10 +2,13 @@
 import {ref, onMounted} from 'vue';
 import {formatCurrency, formatNumber} from "@/Helpers/NumberHelpers.js";
 import {Link} from "@inertiajs/vue3";
+import _ from 'lodash';
+import { get } from 'country-flag-emoji';
 
 const props = defineProps({
     statsGroup: Object,
-    statsType: String,
+    statsGroupType: String,
+    statsGroupSelected: String,
     filters: Object,
 });
 
@@ -13,8 +16,11 @@ const data = ref([]);
 const loading = ref(true);
 
 const filters = Object.assign({}, props.filters);
-if (! filters.groupType) {
-    filters.groupType = props.statsGroup[0].type;
+
+if (props.statsGroupSelected) {
+    filters.statsType = props.statsGroupSelected;
+} else {
+    filters.statsType = props.statsGroup[0].type;
 }
 
 const fetchData = async () => {
@@ -36,11 +42,21 @@ const group2Name = {
     device: 'Devices',
 };
 
-const changeGroup = (stat) => {
-    filters.groupType = stat.type;
+const changeGroup = (statsType, statsGroupType) => {
+    filters.statsType = statsType;
+    filters.groupType = statsGroupType;
     loading.value = true;
     fetchData();
 };
+
+const calculatePercentage = (net) => {
+    let highestNet = data.value.reduce((max, item) => item.net > max.net ? item : max, data.value[0]).net;
+    return Math.floor((net / highestNet) * 100);
+};
+
+const statsTypeIcon =  (statsGroup, item) => {
+    return statsGroup.filter((item) => item.type === filters.statsType)[0].icon;
+}
 
 onMounted(fetchData);
 </script>
@@ -57,9 +73,9 @@ onMounted(fetchData);
         </div>
         <div v-else class="px-4 py-5">
             <div class="flex justify-between mb-2">
-                <div class="font-bold">{{ group2Name[statsType] }}</div>
+                <div class="font-bold">{{ group2Name[statsGroupType] }}</div>
                 <div class="flex gap-2">
-                    <button v-for="stat in statsGroup" class="font-medium text-gray-500 hover:text-indigo-500" :class="{'text-indigo-600 underline': filters.groupType === stat.type}" @click="changeGroup(stat)">
+                    <button v-for="stat in statsGroup" class="font-medium text-gray-500 hover:text-indigo-500" :class="{'text-indigo-600 underline': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
                         {{ stat.title }}
                     </button>
                 </div>
@@ -73,9 +89,13 @@ onMounted(fetchData);
                 </tr>
                 <tr v-for="item in data">
                     <td class="p-1">
-                        <Link preserve-scroll :href="route('dashboard', {...filters, [filters.groupType]: item.type_id ?? -1})" class="hover:underline" :class="{'text-indigo-600 underline': filters[filters.groupType] === item.type_id}">
-                            {{ item.name ?? 'Direct / Unknown' }}
-                        </Link>
+                        <div class="w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item.net)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item.net)+'%);'">
+                            <Link :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="hover:underline" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
+                                <img v-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub mr-1 inline-block" :src="'/icons/stats_groups/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'">
+                                <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mr-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
+                                {{ item.name }}
+                            </Link>
+                        </div>
                     </td>
                     <td class="p-1 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     <td class="p-1 text-right">{{ formatNumber(item.reg) }}</td>

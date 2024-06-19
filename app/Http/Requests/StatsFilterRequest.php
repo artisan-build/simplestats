@@ -128,10 +128,15 @@ class StatsFilterRequest extends FormRequest
                 'integer',
                 new ValidProjectModel($this->projectId, StatsDeviceBrowser::class),
             ],
-            'groupType' => [
+            'statsType' => [
                 'sometimes',
                 'string',
                 Rule::in(StatsService::getStatsTypesCamelFlat()->toArray())
+            ],
+            'groupType' => [
+                'sometimes',
+                'string',
+                Rule::in(array_keys(StatsService::getStatsTypes()->toArray()))
             ],
         ];
     }
