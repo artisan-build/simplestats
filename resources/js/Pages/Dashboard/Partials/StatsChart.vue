@@ -32,11 +32,11 @@ const chartOptions = ref({
     },
     title: {
         text: props.chart.name,
-        align: 'center',
+        align: 'left',
         offsetY: 12,
         style: {
             fontSize: '18px',
-            fontWeight: '500',
+            fontWeight: '600',
             fontFamily: 'Figtree, ui-sans-serif',
             color: '#374151'
         },

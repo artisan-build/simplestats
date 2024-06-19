@@ -23,7 +23,7 @@ defineProps({
         <div>
             <div class="mb-10">
                 <div class="flex items-center">
-                    <div class="mr-2 font-medium">Manage Account:</div>
+                    <div class="mr-2 font-medium">Account:</div>
                     <ProfileDropdown />
                 </div>
             </div>
