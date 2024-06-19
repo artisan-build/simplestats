@@ -30,7 +30,7 @@ const sidebarIsOpen = ref(false);
         <aside :class="{
                 'translate-x-0 shadow-xl ring-1 ring-gray-950\/5 rtl:-translate-x-0 dark:ring-white\/10 lg:sticky': sidebarIsOpen,
                 '-translate-x-full rtl:translate-x-full lg:sticky': ! sidebarIsOpen
-            }" class="px-3 fixed border-r inset-y-0 start-0 z-30 grid h-screen content-between transition-all dark:bg-gray-900 lg:z-0 lg:shadow-none lg:ring-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 -translate-x-full rtl:translate-x-full lg:sticky">
+            }" class="px-3 fixed border-r shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all dark:bg-gray-900 lg:z-0 lg:ring-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 -translate-x-full rtl:translate-x-full lg:sticky">
                 <Navigation />
         </aside>
 

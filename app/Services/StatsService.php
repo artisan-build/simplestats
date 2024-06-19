@@ -71,7 +71,7 @@ class StatsService
             return collect($item)->pluck('model', 'type');
         })->mapWithKeys(function ($model, $type) use ($filters) {
             if (!empty($filters->$type)) {
-                return [$type => $model::find($filters->$type)->name];
+                return [$type => $model::find($filters->$type)?->name ?? 'Direct / Unknown'];
             }
 
             return [];

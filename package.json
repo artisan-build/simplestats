@@ -27,6 +27,7 @@
     "apexcharts": "^3.48.0",
     "chart.js": "^4.4.2",
     "floating-vue": "^5.2.2",
+    "pluralize": "^8.0.0",
     "vue3-apexcharts": "^1.5.2",
     "vue3-form-wizard": "^0.2.3"
   }

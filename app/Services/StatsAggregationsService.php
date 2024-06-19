@@ -60,41 +60,43 @@ class StatsAggregationsService
         ),
         # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
         pd_dau AS (
-            SELECT su.$statsType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            SELECT st.name, su.$statsType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
+            LEFT JOIN $statsTable st ON su.$statsType = st.id
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter != $nauLoginCounter :projectInstanceCondition
             GROUP BY su.$statsType
         ),
         # net
         pd_net AS (
-            SELECT su.$statsType as type_id, SUM(stats.net) AS count
+            SELECT st.name, su.$statsType as type_id, SUM(stats.net) AS count
             FROM stats_payments stats
             :trackingJoinConditions
+            LEFT JOIN $statsTable st ON su.$statsType = st.id
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY su.$statsType
         )
         SELECT
-            pd_reg.name,
-            pd_reg.type_id,
+            COALESCE(pd_reg.name, pd_net.name, pd_dau.name) AS name,
+            COALESCE(pd_reg.type_id, pd_net.type_id, pd_dau.type_id) AS type_id,
             COALESCE(pd_reg.count, 0) AS reg,
             COALESCE(pd_dau.count, 0) AS mau,
             COALESCE(ROUND(pd_net.count, 2), 0) AS net
         FROM
             pd_reg
-                LEFT JOIN pd_dau ON pd_reg.type_id = pd_dau.type_id
-                LEFT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
+                RIGHT JOIN pd_dau ON pd_reg.type_id = pd_dau.type_id
+                RIGHT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
         ORDER BY net DESC
         ";
 
         $filterConditions = $this->getFilterConditions($filters);
 
         if (empty($filterConditions['trackingJoinConditions'])) {
-            $filterConditions['trackingJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
+            $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-
+//echo nl2br($sql);die;
         // convert the objects to arrays for consistency
         return collect(json_decode(json_encode(DB::select($sql)), true));
     }

@@ -73,7 +73,7 @@ onMounted(fetchData);
                 </tr>
                 <tr v-for="item in data">
                     <td class="p-1">
-                        <Link preserve-scroll :href="route('dashboard', {...filters, [filters.groupType]: item.type_id})" class="hover:underline" :class="{'text-indigo-600 underline': filters[filters.groupType] == item.type_id}">
+                        <Link preserve-scroll :href="route('dashboard', {...filters, [filters.groupType]: item.type_id ?? -1})" class="hover:underline" :class="{'text-indigo-600 underline': filters[filters.groupType] === item.type_id}">
                             {{ item.name ?? 'Direct / Unknown' }}
                         </Link>
                     </td>
