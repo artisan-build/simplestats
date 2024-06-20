@@ -77,7 +77,7 @@ class StatsAggregationsService
             GROUP BY su.$statsDBType
         )
         SELECT
-            COALESCE(pd_reg.name, pd_net.name, pd_dau.name, 'Other') AS name,
+            COALESCE(pd_reg.name, pd_net.name, pd_dau.name, 'Unknown') AS name,
             COALESCE(pd_reg.type_id, pd_net.type_id, pd_dau.type_id) AS type_id,
             COALESCE(pd_reg.count, 0) AS reg,
             COALESCE(pd_dau.count, 0) AS mau,

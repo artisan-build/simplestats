@@ -93,8 +93,8 @@ class StatsUser extends BaseStat
             set: function(string $value) {
                 if ($browser = Browser::parse($value)) {
                     return [
-                        'device_type' => $browser->deviceType() ?? 'Other',
-                        'device_platform' => $browser->platformFamily() ?? 'Other',
+                        'device_type' => $browser->deviceType(),
+                        'device_platform' => $browser->platformFamily(),
                         'device_browser' => match (true) {
                             $browser->isChrome() => 'Chrome',
                             $browser->isFirefox() => 'Firefox',
