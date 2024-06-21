@@ -60,8 +60,8 @@ const isSerieVisible = () => {
 </script>
 
 <template>
-    <button class="group p-2 sm:p-3 text-left border-r last:border-r-0 first:rounded-bl-md last:rounded-br-md" @click="$emit('selectSeries', {index: serieIndex, data: serie})">
-        <div class="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:underline group-hover:text-blue-600" :class="{'underline text-blue-600': isSerieVisible()}">
+    <button class="group p-2 sm:p-3 text-left border-r last:border-r-0 first:rounded-bl-md last:rounded-br-md border-t-2 border-t-white hover:border-t-blue-300" :class="{'border-t-blue-300': isSerieVisible()}" @click="$emit('selectSeries', {index: serieIndex, data: serie})">
+        <div class="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:underline" :class="{'underline': isSerieVisible()}">
             <div class="tracking-wider">
                 {{ serie.name }}
             </div>
