@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\DTOs\StatsFilterDto;
 use App\Http\Requests\StatsFilterRequest;
 use App\Models\StatsUser;
+use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class DashboardController extends Controller
+class StatsController extends Controller
 {
-    public function __invoke(StatsFilterRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
+    public function index(StatsFilterRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
     {
         $user = $request->user();
 
@@ -58,6 +60,7 @@ class DashboardController extends Controller
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
             'statsGroupsSelected' => session()->get('selectedGroupTypes') ?? [],
+            'seriesSelected' => session()->get('selectedSeries') ?? [],
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
             'trackAllKey' => StatsFilterDto::TRACK_ALL,
@@ -66,5 +69,28 @@ class DashboardController extends Controller
         ];
 
         return Inertia::render('Dashboard/Index', $data);
+    }
+
+    public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
+    {
+        if (isset($request->groupType)) {
+            session()->put('selectedGroupTypes.'.$request->groupType, $request->statsType);
+        }
+
+        return $statsAggregationsService->getAggregatedGroupedData(
+            StatsFilterDto::fromRequest($request),
+            $request->statsType,
+        );
+    }
+
+    public function setSeries(Request $request)
+    {
+        $type = $request->type;
+        $chartIndex = $request->chartIndex;
+        $seriesIndex = $request->seriesIndex;
+
+        session()->put("selectedSeries.$type.$chartIndex", $seriesIndex);
+
+        return response()->json();
     }
 }

@@ -14,6 +14,7 @@ defineProps({
     statsGroups: Object,
     statsGroupNames: Object,
     statsGroupsSelected: Object,
+    seriesSelected: Object,
     rangeTypes: Array,
     showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
@@ -41,7 +42,7 @@ defineProps({
             </div>
             <div class="mb-8">
                 <div class="grid gap-8 grid-cols-1">
-                    <StatsCharts :rangeType="filters.rangeType" :teamStats="teamStats" />
+                    <StatsCharts :rangeType="filters.rangeType" :teamStats="teamStats" :seriesSelected="seriesSelected" />
                 </div>
             </div>
             <div v-if="filters.projectId" class="mb-8">

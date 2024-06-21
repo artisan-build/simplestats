@@ -35,10 +35,12 @@ It's easier to understand it when you see it in action on the dashboard.
 
 ### KPIs over time period
 
+[//]: # (| **GROSS**  | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |)
+
 | Key        | Short                              | Description                                                                                                                                                 |
 |------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **NET**    | Net revenue                        | Net revenue for the selected period.                                                                                                                        |
-| **GROSS**  | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |
+| **FEE**    | Fee                                | Fee for the selected period.                                                                                                                                |
 | **ARPDAU** | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                 |
 | **REG**    | Registrations                      | Number of new registrations for the selected period.                                                                                                        |
 | **NAU**    | New Active Users                   | Number of unique users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |

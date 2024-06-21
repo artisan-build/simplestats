@@ -5,12 +5,11 @@ import {ref} from "vue";
 
 const props = defineProps({
     serie: Object,
+    serieIndex: Number,
     formatter: String,
     chartInstance: Object,
     hasCurrent: Boolean,
 });
-
-const serieVisible = ref(props.serie.initialVisible);
 
 let latestSerieData = props.serie.data[props.serie.data.length - 1];
 let previousSerieData = props.serie.data[props.serie.data.length - 2];
@@ -46,40 +45,24 @@ const increaseTypes = {
     "-1": {
         formatter: formatPercent,
         description: 'decrease',
-        tailClass: 'text-red-600',
+        tailClass: 'text-red-500',
         icon: ArrowTrendingDownIcon,
     }
 };
 
 const increaseType = increaseTypes[Math.sign(increase).toString()];
 
-const toggleChart = () => {
-    serieVisible.value = ! serieVisible.value;
-    props.chartInstance.toggleSeries(props.serie.name);
-};
-
-const getClass = () => {
-    return  props.serie.customClass;
-};
-
-const activeStyle = 'border-color: '+props.serie.color;
-
-const getStyle = () => {
-    let style = 'background-color: '+props.serie.color+'40;';
-
-    if (serieVisible.value) {
-        style += ' '+activeStyle;
-    }
-
-    return style;
-};
+const isSerieVisible = () => {
+    if (! props.chartInstance?.chart) return props.serie.initialVisible;
+    return ! props.chartInstance.chart.w.globals.collapsedSeries.some((collapsedSerie) => collapsedSerie.index === props.serieIndex)
+}
 
 </script>
 
 <template>
-    <button class="p-2 sm:p-3 text-left border-2 border-transparent hover:brightness-90" :class="getClass()" @click="toggleChart" :style="getStyle()">
-        <div class="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-400">
-            <div>
+    <button class="group p-2 sm:p-3 text-left border-r last:border-r-0 first:rounded-bl-md last:rounded-br-md" @click="$emit('selectSeries', {index: serieIndex, data: serie})">
+        <div class="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:underline group-hover:text-blue-600" :class="{'underline text-blue-600': isSerieVisible()}">
+            <div class="tracking-wider">
                 {{ serie.name }}
             </div>
             <div class="hidden sm:block" :class="increaseType.tailClass">

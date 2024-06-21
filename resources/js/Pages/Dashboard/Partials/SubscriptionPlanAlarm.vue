@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
+import WarningBox from "@/Components/WarningBox.vue";
 
 defineProps({
     subscriptionPlanAlarm: Array,

@@ -10,7 +10,8 @@ import {computed, ref} from "vue";
 import FileInput from "@/Components/FileInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
+import WarningBox from "@/Components/WarningBox.vue";
+import InfoBox from "@/Components/InfoBox.vue";
 
 const props = defineProps({
     filters: Object,
@@ -91,12 +92,12 @@ const currentImportNotFinishedYet = computed(() => {
                 </WarningBox>
             </div>
             <div v-else-if="currentImportNotFinishedYet" class="col-span-6">
-                <WarningBox>
+                <InfoBox>
                     You can only create <strong>one</strong> import at a time.
                     Please wait until this import has finished before starting another data import.
                     We'll send you an <strong>email</strong> as soon as the current import is complete!
                     Depending on the amount of data, this may take from minutes to hours.
-                </WarningBox>
+                </InfoBox>
             </div>
             <div v-else class="col-span-6 sm:col-span-4">
                 <InputLabel for="project_id" value="Project" />

@@ -1,5 +1,5 @@
 <script setup>
-import {ref, defineComponent, onMounted} from 'vue';
+import {ref, defineComponent, onMounted, nextTick} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
@@ -9,6 +9,7 @@ const ApexChart = defineComponent(VueApexCharts);
 
 const props = defineProps({
     chart: Object,
+    chartIndex: Number,
     type: String,
 });
 
@@ -35,7 +36,7 @@ const chartOptions = ref({
         align: 'left',
         offsetY: 12,
         style: {
-            fontSize: '18px',
+            fontSize: '17px',
             fontWeight: '600',
             fontFamily: 'Figtree, ui-sans-serif',
             color: '#374151'
@@ -134,12 +135,25 @@ if (hasCurrentPeriod) {
     };
 }
 
-onMounted(() => {
-    setTimeout(() => {
-        props.chart.data.series.forEach(serie => !serie.initialVisible ? chartInstance.value.hideSeries(serie.name) : null);
-        chartInstance.value.$el.classList.remove('invisible');
-    }, 0);
+onMounted(async () => {
+    await nextTick();
+    props.chart.data.series.forEach(serie => !serie.initialVisible ? chartInstance.value.hideSeries(serie.name) : null);
+    chartInstance.value.$el.classList.remove('invisible');
 });
+
+const selectSeries = (selectedSerie) => {
+    series.value.forEach(serie => {
+        chartInstance.value.hideSeries(serie.name);
+    })
+
+    chartInstance.value.showSeries(selectedSerie.data.name);
+
+    fetch(route('stats.set-series', {
+        type: props.type,
+        chartIndex: props.chartIndex,
+        seriesIndex: selectedSerie.index,
+    }));
+};
 </script>
 
 <template>
@@ -159,11 +173,14 @@ onMounted(() => {
                 :series="series" />
         </div>
         <div class="grid grid-cols-3 border-t">
-            <StatsButton v-for="serie in series"
-                         :serie="serie"
-                         :formatter="chart.formatter"
-                         :chartInstance="chartInstance"
-                         :has-current="hasCurrentPeriod"
+            <StatsButton
+                v-for="(serie, serieIndex) in series"
+                :serie="serie"
+                :serieIndex="serieIndex"
+                :formatter="chart.formatter"
+                :chartInstance="chartInstance"
+                :has-current="hasCurrentPeriod"
+                @selectSeries="selectSeries"
             />
         </div>
     </div>

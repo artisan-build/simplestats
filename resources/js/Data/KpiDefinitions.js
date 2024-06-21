@@ -11,12 +11,16 @@ export function getKpiDefinitions(rangeType) {
     return {
         per_date: {
             NET: {
-                short: 'Net Revenue',
+                short: 'Revenue',
                 description: 'Net Revenue at this '+periodName+'.',
             },
             GROSS: {
                 short: 'Gross Revenue',
                 description: 'Gross Revenue at this '+periodName+'.',
+            },
+            FEE: {
+                short: 'Fee',
+                description: 'Fee at this '+periodName+'.',
             },
             ARPDAU: {
                 short: 'ARP' + XAU(rangeType),
@@ -55,7 +59,7 @@ export function getKpiDefinitions(rangeType) {
         },
         lifetime: {
             NET: {
-                short: 'Net Revenue',
+                short: 'Revenue',
                 description: 'Net Revenue over lifetime.',
             },
             ARPU: {

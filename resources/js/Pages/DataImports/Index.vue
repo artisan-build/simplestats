@@ -6,7 +6,7 @@ import CreateDataImportForm from "@/Pages/DataImports/Partials/CreateDataImportF
 import DataImportListRow from "@/Pages/DataImports/Partials/ShowDataImportRow.vue";
 import {onMounted, onUnmounted, watch} from "vue";
 import { router } from '@inertiajs/vue3'
-import WarningBox from "@/Components/CustomIcons/WarningBox.vue";
+import WarningBox from "@/Components/WarningBox.vue";
 
 const props = defineProps({
     filters: Object,

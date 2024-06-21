@@ -1,9 +1,9 @@
 <script setup>
-import {ref, onMounted} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import {formatCurrency, formatNumber} from "@/Helpers/NumberHelpers.js";
 import {Link} from "@inertiajs/vue3";
 import _ from 'lodash';
-import { get } from 'country-flag-emoji';
+import {get} from 'country-flag-emoji';
 
 const props = defineProps({
     statsGroup: Object,
@@ -27,8 +27,7 @@ const fetchData = async () => {
     try {
         // console.log(filters)
         const response = await fetch(route('stats.grouped', filters));
-        const result = await response.json();
-        data.value = result;
+        data.value = await response.json();
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
