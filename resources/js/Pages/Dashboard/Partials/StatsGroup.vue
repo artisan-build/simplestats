@@ -4,6 +4,7 @@ import {formatCurrency, formatNumber} from "@/Helpers/NumberHelpers.js";
 import {Link} from "@inertiajs/vue3";
 import _ from 'lodash';
 import {get} from 'country-flag-emoji';
+import {XAU} from "../../../Helpers/StringHelpers.js";
 
 const props = defineProps({
     statsGroup: Object,
@@ -84,7 +85,7 @@ onMounted(fetchData);
                     <td class="p-1 py-1.5">Title</td>
                     <td class="w-1 p-1 py-1.5 text-right">Revenue</td>
                     <td class="w-1 p-1 py-1.5 text-right">Regs</td>
-                    <td class="w-1 p-1 py-1.5 text-right">MAU</td>
+                    <td class="w-1 p-1 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
                 </tr>
                 <tr v-for="item in data">
                     <td class="p-1">
@@ -98,7 +99,7 @@ onMounted(fetchData);
                     </td>
                     <td class="p-1 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     <td class="p-1 text-right">{{ formatNumber(item.reg) }}</td>
-                    <td class="p-1 text-right">{{ formatNumber(item.mau) }}</td>
+                    <td class="p-1 text-right">{{ formatNumber(item.xau) }}</td>
                 </tr>
             </table>
         </div>

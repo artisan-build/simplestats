@@ -58,13 +58,13 @@ class StatsAggregationsService
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
             GROUP BY stats.$statsDBType
         ),
-        # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
-        pd_dau AS (
+        # xau: Number of unique accounts who logged in on this period (without 1st login = registration)
+        pd_xau AS (
             SELECT st.name, su.$statsDBType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
             LEFT JOIN $statsTable st ON su.$statsDBType = st.id
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter != $nauLoginCounter :projectInstanceCondition
+            WHERE stats.time >= ':endDateStart' AND stats.time <= ':endDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
             GROUP BY su.$statsDBType
         ),
         # net
@@ -77,14 +77,14 @@ class StatsAggregationsService
             GROUP BY su.$statsDBType
         )
         SELECT
-            COALESCE(pd_reg.name, pd_net.name, pd_dau.name, 'Unknown') AS name,
-            COALESCE(pd_reg.type_id, pd_net.type_id, pd_dau.type_id) AS type_id,
+            COALESCE(pd_reg.name, pd_net.name, pd_xau.name, 'Unknown') AS name,
+            COALESCE(pd_reg.type_id, pd_net.type_id, pd_xau.type_id) AS type_id,
             COALESCE(pd_reg.count, 0) AS reg,
-            COALESCE(pd_dau.count, 0) AS mau,
+            COALESCE(pd_xau.count, 0) AS xau,
             COALESCE(ROUND(pd_net.count, 2), 0) AS net
         FROM
             pd_reg
-                RIGHT JOIN pd_dau ON pd_reg.type_id = pd_dau.type_id
+                RIGHT JOIN pd_xau ON pd_reg.type_id = pd_xau.type_id
                 RIGHT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
         ORDER BY net DESC
         ";
@@ -96,7 +96,7 @@ class StatsAggregationsService
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-//echo nl2br($sql);die;
+
         // convert the objects to arrays for consistency
         return collect(json_decode(json_encode(DB::select($sql)), true));
     }
