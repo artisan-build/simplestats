@@ -43,19 +43,28 @@ class StatsUser extends BaseStat
         parent::boot();
 
         static::creating(function ($statsUser) {
-            foreach (StatsService::getStatsTypes() as $statsTypes) {
-                foreach ($statsTypes as $item) {
-                    $property = $item['type'];
-                    if (!empty($statsUser->$property)) {
-                        $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
-                        $statsProperty = "stats_{$property}_id";
-                        $item['model']::unguard();
-                        $statsUser->$statsProperty = $item['model']::where($trackSource)->first()?->id ?? $item['model']::create($trackSource)->id;
-                    }
-                    unset($statsUser->$property);
-                }
-            }
+            static::handleStatsTypes($statsUser);
         });
+
+        static::updating(function ($statsUser) {
+            static::handleStatsTypes($statsUser);
+        });
+    }
+
+    private static function handleStatsTypes(StatsUser $statsUser): void
+    {
+        foreach (StatsService::getStatsTypes() as $statsTypes) {
+            foreach ($statsTypes as $item) {
+                $property = $item['type'];
+                if (!empty($statsUser->$property)) {
+                    $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
+                    $statsProperty = "stats_{$property}_id";
+                    $item['model']::unguard();
+                    $statsUser->$statsProperty = $item['model']::where($trackSource)->first()?->id ?? $item['model']::create($trackSource)->id;
+                }
+                unset($statsUser->$property);
+            }
+        }
     }
 
     public function statsLogins(): HasMany
@@ -91,7 +100,7 @@ class StatsUser extends BaseStat
         return Attribute::make(
             // when the user agent is set, we set the device data corresponding to it
             set: function(string $value) {
-                if ($browser = Browser::parse($value)) {
+                if ($browser = Browser::parse(urldecode($value))) {
                     return [
                         'device_type' => $browser->deviceType(),
                         'device_platform' => $browser->platformFamily(),
