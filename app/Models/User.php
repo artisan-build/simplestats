@@ -6,10 +6,12 @@ use App\Enums\StatsRangeType;
 use App\Jobs\QueuedVerifyEmailJob;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -44,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
         'email',
         'password',
         'selected_range_type',
+        'settings',
     ];
 
     /**
@@ -66,6 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
     protected $casts = [
         'email_verified_at' => 'datetime',
         'selected_range_type' => StatsRangeType::class,
+        'settings' => 'array',
     ];
 
     /**
@@ -133,5 +137,12 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
     {
         // For example
         return $this->is_admin == 1;
+    }
+
+    public function updateSettings($key, $value): void
+    {
+        $settings = $this->settings;
+        Arr::set($settings, $key, $value);
+        $this->update(['settings' => $settings]);
     }
 }

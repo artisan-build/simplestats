@@ -10,6 +10,7 @@ use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 
 class StatsController extends Controller
@@ -59,7 +60,7 @@ class StatsController extends Controller
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            'statsGroupsSelected' => session()->get('selectedGroupTypes') ?? [],
+            'statsGroupsSelected' => $user->settings['selectedGroupTypes'][$request->projectId] ?? [],
             'seriesSelected' => session()->get('selectedSeries') ?? [],
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
@@ -74,7 +75,7 @@ class StatsController extends Controller
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
     {
         if (isset($request->groupType)) {
-            session()->put('selectedGroupTypes.'.$request->groupType, $request->statsType);
+            $request->user()->updateSettings('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
         }
 
         return $statsAggregationsService->getAggregatedGroupedData(
