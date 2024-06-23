@@ -95,8 +95,8 @@ class StatsAggregationsService
 
         $xauDates = match($filters->rangeType->value) {
             'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
-                'start' => now()->subDay()->format('Y-m-d'),
-                'end' => now()->subDay()->format('Y-m-d'),
+                'start' => now()->subDay()->startOfDay()->format('Y-m-d'),
+                'end' => now()->subDay()->endOfDay()->format('Y-m-d'),
             ] : [],
             'weeks' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfWeek()) ? [
                 'start' => now()->subWeek()->startOfWeek()->format('Y-m-d'),
