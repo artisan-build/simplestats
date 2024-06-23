@@ -27,7 +27,7 @@ const rangeAmounts = Array.from({ length: 60 - 2 }, (_, i) => ({
 }));
 
 const submit = () => {
-    form.get(route('dashboard'));
+    form.get(route('dashboard'), {preserveScroll: true});
 };
 
 const filterChanged = (event) => {

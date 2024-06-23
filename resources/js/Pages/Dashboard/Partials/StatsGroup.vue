@@ -1,10 +1,10 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import {formatCurrency, formatNumber} from "@/Helpers/NumberHelpers.js";
 import {Link} from "@inertiajs/vue3";
 import _ from 'lodash';
 import {get} from 'country-flag-emoji';
-import {XAU} from "../../../Helpers/StringHelpers.js";
+import {XAU} from "@/Helpers/StringHelpers.js";
 
 const props = defineProps({
     statsGroup: Object,
@@ -90,8 +90,8 @@ onMounted(fetchData);
                 <tr v-for="item in data">
                     <td class="p-1">
                         <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item.net)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item.net)+'%);'">
-                            <Link :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="group" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
-                                <img v-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/stats_groups/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'">
+                            <Link preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="group" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
+                                <img v-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/stats_groups/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
                                 <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
                                 <span class="group-hover:underline ml-2">{{ item.name }}</span>
                             </Link>
