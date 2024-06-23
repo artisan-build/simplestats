@@ -5,6 +5,8 @@ import {Link} from "@inertiajs/vue3";
 import _ from 'lodash';
 import {get} from 'country-flag-emoji';
 import {XAU} from "@/Helpers/StringHelpers.js";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps({
     statsGroup: Object,
@@ -102,6 +104,11 @@ onMounted(fetchData);
                     <td class="p-1 text-right">{{ formatNumber(item.xau) }}</td>
                 </tr>
             </table>
+            <div v-if="data.length >= 9" class="flex justify-center mt-2">
+                <SecondaryButton @click="() => {filters.limit = (filters.limit ?? 0) + 100; fetchData()}">
+                    Load more
+                </SecondaryButton>
+            </div>
         </div>
     </div>
 </template>

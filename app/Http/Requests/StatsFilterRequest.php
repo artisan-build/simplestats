@@ -138,6 +138,10 @@ class StatsFilterRequest extends FormRequest
                 'string',
                 Rule::in(array_keys(StatsService::getStatsTypes()->toArray()))
             ],
+            'limit' => [
+                'sometimes',
+                'integer',
+            ],
         ];
     }
 }
