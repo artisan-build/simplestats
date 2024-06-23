@@ -34,6 +34,13 @@ const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
     if (event.target.id === 'projectId') {
         form.instanceId = 0;
+
+        // reset group filters...
+        for(let groupKey in props.statsGroups) {
+            props.statsGroups[groupKey].forEach(item => {
+                form[item.type] = 0;
+            });
+        }
     }
 
     submit();

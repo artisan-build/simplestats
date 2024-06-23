@@ -89,6 +89,19 @@ class StatsAggregationsService
                 pd_reg
                     RIGHT JOIN pd_xau ON pd_reg.type_id = pd_xau.type_id
                     RIGHT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
+            UNION
+
+            SELECT
+                COALESCE(pd_reg.name, pd_net.name, pd_xau.name, 'Unknown') AS name,
+                COALESCE(pd_reg.type_id, pd_net.type_id, pd_xau.type_id) AS type_id,
+                COALESCE(pd_reg.count, 0) AS reg,
+                COALESCE(pd_xau.count, 0) AS xau,
+                COALESCE(ROUND(pd_net.count, 2), 0) AS net
+            FROM
+                pd_reg
+                    LEFT JOIN pd_xau ON pd_reg.type_id = pd_xau.type_id
+                    LEFT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
+
             ORDER BY net DESC
         ";
 
