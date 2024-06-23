@@ -51,9 +51,16 @@ const changeGroup = (statsType, statsGroupType) => {
     fetchData();
 };
 
-const calculatePercentage = (net) => {
-    let highestNet = data.value.reduce((max, item) => item.net > max.net ? item : max, data.value[0]).net;
-    return Math.floor((net / highestNet) * 100);
+const calculatePercentage = (current) => {
+    let highest = data.value.reduce((max, item) => item.net > max.net ? item : max, data.value[0]).net;
+
+    // if net is 0 then we try reg
+    if (highest <= 0) {
+        highest = data.value.reduce((max, item) => item.reg > max.reg ? item : max, data.value[0]).reg;
+        return Math.floor((current.reg / highest) * 100);
+    }
+
+    return Math.floor((current.net / highest) * 100);
 };
 
 const statsTypeIcon =  (statsGroup, item) => {
@@ -91,7 +98,7 @@ onMounted(fetchData);
                 </tr>
                 <tr v-for="item in data">
                     <td class="p-1">
-                        <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item.net)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item.net)+'%);'">
+                        <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
                             <Link preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="group" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
                                 <img v-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/stats_groups/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
                                 <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
