@@ -67,7 +67,7 @@ class StatsAggregationsService
             FROM stats_logins stats
             :trackingJoinConditions
             :projectInstanceCondition
-            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter
+            WHERE stats.time >= ':endDateStart' AND stats.time <= ':endDateEnd' and stats.counter >= $nauLoginCounter
             GROUP BY su.$statsDBType
         ),
         # lifetime regs
@@ -104,31 +104,6 @@ class StatsAggregationsService
         ";
 
         $filterConditions = $this->getFilterConditions($filters);
-
-        $endDateStart = $filterConditions['endDateStart'];
-
-        $dauDates = match($filters->rangeType->value) {
-            'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
-                'start' => now()->subDay()->startOfDay()->format('Y-m-d'),
-                'end' => now()->subDay()->endOfDay()->format('Y-m-d'),
-            ] : [],
-            'weeks' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfWeek()) ? [
-                'start' => now()->subWeek()->startOfWeek()->format('Y-m-d'),
-                'end' => now()->subWeek()->endOfWeek()->format('Y-m-d'),
-            ] : [],
-            'months' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfMonth()) ? [
-                'start' => now()->subMonth()->startOfMonth()->format('Y-m-d'),
-                'end' => now()->subMonth()->endOfMonth()->format('Y-m-d'),
-            ] : [],
-        };
-
-        if (empty($dauDates)) {
-            $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];
-            $filterConditions['dauEndDateEnd'] = $filterConditions['endDateEnd'];
-        } else {
-            $filterConditions['dauEndDateStart'] = $dauDates['start'];
-            $filterConditions['dauEndDateEnd'] = $dauDates['end'];
-        }
 
         if (empty($filterConditions['trackingJoinConditions'])) {
             $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
