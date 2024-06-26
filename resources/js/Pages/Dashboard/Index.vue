@@ -7,6 +7,7 @@ import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups.vue";
 import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
+import {onMounted, onUnmounted, ref} from "vue";
 
 defineProps({
     teamStats: Object,
@@ -19,6 +20,20 @@ defineProps({
     showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
 });
+
+const isScrolled = ref(false)
+
+const handleScroll = () => {
+    isScrolled.value = window.scrollY > 0
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <template>
@@ -31,7 +46,7 @@ defineProps({
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
         <div>
-            <div class="sticky top-0 p-4 -m-4 mb-4 bg-gray-50 z-20">
+            <div class="sticky top-0 px-8 py-4 -mx-8 -my-4 mb-4 bg-gray-50 z-20" :class="{'border-b shadow-sm': isScrolled}">
                 <StatsFilter
                     :teamStats="teamStats"
                     :statsGroups="statsGroups"
