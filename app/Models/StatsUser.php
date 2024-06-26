@@ -58,10 +58,10 @@ class StatsUser extends BaseStat
             foreach ($statsTypes as $item) {
                 $property = $item['type'];
                 if (!empty($statsUser->$property)) {
-                    $trackSource = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
+                    $track = ['team_id' => $statsUser->team_id, 'project_id' => $statsUser->project_id, 'name' => $statsUser->$property];
                     $statsProperty = "stats_{$property}_id";
                     $item['model']::unguard();
-                    $statsUser->$statsProperty = $item['model']::where($trackSource)->first()?->id ?? $item['model']::create($trackSource)->id;
+                    $statsUser->$statsProperty = $item['model']::where($track)->first()?->id ?? $item['model']::create($track)->id;
                 }
                 unset($statsUser->$property);
             }

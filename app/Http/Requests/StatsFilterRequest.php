@@ -14,6 +14,7 @@ use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsLocationCountry;
 use App\Models\StatsTrackMedium;
+use App\Models\StatsTrackReferer;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
 use App\Models\StatsUser;
@@ -73,6 +74,11 @@ class StatsFilterRequest extends FormRequest
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
             'rangeStart' => ['sometimes', 'date'],
+            'trackReferer' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsTrackReferer::class),
+            ],
             'trackSource' => [
                 'sometimes',
                 'integer',
