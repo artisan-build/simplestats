@@ -52,8 +52,8 @@ class StatsAggregationsService
 
         $statsTable = "stats_".str($statsTypeSnake)->plural()->toString();
 
-        // for referer we also want to know the Direct / Unknown
-        $typeIdFallback = ($statsType === 'trackReferer') ? '0' : 'NULL';
+        // for track not but for referer we also want to know the Direct / Unknown
+        $typeIdFallback =  (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
         $sql = "
         WITH stats_groups AS (
