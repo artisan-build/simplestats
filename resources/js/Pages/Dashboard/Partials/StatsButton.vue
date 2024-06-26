@@ -13,11 +13,11 @@ const props = defineProps({
 
 let latestSerieData = props.serie.data[props.serie.data.length - 1];
 let previousSerieData = props.serie.data[props.serie.data.length - 2];
-//
-// if (props.hasCurrent && previousSerieData > 0) {
-//     let latestSerieData = props.serie.data[props.serie.data.length - 2];
-//     let previousSerieData = props.serie.data[props.serie.data.length - 3];
-// }
+
+if (props.hasCurrent) {
+    latestSerieData = props.serie.data[props.serie.data.length - 2];
+    previousSerieData = props.serie.data[props.serie.data.length - 3];
+}
 
 let increase = (((latestSerieData - previousSerieData) / previousSerieData) * 100);
 
