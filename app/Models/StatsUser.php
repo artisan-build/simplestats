@@ -30,6 +30,7 @@ class StatsUser extends BaseStat
         'device_type',
         'device_platform',
         'device_browser',
+        'track_referer',
         'track_source',
         'track_medium',
         'track_campaign',

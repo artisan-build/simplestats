@@ -11,6 +11,7 @@ class StatsUserValidator extends BaseStatsValidator
             'ip' => ['nullable', 'ip'],
             'user_agent' => ['nullable', 'string'],
             'location_country' => ['nullable', 'string'],
+            'track_referer' => ['nullable', 'string'],
             'track_source' => ['nullable', 'string'],
             'track_medium' => ['nullable', 'string'],
             'track_campaign' => ['nullable', 'string'],

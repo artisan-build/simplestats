@@ -44,72 +44,70 @@ class StatsAggregationsService
 
     public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, int $limit = 9): Collection
     {
+        // TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
+
         $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
         $statsTypeSnake = str($statsType)->snake()->toString();
         $statsDBType = 'stats_'.$statsTypeSnake.'_id';
 
         $statsTable = "stats_".str($statsTypeSnake)->plural()->toString();
 
+        // for referer we also want to know the Direct / Unknown
+        $typeIdFallback = ($statsType === 'trackReferer') ? '0' : 'NULL';
+
         $sql = "
-            WITH pd_reg AS (
-                SELECT st.name, stats.$statsDBType as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
-                FROM stats_users stats
-                LEFT JOIN $statsTable st ON stats.$statsDBType = st.id
-                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
-                GROUP BY stats.$statsDBType
-                LIMIT $limit
-            ),
-            # xau: Number of unique accounts who logged in on this period (without 1st login = registration)
-            pd_xau AS (
-                SELECT st.name, su.$statsDBType as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-                FROM stats_logins stats
-                :trackingJoinConditions
-                LEFT JOIN $statsTable st ON su.$statsDBType = st.id
-                WHERE stats.time >= ':xauEndDateStart' AND stats.time <= ':xauEndDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
-                GROUP BY su.$statsDBType
-                LIMIT $limit
-            ),
-            # net
-            pd_net AS (
-                SELECT st.name, su.$statsDBType as type_id, SUM(stats.net) AS count
-                FROM stats_payments stats
-                :trackingJoinConditions
-                LEFT JOIN $statsTable st ON su.$statsDBType = st.id
-                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
-                GROUP BY su.$statsDBType
-                LIMIT $limit
-            )
-            SELECT
-                COALESCE(pd_reg.name, pd_net.name, pd_xau.name, 'Unknown') AS name,
-                COALESCE(pd_reg.type_id, pd_net.type_id, pd_xau.type_id) AS type_id,
-                COALESCE(pd_reg.count, 0) AS reg,
-                COALESCE(pd_xau.count, 0) AS xau,
-                COALESCE(ROUND(pd_net.count, 2), 0) AS net
-            FROM
-                pd_reg
-                    RIGHT JOIN pd_xau ON pd_reg.type_id = pd_xau.type_id
-                    RIGHT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
-            UNION
-
-            SELECT
-                COALESCE(pd_reg.name, pd_net.name, pd_xau.name, 'Unknown') AS name,
-                COALESCE(pd_reg.type_id, pd_net.type_id, pd_xau.type_id) AS type_id,
-                COALESCE(pd_reg.count, 0) AS reg,
-                COALESCE(pd_xau.count, 0) AS xau,
-                COALESCE(ROUND(pd_net.count, 2), 0) AS net
-            FROM
-                pd_reg
-                    LEFT JOIN pd_xau ON pd_reg.type_id = pd_xau.type_id
-                    LEFT JOIN pd_net ON pd_reg.type_id = pd_net.type_id
-
-            ORDER BY net DESC
+        WITH stats_groups AS (
+            SELECT id as type_id, name FROM $statsTable stats WHERE 1 :projectCondition
+            UNION ALL
+            SELECT $typeIdFallback as type_id, 'Direct / Unknown' as name
+        ),
+        # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
+        pd_dau AS (
+            SELECT COALESCE(su.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            :trackingJoinConditions
+            :projectInstanceCondition
+            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter
+            GROUP BY su.$statsDBType
+        ),
+        # lifetime regs
+        lt_reg AS (
+            SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            FROM stats_users stats
+            WHERE stats.time <= ':endDateEnd'
+            :trackingConditions
+            :projectInstanceCondition
+            GROUP BY stats.$statsDBType
+        ),
+        # lifetime net revenue
+        lt_net AS (
+            SELECT COALESCE(su.$statsDBType, $typeIdFallback) as type_id, SUM(stats.net) as count
+            FROM stats_payments stats
+            :trackingJoinConditions
+            :projectInstanceCondition
+            WHERE stats.time <= ':endDateEnd'
+            GROUP BY su.$statsDBType
+        )
+        SELECT
+            sg.type_id as type_id,
+            sg.name as name,
+            COALESCE(pd_dau.count, 0) AS dau,
+            COALESCE(lt_reg.count, 0) AS reg,
+            COALESCE(ROUND(lt_net.count,2), 0) AS net
+        FROM
+            stats_groups sg
+            LEFT JOIN pd_dau ON sg.type_id = pd_dau.type_id
+            LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id
+            LEFT JOIN lt_net ON sg.type_id = lt_net.type_id
+        ORDER BY
+            lt_net.count DESC, lt_reg.count DESC, pd_dau.count DESC;
         ";
 
         $filterConditions = $this->getFilterConditions($filters);
 
         $endDateStart = $filterConditions['endDateStart'];
 
-        $xauDates = match($filters->rangeType->value) {
+        $dauDates = match($filters->rangeType->value) {
             'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
                 'start' => now()->subDay()->startOfDay()->format('Y-m-d'),
                 'end' => now()->subDay()->endOfDay()->format('Y-m-d'),
@@ -124,12 +122,12 @@ class StatsAggregationsService
             ] : [],
         };
 
-        if (empty($xauDates)) {
-            $filterConditions['xauEndDateStart'] = $filterConditions['endDateStart'];
-            $filterConditions['xauEndDateEnd'] = $filterConditions['endDateEnd'];
+        if (empty($dauDates)) {
+            $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];
+            $filterConditions['dauEndDateEnd'] = $filterConditions['endDateEnd'];
         } else {
-            $filterConditions['xauEndDateStart'] = $xauDates['start'];
-            $filterConditions['xauEndDateEnd'] = $xauDates['end'];
+            $filterConditions['dauEndDateStart'] = $dauDates['start'];
+            $filterConditions['dauEndDateEnd'] = $dauDates['end'];
         }
 
         if (empty($filterConditions['trackingJoinConditions'])) {
@@ -139,7 +137,11 @@ class StatsAggregationsService
         $sql = strtr($sql, $this->formatFilter($filterConditions));
 
         // convert the objects to arrays for consistency
-        return collect(json_decode(json_encode(DB::select($sql)), true));
+        $dataArray = json_decode(json_encode(DB::select($sql)), true);
+
+        return collect($dataArray)->reject(function ($item) {
+            return $item['dau'] == 0 && $item['reg'] == 0 && $item['net'] == 0;
+        })->take($limit);
     }
 
     public function getAggregatedData(StatsFilterDto $filters): Collection
@@ -178,14 +180,17 @@ class StatsAggregationsService
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
         // add team_id is very important
-        $projectInstanceCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
+        $projectCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
+        $projectInstanceCondition = $projectCondition;
         if (!empty($filters->projectId)) {
-            $projectInstanceCondition .= " AND stats.project_id = {$filters->projectId} ";
+            $projectCondition .= " AND stats.project_id = {$filters->projectId} ";
+            $projectInstanceCondition .= $projectCondition;
             if (!empty($filters->instanceId)) {
                 $projectInstanceCondition .= " AND stats.instance_id = {$filters->instanceId} ";
             }
         }
 
+        $conditions['projectCondition'] = $projectCondition;
         $conditions['projectInstanceCondition'] = $projectInstanceCondition;
 
         $trackingCondition = "";
@@ -218,6 +223,11 @@ class StatsAggregationsService
         if (!empty($filters->deviceBrowser)) {
             $deviceBrowserCondition = ($filters->deviceBrowser === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->deviceBrowser} ";
             $trackingCondition .= " AND stats.stats_device_browser_id $deviceBrowserCondition ";
+        }
+
+        if (!empty($filters->trackReferer)) {
+            $trackRefererCondition = ($filters->trackReferer === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackReferer} ";
+            $trackingCondition .= " AND stats.stats_track_referer_id $trackRefererCondition ";
         }
 
         if (!empty($filters->trackSource)) {

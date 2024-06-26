@@ -39,7 +39,7 @@ const fetchData = async () => {
 };
 
 const group2Name = {
-    track: 'UTMs',
+    track: 'Tracking',
     location: 'Countries',
     device: 'Devices',
 };
@@ -107,8 +107,8 @@ onMounted(fetchData);
                         </div>
                     </td>
                     <td class="p-1 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
-                    <td class="p-1 text-right">{{ formatNumber(item.reg) }}</td>
-                    <td class="p-1 text-right">{{ formatNumber(item.xau) }}</td>
+                    <td class="p-1 text-right">{{ formatNumber(Number(item.reg)) }}</td>
+                    <td class="p-1 text-right">{{ formatNumber(Number(item.dau)) }}</td>
                 </tr>
             </table>
             <div v-if="data.length >= 9" class="flex justify-center mt-2">

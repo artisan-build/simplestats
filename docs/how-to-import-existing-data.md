@@ -36,6 +36,7 @@ The following fields are allowed:
 | **device_type**      | _string_ `nullable`  | The tracking `device_type` of the user. (If the `user_agent` is set, we take the device type that refers to it.)            |
 | **device_platform**  | _string_ `nullable`  | The tracking `device_platform` (OS) of the user. (If the `user_agent` is set, we take the device system that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The tracking `device_browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)      |
+| **track_referer**    | _string_ `nullable`  | The tracking `referer` of the user.                                                                                         |
 | **track_source**     | _string_ `nullable`  | The tracking `source` of the user.                                                                                          |
 | **track_medium**     | _string_ `nullable`  | The tracking `medium` of the user.                                                                                          |
 | **track_campaign**   | _string_ `nullable`  | The tracking `campaign` of the user.                                                                                        |

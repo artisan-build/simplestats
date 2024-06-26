@@ -44,6 +44,7 @@ class StatsUserFactory extends Factory
             'device_type' => $this->faker->randomElement([null, 'Desktop', 'Mobile', 'Tablet']),
             'device_platform' => $this->faker->randomElement([null, 'Mac', 'Windows', 'Linux']),
             'device_browser' => $this->faker->randomElement([null, 'Chrome', 'Safari', 'Firefox', 'Opera', 'Microsoft Edge']),
+            'track_referer' => $this->faker->randomElement([null, 'google.com', 'instagram.com', 'youtube.com', 'linkedin.com', 'bing.com']),
             'track_source' => $this->faker->randomElement([null, 'twitter', 'newsletter', 'facebook', 'affiliate_partner', 'instagram']),
             'time' => $date,
         ];

@@ -12,6 +12,7 @@ use App\Models\StatsLocationRegion;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
+use App\Models\StatsTrackReferer;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
 use Illuminate\Support\Collection;
@@ -23,6 +24,7 @@ class StatsService
 
     protected static array $statsTypes = [
         'track' => [
+            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'All'],
             ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source'],
             ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium'],
             ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign'],
