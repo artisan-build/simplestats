@@ -61,8 +61,8 @@ class StatsController extends Controller
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
             // dont wann persist it right now...
-//            'statsGroupsSelected' => $user->settings['selectedGroupTypes'][$request->projectId] ?? [],
-            'statsGroupsSelected' => session()->get('selectedGroupTypes')[$request->projectId] ?? [],
+            'statsGroupsSelected' => $user->settings['selectedGroupTypes'][$request->projectId] ?? [],
+//            'statsGroupsSelected' => session()->get('selectedGroupTypes')[$request->projectId] ?? [],
             'seriesSelected' => session()->get('selectedSeries') ?? [],
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
@@ -77,9 +77,9 @@ class StatsController extends Controller
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
     {
         if (isset($request->groupType)) {
-            // dont wann persist it right now...
-//            $request->user()->updateSettings('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
-            session()->put('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
+            // persist selected group
+            $request->user()->updateSettings('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
+//            session()->put('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
         }
 
         return $statsAggregationsService->getAggregatedGroupedData(

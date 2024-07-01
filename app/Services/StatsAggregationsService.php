@@ -55,6 +55,8 @@ class StatsAggregationsService
         // for track not but for referer we also want to know the Direct / Unknown
         $typeIdFallback =  (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
+        // TODO just a simple join from the $statsTable?
+
         $sql = "
         WITH stats_groups AS (
             SELECT id as type_id, name FROM $statsTable stats WHERE 1 :projectCondition
@@ -67,7 +69,7 @@ class StatsAggregationsService
             FROM stats_logins stats
             :trackingJoinConditions
             :projectInstanceCondition
-            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter
+            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
             GROUP BY su.$statsDBType
         ),
         # lifetime regs
@@ -85,7 +87,7 @@ class StatsAggregationsService
             FROM stats_payments stats
             :trackingJoinConditions
             :projectInstanceCondition
-            WHERE stats.time <= ':endDateEnd'
+            WHERE stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY su.$statsDBType
         )
         SELECT
@@ -135,7 +137,7 @@ class StatsAggregationsService
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-
+//echo nl2br($sql);die;
         // convert the objects to arrays for consistency
         $dataArray = json_decode(json_encode(DB::select($sql)), true);
 
