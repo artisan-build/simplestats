@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Observers\StatsObserver;
+use App\Services\FaviconService;
+use App\Services\RefererService;
 use App\Services\StatsService;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -92,6 +94,32 @@ class StatsUser extends BaseStat
                 }
 
                 return [];
+            },
+        );
+    }
+
+    public function trackReferer(): Attribute
+    {
+        return Attribute::make(
+            set: function(string $value) {
+                $value = app(RefererService::class)->getTopReferer($value);
+                app(FaviconService::class)->download($value);
+                return ['track_referer' => $value];
+            },
+        );
+    }
+
+    public function trackSource(): Attribute
+    {
+        return Attribute::make(
+            set: function(string $value) {
+                // if source contains a dot, we assume it's a referrer.
+                // compatibility where referers where sent via source
+                if (str($value)->contains('.')) {
+                    return ['track_referer' => $value];
+                } else {
+                    return ['track_source' => $value];
+                }
             },
         );
     }

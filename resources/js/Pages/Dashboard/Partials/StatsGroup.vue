@@ -100,7 +100,11 @@ onMounted(fetchData);
                     <td class="p-1">
                         <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
                             <Link preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="group" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
-                                <img v-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/stats_groups/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
+                                <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
+                                    <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
+                                    <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
+                                </span>
+                                <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
                                 <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
                                 <span class="group-hover:underline ml-2">{{ item.name }}</span>
                             </Link>

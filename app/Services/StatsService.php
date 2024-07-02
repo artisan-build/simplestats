@@ -24,7 +24,7 @@ class StatsService
 
     protected static array $statsTypes = [
         'track' => [
-            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'All'],
+            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon'],
             ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source'],
             ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium'],
             ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign'],

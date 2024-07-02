@@ -6,10 +6,10 @@ use App\Models\StatsTrackReferer;
 use App\Models\StatsTrackSource;
 use App\Models\StatsUser;
 use App\Models\Team;
+use App\Services\RefererService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Storage;
 
 class ExtractReferersFromSources extends Command
 {
@@ -27,35 +27,23 @@ class ExtractReferersFromSources extends Command
      */
     protected $description = 'Command description';
 
-    protected Collection $topReferers;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->topReferers = collect(Storage::json('top_referers.json'));
-    }
-
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(RefererService $refererService): void
     {
-        Team::with('owner')->get()->each(function($team) {
+        Team::with('owner')->get()->each(function($team) use ($refererService) {
             if (empty($team->owner)) return;
 
             DB::beginTransaction();
 
             try {
-                StatsTrackSource::where('team_id', $team->id)->orderBy('id')->get()->each(function(StatsTrackSource $source) {
+                StatsTrackSource::where('team_id', $team->id)->orderBy('id')->get()->each(function(StatsTrackSource $source) use ($refererService) {
                     $sourceName = $source->name;
 
                     // if source contains a dot, we assume it's a referer...
                     if (str($sourceName)->contains('.')) {
-                        $referer = $this->topReferers->first(function ($referer) use ($sourceName) {
-                            $refererMain = str($referer)->beforeLast('.').'.';
-                            return str($sourceName)->contains($refererMain);
-                        }) ?? $sourceName;
+                        $referer = $refererService->getTopReferer($sourceName);
 
                         StatsTrackReferer::unguard(); // make team and project fillable
                         $refererStat = StatsTrackReferer::firstOrCreate([
@@ -82,5 +70,7 @@ class ExtractReferersFromSources extends Command
 
             DB::commit();
         });
+
+        Artisan::call('app:download-referer-favicons');
     }
 }
