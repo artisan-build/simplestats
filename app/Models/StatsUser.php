@@ -102,9 +102,7 @@ class StatsUser extends BaseStat
     {
         return Attribute::make(
             set: function(string $value) {
-                $value = app(RefererService::class)->getTopReferer($value);
-                app(FaviconService::class)->download($value);
-                return ['track_referer' => $value];
+                return $this->setReferer($value);
             },
         );
     }
@@ -116,12 +114,20 @@ class StatsUser extends BaseStat
                 // if source contains a dot, we assume it's a referrer.
                 // compatibility where referers where sent via source
                 if (str($value)->contains('.')) {
-                    return ['track_referer' => $value];
+                    // this is not working: $this->track_referer = $value;
+                    return $this->setReferer($value);
                 } else {
                     return ['track_source' => $value];
                 }
             },
         );
+    }
+
+    protected function setReferer(string $value): array
+    {
+        $value = app(RefererService::class)->getTopReferer($value);
+        app(FaviconService::class)->download($value);
+        return ['track_referer' => $value];
     }
 
     public function userAgent(): Attribute
