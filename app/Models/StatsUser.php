@@ -101,7 +101,7 @@ class StatsUser extends BaseStat
     public function trackReferer(): Attribute
     {
         return Attribute::make(
-            set: function(string $value) {
+            set: function(?string $value) {
                 return $this->setReferer($value);
             },
         );
@@ -110,7 +110,7 @@ class StatsUser extends BaseStat
     public function trackSource(): Attribute
     {
         return Attribute::make(
-            set: function(string $value) {
+            set: function(?string $value) {
                 // if source contains a dot, we assume it's a referrer.
                 // compatibility where referers where sent via source
                 if (str($value)->contains('.')) {
@@ -123,8 +123,12 @@ class StatsUser extends BaseStat
         );
     }
 
-    protected function setReferer(string $value): array
+    protected function setReferer(?string $value): array
     {
+        if (!$value) {
+            return ['track_referer' => null];
+        }
+
         $value = app(RefererService::class)->getTopReferer($value);
         app(FaviconService::class)->download($value);
         return ['track_referer' => $value];
