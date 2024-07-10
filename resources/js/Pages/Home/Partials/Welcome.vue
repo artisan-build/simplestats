@@ -5,6 +5,7 @@ import Pricing from "@/Pages/Home/Partials/Pricing.vue";
 import Screenshot from "@/Pages/Home/Partials/Screenshot.vue";
 import Header from "@/Pages/Home/Partials/Header.vue";
 import SelfHosted from "@/Pages/Home/Partials/SelfHosted.vue";
+import Testimonials from "@/Pages/Home/Partials/Testimonials.vue";
 
 defineProps({
     plans: Array,
@@ -45,6 +46,8 @@ const appEnv = import.meta.env.VITE_APP_ENV;
         <Screenshot />
 
         <Features />
+
+        <Testimonials />
 
         <Pricing :plans="plans" />
 
