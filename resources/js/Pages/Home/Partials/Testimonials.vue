@@ -7,21 +7,21 @@ const testimonials = [
         "name": "Marc Loskill",
         "title": "CEO",
         "company": "Heilpraktikerschule Likamundi",
-        "link": "https://likamundi.de/?ref=simplestats",
-        "descr": "Integrating SimpleStats into our Laravel projects was incredibly easy. The seamless setup saved us hours, and now we can effortlessly monitor our campaigns and conversions. This tool has streamlined our workflow and provided invaluable insights."
+        "link": "https://likamundi.de",
+        "descr": "Integrating SimpleStats into our Laravel projects was incredibly easy. The seamless setup saved us hours, and now we can effortlessly monitor our campaigns and conversions. This tool has streamlined our workflow and provided invaluable insights and metrics."
     },
     {
         "name": "Filip Ganyicz",
         "title": "CTO",
         "company": "Finotive Group",
-        "link": "https://www.finotivegroup.com/?ref=simplestats",
+        "link": "https://www.finotivegroup.com",
         "descr": "SimpleStats has been a game-changer for us. Its backend analytics ensure pinpoint accuracy, giving us reliable data that isn’t affected by ad blockers. We now have a crystal-clear view of our payment and registration conversions. Highly recommended for anyone needing precise stats!"
     },
     {
         "name": "Ingmar Feldhoff",
         "title": "CEO",
         "company": "Trollgames GmbH",
-        "link": "https://trollgames.de/?ref=simplestats",
+        "link": "https://trollgames.de/?lang=en",
         "descr": "Thanks to SimpleStats, we can quickly see which of our campaigns are truly profitable. The detailed conversion tracking for payments and registrations has helped us optimize our marketing strategies without any extra effort. It’s an essential tool for any data-driven business."
     }
 ];
