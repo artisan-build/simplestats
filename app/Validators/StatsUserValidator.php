@@ -17,6 +17,7 @@ class StatsUserValidator extends BaseStatsValidator
             'track_campaign' => ['nullable', 'string'],
             'track_term' => ['nullable', 'string'],
             'track_content' => ['nullable', 'string'],
+            'page_entry' => ['nullable', 'string'],
         ]);
     }
 }

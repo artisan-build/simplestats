@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTOs\StatsFilterDto;
 use App\Http\Requests\StatsFilterRequest;
 use App\Models\StatsUser;
+use App\Services\RefererService;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
@@ -15,8 +16,12 @@ use Inertia\Inertia;
 
 class StatsController extends Controller
 {
-    public function index(StatsFilterRequest $request, StatsDetailsService $statsDetailsService, SubscriptionService $subscriptionService)
-    {
+    public function index(
+        StatsFilterRequest $request,
+        StatsDetailsService $statsDetailsService,
+        SubscriptionService $subscriptionService,
+        RefererService $refererService,
+    ) {
         $user = $request->user();
 
         if ($request->has('rangeType') && $user->selected_range_type != $request->rangeType) {
@@ -60,13 +65,11 @@ class StatsController extends Controller
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            // dont wann persist it right now...
             'statsGroupsSelected' => $user->settings['selectedGroupTypes'][$request->projectId] ?? [],
-//            'statsGroupsSelected' => session()->get('selectedGroupTypes')[$request->projectId] ?? [],
             'seriesSelected' => session()->get('selectedSeries') ?? [],
+            'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
-            'trackAllKey' => StatsFilterDto::TRACK_ALL,
             'showFreePlanWarning' => $teamOwner->sparkPlan()->name === SubscriptionService::PLAN_FREE,
             'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team)
         ];
@@ -77,9 +80,7 @@ class StatsController extends Controller
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
     {
         if (isset($request->groupType)) {
-            // persist selected group
             $request->user()->updateSettings('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
-//            session()->put('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
         }
 
         return $statsAggregationsService->getAggregatedGroupedData(

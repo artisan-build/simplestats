@@ -9,6 +9,7 @@ use App\Models\StatsDeviceType;
 use App\Models\StatsLocationCity;
 use App\Models\StatsLocationCountry;
 use App\Models\StatsLocationRegion;
+use App\Models\StatsPageEntry;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
@@ -20,8 +21,6 @@ use Illuminate\Support\Str;
 
 class StatsService
 {
-    const NAU_LOGIN_COUNTER = 2;
-
     protected static array $statsTypes = [
         'track' => [
             ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon'],
@@ -41,7 +40,12 @@ class StatsService
             ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS'],
             ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
         ],
+        'page' => [
+            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages'],
+        ],
     ];
+
+    const NAU_LOGIN_COUNTER = 2;
 
     public static function getStatsTypes(): Collection
     {

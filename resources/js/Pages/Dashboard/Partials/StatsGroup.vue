@@ -9,10 +9,11 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps({
+    filters: Object,
     statsGroup: Object,
     statsGroupType: String,
     statsGroupSelected: String,
-    filters: Object,
+    topReferers: Object,
 });
 
 const data = ref([]);
@@ -40,7 +41,8 @@ const fetchData = async () => {
 
 const group2Name = {
     track: 'Tracking',
-    location: 'Countries',
+    page: 'Pages',
+    location: 'Locations',
     device: 'Devices',
 };
 
@@ -80,18 +82,16 @@ onMounted(fetchData);
                 </svg>
             </div>
         </div>
-        <div v-else class="px-4 py-5">
-            <div class="flex justify-between mb-2">
-                <div class="font-bold">{{ group2Name[statsGroupType] }}</div>
-                <div class="flex gap-2">
-                    <button v-for="stat in statsGroup" class="font-medium text-gray-500 hover:text-indigo-500" :class="{'text-indigo-600 underline': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
-                        {{ stat.title }}
-                    </button>
-                </div>
+        <div v-else class="p-4">
+            <div class="hidden font-bold text-center">{{ group2Name[statsGroupType] }}</div>
+            <div class="flex justify-between mb-4">
+                <button v-for="stat in statsGroup" class="flex-grow pb-2 font-medium text-sm text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
+                    {{ stat.title }}
+                </button>
             </div>
             <table class="w-full text-sm">
                 <tr class="font-medium text-gray-600">
-                    <td class="p-1 py-1.5">Title</td>
+                    <td class="p-1 py-1.5">Name</td>
                     <td class="w-1 p-1 py-1.5 text-right">Revenue</td>
                     <td class="w-1 p-1 py-1.5 text-right">Regs</td>
                     <td class="w-1 p-1 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
@@ -106,7 +106,7 @@ onMounted(fetchData);
                                 </span>
                                 <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
                                 <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
-                                <span class="group-hover:underline ml-2">{{ item.name }}</span>
+                                <span class="group-hover:underline ml-2">{{ topReferers[item.name] ?? item.name }}</span>
                             </Link>
                         </div>
                     </td>
@@ -116,7 +116,7 @@ onMounted(fetchData);
                 </tr>
             </table>
             <div v-if="data.length >= 9" class="flex justify-center mt-2">
-                <SecondaryButton @click="() => {filters.limit = (filters.limit ?? 0) + 100; fetchData()}">
+                <SecondaryButton v-if="! filters.limit" @click="() => {filters.limit = (filters.limit ?? 0) + 100; fetchData()}">
                     Load more
                 </SecondaryButton>
             </div>

@@ -21,6 +21,10 @@ export default {
             },
             zIndex: {
                 '100': '100',
+            },
+            screens: {
+                '3xl': '1600px',
+                '4xl': '1900px',
             }
         },
     },

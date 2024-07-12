@@ -38,6 +38,7 @@ class StatsUser extends BaseStat
         'track_campaign',
         'track_term',
         'track_content',
+        'page_entry',
         'time',
     ];
 

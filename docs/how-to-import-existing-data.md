@@ -30,25 +30,26 @@ _Core fields:_
 |----------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | **id**               | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                                                        |
 | **time**             | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d`, before or equal `today`                                          |
-| **ip**               | _string_ `nullable`  | The `ip` of the user. _(does not get stored)_                                                                               |
-| **user_agent**       | _string_ `nullable`  | The `user_agent` of the user. _(does not get stored)_                                                                       |
-| **track_referer**    | _string_ `nullable`  | The tracking `referer` of the user.                                                                                         |
-| **track_source**     | _string_ `nullable`  | The tracking `source` of the user.                                                                                          |
-| **track_medium**     | _string_ `nullable`  | The tracking `medium` of the user.                                                                                          |
-| **track_campaign**   | _string_ `nullable`  | The tracking `campaign` of the user.                                                                                        |
-| **track_term**       | _string_ `nullable`  | The tracking `term` of the user.                                                                                            |
-| **track_content**    | _string_ `nullable`  | The tracking `content` of the user.                                                                                         |
 
 _Additional fields:_
 
-| Key                  | Type                 | Description                                                                                                                   |
-|----------------------|----------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| **location_country** | _string_ `nullable`  | The tracking `country` of the user. (If the `ip` is set, we take the country that refers to it.)                              |
-| **location_region**  | _string_ `nullable`  | The tracking `region` of the user. (If the `ip` is set, we take the region that refers to it.)                                |
-| **location_city**    | _string_ `nullable`  | The tracking `city` of the user. (If the `ip` is set, we take the city that refers to it.)                                    |
-| **device_type**      | _string_ `nullable`  | The tracking `device_type` of the user. (If the `user_agent` is set, we take the device type that refers to it.)              |
-| **device_platform**  | _string_ `nullable`  | The tracking `device_platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
-| **device_browser**   | _string_ `nullable`  | The tracking `device_browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
+| Key                  | Type                 | Description                                                                                                          |
+|----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
+| **ip**               | _string_ `nullable`  | The `ip` of the user. _(does not get stored)_                                                                        |
+| **user_agent**       | _string_ `nullable`  | The `user_agent` of the user. _(does not get stored)_                                                                |
+| **track_referer**    | _string_ `nullable`  | The tracking `referer` of the user.                                                                                  |
+| **track_source**     | _string_ `nullable`  | The tracking `source` of the user.                                                                                   |
+| **track_medium**     | _string_ `nullable`  | The tracking `medium` of the user.                                                                                   |
+| **track_campaign**   | _string_ `nullable`  | The tracking `campaign` of the user.                                                                                 |
+| **track_term**       | _string_ `nullable`  | The tracking `term` of the user.                                                                                     |
+| **track_content**    | _string_ `nullable`  | The tracking `content` of the user.                                                                                  |
+| **location_country** | _string_ `nullable`  | The location `country` of the user. (If the `ip` is set, we take the country that refers to it.)                     |
+| **location_region**  | _string_ `nullable`  | The location `region` of the user. (If the `ip` is set, we take the region that refers to it.)                       |
+| **location_city**    | _string_ `nullable`  | The location `city` of the user. (If the `ip` is set, we take the city that refers to it.)                           |
+| **device_type**      | _string_ `nullable`  | The device `type` of the user. (If the `user_agent` is set, we take the device type that refers to it.)              |
+| **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
+| **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
+| **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
 
 Here is an **example** of how such an SQL query may look like:
 

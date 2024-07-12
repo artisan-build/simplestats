@@ -242,6 +242,11 @@ class StatsAggregationsService
         if (!empty($filters->trackTerm) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
         if (!empty($filters->trackContent) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)     $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
 
+        if (!empty($filters->pageEntry)) {
+            $pageEntryCondition = ($filters->pageEntry === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->pageEntry} ";
+            $trackingCondition .= " AND stats.stats_page_entry_id $pageEntryCondition ";
+        }
+
         if (!empty($trackingCondition)) {
             $conditions['trackingConditions'] = $trackingCondition;
             $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);

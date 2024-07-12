@@ -16,6 +16,7 @@ defineProps({
     statsGroupNames: Object,
     statsGroupsSelected: Object,
     seriesSelected: Object,
+    topReferers: Object,
     rangeTypes: Array,
     showFreePlanWarning: Boolean,
     subscriptionPlanAlarm: Array,
@@ -62,7 +63,7 @@ onUnmounted(() => {
             </div>
             <div v-if="filters.projectId" class="mb-8">
                 <div class="grid gap-8 grid-cols-1">
-                    <StatsGroups :filters="filters" :statsGroups="statsGroups" :statsGroupsSelected="statsGroupsSelected" />
+                    <StatsGroups :filters="filters" :statsGroups="statsGroups" :statsGroupsSelected="statsGroupsSelected" :topReferers="topReferers" />
                 </div>
             </div>
             <div v-if="0" class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">
