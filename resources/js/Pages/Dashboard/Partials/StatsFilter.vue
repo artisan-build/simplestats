@@ -122,6 +122,11 @@ const teamChanged = () => {
 
                         <div class="flex flex-wrap gap-x-2 items-center">
                             <div>
+                                <span>
+                                    From:
+                                </span>
+                            </div>
+                            <div>
                                 <InputLabel class="hidden" for="rangeStart" value="Start from" />
                                 <TextInput
                                     type="date"

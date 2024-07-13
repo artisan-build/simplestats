@@ -2,22 +2,16 @@
 
 namespace App\Validators;
 
+use App\Concerns\HasStatsTrackingValidation;
+
 class StatsUserValidator extends BaseStatsValidator
 {
+    use HasStatsTrackingValidation;
+
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
+        return array_merge(parent::rules(), $this->trackingValidation, [
             'id' => ['required', 'integer'],
-            'ip' => ['nullable', 'ip'],
-            'user_agent' => ['nullable', 'string'],
-            'location_country' => ['nullable', 'string'],
-            'track_referer' => ['nullable', 'string'],
-            'track_source' => ['nullable', 'string'],
-            'track_medium' => ['nullable', 'string'],
-            'track_campaign' => ['nullable', 'string'],
-            'track_term' => ['nullable', 'string'],
-            'track_content' => ['nullable', 'string'],
-            'page_entry' => ['nullable', 'string'],
         ]);
     }
 }

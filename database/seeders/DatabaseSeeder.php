@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\StatsLogin;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
+use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -98,6 +99,13 @@ class DatabaseSeeder extends Seeder
                             'instance_id' => $instance->id,
                         ])
                         ->each(function ($statsUser) use ($instance) {
+                            // for each registration we simulate 3 to 6 visitors
+                            StatsVisitor::factory(rand(3, 6))->create([
+                                'project_id' => $instance->project_id,
+                                'instance_id' => $instance->id,
+                                'time' => $statsUser->time,
+                            ]);
+
                             $loginTime = Carbon::parse($statsUser->time);
                             for ($i = 0; $i < rand(0, 20); $i++) {
                                 StatsLogin::factory()->create([

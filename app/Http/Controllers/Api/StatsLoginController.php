@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsLoginRequest;
 use App\Http\Resources\StatsLoginResource;
 use App\Models\StatsLogin;
+use App\Models\StatsVisitor;
 use App\Services\StatsService;
 
 class StatsLoginController extends Controller
