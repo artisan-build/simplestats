@@ -72,6 +72,15 @@ class StatsAggregationsService
             WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
             GROUP BY su.$statsDBType
         ),
+        # lifetime visitpors
+        lt_visitors AS (
+            SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            FROM stats_visitors stats
+            WHERE stats.time <= ':endDateEnd'
+            :trackingConditions
+            :projectInstanceCondition
+            GROUP BY stats.$statsDBType
+        ),
         # lifetime regs
         lt_reg AS (
             SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
@@ -95,14 +104,16 @@ class StatsAggregationsService
             sg.name as name,
             COALESCE(pd_dau.count, 0) AS dau,
             COALESCE(lt_reg.count, 0) AS reg,
+            COALESCE(lt_visitors.count, 0) AS visitors,
             COALESCE(ROUND(lt_net.count,2), 0) AS net
         FROM
             stats_groups sg
             LEFT JOIN pd_dau ON sg.type_id = pd_dau.type_id
             LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id
+            LEFT JOIN lt_visitors ON sg.type_id = lt_visitors.type_id
             LEFT JOIN lt_net ON sg.type_id = lt_net.type_id
         ORDER BY
-            lt_net.count DESC, lt_reg.count DESC, pd_dau.count DESC;
+            lt_net.count DESC, lt_reg.count DESC, lt_visitors.count DESC, pd_dau.count DESC;
         ";
 
         $filterConditions = $this->getFilterConditions($filters);

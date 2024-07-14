@@ -30,6 +30,7 @@ readonly class StatsFilterDto
         public int $deviceType = 0,
         public int $devicePlatform = 0,
         public int $deviceBrowser = 0,
+        public int $pageEntry = 0,
     ) {}
 
     public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
@@ -56,6 +57,7 @@ readonly class StatsFilterDto
             deviceType: $request->deviceType ?? 0,
             devicePlatform: $request->devicePlatform ?? 0,
             deviceBrowser: $request->deviceBrowser ?? 0,
+            pageEntry: $request->pageEntry ?? 0,
         );
     }
 
@@ -78,6 +80,7 @@ readonly class StatsFilterDto
             $this->deviceType,
             $this->devicePlatform,
             $this->deviceBrowser,
+            $this->pageEntry,
         ]));
     }
 

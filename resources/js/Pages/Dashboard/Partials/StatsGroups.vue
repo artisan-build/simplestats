@@ -10,7 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 4xl:grid-cols-4">
+    <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 4xl:grid-cols-2">
         <div v-for="(statsGroup, statsGroupType) in statsGroups" :key="statsGroup.id">
             <div class="bg-white dark:bg-gray-800 border shadow-md rounded-md" style="min-height: 560px;">
                 <StatsGroup

@@ -14,6 +14,7 @@ const props = defineProps({
     statsGroupNames: Object,
     filters: Object,
     rangeTypes: Array,
+    topReferers: Object,
 });
 
 const page = usePage();
@@ -109,7 +110,7 @@ const teamChanged = () => {
                             <template v-for="statsGroup in statsGroups">
                                 <template v-for="group in statsGroup">
                                     <div v-if="filters[group.type]" class="bg-indigo-100 border rounded-md p-2 mt-1">
-                                        {{ pluralize.singular(group.title) }} is <strong>{{ statsGroupNames[group.type] }}</strong>
+                                        {{ pluralize.singular(group.title) }} is <strong>{{ topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type] }}</strong>
                                         <button class="ml-1 hover:text-red-700" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />

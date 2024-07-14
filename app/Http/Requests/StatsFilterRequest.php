@@ -10,6 +10,7 @@ use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
 use App\Models\StatsLocationCity;
 use App\Models\StatsLocationRegion;
+use App\Models\StatsPageEntry;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsLocationCountry;
@@ -133,6 +134,11 @@ class StatsFilterRequest extends FormRequest
                 'sometimes',
                 'integer',
                 new ValidProjectModel($this->projectId, StatsDeviceBrowser::class),
+            ],
+            'pageEntry' => [
+                'sometimes',
+                'integer',
+                new ValidProjectModel($this->projectId, StatsPageEntry::class),
             ],
             'statsType' => [
                 'sometimes',

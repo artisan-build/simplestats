@@ -5,7 +5,6 @@ import {Link} from "@inertiajs/vue3";
 import _ from 'lodash';
 import {get} from 'country-flag-emoji';
 import {XAU} from "@/Helpers/StringHelpers.js";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps({
@@ -83,18 +82,21 @@ onMounted(fetchData);
             </div>
         </div>
         <div v-else class="p-4">
-            <div class="hidden font-bold text-center">{{ group2Name[statsGroupType] }}</div>
             <div class="flex justify-between mb-4">
-                <button v-for="stat in statsGroup" class="flex-grow pb-2 font-medium text-sm text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
-                    {{ stat.title }}
-                </button>
+                <div class="font-bold text-center">{{ group2Name[statsGroupType] }}</div>
+                <div class="flex">
+                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-sm text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
+                        {{ stat.title }}
+                    </button>
+                </div>
             </div>
             <table class="w-full text-sm">
                 <tr class="font-medium text-gray-600">
                     <td class="p-1 py-1.5">Name</td>
-                    <td class="w-1 p-1 py-1.5 text-right">Revenue</td>
+                    <td class="w-1 p-1 py-1.5 text-right">Visitors</td>
                     <td class="w-1 p-1 py-1.5 text-right">Regs</td>
-                    <td class="w-1 p-1 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
+                    <td class="w-1 p-1 py-1.5 text-right">Revenue</td>
+<!--                    <td class="w-1 p-1 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>-->
                 </tr>
                 <tr v-for="item in data">
                     <td class="p-1">
@@ -110,9 +112,10 @@ onMounted(fetchData);
                             </Link>
                         </div>
                     </td>
-                    <td class="p-1 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+                    <td class="p-1 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
                     <td class="p-1 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                    <td class="p-1 text-right">{{ formatNumber(Number(item.dau)) }}</td>
+                    <td class="p-1 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+<!--                    <td class="p-1 text-right">{{ formatNumber(Number(item.dau)) }}</td>-->
                 </tr>
             </table>
             <div v-if="data.length >= 9" class="flex justify-center mt-2">

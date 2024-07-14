@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import StatsGroup from "@/Pages/Overview/Partials/StatsGroup.vue";
+import StatsGroup from "@/Pages/Overview/Partials/StatsOverviewGroup.vue";
 
 const props = defineProps({
     teamStats: Object,

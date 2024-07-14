@@ -30,6 +30,9 @@ class StatsService
             ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term'],
             ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content'],
         ],
+        'page' => [
+            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages'],
+        ],
         'location' => [
             ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries', 'icon' => 'country'],
             ['model' => StatsLocationRegion::class, 'type' => 'location_region', 'title' => 'Regions', 'icon' => 'country'],
@@ -39,9 +42,6 @@ class StatsService
             ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path'],
             ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS'],
             ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
-        ],
-        'page' => [
-            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages'],
         ],
     ];
 

@@ -54,16 +54,26 @@ onUnmounted(() => {
                     :statsGroupNames="statsGroupNames"
                     :filters="filters"
                     :rangeTypes="rangeTypes"
+                    :topReferers="topReferers"
                 />
             </div>
             <div class="mb-8">
                 <div class="grid gap-8 grid-cols-1">
-                    <StatsCharts :rangeType="filters.rangeType" :teamStats="teamStats" :seriesSelected="seriesSelected" />
+                    <StatsCharts
+                        :rangeType="filters.rangeType"
+                        :teamStats="teamStats"
+                        :seriesSelected="seriesSelected"
+                    />
                 </div>
             </div>
             <div v-if="filters.projectId" class="mb-8">
                 <div class="grid gap-8 grid-cols-1">
-                    <StatsGroups :filters="filters" :statsGroups="statsGroups" :statsGroupsSelected="statsGroupsSelected" :topReferers="topReferers" />
+                    <StatsGroups
+                        :filters="filters"
+                        :statsGroups="statsGroups"
+                        :statsGroupsSelected="statsGroupsSelected"
+                        :topReferers="topReferers"
+                    />
                 </div>
             </div>
             <div v-if="0" class="bg-white dark:bg-gray-800 rounded-md shadow overflow-x-auto mb-8 border p-1">

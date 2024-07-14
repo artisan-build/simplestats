@@ -86,7 +86,7 @@ class StatsController extends Controller
         return $statsAggregationsService->getAggregatedGroupedData(
             StatsFilterDto::fromRequest($request),
             $request->statsType,
-            $request->limit ?? 9, //must be equal to Load more in StatsGroup.vue
+            $request->limit ?? 9, //must be equal to Load more in StatsOverviewGroup.vue
         );
     }
 
