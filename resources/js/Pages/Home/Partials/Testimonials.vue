@@ -21,7 +21,7 @@ const testimonials = [
     {
         "name": "Ingmar Feldhoff",
         "title": "CEO",
-        "company": "Trollgames GmbH",
+        "company": "Trollgames",
         "company_link": "https://trollgames.de/?lang=en",
         "descr": "Thanks to SimpleStats, we can quickly see which of our campaigns are truly profitable. The detailed conversion tracking for payments and registrations has helped us optimize our marketing strategies without any extra effort. It’s an essential tool for any data-driven business."
     }
