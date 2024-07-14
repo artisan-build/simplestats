@@ -28,7 +28,7 @@ export function getKpiDefinitions(rangeType) {
                 description: 'The average revenue per ' + XAU(rangeType, true),
             },
             REG: {
-                short: 'Regs.',
+                short: 'Regs',
                 description: 'Number of new registrations at this '+periodName+'.',
             },
             NAU: {
@@ -73,7 +73,7 @@ export function getKpiDefinitions(rangeType) {
                 description: 'The average revenue per paying User.',
             },
             REG: {
-                short: 'Total Regs.',
+                short: 'Total Regs',
                 description: 'Number of registrations over lifetime.',
             },
             PU: {
