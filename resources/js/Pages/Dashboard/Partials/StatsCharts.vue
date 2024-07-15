@@ -53,7 +53,7 @@ const extractStatsData4Chart = (statsCategory, statsGroups) => {
 const charts = {
     per_date: [
         {
-            name: periodMap[props.rangeType] + ' Registrations',
+            name: periodMap[props.rangeType] + ' Conversion',
             formatter: 'number',
             data: [
                 {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
@@ -91,7 +91,7 @@ const charts = {
     ],
     lifetime: [
         {
-            name: 'Lifetime Registrations',
+            name: 'Lifetime Conversion',
             formatter: 'number',
             data: [
                 {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
@@ -100,7 +100,7 @@ const charts = {
             ],
         },
         {
-            name: 'Lifetime Conversion',
+            name: 'Lifetime Engagement',
             formatter: 'percent',
             data: [
                 {key: 'REG2DAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
