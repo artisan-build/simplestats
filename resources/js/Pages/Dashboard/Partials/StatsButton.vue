@@ -60,7 +60,10 @@ const isSerieVisible = () => {
 </script>
 
 <template>
-    <button class="group p-2 sm:p-3 text-left border-r last:border-r-0 border-t-2 hover:border-t-blue-300" :class="isSerieVisible() ? 'border-t-blue-300' : 'border-t-white'" @click="$emit('selectSeries', {index: serieIndex, data: serie})">
+    <button class="group p-2 sm:p-3 text-left border-r last:border-r-0 border-t-2 hover:border-t-blue-300"
+            :class="isSerieVisible() ? 'border-t-blue-300' : 'border-t-white'"
+            @click="$emit('selectSeries', {index: serieIndex, data: serie})"
+    >
         <div class="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:underline" :class="{'underline': isSerieVisible()}">
             <div class="tracking-wider">
                 {{ serie.name }}
@@ -71,14 +74,14 @@ const isSerieVisible = () => {
         </div>
         <div class="flex justify-between items-center">
             <div class="text-md sm:text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
-                <span v-if="formatter === 'percent'">
-                    {{ formatMap[formatter](latestSerieData, {
+                <span v-if="serie.formatter === 'percent'">
+                    {{ formatMap[serie.formatter](latestSerieData, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                     }, $page.props.teamCurrency) }}
                 </span>
                 <span v-else>
-                    {{ formatMap[formatter](latestSerieData, {
+                    {{ formatMap[serie.formatter](latestSerieData, {
                         minimumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
                         maximumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
                     }, $page.props.teamCurrency) }}

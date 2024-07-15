@@ -124,6 +124,8 @@ class StatsService
     {
         // Lifetime
         if (isset($stats['lifetime'])) {
+            $stats['lifetime']['FEE'] = $stats['lifetime']['GROSS'] - $stats['lifetime']['NET'];
+            $stats['lifetime']['CR'] = round($this->safeDivision($stats['lifetime']['REG'], $stats['lifetime']['VISITOR']) * 100, 2);
             $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['per_date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
             $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
             $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);

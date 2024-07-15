@@ -153,7 +153,7 @@ class StatsAggregationsService
         $dataArray = json_decode(json_encode(DB::select($sql)), true);
 
         return collect($dataArray)->reject(function ($item) {
-            return $item['dau'] == 0 && $item['reg'] == 0 && $item['net'] == 0;
+            return $item['dau'] == 0 && $item['reg'] == 0 && $item['net'] == 0 && $item['visitors'] == 0;
         })->take($limit);
     }
 
@@ -350,6 +350,12 @@ class StatsAggregationsService
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
             GROUP BY date
         ),
+        pd_visitor AS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            FROM stats_visitors stats
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
+            GROUP BY date
+        ),
         # nau: Number of unique accounts who returned on this day (=2nd login) after the registration (=1st login)
         pd_nau AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
@@ -418,6 +424,17 @@ class StatsAggregationsService
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY date
         ),
+        # lifetime visitors
+        lt_visitor AS (
+            SELECT
+                DATE_FORMAT(ds.date, ':dateFormat') AS date,
+                (
+                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
+                    FROM stats_visitors stats
+                    WHERE stats.time <= :intervalEnd :projectInstanceCondition :trackingConditions
+                ) AS count
+            FROM date_sequence ds
+        ),
         # lifetime regs
         lt_reg AS (
             SELECT
@@ -481,6 +498,7 @@ class StatsAggregationsService
             DATE_FORMAT(ds.date, ':dateFormat') as date,
             DATE_FORMAT(ds.date, '%Y-%m-%d') as date_clear,
             COALESCE(pd_reg.count, 0) AS pd_REG,
+            COALESCE(pd_visitor.count, 0) AS pd_VISITOR,
             COALESCE(pd_nau.count, 0) AS pd_NAU,
             COALESCE(pd_napu.count, 0) AS pd_NAPU,
             COALESCE(pd_dau.count, 0) AS pd_DAU,
@@ -488,6 +506,7 @@ class StatsAggregationsService
             COALESCE(pd_daapu.count, 0) AS pd_DAAPU,
             COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
             COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
+            COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
             COALESCE(lt_reg.count, 0) AS lt_REG,
             COALESCE(lt_pu.count, 0) AS lt_PU,
             COALESCE(lt_tau.count, 0) AS lt_TAU,
@@ -496,6 +515,7 @@ class StatsAggregationsService
         FROM
             date_sequence ds
             LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
+            LEFT JOIN pd_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = pd_visitor.date
             LEFT JOIN pd_nau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_nau.date
             LEFT JOIN pd_napu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_napu.date
             LEFT JOIN pd_dau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dau.date
@@ -504,6 +524,7 @@ class StatsAggregationsService
             LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
             LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
             LEFT JOIN lt_reg ON DATE_FORMAT(ds.date, ':dateFormat') = lt_reg.date
+            LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
             LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
             LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
@@ -513,7 +534,7 @@ class StatsAggregationsService
         ";
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-
+//        echo nl2br($sql);die;
         // convert the objects to arrays for consistency
         $array = json_decode(json_encode(DB::select($sql)), true);
         return $this->formatAggregatedData(collect($array));

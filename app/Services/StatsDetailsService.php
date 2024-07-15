@@ -39,6 +39,7 @@ class StatsDetailsService
 
             $stat['stats']['date'] = $stat['date'];
             unset($stat['date']);
+            $stat['stats']['per_date']['CR'] = round($this->statsService->safeDivision($stat['stats']['per_date']['REG'], $stat['stats']['per_date']['VISITOR']) * 100, 2);
             $stat['stats']['per_date']['FEE'] = $stat['stats']['per_date']['GROSS'] - $stat['stats']['per_date']['NET'];
             $stat['stats']['per_date']['ARPDAU'] = $this->statsService->safeDivision($stat['stats']['per_date']['NET'], $stat['stats']['per_date']['DAU']);
         } unset($stat);

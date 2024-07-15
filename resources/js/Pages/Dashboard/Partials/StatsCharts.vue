@@ -56,28 +56,36 @@ const charts = {
             name: periodMap[props.rangeType] + ' Revenue',
             formatter: 'currency',
             data: [
-                {key: 'NET', initialVisible: false, color: '#93c5fd',},
-                // {key: 'GROSS', initialVisible: false, color: '#93c5fd',},
-                {key: 'FEE', initialVisible: false, color: '#93c5fd',},
-                {key: 'ARPDAU', initialVisible: false, color: '#93c5fd',},
+                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
             ],
         },
         {
             name: periodMap[props.rangeType] + ' Registrations',
             formatter: 'number',
             data: [
-                {key: 'REG', initialVisible: false, color: '#93c5fd',},
-                {key: 'NAU', initialVisible: false, color: '#93c5fd',},
-                {key: 'NAPU', initialVisible: false, color: '#93c5fd',},
+                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'CR', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
             ],
         },
         {
             name: XAU(props.rangeType, true),
             formatter: 'number',
             data: [
-                {key: 'DAU', initialVisible: false, color: '#93c5fd',},
-                {key: 'DAPU', initialVisible: false, color: '#93c5fd',},
-                {key: 'DAAPU', initialVisible: false, color: '#93c5fd',},
+                {key: 'DAU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'DAPU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'DAAPU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+            ],
+        },
+        {
+            name: periodMap[props.rangeType] + ' Average + New Actives',
+            formatter: 'number',
+            data: [
+                {key: 'ARPDAU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'NAU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'NAPU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
             ],
         },
     ],
@@ -86,28 +94,37 @@ const charts = {
             name: 'Lifetime Revenue',
             formatter: 'currency',
             data: [
-                {key: 'NET', initialVisible: false, color: '#93c5fd',},
-                // {key: 'GROSS', initialVisible: false, color: '#93c5fd',},
-                {key: 'ARPU', initialVisible: false, color: '#93c5fd',},
-                {key: 'ARPPU', initialVisible: false, color: '#93c5fd',},
+                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
             ],
         },
         {
-            name: 'Lifetime Users',
+            name: 'Lifetime Registrations',
             formatter: 'number',
             data: [
-                {key: 'REG', initialVisible: false, color: '#93c5fd',},
-                {key: 'PU', initialVisible: false, color: '#93c5fd',},
-                {key: 'TAU', initialVisible: false, color: '#93c5fd',},
+                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'CR', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+            ],
+        },
+        {
+            name: 'Lifetime Paying',
+            formatter: 'number',
+            data: [
+                {key: 'PU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'ARPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'ARPPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                // {key: 'TAU', initialVisible: false, color: '#93c5fd',},
             ],
         },
         {
             name: 'Lifetime Conversion',
             formatter: 'percent',
             data: [
-                {key: 'REG2DAU', initialVisible: false, color: '#93c5fd',},
-                {key: 'REG2PU', initialVisible: false, color: '#93c5fd',},
-                {key: 'REG2TAU', initialVisible: false, color: '#93c5fd',},
+                {key: 'REG2DAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+                {key: 'REG2PU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+                {key: 'REG2TAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
             ],
         },
     ],
@@ -141,7 +158,7 @@ Object.keys(charts).forEach(category => {
 </script>
 
 <template>
-    <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
+    <div class="grid gap-8 grid-cols-1 2xl:grid-cols-2">
         <StatsChart v-for="(chart, chartIndex) in charts.per_date" :chart="chart" :chartIndex="chartIndex" type="per_date" />
         <StatsChart v-for="(chart, chartIndex) in charts.lifetime" :chart="chart" :chartIndex="chartIndex" type="lifetime" />
     </div>

@@ -90,13 +90,13 @@ onMounted(fetchData);
                     </button>
                 </div>
             </div>
-            <div class="overflow-y-auto" style="max-height: 500px;">
+            <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full text-sm">
                     <tr class="font-medium text-gray-600">
                         <td class="p-1 py-1.5">Name</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">Visitors</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">Regs</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">Conv.&nbsp;Rate</td>
+                        <td class="w-1 p-1.5 py-1.5 text-left">Visitors</td>
+                        <td class="w-1 p-1.5 py-1.5 text-left">CR</td>
                         <td class="w-1 p-1.5 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">Revenue</td>
                     </tr>
@@ -114,15 +114,15 @@ onMounted(fetchData);
                                 </Link>
                             </div>
                         </td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
+                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
                         <td class="p-1.5 text-right">{{ formatPercent(Number(item.visitors) / Number(item.reg)) }}</td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
                         <td class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     </tr>
                 </table>
             </div>
-            <div v-if="data.length >= 9" class="flex justify-center mt-2">
+            <div v-if="data.length >= 5" class="flex justify-center mt-2">
                 <SecondaryButton v-if="! filters.limit" @click="() => {filters.limit = (filters.limit ?? 0) + 100; fetchData()}">
                     Load more
                 </SecondaryButton>

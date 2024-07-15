@@ -57,17 +57,15 @@ onUnmounted(() => {
                     :topReferers="topReferers"
                 />
             </div>
-            <div class="mb-8">
-                <div class="grid gap-8 grid-cols-1">
+            <div class="grid gap-8 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
+                <div class="2xl:col-span-2">
                     <StatsCharts
                         :rangeType="filters.rangeType"
                         :teamStats="teamStats"
                         :seriesSelected="seriesSelected"
                     />
                 </div>
-            </div>
-            <div v-if="filters.projectId" class="mb-8">
-                <div class="grid gap-8 grid-cols-1">
+                <div v-if="filters.projectId">
                     <StatsGroups
                         :filters="filters"
                         :statsGroups="statsGroups"

@@ -11,25 +11,28 @@ export function getKpiDefinitions(rangeType) {
     return {
         per_date: {
             NET: {
-                short: 'Revenue',
+                short: 'Net',
                 description: 'Net Revenue at this '+periodName+'.',
             },
             GROSS: {
-                short: 'Gross Revenue',
+                short: 'Gross',
                 description: 'Gross Revenue at this '+periodName+'.',
             },
             FEE: {
                 short: 'Fee',
                 description: 'Fee at this '+periodName+'.',
             },
-            ARPDAU: {
-                short: 'ARP' + XAU(rangeType),
-                long: 'Average Revenue Per ' + XAU(rangeType),
-                description: 'The average revenue per ' + XAU(rangeType, true),
+            VISITOR: {
+                short: 'Visitors',
+                description: 'Number of unique visitors at this '+periodName+'.',
             },
             REG: {
                 short: 'Regs',
                 description: 'Number of new registrations at this '+periodName+'.',
+            },
+            CR: {
+                short: 'CR',
+                description: 'Percentage of unique visitors who registered at this '+periodName+' (Conversion Rate).',
             },
             NAU: {
                 short: 'NAU',
@@ -56,11 +59,24 @@ export function getKpiDefinitions(rangeType) {
                 long: XAAPU(rangeType, true),
                 description: 'Number of unique users who logged in or registered during the given '+periodName+' and did at least one payment in the last 20 days (including this '+periodName+')',
             },
+            ARPDAU: {
+                short: 'ARP' + XAU(rangeType),
+                long: 'Average Revenue Per ' + XAU(rangeType),
+                description: 'The average revenue per ' + XAU(rangeType, true),
+            },
         },
         lifetime: {
             NET: {
-                short: 'Revenue',
+                short: 'Total Net',
                 description: 'Net Revenue over lifetime.',
+            },
+            GROSS: {
+                short: 'Total Gross',
+                description: 'Gross Revenue over lifetime.',
+            },
+            FEE: {
+                short: 'Total Fee',
+                description: 'Fee over lifetime.',
             },
             ARPU: {
                 short: 'ARPU',
@@ -72,9 +88,17 @@ export function getKpiDefinitions(rangeType) {
                 long: 'Average Revenue Per Paying User',
                 description: 'The average revenue per paying User.',
             },
+            VISITOR: {
+                short: 'Total Visitors',
+                description: 'Number of unique visitors over lifetime.',
+            },
             REG: {
                 short: 'Total Regs',
                 description: 'Number of registrations over lifetime.',
+            },
+            CR: {
+                short: 'Total CR',
+                description: 'Percentage of unique visitors who registered (Conversion Rate).',
             },
             PU: {
                 short: 'Paying Users',
@@ -90,7 +114,7 @@ export function getKpiDefinitions(rangeType) {
             },
             REG2PU: {
                 short: 'Reg. to Pay',
-                description: 'Percentage of registered users who become paying user.',
+                description: 'Percentage of registered users who become paying users.',
             },
             REG2TAU: {
                 short: 'Reg. to Active',
