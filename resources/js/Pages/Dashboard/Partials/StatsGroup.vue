@@ -94,8 +94,8 @@ onMounted(fetchData);
                 <table class="w-full text-sm">
                     <tr class="sticky top-0 bg-white font-medium text-gray-600">
                         <td class="p-1 py-1.5">Name</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">Regs</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">Visitors</td>
+                        <td class="w-1 p-1.5 py-1.5 text-left">Regs</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">CR</td>
                         <td class="w-1 p-1.5 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">Revenue</td>
@@ -114,8 +114,8 @@ onMounted(fetchData);
                                 </Link>
                             </div>
                         </td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
+                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
                         <td class="p-1.5 text-right">{{ formatPercent(Number(item.visitors) / Number(item.reg)) }}</td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
                         <td class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>

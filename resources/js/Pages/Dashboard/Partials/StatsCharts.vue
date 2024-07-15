@@ -56,8 +56,8 @@ const charts = {
             name: periodMap[props.rangeType] + ' Registrations',
             formatter: 'number',
             data: [
-                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
                 {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
                 {key: 'CR', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
             ],
         },
@@ -94,8 +94,8 @@ const charts = {
             name: 'Lifetime Registrations',
             formatter: 'number',
             data: [
-                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
                 {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
                 {key: 'CR', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
             ],
         },
