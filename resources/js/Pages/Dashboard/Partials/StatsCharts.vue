@@ -53,15 +53,6 @@ const extractStatsData4Chart = (statsCategory, statsGroups) => {
 const charts = {
     per_date: [
         {
-            name: periodMap[props.rangeType] + ' Revenue',
-            formatter: 'currency',
-            data: [
-                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-            ],
-        },
-        {
             name: periodMap[props.rangeType] + ' Registrations',
             formatter: 'number',
             data: [
@@ -80,7 +71,16 @@ const charts = {
             ],
         },
         {
-            name: periodMap[props.rangeType] + ' Average + New Actives',
+            name: periodMap[props.rangeType] + ' Revenue',
+            formatter: 'currency',
+            data: [
+                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+            ],
+        },
+        {
+            name: periodMap[props.rangeType] + ' Growth',
             formatter: 'number',
             data: [
                 {key: 'ARPDAU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
@@ -91,15 +91,6 @@ const charts = {
     ],
     lifetime: [
         {
-            name: 'Lifetime Revenue',
-            formatter: 'currency',
-            data: [
-                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-            ],
-        },
-        {
             name: 'Lifetime Registrations',
             formatter: 'number',
             data: [
@@ -109,22 +100,31 @@ const charts = {
             ],
         },
         {
-            name: 'Lifetime Paying',
-            formatter: 'number',
-            data: [
-                {key: 'PU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
-                {key: 'ARPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-                {key: 'ARPPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-                // {key: 'TAU', initialVisible: false, color: '#93c5fd',},
-            ],
-        },
-        {
             name: 'Lifetime Conversion',
             formatter: 'percent',
             data: [
                 {key: 'REG2DAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
                 {key: 'REG2PU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
                 {key: 'REG2TAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+            ],
+        },
+        {
+            name: 'Lifetime Revenue',
+            formatter: 'currency',
+            data: [
+                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+            ],
+        },
+        {
+            name: 'Lifetime Paying',
+            formatter: 'number',
+            data: [
+                {key: 'ARPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'ARPPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'PU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                // {key: 'TAU', initialVisible: false, color: '#93c5fd',},
             ],
         },
     ],
