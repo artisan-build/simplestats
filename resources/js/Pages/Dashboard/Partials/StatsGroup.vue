@@ -92,7 +92,7 @@ onMounted(fetchData);
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full text-sm">
-                    <tr class="font-medium text-gray-600">
+                    <tr class="sticky top-0 bg-white font-medium text-gray-600">
                         <td class="p-1 py-1.5">Name</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">Regs</td>
                         <td class="w-1 p-1.5 py-1.5 text-left">Visitors</td>
