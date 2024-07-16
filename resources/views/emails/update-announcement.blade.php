@@ -27,7 +27,9 @@
     Again, its <b>important</b> to update the <i><a href="https://github.com/simplestats-io/laravel-client">simplestats-io/laravel-client</a></i> composer client package to version 2!<br>
     <br>
     Happy analysing,<br>
-    The SimpleStats-Team
+    The SimpleStats-Team<br>
+    <br>
+    PS: Feel free to reach out to us at <a href="mailto:{{ config('app.app_mail') }}">{{ config('app.app_mail') }}</a> if you have any questions!
 <br>
 
 @endcomponent
