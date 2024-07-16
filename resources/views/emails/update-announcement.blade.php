@@ -19,7 +19,11 @@
         <li>Aggregated quick-view panels for referrers, UTMs, pages, locations and devices.</li>
     </ul>
     <br>
-    The good news is that these metrics are much more accurate then
+    The good news is that these metrics are much more accurate than client-side approaches,
+    because they are made directly on the server. This means they are not affected by browser settings,
+    ad blockers, or JavaScript issues that can hinder frontend tracking.
+    As a result, backend tracking provides a more reliable and comprehensive view of user interactions and behavior.<br>
+    <br>
     Again, its <b>important</b> to update the <i><a href="https://github.com/simplestats-io/laravel-client">simplestats-io/laravel-client</a></i> composer client package to version 2!<br>
     <br>
     Happy analysing,<br>
