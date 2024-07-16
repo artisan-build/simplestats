@@ -31,7 +31,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 <!--                V2 Finally a lightweight and GDPR-compliant statistics tool for Laravel,<br>-->
 <!--                which quickly reveals marketing ROI and user conversion with a very simple setup.-->
 <!--                V3 Quickly reveal marketing ROI and<br>user conversion efficiency with a minimal setup.-->
-                Transcending mere counts of visits and views and discover in-depth metrics like<br class="hidden sm:block">
+                Go beyond simple counts of views and visits and discover in-depth metrics like<br class="hidden sm:block">
                 Registrations, Daily Active Users, New Paying Users, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
             </p>
             <Link v-if="$page.props.canRegister" :href="route('register')" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">

@@ -31,7 +31,7 @@ const features = [
     {
         "icon": CodeBracketIcon,
         "title": "API",
-        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually."
+        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually and you’ll be able to use the tool for any custom project."
     },
     {
         "icon": MapPinIcon,
@@ -41,12 +41,12 @@ const features = [
     {
         "icon": ChartBarIcon,
         "title": "KPIs",
-        "descr": "Here are a few of the KPIs that the tool provides: Registrations, Daily Active Users, New Active Paying Users, Average Revenue per User, Paying User, Revenue and much more. Everything filterable by date and UTMs!"
+        "descr": "Here are a few of the KPIs that the tool provides: Unique Visitors, Registrations, Conversion Rate, Daily Active Users, New Active Paying Users, Average Revenue per User, Revenue and much more. Everything filterable by date, locations, devices and UTMs!"
     },
     {
         "icon": ShieldCheckIcon,
         "title": "Privacy",
-        "descr": "We are fully committed to privacy compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."
+        "descr": "We are fully committed to GDPR compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."
     },
     {
         "icon": UserGroupIcon,
