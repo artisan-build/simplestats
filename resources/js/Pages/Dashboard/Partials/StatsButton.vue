@@ -33,19 +33,19 @@ const increaseTypes = {
     "0": {
         f: formatNumber,
         description: 'stable',
-        tailClass: 'text-yellow-600',
+        class: 'text-yellow-600',
         icon: ScaleIcon,
     },
     "1": {
         formatter: formatPercent,
         description: 'increase',
-        tailClass: 'text-green-600',
+        class: 'text-green-600',
         icon: ArrowTrendingUpIcon,
     },
     "-1": {
         formatter: formatPercent,
         description: 'decrease',
-        tailClass: 'text-red-500',
+        class: 'text-red-500',
         icon: ArrowTrendingDownIcon,
     }
 };
@@ -68,7 +68,7 @@ const isSerieVisible = () => {
             <div class="tracking-wider">
                 {{ serie.name }}
             </div>
-            <div class="hidden sm:block" :class="increaseType.tailClass">
+            <div class="hidden sm:block" :class="increaseType.class">
                 <component class="inline-block h-5 w-5" :is="increaseType.icon" />
             </div>
         </div>
@@ -76,18 +76,24 @@ const isSerieVisible = () => {
             <div class="text-md sm:text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
                 <span v-if="serie.formatter === 'percent'">
                     {{ formatMap[serie.formatter](latestSerieData, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }, $page.props.teamCurrency) }}
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }, $page.props.teamCurrency) }}
+                </span>
+                <span v-else-if="serie.formatter === 'currency'">
+                    {{ formatMap[serie.formatter](latestSerieData, {
+                    minimumFractionDigits: (latestSerieData < 10000 || latestSerieData >= 100000) ? 2 : 0,
+                    maximumFractionDigits: (latestSerieData < 10000 || latestSerieData >= 100000) ? 2 : 0,
+                }, $page.props.teamCurrency) }}
                 </span>
                 <span v-else>
                     {{ formatMap[serie.formatter](latestSerieData, {
-                        minimumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
-                        maximumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
-                    }, $page.props.teamCurrency) }}
+                    minimumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
+                    maximumFractionDigits: (latestSerieData >= 1000) ? 2 : 0,
+                }, $page.props.teamCurrency) }}
                 </span>
             </div>
-            <div class="text-sm font-bold" :class="increaseType.tailClass">
+            <div class="text-sm font-bold" :class="increaseType.class">
                     <span v-if="increase !== 0">
                         {{ increaseType.formatter(increase, {
                         minimumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
