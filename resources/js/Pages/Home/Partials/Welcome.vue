@@ -20,19 +20,15 @@ const appEnv = import.meta.env.VITE_APP_ENV;
     <div class="min-h-screen bg-white">
         <section class="text-center pt-24">
             <h1 class="mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-<!--                V1 A simple and GDPR-compliant<br>statistics tool for <span class="text-indigo-500">Laravel</span>.-->
                 The missing statistics tool<br class="hidden sm:block">
                 for your&nbsp;<span class="text-indigo-500">Laravel</span> application.
-<!--                V3 A simple statistics tool for <span class="text-indigo-500">Laravel</span><br>to check the ROI of your campaigns in seconds.-->
             </h1>
             <p class="mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 px-6 sm:px-0">
-<!--                V1 Get highly detailed user, revenue and campaign statistics in no time.<br>-->
-<!--                Start knowing your users and campaigns today!-->
-<!--                V2 Finally a lightweight and GDPR-compliant statistics tool for Laravel,<br>-->
-<!--                which quickly reveals marketing ROI and user conversion with a very simple setup.-->
-<!--                V3 Quickly reveal marketing ROI and<br>user conversion efficiency with a minimal setup.-->
-                Go beyond simple counts of views and visits and discover in-depth metrics like<br class="hidden sm:block">
-                Registrations, Daily Active Users, New Paying Users, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
+                Server-side, GDPR compliant and 100% accurate statistics/analytics tool, that goes beyond simple<br class="hidden sm:block">
+                counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users,<br class="hidden sm:block">
+                New Paying Users, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
+<!--                Go beyond simple counts of views and visits and discover in-depth metrics like<br class="hidden sm:block">-->
+<!--                Registrations, Daily Active Users, New Paying Users, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!-->
             </p>
             <Link v-if="$page.props.canRegister" :href="route('register')" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
                 Get started

@@ -16,7 +16,7 @@ const features = [
     {
         "icon": LightBulbIcon,
         "title": "Different",
-        "descr": "Most analytic tools show you data like visits, views, and page impressions. Everything beyond that, you need to integrate manually. That's where SimpleStats shines; it gives you superpowers without the integration hustle."
+        "descr": "Traditional client-side analytic tools are only about 70% accurate because of ad blockers. They only show you data like visits and views. That's where SimpleStats shines; it gives you superpowers without the integration hustle."
     },
     {
         "icon": RocketLaunchIcon,

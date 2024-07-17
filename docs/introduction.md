@@ -24,6 +24,20 @@ We collect this data in a GDPR-compliant way, aggregate it and make it filterabl
 
 You can invite co-workers to your **team** and assign roles, such as _Administrator_, _Editor_, _Viewer_ to them. Furthermore, if you like and want to, you can create multiple **projects** and multiple **instances** per project, which allows you to structure and organize your App tracking into smaller "junks". For instance, if you have an app/project called _My great Shop_ you may want to "divide" it by countries. So you could create multiple instances for this project called: _Germany, Spain and Italy_. You may even want to have multiple instances per country like _DE1, DE2, DE3, ES1, ES2 and IT1_. The structure and naming of your projects and instances are completely up to you!
 
+## Server-Side vs Client-Side Tracking
+
+**Ad blockers** and other privacy tools have a significant impact on the effectiveness of client-side analytics. Estimates suggest that up to **30-50%** of tracking data can be **blocked** when using client-side analytics due to these tools.
+This can lead to incomplete datasets, skewed metrics, and ultimately, inaccurate insights.
+
+On the other hand, server-side analytics are largely unaffected by ad blockers since the data collection occurs on the server rather than the user’s device.
+This method ensures more accurate and comprehensive data collection, as it bypasses the limitations imposed by client-side tracking methods.
+
+Furthermore, server-side tracking offers enhanced data security and privacy since it does not rely on third-party cookies and is less vulnerable to browser restrictions and privacy settings.
+This makes it a more reliable choice for collecting accurate data and maintaining compliance with data protection regulations like **GDPR**.
+
+In summary, while client-side analytics are easier to implement, server-side analytics provide more accurate and comprehensive data,
+unaffected by ad blockers and privacy tools, making them a better choice for businesses needing reliable metrics.
+
 ## KPIs
  
 On our dashboard, we provide you with the following [KPIs](https://en.wikipedia.org/wiki/Performance_indicator).
