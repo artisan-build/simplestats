@@ -42,10 +42,10 @@ It's easier to understand it when you see it in action on the dashboard.
 | **NET**      | Net revenue                        | Net revenue for the selected period.                                                                                                                        |
 | **FEE**      | Fee                                | Fee for the selected period.                                                                                                                                |
 | **GROSS**    | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |
-| **ARPDAU**   | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                 |
-| **Visitors** | Unique Visitors                    | Number of unique visitors for the selected period.                                                                                                          |
+| **VISITORS** | Unique Visitors                    | Number of unique visitors for the selected period.                                                                                                          |
 | **REG**      | Registrations                      | Number of new registrations for the selected period.                                                                                                        |
 | **CR**       | Conversion Rate                    | Percentag of unique visitors who registered at the selected period.                                                                                         |
+| **ARPDAU**   | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                 |
 | **NAU**      | New Active Users                   | Number of unique users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |
 | **NAPU**     | New Active Paying Users            | Number of unique users who did their first payment at the selected period.                                                                                  |
 | **DAU**      | Daily Active Users                 | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
@@ -62,16 +62,15 @@ It's easier to understand it when you see it in action on the dashboard.
 
 | Key          | Short                           | Description                                                                |
 |--------------|---------------------------------|----------------------------------------------------------------------------|
-| **NET**      | Net revenue                     | Net revenue over lifetime.                                                 |
-| **FEE**      | Fee                             | Fee over lifetime.                                                         |
-| **GROSS**    | Gross revenue                   | Gross revenue over lifetime.                                               |
-| **ARPU**     | Average revenue Per User        | The average revenue per User (how much is a user/lead/reg worth in money). |
-| **ARPPU**    | Average revenue Per Paying User | The average revenue per paying User.                                       |
+| **NET**      | Total Net revenue               | Net revenue over lifetime.                                                 |
+| **FEE**      | Total Fee                       | Fee over lifetime.                                                         |
+| **GROSS**    | Total Gross revenue             | Gross revenue over lifetime.                                               |
 | **VISITORS** | Total Unique Visitors           | Number of unique visitors over lifetime.                                   |
 | **REG**      | Total Registrations             | Number of registrations over lifetime.                                     |
 | **CR**       | Total Conversion Rate           | Percentag of unique visitors who registered over lifetime.                                     |
+| **ARPU**     | Average revenue Per User        | The average revenue per User (how much is a user/lead/reg worth in money). |
+| **ARPPU**    | Average revenue Per Paying User | The average revenue per paying User.                                       |
 | **PU**       | Paying Users                    | Number of paying users over lifetime.                                      |
-| **TAU**      | Total Active Users              | Number of users who logged in at least twice over lifetime.                |
 | **REG2DAU**  | Reg. to DAU                     | Percentage of registered users who become DAUs                             |
 | **REG2WAU**  | Reg. to WAU                     | Percentage of registered users who become WAUs                             |
 | **REG2MAU**  | Reg. to MAU                     | Percentage of registered users who become MAUs                             |
