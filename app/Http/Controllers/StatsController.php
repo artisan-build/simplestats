@@ -66,7 +66,7 @@ class StatsController extends Controller
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
             'statsGroupsSelected' => $user->settings['selectedGroupTypes'][$request->projectId] ?? [],
-            'seriesSelected' => session()->get('selectedSeries') ?? [],
+            'seriesSelected' => $user->settings['selectedSeries'] ?? [],
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
@@ -80,7 +80,7 @@ class StatsController extends Controller
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
     {
         if (isset($request->groupType)) {
-            $request->user()->updateSettings('selectedGroupTypes.'.$request->projectId.'.'.$request->groupType, $request->statsType);
+            $request->user()->updateSettings("selectedGroupTypes.$request->projectId.$request->groupType", $request->statsType);
         }
 
         return $statsAggregationsService->getAggregatedGroupedData(
@@ -96,7 +96,7 @@ class StatsController extends Controller
         $chartIndex = $request->chartIndex;
         $seriesIndex = $request->seriesIndex;
 
-        session()->put("selectedSeries.$type.$chartIndex", $seriesIndex);
+        $request->user()->updateSettings("selectedSeries.$type.$chartIndex", $seriesIndex);
 
         return response()->json();
     }
