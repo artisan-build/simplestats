@@ -94,7 +94,7 @@ const teamChanged = () => {
                                     @change="filterChanged"
                                 />
                             </div>
-                            <div v-if="teamStats.projects[filters.projectId].instances && teamStats.totalInstancesCount > 0">
+                            <div v-if="teamStats.projects[filters.projectId].instances && teamStats.totalInstancesCount > 1">
                                 <InputLabel class="hidden" for="instanceId" value="Instance" />
                                 <SelectInput
                                     id="instanceId"

@@ -23,9 +23,11 @@ defineProps({
 const page = usePage();
 
 const displayingToken = ref(false);
+const trackedVisitors = ref(0);
 
 watchEffect(() => {
     displayingToken.value = page.props.jetstream.flash.token;
+    trackedVisitors.value = page.props.jetstream.flash.trackedVisitors;
 });
 
 const viewApiTokenForm = useForm({});
@@ -152,6 +154,11 @@ const copyToClipboard = async () => {
                 <template #content>
                     <div>
                         Please copy your new API token and paste it to your App Instance you want to track!
+                    </div>
+
+                    <div v-if="trackedVisitors <= 0" class="mt-2 text-base">
+                        To <strong>enable tracking</strong> in your app, please also make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation here</a>.
+                        Follow the necessary steps to get everything set up correctly!
                     </div>
 
                     <div class="flex justify-between mt-4 bg-gray-100 dark:bg-gray-900 px-4 py-2 rounded font-mono text-sm text-gray-500 break-all">

@@ -6,6 +6,7 @@ use App\Actions\CheckPasswordConfirmation;
 use App\Http\Requests\InstanceRequest;
 use App\Models\Instance;
 use App\Models\Project;
+use App\Models\StatsVisitor;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -103,6 +104,7 @@ class ProjectInstanceController extends Controller
         return redirect()->route('projects.instances.show', [$project, $instance])->with('flash', array_merge(
             session('flash') ?? [], [
             'token' => $token->token_plain_part,
+            'trackedVisitors' => StatsVisitor::count(),
         ]));
     }
 }

@@ -14,7 +14,7 @@ const form = useForm({
     team: props.team,
     currency: '',
     project: '',
-    instance: '',
+    instance: 'Default',
 });
 
 const submit = () => {
@@ -41,20 +41,22 @@ const submit = () => {
                             id="team"
                             v-model="form.team"
                             type="text"
-                            class="mt-1 inline-block w-3/5"
+                            class="mt-1 inline-block w-2/5"
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Currency">
                         <div class="text-xl font-medium mb-10">
                             What is the currency of your team/company?
-                            <p class="text-base">All tracked multi-currency payments are converted to your currency at the daily exchange rate.</p>
+                            <p class="text-base mt-2">
+                                All tracked multi-currency payments of your app will be converted to your currency at the daily exchange rate.
+                            </p>
                         </div>
 
                         <TextInput
                             id="currency"
                             v-model="form.currency"
                             type="text"
-                            class="mt-1 inline-block w-3/5"
+                            class="mt-1 inline-block w-2/5"
                             placeholder="e.g. USD"
                         />
                     </TabContent>
@@ -67,22 +69,25 @@ const submit = () => {
                             id="project"
                             v-model="form.project"
                             type="text"
-                            class="mt-1 inline-block w-3/5"
+                            class="mt-1 inline-block w-2/5"
                             placeholder="e.g. My great SaaS"
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Instance">
                         <div class="text-xl font-medium mb-10">
-                            What should your first instance be called?
-                            <p class="text-base">Each of your projects may contain multiple instances.</p>
+                            What should your first instance be called? (optional)
+                            <p class="text-base mt-2">
+                                You can divide a project into multiple instances.
+                                For example, in a gaming app, you might have multiple game worlds per project like "Game World 1", "Game World 2", etc.<br>
+                                This allows you to filter and manage them separately. If you do not plan to use multiple instances, you can just leave this as "Default".
+                            </p>
                         </div>
 
                         <TextInput
                             id="project"
                             v-model="form.instance"
                             type="text"
-                            class="mt-1 inline-block w-3/5"
-                            placeholder="e.g. US East or International"
+                            class="mt-1 inline-block w-2/5"
                         />
                     </TabContent>
                 </FormWizard>
