@@ -16,7 +16,7 @@ const features = [
     {
         "icon": LightBulbIcon,
         "title": "Different",
-        "descr": "Traditional client-side analytic tools are only about 70% accurate because of ad blockers. They only show you data like visits and views. That's where SimpleStats shines; it gives you superpowers without the integration hustle."
+        "descr": "Traditional client-side analytic tools are only about 70% accurate because of ad blockers. They only show you data like visits and views. That's where SimpleStats shines; it gives you superpowers without the integration hustle!"
     },
     {
         "icon": RocketLaunchIcon,
