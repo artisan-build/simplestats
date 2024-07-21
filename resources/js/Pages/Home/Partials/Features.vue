@@ -41,7 +41,7 @@ const features = [
     {
         "icon": ChartBarIcon,
         "title": "KPIs",
-        "descr": "Here are a few of the KPIs that the tool provides: Unique Visitors, Registrations, Conversion Rate, Daily Active Users, New Active Paying Users, Average Revenue per User, Revenue and much more. Everything filterable by date, locations, devices and UTMs!"
+        "descr": "Here are a few of the KPIs that the tool provides out of the box: Unique Visitors, Registrations, Conversion Rate, Daily Active Users, New Active Paying Users, Average Revenue per User, Revenue and much more! Everything filterable by date, locations, devices and UTMs."
     },
     {
         "icon": ShieldCheckIcon,

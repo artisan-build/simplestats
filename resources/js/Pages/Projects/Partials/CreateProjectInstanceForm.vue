@@ -35,7 +35,7 @@ const createInstance = () => {
         </template>
 
         <template #description>
-            Manage or create new project-associated Instances.
+            Manage or create new instances for the current project.
         </template>
 
         <template #form>
