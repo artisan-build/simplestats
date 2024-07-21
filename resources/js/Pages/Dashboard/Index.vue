@@ -18,7 +18,7 @@ defineProps({
     seriesSelected: Object,
     topReferers: Object,
     rangeTypes: Array,
-    showFreePlanWarning: Boolean,
+    freePlanWarning: Object,
     subscriptionPlanAlarm: Array,
 });
 
@@ -40,8 +40,8 @@ onUnmounted(() => {
 <template>
     <AppLayout title="Dashboard" :fullscreen="true">
         <template #header>Dashboard</template>
-        <div v-if="showFreePlanWarning">
-            <FreePlanWarning />
+        <div v-if="freePlanWarning.show">
+            <FreePlanWarning :freePlanWarning="freePlanWarning" />
         </div>
         <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />

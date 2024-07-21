@@ -6,7 +6,6 @@ use App\Enums\StatsRangeType;
 use App\Jobs\QueuedVerifyEmailJob;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,7 +17,6 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
-use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
 use Spark\Billable;
 use Spark\Plan;
@@ -108,7 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
             // Fallback to "Free" plan
             $plans = config('spark.billables.user.plans');
             // local every user gets the highest plan by default :D
-            $planConfig = (! app()->isProduction() || in_array($this->id, config('app.plan_auto_max_users'))) ? $plans[count($plans)-1] : $plans[0];
+            $planConfig = $plans[0];// (! app()->isProduction() || in_array($this->id, config('app.plan_auto_max_users'))) ? $plans[count($plans)-1] : $plans[0];
 
             $plan = (new Plan($planConfig['name'], 0))
                 ->interval('monthly')

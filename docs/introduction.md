@@ -22,7 +22,7 @@ We collect this data in a GDPR-compliant way, aggregate it and make it filterabl
 
 ### Teams, Projects and Instances
 
-You can invite co-workers to your **team** and assign roles, such as _Administrator_, _Editor_, _Viewer_ to them. Furthermore, if you like and want to, you can create multiple **projects** and multiple **instances** per project. For example, in a gaming app, you might have multiple game worlds per project like "Game World 1", "Game World 2", etc. This allows you to filter and manage them separately. If you do not plan to use multiple instances, you can just leave it as "Default". The structure and naming of your projects and instances are completely up to you!
+You can invite co-workers to your **team** and assign roles, such as _Administrator_, _Editor_, _Viewer_ to them. Furthermore, if you like and want to, you can create multiple **projects** and multiple **instances** per project. For example, in a gaming app, you might have multiple game worlds per app like "Game World 1", "Game World 2", etc. This allows you to filter and manage them separately. If you do not plan to use multiple instances, you can just leave it as "Default". The structure and naming of your projects and instances are completely up to you!
 
 ## Server-Side vs Client-Side Tracking
 

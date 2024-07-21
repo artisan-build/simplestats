@@ -59,6 +59,8 @@ class StatsController extends Controller
         $teamStats->stats = $statsDetailsService->getStats($filters);
 
         $teamOwner = $user->team->owner;
+        $currentPlan = $teamOwner->sparkPlan();
+        $hideFreePlanWarning = $user->settings['hideFreePlanWarning'] ?? false;
         $data = [
             'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
@@ -70,7 +72,10 @@ class StatsController extends Controller
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
-            'showFreePlanWarning' => $teamOwner->sparkPlan()->name === SubscriptionService::PLAN_FREE,
+            'freePlanWarning' => [
+                'show' => $currentPlan->name === SubscriptionService::PLAN_FREE && ! $hideFreePlanWarning,
+                'users' => $currentPlan->options[StatsUser::class]
+            ],
             'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team)
         ];
 
@@ -99,5 +104,12 @@ class StatsController extends Controller
         $request->user()->updateSettings("selectedSeries.$type.$chartIndex", $seriesIndex);
 
         return response()->json();
+    }
+
+    public function hideFreePlanWarning(Request $request)
+    {
+        $request->user()->updateSettings("hideFreePlanWarning", true);
+
+        return back();
     }
 }
