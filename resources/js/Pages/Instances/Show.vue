@@ -153,12 +153,7 @@ const copyToClipboard = async () => {
 
                 <template #content>
                     <div>
-                        Please copy your new API token and paste it to your App Instance you want to track!
-                    </div>
-
-                    <div v-if="trackedVisitors <= 0" class="mt-2 text-base">
-                        To <strong>enable tracking</strong> in your app, please also make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation here</a>.
-                        Follow the necessary steps to get everything set up correctly!
+                        Please copy your new API token and paste it to your app Instance you want to track!
                     </div>
 
                     <div class="flex justify-between mt-4 bg-gray-100 dark:bg-gray-900 px-4 py-2 rounded font-mono text-sm text-gray-500 break-all">
@@ -172,6 +167,22 @@ const copyToClipboard = async () => {
                                 </svg>
                             </button>
                         </div>
+                    </div>
+
+                    <div v-if="trackedVisitors <= 0" class="mt-6 text-base">
+                        <h3 class="text-xl font-medium mb-3">Instructions</h3>
+                        To <strong>enable</strong> the tracking in your app, please make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation here</a>.
+                        Follow the necessary steps to get everything set up correctly!<br>
+                        <br>
+                        Basically these are the steps:<br>
+                        <ol class="list-decimal ml-6 mt-2">
+                            <li>Install the composer package</li>
+                            <li>Add the TrackableUser contract to your User model</li>
+                            <li>Add the TrackablePayment contract to your Payment/Transaction model</li>
+                            <li>Paste the token into your .env file</li>
+                        </ol>
+                        <br>
+                        Happy analysing!
                     </div>
                 </template>
 
