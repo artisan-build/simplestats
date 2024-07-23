@@ -3,12 +3,14 @@ import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
 import {formatDate} from "@/Helpers/NumberHelpers.js";
 import { periodMap, XAU} from "@/Helpers/StringHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     rangeType: String,
     teamStats: Object,
-    seriesSelected: Object,
 });
+
+const page = usePage();
 
 const kpiDefs = getKpiDefinitions(props.rangeType);
 
@@ -135,7 +137,7 @@ Object.keys(charts).forEach(category => {
         let info = ``;
 
         chartGroup.data.forEach(function(data, seriesIndex) {
-            let selectedIndex = props.seriesSelected?.[category]?.[chartIndex];
+            let selectedIndex = page.props.auth.user.settings.selectedSeries?.[category]?.[chartIndex];
             data.initialVisible = (selectedIndex == seriesIndex) || (!selectedIndex && seriesIndex == 0);
 
             let kpiDef = kpiDefs[category][data.key];

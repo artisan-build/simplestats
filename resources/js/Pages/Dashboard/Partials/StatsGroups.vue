@@ -1,12 +1,14 @@
 <script setup>
 import StatsGroup from "@/Pages/Dashboard/Partials/StatsGroup.vue";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     filters: Object,
     statsGroups: Object,
-    statsGroupsSelected: Object,
     topReferers: Object,
 });
+
+const page = usePage();
 </script>
 
 <template>
@@ -18,7 +20,7 @@ const props = defineProps({
                 :filters="filters"
                 :statsGroup="statsGroup"
                 :statsGroupType="statsGroupType"
-                :statsGroupSelected="statsGroupsSelected[statsGroupType]"
+                :statsGroupSelected="page.props.auth.user.settings?.selectedGroupTypes[filters.projectId][statsGroupType]"
                 :topReferers="topReferers"
             />
         </div>

@@ -14,8 +14,6 @@ defineProps({
     filters: Object,
     statsGroups: Object,
     statsGroupNames: Object,
-    statsGroupsSelected: Object,
-    seriesSelected: Object,
     topReferers: Object,
     rangeTypes: Array,
     freePlanWarning: Object,
@@ -62,14 +60,12 @@ onUnmounted(() => {
                     <StatsCharts
                         :rangeType="filters.rangeType"
                         :teamStats="teamStats"
-                        :seriesSelected="seriesSelected"
                     />
                 </div>
                 <div v-if="filters.projectId">
                     <StatsGroups
                         :filters="filters"
                         :statsGroups="statsGroups"
-                        :statsGroupsSelected="statsGroupsSelected"
                         :topReferers="topReferers"
                     />
                 </div>

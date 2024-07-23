@@ -67,8 +67,6 @@ class StatsController extends Controller
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            'statsGroupsSelected' => $user->settings['selectedGroupTypes'][$request->projectId] ?? [],
-            'seriesSelected' => $user->settings['selectedSeries'] ?? [],
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
