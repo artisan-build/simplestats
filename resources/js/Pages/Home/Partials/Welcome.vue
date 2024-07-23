@@ -26,9 +26,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
             <p class="mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 px-6 sm:px-0">
                 Server-side, GDPR compliant and 100% accurate statistics/analytics tool, that goes beyond simple<br class="hidden sm:block">
                 counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users,<br class="hidden sm:block">
-                New Paying Users, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
-<!--                Go beyond simple counts of views and visits and discover in-depth metrics like<br class="hidden sm:block">-->
-<!--                Registrations, Daily Active Users, New Paying Users, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!-->
+                Average Revenue Per User, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
             </p>
             <Link v-if="$page.props.canRegister" :href="route('register')" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
                 Get started
