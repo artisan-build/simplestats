@@ -82,7 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail, TrackableUserWith
     public function sendEmailVerificationNotification(): void
     {
         //dispactches the job to the queue passing it this User object
-        QueuedVerifyEmailJob::dispatch($this)->onQueue('low');
+        QueuedVerifyEmailJob::dispatch($this);
     }
 
     public function passTrackingCondition(): bool
