@@ -19,7 +19,8 @@ class StatsUserController extends Controller
     public function store(StatsUserRequest $request): JsonResponse|StatsUserResource
     {
         if (Browser::parse(urldecode($request->user_agent))->isBot()) {
-            return response()->json(['message' => 'Bots are not allowed'], 403);
+            // we respond, cause else the client would retry these requests again and again if they use queues...
+            return response()->json(['message' => 'Bots are not allowed'], 200);
         }
 
         $statsUser = StatsUser::updateOrCreate(['id' => $request->id], $request->validated());
