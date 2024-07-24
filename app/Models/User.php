@@ -17,11 +17,12 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
+use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
 use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
-class User extends Authenticatable implements MustVerifyEmail, TrackableUserWithCondition
+class User extends Authenticatable implements TrackableUserWithCondition, MustVerifyEmail
 {
     use HasApiTokens;
     use HasFactory;

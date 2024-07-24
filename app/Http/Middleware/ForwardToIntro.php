@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class ForwardToIntro
@@ -16,7 +17,7 @@ class ForwardToIntro
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->getRequestUri() === RouteServiceProvider::HOME &&
+        if (Str::of($request->getRequestUri())->contains(RouteServiceProvider::HOME) &&
             $request->user()->currentTeam->instances()->count() < 1
         ) {
             return redirect()->route('intro');
