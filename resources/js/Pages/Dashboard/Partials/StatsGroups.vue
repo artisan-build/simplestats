@@ -20,7 +20,7 @@ const page = usePage();
                 :filters="filters"
                 :statsGroup="statsGroup"
                 :statsGroupType="statsGroupType"
-                :statsGroupSelected="page.props.auth.user.settings?.selectedGroupTypes[filters.projectId][statsGroupType]"
+                :statsGroupSelected="page.props.auth.user.settings?.selectedGroupTypes?.[filters.projectId]?.[statsGroupType]"
                 :topReferers="topReferers"
             />
         </div>

@@ -137,7 +137,7 @@ Object.keys(charts).forEach(category => {
         let info = ``;
 
         chartGroup.data.forEach(function(data, seriesIndex) {
-            let selectedIndex = page.props.auth.user.settings.selectedSeries?.[category]?.[chartIndex];
+            let selectedIndex = page.props.auth.user.settings?.selectedSeries?.[category]?.[chartIndex];
             data.initialVisible = (selectedIndex == seriesIndex) || (!selectedIndex && seriesIndex == 0);
 
             let kpiDef = kpiDefs[category][data.key];
