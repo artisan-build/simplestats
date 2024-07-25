@@ -116,7 +116,7 @@ onMounted(fetchData);
                         </td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatPercent(Number(item.visitors) / Number(item.reg)) }}</td>
+                        <td class="p-1.5 text-right">{{ formatPercent((Number(item.reg) / Number(item.visitors)) * 100) }}</td>
                         <td class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
                         <td class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     </tr>
