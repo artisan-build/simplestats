@@ -97,7 +97,7 @@ trait HasStatsTracking
     {
         return Attribute::make(
             // if the user agent is set, we set the device data corresponding to it
-            set: function(string $value) {
+            set: function(?string $value) {
                 if ($browser = Browser::parse(urldecode($value))) {
                     return [
                         'device_type' => $browser->deviceType(),
