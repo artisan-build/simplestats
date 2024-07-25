@@ -40,7 +40,7 @@ class NewRegistration extends Notification
      */
     public function toMail($notifiable)
     {
-        $subject = Lang::get('New registration for :app_name', ['app_name' => env('APP_NAME')]);
+        $subject = Lang::get('New registration for :app_name', ['app_name' => config('app.name')]);
 
         return (new MailMessage)
             ->subject($subject)
