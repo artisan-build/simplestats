@@ -14,7 +14,7 @@ const props = defineProps({
 let latestSerieData = props.serie.data[props.serie.data.length - 1];
 let previousSerieData = props.serie.data[props.serie.data.length - 2];
 
-if (props.hasCurrent && previousSerieData > 0) {
+if (props.hasCurrent && previousSerieData > latestSerieData) {
     latestSerieData = props.serie.data[props.serie.data.length - 2];
     previousSerieData = props.serie.data[props.serie.data.length - 3];
 }
