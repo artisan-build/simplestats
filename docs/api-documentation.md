@@ -98,8 +98,7 @@ _Additional parameters:_
         "id": "1",
         "project_id": 1,
         "instance_id": 1,
-        "stats_track_source_id": "87.123.45.67",
-        "stats_location_country_id": 1, // germany
+        "stats_track_source_id": 1, // links to "test"
         "time": "2024-04-04"
     }
 }
@@ -166,8 +165,6 @@ _Additional parameters:_
 {
     "id": "1",
     "stats_user_id": "1",
-    "project_id": 1,
-    "instance_id": 1,
     "gross": 2000,
     "net": 1800,
     "currency": "EUR",
