@@ -102,7 +102,7 @@ onMounted(fetchData);
                     </tr>
                     <tr v-for="item in data">
                         <td class="p-1.5">
-                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
+                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l whitespace-nowrap" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
                                 <Link preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="group" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
                                     <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
                                         <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
