@@ -1,12 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
-import ApplicationMark from '@/Components/ApplicationMark.vue';
+import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
-import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
-import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import Navigation from "@/Components/Navigation.vue";
 import Footer from "@/Components/Footer.vue";
+import MenuToggler from "@/Components/MenuToggler.vue";
 
 defineProps({
     title: String,
@@ -27,10 +25,13 @@ const sidebarIsOpen = ref(false);
 
         <div @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"></div>
 
-        <aside :class="{
+        <aside
+            class="bg-white px-3 fixed border-r shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all dark:bg-gray-900 -translate-x-full rtl:translate-x-full"
+            :class="{
+                'lg:z-0 lg:ring-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
                 'translate-x-0 shadow-xl ring-1 ring-gray-950\/5 rtl:-translate-x-0 dark:ring-white\/10 lg:sticky': sidebarIsOpen,
-                '-translate-x-full rtl:translate-x-full lg:sticky': ! sidebarIsOpen
-            }" class="bg-white px-3 fixed border-r shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all dark:bg-gray-900 lg:z-0 lg:ring-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 -translate-x-full rtl:translate-x-full lg:sticky">
+            }"
+        >
                 <Navigation />
         </aside>
 
@@ -61,6 +62,17 @@ const sidebarIsOpen = ref(false);
                 </button>
             </div>
             <main class="mx-auto h-full w-full p-8" :class="{'max-w-screen-2xl': ! fullscreen}">
+                <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-8 pb-8">
+                    <h1 class="flex items-center w-full text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+                        <div v-if="! ($page.props.auth.user.settings?.showMenu ?? true)">
+                            <MenuToggler />
+                        </div>
+                        <div class="flex flex-grow justify-between">
+                            <slot name="header" />
+                        </div>
+                    </h1>
+                </header>
+
                 <slot />
             </main>
             <Footer />

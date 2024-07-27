@@ -1,12 +1,12 @@
 <script setup>
-import {router, useForm, usePage} from "@inertiajs/vue3";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {router, useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
+import MenuToggler from "@/Components/MenuToggler.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -16,8 +16,6 @@ const props = defineProps({
     rangeTypes: Array,
     topReferers: Object,
 });
-
-const page = usePage();
 
 const form = useForm(props.filters);
 
@@ -68,8 +66,11 @@ const teamChanged = () => {
 </script>
 
 <template>
-    <form @submit.prevent="submit">
-        <div class="">
+    <div class="flex">
+        <div>
+            <MenuToggler />
+        </div>
+        <form @submit.prevent="submit" class="flex-grow">
             <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-center justify-start md:justify-end">
                 <div class="flex-grow">
                     <div class="flex flex-wrap gap-x-8 gap-y-5 items-center justify-between">
@@ -159,7 +160,7 @@ const teamChanged = () => {
                             </div>
                             <div class="hidden sm:block">
                                 <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
                                 </div>
@@ -167,7 +168,7 @@ const teamChanged = () => {
                             <div class="">
                                 <InputLabel class="hidden" for="refresh" value="&nbsp;" />
                                 <SecondaryButton type="submit" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                     </svg>
                                     <span class="ml-2 hidden">Refresh</span>
@@ -177,6 +178,6 @@ const teamChanged = () => {
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </template>

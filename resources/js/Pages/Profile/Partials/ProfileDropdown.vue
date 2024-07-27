@@ -10,7 +10,7 @@ const logout = () => {
 </script>
 
 <template>
-    <Dropdown align="left" width="48">
+    <Dropdown align="right" width="48">
         <template #trigger>
             <button v-if="$page.props.jetstream.managesProfilePhotos"
                     class="flex text-sm border-2 rounded-full focus:outline-none focus:border-gray-300 transition"
@@ -36,9 +36,9 @@ const logout = () => {
                 Manage Account
             </div>
 
-            <DropdownLink :href="route('profile.show')">
-                Profile
-            </DropdownLink>
+<!--            <DropdownLink :href="route('profile.show')">-->
+<!--                Profile-->
+<!--            </DropdownLink>-->
 
             <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
                 API Tokens

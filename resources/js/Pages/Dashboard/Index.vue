@@ -37,7 +37,8 @@ onUnmounted(() => {
 
 <template>
     <AppLayout title="Dashboard" :fullscreen="true">
-        <template #header>Dashboard</template>
+<!--        <template #header>Dashboard</template>-->
+
         <div v-if="freePlanWarning.show">
             <FreePlanWarning :freePlanWarning="freePlanWarning" />
         </div>

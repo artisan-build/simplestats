@@ -17,16 +17,11 @@ defineProps({
 <template>
     <AppLayout title="Profile">
         <template #header>
-            Profile
+            <div>Profile</div>
+            <ProfileDropdown />
         </template>
 
         <div>
-            <div class="mb-10">
-                <div class="flex items-center">
-                    <div class="mr-2 font-medium">Account:</div>
-                    <ProfileDropdown />
-                </div>
-            </div>
 
             <div v-if="$page.props.jetstream.canUpdateProfileInformation">
                 <UpdateProfileInformationForm :user="$page.props.auth.user" />

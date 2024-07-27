@@ -4,6 +4,7 @@ use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\IntroController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\StatsGroupedController;
@@ -51,4 +52,6 @@ Route::middleware([
     Route::resource('projects.instances', App\Http\Controllers\ProjectInstanceController::class);
     Route::get('projects/{project}/instances/{instance}/token-view', [App\Http\Controllers\ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
     Route::get('projects/{project}/instances/{instance}/token-regenerate', [App\Http\Controllers\ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
+
+    Route::post('menu/toggle', [MenuController::class, 'toggle'])->name('menu.toggle');
 });
