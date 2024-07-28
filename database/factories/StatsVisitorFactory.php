@@ -36,7 +36,7 @@ class StatsVisitorFactory extends Factory
             'device_browser' => $this->faker->randomElement([null, 'Chrome', 'Safari', 'Firefox', 'Opera', 'Microsoft Edge']),
             'track_referer' => $this->faker->randomElement([null, 'www.google.com', 'instagram.com', 'youtube.com', 'linkedin.com', 'bing.com', 'facebook.com', 'duckduckgo.com', 'laracraft.tech']),
             'track_source' => $this->faker->randomElement([null, 'twitter', 'newsletter', 'facebook', 'affiliate_partner', 'instagram']),
-            'page_entry' => $this->faker->randomElement(['/', '/docs', '/login', '/register']),
+            'page_entry' => $this->faker->randomElement(['/', '/blog/my-super-successful-article', '/blog/why-we-are-awesome', '/blog/we-love-good-analytics']),
             'time' => $date,
         ];
 
