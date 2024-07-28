@@ -72,7 +72,7 @@ onMounted(fetchData);
 </script>
 
 <template>
-    <div class="flex-grow min-h-96 overflow-x-auto ">
+    <div class="flex-grow min-h-96 overflow-x-auto">
         <div v-if="loading" class="flex items-center justify-center h-96">
             <div>
                 <svg class="text-gray-300 animate-spin -ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -91,19 +91,19 @@ onMounted(fetchData);
                 </div>
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
-                <table class="w-full text-sm">
+                <table class="w-full table-fixed text-sm">
                     <tr class="sticky top-0 bg-white font-medium text-gray-600">
-                        <td class="p-1 py-1.5">Name</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">Visitors</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">Regs</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">CR</td>
-                        <td class="w-1 p-1.5 py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
-                        <td class="w-1 p-1.5 py-1.5 text-left">Revenue</td>
+                        <td style="width: 50%;" class="py-1.5">Name</td>
+                        <td style="width: 10%;" class="py-1.5 text-right">Visitors</td>
+                        <td style="width: 10%;" class="py-1.5 text-right">Regs</td>
+                        <td style="width: 10%;" class="py-1.5 text-right">CR</td>
+                        <td style="width: 10%;" class="py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
+                        <td style="width: 10%;" class="py-1.5 text-right">Revenue</td>
                     </tr>
                     <tr v-for="item in data">
-                        <td class="p-1.5">
-                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l whitespace-nowrap" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
-                                <Link preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})" class="group" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}">
+                        <td class="py-1.5">
+                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
+                                <Link class="group truncate" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
                                     <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
                                         <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
                                         <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
@@ -114,11 +114,11 @@ onMounted(fetchData);
                                 </Link>
                             </div>
                         </td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatPercent((Number(item.reg) / Number(item.visitors)) * 100) }}</td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+                        <td class="py-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
+                        <td class="py-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
+                        <td class="py-1.5 text-right">{{ formatPercent((Number(item.reg) / Number(item.visitors)) * 100) }}</td>
+                        <td class="py-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
+                        <td class="py-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     </tr>
                 </table>
             </div>
