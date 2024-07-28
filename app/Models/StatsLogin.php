@@ -37,7 +37,7 @@ class StatsLogin extends BaseStat
     {
         return Attribute::make(
             set: function(string $value) {
-                if (! $this->statsUser?->stats_location_country_id) {
+                if ($this->statsUser && ! $this->statsUser->stats_location_country_id) {
                     $this->statsUser->ip = $value;
                     $this->statsUser->save();
                 }
@@ -51,7 +51,7 @@ class StatsLogin extends BaseStat
     {
         return Attribute::make(
             set: function(string $value) {
-                if (! $this->statsUser?->stats_device_type_id) {
+                if ($this->statsUser && ! $this->statsUser->stats_device_type_id) {
                     $this->statsUser->user_agent = $value;
                     $this->statsUser->save();
                 }

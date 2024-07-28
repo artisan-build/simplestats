@@ -18,6 +18,10 @@ trait HasStatsTracking
             static::handleStatsTypes($statsModel);
         });
 
+        static::saving(function (BaseStat $statsModel) {
+            static::handleStatsTypes($statsModel);
+        });
+
         static::updating(function (BaseStat $statsModel) {
             static::handleStatsTypes($statsModel);
         });
@@ -32,7 +36,7 @@ trait HasStatsTracking
                     $track = ['team_id' => $statsModel->team_id, 'project_id' => $statsModel->project_id, 'name' => $statsModel->$property];
                     $statsProperty = "stats_{$property}_id";
                     $item['model']::unguard();
-                    $statsModel->$statsProperty = $item['model']::where($track)->exists() ?? $item['model']::create($track)->id;
+                    $statsModel->$statsProperty = $item['model']::where($track)->first()?->id ?? $item['model']::create($track)->id;
                 }
                 unset($statsModel->$property);
             }
