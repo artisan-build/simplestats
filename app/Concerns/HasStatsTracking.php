@@ -92,7 +92,8 @@ trait HasStatsTracking
 
     protected function setReferer(?string $value): array
     {
-        if (!$value) {
+        // falsy values und ips werden zu null referers (Direct/Unknown)
+        if (!$value || filter_var($value, FILTER_VALIDATE_IP) !== false) {
             return ['track_referer' => null];
         }
 
