@@ -1,36 +1,38 @@
 {
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
-  },
-  "devDependencies": {
-    "@inertiajs/vue3": "^1.2.0",
-    "@tailwindcss/forms": "^0.5.2",
-    "@tailwindcss/typography": "^0.5.2",
-    "@vitejs/plugin-vue": "^4.5.0",
-    "autoprefixer": "^10.4.7",
-    "axios": "^1.6.1",
-    "laravel-vite-plugin": "^1.0.0",
-    "postcss": "^8.4.14",
-    "tailwindcss": "^3.4.4",
-    "vite": "^5.0.0",
-    "vitepress": "^1.0.0-rc.44",
-    "vue": "^3.2.31"
-  },
-  "dependencies": {
-    "@heroicons/vue": "^2.1.1",
-    "apexcharts": "^3.48.0",
-    "chart.js": "^4.4.2",
-    "country-flag-emoji": "^1.0.3",
-    "floating-vue": "^5.2.2",
-    "lodash": "^4.17.21",
-    "pluralize": "^8.0.0",
-    "vue3-apexcharts": "^1.5.2",
-    "vue3-form-wizard": "^0.2.3"
-  }
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
+    },
+    "devDependencies": {
+        "@inertiajs/vue3": "^1.2.0",
+        "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/typography": "^0.5.2",
+        "@vitejs/plugin-vue": "^4.5.0",
+        "autoprefixer": "^10.4.7",
+        "axios": "^1.6.1",
+        "laravel-vite-plugin": "^1.0.0",
+        "postcss": "^8.4.14",
+        "tailwindcss": "^3.4.4",
+        "vite": "^5.0.0",
+        "vitepress": "^1.0.0-rc.44",
+        "vue": "^3.2.31"
+    },
+    "dependencies": {
+        "@heroicons/vue": "^2.1.1",
+        "@sentry/react": "^7.40.0",
+        "@sentry/vue": "^7.40.0",
+        "apexcharts": "^3.48.0",
+        "chart.js": "^4.4.2",
+        "country-flag-emoji": "^1.0.3",
+        "floating-vue": "^5.2.2",
+        "lodash": "^4.17.21",
+        "pluralize": "^8.0.0",
+        "vue3-apexcharts": "^1.5.2",
+        "vue3-form-wizard": "^0.2.3"
+    }
 }
