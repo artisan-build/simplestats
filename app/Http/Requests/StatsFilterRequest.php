@@ -145,6 +145,11 @@ class StatsFilterRequest extends FormRequest
                 'string',
                 Rule::in(StatsService::getStatsTypesCamelFlat()->toArray())
             ],
+            'statsSort' => [
+                'sometimes',
+                'string',
+                Rule::in(['net', 'reg', 'visitors', 'cr', 'dau'])
+            ],
             'groupType' => [
                 'sometimes',
                 'string',

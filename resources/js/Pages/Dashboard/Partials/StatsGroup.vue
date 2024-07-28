@@ -26,6 +26,10 @@ if (props.statsGroupSelected) {
     filters.statsType = props.statsGroup[0].type;
 }
 
+if (! filters.statsSort) {
+    filters.statsSort = 'net';
+}
+
 const fetchData = async () => {
     try {
         // console.log(filters)
@@ -48,6 +52,12 @@ const group2Name = {
 const changeGroup = (statsType, statsGroupType) => {
     filters.statsType = statsType;
     filters.groupType = statsGroupType;
+    loading.value = true;
+    fetchData();
+};
+
+const changeSort = (sort) => {
+    filters.statsSort = sort;
     loading.value = true;
     fetchData();
 };
@@ -94,11 +104,46 @@ onMounted(fetchData);
                 <table class="w-full table-fixed text-sm">
                     <tr class="sticky top-0 bg-white font-medium text-gray-600">
                         <td style="width: 50%;" class="py-1.5">Name</td>
-                        <td style="width: 10%;" class="py-1.5 text-right">Visitors</td>
-                        <td style="width: 10%;" class="py-1.5 text-right">Regs</td>
-                        <td style="width: 10%;" class="py-1.5 text-right">CR</td>
-                        <td style="width: 10%;" class="py-1.5 text-right">{{ XAU(filters.rangeType) }}</td>
-                        <td style="width: 10%;" class="py-1.5 text-right">Revenue</td>
+                        <td style="width: 10%;" class="py-1.5 text-right">
+                            <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'visitors' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('visitors')">
+                                Visitors
+                                <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </td>
+                        <td style="width: 10%;" class="py-1.5 text-right">
+                            <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'reg' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('reg')">
+                                Regs
+                                <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </td>
+                        <td style="width: 10%;" class="py-1.5 text-right">
+                            <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'cr' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('cr')">
+                                CR
+                                <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </td>
+                        <td style="width: 10%;" class="py-1.5 text-right">
+                            <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'dau' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('dau')">
+                                {{ XAU(filters.rangeType) }}
+                                <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </td>
+                        <td style="width: 10%;" class="py-1.5 text-right">
+                            <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'net' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('net')">
+                                Rev.
+                                <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </td>
                     </tr>
                     <tr v-for="item in data">
                         <td class="py-1.5">
@@ -116,7 +161,7 @@ onMounted(fetchData);
                         </td>
                         <td class="py-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
                         <td class="py-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                        <td class="py-1.5 text-right">{{ formatPercent((Number(item.reg) / Number(item.visitors)) * 100) }}</td>
+                        <td class="py-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
                         <td class="py-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
                         <td class="py-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     </tr>

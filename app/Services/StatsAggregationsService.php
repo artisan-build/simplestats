@@ -42,7 +42,7 @@ class StatsAggregationsService
         return $aggregatedData->keyBy('date_clear');
     }
 
-    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, int $limit = 9): Collection
+    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9): Collection
     {
         // TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
 
@@ -102,9 +102,10 @@ class StatsAggregationsService
         SELECT
             sg.type_id as type_id,
             sg.name as name,
-            COALESCE(pd_dau.count, 0) AS dau,
-            COALESCE(lt_reg.count, 0) AS reg,
             COALESCE(lt_visitors.count, 0) AS visitors,
+            COALESCE(lt_reg.count, 0) AS reg,
+            COALESCE(lt_reg.count / lt_visitors.count * 100, 0) AS cr,
+            COALESCE(pd_dau.count, 0) AS dau,
             COALESCE(ROUND(lt_net.count,2), 0) AS net
         FROM
             stats_groups sg
@@ -113,7 +114,7 @@ class StatsAggregationsService
             LEFT JOIN lt_visitors ON sg.type_id = lt_visitors.type_id
             LEFT JOIN lt_net ON sg.type_id = lt_net.type_id
         ORDER BY
-            lt_net.count DESC, lt_reg.count DESC, lt_visitors.count DESC, pd_dau.count DESC;
+            $statsSort DESC;
         ";
 
         $filterConditions = $this->getFilterConditions($filters);
