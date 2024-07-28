@@ -8,6 +8,7 @@ import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
 import _ from "lodash";
+import EnvBadge from "@/Components/EnvBadge.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -175,6 +176,7 @@ const teamChanged = () => {
                                     <span class="ml-2 hidden">Refresh</span>
                                 </SecondaryButton>
                             </div>
+                            <EnvBadge />
                         </div>
                     </div>
                 </div>

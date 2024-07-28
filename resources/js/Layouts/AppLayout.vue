@@ -5,6 +5,7 @@ import Banner from '@/Components/Banner.vue';
 import Navigation from "@/Components/Navigation.vue";
 import Footer from "@/Components/Footer.vue";
 import MenuToggler from "@/Components/MenuToggler.vue";
+import EnvBadge from "@/Components/EnvBadge.vue";
 
 defineProps({
     title: String,
@@ -70,6 +71,7 @@ const sidebarIsOpen = ref(false);
                         <div class="flex flex-grow justify-between">
                             <slot name="header" />
                         </div>
+                        <EnvBadge />
                     </h1>
                 </header>
 
