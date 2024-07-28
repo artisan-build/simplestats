@@ -53,5 +53,5 @@ Route::middleware([
     Route::get('projects/{project}/instances/{instance}/token-view', [App\Http\Controllers\ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
     Route::get('projects/{project}/instances/{instance}/token-regenerate', [App\Http\Controllers\ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
 
-    Route::post('menu/toggle', [MenuController::class, 'toggle'])->name('menu.toggle');
+    Route::get('menu/toggle', [MenuController::class, 'toggle'])->name('menu.toggle');
 });
