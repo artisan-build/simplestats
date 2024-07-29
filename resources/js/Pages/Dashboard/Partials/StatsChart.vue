@@ -110,7 +110,9 @@ const chartOptions = ref({
 const latestPeriod = categories[categories.length - 1];
 const previousPeriod = categories[categories.length - 2];
 const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.rangeType);
-const hasCurrentPeriod = props.type === 'per_date' && latestPeriod === currentPeriod;
+
+let hasCurrentHigh = false;
+let hasCurrentPeriod = props.type === 'per_date' && latestPeriod === currentPeriod;
 
 if (hasCurrentPeriod) {
     chartOptions.value.annotations = {
@@ -119,20 +121,15 @@ if (hasCurrentPeriod) {
                 x: previousPeriod,
                 x2: latestPeriod,
                 fillColor: '#DDDDDD',
-                // label: {
-                //     text: 'current',
-                //     position: 'bottom', // Position des Labels
-                //     // orientation: 'horizontal', // Ausrichtung des Labels
-                //     // offsetX: 0, // Horizontal verschieben
-                //     // offsetY: 0, // Vertikal verschieben
-                //     style: {
-                //         color: '#000',
-                //         background: '#B3F7CA'
-                //     }
-                // }
             }
         ]
     };
+
+    series.value.forEach((serie) => {
+        if (serie.data[serie.data.length - 1] > serie.data[serie.data.length - 2]) {
+            hasCurrentHigh = true;
+        }
+    });
 }
 
 onMounted(async () => {
@@ -179,7 +176,8 @@ const selectSeries = (selectedSerie) => {
                 :serieIndex="serieIndex"
                 :formatter="chart.formatter"
                 :chartInstance="chartInstance"
-                :has-current="hasCurrentPeriod"
+                :hasCurrent="hasCurrentPeriod"
+                :highCurrent="hasCurrentHigh"
                 @selectSeries="selectSeries"
             />
         </div>
