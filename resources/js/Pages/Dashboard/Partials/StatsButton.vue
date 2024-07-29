@@ -14,7 +14,10 @@ const props = defineProps({
 let latestSerieData = props.serie.data[props.serie.data.length - 1];
 let previousSerieData = props.serie.data[props.serie.data.length - 2];
 
-if (props.hasCurrent && previousSerieData > latestSerieData) {
+// Unfortunately, we can't do "previousSerieData > latestSerieData" here the idea was, to show the latest data,
+// if it's bigger than before, but this will not work with conversion rate. Cause maybe reg and visits are very high
+// previously and low on latest, but the CR is higher. Then we would see visits and regs from prev and cr from latest.
+if (props.hasCurrent && previousSerieData > 0) {
     latestSerieData = props.serie.data[props.serie.data.length - 2];
     previousSerieData = props.serie.data[props.serie.data.length - 3];
 }
