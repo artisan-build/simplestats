@@ -8,8 +8,13 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import {vTooltip} from 'floating-vue'
 import * as Sentry from "@sentry/vue";
+import _ from "lodash";
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+let appName = import.meta.env.VITE_APP_NAME;
+
+if (import.meta.env.VITE_APP_ENV !== 'production') {
+    appName = _.capitalize(import.meta.env.VITE_APP_ENV) +' '+import.meta.env.VITE_APP_NAME;
+}
 
 createInertiaApp({
     title: (title) => `${appName} - ${title}`,
