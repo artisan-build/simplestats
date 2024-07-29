@@ -32,7 +32,6 @@ if (! filters.statsSort) {
 
 const fetchData = async () => {
     try {
-        // console.log(filters)
         const response = await fetch(route('stats.grouped', filters));
         data.value = await response.json();
     } catch (error) {

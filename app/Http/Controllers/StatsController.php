@@ -86,12 +86,14 @@ class StatsController extends Controller
             $request->user()->updateSettings("selectedGroupTypes.$request->projectId.$request->groupType", $request->statsType);
         }
 
+        // ->values()->toArray() makes sure the indexes are int-numeric and not string-numeric
+        // (which would result in a js object). This happens cause of the reject at the end of "getAggregatedGroupedData"
         return $statsAggregationsService->getAggregatedGroupedData(
             StatsFilterDto::fromRequest($request),
             $request->statsType,
             $request->statsSort,
             $request->limit ?? 5, //must be equal to Load more in StatsOverviewGroup.vue
-        );
+        )->values()->toArray();
     }
 
     public function setSeries(Request $request)

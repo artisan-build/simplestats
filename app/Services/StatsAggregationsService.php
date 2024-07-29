@@ -149,7 +149,7 @@ class StatsAggregationsService
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-//echo nl2br($sql);die;
+        //echo nl2br($sql);die;
         // convert the objects to arrays for consistency
         $dataArray = json_decode(json_encode(DB::select($sql)), true);
 
