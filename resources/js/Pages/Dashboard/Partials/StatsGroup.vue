@@ -105,7 +105,7 @@ onMounted(fetchData);
                         <td style="width: 44%;" class="py-1.5">Name</td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
-                                Visitors
+                                <span>Visitors</span><!-- the span removes whitespace -->
                                 <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -113,7 +113,7 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'reg' ? 'text-indigo-600' : ''" @click="changeSort('reg')">
-                                Regs
+                                <span>Regs</span><!-- the span removes whitespace -->
                                 <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -121,7 +121,7 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
-                                CR
+                                <span>CR</span><!-- the span removes whitespace -->
                                 <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -129,7 +129,7 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'dau' ? 'text-indigo-600' : ''" @click="changeSort('dau')">
-                                {{ XAU(filters.rangeType) }}
+                                <span>{{ XAU(filters.rangeType) }}</span><!-- the span removes whitespace -->
                                 <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -137,7 +137,7 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
-                                Rev.
+                                <span>Rev.</span><!-- the span removes whitespace -->
                                 <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
