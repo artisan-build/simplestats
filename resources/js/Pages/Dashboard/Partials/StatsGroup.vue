@@ -107,41 +107,26 @@ onMounted(fetchData);
                         <td style="width: 10%;" class="py-1.5 text-right">
                             <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'visitors' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('visitors')">
                                 Visitors
-                                <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
                             </button>
                         </td>
                         <td style="width: 10%;" class="py-1.5 text-right">
                             <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'reg' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('reg')">
                                 Regs
-                                <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
                             </button>
                         </td>
                         <td style="width: 10%;" class="py-1.5 text-right">
                             <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'cr' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('cr')">
                                 CR
-                                <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
                             </button>
                         </td>
                         <td style="width: 10%;" class="py-1.5 text-right">
                             <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'dau' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('dau')">
                                 {{ XAU(filters.rangeType) }}
-                                <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
                             </button>
                         </td>
                         <td style="width: 10%;" class="py-1.5 text-right">
                             <button class="whitespace-nowrap border-b hover:border-indigo-400" :class="filters.statsSort === 'net' ? 'text-indigo-600 border-indigo-400' : 'border-transparent'" @click="changeSort('net')">
                                 Rev.
-                                <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
                             </button>
                         </td>
                     </tr>
