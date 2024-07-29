@@ -24,7 +24,8 @@ class DisableMutateEndpointsInDemoEnv
             $request->is('login') ||
             $request->is('logout') ||
             $request->is('spark/*') ||
-            $request->is('paddle/*')
+            $request->is('paddle/*') ||
+            $request->is('menu/toggle')
         ) {
             return $next($request);
         }
