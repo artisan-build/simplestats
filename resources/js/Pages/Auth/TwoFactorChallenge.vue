@@ -45,6 +45,10 @@ const submit = () => {
             <AuthenticationCardLogo />
         </template>
 
+        <template #title>
+            Account Confirmation
+        </template>
+
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
             <template v-if="! recovery">
                 Please confirm access to your account by entering the authentication code provided by your authenticator application.
@@ -57,7 +61,6 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div v-if="! recovery">
-                <InputLabel for="code" value="Code" />
                 <TextInput
                     id="code"
                     ref="codeInput"
@@ -67,12 +70,12 @@ const submit = () => {
                     class="mt-1 block w-full"
                     autofocus
                     autocomplete="one-time-code"
+                    placeholder="Code"
                 />
                 <InputError class="mt-2" :message="form.errors.code" />
             </div>
 
             <div v-else>
-                <InputLabel for="recovery_code" value="Recovery Code" />
                 <TextInput
                     id="recovery_code"
                     ref="recoveryCodeInput"
@@ -80,6 +83,7 @@ const submit = () => {
                     type="text"
                     class="mt-1 block w-full"
                     autocomplete="one-time-code"
+                    placeholder="Recovery Code"
                 />
                 <InputError class="mt-2" :message="form.errors.recovery_code" />
             </div>
@@ -94,9 +98,13 @@ const submit = () => {
                         Use an authentication code
                     </template>
                 </button>
+            </div>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
+            <div class="mt-4">
+                <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <div class="w-full py-1 text-base normal-case">
+                        Sign in
+                    </div>
                 </PrimaryButton>
             </div>
         </form>

@@ -26,6 +26,10 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
             <AuthenticationCardLogo />
         </template>
 
+        <template #title>
+            Email verification
+        </template>
+
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
             Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
         </div>
@@ -35,27 +39,22 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
+            <div class="mt-4">
+                <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <div class="w-full py-1 text-base normal-case">
+                        Resend verification email
+                    </div>
                 </PrimaryButton>
+            </div>
 
-                <div>
-                    <Link
-                        :href="route('profile.show')"
-                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                    >
-                        Edit Profile</Link>
+            <div class="flex items-center justify-around mt-4">
+                <Link :href="route('profile.show')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    Profile
+                </Link>
 
-                    <Link
-                        :href="route('logout')"
-                        method="post"
-                        as="button"
-                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 ms-2"
-                    >
-                        Log Out
-                    </Link>
-                </div>
+                <Link as="button" method="post" :href="route('logout')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    Sign out
+                </Link>
             </div>
         </form>
     </AuthenticationCard>

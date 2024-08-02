@@ -1,23 +1,31 @@
 <script setup>
-import Header from "@/Pages/Home/Partials/Header.vue";
+import Header from "@/Pages/Auth/Header.vue";
 import Footer from "@/Components/Footer.vue";
+import Testimonials from "@/Components/Testimonials.vue";
+import {testimonials} from "@/Data/testimonials.js";
+import {sample} from "lodash";
 </script>
 
 <template>
-    <Header />
+    <div class="w-full min-h-screen flex bg-white dark:bg-gray-900">
+        <div class="w-full md:w-1/2 flex items-center">
+            <div class="mx-auto w-full sm:max-w-lg px-10 xl:px-0">
+                <div class="text-center">
+                    <Header class="mb-10" />
 
-    <div class="min-h-screen flex flex-col sm:py-32 items-center bg-white dark:bg-gray-900">
-        <div>
-            <slot name="logo" />
+                    <h2 class="text-3xl font-medium mb-10">
+                        <slot name="title" />
+                    </h2>
+                </div>
+                <slot />
+            </div>
         </div>
-
-        <div class="w-full sm:max-w-lg mt-6 px-12 py-10 bg-white dark:bg-gray-800 shadow-xl overflow-hidden rounded-lg border">
-            <h2 class="text-2xl font-medium text-center mb-6">
-                <slot name="title" />
-            </h2>
-            <slot />
+        <div class="w-1/2 hidden md:flex items-center border-l border-gray-400" style="background: url('/images/side_bg.jpg'); background-size: cover;">
+            <div class="mx-auto w-full sm:max-w-lg px-10 xl:px-0">
+                <Testimonials :testimonials="[sample(testimonials)]" />
+            </div>
         </div>
     </div>
 
-    <Footer />
+    <Footer class="hidden" />
 </template>

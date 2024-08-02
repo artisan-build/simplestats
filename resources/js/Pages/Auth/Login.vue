@@ -31,6 +31,8 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
+const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
@@ -42,7 +44,7 @@ const submit = () => {
         </template>
 
         <template #title>
-            Login to your account
+            Sign in to {{ appName }}
         </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
@@ -51,7 +53,6 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -60,12 +61,12 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
+                    placeholder="Email"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
                 <TextInput
                     id="password"
                     v-model="form.password"
@@ -73,6 +74,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="current-password"
+                    placeholder="Password"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
@@ -84,14 +86,26 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+            <div class="mt-4">
+                <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <div class="w-full py-1 text-base normal-case">
+                        Sign in
+                    </div>
+                </PrimaryButton>
+            </div>
+
+            <div class="flex items-center justify-around mt-4">
+                <Link :href="route('register')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    Sign up
+                </Link>
+
+                <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Forgot your password?
                 </Link>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
+                <Link :href="route('home')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    Home
+                </Link>
             </div>
         </form>
     </AuthenticationCard>

@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', HomeController::class);
+Route::get('/', HomeController::class)->name('home');
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 

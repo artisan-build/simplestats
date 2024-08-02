@@ -19,7 +19,7 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     accept_invitation_link: props.params.acceptInvitationLink ?? '',
-    terms: false,
+    terms: true,
 });
 
 const submit = () => {
@@ -27,10 +27,12 @@ const submit = () => {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
+
+const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="Sign up" />
 
     <AuthenticationCard>
         <template #logo>
@@ -38,13 +40,12 @@ const submit = () => {
         </template>
 
         <template #title>
-            Register a new account<br>
+            Sign up to {{ appName }}<br>
             <span class="text-sm text-gray-500" v-if="params.teamName">and join the following team: {{ params.teamName }}</span>
         </template>
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name" />
                 <TextInput
                     id="name"
                     v-model="form.name"
@@ -53,12 +54,12 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="name"
+                    placeholder="Name"
                 />
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-3 -mb-1 text-left" :message="form.errors.name" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="email" value="Email" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -66,12 +67,12 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="username"
+                    placeholder="Email"
                 />
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError class="mt-3 -mb-1 text-left" :message="form.errors.email" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
                 <TextInput
                     id="password"
                     v-model="form.password"
@@ -79,12 +80,12 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
+                    placeholder="Password"
                 />
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError class="mt-3 -mb-1 text-left" :message="form.errors.password" />
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
                 <TextInput
                     id="password_confirmation"
                     v-model="form.password_confirmation"
@@ -92,25 +93,34 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
+                    placeholder="Confirm Password"
                 />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <InputError class="mt-3 -mb-1 text-left" :message="form.errors.password_confirmation" />
             </div>
 
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
+            <div class="mt-4">
+                <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <div class="w-full py-1 text-base normal-case">
+                        Create account
+                    </div>
+                </PrimaryButton>
+            </div>
 
-                        <div class="ms-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Privacy Policy</a>
+            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
+                <InputLabel for="terms">
+                    <div class="flex items-center px-2 lg:px-6">
+                        <Checkbox class="hidden" id="terms" v-model:checked="form.terms" name="terms" required />
+
+                        <div>
+                            Signing up for a {{ appName }} account means you agree to the <a target="_blank" :href="route('terms.show')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">Privacy Policy</a>.
                         </div>
                     </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
+                    <InputError class="mt-3 -mb-1 text-left" :message="form.errors.terms" />
                 </InputLabel>
             </div>
 
             <div>
-                <TextInput
+                <TextInputx
                     id="accept_invitation_link"
                     v-model="form.accept_invitation_link"
                     type="hidden"
@@ -118,17 +128,13 @@ const submit = () => {
                 />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                    Already registered?
+            <div class="mt-4 text-center">
+                <Link :href="route('login')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">
+                    <span class="text-gray-600">Already have an account?</span> Sign in
                 </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
             </div>
 
-            <InputError class="mt-2" :message="form.errors.accept_invitation_link" />
+            <InputError class="mt-3 -mb-1 text-left" :message="form.errors.accept_invitation_link" />
         </form>
     </AuthenticationCard>
 </template>
