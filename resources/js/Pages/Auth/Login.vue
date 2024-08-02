@@ -36,7 +36,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Sign in" />
 
     <AuthenticationCard>
         <template #logo>
