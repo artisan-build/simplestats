@@ -92,7 +92,7 @@ onMounted(fetchData);
         </div>
         <div v-else class="p-4 text-sm @md:text-base">
             <div class="flex justify-between mb-4">
-                <div class="font-bold text-center hidden @md:block">{{ group2Name[statsGroupType] }}</div>
+                <div class="font-bold text-center hidden @xl:block">{{ group2Name[statsGroupType] }}</div>
                 <div class="flex">
                     <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
                         {{ stat.title }}
@@ -105,8 +105,8 @@ onMounted(fetchData);
                         <td style="width: 44%;" class="py-1.5">Name</td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
-                                <span class="inline-block @xl:hidden">Visits</span><!-- the span removes whitespace -->
-                                <span class="hidden @xl:inline-block">Visitors</span>
+                                <span class="inline-block @2xl:hidden">Visits</span>
+                                <span class="hidden @2xl:inline-block">Visitors</span>
                                 <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -114,7 +114,7 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'reg' ? 'text-indigo-600' : ''" @click="changeSort('reg')">
-                                <span>Regs</span><!-- the span removes whitespace -->
+                                <span>Regs</span>
                                 <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -122,7 +122,8 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
-                                <span>CR</span><!-- the span removes whitespace -->
+                                <span class="inline-block @2xl:hidden">CR</span>
+                                <span class="hidden @2xl:inline-block">Conversion</span>
                                 <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
@@ -138,7 +139,8 @@ onMounted(fetchData);
                         </td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
-                                <span>Rev.</span><!-- the span removes whitespace -->
+                                <span class="inline-block @2xl:hidden">Rev.</span>
+                                <span class="hidden @2xl:inline-block">Revenue</span>
                                 <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
