@@ -3,6 +3,7 @@ import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import Testimonials from "@/Components/Testimonials.vue";
 import {testimonials} from "@/Data/testimonials.js";
 
+const topTestimonials = testimonials.slice(0, 3);
 </script>
 
 <template>
@@ -13,7 +14,7 @@ import {testimonials} from "@/Data/testimonials.js";
             </SectionHeader>
 
             <section class="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-3">
-                <Testimonials :testimonials="testimonials" />
+                <Testimonials :testimonials="topTestimonials" />
             </section>
         </div>
     </section>
