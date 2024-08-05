@@ -22,7 +22,7 @@ const selectedTestimonial = sample(testimonials);
                 <slot />
             </div>
         </div>
-        <div class="w-1/2 hidden md:flex items-center border-l border-gray-400" style="background: url('/images/side_bg.jpg'); background-size: cover;">
+        <div class="w-1/2 hidden md:flex items-center border-l border-gray-400" style="background: url('/images/side_bg.webp'); background-size: cover;">
             <div class="mx-auto w-full sm:max-w-lg px-10 xl:px-0">
                 <Testimonials :testimonials="[selectedTestimonial]" />
             </div>
