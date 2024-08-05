@@ -81,7 +81,7 @@ onMounted(fetchData);
 </script>
 
 <template>
-    <div class="flex-grow min-h-96 overflow-x-auto">
+    <div class="@container flex-grow min-h-96 overflow-x-auto">
         <div v-if="loading" class="flex items-center justify-center h-96">
             <div>
                 <svg class="text-gray-300 animate-spin -ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -90,23 +90,24 @@ onMounted(fetchData);
                 </svg>
             </div>
         </div>
-        <div v-else class="p-4">
+        <div v-else class="p-4 text-sm @md:text-base">
             <div class="flex justify-between mb-4">
-                <div class="font-bold text-center">{{ group2Name[statsGroupType] }}</div>
+                <div class="font-bold text-center hidden @md:block">{{ group2Name[statsGroupType] }}</div>
                 <div class="flex">
-                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-sm text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
+                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
                         {{ stat.title }}
                     </button>
                 </div>
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
-                <table class="w-full table-fixed text-sm">
+                <table class="w-full table-fixed">
                     <tr class="sticky top-0 bg-white font-medium text-gray-600">
                         <td style="width: 44%;" class="py-1.5">Name</td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
-                                <span>Visitors</span><!-- the span removes whitespace -->
-                                <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                <span class="inline-block @xl:hidden">Visits</span><!-- the span removes whitespace -->
+                                <span class="hidden @xl:inline-block">Visitors</span>
+                                <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
                             </button>
@@ -114,7 +115,7 @@ onMounted(fetchData);
                         <td style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'reg' ? 'text-indigo-600' : ''" @click="changeSort('reg')">
                                 <span>Regs</span><!-- the span removes whitespace -->
-                                <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
                             </button>
@@ -122,7 +123,7 @@ onMounted(fetchData);
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
                                 <span>CR</span><!-- the span removes whitespace -->
-                                <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
                             </button>
@@ -130,7 +131,7 @@ onMounted(fetchData);
                         <td style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'dau' ? 'text-indigo-600' : ''" @click="changeSort('dau')">
                                 <span>{{ XAU(filters.rangeType) }}</span><!-- the span removes whitespace -->
-                                <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
                             </button>
@@ -138,7 +139,7 @@ onMounted(fetchData);
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
                                 <span>Rev.</span><!-- the span removes whitespace -->
-                                <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 inline-block">
+                                <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                     <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                 </svg>
                             </button>

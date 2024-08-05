@@ -154,9 +154,21 @@ const selectSeries = (selectedSerie) => {
 </script>
 
 <template>
-    <div class="bg-white dark:bg-gray-800 border shadow-md rounded-md">
+    <div class="@container bg-white dark:bg-gray-800 border shadow-md rounded-md">
+        <div class="grid gap-3 grid-cols-3 pt-3 px-3">
+            <StatsButton
+                v-for="(serie, serieIndex) in series"
+                :serie="serie"
+                :serieIndex="serieIndex"
+                :formatter="chart.formatter"
+                :chartInstance="chartInstance"
+                :hasCurrent="hasCurrentPeriod"
+                :highCurrent="hasCurrentHigh"
+                @selectSeries="selectSeries"
+            />
+        </div>
         <div class="pl-2 relative">
-            <div v-tooltip.right="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chart.info}</div>`, html: true }" class="absolute top-1.5 right-1.5 text-gray-400 z-10">
+            <div v-tooltip.right="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chart.info}</div>`, html: true }" class="absolute top-3 right-2 text-gray-400 z-10">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                 </svg>
@@ -168,18 +180,6 @@ const selectSeries = (selectedSerie) => {
                 :height="chartOptions.chart.height"
                 :options="chartOptions"
                 :series="series" />
-        </div>
-        <div class="grid grid-cols-3 border-t">
-            <StatsButton
-                v-for="(serie, serieIndex) in series"
-                :serie="serie"
-                :serieIndex="serieIndex"
-                :formatter="chart.formatter"
-                :chartInstance="chartInstance"
-                :hasCurrent="hasCurrentPeriod"
-                :highCurrent="hasCurrentHigh"
-                @selectSeries="selectSeries"
-            />
         </div>
     </div>
 </template>

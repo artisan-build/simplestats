@@ -28,7 +28,7 @@
         <link rel="manifest" href="/site.webmanifest">
 
         <!-- preloads -->
-        <link rel="preload" href="{{ asset('/images/side_bg.webp') }}" as="image">
+        <link rel="prefetch" href="{{ asset('/images/side_bg.webp') }}" as="image">
 
         <!-- Scripts -->
         @routes

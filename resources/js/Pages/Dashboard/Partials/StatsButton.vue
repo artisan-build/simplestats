@@ -47,7 +47,7 @@ const increaseTypes = {
     "-1": {
         formatter: formatPercent,
         description: 'decrease',
-        class: 'text-red-500',
+        class: 'text-red-400',
         icon: ArrowTrendingDownIcon,
     }
 };
@@ -62,20 +62,21 @@ const isSerieVisible = () => {
 </script>
 
 <template>
-    <button class="group p-2 sm:p-3 text-left border-r last:border-r-0 border-t-2 hover:border-t-blue-300"
-            :class="isSerieVisible() ? 'border-t-blue-300' : 'border-t-white'"
+    <button class="group py-1 px-2 sm:py-2 sm:px-3 text-left border-b-2 hover:border-b-blue-300 hover:bg-gray-100 rounded-md"
+            :class="isSerieVisible() ? 'border-b-blue-300 bg-gray-100' : 'border-white'"
             @click="$emit('selectSeries', {index: serieIndex, data: serie})"
     >
-        <div class="flex justify-between text-sm font-medium text-gray-700 dark:text-gray-400 group-hover:underline" :class="{'underline': isSerieVisible()}">
+        <div class="flex justify-between text-lg font-medium" :class="isSerieVisible() ? 'text-black dark:text-gray-200' : 'text-gray-700 dark:text-gray-400'">
             <div class="tracking-wider">
-                {{ serie.name }}
+                <span class="hidden 2xl:block">{{ serie.name }}</span>
+                <span class="block 2xl:hidden">{{ serie.nameSmall }}</span>
             </div>
             <div class="hidden sm:block" :class="increaseType.class">
                 <component class="inline-block h-5 w-5" :is="increaseType.icon" />
             </div>
         </div>
         <div class="flex justify-between items-center">
-            <div class="text-md sm:text-lg font-semibold tracking-tight text-gray-950 dark:text-white">
+            <div class="text-base @md:text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
                 <span v-if="serie.formatter === 'percent'">
                     {{ formatMap[serie.formatter](latestSerieData, {
                     minimumFractionDigits: 2,
