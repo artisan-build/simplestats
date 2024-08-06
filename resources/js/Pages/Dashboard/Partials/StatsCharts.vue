@@ -133,7 +133,7 @@ let charts = {
     ],
 };
 
-const chartType = props.filters.chartType;
+const chartType = (props.filters.lifetime) ? 'lifetime' : 'per_date' ;
 charts = {[chartType]: charts[chartType]};
 
 Object.keys(charts).forEach(category => {

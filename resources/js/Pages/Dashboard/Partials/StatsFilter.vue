@@ -7,8 +7,9 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
-import _ from "lodash";
+import {truncate} from "lodash";
 import EnvBadge from "@/Components/EnvBadge.vue";
+import ToggleButton from "@/Components/ToggleButton.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -22,13 +23,15 @@ const props = defineProps({
 const form = useForm(props.filters);
 
 const rangeAmounts = Array.from({ length: 60 - 1 }, (_, i) => ({
-    // start from min 3 days cause smaller would break the charts, and it not really makes sense...
     id: (i + 2).toString(),
     name: (i + 2).toString()
 }));
 
 const submit = () => {
-    form.get(route('dashboard'), {preserveScroll: true});
+    form.transform(data => ({
+        ...data,
+        lifetime: form.lifetime ? 1 : 0,
+    })).get(route('dashboard'), {preserveScroll: true});
 };
 
 const filterChanged = (event) => {
@@ -113,7 +116,7 @@ const teamChanged = () => {
                             <template v-for="statsGroup in statsGroups">
                                 <template v-for="group in statsGroup">
                                     <div v-if="filters[group.type]" class="bg-indigo-100 border rounded-md p-2 mt-1">
-                                        {{ pluralize.singular(group.title) }} is <strong>{{ _.truncate(topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type], {length: 15}) }}</strong>
+                                        {{ pluralize.singular(group.title) }} is <strong>{{ truncate(topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type], {length: 15}) }}</strong>
                                         <button class="ml-1 hover:text-red-700" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -166,6 +169,10 @@ const teamChanged = () => {
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
                                 </div>
+                            </div>
+                            <div>
+                                <InputLabel class="hidden" for="lifetime" value="&nbsp;" />
+                                <ToggleButton class="mt-1" id="lifetime" v-model:checked="form.lifetime" buttonText="Total" @change="filterChanged" />
                             </div>
                             <div class="">
                                 <InputLabel class="hidden" for="refresh" value="&nbsp;" />

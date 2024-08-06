@@ -119,7 +119,7 @@ class StatsAggregationsService
 
         $filterConditions = $this->getFilterConditions($filters);
 
-        if ($filters->chartType === 'lifetime') {
+        if ($filters->lifetime) {
             $filterConditions['startDateStart'] = '1970-01-01';
         }
 

@@ -15,7 +15,7 @@ readonly class StatsFilterDto
     public function __construct(
         public int $projectId,
         public int $instanceId,
-        public string $chartType,
+        public bool $lifetime,
         public int $rangeAmount,
         public StatsRangeType $rangeType,
         public CarbonImmutable $rangeStart,
@@ -43,7 +43,7 @@ readonly class StatsFilterDto
         return new self(
             projectId: $request->projectId ?? 0,
             instanceId: $request->instanceId ?? 0,
-            chartType: $request->chartType ?? 'per_date',
+            lifetime: $request->lifetime ?? false,
             rangeAmount: $rangeAmount,
             rangeType: $rangeType,
             rangeStart: $rangeStart,

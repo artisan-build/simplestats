@@ -72,10 +72,9 @@ class StatsFilterRequest extends FormRequest
                 'integer',
                 new ValidProjectModel($this->projectId, Instance::class),
             ],
-            'chartType' => [
+            'lifetime' => [
                 'sometimes',
-                'string',
-                Rule::in(['per_date', 'lifetime'])
+                'boolean',
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
