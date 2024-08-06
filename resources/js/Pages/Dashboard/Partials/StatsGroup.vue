@@ -62,7 +62,7 @@ const changeSort = (sort) => {
 };
 
 const calculatePercentage = (current) => {
-    let highest = data.value.reduce((max, item) => item.net > max.net ? item : max, data.value[0]).net;
+    let highest = data.value.reduce((max, item) => item[filters.statsSort] > max[filters.statsSort] ? item : max, data.value[0])[filters.statsSort];
 
     // if net is 0 then we try reg
     if (highest <= 0) {
@@ -70,7 +70,7 @@ const calculatePercentage = (current) => {
         return Math.floor((current.reg / highest) * 100);
     }
 
-    return Math.floor((current.net / highest) * 100);
+    return Math.floor((current[filters.statsSort] / highest) * 100);
 };
 
 const statsTypeIcon =  (statsGroup, item) => {
