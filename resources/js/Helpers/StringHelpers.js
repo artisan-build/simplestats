@@ -2,12 +2,14 @@ export const periodMap = {
     days: 'Daily',
     weeks: 'Weekly',
     months: 'Monthly',
+    years: 'Yearly',
 };
 
 export const periodSingular = {
     days: 'day',
     weeks: 'week',
     months: 'month',
+    years: 'year',
 };
 
 export function XAU(type, long) {

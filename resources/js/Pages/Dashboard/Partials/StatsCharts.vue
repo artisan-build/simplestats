@@ -6,13 +6,13 @@ import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
-    rangeType: String,
+    filters: Object,
     teamStats: Object,
 });
 
 const page = usePage();
 
-const kpiDefs = getKpiDefinitions(props.rangeType);
+const kpiDefs = getKpiDefinitions(props.filters.rangeType);
 
 const extractStatsData4Chart = (statsCategory, statsGroups) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
@@ -37,7 +37,7 @@ const extractStatsData4Chart = (statsCategory, statsGroups) => {
                 acc.series[group.key].data.push(item.stats[statsCategory][group.key]);
             }
 
-            acc.categories.push(formatDate(item.stats.date, props.rangeType));
+            acc.categories.push(formatDate(item.stats.date, props.filters.rangeType));
         }
 
         return acc;
@@ -53,10 +53,10 @@ const extractStatsData4Chart = (statsCategory, statsGroups) => {
     return data;
 };
 
-const charts = {
+let charts = {
     per_date: [
         {
-            name: periodMap[props.rangeType] + ' Conversion',
+            name: periodMap[props.filters.rangeType] + ' Conversion',
             formatter: 'number',
             data: [
                 {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
@@ -65,7 +65,7 @@ const charts = {
             ],
         },
         {
-            name: periodMap[props.rangeType] + ' Revenue',
+            name: periodMap[props.filters.rangeType] + ' Revenue',
             formatter: 'currency',
             data: [
                 {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
@@ -74,7 +74,7 @@ const charts = {
             ],
         },
         {
-            name: XAU(props.rangeType, true),
+            name: XAU(props.filters.rangeType, true),
             formatter: 'number',
             data: [
                 {key: 'DAU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
@@ -83,7 +83,7 @@ const charts = {
             ],
         },
         {
-            name: periodMap[props.rangeType] + ' Growth',
+            name: periodMap[props.filters.rangeType] + ' Growth',
             formatter: 'number',
             data: [
                 {key: 'ARPDAU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
@@ -92,46 +92,49 @@ const charts = {
             ],
         },
     ],
-    // lifetime: [
-    //     {
-    //         name: 'Lifetime Conversion',
-    //         formatter: 'number',
-    //         data: [
-    //             {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
-    //             {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
-    //             {key: 'CR', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
-    //         ],
-    //     },
-    //     {
-    //         name: 'Lifetime Engagement',
-    //         formatter: 'percent',
-    //         data: [
-    //             {key: 'REG2DAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
-    //             {key: 'REG2PU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
-    //             {key: 'REG2TAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
-    //         ],
-    //     },
-    //     {
-    //         name: 'Lifetime Revenue',
-    //         formatter: 'currency',
-    //         data: [
-    //             {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-    //             {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-    //             {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-    //         ],
-    //     },
-    //     {
-    //         name: 'Lifetime Paying',
-    //         formatter: 'number',
-    //         data: [
-    //             {key: 'ARPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-    //             {key: 'ARPPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
-    //             {key: 'PU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
-    //             // {key: 'TAU', initialVisible: false, color: '#93c5fd',},
-    //         ],
-    //     },
-    // ],
+    lifetime: [
+        {
+            name: 'Lifetime Conversion',
+            formatter: 'number',
+            data: [
+                {key: 'VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'REG', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                {key: 'CR', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+            ],
+        },
+        {
+            name: 'Lifetime Revenue',
+            formatter: 'currency',
+            data: [
+                {key: 'NET', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+            ],
+        },
+        {
+            name: 'Lifetime Engagement',
+            formatter: 'percent',
+            data: [
+                {key: 'REG2DAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+                {key: 'REG2PU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+                {key: 'REG2TAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',},
+            ],
+        },
+        {
+            name: 'Lifetime Paying',
+            formatter: 'number',
+            data: [
+                {key: 'ARPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'ARPPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',},
+                {key: 'PU', initialVisible: false, color: '#93c5fd', formatter: 'number',},
+                // {key: 'TAU', initialVisible: false, color: '#93c5fd',},
+            ],
+        },
+    ],
 };
+
+const chartType = props.filters.chartType;
+charts = {[chartType]: charts[chartType]};
 
 Object.keys(charts).forEach(category => {
     charts[category].forEach(function(chartGroup, chartIndex) {

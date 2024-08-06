@@ -69,14 +69,14 @@ class StatsAggregationsService
             FROM stats_logins stats
             :trackingJoinConditions
             :projectInstanceCondition
-            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
+            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter
             GROUP BY su.$statsDBType
         ),
         # lifetime visitpors
         lt_visitors AS (
             SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_visitors stats
-            WHERE stats.time <= ':endDateEnd'
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
             :trackingConditions
             :projectInstanceCondition
             GROUP BY stats.$statsDBType
@@ -85,7 +85,7 @@ class StatsAggregationsService
         lt_reg AS (
             SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_users stats
-            WHERE stats.time <= ':endDateEnd'
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
             :trackingConditions
             :projectInstanceCondition
             GROUP BY stats.$statsDBType
@@ -96,7 +96,7 @@ class StatsAggregationsService
             FROM stats_payments stats
             :trackingJoinConditions
             :projectInstanceCondition
-            WHERE stats.time <= ':endDateEnd' :projectInstanceCondition
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
             GROUP BY su.$statsDBType
         )
         SELECT
@@ -119,6 +119,10 @@ class StatsAggregationsService
 
         $filterConditions = $this->getFilterConditions($filters);
 
+        if ($filters->chartType === 'lifetime') {
+            $filterConditions['startDateStart'] = '1970-01-01';
+        }
+
         $endDateStart = $filterConditions['endDateStart'];
 
         $dauDates = match($filters->rangeType->value) {
@@ -133,6 +137,10 @@ class StatsAggregationsService
             'months' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfMonth()) ? [
                 'start' => now()->subMonth()->startOfMonth()->format('Y-m-d'),
                 'end' => now()->subMonth()->endOfMonth()->format('Y-m-d'),
+            ] : [],
+            'years' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfYear()) ? [
+                'start' => now()->subYear()->startOfYear()->format('Y-m-d'),
+                'end' => now()->subYear()->endOfYear()->format('Y-m-d'),
             ] : [],
         };
 
@@ -378,7 +386,7 @@ class StatsAggregationsService
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
             :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter != 1 :projectInstanceCondition
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
             GROUP BY date
         ),
         # dapu: Number of unique accounts who logged in or registered on this day and did at least one payment over lifetime (including today)

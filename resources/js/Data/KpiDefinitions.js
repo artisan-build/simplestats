@@ -4,6 +4,7 @@ const periodMap = {
     days: 'day',
     weeks: 'week',
     months: 'month',
+    years: 'year',
 };
 
 export function getKpiDefinitions(rangeType) {

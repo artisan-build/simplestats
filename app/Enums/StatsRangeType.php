@@ -15,6 +15,7 @@ enum StatsRangeType: string
     case DAY = 'days';
     case WEEK = 'weeks';
     case MONTH = 'months';
+    case YEAR = 'years';
 
     public static function conditions(CarbonImmutable $rangeStart, int $rangeAmount): array
     {
@@ -45,6 +46,14 @@ enum StatsRangeType: string
                 'intervalEnd' => 'LAST_DAY(ds.date)', // the end of the current interval
                 'dateFormat' => self::MONTH->dateFormat()['mysql'],
             ],
+            self::YEAR->value => [
+                'startDateStart' => $rangeStart->startOfYear()->subYear($rangeAmount)->format(self::DATE_FORMAT),
+                'endDateStart' => $rangeStart->startOfYear()->format(self::DATE_FORMAT),
+                'endDateEnd' => $rangeStart->endOfYear()->format(self::DATE_FORMAT),
+                'intervalType' => str(self::YEAR->value)->upper()->singular(),
+                'intervalEnd' => 'LAST_DAY(DATE_ADD(ds.date, INTERVAL 11 MONTH))', // the end of the current interval
+                'dateFormat' => self::YEAR->dateFormat()['mysql'],
+            ],
         ];
     }
 
@@ -63,6 +72,10 @@ enum StatsRangeType: string
                 'mysql' => '%Y-%m',
                 'php' => 'Y-m',
             ],
+            self::YEAR => [
+                'mysql' => '%Y',
+                'php' => 'Y',
+            ],
             default => throw new \Exception('Unexpected match value'),
         };
     }
@@ -73,6 +86,7 @@ enum StatsRangeType: string
             self::DAY => $date->startOfDay(),
             self::WEEK => $date->startOfWeek(),
             self::MONTH => $date->startOfMonth(),
+            self::YEAR => $date->startOfYear(),
             default => throw new \Exception('Unexpected match value'),
         };
     }
@@ -83,6 +97,7 @@ enum StatsRangeType: string
             self::DAY => 7,
             self::WEEK => 4,
             self::MONTH => 6,
+            self::YEAR => 3,
             default => throw new \Exception('Unexpected match value'),
         };
     }
