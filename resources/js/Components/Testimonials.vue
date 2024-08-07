@@ -25,7 +25,7 @@ defineProps({
                             {{ testimonial.name }}
                         </span>
                     </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ testimonial.title }}, <a class="underline hover:text-indigo-600" :href="testimonial.company_link" target="_blank">{{ testimonial.company }}</a></span>
+                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ testimonial.title }} of <a class="underline hover:text-indigo-600" :href="testimonial.company_link" target="_blank">{{ testimonial.company }}</a></span>
                 </div>
             </div>
         </div>

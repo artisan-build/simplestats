@@ -23,9 +23,10 @@ export const testimonials = [
     },
     {
         "name": "Joel Clermont",
-        "title": "Laravel Expert",
+        "title": "Author",
         "company": "Mastering Laravel",
         "company_link": "https://masteringlaravel.io/",
+        "social_link": "https://x.com/jclermont",
         "descr": "I definitely think that server side analytic tools like SimpleStats will become more and more popular cause they can't be blocked by ad blockers!"
     },
     {
@@ -33,13 +34,15 @@ export const testimonials = [
         "title": "Co-founder",
         "company": "try hard studios",
         "company_link": "https://tryhardstudios.com/",
+        "social_link": "https://x.com/aarondfrancis",
         "descr": "I just saw SimpleStats on reddit! Looks super awesome!"
     },
     {
         "name": "Sergey Karakhanyan",
-        "title": "Creator of Larafast",
+        "title": "Creator",
         "company": "Larafast",
         "company_link": "https://larafast.com/",
+        "social_link": "https://x.com/karakhanyanS",
         "descr": "SimpleStats is a damn good product. Lots of features and metrics most Laravel apps needs."
     }
 ];
