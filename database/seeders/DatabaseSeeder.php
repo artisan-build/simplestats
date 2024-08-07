@@ -77,8 +77,9 @@ class DatabaseSeeder extends Seeder
         ];
 
         $instances = [
-            ['name' => 'US'],
-            ['name' => 'EU'],
+            ['name' => 'Default'],
+//            ['name' => 'US'],
+//            ['name' => 'EU'],
         ];
 
         Project::factory()->count(count($projects))
