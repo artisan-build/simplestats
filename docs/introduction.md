@@ -6,7 +6,7 @@ _**SimpleStats**_ is a streamlined statistics tool tailored for **Laravel** appl
 
 Are you a visual learner? Here you can learn how to set up SimpleStats in just a few minutes.
 
-<video width="100%" controls poster="https://simplestats.io/images/screenshot.png">
+<video width="100%" controls poster="https://simplestats.io/images/screenshot.webp">
   <source src="https://simplestats.io/storage/intro.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>

@@ -8,7 +8,7 @@
 
         <meta property="og:title" content="{{ config('app.name', 'Laravel') }}">
         <meta property="og:description" content="The missing statistics tool for your Laravel application. A server-side, GDPR compliant and 100% accurate statistics/analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
-        <meta property="og:image" content="{{ asset('/images/screenshot.png') }}">
+        <meta property="og:image" content="{{ asset('/images/screenshot.webp') }}">
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
 
