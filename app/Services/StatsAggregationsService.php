@@ -67,9 +67,8 @@ class StatsAggregationsService
         pd_dau AS (
             SELECT COALESCE(su.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingJoinConditions
-            :projectInstanceCondition
-            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter
+            :trackingJoinConditions :projectInstanceCondition
+            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
             GROUP BY su.$statsDBType
         ),
         # lifetime visitpors
@@ -77,8 +76,7 @@ class StatsAggregationsService
             SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_visitors stats
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
-            :trackingConditions
-            :projectInstanceCondition
+            :trackingConditions :projectInstanceCondition
             GROUP BY stats.$statsDBType
         ),
         # lifetime regs
@@ -86,17 +84,15 @@ class StatsAggregationsService
             SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_users stats
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
-            :trackingConditions
-            :projectInstanceCondition
+            :trackingConditions :projectInstanceCondition
             GROUP BY stats.$statsDBType
         ),
         # lifetime net revenue
         lt_net AS (
             SELECT COALESCE(su.$statsDBType, $typeIdFallback) as type_id, SUM(stats.net) as count
             FROM stats_payments stats
-            :trackingJoinConditions
-            :projectInstanceCondition
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
+            :trackingJoinConditions :projectInstanceCondition
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY su.$statsDBType
         )
         SELECT
