@@ -95,7 +95,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
 
             <div class="flex items-center justify-around mt-4">
-                <Link :href="route('register')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="$page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Sign up
                 </Link>
 
