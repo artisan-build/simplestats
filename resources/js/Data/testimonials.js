@@ -33,7 +33,7 @@ export const testimonials = [
         "title": "Co-founder",
         "company": "try hard studios",
         "company_link": "https://tryhardstudios.com/",
-        "descr": "I just saw SimpleStats on reddit! Looks super awesome. Congrats!"
+        "descr": "I just saw SimpleStats on reddit! Looks super awesome!"
     },
     {
         "name": "Sergey Karakhanyan",
