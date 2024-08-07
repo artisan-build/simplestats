@@ -27,7 +27,7 @@ if (props.statsGroupSelected) {
 }
 
 if (! filters.statsSort) {
-    filters.statsSort = 'net';
+    filters.statsSort = 'visitors';
 }
 
 const fetchData = async () => {
@@ -62,13 +62,13 @@ const changeSort = (sort) => {
 };
 
 const calculatePercentage = (current) => {
-    let highest = data.value.reduce((max, item) => item[filters.statsSort] > max[filters.statsSort] ? item : max, data.value[0])[filters.statsSort];
+    let highest = data.value.reduce((max, item) => item[filters.statsSort] > max[filters.statsSort] ? item : max, data.value[0])[filters.statsSort] ?? 0;
 
-    // if net is 0 then we try reg
-    if (highest <= 0) {
-        highest = data.value.reduce((max, item) => item.reg > max.reg ? item : max, data.value[0]).reg;
-        return Math.floor((current.reg / highest) * 100);
-    }
+    // if net is 0 then we try visitors
+    // if (highest <= 0) {
+    //     highest = data.value.reduce((max, item) => item.visitors > max.visitors ? item : max, data.value[0]).visitors;
+    //     return Math.floor((current.visitors / highest) * 100);
+    // }
 
     return Math.floor((current[filters.statsSort] / highest) * 100);
 };
