@@ -21,6 +21,7 @@ use App\Models\StatsTrackTerm;
 use App\Models\StatsUser;
 use App\Rules\ValidProjectModel;
 use App\Services\StatsService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -71,10 +72,6 @@ class StatsFilterRequest extends FormRequest
                 'sometimes',
                 'integer',
                 new ValidProjectModel($this->projectId, Instance::class),
-            ],
-            'lifetime' => [
-                'sometimes',
-                'boolean',
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],

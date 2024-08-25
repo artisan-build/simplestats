@@ -73,7 +73,7 @@ export function formatDate(date, rangeType) {
     if (rangeType === 'days') {
         return new Date(date).toLocaleString(locale, { month: 'short', day: 'numeric' });
     } else if (rangeType === 'months') {
-        return new Date(date).toLocaleString(locale, { month: 'short', year: '2-digit' });
+        return new Date(date).toLocaleString(locale, { month: 'short', year: 'numeric' });
     }
 
     return date;

@@ -13,6 +13,7 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\StatsService;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -141,6 +142,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DataImportSeeder::class,
         ]);
+
+        // make sure no data greater than now is seeded
+        collect(StatsService::getStatsModels())->each(function ($statsModel) {
+            $statsModel::where('time', '>', now())->delete();
+        });
     }
 
     protected function changeEnv($data = [])

@@ -13,6 +13,10 @@ class Project extends Model
     use HasFactory;
     use HasTeamScope;
 
+    protected $casts = [
+        'stats_starting_at' => 'date',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -20,6 +24,7 @@ class Project extends Model
      */
     protected $fillable = [
         'name',
+        'stats_starting_at',
     ];
 
     public function team(): BelongsTo

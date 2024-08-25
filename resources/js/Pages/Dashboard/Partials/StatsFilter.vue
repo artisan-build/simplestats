@@ -2,14 +2,14 @@
 import {router, useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import TextInput from "@/Components/TextInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
 import {truncate} from "lodash";
 import EnvBadge from "@/Components/EnvBadge.vue";
-import ToggleButton from "@/Components/ToggleButton.vue";
+import StatsDatePicker from "@/Pages/Dashboard/Partials/StatsDatePicker.vue";
+import {format} from "date-fns";
 
 const props = defineProps({
     teamStats: Object,
@@ -22,9 +22,9 @@ const props = defineProps({
 
 const form = useForm(props.filters);
 
-const rangeAmounts = Array.from({ length: 60 - 1 }, (_, i) => ({
-    id: (i + 2).toString(),
-    name: (i + 2).toString()
+const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
+    id: (i + 1).toString(),
+    name: (i + 1).toString()
 }));
 
 const submit = () => {
@@ -36,7 +36,7 @@ const submit = () => {
 
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
-    if (event.target.id === 'projectId') {
+    if (event && event.target.id === 'projectId') {
         form.instanceId = 0;
 
         // reset group filters...
@@ -68,6 +68,13 @@ const teamChanged = () => {
         preserveState: false,
     });
 };
+
+const handleDateChanged = (date) => {
+    form.rangeStart = format(date, "yyyy-MM-dd");
+
+    filterChanged();
+    // do something else with the data
+}
 </script>
 
 <template>
@@ -135,13 +142,7 @@ const teamChanged = () => {
                             </div>
                             <div>
                                 <InputLabel class="hidden" for="rangeStart" value="Start from" />
-                                <TextInput
-                                    type="date"
-                                    id="rangeStart"
-                                    v-model="form.rangeStart"
-                                    class="mt-1 block w-36"
-                                    @change="filterChanged"
-                                />
+                                <StatsDatePicker :rangeStart="form.rangeStart" @update-date="handleDateChanged" />
                             </div>
                             <div>
                                 <InputLabel class="hidden" for="rangeAmount" value="Last" />
@@ -169,10 +170,6 @@ const teamChanged = () => {
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
                                 </div>
-                            </div>
-                            <div>
-                                <InputLabel class="hidden" for="lifetime" value="&nbsp;" />
-                                <ToggleButton class="mt-1" id="lifetime" v-model:checked="form.lifetime" buttonText="Total" @change="filterChanged" />
                             </div>
                             <div class="">
                                 <InputLabel class="hidden" for="refresh" value="&nbsp;" />

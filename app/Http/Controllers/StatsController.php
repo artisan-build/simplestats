@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
 use App\Http\Requests\StatsFilterRequest;
+use App\Models\Instance;
+use App\Models\Project;
 use App\Models\StatsUser;
 use App\Services\RefererService;
 use App\Services\StatsAggregationsService;
@@ -67,6 +69,9 @@ class StatsController extends Controller
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
+            'statsStartingAt' => app(StatsService::class)->getStatsStartingAt(
+                Instance::find($filters->instanceId) ?? Project::find($filters->projectId) ?? $user->currentTeam
+            ),
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
@@ -98,11 +103,10 @@ class StatsController extends Controller
 
     public function setSeries(Request $request)
     {
-        $type = $request->type;
         $chartIndex = $request->chartIndex;
         $seriesIndex = $request->seriesIndex;
 
-        $request->user()->updateSettings("selectedSeries.$type.$chartIndex", $seriesIndex);
+        $request->user()->updateSettings("selectedSeries.$chartIndex", $seriesIndex);
 
         return response()->json();
     }

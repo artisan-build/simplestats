@@ -7,17 +7,21 @@ use App\Concerns\HasTeamScope;
 use App\Events\InstanceCreated;
 use App\Events\InstanceDeleted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Instance extends Model
+class Instance extends Authenticatable
 {
     use HasFactory;
     use HasApiPlainTokens;
     use HasTeamScope;
 
     const TOKEN_NAME_POSTFIX = ' Token';
+
+    protected $casts = [
+        'stats_starting_at' => 'date',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +31,7 @@ class Instance extends Model
     protected $fillable = [
         'name',
         'project_id',
+        'stats_starting_at',
     ];
 
     protected $dispatchesEvents = [

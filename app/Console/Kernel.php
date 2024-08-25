@@ -30,6 +30,8 @@ class Kernel extends ConsoleKernel
             $schedule->command('backup:clean')->daily()->at('01:00');
             $schedule->command('backup:run')->daily()->at('01:30');
 
+            $schedule->command('app:update-stats-starting-at')->daily()->at('01:45');
+
             $schedule->command('app:check-subscription-plan-alarm')->weekly()->at('3:30');
         }
 

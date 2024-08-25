@@ -12,6 +12,7 @@ class StatsUserValidator extends BaseStatsValidator
     {
         return array_merge(parent::rules(), $this->trackingValidation, [
             'id' => ['required', 'integer'],
+            'add_login' => ['sometimes', 'bool'],
         ]);
     }
 }

@@ -9,7 +9,7 @@ import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 
-defineProps({
+const props = defineProps({
     teamStats: Object,
     filters: Object,
     statsGroups: Object,

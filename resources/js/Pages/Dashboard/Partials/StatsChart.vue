@@ -3,14 +3,13 @@ import {ref, defineComponent, onMounted, nextTick} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
-import StatsButton from "@/Pages/Dashboard/Partials/StatsButton.vue";
+import StatsIndicator from "@/Pages/Dashboard/Partials/StatsIndicator.vue";
 
 const ApexChart = defineComponent(VueApexCharts);
 
 const props = defineProps({
     chart: Object,
     chartIndex: Number,
-    type: String,
 });
 
 const page = usePage();
@@ -57,6 +56,10 @@ const chartOptions = ref({
     xaxis: {
         type: 'string',
         categories: categories,
+        tickAmount: 5,
+        labels: {
+            rotate: 0,
+        },
         tooltip: {
             enabled: false,
         },
@@ -111,8 +114,7 @@ const latestPeriod = categories[categories.length - 1];
 const previousPeriod = categories[categories.length - 2];
 const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.rangeType);
 
-let hasCurrentHigh = false;
-let hasCurrentPeriod = props.type === 'per_date' && latestPeriod === currentPeriod;
+let hasCurrentPeriod = latestPeriod === currentPeriod;
 
 if (hasCurrentPeriod) {
     chartOptions.value.annotations = {
@@ -124,12 +126,6 @@ if (hasCurrentPeriod) {
             }
         ]
     };
-
-    series.value.forEach((serie) => {
-        if (serie.data[serie.data.length - 1] > serie.data[serie.data.length - 2]) {
-            hasCurrentHigh = true;
-        }
-    });
 }
 
 onMounted(async () => {
@@ -146,7 +142,6 @@ const selectSeries = (selectedSerie) => {
     chartInstance.value.showSeries(selectedSerie.data.name);
 
     fetch(route('stats.set-series', {
-        type: props.type,
         chartIndex: props.chartIndex,
         seriesIndex: selectedSerie.index,
     }));
@@ -154,16 +149,15 @@ const selectSeries = (selectedSerie) => {
 </script>
 
 <template>
-    <div class="@container bg-white dark:bg-gray-800 border shadow-md rounded-md">
+    <div class="@container bg-white dark:bg-gray-800 border shadow-md rounded-md" :class="chart.class">
         <div class="grid gap-3 grid-cols-3 pt-3 px-3">
-            <StatsButton
+            <StatsIndicator
                 v-for="(serie, serieIndex) in series"
                 :serie="serie"
                 :serieIndex="serieIndex"
                 :formatter="chart.formatter"
                 :chartInstance="chartInstance"
                 :hasCurrent="hasCurrentPeriod"
-                :highCurrent="hasCurrentHigh"
                 @selectSeries="selectSeries"
             />
         </div>

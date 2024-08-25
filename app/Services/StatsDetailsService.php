@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class StatsDetailsService
 {
@@ -18,10 +16,6 @@ class StatsDetailsService
     public function getStats(StatsFilterDto $filters)
     {
         $stats = $this->getRaw($filters);
-
-        $this->groupStats($stats);
-        $this->applyStatsTotal($stats);
-
         $this->applyStatsDetails($stats);
 
         return $stats;
@@ -32,39 +26,18 @@ class StatsDetailsService
         return $this->statsAggregationsService->getAggregatedData($filters)->toArray();
     }
 
-    private function groupStats(array &$stats): void
-    {
-        foreach ($stats as &$stat) {
-            $stat = $this->statsService->groupStats($stat);
-
-            $stat['stats']['date'] = $stat['date'];
-            unset($stat['date']);
-            $stat['stats']['per_date']['CR'] = round($this->statsService->safeDivision($stat['stats']['per_date']['REG'], $stat['stats']['per_date']['VISITOR']) * 100, 2);
-            $stat['stats']['per_date']['FEE'] = $stat['stats']['per_date']['GROSS'] - $stat['stats']['per_date']['NET'];
-            $stat['stats']['per_date']['ARPDAU'] = $this->statsService->safeDivision($stat['stats']['per_date']['NET'], $stat['stats']['per_date']['DAU']);
-        } unset($stat);
-    }
-
-    private function applyStatsTotal(array &$stats): void
-    {
-        $statsTotal = [];
-
-        foreach ($stats as $stat) {
-            $this->statsService->calcStatsTotal(
-                stats: $stat['stats'],
-                totalStats: $statsTotal,
-                skipCategories: ['lifetime']
-            );
-        }
-
-        $statsTotal['date'] = 'Total';
-        $stats['total']['stats'] = $statsTotal;
-    }
-
     private function applyStatsDetails(array &$stats): void
     {
         foreach ($stats as &$stat) {
-            $stat['stats'] = $this->statsService->addStatsDetails($stat['stats']);
+            $stat['pd_CR'] = round($this->statsService->safeDivision($stat['pd_REG'], $stat['pd_VISITOR']) * 100, 2);
+            $stat['pd_FEE'] = $stat['pd_GROSS'] - $stat['pd_NET'];
+            $stat['pd_ARPDAU'] = $this->statsService->safeDivision($stat['pd_NET'], $stat['pd_DAU']);
+
+            $stat['lt_REG2DAU'] = round($this->statsService->safeDivision($stat['pd_DAU'], $stat['lt_REG']) * 100, 2);
+            $stat['lt_REG2PU'] = round($this->statsService->safeDivision($stat['pd_PU'], $stat['lt_REG']) * 100, 2);
+            $stat['lt_REG2TAU'] = round($this->statsService->safeDivision($stat['lt_TAU'], $stat['lt_REG']) * 100, 2);
+            $stat['lt_ARPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_REG']), 2);
+            $stat['lt_ARPPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['pd_PU']), 2);
         } unset($stat);
     }
 

@@ -6,7 +6,7 @@ _**SimpleStats**_ is a streamlined statistics tool tailored for **Laravel** appl
 
 Are you a visual learner? Here you can learn how to set up SimpleStats in just a few minutes.
 
-<video width="100%" controls poster="https://simplestats.io/images/screenshot.webp">
+<video width="100%" controls poster="https://simplestats.io/images/screenshot.png">
   <source src="https://simplestats.io/storage/intro.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
@@ -14,11 +14,11 @@ Are you a visual learner? Here you can learn how to set up SimpleStats in just a
 ## How does it work?
 
 ### API Communication
-Basically all we do is provide a [composer package](/installation), which allows you to simply define and set your [User](/how-to-track-a-new-user) and [Payment](how-to-track-a-new-payment) model and [Login](/how-to-track-a-new-login) event in the package config file. Then we listen if a new user or payment gets created or a login event occurs, and we send an [API call](/queue) to our service. 
+Basically all we do is provide a [composer package](/installation), which allows you to simply define and set your [User](/how-to-track-a-new-user) and [Payment](how-to-track-a-new-payment) model and [Login](/how-to-track-a-new-login) event in the package config file. Then we listen if a new user or payment gets created or a login event occurs, and we send an [API call](/queue) to our service.
 
 ### Data Visualisation
 
-We collect this data in a GDPR-compliant way, aggregate it and make it filterable and visible for you on our nice looking dashboard at https://simplestats.io. This allows you to see how your campaigns and users perform during a selected time period filtered by UTMs and also how they perform over lifetime!
+We collect this data in a GDPR-compliant way, aggregate it and make it filterable and visible for you on our nice looking dashboard at https://simplestats.io. This allows you to see how your campaigns and users perform during a selected time period filtered by UTMs, referrers and countries!
 
 ### Teams, Projects and Instances
 
@@ -39,57 +39,41 @@ In summary, while client-side analytics are easier to implement, server-side ana
 unaffected by ad blockers and privacy tools, making them a better choice for businesses needing reliable metrics.
 
 ## KPIs
- 
+
 On our dashboard, we provide you with the following [KPIs](https://en.wikipedia.org/wiki/Performance_indicator).
 
 ::: info
 Don't worry if you do not understand the list below immediately.
-It's easier to understand it when you see it in action on the dashboard. 
+It's easier to understand it when you see it in action on the dashboard.
 :::
-
-### KPIs over time period
-
-[//]: # (| **GROSS**  | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |)
 
 | Key          | Short                              | Description                                                                                                                                                 |
 |--------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **NET**      | Net revenue                        | Net revenue for the selected period.                                                                                                                        |
-| **FEE**      | Fee                                | Fee for the selected period.                                                                                                                                |
-| **GROSS**    | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |
 | **VISITORS** | Unique Visitors                    | Number of unique visitors for the selected period.                                                                                                          |
 | **REG**      | Registrations                      | Number of new registrations for the selected period.                                                                                                        |
 | **CR**       | Conversion Rate                    | Percentag of unique visitors who registered at the selected period.                                                                                         |
-| **ARPDAU**   | Average revenue Per DAU            | The average revenue per DAU                                                                                                                                 |
-| **NAU**      | New Active Users                   | Number of unique users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |
-| **NAPU**     | New Active Paying Users            | Number of unique users who did their first payment at the selected period.                                                                                  |
-| **DAU**      | Daily Active Users                 | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
-| **DAPU**     | Daily Active Paying Users          | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
-| **DAAPU**    | Daily Active Active Paying Users   | Number of unique users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
-| **WAU**      | Weekly Active Users                | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
-| **WAPU**     | Weekly Active Paying Users         | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
-| **WAAPU**    | Weekly Active Active Paying Users  | Number of unique users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
-| **MAU**      | Monthly Active Users               | Number of unique users who logged in at the selected period (without 1st login = registration).                                                             |
-| **MAPU**     | Monthly Active Paying Users        | Number of unique users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
-| **MAAPU**    | Monthly Active Active Paying Users | Number of unique users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
-
-### KPIs over lifetime
-
-| Key          | Short                           | Description                                                                |
-|--------------|---------------------------------|----------------------------------------------------------------------------|
-| **NET**      | Total Net revenue               | Net revenue over lifetime.                                                 |
-| **FEE**      | Total Fee                       | Fee over lifetime.                                                         |
-| **GROSS**    | Total Gross revenue             | Gross revenue over lifetime.                                               |
-| **VISITORS** | Total Unique Visitors           | Number of unique visitors over lifetime.                                   |
-| **REG**      | Total Registrations             | Number of registrations over lifetime.                                     |
-| **CR**       | Total Conversion Rate           | Percentag of unique visitors who registered over lifetime.                                     |
-| **ARPU**     | Average revenue Per User        | The average revenue per User (how much is a user/lead/reg worth in money). |
-| **ARPPU**    | Average revenue Per Paying User | The average revenue per paying User.                                       |
-| **PU**       | Paying Users                    | Number of paying users over lifetime.                                      |
-| **REG2DAU**  | Reg. to DAU                     | Percentage of registered users who become DAUs                             |
-| **REG2WAU**  | Reg. to WAU                     | Percentage of registered users who become WAUs                             |
-| **REG2MAU**  | Reg. to MAU                     | Percentage of registered users who become MAUs                             |
-| **REG2PU**   | Reg. to Pay                     | Percentage of registered users who become paying user.                     |
-| **REG2TAU**  | Reg. to Active                  | Percentage of registered users who become active.                          |
+| **NET**      | Net revenue                        | Net revenue for the selected period.                                                                                                                        |
+| **FEE**      | Fee                                | Fee for the selected period.                                                                                                                                |
+| **GROSS**    | Gross revenue                      | Gross revenue for the selected period.                                                                                                                      |
+| **ARPDAU**   | Average revenue Per DAU            | The average revenue per DAU.                                                                                                                                |
+| **ARPU**     | Average revenue Per User           | The average revenue per User (how much is a user/lead/reg worth in money).                                                                                  |
+| **NAU**      | New Active Users                   | Number of users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |
+| **NAPU**     | New Active Paying Users            | Number of users who did their first payment at the selected period.                                                                                  |
+| **PU**       | Paying Users                       | Number of users who did at least one payment over lifetime.                                                                                                 |
+| **ARPPU**    | Average revenue Per Paying User    | The average revenue per paying User.                                                                                                                        |
+| **DAU**      | Daily Active Users                 | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
+| **DAPU**     | Daily Active Paying Users          | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
+| **DAAPU**    | Daily Active Active Paying Users   | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
+| **WAU**      | Weekly Active Users                | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
+| **WAPU**     | Weekly Active Paying Users         | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
+| **WAAPU**    | Weekly Active Active Paying Users  | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
+| **MAU**      | Monthly Active Users               | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
+| **MAPU**     | Monthly Active Paying Users        | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
+| **MAAPU**    | Monthly Active Active Paying Users | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
+| **REG2DAU**  | Reg. to DAU                        | Percentage of registered users who become DAUs                                                                                                              |
+| **REG2WAU**  | Reg. to WAU                        | Percentage of registered users who become WAUs                                                                                                              |
+| **REG2MAU**  | Reg. to MAU                        | Percentage of registered users who become MAUs                                                                                                              |
+| **REG2PU**   | Reg. to Pay                        | Percentage of registered users who become paying user.                                                                                                      |
 
 ## Help
 

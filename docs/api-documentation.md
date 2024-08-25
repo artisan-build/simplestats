@@ -94,13 +94,7 @@ _Additional parameters:_
 
 ```json
 {
-    "data": {
-        "id": "1",
-        "project_id": 1,
-        "instance_id": 1,
-        "stats_track_source_id": 1, // links to "test"
-        "time": "2024-04-04"
-    }
+    "message": "Request accepted."
 }
 ```
 
@@ -130,13 +124,7 @@ _Additional parameters:_
 
 ```json
 {
-    "data": {
-        "id": 1,
-        "stats_user_id": "1",
-        "project_id": 1,
-        "instance_id": 1,
-        "time": "2024-04-04"
-    }
+    "message": "Request accepted."
 }
 ```
 
@@ -176,15 +164,6 @@ _Additional parameters:_
 
 ```json
 {
-    "data": {
-        "id": "1",
-        "stats_user_id": "1",
-        "project_id": 1,
-        "instance_id": 1,
-        "gross": 2000,
-        "net": 1800,
-        "currency": "EUR",
-        "time": "2024-04-04"
-    }
+    "message": "Request accepted."
 }
 ```

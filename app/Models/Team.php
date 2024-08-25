@@ -20,6 +20,7 @@ class Team extends JetstreamTeam
      */
     protected $casts = [
         'personal_team' => 'boolean',
+        'stats_starting_at' => 'date',
     ];
 
     /**
@@ -31,6 +32,7 @@ class Team extends JetstreamTeam
         'name',
         'currency',
         'personal_team',
+        'stats_starting_at',
     ];
 
     /**

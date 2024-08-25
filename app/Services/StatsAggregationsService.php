@@ -413,6 +413,19 @@ class StatsAggregationsService
             ) :projectInstanceCondition
             GROUP BY date
         ),
+        # pu: Number of unique accounts who did at least one payment over lifetime (including today)
+        pd_pu AS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            FROM stats_logins stats
+            :trackingJoinConditions
+            WHERE EXISTS (
+                SELECT 1
+                FROM stats_payments sp
+                WHERE stats.stats_user_id = sp.stats_user_id
+                    AND stats.instance_id = sp.instance_id
+            ) :projectInstanceCondition
+            GROUP BY date
+        ),
         # gross
         pd_gross AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
@@ -448,18 +461,6 @@ class StatsAggregationsService
                     SELECT COUNT(DISTINCT stats.id, stats.instance_id)
                     FROM stats_users stats
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition :trackingConditions
-                ) AS count
-            FROM date_sequence ds
-        ),
-        # lifetime paying user
-        lt_pu AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
-                    FROM stats_payments stats
-                    :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
         ),
@@ -513,7 +514,7 @@ class StatsAggregationsService
             COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
             COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
             COALESCE(lt_reg.count, 0) AS lt_REG,
-            COALESCE(lt_pu.count, 0) AS lt_PU,
+            COALESCE(pd_pu.count, 0) AS pd_PU,
             COALESCE(lt_tau.count, 0) AS lt_TAU,
             COALESCE(ROUND(lt_net.count,2), 0) AS lt_NET,
             COALESCE(ROUND(lt_gross.count,2), 0) AS lt_GROSS
@@ -530,7 +531,7 @@ class StatsAggregationsService
             LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
             LEFT JOIN lt_reg ON DATE_FORMAT(ds.date, ':dateFormat') = lt_reg.date
             LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
-            LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
+            LEFT JOIN pd_pu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_pu.date
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
             LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
             LEFT JOIN lt_gross ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross.date

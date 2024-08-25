@@ -3,24 +3,42 @@
 namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
+use App\Models\BaseStat;
+use App\Models\Instance;
+use App\Models\Project;
 use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
 use App\Models\StatsLocationCity;
 use App\Models\StatsLocationCountry;
 use App\Models\StatsLocationRegion;
+use App\Models\StatsLogin;
 use App\Models\StatsPageEntry;
+use App\Models\StatsPayment;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackReferer;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
+use App\Models\StatsUser;
+use App\Models\StatsVisitor;
+use App\Models\Team;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class StatsService
 {
+    const NAU_LOGIN_COUNTER = 2;
+
+    protected static array $statsModels = [
+        StatsVisitor::class,
+        StatsUser::class,
+        StatsLogin::class,
+        StatsPayment::class,
+    ];
+
     protected static array $statsTypes = [
         'track' => [
             ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon'],
@@ -45,7 +63,10 @@ class StatsService
         ],
     ];
 
-    const NAU_LOGIN_COUNTER = 2;
+    public static function getStatsModels(): Collection
+    {
+        return collect(self::$statsModels);
+    }
 
     public static function getStatsTypes(): Collection
     {
@@ -87,7 +108,7 @@ class StatsService
     public static function formatFilters(StatsFilterDto $filters): array
     {
         $formatted = collect((array) $filters)->merge([
-            'rangeStart' => $filters->rangeStart->format('Y-m-d')
+            'rangeStart' => $filters->rangeStart->format('Y-m-d'),
         ])->filter()->toArray(); //remove 0 values
 
         // project and instance must have a default value...
@@ -102,49 +123,40 @@ class StatsService
         return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 
-    public function groupStats($stats): array
+    public function getStatsStartingAt(Team|Project|Instance $model, bool $recalc = false)
     {
-        $result = ['stats' => []];
-        $statsPrefixes = ['lt_' => 'lifetime', 'pd_' => 'per_date'];
-
-        foreach ($stats as $key => $value) {
-            if (Str::startsWith($key, array_keys($statsPrefixes))) {
-                $parts = explode('_', $key);
-                $statsKey = $statsPrefixes[$parts[0].'_'];
-                $result['stats'][$statsKey][$parts[1]] = $value;
-            } else {
-                $result[$key] = $value;
-            }
+        if ($model->stats_starting_at && ! $recalc) {
+            return $model->stats_starting_at;
         }
 
-        return $result;
+        $key = str($model->getTable())->singular().'_'.$model->getKeyName();
+
+        $start = collect(self::getStatsModels())->map(
+            fn($statsModel) => $statsModel::withoutGlobalScope('instance')->where([$key => $model->id])->min('time')
+        )->filter()->min();
+
+        $model->update(['stats_starting_at' => $start]);
+
+        return $start;
     }
 
-    public function addStatsDetails(array $stats): array
+    /**
+     * Compatible with a command (no auth so all teams will be handled).
+     * Else if auth exists, only the auth users team will be handled...
+     */
+    public function recalcStatsStartingAt(): void
     {
-        // Lifetime
-        if (isset($stats['lifetime'])) {
-            $stats['lifetime']['FEE'] = $stats['lifetime']['GROSS'] - $stats['lifetime']['NET'];
-            $stats['lifetime']['CR'] = round($this->safeDivision($stats['lifetime']['REG'], $stats['lifetime']['VISITOR']) * 100, 2);
-            $stats['lifetime']['REG2DAU'] = round($this->safeDivision($stats['per_date']['DAU'], $stats['lifetime']['REG']) * 100, 2);
-            $stats['lifetime']['REG2PU'] = round($this->safeDivision($stats['lifetime']['PU'], $stats['lifetime']['REG']) * 100, 2);
-            $stats['lifetime']['REG2TAU'] = round($this->safeDivision($stats['lifetime']['TAU'], $stats['lifetime']['REG']) * 100, 2);
-            $stats['lifetime']['ARPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['REG']), 2);
-            $stats['lifetime']['ARPPU'] = round($this->safeDivision($stats['lifetime']['NET'], $stats['lifetime']['PU']), 2);
-        }
+        Team::with('owner')->get()->each(function(Team $team) {
+            if (empty($team->owner)) return;
+            $this->getStatsStartingAt($team, true);
+        });
 
-        return $stats;
-    }
+        Project::query()->get()->each(function(Project $project) {
+            $this->getStatsStartingAt($project, true);
+        });
 
-    public function calcStatsTotal(array $stats, array &$totalStats, array $skipCategories = []): void
-    {
-        foreach ($stats as $statCategory => $statsGroup) {
-            if (in_array($statCategory, $skipCategories) || !is_array($statsGroup))
-                continue;
-
-            foreach ($statsGroup as $key => $value) {
-                $totalStats[$statCategory][$key] = ($totalStats[$statCategory][$key] ?? 0) + $value;
-            }
-        }
+        Instance::query()->get()->each(function(Instance $instance) {
+            $this->getStatsStartingAt($instance, true);
+        });
     }
 }

@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsVisitorRequest;
-use App\Http\Resources\StatsVisitorResource;
+use App\Jobs\TrackStatsVisitor;
 use App\Models\StatsLogin;
-use App\Models\StatsVisitor;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Http\JsonResponse;
 
@@ -21,17 +20,18 @@ class StatsVisitorController extends Controller
         $this->authorizeResource(StatsLogin::class, 'stats_login');
     }
 
-    public function store(StatsVisitorRequest $request): JsonResponse|StatsVisitorResource
+    public function store(StatsVisitorRequest $request): JsonResponse
     {
         if (Browser::parse(urldecode($request->user_agent))->isBot()) {
             // we respond, cause else the client would retry these requests again and again if they use queues...
             return response()->json(['message' => 'Bots are not allowed'], 200);
         }
 
-        $statsVisitor = StatsVisitor::firstOrCreate([
-            'visitor_hash' => StatsVisitor::createHash($request->time, $request->ip, $request->user_agent)
-        ], $request->validated());
+        TrackStatsVisitor::dispatch(
+//            instanceId: auth()->user()->id,
+            input: $request->validated(),
+        );
 
-        return new StatsVisitorResource($statsVisitor);
+        return response()->json(['message' => 'Stats Visitor Request accepted.']);
     }
 }

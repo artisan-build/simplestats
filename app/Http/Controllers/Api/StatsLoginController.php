@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsLoginRequest;
-use App\Http\Resources\StatsLoginResource;
+use App\Jobs\TrackStatsLogin;
 use App\Models\StatsLogin;
-use App\Models\StatsVisitor;
-use App\Services\StatsService;
+use Illuminate\Http\JsonResponse;
 
 class StatsLoginController extends Controller
 {
@@ -16,24 +15,13 @@ class StatsLoginController extends Controller
         $this->authorizeResource(StatsLogin::class, 'stats_login');
     }
 
-    public function store(StatsLoginRequest $request): StatsLoginResource
+    public function store(StatsLoginRequest $request): JsonResponse
     {
-        // on logins, we do not do a updateOrCreate, cause the client not sends ids, which makes not really sense for logins.
-        // also only to the second login (to check NAU after reg. on the same day) we save logins at the same day,
-        // else we only save one login per day
+        TrackStatsLogin::dispatch(
+//            instanceId: auth()->user()->id,
+            input: $request->validated(),
+        );
 
-        if (! StatsLogin::where([
-            'stats_user_id' => $request->stats_user_id,
-            'counter' => StatsService::NAU_LOGIN_COUNTER
-        ])->exists()) {
-            $statsLogin = StatsLogin::create($request->validated());
-        } elseif (! $statsLogin = StatsLogin::where([
-            'stats_user_id' => $request->stats_user_id,
-            'time' => $request->time
-        ])->first()) {
-            $statsLogin = StatsLogin::create($request->validated());
-        }
-
-        return new StatsLoginResource($statsLogin);
+        return response()->json(['message' => 'Stats Login Request accepted.']);
     }
 }
