@@ -84,14 +84,14 @@ const teamChanged = () => {
 const presets = [
     {name: 'Today', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
     {name: 'Yesterday', rangeStart: format(subDays(new Date(), 1), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
-    { name: 'Last 7 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 7, rangeType: 'days'},
-    { name: 'Last 30 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 30, rangeType: 'days'},
-    { name: 'This Month', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
-    { name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
-    { name: 'Last 12 Months', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},
-    { name: 'This Year', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
-    { name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
-    { name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1))), rangeType: 'months'},
+    {name: 'Last 7 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 7, rangeType: 'days'},
+    {name: 'Last 30 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 30, rangeType: 'days'},
+    // {name: 'Last 12 Months', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},
+    {name: 'This Month', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
+    {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
+    {name: 'This Year', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
+    {name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
+    {name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1))), rangeType: 'months'},
     {name: 'Custom', rangeStart: '', rangeAmount: 0, rangeType: ''},
 ].map((preset, index) => ({ ...preset, id: index }));
 
@@ -235,7 +235,7 @@ const presetChanged = (event) => {
                                     @change="filterChanged"
                                 />
                             </div>
-                            <div class="hidden sm:block">
+                            <div class="hidden">
                                 <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
