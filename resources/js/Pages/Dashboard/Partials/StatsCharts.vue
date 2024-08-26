@@ -187,6 +187,10 @@ let charts = [
     },
 ];
 
+if (! page.props.auth.user.settings.showAdvanced) {
+    charts = charts.filter(function (item) {return item.name !== 'Average Revenue' && item.name !== 'Engagement';});
+}
+
 charts.forEach(function(chartGroup, chartIndex) {
     let info = ``;
 
@@ -225,7 +229,7 @@ charts.forEach(function(chartGroup, chartIndex) {
 </script>
 
 <template>
-    <div class="grid gap-8 xl:grid-cols-2 3xl:grid-cols-3">
+    <div class="grid gap-8 xl:grid-cols-2" :class="(page.props.auth.user.settings.showAdvanced) ? '3xl:grid-cols-3' : '5xl:grid-cols-4'">
         <StatsChart v-for="(chart, chartIndex) in charts" :chart="chart" :chartIndex="chartIndex" />
     </div>
 </template>

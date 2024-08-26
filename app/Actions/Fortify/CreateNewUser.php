@@ -54,6 +54,7 @@ class CreateNewUser implements CreatesNewUsers
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
+                'settings' => ['placeholder' => 1],
             ];
 
             return tap(User::create($createUser), function (User $user) use ($invitationRequest, $invitation) {

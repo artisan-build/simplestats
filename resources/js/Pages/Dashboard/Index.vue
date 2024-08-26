@@ -56,7 +56,7 @@ onUnmounted(() => {
                     :topReferers="topReferers"
                 />
             </div>
-            <div class="grid gap-8 grid-cols-1" :class="filters.projectId ? 'lg:grid-cols-1 2xl:grid-cols-1' : 'lg:grid-cols-1 2xl:grid-cols-1'">
+            <div class="grid gap-8">
                 <div>
                     <StatsCharts
                         :filters="filters"

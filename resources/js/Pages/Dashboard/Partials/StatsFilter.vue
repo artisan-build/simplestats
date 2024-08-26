@@ -20,6 +20,7 @@ import {
 } from "date-fns";
 import TextInput from "@/Components/TextInput.vue";
 import {onMounted, ref} from "vue";
+import ToggleButton from "@/Components/ToggleButton.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -40,10 +41,7 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 }));
 
 const submit = () => {
-    form.transform(data => ({
-        ...data,
-        lifetime: form.lifetime ? 1 : 0,
-    })).get(route('dashboard'), {preserveScroll: true});
+    form.get(route('dashboard'), {preserveScroll: true});
 };
 
 const filterChanged = (event) => {
@@ -232,6 +230,10 @@ function isStatsGroupSet() {
                                         :options="presets"
                                         @change="presetChanged"
                                     />
+                                </div>
+                                <div>
+                                    <InputLabel class="hidden" for="advanced" value="&nbsp;" />
+                                    <ToggleButton class="mt-1" id="advanced" v-model:checked="page.props.auth.user.settings.showAdvanced" buttonText="Advanced" type="button" @click="$inertia.get(route('user-settings.toggle-advanced'))" />
                                 </div>
                                 <div class="hidden">
                                     <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
