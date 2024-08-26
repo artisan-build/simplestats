@@ -149,8 +149,9 @@ onMounted(fetchData);
                     </tr>
                     <tr v-for="item in data">
                         <td class="py-1.5">
+                            <!-- direction: rtl; is that on small screens the page uris got truncated from left so that you can see the end of the uri with prio -->
                             <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
-                                <Link class="group truncate" :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
+                                <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
                                     <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
                                         <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
                                         <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
