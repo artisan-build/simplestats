@@ -62,7 +62,9 @@ const changeSort = (sort) => {
 };
 
 const calculatePercentage = (current) => {
-    let highest = data.value.reduce((max, item) => item[filters.statsSort] > max[filters.statsSort] ? item : max, data.value[0])[filters.statsSort] ?? 0;
+    const sort = (filters.statsSort !== 'name') ? filters.statsSort : 'visitors' ;
+
+    let highest = data.value.reduce((max, item) => item[sort] > max[sort] ? item : max, data.value[0])[sort] ?? 0;
 
     // if net is 0 then we try visitors
     // if (highest <= 0) {
@@ -70,7 +72,7 @@ const calculatePercentage = (current) => {
     //     return Math.floor((current.visitors / highest) * 100);
     // }
 
-    return Math.floor((current[filters.statsSort] / highest) * 100);
+    return Math.floor((current[sort] / highest) * 100);
 };
 
 const statsTypeIcon =  (statsGroup, item) => {
@@ -102,7 +104,14 @@ onMounted(fetchData);
             <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full table-fixed">
                     <tr class="sticky top-0 bg-white font-medium text-gray-600">
-                        <td style="width: 44%;" class="py-1.5">Name</td>
+                        <td style="width: 44%;" class="py-1.5">
+                            <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
+                                <span>Name</span>
+                                <svg v-if="filters.statsSort === 'name'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </td>
                         <td style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
                                 <span class="inline-block @2xl:hidden">Visits</span>
@@ -158,7 +167,7 @@ onMounted(fetchData);
                                     </span>
                                     <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
                                     <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
-                                    <span class="group-hover:underline ml-2">{{ topReferers[item.name] ?? item.name }}</span>
+                                    <span class="group-hover:underline ml-2" v-tooltip="(statsGroupType === 'page') ? { content: topReferers[item.name] ?? item.name, delay: 1000 } : ''">{{ topReferers[item.name] ?? item.name }}</span>
                                 </Link>
                             </div>
                         </td>
