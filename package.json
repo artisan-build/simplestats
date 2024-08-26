@@ -27,7 +27,6 @@
         "@sentry/react": "^7.40.0",
         "@sentry/vue": "^7.40.0",
         "@tailwindcss/container-queries": "^0.1.1",
-        "@vuepic/vue-datepicker": "^9.0.2",
         "apexcharts": "^3.48.0",
         "chart.js": "^4.4.2",
         "country-flag-emoji": "^1.0.3",

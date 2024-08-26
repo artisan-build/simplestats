@@ -78,7 +78,7 @@ const submit = () => {
                             What should your first instance be called? (optional)
                             <p class="text-base mt-2">
                                 You can divide a project into multiple instances.
-                                For example, in a gaming app, you might have multiple game worlds per app like "Game World 1", "Game World 2", etc.<br>
+                                For example, in a gaming app, you might have multiple game worlds per app like "Game World 1", "Game World 2", etc.
                                 This allows you to filter and manage them separately. If you do not plan to use multiple instances, you can just leave this as "Default".
                             </p>
                         </div>

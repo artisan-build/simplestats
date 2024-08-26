@@ -44,7 +44,6 @@ class User extends Authenticatable implements TrackableUserWithCondition, MustVe
         'name',
         'email',
         'password',
-        'selected_range_type',
         'settings',
     ];
 
@@ -67,7 +66,6 @@ class User extends Authenticatable implements TrackableUserWithCondition, MustVe
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'selected_range_type' => StatsRangeType::class,
         'settings' => 'array',
     ];
 

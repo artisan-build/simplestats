@@ -1,5 +1,5 @@
 <script setup>
-import {router, useForm} from "@inertiajs/vue3";
+import {router, useForm, usePage} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -8,8 +8,18 @@ import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
 import {truncate} from "lodash";
 import EnvBadge from "@/Components/EnvBadge.vue";
-import StatsDatePicker from "@/Pages/Dashboard/Partials/StatsDatePicker.vue";
-import {format} from "date-fns";
+import {
+    differenceInDays,
+    differenceInMonths,
+    endOfMonth, endOfYear,
+    format,
+    startOfMonth,
+    startOfYear,
+    subDays,
+    subMonths, subYears
+} from "date-fns";
+import TextInput from "@/Components/TextInput.vue";
+import {onMounted, ref} from "vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -19,6 +29,8 @@ const props = defineProps({
     rangeTypes: Array,
     topReferers: Object,
 });
+
+const page = usePage();
 
 const form = useForm(props.filters);
 
@@ -69,12 +81,52 @@ const teamChanged = () => {
     });
 };
 
-const handleDateChanged = (date) => {
-    form.rangeStart = format(date, "yyyy-MM-dd");
+const presets = [
+    {name: 'Today', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
+    {name: 'Yesterday', rangeStart: format(subDays(new Date(), 1), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
+    { name: 'Last 7 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 7, rangeType: 'days'},
+    { name: 'Last 30 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 30, rangeType: 'days'},
+    { name: 'This Month', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
+    { name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
+    { name: 'Last 12 Months', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},
+    { name: 'This Year', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
+    { name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
+    { name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1))), rangeType: 'months'},
+    {name: 'Custom', rangeStart: '', rangeAmount: 0, rangeType: ''},
+].map((preset, index) => ({ ...preset, id: index }));
 
-    filterChanged();
-    // do something else with the data
+const presetSelected = ref(null);
+const customRangeId = presets.length-1;
+
+onMounted(() => {
+    presets.forEach(function (preset) {
+        if (preset.rangeStart === form.rangeStart && preset.rangeAmount === form.rangeAmount && preset.rangeType === form.rangeType) {
+            presetSelected.value = preset.id;
+        }
+    });
+
+    if (presetSelected.value === null) {
+        presetSelected.value = customRangeId;
+    }
+});
+
+function isCustomRange() {
+    return presetSelected.value == customRangeId;
 }
+
+const presetChanged = (event) => {
+    const selectedPreset = presets[presetSelected.value];
+
+    if (isCustomRange()) {
+        return;
+    }
+
+    form.rangeStart = selectedPreset.rangeStart;
+    form.rangeAmount = selectedPreset.rangeAmount;
+    form.rangeType = selectedPreset.rangeType;
+
+    filterChanged(event);
+};
 </script>
 
 <template>
@@ -118,7 +170,6 @@ const handleDateChanged = (date) => {
                                 />
                             </div>
                         </div>
-
                         <div class="flex flex-wrap gap-x-2 items-center">
                             <template v-for="statsGroup in statsGroups">
                                 <template v-for="group in statsGroup">
@@ -133,18 +184,38 @@ const handleDateChanged = (date) => {
                                 </template>
                             </template>
                         </div>
-
                         <div class="flex flex-wrap gap-x-2 items-center">
                             <div>
+                                <InputLabel class="hidden" for="rangePreset" value="Preset" />
+                                <SelectInput
+                                    id="rangePreset"
+                                    v-model="presetSelected"
+                                    class="mt-1 block w-18"
+                                    :options="presets"
+                                    @change="presetChanged"
+                                />
+                            </div>
+                            <div class="pl-4" v-if="isCustomRange()">
                                 <span>
-                                    From:
+                                    From
                                 </span>
                             </div>
-                            <div>
+                            <div v-if="isCustomRange()">
                                 <InputLabel class="hidden" for="rangeStart" value="Start from" />
-                                <StatsDatePicker :rangeStart="form.rangeStart" @update-date="handleDateChanged" />
+                                <TextInput
+                                    type="date"
+                                    id="rangeStart"
+                                    v-model="form.rangeStart"
+                                    class="mt-1 block w-36"
+                                    @change="filterChanged"
+                                />
                             </div>
-                            <div>
+                            <div v-if="isCustomRange()">
+                                <span>
+                                    last
+                                </span>
+                            </div>
+                            <div v-if="isCustomRange()">
                                 <InputLabel class="hidden" for="rangeAmount" value="Last" />
                                 <SelectInput
                                     id="rangeAmount"
@@ -154,7 +225,7 @@ const handleDateChanged = (date) => {
                                     @change="filterChanged"
                                 />
                             </div>
-                            <div>
+                            <div v-if="isCustomRange()">
                                 <InputLabel class="hidden" for="rangeType" value="&nbsp;" />
                                 <SelectInput
                                     id="rangeType"

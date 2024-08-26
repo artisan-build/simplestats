@@ -26,12 +26,6 @@ class StatsController extends Controller
     ) {
         $user = $request->user();
 
-        if ($request->has('rangeType') && $user->selected_range_type != $request->rangeType) {
-            $user->update([
-                'selected_range_type' => $request->rangeType,
-            ]);
-        }
-
         $teamStats = $user->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
                 $query->where('project_id', $request->projectId);

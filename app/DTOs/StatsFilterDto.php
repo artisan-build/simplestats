@@ -36,7 +36,7 @@ readonly class StatsFilterDto
 
     public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
     {
-        $rangeType = StatsRangeType::from(auth()->user()->selected_range_type->value ?? StatsRangeType::DAY->value);
+        $rangeType = StatsRangeType::from($request->rangeType ?? StatsRangeType::DAY->value);
         $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
         $rangeStart = Date::parse($request->rangeStart ?? now());
 
