@@ -178,17 +178,7 @@ function isStatsGroupSet() {
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-x-2 items-center">
-                                <div>
-                                    <InputLabel class="hidden" for="rangePreset" value="Preset" />
-                                    <SelectInput
-                                        id="rangePreset"
-                                        v-model="presetSelected"
-                                        class="mt-1 block w-18"
-                                        :options="presets"
-                                        @change="presetChanged"
-                                    />
-                                </div>
-                                <div class="pl-4" v-if="isCustomRange()">
+                                <div v-if="isCustomRange()">
                                     <span>
                                         From
                                     </span>
@@ -226,6 +216,16 @@ function isStatsGroupSet() {
                                         class="mt-1 block w-28"
                                         :options="rangeTypes"
                                         @change="filterChanged"
+                                    />
+                                </div>
+                                <div class="pl-4">
+                                    <InputLabel class="hidden" for="rangePreset" value="Preset" />
+                                    <SelectInput
+                                        id="rangePreset"
+                                        v-model="presetSelected"
+                                        class="mt-1 block w-18"
+                                        :options="presets"
+                                        @change="presetChanged"
                                     />
                                 </div>
                                 <div class="hidden">
