@@ -10,7 +10,7 @@ import {truncate} from "lodash";
 import EnvBadge from "@/Components/EnvBadge.vue";
 import {
     differenceInDays,
-    differenceInMonths,
+    differenceInMonths, differenceInYears,
     endOfMonth, endOfYear,
     format,
     startOfMonth,
@@ -79,6 +79,15 @@ const teamChanged = () => {
     });
 };
 
+let allTimeType = 'months';
+let allTimeRange = differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
+
+// wenn all time range ist größer als 5 jahre (60 monate), dann range type auf years stellen (da 60 der max rangeAmount ist)
+if (allTimeRange > (12 * 5)) {
+    allTimeType = 'years';
+    allTimeRange = differenceInYears(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
+}
+
 const presets = [
     {name: 'Today', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
     {name: 'Yesterday', rangeStart: format(subDays(new Date(), 1), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
@@ -89,7 +98,7 @@ const presets = [
     {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
     {name: 'This Year', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
     {name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
-    {name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1))), rangeType: 'months'},
+    {name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: allTimeRange, rangeType: allTimeType},
     {name: 'Custom', rangeStart: '', rangeAmount: 0, rangeType: ''},
 ].map((preset, index) => ({ ...preset, id: index }));
 
