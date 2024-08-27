@@ -98,7 +98,7 @@ const presets = [
     {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
     {name: 'This Year', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
     {name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
-    {name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: allTimeRange, rangeType: allTimeType},
+    {name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: allTimeRange + 1, rangeType: allTimeType},
     {name: 'Custom', rangeStart: '', rangeAmount: 0, rangeType: ''},
 ].map((preset, index) => ({ ...preset, id: index }));
 
