@@ -82,8 +82,8 @@ const teamChanged = () => {
 let allTimeType = 'months';
 let allTimeRange = differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
 
-// wenn all time range ist größer als 5 jahre (60 monate), dann range type auf years stellen (da 60 der max rangeAmount ist)
-if (allTimeRange > (12 * 5)) {
+// wenn all time range ist größer als 4 jahre, dann range type auf years stellen
+if (allTimeRange > (12 * 4)) {
     allTimeType = 'years';
     allTimeRange = differenceInYears(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
 }
