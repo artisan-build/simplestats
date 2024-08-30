@@ -14,6 +14,7 @@ use App\Services\StatsService;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class StatsController extends Controller

@@ -8,6 +8,7 @@ use App\Services\RefererService;
 use App\Services\StatsService;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Str;
 use Stevebauman\Location\Facades\Location;
 
 trait HasStatsTracking
@@ -127,6 +128,20 @@ trait HasStatsTracking
                 }
 
                 return [];
+            },
+        );
+    }
+
+    public function pageEntry(): Attribute
+    {
+        return Attribute::make(
+            set: function(?string $value) {
+                // it the page is only "/" we keep it else remove last "/" from page entry for consistency
+                if ($value !== '/' && Str::endsWith($value, '/')) {
+                    $value = Str::beforeLast($value, '/');
+                }
+
+                return $value;
             },
         );
     }
