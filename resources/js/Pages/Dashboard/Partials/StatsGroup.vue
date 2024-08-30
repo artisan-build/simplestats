@@ -1,11 +1,12 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
-import {Link} from "@inertiajs/vue3";
+import {Link, usePage} from "@inertiajs/vue3";
 import _ from 'lodash';
 import {get} from 'country-flag-emoji';
 import {XAU} from "@/Helpers/StringHelpers.js";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import axios from 'axios';
 
 const props = defineProps({
     filters: Object,
@@ -14,6 +15,8 @@ const props = defineProps({
     statsGroupSelected: String,
     topReferers: Object,
 });
+
+const page = usePage();
 
 const data = ref([]);
 const loading = ref(true);
@@ -32,8 +35,10 @@ if (! filters.statsSort) {
 
 const fetchData = async () => {
     try {
-        const response = await fetch(route('stats.grouped', filters));
-        data.value = await response.json();
+        const response = await axios(route('stats.grouped', filters), {
+            method: 'POST'
+        });
+        data.value = await response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {

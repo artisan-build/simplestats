@@ -4,6 +4,7 @@ import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
 import StatsIndicator from "@/Pages/Dashboard/Partials/StatsIndicator.vue";
+import axios from 'axios';
 
 const ApexChart = defineComponent(VueApexCharts);
 
@@ -141,10 +142,12 @@ const selectSeries = (selectedSerie) => {
 
     chartInstance.value.showSeries(selectedSerie.data.name);
 
-    fetch(route('stats.set-series', {
+    axios(route('stats.set-series', {
         chartIndex: props.chartIndex,
         seriesIndex: selectedSerie.index,
-    }));
+    }), {
+        method: 'POST',
+    });
 };
 </script>
 
