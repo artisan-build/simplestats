@@ -18,8 +18,8 @@ readonly class ValidProjectModel implements ValidationRule
         // if its the project model itself, we just need to check the id...
         $validProjectModel = $this->model::where('id', $value)
             ->when($this->model != Project::class, function ($query) {
-                $query->where('project_id', $this->projectId)->exists();
-            });
+                $query->where('project_id', $this->projectId);
+            })->exists();
 
         if ($value == -1 || $value == 0 || $validProjectModel) {
             return;
