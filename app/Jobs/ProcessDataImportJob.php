@@ -10,6 +10,7 @@ use App\Mail\DataImportFailed;
 use App\Mail\DataImportCompleted;
 use App\Models\DataImport;
 use App\Services\StatsAggregationsService;
+use App\Services\StatsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -73,6 +74,7 @@ class ProcessDataImportJob implements ShouldQueue
 
             throw $e;
         } finally {
+            app(StatsService::class)->recalculateStatsStartingAt();
             $this->invalidateStatsAggregations($importer);
             Storage::disk('local')->delete($this->filepath);
         }

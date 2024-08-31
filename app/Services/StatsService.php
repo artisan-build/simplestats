@@ -130,4 +130,21 @@ class StatsService
 
         return Instance::where($where)->min('stats_starting_at');
     }
+
+    /**
+     * Compatible with an artisan command (no auth available, so all teams will be handled).
+     * Else if auth exists, only the auth users team will be handled...
+     */
+    public function recalculateStatsStartingAt(): void
+    {
+        Instance::all()->each(function (Instance $instance) {
+            $start = collect(StatsService::getStatsModels())->map(
+                fn ($statsModel) => $statsModel::where(['instance_id' => $instance->id])->min('time')
+            )->filter()->min();
+
+            if ($start) {
+                $instance->update(['stats_starting_at' => $start]);
+            }
+        });
+    }
 }
