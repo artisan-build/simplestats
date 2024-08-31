@@ -11,6 +11,7 @@ class RefererService
     public function __construct()
     {
         $this->topReferers = collect([
+            // google with "www" because we want "mail.google.com" separate....
             'www.google.com' => 'Google',
             'facebook.com' => 'Facebook',
             'youtube.com' => 'YouTube',

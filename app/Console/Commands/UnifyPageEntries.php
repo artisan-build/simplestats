@@ -41,7 +41,7 @@ class UnifyPageEntries extends Command
             DB::beginTransaction();
 
             try {
-                StatsPageEntry::where('team_id', $team->id)->orderBy('id')->get()->each(function (StatsPageEntry $page) {
+                StatsPageEntry::where('team_id', $team->id)->get()->each(function (StatsPageEntry $page) {
                     $pageName = $page->name;
 
                     $pageWithSlash = StatsPageEntry::where([
@@ -75,8 +75,8 @@ class UnifyPageEntries extends Command
             }
 
             DB::commit();
-
-            StatsAggregation::truncate();
         });
+
+        StatsAggregation::truncate();
     }
 }
