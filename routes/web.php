@@ -35,7 +35,7 @@ Route::middleware([
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::post('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
-    Route::get('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
+    Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
 
     // Data Import
     Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store']);
