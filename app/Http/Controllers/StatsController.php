@@ -64,9 +64,11 @@ class StatsController extends Controller
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            'statsStartingAt' => app(StatsService::class)->getStatsStartingAt(
-                Instance::find($filters->instanceId) ?? Project::find($filters->projectId) ?? $user->currentTeam
-            ),
+            'statsStartingAt' => app(StatsService::class)->getStatsStartingAt([
+                'team_id' => $user->team->id,
+                'project_id' => $filters->projectId,
+                'id' => $filters->instanceId,
+            ]),
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),

@@ -123,40 +123,11 @@ class StatsService
         return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 
-    public function getStatsStartingAt(Team|Project|Instance $model, bool $recalc = false)
+    public function getStatsStartingAt(array $filter)
     {
-        if ($model->stats_starting_at && ! $recalc) {
-            return $model->stats_starting_at;
-        }
+        // filter to remove 0 key value pairs...
+        $where = collect($filter)->filter()->toArray();
 
-        $key = str($model->getTable())->singular().'_'.$model->getKeyName();
-
-        $start = collect(self::getStatsModels())->map(
-            fn($statsModel) => $statsModel::withoutGlobalScope('instance')->where([$key => $model->id])->min('time')
-        )->filter()->min();
-
-        $model->update(['stats_starting_at' => $start]);
-
-        return $start;
-    }
-
-    /**
-     * Compatible with a command (no auth so all teams will be handled).
-     * Else if auth exists, only the auth users team will be handled...
-     */
-    public function recalcStatsStartingAt(): void
-    {
-        Team::with('owner')->get()->each(function(Team $team) {
-            if (empty($team->owner)) return;
-            $this->getStatsStartingAt($team, true);
-        });
-
-        Project::query()->get()->each(function(Project $project) {
-            $this->getStatsStartingAt($project, true);
-        });
-
-        Instance::query()->get()->each(function(Instance $instance) {
-            $this->getStatsStartingAt($instance, true);
-        });
+        return Instance::where($where)->min('stats_starting_at');
     }
 }
