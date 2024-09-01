@@ -39,10 +39,68 @@ _SimpleStats_ uses standard HTTP response codes to communicate the outcome of **
 | **500** | Request failed due to an internal error in _SimpleStats_.              |
 | **503** | _SimpleStats_ is offline for maintenance.                              |
 
+## Rate Limit
+
+The rate limits for our API are **2000** requests **per hour** by default. If you have special needs for more requests, please contact us to request more capacity.
+
 ## Endpoints
 
 At the moment, only the `create` endpoints are available.
 But if the `id` already exists on our side, the record gets updated with the new data.
+
+### Create Visitor
+
+**HTTP Request**
+
+`POST /api/v1/stats-visitor`
+
+_Core parameters:_
+
+[//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "IMPORT USER" PAGE.)
+
+| Key                | Type                 | Description                                                                                                                 |
+|--------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d`, before or equal `today`                                          |
+| **ip**             | _string_ `nullable`  | The `ip` of the user. _(does not get stored)_                                                                               |
+| **user_agent**     | _string_ `nullable`  | The `user_agent` of the user. _(does not get stored)_                                                                       |
+| **track_referer**  | _string_ `nullable`  | The http tracking `referer` of the user.                                                                                    |
+| **track_source**   | _string_ `nullable`  | The tracking `source` of the user.                                                                                          |
+| **track_medium**   | _string_ `nullable`  | The tracking `medium` of the user.                                                                                          |
+| **track_campaign** | _string_ `nullable`  | The tracking `campaign` of the user.                                                                                        |
+| **track_term**     | _string_ `nullable`  | The tracking `term` of the user.                                                                                            |
+| **track_content**  | _string_ `nullable`  | The tracking `content` of the user.                                                                                         |
+| **page_entry**     | _string_ `nullable`  | The tracking `page_entry` of the user.                                                                                         |
+
+_Additional parameters:_
+
+| Key                  | Type                 | Description                                                                                                          |
+|----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
+| **location_country** | _string_ `nullable`  | The location `country` of the user. (If the `ip` is set, we take the country that refers to it.)                     |
+| **location_region**  | _string_ `nullable`  | The location `region` of the user. (If the `ip` is set, we take the region that refers to it.)                       |
+| **location_city**    | _string_ `nullable`  | The location `city` of the user. (If the `ip` is set, we take the city that refers to it.)                           |
+| **device_type**      | _string_ `nullable`  | The device `type` of the user. (If the `user_agent` is set, we take the device type that refers to it.)              |
+| **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
+| **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
+| **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+
+**Payload**
+
+```json
+{
+    "ip": "127.0.0.1",
+    "user_agent": "Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36",
+    "track_source": "test",
+    "time": "2024-04-04"
+}
+```
+
+**Response**
+
+```json
+{
+    "message": "Request accepted."
+}
+```
 
 ### Create User
 
