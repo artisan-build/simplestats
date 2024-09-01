@@ -129,18 +129,10 @@ if (hasCurrentPeriod) {
     };
 }
 
-onMounted(async () => {
-    await nextTick();
-    props.chart.data.series.forEach(serie => !serie.initialVisible ? chartInstance.value.hideSeries(serie.name) : null);
-    chartInstance.value.$el.classList.remove('invisible');
-});
+const selectedSerieIndex = ref(Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0));
 
 const selectSeries = (selectedSerie) => {
-    series.value.forEach(serie => {
-        chartInstance.value.hideSeries(serie.name);
-    })
-
-    chartInstance.value.showSeries(selectedSerie.data.name);
+    selectedSerieIndex.value = selectedSerie.index;
 
     axios(route('stats.set-series', {
         chartIndex: props.chartIndex,
@@ -148,6 +140,10 @@ const selectSeries = (selectedSerie) => {
     }), {
         method: 'POST',
     });
+};
+
+const selectedSeries = () => {
+    return series.value.filter((serie, index) => index === selectedSerieIndex.value);
 };
 </script>
 
@@ -158,8 +154,8 @@ const selectSeries = (selectedSerie) => {
                 v-for="(serie, serieIndex) in series"
                 :serie="serie"
                 :serieIndex="serieIndex"
+                :selectedSerieIndex="selectedSerieIndex"
                 :formatter="chart.formatter"
-                :chartInstance="chartInstance"
                 :hasCurrent="hasCurrentPeriod"
                 @selectSeries="selectSeries"
             />
@@ -172,11 +168,10 @@ const selectSeries = (selectedSerie) => {
             </div>
             <ApexChart
                 ref="chartInstance"
-                class="invisible"
                 type="area"
                 :height="chartOptions.chart.height"
                 :options="chartOptions"
-                :series="series" />
+                :series="selectedSeries()" />
         </div>
     </div>
 </template>

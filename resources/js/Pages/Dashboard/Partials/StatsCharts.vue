@@ -23,7 +23,6 @@ const extractStatsData4Chart = (statsGroups) => {
                     data: [],
                     name: group.title ?? group.key,
                     nameSmall: group.titleSmall ?? group.title ?? group.key,
-                    initialVisible: group.initialVisible,
                     color: group.color ?? '',
                     // extras...
                     key: group.key,
@@ -91,13 +90,13 @@ let charts = [
         formatter: 'number',
         class: 'order-1 3xl:order-1',
         group: [
-            {key: 'pd_VISITOR', initialVisible: false, color: '#93c5fd', formatter: 'number', indicatorCallback: function () {
+            {key: 'pd_VISITOR', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {
                 return statsSum.pd_VISITOR;
             }},
-            {key: 'pd_REG', initialVisible: false, color: '#93c5fd', formatter: 'number', indicatorCallback: function () {
+            {key: 'pd_REG', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {
                 return statsSum.pd_REG;
             }},
-            {key: 'pd_CR', initialVisible: false, color: '#93c5fd', formatter: 'percent', indicatorCallback: function () {
+            {key: 'pd_CR', color: '#93c5fd', formatter: 'percent', indicatorCallback: function () {
                 return safeDevision(statsSum.pd_REG, statsSum.pd_VISITOR) * 100;
             }},
         ],
@@ -107,13 +106,13 @@ let charts = [
         formatter: 'currency',
         class: 'order-2 3xl:order-2',
         group: [
-            {key: 'pd_NET', initialVisible: false, color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
+            {key: 'pd_NET', color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
                 return statsSum.pd_NET;
             }},
-            {key: 'pd_FEE', initialVisible: false, color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
+            {key: 'pd_FEE', color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
                 return statsSum.pd_FEE;
             }},
-            {key: 'pd_GROSS', initialVisible: false, color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
+            {key: 'pd_GROSS', color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
                 return statsSum.pd_GROSS;
             }},
         ],
@@ -123,16 +122,16 @@ let charts = [
         formatter: 'number',
         class: 'order-3 3xl:order-4',
         group: [
-            {key: 'pd_NAU', initialVisible: false, color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+            {key: 'pd_NAU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSum.pd_NAU;
             }},
-            {key: 'pd_NAPU', initialVisible: false, color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+            {key: 'pd_NAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSum.pd_NAPU;
             }},
-            {key: 'pd_PU', initialVisible: false, color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+            {key: 'pd_PU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSum.pd_PU;
             }},
-            // {key: 'lt_TAU', initialVisible: false, color: '#93c5fd',  indicatorCallback: function () {
+            // {key: 'lt_TAU', color: '#93c5fd',  indicatorCallback: function () {
             //     return statsSum.pd_GROSS;
             // }},
         ],
@@ -142,13 +141,13 @@ let charts = [
         formatter: 'currency',
         class: 'order-4 3xl:order-3',
         group: [
-            {key: 'lt_ARPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
+            {key: 'lt_ARPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.lt_ARPU / statsSumWithoutCurrentLength.lt_ARPU;
             }},
-            {key: 'lt_ARPPU', initialVisible: false, color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
+            {key: 'lt_ARPPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.lt_ARPPU / statsSumWithoutCurrentLength.lt_ARPPU;
             }},
-            {key: 'pd_ARPDAU', initialVisible: false, color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
+            {key: 'pd_ARPDAU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.pd_ARPDAU / statsSumWithoutCurrentLength.pd_ARPDAU;
             }},
         ],
@@ -158,13 +157,13 @@ let charts = [
         formatter: 'number',
         class: 'order-5 3xl:order-5',
         group: [
-            {key: 'pd_DAU', initialVisible: false, color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+            {key: 'pd_DAU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.pd_DAU / statsSumWithoutCurrentLength.pd_DAU;
             }},
-            {key: 'pd_DAPU', initialVisible: false, color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+            {key: 'pd_DAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.pd_DAPU / statsSumWithoutCurrentLength.pd_DAPU;
             }},
-            {key: 'pd_DAAPU', initialVisible: false, color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+            {key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.pd_DAAPU / statsSumWithoutCurrentLength.pd_DAAPU;
             }},
         ],
@@ -174,13 +173,13 @@ let charts = [
         formatter: 'percent',
         class: 'order-6 3xl:order-6',
         group: [
-            {key: 'lt_REG2PU', initialVisible: false, color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
+            {key: 'lt_REG2PU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.lt_REG2PU / statsSumWithoutCurrentLength.lt_REG2PU;
             }},
-            {key: 'lt_REG2DAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
+            {key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.lt_REG2DAU / statsSumWithoutCurrentLength.lt_REG2DAU;
             }},
-            {key: 'lt_REG2TAU', initialVisible: false, color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
+            {key: 'lt_REG2TAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
                 return statsSumWithoutCurrent.lt_REG2TAU / statsSumWithoutCurrentLength.lt_REG2TAU;
             }},
         ],
@@ -191,13 +190,10 @@ if (! page.props.auth.user.settings.showAdvanced) {
     charts = charts.filter(function (item) {return item.name !== 'Average Revenue' && item.name !== 'Engagement';});
 }
 
-charts.forEach(function(chartGroup, chartIndex) {
+charts.forEach(function(chartGroup) {
     let info = ``;
 
-    chartGroup.group.forEach(function(group, groupIndex) {
-        let selectedIndex = page.props.auth.user.settings?.selectedSeries?.[chartIndex];
-        group.initialVisible = (selectedIndex == groupIndex) || (!selectedIndex && groupIndex == 0);
-
+    chartGroup.group.forEach(function(group) {
         let kpiDef = kpiDefs[group.key];
 
         let title = (kpiDef.long) ? `${kpiDef.long} (${kpiDef.short})`: `${kpiDef.short}` ;

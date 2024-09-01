@@ -2,21 +2,22 @@
 import {formatNumber, formatPercent, formatMap} from "@/Helpers/NumberHelpers.js";
 import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, ScaleIcon} from "@heroicons/vue/20/solid/index.js";
 import {ref} from "vue";
+import {usePage} from "@inertiajs/vue3";
 
 const props = defineProps({
     serie: Object,
     serieIndex: Number,
+    selectedSerieIndex: Number,
     formatter: String,
-    chartInstance: Object,
     hasCurrent: Boolean,
-    highCurrent: Boolean,
 });
+
+const page = usePage();
 
 let latestSerieData = props.serie.data[props.serie.data.length - 1];
 let previousSerieData = props.serie.data[props.serie.data.length - 2];
 
-// if hasCurrent we only show the prev values if at least one of the latest aren't higher
-if (props.hasCurrent && ! props.highCurrent) {
+if (props.hasCurrent) {
     latestSerieData = props.serie.data[props.serie.data.length - 2];
     previousSerieData = props.serie.data[props.serie.data.length - 3];
 }
@@ -54,9 +55,8 @@ const increaseTypes = {
 
 const increaseType = increaseTypes[Math.sign(increase).toString()];
 
-const isSerieVisible = () => {
-    if (! props.chartInstance?.chart) return props.serie.initialVisible;
-    return ! props.chartInstance.chart.w.globals.collapsedSeries.some((collapsedSerie) => collapsedSerie.index === props.serieIndex)
+function isSerieVisible() {
+    return props.serieIndex === props.selectedSerieIndex;
 }
 
 </script>
