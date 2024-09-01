@@ -27,14 +27,14 @@
         "@sentry/react": "^7.40.0",
         "@sentry/vue": "^7.40.0",
         "@tailwindcss/container-queries": "^0.1.1",
-        "apexcharts": "^3.48.0",
+        "apexcharts": "^3.53.0",
         "chart.js": "^4.4.2",
         "country-flag-emoji": "^1.0.3",
         "date-fns": "^3.6.0",
         "floating-vue": "^5.2.2",
         "lodash": "^4.17.21",
         "pluralize": "^8.0.0",
-        "vue3-apexcharts": "^1.5.2",
+        "vue3-apexcharts": "^1.6.0",
         "vue3-form-wizard": "^0.2.3"
     }
 }
