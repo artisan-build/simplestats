@@ -41,7 +41,7 @@ _SimpleStats_ uses standard HTTP response codes to communicate the outcome of **
 
 ## Rate Limit
 
-The rate limits for our API are **2000** requests **per hour** by default. If you have special needs for more requests, please contact us to request more capacity.
+The rate limits for our API are **120** requests **per minute** by default. If you have special needs for more requests, please contact us to request more capacity.
 
 ## Endpoints
 
