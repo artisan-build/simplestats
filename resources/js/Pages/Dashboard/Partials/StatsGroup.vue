@@ -172,7 +172,7 @@ onMounted(fetchData);
                                     </span>
                                     <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
                                     <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
-                                    <span class="group-hover:underline ml-2" :title="topReferers[item.name] ?? item.name">{{ topReferers[item.name] ?? item.name }}</span>
+                                    <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
                                 </Link>
                             </div>
                         </td>
