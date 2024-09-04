@@ -53,7 +53,7 @@ class RefererService
     {
         return $this->topReferers->search(function ($topRefererName, $topReferer) use ($referer) {
             // google.co.uk, google.ch, google.de all become google.com
-            $topRefererMain = str($topReferer)->beforeLast('.').'.';
+            $topRefererMain = str($topReferer)->replace('www.', '')->beforeLast('.').'.';
             return str($referer)->contains($topRefererMain);
         }) ?: $referer;
     }
