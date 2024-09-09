@@ -16,12 +16,14 @@ class IntroController extends Controller
     {
         if ($request->has('team') &&
             $request->has('currency') &&
+            $request->has('timezone') &&
             $request->has('project') &&
             $request->has('instance')
         ) {
             $request->user()->currentTeam->update([
                 'name' => $request->team,
                 'currency' => $request->currency,
+                'timezone' => $request->timezone,
             ]);
 
             $project = Project::create([
@@ -37,8 +39,16 @@ class IntroController extends Controller
             ]);
         }
 
+        $timezones = collect(timezone_identifiers_list())->map(function ($timezone, $key) {
+            return [
+                'id' => $timezone,
+                'name' => $timezone,
+            ];
+        });
+
         return Inertia::render('Intro', [
             'team' => $request->user()->currentTeam->name,
+            'timezones' => $timezones,
         ]);
     }
 }

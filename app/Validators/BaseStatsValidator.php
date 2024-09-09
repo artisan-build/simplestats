@@ -2,14 +2,10 @@
 
 namespace App\Validators;
 
-use App\Enums\DataImportType;
 use App\Models\DataImport;
 use Gate;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\HeadingRowImport;
 
 class BaseStatsValidator
 {
@@ -22,7 +18,16 @@ class BaseStatsValidator
     {
         // we do not allow logging in the future
         return [
-            'time' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
+            'time' => [
+                'required',
+                'before_or_equal:now',
+                function ($attribute, $value, $fail) {
+                    if (! \DateTime::createFromFormat('Y-m-d', $value) &&
+                        ! \DateTime::createFromFormat('Y-m-d H:i:s', $value)) {
+                        $fail('The '.$attribute.' must be a valid date in Y-m-d or Y-m-d H:i:s format.');
+                    }
+                },
+            ],
         ];
     }
 

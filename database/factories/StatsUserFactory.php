@@ -48,6 +48,7 @@ class StatsUserFactory extends Factory
             'track_source' => $this->faker->randomElement([null, 'twitter', 'newsletter', 'facebook', 'affiliate_partner', 'instagram']),
             'page_entry' => $this->faker->randomElement(['/', '/blog/my-super-successful-article', '/blog/why-we-are-awesome', '/blog/we-love-good-analytics']),
             'time' => $date,
+            'time_utc' => $date,
         ];
 
         if (!is_null($data['track_source'])) {

@@ -37,6 +37,7 @@ class StatsUser extends BaseStat
         'track_content',
         'page_entry',
         'time',
+        'time_utc',
     ];
 
     public function statsLogins(): HasMany

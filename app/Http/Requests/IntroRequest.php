@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Spatie\ValidationRules\Rules\Currency;
 
 class IntroRequest extends FormRequest
@@ -25,6 +26,7 @@ class IntroRequest extends FormRequest
         return [
             'team' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
             'currency' => ['sometimes', 'required', new Currency()],
+            'timezone' => ['sometimes', 'required', Rule::in(timezone_identifiers_list())],
             'project' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
             'instance' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
         ];

@@ -5,14 +5,17 @@ import 'vue3-form-wizard/dist/style.css';
 import {useForm} from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
+import SelectInput from "@/Components/SelectInput.vue";
 
 const props = defineProps({
     team: String,
+    timezones: Array,
 });
 
 const form = useForm({
     team: props.team,
     currency: '',
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
     project: '',
     instance: 'Default',
 });
@@ -58,6 +61,18 @@ const submit = () => {
                             type="text"
                             class="mt-1 inline-block w-2/5"
                             placeholder="e.g. USD"
+                        />
+                    </TabContent>
+                    <TabContent class="pt-10 pb-20 text-center" title="Timezone">
+                        <div class="text-xl font-medium mb-10">
+                            What is the timezone of your team/company?
+                        </div>
+
+                        <SelectInput
+                            id="timezone"
+                            v-model="form.timezone"
+                            class="mt-1 inline-block w-2/5"
+                            :options="timezones"
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Project">

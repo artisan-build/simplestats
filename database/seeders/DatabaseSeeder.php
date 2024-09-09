@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Actions\Fortify\CreateNewUser;
-use App\Enums\StatsRangeType;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsLogin;
@@ -72,14 +71,14 @@ class DatabaseSeeder extends Seeder
         sleep(1);
 
         $projects = [
-//            ['name' => 'My cool SaaS'],
+            //['name' => 'My cool SaaS'],
             ['name' => 'My great App'],
         ];
 
         $instances = [
             ['name' => 'Default'],
-//            ['name' => 'US'],
-//            ['name' => 'EU'],
+            //['name' => 'US'],
+            //['name' => 'EU'],
         ];
 
         Project::factory()->count(count($projects))
@@ -95,45 +94,45 @@ class DatabaseSeeder extends Seeder
                         StatsPayment::factory()->initialize();
 
                         $count = $this->getUserSeedCount();
-                        StatsUser::factory(rand($count['from'],$count['to']))->create([
+                        StatsUser::factory(rand($count['from'], $count['to']))->create([
                             'project_id' => $instance->project_id,
                             'instance_id' => $instance->id,
                         ])
-                        ->each(function ($statsUser) use ($instance) {
-                            // for each registration we simulate 3 to 6 visitors
-                            StatsVisitor::factory(rand(3, 6))->create([
-                                'project_id' => $instance->project_id,
-                                'instance_id' => $instance->id,
-                                'time' => $statsUser->time,
-                            ]);
-
-                            $loginTime = Carbon::parse($statsUser->time);
-                            for ($i = 0; $i < rand(0, 20); $i++) {
-                                StatsLogin::factory()->create([
+                            ->each(function ($statsUser) use ($instance) {
+                                // for each registration we simulate 3 to 6 visitors
+                                StatsVisitor::factory(rand(3, 6))->create([
                                     'project_id' => $instance->project_id,
                                     'instance_id' => $instance->id,
-                                    'stats_user_id' => $statsUser->id,
-                                    //The first login time is the same as registration
-                                    'time' => $loginTime,
+                                    'time' => $statsUser->time,
                                 ]);
-                                // increment a random number of days for the next login
-                                $loginTime->addDays(rand(1, 28));
-                            }
 
-                            $paymentTime = Carbon::parse($statsUser->time);
-                            if (rand(0, 9) === 0) {
+                                $loginTime = Carbon::parse($statsUser->time);
                                 for ($i = 0; $i < rand(0, 20); $i++) {
-                                    StatsPayment::factory()->create([
+                                    StatsLogin::factory()->create([
                                         'project_id' => $instance->project_id,
                                         'instance_id' => $instance->id,
                                         'stats_user_id' => $statsUser->id,
-                                        'currency' => self::DEFAULT_CURRENCY,
-                                        // increment a random number of days for the next payment
-                                        'time' => $paymentTime->addDays(rand(1, 28))
+                                        //The first login time is the same as registration
+                                        'time' => $loginTime,
                                     ]);
+                                    // increment a random number of days for the next login
+                                    $loginTime->addDays(rand(1, 28));
                                 }
-                            }
-                        });
+
+                                $paymentTime = Carbon::parse($statsUser->time);
+                                if (rand(0, 9) === 0) {
+                                    for ($i = 0; $i < rand(0, 20); $i++) {
+                                        StatsPayment::factory()->create([
+                                            'project_id' => $instance->project_id,
+                                            'instance_id' => $instance->id,
+                                            'stats_user_id' => $statsUser->id,
+                                            'currency' => self::DEFAULT_CURRENCY,
+                                            // increment a random number of days for the next payment
+                                            'time' => $paymentTime->addDays(rand(1, 28)),
+                                        ]);
+                                    }
+                                }
+                            });
                     })
             )
             ->create();
@@ -152,15 +151,15 @@ class DatabaseSeeder extends Seeder
     {
         if (count($data) > 0) {
             // Pfad zur .env-Datei
-            $env = file_get_contents(base_path() . '/.env');
+            $env = file_get_contents(base_path().'/.env');
 
             foreach ($data as $dataKey => $dataValue) {
                 // Ersetzen des aktuellen Werts mit dem neuen Wert
-                $env = preg_replace('/^' . $dataKey . '=.*/m', $dataKey . '=' . $dataValue, $env);
+                $env = preg_replace('/^'.$dataKey.'=.*/m', $dataKey.'='.$dataValue, $env);
             }
 
             // Speichern der neuen .env-Datei
-            file_put_contents(base_path() . '/.env', $env);
+            file_put_contents(base_path().'/.env', $env);
         }
     }
 

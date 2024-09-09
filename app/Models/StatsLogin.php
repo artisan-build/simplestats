@@ -24,6 +24,7 @@ class StatsLogin extends BaseStat
     protected $fillable = [
         'stats_user_id',
         'time',
+        'time_utc',
         'ip',
         'user_agent',
     ];

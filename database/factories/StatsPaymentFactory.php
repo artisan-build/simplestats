@@ -45,6 +45,7 @@ class StatsPaymentFactory extends Factory
             'net' => $gross*0.8,
             'currency' => 'EUR',
             'time' => $date->format('Y-m-d H:i:s'),
+            'time_utc' => $date->format('Y-m-d H:i:s'),
         ];
     }
 }

@@ -26,10 +26,10 @@ The following fields are allowed:
 
 _Core fields:_
 
-| Key                  | Type                 | Description                                                                                                                 |
-|----------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| **id**               | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                                                        |
-| **time**             | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d`, before or equal `today`                                          |
+| Key                  | Type                 | Description                                                                            |
+|----------------------|----------------------|----------------------------------------------------------------------------------------|
+| **id**               | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                   |
+| **time**             | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
 
 _Additional fields:_
 
@@ -56,7 +56,7 @@ Here is an **example** of how such an SQL query may look like:
 ```sql
 SELECT
     id,
-    DATE_FORMAT(created_at, '%Y-%m-%d') as `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as `time`
 FROM
     users
 WHERE
@@ -72,7 +72,7 @@ The query could look like this:
 ```sql
 SELECT
     id,
-    DATE_FORMAT(created_at, '%Y-%m-%d') AS `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`
 FROM
     users
 WHERE
@@ -105,14 +105,14 @@ The following fields are allowed:
 
 [//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "API DOCS" PAGE.)
 
-| Key               | Type                 | Description                                                                      |
-|-------------------|----------------------|----------------------------------------------------------------------------------|
-| **id**            | _integer_ `required` | The payment id.<br/>(`uuid` and `ulid` are not supported at the moment)          |
-| **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                         |
-| **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d`, before or equal `today` |
-| **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)              |
-| **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).               |
-| **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)     |
+| Key               | Type                 | Description                                                                          |
+|-------------------|----------------------|--------------------------------------------------------------------------------------|
+| **id**            | _integer_ `required` | The payment id.<br/>(`uuid` and `ulid` are not supported at the moment)              |
+| **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                             |
+| **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
+| **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                  |
+| **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                   |
+| **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)         |
 
 Assuming the table is called `transactions`, here is an **example** of how such an SQL query may look like:
 
@@ -123,7 +123,7 @@ SELECT
     total AS gross,
     total - tax AS net,
     'USD' AS currency,
-    DATE_FORMAT(created_at, '%Y-%m-%d') as `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as `time`
 FROM
     transactions
 WHERE
@@ -143,7 +143,7 @@ SELECT
     total AS gross,
     total - tax AS net,
     'USD' AS currency,
-    DATE_FORMAT(created_at, '%Y-%m-%d') as `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as `time`
 FROM
     transactions
 WHERE

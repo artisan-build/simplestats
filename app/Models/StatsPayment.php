@@ -31,6 +31,7 @@ class StatsPayment extends BaseStat
         'orig_net',
         'orig_currency',
         'time',
+        'time_utc',
     ];
 
     public function statsUser(): BelongsTo

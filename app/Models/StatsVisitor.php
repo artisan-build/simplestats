@@ -35,6 +35,7 @@ class StatsVisitor extends BaseStat
         'track_content',
         'page_entry',
         'time',
+        'time_utc',
     ];
 
     /**

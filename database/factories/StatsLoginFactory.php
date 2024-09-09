@@ -25,13 +25,14 @@ class StatsLoginFactory extends Factory
     public function definition(): array
     {
         $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
-        
+
         return [
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
             'instance_id' => Instance::inRandomOrder()->first()->id,
             'time' => $date->format('Y-m-d H:i:s'),
+            'time_utc' => $date->format('Y-m-d H:i:s'),
         ];
     }
 }

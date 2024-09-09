@@ -23,10 +23,8 @@ class TrackStatsLogin extends BaseStatsTrack
             'counter' => StatsService::NAU_LOGIN_COUNTER,
         ])->exists()) {
             StatsLogin::create($this->input);
-        } elseif (! StatsLogin::where([
-            'stats_user_id' => $this->input['stats_user_id'],
-            'time' => $this->input['time'],
-        ])->first()) {
+        } elseif (! StatsLogin::where('stats_user_id', $this->input['stats_user_id'])
+            ->whereDate('time', $this->input['time'])->first()) {
             StatsLogin::create($this->input);
         }
     }

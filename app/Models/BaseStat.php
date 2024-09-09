@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Concerns\HasInstanceScope;
 use App\Concerns\HasTeamScope;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 abstract class BaseStat extends Model
 {
@@ -22,7 +24,7 @@ abstract class BaseStat extends Model
      * @var array
      */
     protected $casts = [
-        'time' => 'date',
+        'time' => 'datetime',
     ];
 
     public function team(): BelongsTo
@@ -38,5 +40,17 @@ abstract class BaseStat extends Model
     public function instance(): BelongsTo
     {
         return $this->belongsTo(Instance::class);
+    }
+
+    public function time(): Attribute
+    {
+        return Attribute::make(
+            set: function ($value) {
+                return [
+                    'time' => Carbon::parse($value)->tz(auth()->user()->team->timezone),
+                    'time_utc' => $value,
+                ];
+            },
+        );
     }
 }

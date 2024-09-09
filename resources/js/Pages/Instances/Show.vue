@@ -81,7 +81,7 @@ const copyToClipboard = async () => {
             </div>
             <div>
                 <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('dashboard', {projectId: instance.project_id, instanceId: instance.id}))">
-                    Go to Stats
+                    Go To Dashboard
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                     </svg>
@@ -153,7 +153,7 @@ const copyToClipboard = async () => {
 
                 <template #content>
                     <div>
-                        Please copy your new API token and paste it to your app Instance you want to track!
+                        Please copy your new API token and paste it into your <strong>.env</strong> file!
                     </div>
 
                     <div class="flex justify-between mt-4 bg-gray-100 dark:bg-gray-900 px-4 py-2 rounded font-mono text-sm text-gray-500 break-all">
@@ -171,15 +171,15 @@ const copyToClipboard = async () => {
 
                     <div v-if="trackedVisitors <= 0" class="mt-6 text-base">
                         <h3 class="text-xl font-medium mb-3">Instructions</h3>
-                        To <strong>enable</strong> the tracking in your app, please make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation here</a>.
+                        To <strong>enable</strong> the tracking, please make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation here</a>.
                         Follow the necessary steps to get everything set up correctly!<br>
                         <br>
                         Basically these are the steps:<br>
-                        <ol class="list-decimal ml-6 mt-2">
-                            <li>Install the composer package</li>
-                            <li>Add the TrackableUser contract to your User model</li>
-                            <li>Add the TrackablePayment contract to your Payment/Transaction model</li>
-                            <li>Paste the token into your .env file</li>
+                        <ol class="list-decimal ml-6 mt-2 leading-8">
+                            <li>Install the package: <span class="italic font-medium">composer require simplestats-io/laravel-client</span></li>
+                            <li>Add the <span class="italic font-medium">TrackableUser</span> contract to your <span class="italic font-medium">User</span> model</li>
+                            <li>Add the <span class="italic font-medium">TrackablePayment</span> contract to your <span class="italic font-medium">Payment/Transaction</span> model</li>
+                            <li>Paste the token into your <span class="italic font-medium">.env</span> file</li>
                         </ol>
                         <br>
                         Happy analysing!

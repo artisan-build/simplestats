@@ -46,12 +46,6 @@ https://example.com?my_source=twitter&my_medium=desktop
 https://example.com?my_ref=google&group=banner
 ```
 
-## HTTP Referer Fallback
-
-In instances where a user navigates to your application without any tracking codes attached to the URL, the **HTTP referer**, when available, is utilized as the **default** source.
-
-This scenario often arises when individuals link to your app from their blogs or websites without embedding UTM codes in the URL. Ordinarily, the absence of UTM parameters would obscure the origin of these visitors. However, by leveraging the HTTP referer, you can still ascertain the referring site, ensuring **valuable insights** into your traffic _sources_ are not lost.
-
 ## Payment Association with Tracking Codes
 
-New payments are **exclusively** associated with the tracking codes (campaigns) from the user’s registration. Individual payments cannot be associated with separate tracking codes. For example, if a user registers with a `utm_source` value of "facebook", all future payments by that user will be associated with the "facebook" campaign. This gives you the indication of how your campain is performing.
+New payments are **exclusively** associated with the tracking codes (campaigns) from the user’s registration. Individual payments cannot be associated with separate tracking codes. For example, if a user registers with a `utm_campaign` value of "facebook", all future payments by that user will be associated with the "facebook" campaign. This gives you the indication of how your campain is performing.
