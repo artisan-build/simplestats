@@ -123,20 +123,20 @@ class StatsAggregationsService
 
         $dauDates = match($filters->rangeType->value) {
             'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
-                'start' => now()->subDay()->startOfDay()->format('Y-m-d'),
-                'end' => now()->subDay()->endOfDay()->format('Y-m-d'),
+                'start' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
+                'end' => now()->subDay()->endOfDay()->format(StatsRangeType::DATE_FORMAT),
             ] : [],
             'weeks' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfWeek()) ? [
-                'start' => now()->subWeek()->startOfWeek()->format('Y-m-d'),
-                'end' => now()->subWeek()->endOfWeek()->format('Y-m-d'),
+                'start' => now()->subWeek()->startOfWeek()->format(StatsRangeType::DATE_FORMAT),
+                'end' => now()->subWeek()->endOfWeek()->format(StatsRangeType::DATE_FORMAT),
             ] : [],
             'months' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfMonth()) ? [
-                'start' => now()->subMonth()->startOfMonth()->format('Y-m-d'),
-                'end' => now()->subMonth()->endOfMonth()->format('Y-m-d'),
+                'start' => now()->subMonth()->startOfMonth()->format(StatsRangeType::DATE_FORMAT),
+                'end' => now()->subMonth()->endOfMonth()->format(StatsRangeType::DATE_FORMAT),
             ] : [],
             'years' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfYear()) ? [
-                'start' => now()->subYear()->startOfYear()->format('Y-m-d'),
-                'end' => now()->subYear()->endOfYear()->format('Y-m-d'),
+                'start' => now()->subYear()->startOfYear()->format(StatsRangeType::DATE_FORMAT),
+                'end' => now()->subYear()->endOfYear()->format(StatsRangeType::DATE_FORMAT),
             ] : [],
         };
 
@@ -540,7 +540,7 @@ class StatsAggregationsService
         ";
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-//        echo nl2br($sql);die;
+//         echo nl2br($sql);die;
         // convert the objects to arrays for consistency
         $array = json_decode(json_encode(DB::select($sql)), true);
         return $this->formatAggregatedData(collect($array));

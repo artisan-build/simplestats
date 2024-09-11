@@ -10,7 +10,7 @@ enum StatsRangeType: string
 {
     use UsefulEnums;
 
-    const DATE_FORMAT = 'Y-m-d';
+    const DATE_FORMAT = 'Y-m-d H:i:s';
 
     case DAY = 'days';
     case WEEK = 'weeks';
