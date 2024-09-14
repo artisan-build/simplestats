@@ -168,19 +168,22 @@ class StatsAggregationsService
 
     public function getAggregatedData(StatsFilterDto $filters): Collection
     {
+        $aggregatedData = collect();
         $filterConditions = $this->getFilterConditions($filters);
 
-        $aggregatedDataKeyedById = StatsAggregation::whereBetween('time', [
-            $filterConditions['startDateStart'],
-            $filterConditions['endDateEnd']
-        ])->where('filter_hash', $filters->makeHash())
-            ->orderBy('time', 'desc')
-            ->pluck('data', 'id');
+        if (config('app.stats_aggregation_enabled')) {
+            $aggregatedDataKeyedById = StatsAggregation::whereBetween('time', [
+                $filterConditions['startDateStart'],
+                $filterConditions['endDateEnd']
+            ])->where('filter_hash', $filters->makeHash())
+                ->orderBy('time', 'desc')
+                ->pluck('data', 'id');
 
-        // we need to update this information, so that we can delete aggregations which are older than x days...
-        StatsAggregation::whereIn('id', $aggregatedDataKeyedById->keys())->update(['selected_at' => now()]);
+            // we need to update this information, so that we can delete aggregations which are older than x days...
+            StatsAggregation::whereIn('id', $aggregatedDataKeyedById->keys())->update(['selected_at' => now()]);
 
-        $aggregatedData = $this->formatAggregatedData($aggregatedDataKeyedById);
+            $aggregatedData = $this->formatAggregatedData($aggregatedDataKeyedById);
+        }
 
         if ($aggregatedData->isEmpty()) {
             $aggregatedData = $this->getRawData($filterConditions);
