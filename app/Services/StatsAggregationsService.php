@@ -37,11 +37,6 @@ class StatsAggregationsService
         StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time'], update: ['data']);
     }
 
-    private function formatAggregatedData(Collection $aggregatedData): Collection
-    {
-        return $aggregatedData->keyBy('date_clear');
-    }
-
     public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9): Collection
     {
         // TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
@@ -122,6 +117,10 @@ class StatsAggregationsService
         $endDateStart = $filterConditions['endDateStart'];
 
         $dauDates = match($filters->rangeType->value) {
+            'hours' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfHour()) ? [
+                'start' => now()->subHour()->startOfHour()->format(StatsRangeType::DATE_FORMAT),
+                'end' => now()->subHour()->endOfHour()->format(StatsRangeType::DATE_FORMAT),
+            ] : [],
             'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
                 'start' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
                 'end' => now()->subDay()->endOfDay()->format(StatsRangeType::DATE_FORMAT),
@@ -160,6 +159,11 @@ class StatsAggregationsService
         return collect($dataArray)->reject(function ($item) {
             return $item['dau'] == 0 && $item['reg'] == 0 && $item['net'] == 0 && $item['visitors'] == 0;
         })->take($limit);
+    }
+
+    private function formatAggregatedData(Collection $aggregatedData): Collection
+    {
+        return $aggregatedData->keyBy('date_clear');
     }
 
     public function getAggregatedData(StatsFilterDto $filters): Collection
@@ -502,7 +506,7 @@ class StatsAggregationsService
         )
         SELECT
             DATE_FORMAT(ds.date, ':dateFormat') as date,
-            DATE_FORMAT(ds.date, '%Y-%m-%d') as date_clear,
+            DATE_FORMAT(ds.date, ':dateFormatClear') as date_clear,
             COALESCE(pd_reg.count, 0) AS pd_REG,
             COALESCE(pd_visitor.count, 0) AS pd_VISITOR,
             COALESCE(pd_nau.count, 0) AS pd_NAU,
@@ -560,7 +564,7 @@ class StatsAggregationsService
             // it's important to convert the time to the corresponding range types (days, weeks, months)
             // for instance: if the update time is 2024-05-15 you'll also want to delete form its corresponding week,
             // which starts at 2024-05-13 (same counts for months)
-            $start = $case->rangeStart($stat->time)->format(StatsRangeType::DATE_FORMAT);
+            $start = $case->rangeStart($stat->time)->format($case->dateFormatClear()['php']);
 
             StatsAggregation::where([
                 ['time', '>=', $start],

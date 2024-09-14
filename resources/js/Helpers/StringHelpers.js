@@ -1,4 +1,5 @@
 export const periodMap = {
+    hours: 'Hourly',
     days: 'Daily',
     weeks: 'Weekly',
     months: 'Monthly',
@@ -6,6 +7,7 @@ export const periodMap = {
 };
 
 export const periodSingular = {
+    hours: 'hour',
     days: 'day',
     weeks: 'week',
     months: 'month',

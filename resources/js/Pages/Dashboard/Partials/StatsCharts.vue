@@ -222,6 +222,7 @@ charts.forEach(function(chartGroup) {
         });
     }
 });
+console.log(charts)
 </script>
 
 <template>

@@ -40,6 +40,12 @@ readonly class StatsFilterDto
         $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
         $rangeStart = Date::parse($request->rangeStart ?? now());
 
+        if ($rangeStart->isToday()) {
+            $rangeStart = now();
+        } else {
+            $rangeStart = $rangeStart->endOfDay();
+        }
+
         return new self(
             projectId: $request->projectId ?? 0,
             instanceId: $request->instanceId ?? 0,

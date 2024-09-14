@@ -30,5 +30,9 @@ return new class extends Migration
         Schema::table('stats_payments', function (Blueprint $table) {
             $table->datetime('time')->change();
         });
+
+        Schema::table('stats_aggregations', function (Blueprint $table) {
+            $table->datetime('time')->change();
+        });
     }
 };

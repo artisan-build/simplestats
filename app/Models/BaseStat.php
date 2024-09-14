@@ -47,8 +47,8 @@ abstract class BaseStat extends Model
         return Attribute::make(
             set: function ($value) {
                 return [
-                    'time' => Carbon::parse($value)->tz(auth()->user()->team->timezone),
-                    'time_utc' => $value,
+                    'time' => $value,
+                    'time_utc' => Carbon::parse($value)->tz('UTC'),
                 ];
             },
         );

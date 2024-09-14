@@ -9,10 +9,11 @@ import MenuToggler from "@/Components/MenuToggler.vue";
 import {truncate} from "lodash";
 import EnvBadge from "@/Components/EnvBadge.vue";
 import {
-    differenceInDays,
+    addHours,
+    differenceInDays, differenceInHours,
     differenceInMonths, differenceInYears,
     endOfMonth, endOfYear,
-    format,
+    format, startOfDay, startOfHour,
     startOfMonth,
     startOfYear,
     subDays,
@@ -89,8 +90,8 @@ if (allTimeRange > (12 * 4)) {
 }
 
 const presets = [
-    {name: 'Today', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
-    {name: 'Yesterday', rangeStart: format(subDays(new Date(), 1), 'y-MM-dd'), rangeAmount: 1, rangeType: 'days'},
+    {name: 'Today', rangeStart: format(startOfDay(new Date()), 'y-MM-dd'), rangeAmount: differenceInHours(startOfHour(addHours(new Date(), 1)), startOfDay(new Date())), rangeType: 'hours'},
+    {name: 'Yesterday', rangeStart: format(startOfDay(subDays(new Date(), 1)), 'y-MM-dd'), rangeAmount: 24, rangeType: 'hours'},
     {name: 'Last 7 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 7, rangeType: 'days'},
     {name: 'Last 30 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 30, rangeType: 'days'},
     // {name: 'Last 12 Months', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},

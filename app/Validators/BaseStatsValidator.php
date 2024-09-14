@@ -4,6 +4,7 @@ namespace App\Validators;
 
 use App\Models\DataImport;
 use Gate;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -11,6 +12,8 @@ class BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
+        $input['time'] = Carbon::parse($input['time'])->tz(auth()->user()->team->timezone);
+
         return $input;
     }
 

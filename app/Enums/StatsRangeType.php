@@ -12,6 +12,7 @@ enum StatsRangeType: string
 
     const DATE_FORMAT = 'Y-m-d H:i:s';
 
+    case HOUR = 'hours';
     case DAY = 'days';
     case WEEK = 'weeks';
     case MONTH = 'months';
@@ -22,6 +23,15 @@ enum StatsRangeType: string
         $rangeAmount -= 1;
 
         return [
+            self::HOUR->value => [
+                'startDateStart' => $rangeStart->startOfHour()->subHours($rangeAmount)->format(self::DATE_FORMAT),
+                'endDateStart' => $rangeStart->startOfHour()->format(self::DATE_FORMAT),
+                'endDateEnd' => $rangeStart->endOfHour()->format(self::DATE_FORMAT),
+                'intervalType' => str(self::HOUR->value)->upper()->singular(),
+                'intervalEnd' => 'DATE_ADD(ds.date, INTERVAL 1 HOUR) - INTERVAL 1 SECOND', // the end of the current interval
+                'dateFormat' => self::HOUR->dateFormat()['mysql'],
+                'dateFormatClear' => self::HOUR->dateFormatClear()['mysql'],
+            ],
             self::DAY->value => [
                 'startDateStart' => $rangeStart->startOfDay()->subDays($rangeAmount)->format(self::DATE_FORMAT),
                 'endDateStart' => $rangeStart->startOfDay()->format(self::DATE_FORMAT),
@@ -29,6 +39,7 @@ enum StatsRangeType: string
                 'intervalType' => str(self::DAY->value)->upper()->singular(),
                 'intervalEnd' => 'ds.date', // the end of the current interval
                 'dateFormat' => self::DAY->dateFormat()['mysql'],
+                'dateFormatClear' => self::DAY->dateFormatClear()['mysql'],
             ],
             self::WEEK->value => [
                 'startDateStart' => $rangeStart->startOfWeek()->subWeeks($rangeAmount)->format(self::DATE_FORMAT),
@@ -37,6 +48,7 @@ enum StatsRangeType: string
                 'intervalType' => str(self::WEEK->value)->upper()->singular(),
                 'intervalEnd' => 'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
                 'dateFormat' => self::WEEK->dateFormat()['mysql'],
+                'dateFormatClear' => self::WEEK->dateFormatClear()['mysql'],
             ],
             self::MONTH->value => [
                 'startDateStart' => $rangeStart->startOfMonth()->subMonths($rangeAmount)->format(self::DATE_FORMAT),
@@ -45,6 +57,7 @@ enum StatsRangeType: string
                 'intervalType' => str(self::MONTH->value)->upper()->singular(),
                 'intervalEnd' => 'LAST_DAY(ds.date)', // the end of the current interval
                 'dateFormat' => self::MONTH->dateFormat()['mysql'],
+                'dateFormatClear' => self::MONTH->dateFormatClear()['mysql'],
             ],
             self::YEAR->value => [
                 'startDateStart' => $rangeStart->startOfYear()->subYear($rangeAmount)->format(self::DATE_FORMAT),
@@ -53,6 +66,7 @@ enum StatsRangeType: string
                 'intervalType' => str(self::YEAR->value)->upper()->singular(),
                 'intervalEnd' => 'LAST_DAY(DATE_ADD(ds.date, INTERVAL 11 MONTH))', // the end of the current interval
                 'dateFormat' => self::YEAR->dateFormat()['mysql'],
+                'dateFormatClear' => self::YEAR->dateFormatClear()['mysql'],
             ],
         ];
     }
@@ -60,22 +74,23 @@ enum StatsRangeType: string
     public function dateFormat(): array
     {
         return match($this) {
-            self::DAY => [
-                'mysql' => '%Y-%m-%d',
-                'php' => 'Y-m-d',
-            ],
-            self::WEEK => [
-                'mysql' => '%Y-%v',
-                'php' => 'o-W',
-            ],
-            self::MONTH => [
-                'mysql' => '%Y-%m',
-                'php' => 'Y-m',
-            ],
-            self::YEAR => [
-                'mysql' => '%Y',
-                'php' => 'Y',
-            ],
+            self::HOUR =>   ['mysql' => '%H:00',    'php' => 'Y-m-d H:00'],
+            self::DAY =>    ['mysql' => '%Y-%m-%d', 'php' => 'Y-m-d'],
+            self::WEEK =>   ['mysql' => '%Y-%v',    'php' => 'o-W'],
+            self::MONTH =>  ['mysql' => '%Y-%m',    'php' => 'Y-m'],
+            self::YEAR =>   ['mysql' => '%Y',       'php' => 'Y'],
+            default => throw new \Exception('Unexpected match value'),
+        };
+    }
+
+    public function dateFormatClear(): array
+    {
+        return match($this) {
+            self::HOUR =>   ['mysql' => '%Y-%m-%d %H:00',   'php' => 'Y-m-d H:00'],
+            self::DAY =>    ['mysql' => '%Y-%m-%d',         'php' => 'Y-m-d'],
+            self::WEEK =>   ['mysql' => '%Y-%m-%d',         'php' => 'Y-m-d '],
+            self::MONTH =>  ['mysql' => '%Y-%m-%d',         'php' => 'Y-m-d '],
+            self::YEAR =>   ['mysql' => '%Y-%m-%d',         'php' => 'Y-m-d '],
             default => throw new \Exception('Unexpected match value'),
         };
     }
@@ -83,6 +98,7 @@ enum StatsRangeType: string
     public function rangeStart(CarbonImmutable $date): CarbonImmutable
     {
         return match($this) {
+            self::HOUR => $date->startOfHour(),
             self::DAY => $date->startOfDay(),
             self::WEEK => $date->startOfWeek(),
             self::MONTH => $date->startOfMonth(),
@@ -94,6 +110,7 @@ enum StatsRangeType: string
     public function defaultRangeAmount(): int
     {
         return match($this) {
+            self::HOUR => 24,
             self::DAY => 7,
             self::WEEK => 4,
             self::MONTH => 6,
