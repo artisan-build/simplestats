@@ -34,10 +34,10 @@ class StatsDetailsService
             $stat['pd_ARPDAU'] = $this->statsService->safeDivision($stat['pd_NET'], $stat['pd_DAU']);
 
             $stat['lt_REG2DAU'] = round($this->statsService->safeDivision($stat['pd_DAU'], $stat['lt_REG']) * 100, 2);
-            $stat['lt_REG2PU'] = round($this->statsService->safeDivision($stat['pd_PU'], $stat['lt_REG']) * 100, 2);
+            $stat['lt_REG2PU'] = round($this->statsService->safeDivision($stat['lt_PU'], $stat['lt_REG']) * 100, 2);
             $stat['lt_REG2TAU'] = round($this->statsService->safeDivision($stat['lt_TAU'], $stat['lt_REG']) * 100, 2);
             $stat['lt_ARPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_REG']), 2);
-            $stat['lt_ARPPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['pd_PU']), 2);
+            $stat['lt_ARPPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_PU']), 2);
         } unset($stat);
     }
 

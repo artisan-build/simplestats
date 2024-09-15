@@ -78,7 +78,7 @@ export function getKpiDefinitions(rangeType) {
             long: 'Average Revenue Per Paying User',
             description: 'The average revenue per paying User.',
         },
-        pd_PU: {
+        lt_PU: {
             small: 'PU',
             short: 'Paying Users',
             description: 'Number of users who did at least one payment over lifetime (including this '+periodName+').',

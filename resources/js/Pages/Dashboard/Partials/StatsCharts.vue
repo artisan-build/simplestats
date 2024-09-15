@@ -63,23 +63,23 @@ statsArray.forEach(item => {
     });
 });
 
-let statsSumWithoutCurrent = {};
-let statsSumWithoutCurrentLength = {};
-statsArray.forEach(item => {
-    Object.keys(item).forEach(key => {
-        if (Object.values(props.teamStats.stats).length > 1 && formatDate(item['date'], props.filters.rangeType) === formatDate(page.props.rangeCurrent, props.filters.rangeType)) {
-            return;
+const lastStat = (key) => {
+    if (! statsArray.length) {
+        return 0;
+    }
+
+    let stat = statsArray.at(0);
+
+    if (statsArray.length > 1) {
+        let prevStat = statsArray.at(1);
+        // console.log(stat, prevStat)
+        if (formatDate(stat.date, props.filters.rangeType) === formatDate(page.props.rangeCurrent, props.filters.rangeType) && stat[key] < prevStat[key]) {
+            stat = prevStat;
         }
+    }
 
-        if (key === 'date' || key === 'date_clear') {
-            return;
-        }
-
-        statsSumWithoutCurrent[key] = (statsSumWithoutCurrent[key] ?? 0) + item[key];
-        statsSumWithoutCurrentLength[key] = (statsSumWithoutCurrentLength[key] ?? 0) + 1;
-    });
-});
-
+    return stat[key];
+}
 function safeDevision(numerator, denominator) {
     return denominator == 0 ? 0 : numerator / denominator;
 }
@@ -128,8 +128,8 @@ let charts = [
             {key: 'pd_NAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
                 return statsSum.pd_NAPU;
             }},
-            {key: 'pd_PU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return statsSum.pd_PU;
+            {key: 'lt_PU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
+                return lastStat('lt_PU');
             }},
             // {key: 'lt_TAU', color: '#93c5fd',  indicatorCallback: function () {
             //     return statsSum.pd_GROSS;
@@ -142,13 +142,13 @@ let charts = [
         class: 'order-4 3xl:order-3',
         group: [
             {key: 'lt_ARPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.lt_ARPU / statsSumWithoutCurrentLength.lt_ARPU;
+                return lastStat('lt_ARPU');
             }},
             {key: 'lt_ARPPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.lt_ARPPU / statsSumWithoutCurrentLength.lt_ARPPU;
+                return lastStat('lt_ARPPU');
             }},
             {key: 'pd_ARPDAU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.pd_ARPDAU / statsSumWithoutCurrentLength.pd_ARPDAU;
+                return lastStat('pd_ARPDAU');
             }},
         ],
     },
@@ -158,13 +158,13 @@ let charts = [
         class: 'order-5 3xl:order-5',
         group: [
             {key: 'pd_DAU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.pd_DAU / statsSumWithoutCurrentLength.pd_DAU;
+                return lastStat('pd_DAU');
             }},
             {key: 'pd_DAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.pd_DAPU / statsSumWithoutCurrentLength.pd_DAPU;
+                return lastStat('pd_DAPU');
             }},
             {key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.pd_DAAPU / statsSumWithoutCurrentLength.pd_DAAPU;
+                return lastStat('pd_DAAPU');
             }},
         ],
     },
@@ -174,13 +174,13 @@ let charts = [
         class: 'order-6 3xl:order-6',
         group: [
             {key: 'lt_REG2PU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.lt_REG2PU / statsSumWithoutCurrentLength.lt_REG2PU;
+                return lastStat('lt_REG2PU');
             }},
             {key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.lt_REG2DAU / statsSumWithoutCurrentLength.lt_REG2DAU;
+                return lastStat('lt_REG2DAU');
             }},
             {key: 'lt_REG2TAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
-                return statsSumWithoutCurrent.lt_REG2TAU / statsSumWithoutCurrentLength.lt_REG2TAU;
+                return lastStat('lt_REG2TAU');
             }},
         ],
     },
@@ -222,7 +222,6 @@ charts.forEach(function(chartGroup) {
         });
     }
 });
-console.log(charts)
 </script>
 
 <template>
