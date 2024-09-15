@@ -11,9 +11,9 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
             </Link>
 
             <div class="flex items-center gap-6">
-                <a href="/#features" class="">Features</a>
-                <a href="/#pricing" class="">Pricing</a>
-                <a href="/#self-hosted" class="hidden sm:block">Self-Hosted</a>
+                <a href="/#features" class="hidden lg:block">Features</a>
+                <a href="/#pricing" class="hidden lg:block">Pricing</a>
+                <a href="/#self-hosted" class="hidden lg:block">Self-Hosted</a>
 
                 <a href="/docs" class="px-3">Docs</a>
 

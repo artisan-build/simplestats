@@ -13,7 +13,7 @@ const topTestimonials = testimonials.slice(0, 3);
                 Testimonials of our <span class="text-indigo-500">clients</span>
             </SectionHeader>
 
-            <section class="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-3">
+            <section class="grid grid-cols-1 gap-8 lg:grid-cols-3 px-6">
                 <Testimonials :testimonials="topTestimonials" />
             </section>
         </div>
