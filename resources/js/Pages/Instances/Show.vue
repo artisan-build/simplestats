@@ -176,10 +176,10 @@ const copyToClipboard = async () => {
                         <br>
                         Basically these are the steps:<br>
                         <ol class="list-decimal ml-6 mt-2 leading-8">
-                            <li>Install the package: <span class="italic font-medium">composer require simplestats-io/laravel-client</span></li>
-                            <li>Add the <span class="italic font-medium">TrackableUser</span> contract to your <span class="italic font-medium">User</span> model</li>
-                            <li>Add the <span class="italic font-medium">TrackablePayment</span> contract to your <span class="italic font-medium">Payment/Transaction</span> model</li>
-                            <li>Paste the token into your <span class="italic font-medium">.env</span> file</li>
+                            <li>Install the package: <span class="italic font-medium">composer require simplestats-io/laravel-client</span>.</li>
+                            <li>Add the <span class="italic font-medium">TrackableUser</span> contract to your user model.</li>
+                            <li>Add the <span class="italic font-medium">TrackablePayment</span> contract to your payment model.</li>
+                            <li>Paste the token into your <span class="italic font-medium">.env</span> file.</li>
                         </ol>
                         <br>
                         Happy analysing!
