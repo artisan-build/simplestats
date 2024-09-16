@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasInstanceScope;
 use App\Concerns\HasTeamScope;
+use App\Enums\StatsRangeType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,8 +48,8 @@ abstract class BaseStat extends Model
         return Attribute::make(
             set: function ($value) {
                 return [
-                    'time' => $value,
-                    'time_utc' => Carbon::parse($value)->tz('UTC'),
+                    'time' => Carbon::parse($value)->tz(auth()->user()->team->timezone)->format(StatsRangeType::DATE_FORMAT),
+                    'time_utc' => Carbon::parse($value)->tz('UTC')->format(StatsRangeType::DATE_FORMAT),
                 ];
             },
         );

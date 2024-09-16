@@ -11,6 +11,8 @@ class StatsPaymentValidator extends BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
+        $input = parent::prepareForValidation($input);
+
         $team = auth()->user()->team;
         // if the currency is not valid, we do not check if we have to convert it...
         // it will fail anyway in the request validation...

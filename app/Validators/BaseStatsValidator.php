@@ -2,6 +2,7 @@
 
 namespace App\Validators;
 
+use App\Enums\StatsRangeType;
 use App\Models\DataImport;
 use Gate;
 use Illuminate\Support\Carbon;
@@ -12,24 +13,18 @@ class BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
-        $input['time'] = Carbon::parse($input['time'])->tz(auth()->user()->team->timezone);
+        $input['time'] = Carbon::parse($input['time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
 
         return $input;
     }
 
     public function rules(): array
     {
-        // we do not allow logging in the future
         return [
             'time' => [
                 'required',
                 'before_or_equal:now',
-                function ($attribute, $value, $fail) {
-                    if (! \DateTime::createFromFormat('Y-m-d', $value) &&
-                        ! \DateTime::createFromFormat('Y-m-d H:i:s', $value)) {
-                        $fail('The '.$attribute.' must be a valid date in Y-m-d or Y-m-d H:i:s format.');
-                    }
-                },
+                'date_format:Y-m-d H:i:s P',
             ],
         ];
     }
