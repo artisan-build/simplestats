@@ -43,7 +43,10 @@ class DatabaseSeeder extends Seeder
             $user->markEmailAsVerified();
 
             $user->switchTeam($user->personalTeam());
-            $user->currentTeam->update(['currency' => self::DEFAULT_CURRENCY]);
+            $user->currentTeam->update([
+                'currency' => self::DEFAULT_CURRENCY,
+                'timezone' => 'Europe/Berlin',
+            ]);
 
             return $user;
         });
