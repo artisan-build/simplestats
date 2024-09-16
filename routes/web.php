@@ -33,7 +33,7 @@ Route::middleware([
     Route::any('intro', IntroController::class)->name('intro');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
-    Route::post('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
+    Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
 

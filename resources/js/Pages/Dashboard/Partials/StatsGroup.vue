@@ -35,9 +35,7 @@ if (! filters.statsSort) {
 
 const fetchData = async () => {
     try {
-        const response = await axios(route('stats.grouped', filters), {
-            method: 'POST'
-        });
+        const response = await axios(route('stats.grouped', filters));
         data.value = await response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
