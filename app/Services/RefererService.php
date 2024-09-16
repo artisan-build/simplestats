@@ -11,8 +11,7 @@ class RefererService
     public function __construct()
     {
         $this->topReferers = collect([
-            // google with "www" because we want "mail.google.com" separate....
-            'www.google.com' => 'Google',
+            'google.com' => 'Google',
             'facebook.com' => 'Facebook',
             'youtube.com' => 'YouTube',
             'instagram.com' => 'Instagram',
@@ -53,8 +52,8 @@ class RefererService
     {
         return $this->topReferers->search(function ($topRefererName, $topReferer) use ($referer) {
             // google.co.uk, google.ch, google.de all become google.com
-            $topRefererMain = str($topReferer)->replace('www.', '')->beforeLast('.').'.';
-            return str($referer)->contains($topRefererMain);
+            $topRefererMain = str($topReferer)->beforeLast('.').'.';
+            return str($referer)->startsWith($topRefererMain);
         }) ?: $referer;
     }
 
