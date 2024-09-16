@@ -60,7 +60,7 @@ _Core parameters:_
 
 | Key                | Type                 | Description                                                                            |
 |--------------------|----------------------|----------------------------------------------------------------------------------------|
-| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
+| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
 | **ip**             | _string_ `nullable`  | The `ip` of the user. _(does not get stored)_                                          |
 | **user_agent**     | _string_ `nullable`  | The `user_agent` of the user. _(does not get stored)_                                  |
 | **track_referer**  | _string_ `nullable`  | The http tracking `referer` of the user.                                               |
@@ -115,7 +115,7 @@ _Core parameters:_
 | Key                | Type                 | Description                                                                            |
 |--------------------|----------------------|----------------------------------------------------------------------------------------|
 | **id**             | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                   |
-| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
+| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
 | **ip**             | _string_ `nullable`  | The `ip` of the user. _(does not get stored)_                                          |
 | **user_agent**     | _string_ `nullable`  | The `user_agent` of the user. _(does not get stored)_                                  |
 | **track_referer**  | _string_ `nullable`  | The http tracking `referer` of the user.                                               |
@@ -167,7 +167,7 @@ _Additional parameters:_
 | Key               | Type                 | Description                                                                         |
 |-------------------|----------------------|-------------------------------------------------------------------------------------|
 | **stats_user_id** | _integer_ `required` | The id of the user trying to login.                                                 |
-| **time**          | _string_ `required`  | The time when the user tries to login.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
+| **time**          | _string_ `required`  | The time when the user tries to login.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
 
 **Payload**
 
@@ -200,7 +200,7 @@ _Additional parameters:_
 |-------------------|----------------------|--------------------------------------------------------------------------------------|
 | **id**            | _integer_ `required` | The payment id.<br/>(`uuid` and `ulid` are not supported at the moment)              |
 | **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                             |
-| **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
+| **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
 | **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                  |
 | **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                   |
 | **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)         |

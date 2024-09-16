@@ -2,13 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Concerns\HasTeamScope;
 use App\Exceptions\ImportCanceledException;
+use App\Helpers\AppHelper;
 use App\Imports\BaseStatsImport;
 use App\Mail\DataImportCanceled;
 use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
 use App\Mail\DataImportCompleted;
 use App\Models\DataImport;
+use App\Models\Team;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
 use Illuminate\Bus\Queueable;
@@ -16,6 +19,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -50,6 +54,9 @@ class ProcessDataImportJob implements ShouldQueue
     {
         // make auth stuff work in this dispatched/context-less job
         auth()->setUser($this->model->createdBy);
+
+        // ppl mostly import data without UTC, so to make validation work, we need to apply timezone directly...
+        AppHelper::ensureTeamTimezone();
 
         // As this job uses the Trackable trait, we already track the output of these jobs,
         // and as we do not retry those, there is no need to also store it in the failed jobs table.

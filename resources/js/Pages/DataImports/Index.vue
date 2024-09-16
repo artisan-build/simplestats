@@ -25,7 +25,7 @@ const checkAndReload = () => {
         if (intervalId === null) { // Stelle sicher, dass der Interval nicht mehrfach gesetzt wird
             intervalId = setInterval(function () {
                 router.reload({ preserveState: true, preserveScroll: true });
-            }, 2000);
+            }, 5000);
         }
     } else {
         if (intervalId !== null) {
