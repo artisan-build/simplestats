@@ -1,6 +1,7 @@
 import {XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 
 const periodMap = {
+    hours: 'hour',
     days: 'day',
     weeks: 'week',
     months: 'month',
