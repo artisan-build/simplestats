@@ -87,9 +87,9 @@ const currentImportNotFinishedYet = computed(() => {
 
         <template #form>
             <div v-if="! permissions.canCreateDataImport" class="col-span-6">
-                <WarningBox>
+                <InfoBox>
                     You are not allowed to create Data Imports due to plan or role limitations!
-                </WarningBox>
+                </InfoBox>
             </div>
             <div v-else-if="currentImportNotFinishedYet" class="col-span-6">
                 <InfoBox>
