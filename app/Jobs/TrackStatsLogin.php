@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\StatsLogin;
 use App\Services\StatsService;
+use Carbon\Carbon;
 
 class TrackStatsLogin extends BaseStatsTrack
 {
@@ -24,7 +25,7 @@ class TrackStatsLogin extends BaseStatsTrack
         ])->exists()) {
             StatsLogin::create($this->input);
         } elseif (! StatsLogin::where('stats_user_id', $this->input['stats_user_id'])
-            ->whereDate('time', $this->input['time'])->first()) {
+            ->whereDate('time', Carbon::parse($this->input['time'])->format('Y-m-d'))->first()) {
             StatsLogin::create($this->input);
         }
     }
