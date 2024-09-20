@@ -6,7 +6,9 @@ use App\Actions\CheckPasswordConfirmation;
 use App\Http\Requests\InstanceRequest;
 use App\Models\Instance;
 use App\Models\Project;
+use App\Models\StatsAggregation;
 use App\Models\StatsVisitor;
+use App\Services\StatsAggregationsService;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,9 +69,11 @@ class ProjectInstanceController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Request $request, Project $project, Instance $instance, StatefulGuard $guard): RedirectResponse
+    public function destroy(Request $request, Project $project, Instance $instance, StatefulGuard $guard, StatsAggregationsService $statsAggregationsService): RedirectResponse
     {
         app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+
+        $statsAggregationsService->clearByInstance($instance);
 
         $instance->delete();
 

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Models\BaseStat;
+use App\Models\Instance;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -592,6 +593,25 @@ class StatsAggregationsService
             // other projects and instances aggregations will remain
             // but unfortunately we have to re-aggregate the whole team
         }
+    }
+
+    public function clearByInstance(Instance $instance): void
+    {
+        StatsAggregation::where([
+            ['team_id', '=', $instance->team_id],
+            ['project_id', '=', null],
+            ['instance_id', '=', null],
+            // stats must be re-aggregated on project basis
+        ])->orWhere([
+            ['team_id', '=', $instance->team_id],
+            ['project_id', '=', $instance->project_id],
+            ['instance_id', '=', null],
+            // stats must be re-aggregated on instance basis
+        ])->orWhere([
+            ['team_id', '=', $instance->team_id],
+            ['project_id', '=', $instance->project_id],
+            ['instance_id', '=', $instance->id],
+        ])->delete();
     }
 
     private function formatFilter(array $filterConditions): array
