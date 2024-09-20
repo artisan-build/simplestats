@@ -6,6 +6,7 @@ use App\Actions\CheckPasswordConfirmation;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Instance;
 use App\Models\Project;
+use App\Services\StatsAggregationsService;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
@@ -65,9 +66,11 @@ class ProjectController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Request $request, Project $project, StatefulGuard $guard): RedirectResponse
+    public function destroy(Request $request, Project $project, StatefulGuard $guard, StatsAggregationsService $statsAggregationsService): RedirectResponse
     {
         app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+
+        $statsAggregationsService->clearByProject($project);
 
         $project->delete();
 

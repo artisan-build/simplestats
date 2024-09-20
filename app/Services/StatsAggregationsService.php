@@ -6,6 +6,7 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Models\BaseStat;
 use App\Models\Instance;
+use App\Models\Project;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -611,6 +612,18 @@ class StatsAggregationsService
             ['team_id', '=', $instance->team_id],
             ['project_id', '=', $instance->project_id],
             ['instance_id', '=', $instance->id],
+        ])->delete();
+    }
+
+    public function clearByProject(Project $project): void
+    {
+        StatsAggregation::where([
+            ['team_id', '=', $project->team_id],
+            ['project_id', '=', null],
+            // stats must be re-aggregated on project basis
+        ])->orWhere([
+            ['team_id', '=', $project->team_id],
+            ['project_id', '=', $project->id],
         ])->delete();
     }
 
