@@ -110,7 +110,7 @@ return [
                 [
                     //free plan must be the first in the array
                     'name' => SubscriptionService::PLAN_FREE,
-                    'short_description' => 'Starter to get in touch. Explore the strength of statistics. No card required.',
+                    'short_description' => 'Starter to get in touch. Explore the strength of analytics. No card required.',
                     'monthly_id' => 0,
                     'yearly_id' => 0,
                     'features' => [

@@ -26,7 +26,7 @@ const features = [
     {
         "icon": LaravelIcon,
         "title": "Laravel",
-        "descr": "Since the statistics tool and the composer client package are tailored precisely to Laravel, they can collect very interesting and important data without any additional complexity for you as the integrator of the package."
+        "descr": "Since the analytics tool and the composer client package are tailored precisely to Laravel, they can collect very interesting and important data without any additional complexity for you as the integrator of the package."
     },
     {
         "icon": CodeBracketIcon,

@@ -15,7 +15,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <p class="leading-normal text-gray-600 text-lg">
                     Embrace the ultimate level of autonomy and security with our Self-Hosted solution.
                     Ideal for those who demand full control.
-                    This option allows you to host our powerful statistics tool on your own infrastructure,
+                    This option allows you to host our powerful analytics tool on your own infrastructure,
                     ensuring complete data sovereignty and customizable security.
                 </p>
 
