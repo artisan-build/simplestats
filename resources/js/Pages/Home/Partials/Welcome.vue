@@ -20,7 +20,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
     <div class="min-h-screen bg-white">
         <section class="text-center pt-24">
             <h1 class="m-auto mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white px-6 sm:px-3 max-w-screen-md">
-                The missing statistics tool for your&nbsp;<span class="text-indigo-500">Laravel</span> application.
+                The missing analytics tool for your&nbsp;<span class="text-indigo-500">Laravel</span> application.
             </h1>
             <p class="m-auto mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 px-6 sm:px-3 max-w-screen-md">
                 Server-side, GDPR compliant and 100% accurate statistics/analytics tool, that goes beyond simple

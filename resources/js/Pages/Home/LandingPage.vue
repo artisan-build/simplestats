@@ -9,7 +9,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="The missing statistics tool for your Laravel application." />
+    <Head title="The missing analytics tool for your Laravel application." />
 
     <Welcome :plans="plans" />
 
