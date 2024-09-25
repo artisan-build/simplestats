@@ -22,11 +22,14 @@ const appEnv = import.meta.env.VITE_APP_ENV;
             <h1 class="m-auto mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white px-6 sm:px-3 max-w-screen-md">
                 The missing analytics tool for your&nbsp;<span class="text-indigo-500">Laravel</span> application.
             </h1>
-            <p class="m-auto mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 px-6 sm:px-3 max-w-screen-md">
+            <div class="relative m-auto mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 px-6 sm:px-3 max-w-screen-md">
                 Server-side, GDPR compliant and 100% accurate statistics/analytics tool, that goes beyond simple
                 counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users,
                 Average Revenue Per User, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
-            </p>
+                <a href="docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:block absolute right-0 top-0 -mr-64 -mt-16 " style="transform: rotate(30deg);">
+                    <img width="250" height="112" class="hover:scale-105 transition" src="images/ad-blockers-badge.png" />
+                </a>
+            </div>
             <Link v-if="$page.props.canRegister" :href="route('register')" class="mb-4 inline-flex items-center justify-center px-5 py-3 mx-1.5 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
                 Get started
                 <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
