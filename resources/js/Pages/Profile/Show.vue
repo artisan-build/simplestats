@@ -12,6 +12,8 @@ defineProps({
     confirmsTwoFactorAuthentication: Boolean,
     sessions: Array,
 });
+
+const appEnv = import.meta.env.VITE_APP_ENV;
 </script>
 
 <template>
@@ -44,7 +46,7 @@ defineProps({
                 <SectionBorder />
             </div>
 
-            <LogoutOtherBrowserSessionsForm :sessions="sessions" class="mt-10 sm:mt-0" />
+            <LogoutOtherBrowserSessionsForm v-if="appEnv !== 'demo'" :sessions="sessions" class="mt-10 sm:mt-0" />
 
             <template v-if="$page.props.jetstream.hasAccountDeletionFeatures">
                 <SectionBorder />
