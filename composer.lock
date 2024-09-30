@@ -2711,24 +2711,24 @@
         },
         {
             "name": "laravel/spark-paddle",
-            "version": "v5.1.5",
+            "version": "v5.2.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/spark-paddle.git",
-                "reference": "2c295f24ddf5cc49fb914a8bd6a6d9701a0fc528"
+                "reference": "e11558d23fc14de5367799920b8f93dca2e69d1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://spark.laravel.com/dist/laravel/spark-paddle/laravel-spark-paddle-2c295f24ddf5cc49fb914a8bd6a6d9701a0fc528-zip-43b330.zip",
-                "reference": "2c295f24ddf5cc49fb914a8bd6a6d9701a0fc528",
-                "shasum": "6c06b703aa701801f363ef5f7d4645526353cbb5"
+                "url": "https://spark.laravel.com/dist/laravel/spark-paddle/laravel-spark-paddle-e11558d23fc14de5367799920b8f93dca2e69d1d-zip-fa41d8.zip",
+                "reference": "e11558d23fc14de5367799920b8f93dca2e69d1d",
+                "shasum": "0dec170be4cfeaae402c0b549324573f150f2016"
             },
             "require": {
                 "ext-bcmath": "*",
                 "ext-json": "*",
                 "illuminate/contracts": "^10.0|^11.0",
                 "inertiajs/inertia-laravel": "^0.6.4|^1.0",
-                "laravel/cashier-paddle": "^2.0.5",
+                "laravel/cashier-paddle": "^2.3.0",
                 "php": "^8.1"
             },
             "require-dev": {
@@ -2776,10 +2776,10 @@
                 "scaffolding"
             ],
             "support": {
-                "source": "https://github.com/laravel/spark-paddle/tree/v5.1.5",
+                "source": "https://github.com/laravel/spark-paddle/tree/v5.2.1",
                 "issues": "https://github.com/laravel/spark-paddle/issues"
             },
-            "time": "2024-03-19T16:24:28+00:00"
+            "time": "2024-04-18T11:31:42+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -6096,7 +6096,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/simplestats-io/laravel-client",
-                "reference": "7efc0eff335533fc38a4424c2dcfcc28d1ae1f03"
+                "reference": "5a5782ad4c9564c6872f41abda4692f53f8f1974"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
