@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\StatsLogin;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
+use App\Models\StatsVisitor;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Services\SubscriptionService;
@@ -119,6 +120,7 @@ return [
                         StatsUser::class => '5,000 Users',
                         StatsPayment::class => '1,000 Payments',
                         StatsLogin::class => '10,000 Logins',
+                        StatsVisitor::class => '30,000 Visitors',
                         DataImport::class => 'Data Import',
                         'MultiCurrency' => 'Multi Currency Support',
                     ],
@@ -128,6 +130,7 @@ return [
                         StatsUser::class => 5_000,
                         StatsPayment::class => 1_000,
                         StatsLogin::class => 10_000,
+                        StatsVisitor::class => 30_000,
                         DataImport::class => false,
                         'MultiCurrency' => false,
                     ],
@@ -145,6 +148,7 @@ return [
                         StatsUser::class => '100,000 Users',
                         StatsPayment::class => '50,000 Payments',
                         StatsLogin::class => '500,000 Logins',
+                        StatsVisitor::class => '1,500,000 Visitors',
                         DataImport::class => 'Data Import',
                         'MultiCurrency' => 'Multi Currency Support',
                     ],
@@ -154,6 +158,7 @@ return [
                         StatsUser::class => 100_000,
                         StatsPayment::class => 50_000,
                         StatsLogin::class => 500_000,
+                        StatsVisitor::class => 1_500_000,
                         DataImport::class => true,
                         'MultiCurrency' => true,
                     ],
@@ -171,6 +176,7 @@ return [
                         StatsUser::class => '1,000,000 Users',
                         StatsPayment::class => '500,000 Payments',
                         StatsLogin::class => '5,000,000 Logins',
+                        StatsVisitor::class => '15,000,000 Visitors',
                         DataImport::class => 'Data Import',
                         'MultiCurrency' => 'Multi Currency Support',
                     ],
@@ -180,6 +186,7 @@ return [
                         StatsUser::class => 1_000_000,
                         StatsPayment::class => 500_000,
                         StatsLogin::class => 5_000_000,
+                        StatsVisitor::class => 15_000_000,
                         DataImport::class => true,
                         'MultiCurrency' => true,
                     ],
@@ -198,6 +205,7 @@ return [
                         StatsUser::class => '10,000,000 Users',
                         StatsPayment::class => 'Unlimited Payments',
                         StatsLogin::class => 'Unlimited Logins',
+                        StatsVisitor::class => 'Unlimited Visitors',
                         DataImport::class => 'Data Import',
                         'MultiCurrency' => 'Multi Currency Support',
                     ],
@@ -207,6 +215,7 @@ return [
                         StatsUser::class => 10_000_000,
                         StatsPayment::class => SubscriptionService::UNLIMITED_AMOUNT,
                         StatsLogin::class => SubscriptionService::UNLIMITED_AMOUNT,
+                        StatsVisitor::class => SubscriptionService::UNLIMITED_AMOUNT,
                         DataImport::class => true,
                         'MultiCurrency' => true,
                     ],

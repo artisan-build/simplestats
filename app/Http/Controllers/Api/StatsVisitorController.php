@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsVisitorRequest;
 use App\Jobs\TrackStatsVisitor;
 use App\Models\StatsLogin;
+use App\Models\StatsVisitor;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Http\JsonResponse;
 
@@ -17,7 +18,7 @@ class StatsVisitorController extends Controller
      */
     public function __construct()
     {
-        $this->authorizeResource(StatsLogin::class, 'stats_login');
+        $this->authorizeResource(StatsVisitor::class, 'stats_visitor');
     }
 
     public function store(StatsVisitorRequest $request): JsonResponse
