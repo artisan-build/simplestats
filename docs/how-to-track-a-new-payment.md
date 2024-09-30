@@ -89,10 +89,6 @@ Now each time a new **Transaction** model gets created, an API request is sent t
 You may tweak the defined methods to your needs and apply any logic you need there!
 :::
 
-::: warning
-In addition, your trackable payment model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
-:::
-
 ::: danger
 Remember that **Gross** and **Net** must return cents!
 :::

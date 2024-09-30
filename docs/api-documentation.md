@@ -112,19 +112,19 @@ _Core parameters:_
 
 [//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "IMPORT USER" PAGE.)
 
-| Key                | Type                 | Description                                                                            |
-|--------------------|----------------------|----------------------------------------------------------------------------------------|
-| **id**             | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                   |
-| **time**           | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
-| **ip**             | _string_ `nullable`  | The `ip` of the user. _(does not get stored)_                                          |
-| **user_agent**     | _string_ `nullable`  | The `user_agent` of the user. _(does not get stored)_                                  |
-| **track_referer**  | _string_ `nullable`  | The http tracking `referer` of the user.                                               |
-| **track_source**   | _string_ `nullable`  | The tracking `source` of the user.                                                     |
-| **track_medium**   | _string_ `nullable`  | The tracking `medium` of the user.                                                     |
-| **track_campaign** | _string_ `nullable`  | The tracking `campaign` of the user.                                                   |
-| **track_term**     | _string_ `nullable`  | The tracking `term` of the user.                                                       |
-| **track_content**  | _string_ `nullable`  | The tracking `content` of the user.                                                    |
-| **page_entry**     | _string_ `nullable`  | The tracking `page_entry` of the user.                                                 |
+| Key                | Type                | Description                                                                              |
+|--------------------|---------------------|------------------------------------------------------------------------------------------|
+| **id**             | _mixed_ `required`  | The user id.                                                                             |
+| **time**           | _string_ `required` | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
+| **ip**             | _string_ `nullable` | The `ip` of the user. _(does not get stored)_                                            |
+| **user_agent**     | _string_ `nullable` | The `user_agent` of the user. _(does not get stored)_                                    |
+| **track_referer**  | _string_ `nullable` | The http tracking `referer` of the user.                                                 |
+| **track_source**   | _string_ `nullable` | The tracking `source` of the user.                                                       |
+| **track_medium**   | _string_ `nullable` | The tracking `medium` of the user.                                                       |
+| **track_campaign** | _string_ `nullable` | The tracking `campaign` of the user.                                                     |
+| **track_term**     | _string_ `nullable` | The tracking `term` of the user.                                                         |
+| **track_content**  | _string_ `nullable` | The tracking `content` of the user.                                                      |
+| **page_entry**     | _string_ `nullable` | The tracking `page_entry` of the user.                                                   |
 
 _Additional parameters:_
 
@@ -196,14 +196,14 @@ _Additional parameters:_
 
 [//]: <> (WARNING !!!!: THIS TABLE SHOULD BE IDENTICALL TO THE ONE ON THE "IMPORT PAYMENT" PAGE.)
 
-| Key               | Type                 | Description                                                                          |
-|-------------------|----------------------|--------------------------------------------------------------------------------------|
-| **id**            | _integer_ `required` | The payment id.<br/>(`uuid` and `ulid` are not supported at the moment)              |
-| **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                             |
+| Key               | Type                 | Description                                                                            |
+|-------------------|----------------------|----------------------------------------------------------------------------------------|
+| **id**            | _mixed_ `required`   | The payment id.                                                                        |
+| **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                               |
 | **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
-| **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                  |
-| **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                   |
-| **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)         |
+| **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                    |
+| **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                     |
+| **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)           |
 
 **Payload**
 

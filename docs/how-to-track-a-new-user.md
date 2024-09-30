@@ -52,10 +52,6 @@ Now each time a new **User** model gets created, an API request is sent to _Simp
 You may tweak the `getTrackingTime` method to your needs. For instance, if your `created_at` field is named differently you have to ajust it in the method.
 :::
 
-::: warning
-In addition, your trackable user model's primary key should be an `integer` column named `id`. We do not support `uuid` or `ulid` at the moment.
-:::
-
 ### With Condition
 
 Sometimes you may not want to count a newly created user immediately as a "valid" registration. For such cases, the `TrackableUserWithCondition` contract is designed to be utilized. Use it if you want to track/count a new registration only when a certain condition is fulfilled, such as the user has verified their email address.

@@ -61,8 +61,8 @@ class StatsPaymentValidator extends BaseStatsValidator
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            'id' => ['required', 'integer'],
-            'stats_user_id' => ['required', 'integer'],
+            'id' => ['required'],
+            'stats_user_id' => ['required'],
             'gross' => ['required', 'numeric'],
             'net' => ['required', 'numeric'],
             'currency' => ['required', new Currency()],

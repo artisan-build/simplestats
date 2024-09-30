@@ -26,10 +26,10 @@ The following fields are allowed:
 
 _Core fields:_
 
-| Key                  | Type                 | Description                                                                            |
-|----------------------|----------------------|----------------------------------------------------------------------------------------|
-| **id**               | _integer_ `required` | The user id.<br/>(`uuid` and `ulid` are not supported at the moment)                   |
-| **time**             | _string_ `required`  | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
+| Key                  | Type                | Description                                                                            |
+|----------------------|---------------------|----------------------------------------------------------------------------------------|
+| **id**               | _mixed_ `required`  | The user id.                                                                           |
+| **time**             | _string_ `required` | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
 
 _Additional fields:_
 
@@ -107,7 +107,7 @@ The following fields are allowed:
 
 | Key               | Type                 | Description                                                                          |
 |-------------------|----------------------|--------------------------------------------------------------------------------------|
-| **id**            | _integer_ `required` | The payment id.<br/>(`uuid` and `ulid` are not supported at the moment)              |
+| **id**            | _mixed_ `required`   | The payment id.                                                                      |
 | **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                             |
 | **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
 | **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                  |
