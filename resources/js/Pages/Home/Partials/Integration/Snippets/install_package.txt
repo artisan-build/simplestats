@@ -1,0 +1,2 @@
+composer require simplestats-io/laravel-client
+php artisan vendor:publish --tag="simplestats-client-config"

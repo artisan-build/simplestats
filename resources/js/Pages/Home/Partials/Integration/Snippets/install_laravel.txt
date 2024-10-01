@@ -1,0 +1,2 @@
+composer create-project laravel/laravel my-simplestats-app
+cd my-simplestats-app

@@ -170,26 +170,11 @@ const copyToClipboard = async () => {
                     </div>
 
                     <div v-if="trackedVisitors <= 0" class="mt-6 text-base">
-                        <h3 class="text-xl font-medium mb-3">Instructions</h3>
-                        To <strong>enable</strong> the tracking, please make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation here</a>.
+                        To <strong>enable</strong> the tracking, please make sure to check out the <a href="/docs" target="_blank" class="underline hover:text-indigo-600 font-bold">documentation</a>.
                         Follow the necessary steps to get everything set up correctly!<br>
+
                         <br>
-                        Basically these are the steps:<br>
-                        <ol class="list-decimal ml-6 mt-2 leading-8">
-                            <li>Install the package: <span class="italic font-medium">composer require simplestats-io/laravel-client</span>.</li>
-                            <li>Add the <span class="italic font-medium">TrackableUser</span> contract to your user model.</li>
-                            <li>Add the <span class="italic font-medium">TrackablePayment</span> contract to your payment model.</li>
-                            <li>Paste the token into your <span class="italic font-medium">.env</span> file.</li>
-                        </ol>
-                        <br>
-                        Happy analysing!<br>
-                        <br>
-                        <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('dashboard', {projectId: instance.project_id, instanceId: instance.id}))">
-                            Go To Dashboard
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-3">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </PrimaryButton>
+                        Happy analysing!
                     </div>
                 </template>
 

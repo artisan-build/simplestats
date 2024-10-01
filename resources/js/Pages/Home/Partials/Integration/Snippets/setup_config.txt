@@ -1,0 +1,5 @@
+'tracking_types' => [
+    'payment' => [
+        'model' => App\Models\Transaction::class,
+    ],
+],

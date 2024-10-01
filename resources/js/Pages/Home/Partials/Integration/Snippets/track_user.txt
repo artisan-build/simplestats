@@ -1,0 +1,7 @@
+class User extends Authenticatable implements TrackableUser
+{
+    public function getTrackingTime(): CarbonInterface
+    {
+        return $this->created_at;
+    }
+}

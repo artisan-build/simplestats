@@ -6,6 +6,7 @@ import Screenshot from "@/Pages/Home/Partials/Screenshot.vue";
 import Header from "@/Pages/Home/Partials/Header.vue";
 import SelfHosted from "@/Pages/Home/Partials/SelfHosted.vue";
 import Testimonials from "@/Pages/Home/Partials/Testimonials.vue";
+import Integration from "@/Pages/Home/Partials/Integration.vue";
 
 defineProps({
     plans: Array,
@@ -42,6 +43,10 @@ const appEnv = import.meta.env.VITE_APP_ENV;
         </section>
 
         <Screenshot />
+
+        <Suspense>
+            <Integration />
+        </Suspense>
 
         <Features />
 
