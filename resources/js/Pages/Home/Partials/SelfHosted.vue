@@ -86,12 +86,12 @@ const licenses = [
                     Start <span class="italic">{{ appName }} Self-Hosted</span> today and take full control!
                 </p>
 
-                <div class="inline-flex w-full sm:w-auto mt-10">
-                    <a href="mailto:simplestats@laracraft.tech" class="whitespace-nowrap block text-center w-full px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
+                <div class="md:inline-flex mt-10">
+                    <a href="mailto:simplestats@laracraft.tech" class="whitespace-nowrap block text-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
                         Contact Sales
                     </a>
                     &nbsp;&nbsp;&nbsp;
-                    <a v-if="$page.props.canRegister" href="https://calendly.com/simplestats/30min" target="_blank" class="whitespace-nowrap block text-center w-full px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
+                    <a v-if="$page.props.canRegister" href="https://calendly.com/simplestats/30min" target="_blank" class="whitespace-nowrap block text-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
                         Book a call
                     </a>
                 </div>
