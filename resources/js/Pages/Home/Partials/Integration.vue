@@ -29,23 +29,15 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <div class="flex-grow grid gap-4 grid-cols-1 xl:grid-cols-[1fr_auto_1fr] items-center relative">
                     <GridPlaceholder />
                     <BigStepBullet content="1" />
-                    <BigStepText content="Install the framework" />
+                    <BigStepText :content="`Install ${appName}`" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Install Laravel" />
-
-                    <CodeWrapper lang="bash" theme="github-dark" title="Install Laravel" :code="snippetInstallLaravel" />
-                    <GridPlaceholder />
-                    <StepText :content="`${appName} can be seamlessly integrated into both new and existing Laravel projects. If you’re working with an existing project, feel free to jump ahead to the next section.`" />
-
-                    <GridPlaceholder />
-                    <SmallStepBullet content="" />
-                    <SmallStepText :content="`Install the ${appName} client`" />
+                    <SmallStepText content="Install the client" />
 
                     <CodeWrapper lang="bash" theme="github-dark" :title="`Install ${appName}`" :code="snippetInstallPackage" />
                     <GridPlaceholder />
-                    <StepText :content="`In your Laravel project, install the ${appName} client for Laravel and publish the config. Congrats now the tool is tracking your visitors!`" />
+                    <StepText :content="`In your Laravel project, you just need to install the ${appName} client. Congrats, the tool is now already tracking your visitors!`" />
 
 <!--                    <GridPlaceholder />-->
 <!--                    <BigStepBullet content="2" />-->
@@ -69,7 +61,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <BigStepBullet content="2" />
-                    <BigStepText content="Track users" />
+                    <BigStepText content="Add tracking" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
@@ -79,19 +71,13 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <GridPlaceholder />
                     <StepText :content="`To make the client track your user registrations, you only have to add the TrackableUser interface and implement the contract.`" />
 
-
-                    <GridPlaceholder />
-                    <BigStepBullet content="3" />
-                    <BigStepText content="Track payments" />
-
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
                     <SmallStepText content="Add the TrackablePayment contract" />
 
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePayment contract" :code="snippetTrackPayment" />
                     <GridPlaceholder />
-                    <StepText :content="`To enable the client to track your app’s payments, you need to add the TrackablePayment interface to your payment/transaction model and implement its contract.`" />
-
+                    <StepText :content="`To enable the client to track your app’s payments, you need to add the TrackablePayment interface to your payment/transaction model and implement the contract.`" />
                 </div>
             </div>
             <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs">documentation</a> for more details.</div>
