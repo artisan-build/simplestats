@@ -17,7 +17,7 @@ class Instance extends Authenticatable
     use HasApiPlainTokens;
     use HasTeamScope;
 
-    const TOKEN_NAME_POSTFIX = ' Token';
+    const TOKEN_NAME = 'API Token';
 
     protected $casts = [
         'stats_starting_at' => 'date',

@@ -16,8 +16,6 @@ class InstanceCreated
      */
     public function __construct(Instance $instance)
     {
-        $instance->createTokenPlain(
-            $instance->name.Instance::TOKEN_NAME_POSTFIX,
-        );
+        $instance->createTokenPlain(Instance::TOKEN_NAME);
     }
 }

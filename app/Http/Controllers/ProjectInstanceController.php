@@ -88,9 +88,7 @@ class ProjectInstanceController extends Controller
 
         $instance->tokens()->delete();
 
-        $token = $instance->createTokenPlain(
-            $instance->name.Instance::TOKEN_NAME_POSTFIX,
-        );
+        $token = $instance->createTokenPlain(Instance::TOKEN_NAME);
 
         return back()->with('flash', [
             'token' => $token->accessToken->token_plain_part,
