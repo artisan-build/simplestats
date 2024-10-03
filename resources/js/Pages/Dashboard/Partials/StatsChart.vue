@@ -115,7 +115,6 @@ const latestPeriod = categories[categories.length - 1];
 const previousPeriod = categories[categories.length - 2];
 const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.rangeType);
 
-let hasCurrentHigh = false;
 let hasCurrentPeriod = latestPeriod === currentPeriod;
 
 if (hasCurrentPeriod) {
@@ -128,12 +127,6 @@ if (hasCurrentPeriod) {
             }
         ]
     };
-
-    series.value.forEach((serie) => {
-        if (serie.data[serie.data.length - 1] > serie.data[serie.data.length - 2]) {
-            hasCurrentHigh = true;
-        }
-    });
 }
 
 const selectedSerieIndex = ref(Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0));
@@ -164,7 +157,6 @@ const selectedSeries = () => {
                 :selectedSerieIndex="selectedSerieIndex"
                 :formatter="chart.formatter"
                 :hasCurrent="hasCurrentPeriod"
-                :highCurrent="hasCurrentHigh"
                 @selectSeries="selectSeries"
             />
         </div>

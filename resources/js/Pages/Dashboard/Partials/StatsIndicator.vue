@@ -10,14 +10,15 @@ const props = defineProps({
     selectedSerieIndex: Number,
     formatter: String,
     hasCurrent: Boolean,
-    highCurrent: Boolean,
 });
+
+let highCurrent = props.serie.data[props.serie.data.length - 1] > props.serie.data[props.serie.data.length - 2];
 
 let latestSerieData = props.serie.data[props.serie.data.length - 1];
 let previousSerieData = props.serie.data[props.serie.data.length - 2];
 
 // if hasCurrent we only show the prev values if at least one of the latest aren't higher
-if (props.hasCurrent && ! props.highCurrent) {
+if (props.hasCurrent && ! highCurrent) {
     latestSerieData = props.serie.data[props.serie.data.length - 2];
     previousSerieData = props.serie.data[props.serie.data.length - 3];
 }
