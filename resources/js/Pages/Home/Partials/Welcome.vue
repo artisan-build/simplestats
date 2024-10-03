@@ -25,7 +25,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
             </h1>
             <div class="relative m-auto mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 px-6 sm:px-3 max-w-screen-md">
                 Server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple
-                counts of views and visits. Discover in-depth metrics like Registrations, Conversion Rate, campaign ROI and much more in just <a href="/docs" target="_blank" class="font-bold text-indigo-500">5 minutes</a>!
+                counts of views and visits. Discover in-depth metrics like Registrations, Conversion Rate, campaign ROI and much more in just a few <a href="/docs" target="_blank" class="font-bold text-indigo-500">minutes</a>!
                 <a href="docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:block absolute right-0 top-0 -mr-64 -mt-16 " style="transform: rotate(30deg);">
                     <img width="250" height="112" class="hover:scale-105 transition" src="images/ad-blockers-badge.png" />
                 </a>
