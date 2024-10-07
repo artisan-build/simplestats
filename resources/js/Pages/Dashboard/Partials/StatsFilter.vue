@@ -107,9 +107,10 @@ const presetSelected = ref(null);
 const customRangeId = presets.length-1;
 
 onMounted(() => {
-    presets.forEach(function (preset) {
+    presets.some(function (preset) {
         if (preset.rangeStart === form.rangeStart && preset.rangeAmount === form.rangeAmount && preset.rangeType === form.rangeType) {
             presetSelected.value = preset.id;
+            return true;
         }
     });
 
