@@ -18,7 +18,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
-    <section class="-mt-10 flex justify-center px-4">
+    <section class="flex justify-center px-4">
         <div class="w-full max-w-screen-xl">
             <SectionHeader id="integration">
                 Powerful analytics with&nbsp;<span class="text-indigo-500">zero effort</span>
