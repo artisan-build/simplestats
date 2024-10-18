@@ -34,7 +34,14 @@ trait HasStatsTracking
             foreach ($statsTypes as $item) {
                 $property = $item['type'];
                 if (!empty($statsModel->$property)) {
-                    $track = ['team_id' => $statsModel->team_id, 'project_id' => $statsModel->project_id, 'name' => $statsModel->$property];
+                    $track = [
+                        'team_id' => $statsModel->team_id,
+                        'project_id' => $statsModel->project_id,
+                        // there is a composite index on the name col
+                        // we can't make it longer then 255 charts (string indexes can't be so long), so we need to trim
+                        'name' => Str::limit($statsModel->$property, 252)
+                    ];
+
                     $statsProperty = "stats_{$property}_id";
                     $item['model']::unguard();
                     $statsModel->$statsProperty = $item['model']::where($track)->first()?->id ?? $item['model']::create($track)->id;
