@@ -15,7 +15,7 @@ class SendCustomMail extends Command
      *
      * @var string
      */
-    protected $signature = 'app:send-custom-mail {userId} {message}';
+    protected $signature = 'app:send-custom-mail {userId} {title} {message}';
 
     /**
      * The console command description.
@@ -31,7 +31,7 @@ class SendCustomMail extends Command
     {
         $user = User::findOrFail($this->argument('userId'));
 
-        Mail::to($user->email)->send(new CustomMail($user, $this->argument('message')));
+        Mail::to($user->email)->send(new CustomMail($user, $this->argument('title'), $this->argument('message')));
 
         $this->info('Custom mail has been sent successfully.');
     }

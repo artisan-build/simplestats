@@ -20,6 +20,7 @@ class CustomMail extends Mailable
      */
     public function __construct(
         public User $user,
+        public string $title,
         public string $message,
     )
     {}
@@ -31,7 +32,7 @@ class CustomMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Hello!')
+        return $this->subject($this->title)
             ->markdown('emails.custom-mail', [
                 'user' => $this->user,
                 'message' => $this->message,
