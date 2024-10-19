@@ -35,7 +35,9 @@ const createInstance = () => {
         </template>
 
         <template #description>
-            Manage or create new instances for the current project.
+            Manage or create new instances for the current project.<br>
+            <br>
+            You can create multiple instances within a project. For example, in a SaaS application, you might have different environments like “Environment A,” “Environment B,” etc. This allows you to view and analyze each instance separately or get an aggregated overview at the project level.
         </template>
 
         <template #form>
