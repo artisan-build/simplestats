@@ -132,7 +132,11 @@ class User extends Authenticatable implements TrackableUserWithCondition, MustVe
 
     public function canImpersonate()
     {
-        // For example
+        return $this->isAdmin();
+    }
+
+    public function isAdmin(): bool
+    {
         return $this->is_admin == 1;
     }
 
@@ -141,5 +145,11 @@ class User extends Authenticatable implements TrackableUserWithCondition, MustVe
         $settings = $this->settings;
         Arr::set($settings, $key, $value);
         $this->update(['settings' => $settings]);
+    }
+
+    public function makeAdmin()
+    {
+        $this->is_admin = 1;
+        $this->save();
     }
 }

@@ -37,9 +37,9 @@ class DatabaseSeeder extends Seeder
                 'password' => $testUser['password'],
                 'password_confirmation' => $testUser['password'],
                 'terms' => true,
-                'is_admin' => app()->isLocal(),
             ]);
 
+            $user->makeAdmin();
             $user->markEmailAsVerified();
 
             $user->switchTeam($user->personalTeam());

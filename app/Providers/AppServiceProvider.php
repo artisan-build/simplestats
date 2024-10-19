@@ -6,10 +6,12 @@ use App\Enums\DataImportType;
 use App\Imports\BaseStatsImport;
 use App\Models\DataImport;
 use App\Models\PersonalAccessToken;
+use App\Models\User;
 use Carbon\CarbonImmutable;
-use Date;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -37,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! app()->isProduction());
         Model::shouldBeStrict(! app()->isProduction());
 
-//        ray()->clearScreen();
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isAdmin();
+        });
     }
 }
