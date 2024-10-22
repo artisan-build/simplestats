@@ -149,7 +149,8 @@ const selectedSeries = () => {
 
 <template>
     <div class="@container bg-white dark:bg-gray-800 border shadow-md rounded-md" :class="chart.class">
-        <div class="grid gap-3 grid-cols-3 pt-3 px-3">
+        <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3"></div>
+        <div :class="'grid gap-3 grid-cols-'+series.length+' pt-3 px-3'">
             <StatsIndicator
                 v-for="(serie, serieIndex) in series"
                 :serie="serie"

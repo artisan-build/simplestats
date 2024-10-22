@@ -18,6 +18,7 @@ const props = defineProps({
     rangeTypes: Array,
     freePlanWarning: Object,
     subscriptionPlanAlarm: Array,
+    trackingUsageBits: Object,
 });
 
 const isScrolled = ref(false)
@@ -33,6 +34,9 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
 })
+
+
+const currentProject = props.teamStats.projects[props.filters.projectId];
 </script>
 
 <template>
@@ -61,6 +65,8 @@ onUnmounted(() => {
                     <StatsCharts
                         :filters="filters"
                         :teamStats="teamStats"
+                        :currentProject="currentProject"
+                        :trackingUsageBits="trackingUsageBits"
                     />
                 </div>
                 <div v-if="filters.projectId">
@@ -68,6 +74,8 @@ onUnmounted(() => {
                         :filters="filters"
                         :statsGroups="statsGroups"
                         :topReferers="topReferers"
+                        :currentProject="currentProject"
+                        :trackingUsageBits="trackingUsageBits"
                     />
                 </div>
             </div>

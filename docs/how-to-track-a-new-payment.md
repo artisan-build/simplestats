@@ -32,7 +32,7 @@ To track a new payment, the only thing you have to do is to add the `TrackablePa
 It may look like this:
 
 ```php
-use SimpleStatsIo\LaravelClient\Contracts\TrackablePayment;
+use SimpleStatsIo\LaravelClient\Contracts\TrackablePayment;use SimpleStatsIo\LaravelClient\Visitor;
 
 class Transaction extends Model implements TrackablePayment
 {

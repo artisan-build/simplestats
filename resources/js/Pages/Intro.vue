@@ -6,10 +6,12 @@ import {useForm} from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import SelectInput from "@/Components/SelectInput.vue";
+import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
 
 const props = defineProps({
     team: String,
     timezones: Array,
+    trackingUsages: Object,
 });
 
 const form = useForm({
@@ -18,11 +20,14 @@ const form = useForm({
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
     project: '',
     instance: 'Default',
+    usage: 0,
 });
 
 const submit = () => {
     form.post(route('intro'));
 };
+
+const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
@@ -37,7 +42,7 @@ const submit = () => {
                 <FormWizard color="#716bdd" @on-complete="submit" step-size="xs">
                     <TabContent class="pt-10 pb-20 text-center" title="Name">
                         <div class="text-xl font-medium mb-10">
-                            What is the name of your team/company?
+                            What is the name of your team?
                         </div>
 
                         <TextInput
@@ -51,7 +56,7 @@ const submit = () => {
                         <div class="text-xl font-medium mb-10">
                             What is the currency of your team/company?
                             <p class="text-base mt-2">
-                                All tracked multi-currency payments of your app will be converted to your currency at the daily exchange rate.
+                                All tracked multi-currency payments will be converted to your currency at the daily exchange rate.
                             </p>
                         </div>
 
@@ -65,7 +70,7 @@ const submit = () => {
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Timezone">
                         <div class="text-xl font-medium mb-10">
-                            What is the timezone of your team/company?
+                            What is the timezone of your team?
                         </div>
 
                         <SelectInput
@@ -88,22 +93,36 @@ const submit = () => {
                             placeholder="e.g. My great SaaS"
                         />
                     </TabContent>
-                    <TabContent class="pt-10 pb-20 text-center" title="Instance">
+<!--                    <TabContent class="pt-10 pb-20 text-center" title="Instance">-->
+<!--                        <div class="text-xl font-medium mb-10">-->
+<!--                            What should your first instance be called? (optional)-->
+<!--                            <p class="text-base mt-2">-->
+<!--                                You can divide a project into multiple instances.-->
+<!--                                For example, in a SaaS application, you might have different environments like “Environment A,” “Environment B,” etc. This allows you to view and analyze each instance separately or get an aggregated overview at the project level.-->
+<!--                            </p>-->
+<!--                        </div>-->
+
+<!--                        <TextInput-->
+<!--                            id="project"-->
+<!--                            v-model="form.instance"-->
+<!--                            type="text"-->
+<!--                            class="mt-1 inline-block w-2/5"-->
+<!--                        />-->
+<!--                    </TabContent>-->
+                    <TabContent class="pt-10 pb-20 text-center" title="Usage">
                         <div class="text-xl font-medium mb-10">
-                            What should your first instance be called? (optional)
+                            How do you want to use {{ appName }}?
                             <p class="text-base mt-2">
-                                You can divide a project into multiple instances.
-                                For example, in a gaming app, you might have multiple game worlds per app like "Game World 1", "Game World 2", etc.
-                                This allows you to filter and manage them separately. If you do not plan to use multiple instances, you can just leave this as "Default".
+                                Choose every option that meets your requirements!
                             </p>
                         </div>
 
-                        <TextInput
-                            id="project"
-                            v-model="form.instance"
-                            type="text"
-                            class="mt-1 inline-block w-2/5"
-                        />
+                        <div class="w-10/12 m-auto">
+                            <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" border="4" />
+                            <div class="text-base mt-5">
+                                In the most cases it's best to select all...
+                            </div>
+                        </div>
                     </TabContent>
                 </FormWizard>
             </div>

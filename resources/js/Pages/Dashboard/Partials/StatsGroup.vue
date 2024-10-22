@@ -14,6 +14,8 @@ const props = defineProps({
     statsGroupType: String,
     statsGroupSelected: String,
     topReferers: Object,
+    currentProject: Object,
+    trackingUsageBits: Object,
 });
 
 const page = usePage();
@@ -83,6 +85,10 @@ const statsTypeIcon =  (statsGroup, item) => {
 }
 
 onMounted(fetchData);
+
+function currentProjectHasTrackingUsageBits(bits){
+    return bits.every(bit => (props.trackingUsageBits[bit] & props.currentProject.usage));
+}
 </script>
 
 <template>
@@ -115,7 +121,7 @@ onMounted(fetchData);
                                 </svg>
                             </button>
                         </td>
-                        <td style="width: 12%;" class="p-1.5 text-right">
+                        <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
                                 <span class="inline-block @2xl:hidden">Visits</span>
                                 <span class="hidden @2xl:inline-block">Visitors</span>
@@ -124,7 +130,7 @@ onMounted(fetchData);
                                 </svg>
                             </button>
                         </td>
-                        <td style="width: 10%;" class="p-1.5 text-right">
+                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'reg' ? 'text-indigo-600' : ''" @click="changeSort('reg')">
                                 <span>Regs</span>
                                 <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
@@ -132,7 +138,7 @@ onMounted(fetchData);
                                 </svg>
                             </button>
                         </td>
-                        <td style="width: 12%;" class="p-1.5 text-right">
+                        <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
                                 <span class="inline-block @2xl:hidden">CR</span>
                                 <span class="hidden @2xl:inline-block">Conversion</span>
@@ -141,7 +147,7 @@ onMounted(fetchData);
                                 </svg>
                             </button>
                         </td>
-                        <td style="width: 10%;" class="p-1.5 text-right">
+                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" style="width: 10%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'dau' ? 'text-indigo-600' : ''" @click="changeSort('dau')">
                                 <span>{{ XAU(filters.rangeType) }}</span><!-- the span removes whitespace -->
                                 <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
@@ -149,7 +155,7 @@ onMounted(fetchData);
                                 </svg>
                             </button>
                         </td>
-                        <td style="width: 12%;" class="p-1.5 text-right">
+                        <td v-if="currentProjectHasTrackingUsageBits(['payments'])" style="width: 12%;" class="p-1.5 text-right">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
                                 <span class="inline-block @2xl:hidden">Rev.</span>
                                 <span class="hidden @2xl:inline-block">Revenue</span>
@@ -174,11 +180,11 @@ onMounted(fetchData);
                                 </Link>
                             </div>
                         </td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
-                        <td class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+                        <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
+                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
+                        <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
+                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
+                        <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                     </tr>
                 </table>
             </div>

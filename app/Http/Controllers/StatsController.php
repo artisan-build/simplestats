@@ -76,7 +76,10 @@ class StatsController extends Controller
                 'show' => $currentPlan->name === SubscriptionService::PLAN_FREE && ! $hideFreePlanWarning,
                 'users' => $currentPlan->options[StatsUser::class]
             ],
-            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team)
+            'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team),
+            'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
+                return [$key => $item['bit']];
+            }),
         ];
 
         return Inertia::render('Dashboard/Index', $data);

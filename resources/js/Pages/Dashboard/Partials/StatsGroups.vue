@@ -5,6 +5,8 @@ const props = defineProps({
     filters: Object,
     statsGroups: Object,
     topReferers: Object,
+    currentProject: Object,
+    trackingUsageBits: Object,
 });
 </script>
 
@@ -19,6 +21,8 @@ const props = defineProps({
                 :statsGroupType="statsGroupType"
                 :statsGroupSelected="$page.props.auth.user.settings?.selectedGroupTypes?.[filters.projectId]?.[statsGroupType]"
                 :topReferers="topReferers"
+                :currentProject="currentProject"
+                :trackingUsageBits="trackingUsageBits"
             />
         </div>
     </div>

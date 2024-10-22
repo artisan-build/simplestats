@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Services\StatsService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Spatie\ValidationRules\Rules\Currency;
@@ -29,6 +30,7 @@ class IntroRequest extends FormRequest
             'timezone' => ['sometimes', 'required', Rule::in(timezone_identifiers_list())],
             'project' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
             'instance' => ['sometimes', 'required', 'string', 'min:1', 'max:30'],
+            'usage' => ['sometimes', 'required', 'integer', 'min:1', 'max:'.StatsService::getTrackingUsageBitsCount()],
         ];
     }
 }

@@ -20,6 +20,7 @@ class Project extends Model
      */
     protected $fillable = [
         'name',
+        'usage',
     ];
 
     public function team(): BelongsTo
@@ -30,5 +31,16 @@ class Project extends Model
     public function instances(): HasMany
     {
         return $this->hasMany(Instance::class);
+    }
+
+    public function hasTrackingUsageBits(array $bits): bool
+    {
+        foreach ($bits as $bit) {
+            if (! ($bit & $this->usage)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

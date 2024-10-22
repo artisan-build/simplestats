@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsUserRequest;
 use App\Jobs\TrackStatsUser;
 use App\Models\StatsUser;
+use App\Services\StatsService;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Http\JsonResponse;
 
@@ -21,6 +22,10 @@ class StatsUserController extends Controller
         if (Browser::parse(urldecode($request->user_agent))->isBot()) {
             // we respond, cause else the client would retry these requests again and again if they use queues...
             return response()->json(['message' => 'Bots are not allowed.']);
+        }
+
+        if (! auth()->user()->project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
+            return response()->json(['message' => 'Tracking Usage not set'], 200);
         }
 
         TrackStatsUser::dispatch(

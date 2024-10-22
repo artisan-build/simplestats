@@ -7,6 +7,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Services\StatsAggregationsService;
+use App\Services\StatsService;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +31,7 @@ class ProjectController extends Controller
 
         return Inertia::render('Projects/Index', [
             'projects' => $projects,
+            'trackingUsages' => StatsService::getTrackingUsages(),
             'permissions' => [
                 'canCreateProject' => Gate::check('create', Project::class),
             ]
@@ -51,6 +53,7 @@ class ProjectController extends Controller
 
         return Inertia::render('Projects/Show', [
             'project' => $project,
+            'trackingUsages' => StatsService::getTrackingUsages(),
             'permissions' => [
                 'canDeleteProject' => Gate::check('delete', $project),
                 'canUpdateProject' => Gate::check('update', $project),

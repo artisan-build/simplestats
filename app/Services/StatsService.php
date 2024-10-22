@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
-use App\Models\BaseStat;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsDeviceBrowser;
@@ -24,13 +23,17 @@ use App\Models\StatsTrackTerm;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class StatsService
 {
     const NAU_LOGIN_COUNTER = 2;
+
+    const TRACKING_USAGE_BITS_VISITORS = 1;
+
+    const TRACKING_USAGE_BITS_USERS = 2;
+
+    const TRACKING_USAGE_BITS_PAYMENTS = 4;
 
     protected static array $statsModels = [
         StatsVisitor::class,
@@ -77,9 +80,14 @@ class StatsService
     {
         return collect(self::$statsTypes)->map(function ($types) use ($skip) {
             return collect($types)->map(function ($item) use ($skip) {
-                if (!empty($skip)) foreach ($skip as $key) {unset($item[$key]);}
+                if (! empty($skip)) {
+                    foreach ($skip as $key) {
+                        unset($item[$key]);
+                    }
+                }
 
                 $item['type'] = str($item['type'])->camel()->toString();
+
                 return $item;
             });
         });
@@ -97,7 +105,7 @@ class StatsService
         return collect(self::getStatsTypesCamel())->flatMap(function ($item) {
             return collect($item)->pluck('model', 'type');
         })->mapWithKeys(function ($model, $type) use ($filters) {
-            if (!empty($filters->$type)) {
+            if (! empty($filters->$type)) {
                 return [$type => $model::find($filters->$type)?->name ?? 'Direct / Unknown'];
             }
 
@@ -112,8 +120,12 @@ class StatsService
         ])->filter()->toArray(); //remove 0 values
 
         // project and instance must have a default value...
-        if (!isset($formatted['projectId'])) $formatted['projectId'] = 0;
-        if (!isset($formatted['instanceId'])) $formatted['instanceId'] = 0;
+        if (! isset($formatted['projectId'])) {
+            $formatted['projectId'] = 0;
+        }
+        if (! isset($formatted['instanceId'])) {
+            $formatted['instanceId'] = 0;
+        }
 
         return $formatted;
     }
@@ -146,5 +158,31 @@ class StatsService
                 $instance->update(['stats_starting_at' => $start]);
             }
         });
+    }
+
+    public static function getTrackingUsages(): Collection
+    {
+        return collect([
+            'visitors' => [
+                'bit' => self::TRACKING_USAGE_BITS_VISITORS,
+                'name' => 'Visitor Tracking',
+                'descr' => 'Track app visitors and capture their UTMs, location, device etc.',
+            ],
+            'users' => [
+                'bit' => self::TRACKING_USAGE_BITS_USERS,
+                'name' => 'User Tracking',
+                'descr' => 'Track users, including the registration time and their logins.',
+            ],
+            'payments' => [
+                'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
+                'name' => 'Payment Tracking',
+                'descr' => 'Track payments and the associated campaigns. Perfect to analyze ROI.',
+            ],
+        ]);
+    }
+
+    public static function getTrackingUsageBitsCount()
+    {
+        return self::getTrackingUsages()->sum('bit');
     }
 }

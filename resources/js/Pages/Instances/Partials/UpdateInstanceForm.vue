@@ -34,13 +34,13 @@ const updateInstance = () => {
         </template>
 
         <template #description>
-            The Instance details.
+            Information about the instance.
         </template>
 
         <template #form>
             <!-- Instance Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Instance Name" />
+                <InputLabel for="name" value="Instance name" />
 
                 <TextInput
                     id="name"
@@ -54,7 +54,7 @@ const updateInstance = () => {
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="project_id" value="Instance Project" />
+                <InputLabel for="project_id" value="Instance project" />
 
                 <SelectInput
                     id="project_id"

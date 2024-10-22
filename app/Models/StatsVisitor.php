@@ -37,18 +37,4 @@ class StatsVisitor extends BaseStat
         'time',
         'time_utc',
     ];
-
-    /**
-     * Plausible Style:
-     * @link https://plausible.io/data-policy#how-we-count-unique-users-without-cookies
-     *
-     * @param  string|null  $time
-     * @param  string|null  $ip
-     * @param  string|null  $userAgent
-     * @return string
-     */
-    public static function createHash(?string $time, ?string $ip, ?string $userAgent): string
-    {
-        return substr(hash('sha256', $ip.$userAgent.$time.config('app.key')), 0, 32);
-    }
 }

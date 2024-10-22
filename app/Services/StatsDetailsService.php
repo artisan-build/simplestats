@@ -37,6 +37,7 @@ class StatsDetailsService
             $stat['lt_REG2PU'] = round($this->statsService->safeDivision($stat['lt_PU'], $stat['lt_REG']) * 100, 2);
             $stat['lt_REG2TAU'] = round($this->statsService->safeDivision($stat['lt_TAU'], $stat['lt_REG']) * 100, 2);
             $stat['lt_ARPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_REG']), 2);
+            $stat['lt_ARPV'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_VISITOR']), 2);
             $stat['lt_ARPPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_PU']), 2);
         } unset($stat);
     }
@@ -44,17 +45,25 @@ class StatsDetailsService
     public function getRangeTypes(): Collection
     {
         return collect(StatsRangeType::values())->transform(fn($name, $key) => [
-            'id' => $name, 'name' => ucfirst($name)
+            'id' => $name,
+            'name' => ucfirst($name)
         ]);
     }
 
     public function getAllFilterFor(string $type): array
     {
-        return ['id' => StatsFilterDto::TRACK_ALL, 'name' => 'All'];//.$type];
+        return [
+            'id' => StatsFilterDto::TRACK_ALL,
+            'name' => 'All',
+            'usage' => StatsService::getTrackingUsageBitsCount()
+        ];
     }
 
     public function getOrganicFilter(string $name = 'Direct / Unknown'): array
     {
-        return ['id' => StatsFilterDto::TRACK_ORGANIC, 'name' => $name];
+        return [
+            'id' => StatsFilterDto::TRACK_ORGANIC,
+            'name' => $name
+        ];
     }
 }

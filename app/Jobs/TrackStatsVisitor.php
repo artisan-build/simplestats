@@ -15,7 +15,7 @@ class TrackStatsVisitor extends BaseStatsTrack
         parent::handle();
 
         StatsVisitor::firstOrCreate([
-            'visitor_hash' => StatsVisitor::createHash(Carbon::parse($this->input['time'])->format('Y-m-d'), $this->input['ip'] ?? '', $this->input['user_agent'] ?? ''),
+            'visitor_hash' => $this->input['visitor_hash'],
         ], $this->input);
     }
 }

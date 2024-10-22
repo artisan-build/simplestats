@@ -4,10 +4,13 @@ import {formatDate} from "@/Helpers/NumberHelpers.js";
 import { periodMap, XAU} from "@/Helpers/StringHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
+import {forEach} from "lodash";
 
 const props = defineProps({
     filters: Object,
     teamStats: Object,
+    currentProject: Object,
+    trackingUsageBits: Object,
 });
 
 const page = usePage();
@@ -72,7 +75,7 @@ const lastStat = (key) => {
 
     if (statsArray.length > 1) {
         let prevStat = statsArray.at(1);
-        // console.log(stat, prevStat)
+
         if (formatDate(stat.date, props.filters.rangeType) === formatDate(page.props.rangeCurrent, props.filters.rangeType) && stat[key] < prevStat[key]) {
             stat = prevStat;
         }
@@ -84,110 +87,121 @@ function safeDevision(numerator, denominator) {
     return denominator == 0 ? 0 : numerator / denominator;
 }
 
-let charts = [
-    {
-        name: 'Conversion',
-        formatter: 'number',
-        class: 'order-1 3xl:order-1',
-        group: [
-            {key: 'pd_VISITOR', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {
-                return statsSum.pd_VISITOR;
-            }},
-            {key: 'pd_REG', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {
-                return statsSum.pd_REG;
-            }},
-            {key: 'pd_CR', color: '#93c5fd', formatter: 'percent', indicatorCallback: function () {
-                return safeDevision(statsSum.pd_REG, statsSum.pd_VISITOR) * 100;
-            }},
-        ],
-    },
-    {
+function currentProjectHasTrackingUsageBits(bits) {
+    return bits.every(bit => (props.trackingUsageBits[bit] & props.currentProject.usage));
+}
+
+const charts = [];
+
+// !! CONVERSION
+const conversionChart = {
+    name: 'Conversion',
+    formatter: 'number',
+    class: 'order-1 3xl:order-1',
+    group: [],
+};
+
+if (currentProjectHasTrackingUsageBits(['visitors'])) {
+    conversionChart.group.push({key: 'pd_VISITOR', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_VISITOR}});
+}
+
+if (currentProjectHasTrackingUsageBits(['users'])) {
+    conversionChart.group.push({key: 'pd_REG', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_REG}});
+
+    if (currentProjectHasTrackingUsageBits(['visitors'])) {
+        conversionChart.group.push({key: 'pd_CR', color: '#93c5fd', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_REG, statsSum.pd_VISITOR) * 100}});
+    }
+}
+
+if (conversionChart.group.length > 0) charts.push(conversionChart);
+
+// !! REVENUE
+if (currentProjectHasTrackingUsageBits(['payments'])) {
+    const revenueChart = {
         name: 'Revenue',
         formatter: 'currency',
         class: 'order-2 3xl:order-2',
-        group: [
-            {key: 'pd_NET', color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
-                return statsSum.pd_NET;
-            }},
-            {key: 'pd_FEE', color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
-                return statsSum.pd_FEE;
-            }},
-            {key: 'pd_GROSS', color: '#93c5fd', formatter: 'currency', indicatorCallback: function () {
-                return statsSum.pd_GROSS;
-            }},
-        ],
-    },
-    {
+        group: [],
+    };
+
+    revenueChart.group.push({key: 'pd_NET', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_NET}});
+    revenueChart.group.push({key: 'pd_FEE', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_FEE}});
+
+
+    if (! currentProjectHasTrackingUsageBits(['users']) && currentProjectHasTrackingUsageBits(['payments'])) {
+        revenueChart.group.push({key: 'lt_ARPV', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_ARPV')}});
+    } else {
+        revenueChart.group.push({key: 'pd_GROSS', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_GROSS}});
+    }
+
+    if (revenueChart.group.length > 0) charts.push(revenueChart);
+}
+
+// !! GROWTH
+if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
+    const growthChart = {
         name: 'Growth',
         formatter: 'number',
         class: 'order-3 3xl:order-4',
-        group: [
-            {key: 'pd_NAU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return statsSum.pd_NAU;
-            }},
-            {key: 'pd_NAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return statsSum.pd_NAPU;
-            }},
-            {key: 'lt_PU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return lastStat('lt_PU');
-            }},
-            // {key: 'lt_TAU', color: '#93c5fd',  indicatorCallback: function () {
-            //     return statsSum.pd_GROSS;
-            // }},
-        ],
-    },
-    {
+        group: [],
+    };
+
+    growthChart.group.push({key: 'pd_NAU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAU}});
+    growthChart.group.push({key: 'pd_NAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAPU}});
+    growthChart.group.push({key: 'lt_PU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return lastStat('lt_PU')}});
+
+    if (growthChart.group.length > 0) charts.push(growthChart);
+}
+
+// !! AVERAGE REVENUE
+if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
+    const avgRevChart = {
         name: 'Average Revenue',
         formatter: 'currency',
         class: 'order-4 3xl:order-3',
-        group: [
-            {key: 'lt_ARPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
-                return lastStat('lt_ARPU');
-            }},
-            {key: 'lt_ARPPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
-                return lastStat('lt_ARPPU');
-            }},
-            {key: 'pd_ARPDAU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: function () {
-                return lastStat('pd_ARPDAU');
-            }},
-        ],
-    },
-    {
+        group: [],
+    };
+
+    avgRevChart.group.push({key: 'lt_ARPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_ARPU')}});
+    avgRevChart.group.push({key: 'lt_ARPPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_ARPPU')}});
+    avgRevChart.group.push({key: 'pd_ARPDAU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('pd_ARPDAU')}});
+
+    if (avgRevChart.group.length > 0) charts.push(avgRevChart);
+}
+
+// !! ACTIVE USERS
+if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users'])) {
+    const activeUsersChart = {
         name: 'Active Users',
         formatter: 'number',
         class: 'order-5 3xl:order-5',
-        group: [
-            {key: 'pd_DAU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return lastStat('pd_DAU');
-            }},
-            {key: 'pd_DAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return lastStat('pd_DAPU');
-            }},
-            {key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number',  indicatorCallback: function () {
-                return lastStat('pd_DAAPU');
-            }},
-        ],
-    },
-    {
+        group: [],
+    };
+
+    activeUsersChart.group.push({key: 'pd_DAU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAU')}});
+    activeUsersChart.group.push({key: 'pd_DAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAPU')}});
+    activeUsersChart.group.push({key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAAPU')}});
+
+    if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
+}
+
+// !! ENGAGEMENT
+if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users'])) {
+    const engagementChart = {
         name: 'Engagement',
         formatter: 'percent',
         class: 'order-6 3xl:order-6',
-        group: [
-            {key: 'lt_REG2PU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
-                return lastStat('lt_REG2PU');
-            }},
-            {key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
-                return lastStat('lt_REG2DAU');
-            }},
-            {key: 'lt_REG2TAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {
-                return lastStat('lt_REG2TAU');
-            }},
-        ],
-    },
-];
+        group: [],
+    };
 
-if (! page.props.auth.user.settings.showAdvanced) {
-    charts = charts.filter(function (item) {return item.name !== 'Average Revenue' && item.name !== 'Engagement';});
+    if (currentProjectHasTrackingUsageBits(['payments'])) {
+        engagementChart.group.push({key: 'lt_REG2PU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2PU')}});
+    }
+
+    engagementChart.group.push({key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2DAU')}});
+    engagementChart.group.push({key: 'lt_REG2TAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2TAU')}});
+
+    if (engagementChart.group.length > 0) charts.push(engagementChart);
 }
 
 charts.forEach(function(chartGroup) {

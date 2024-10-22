@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\Team;
+use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 
 class StatsVisitorFactory extends Factory
 {
@@ -50,7 +51,7 @@ class StatsVisitorFactory extends Factory
             ]);
         }
 
-        $data['visitor_hash'] = StatsVisitor::createHash($data['time'], $this->faker->ipv4, $this->faker->userAgent);
+        $data['visitor_hash'] = SimplestatsClient::createVisitorHash($data['time'], $this->faker->ipv4, $this->faker->userAgent);
 
         return $data;
     }

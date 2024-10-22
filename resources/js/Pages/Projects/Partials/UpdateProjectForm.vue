@@ -6,14 +6,17 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
 
 const props = defineProps({
     project: Object,
     permissions: Object,
+    trackingUsages: Object,
 });
 
 const form = useForm({
     name: props.project.name,
+    usage: props.project.usage,
 });
 
 const updateProject = () => {
@@ -27,17 +30,17 @@ const updateProject = () => {
 <template>
     <FormSection @submitted="updateProject">
         <template #title>
-            Project Name
+            Project
         </template>
 
         <template #description>
-            The project's name.
+            Information about the project.
         </template>
 
         <template #form>
             <!-- Project Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Project Name" />
+                <InputLabel for="name" value="Project name" />
 
                 <TextInput
                     id="name"
@@ -48,6 +51,14 @@ const updateProject = () => {
                 />
 
                 <InputError :message="form.errors.name" class="mt-2" />
+            </div>
+
+            <div class="col-span-6">
+                <InputLabel for="usage" value="Project usage" />
+                <div class="mt-1">
+                    <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" />
+                </div>
+                <InputError :message="form.errors.usage" class="mt-2" />
             </div>
         </template>
 

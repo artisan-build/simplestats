@@ -10,6 +10,7 @@ import CreateProjectInstanceForm from "@/Pages/Projects/Partials/CreateProjectIn
 defineProps({
     project: Object,
     permissions: Object,
+    trackingUsages: Object,
 });
 
 </script>
@@ -21,7 +22,7 @@ defineProps({
         </template>
 
         <div>
-            <UpdateProjectForm :project="project" :permissions="permissions" />
+            <UpdateProjectForm :project="project" :permissions="permissions" :trackingUsages="trackingUsages" />
 
             <SectionBorder />
 

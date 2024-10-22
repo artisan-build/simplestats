@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Services\StatsService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProjectRequest extends FormRequest
@@ -21,6 +22,7 @@ class ProjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:1', 'max:30'],
+            'usage' => ['required', 'integer', 'min:1', 'max:'.StatsService::getTrackingUsageBitsCount()],
         ];
     }
 }

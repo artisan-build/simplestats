@@ -79,6 +79,11 @@ export function getKpiDefinitions(rangeType) {
             long: 'Average Revenue Per Paying User',
             description: 'The average revenue per paying User.',
         },
+        lt_ARPV: {
+            short: 'ARPV',
+            long: 'Average Revenue Per Visitor',
+            description: 'The average revenue per Unique Visitor over lifetime.',
+        },
         lt_PU: {
             small: 'PU',
             short: 'Paying Users',

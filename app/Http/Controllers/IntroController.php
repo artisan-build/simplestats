@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IntroRequest;
 use App\Models\Project;
 use App\Providers\RouteServiceProvider;
+use App\Services\StatsService;
 use Inertia\Inertia;
 
 class IntroController extends Controller
@@ -18,7 +19,8 @@ class IntroController extends Controller
             $request->has('currency') &&
             $request->has('timezone') &&
             $request->has('project') &&
-            $request->has('instance')
+            $request->has('instance') &&
+            $request->has('usage')
         ) {
             $request->user()->currentTeam->update([
                 'name' => $request->team,
@@ -28,6 +30,7 @@ class IntroController extends Controller
 
             $project = Project::create([
                 'name' => $request->project,
+                'usage' => $request->usage,
             ]);
 
             $instance = $project->instances()->create([
@@ -49,6 +52,7 @@ class IntroController extends Controller
         return Inertia::render('Intro', [
             'team' => $request->user()->currentTeam->name,
             'timezones' => $timezones,
+            'trackingUsages' => StatsService::getTrackingUsages(),
         ]);
     }
 }

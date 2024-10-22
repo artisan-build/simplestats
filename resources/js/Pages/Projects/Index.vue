@@ -9,14 +9,17 @@ import TextInput from "@/Components/TextInput.vue";
 import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import {Link, useForm} from "@inertiajs/vue3";
+import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
 
 defineProps({
     projects: Object,
     permissions: Object,
+    trackingUsages: Object,
 });
 
 const createProjectForm = useForm({
     name: '',
+    usage: 0,
 });
 
 const createProject = () => {
@@ -49,7 +52,7 @@ const createProject = () => {
 
                     <template #form>
                         <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="name" value="Name" />
+                            <InputLabel for="name" value="Project name" />
                             <TextInput
                                 id="name"
                                 v-model="createProjectForm.name"
@@ -59,6 +62,13 @@ const createProject = () => {
                                 :disabled="! permissions.canCreateProject"
                             />
                             <InputError :message="createProjectForm.errors.name" class="mt-2" />
+                        </div>
+                        <div class="col-span-6">
+                            <InputLabel for="usage" value="Project usage" />
+                            <div class="mt-1">
+                                <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="createProjectForm.usage" />
+                            </div>
+                            <InputError :message="createProjectForm.errors.usage" class="mt-2" />
                         </div>
                     </template>
 
