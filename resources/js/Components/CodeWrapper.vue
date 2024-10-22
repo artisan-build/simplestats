@@ -30,7 +30,7 @@ const html = highlighter.codeToHtml(props.code, {
             </p>
         </div>
         <div class="text-sm mt-4">
-            <div v-html="html"></div>
+            <div class="overflow-auto" v-html="html"></div>
         </div>
     </div>
 </template>
