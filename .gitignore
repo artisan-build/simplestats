@@ -2,9 +2,9 @@
 /node_modules
 /public/build
 /public/hot
+/public/icons/track_referer
 /public/storage
-/storage/*.key
-/storage/debugbar
+/storage
 /vendor
 .env
 .env.backup

@@ -28,7 +28,13 @@ class FaviconService
     public function download(string $domain): bool
     {
         $basePath = public_path("icons");
-        $filePath = "$basePath/track_referer/$domain.ico";
+        $refererPath = $basePath . "/track_referer";
+
+        if (! is_dir($refererPath)) {
+            mkdir($refererPath, 0775, true);
+        }
+
+        $filePath = $refererPath . "/$domain.ico";
 
         // TODO evtl. last modify prüfen und monatlich favicon neu fetchen?
         if (file_exists($filePath)) {
