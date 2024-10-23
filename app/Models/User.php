@@ -6,11 +6,14 @@ use App\Enums\StatsRangeType;
 use App\Jobs\QueuedVerifyEmailJob;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use JoelButcher\Socialstream\HasConnectedAccounts;
+use JoelButcher\Socialstream\SetsProfilePhotoFromUrl;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -25,10 +28,14 @@ use Spark\Plan;
 class User extends Authenticatable implements TrackableUserWithCondition, MustVerifyEmail
 {
     use HasApiTokens;
+    use HasConnectedAccounts;
     use HasFactory;
-    use HasProfilePhoto;
+    use HasProfilePhoto {
+        HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
+    }
     use HasTeams;
     use Notifiable;
+    use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
     use Billable {
         sparkPlan as aliasSparkPlan;
@@ -77,6 +84,16 @@ class User extends Authenticatable implements TrackableUserWithCondition, MustVe
     protected $appends = [
         'profile_photo_url',
     ];
+
+    /**
+     * Get the URL to the user's profile photo.
+     */
+    public function profilePhotoUrl(): Attribute
+    {
+        return filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)
+            ? Attribute::get(fn () => $this->profile_photo_path)
+            : $this->getPhotoUrl();
+    }
 
     public function sendEmailVerificationNotification(): void
     {

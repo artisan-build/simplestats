@@ -53,3 +53,5 @@ Route::middleware([
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::get('user-settings/toggle-advanced', [UserSettingsController::class, 'toggleAdvanced'])->name('user-settings.toggle-advanced');
 });
+
+require __DIR__.'/socialstream.php';
