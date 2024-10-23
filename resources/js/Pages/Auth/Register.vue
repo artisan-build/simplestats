@@ -19,7 +19,6 @@ const form = useForm({
     email: props.params.invitationMail ?? '',
     password: '',
     password_confirmation: '',
-    accept_invitation_link: props.params.acceptInvitationLink ?? '',
     terms: true,
 });
 
@@ -122,15 +121,6 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </div>
                     <InputError class="mt-3 -mb-1 text-left" :message="form.errors.terms" />
                 </InputLabel>
-            </div>
-
-            <div>
-                <TextInput
-                    id="accept_invitation_link"
-                    v-model="form.accept_invitation_link"
-                    type="hidden"
-                    autocomplete="accept_invitation_link"
-                />
             </div>
 
             <div class="mt-4 text-center">

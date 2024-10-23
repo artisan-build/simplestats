@@ -40,6 +40,10 @@ class CreateNewUser implements CreatesNewUsers
             $input['terms'] = true;
         }
 
+        if (session()->has('invitation')) {
+            $input['accept_invitation_link'] = session('invitation.acceptInvitationLink') ?? null;
+        }
+
         Validator::make($input, $rules)->validate();
 
         $invitation = false;
