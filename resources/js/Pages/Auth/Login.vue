@@ -1,11 +1,12 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, useForm, usePage} from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Socialstream from '@/Components/Socialstream.vue';
 import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
@@ -50,6 +51,10 @@ const appName = import.meta.env.VITE_APP_NAME;
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
             {{ status }}
         </div>
+
+        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length && $page.props.canRegister"
+                      :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
+                      :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
 
         <form @submit.prevent="submit">
             <div>

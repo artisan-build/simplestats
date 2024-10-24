@@ -7,12 +7,14 @@ use App\Imports\BaseStatsImport;
 use App\Models\DataImport;
 use App\Models\PersonalAccessToken;
 use App\Models\User;
+use App\PulseUsers;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Pulse\Contracts\ResolvesUsers;
 use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }
+
+        $this->app->singleton(ResolvesUsers::class, PulseUsers::class);
     }
 
     /**

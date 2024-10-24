@@ -27,13 +27,24 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
             'accept_invitation_link' => ['nullable', new SignedUrl()]
-        ])->validate();
+        ];
+
+        if (isset($input['sso']) && $input['sso']) {
+            unset($rules['password']);
+            $input['terms'] = true;
+        }
+
+        if (session()->has('invitation')) {
+            $input['accept_invitation_link'] = session('invitation.acceptInvitationLink') ?? null;
+        }
+
+        Validator::make($input, $rules)->validate();
 
         $invitation = false;
         $invitationRequest = false;
@@ -53,9 +64,12 @@ class CreateNewUser implements CreatesNewUsers
             $createUser = [
                 'name' => $input['name'],
                 'email' => $input['email'],
-                'password' => Hash::make($input['password']),
                 'settings' => ['placeholder' => 1],
             ];
+
+            if (isset($input['password'])) {
+                $createUser['password'] = Hash::make($input['password']);
+            }
 
             return tap(User::create($createUser), function (User $user) use ($invitationRequest, $invitation) {
                 // create the users personal team

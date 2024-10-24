@@ -46,13 +46,18 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::registerView(function (Request $request) {
-            $data['params'] = [
-                'invitationMail' => $request->invitation_mail ?? '',
-                'acceptInvitationLink' => $request->accept_invitation_link ?? '',
-                'teamName' => urldecode($request->team_name) ?? '',
-                'teamOwner' => urldecode($request->team_owner) ?? '',
-            ];
-            return Inertia::render('Auth/Register', $data);
+            if ($request->has('invitation_mail')) {
+                session()->put('invitation', [
+                    'invitationMail' => $request->invitation_mail ?? '',
+                    'acceptInvitationLink' => $request->accept_invitation_link ?? '',
+                    'teamName' => urldecode($request->team_name) ?? '',
+                    'teamOwner' => urldecode($request->team_owner) ?? '',
+                ]);
+            }
+
+            return Inertia::render('Auth/Register', [
+                'params' => session('invitation') ?? [],
+            ]);
         });
 
         Fortify::loginView(function () {

@@ -6,6 +6,7 @@ import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Socialstream from '@/Components/Socialstream.vue';
 import TextInput from '@/Components/TextInput.vue';
 import {onMounted} from "vue";
 
@@ -18,7 +19,6 @@ const form = useForm({
     email: props.params.invitationMail ?? '',
     password: '',
     password_confirmation: '',
-    accept_invitation_link: props.params.acceptInvitationLink ?? '',
     terms: true,
 });
 
@@ -43,6 +43,10 @@ const appName = import.meta.env.VITE_APP_NAME;
             Sign up to {{ appName }}<br>
             <span class="text-sm text-gray-500" v-if="params.teamName">and join the following team: {{ params.teamName }}</span>
         </template>
+
+        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length"
+                      :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
+                      :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
 
         <form @submit.prevent="submit">
             <div>
@@ -117,15 +121,6 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </div>
                     <InputError class="mt-3 -mb-1 text-left" :message="form.errors.terms" />
                 </InputLabel>
-            </div>
-
-            <div>
-                <TextInputx
-                    id="accept_invitation_link"
-                    v-model="form.accept_invitation_link"
-                    type="hidden"
-                    autocomplete="accept_invitation_link"
-                />
             </div>
 
             <div class="mt-4 text-center">
