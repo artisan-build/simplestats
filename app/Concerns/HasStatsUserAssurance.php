@@ -29,12 +29,14 @@ trait HasStatsUserAssurance
         ])->doesntExist()) {
             StatsUser::create(array_merge($uniqueInstance, [
                 'id' => $this->stats_user_id,
-                'time' => now(),
+                'time' => $this->stats_user_time ?? now(),
                 // hack to set ip and user_agent when the user not yet exists on our side, but the user is doing a login
                 // then a account gets created and we want to store ip and user_agent
                 'ip' => request()->input('ip') ?? null,
                 'user_agent' => request()->input('user_agent') ?? null,
             ]));
         }
+
+        unset($this->stats_user_time);
     }
 }

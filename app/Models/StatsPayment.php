@@ -24,6 +24,7 @@ class StatsPayment extends BaseStat
     protected $fillable = [
         'id',
         'stats_user_id',
+        'stats_user_time', // used for HasStatsUserAssurance
         'gross',
         'net',
         'currency',

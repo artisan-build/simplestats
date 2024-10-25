@@ -23,6 +23,7 @@ class StatsLogin extends BaseStat
      */
     protected $fillable = [
         'stats_user_id',
+        'stats_user_time', // used for HasStatsUserAssurance
         'time',
         'time_utc',
         'ip',

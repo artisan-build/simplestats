@@ -8,7 +8,7 @@ return [
     'middleware' => ['web'],
     'prompt' => 'Or',
     'providers' => [
-//        Providers::google(),
+        Providers::google(),
         Providers::github(),
     ],
     'features' => [
