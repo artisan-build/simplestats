@@ -68,8 +68,10 @@ class PulseUsers implements ResolvesUsers
             return (object) ($this->fieldResolver)($user);
         }
 
+        $name = $user->name ?? '';
+
         return (object) [
-            'name' => $user->name ?? "ID: $id",
+            'name' => $name. " - ID: $id",
             'extra' => explode('\\', $model)[2],
             'avatar' => $user->avatar ?? (($user->email ?? false)
                     ? sprintf('https://gravatar.com/avatar/%s?d=mp', hash('sha256', trim(strtolower($user->email)))) // @phpstan-ignore property.nonObject
