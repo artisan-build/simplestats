@@ -15,6 +15,10 @@ class BaseStatsValidator
     {
         $input['time'] = Carbon::parse($input['time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
 
+        if (isset($input['stats_user_time'])) {
+            $input['stats_user_time'] = Carbon::parse($input['stats_user_time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
+        }
+
         return $input;
     }
 
@@ -23,6 +27,11 @@ class BaseStatsValidator
         return [
             'time' => [
                 'required',
+                'before_or_equal:now',
+                'date_format:Y-m-d H:i:s P',
+            ],
+            'stats_user_time' => [
+                'sometimes',
                 'before_or_equal:now',
                 'date_format:Y-m-d H:i:s P',
             ],
