@@ -11,7 +11,7 @@ defineProps({
 
 <template>
     <tr class="text-left font-bold">
-        <th class="pb-4 pt-6 px-6">Instances</th>
+        <th class="pb-4 pt-6 px-6">Your existing Instances</th>
         <th v-if="! insideProject" class="pb-4 pt-6 px-6">Project</th>
     </tr>
     <tr v-if="instances.length > 0" v-for="instance in instances" :key="instance.id" class="hover:bg-gray-50 focus-within:bg-gray-50 text-gray-700">

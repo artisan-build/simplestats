@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\StatsRangeType;
 use App\Jobs\QueuedVerifyEmailJob;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -20,12 +19,11 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
-use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
-use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
+use SimpleStatsIo\LaravelClient\Contracts\TrackableIndividualWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
-class User extends Authenticatable implements TrackableUserWithCondition, MustVerifyEmail
+class User extends Authenticatable implements TrackableIndividualWithCondition, MustVerifyEmail
 {
     use HasApiTokens;
     use HasConnectedAccounts;

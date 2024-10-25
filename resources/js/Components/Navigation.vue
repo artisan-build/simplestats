@@ -19,7 +19,7 @@ const helpAction = (e) => {
         <div class="overflow-x-clip">
             <header class="pt-8 pb-7 dark:bg-gray-900 text-center">
                 <Link class="inline-block mt-2" :href="route('dashboard')">
-                    <img src="/svg/logo_only.svg">
+                    <img src="/svg/logo_only.svg" width="40" height="30">
                 </Link>
             </header>
         </div>

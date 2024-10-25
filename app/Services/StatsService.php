@@ -166,7 +166,7 @@ class StatsService
             'visitors' => [
                 'bit' => self::TRACKING_USAGE_BITS_VISITORS,
                 'name' => 'Visitor Tracking',
-                'descr' => 'Track app visitors and capture their UTMs, location, device etc.',
+                'descr' => 'Track app visitors and capture UTMs, location, device etc.',
             ],
             'users' => [
                 'bit' => self::TRACKING_USAGE_BITS_USERS,
@@ -176,7 +176,7 @@ class StatsService
             'payments' => [
                 'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
                 'name' => 'Payment Tracking',
-                'descr' => 'Track payments and the associated campaigns. Perfect to analyze ROI.',
+                'descr' => 'Track payments with associated campaigns - ideal to measure ROI.',
             ],
         ]);
     }

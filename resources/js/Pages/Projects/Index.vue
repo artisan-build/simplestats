@@ -92,7 +92,7 @@ const createProject = () => {
                     <div class="mt-10 sm:mt-0">
                         <ActionTable :links="projects.links" >
                             <template #title>
-                                Your Projects
+                                Your existing Projects
                             </template>
 
                             <template #description>

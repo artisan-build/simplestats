@@ -125,13 +125,12 @@ if (currentProjectHasTrackingUsageBits(['payments'])) {
     };
 
     revenueChart.group.push({key: 'pd_NET', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_NET}});
-    revenueChart.group.push({key: 'pd_FEE', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_FEE}});
+    revenueChart.group.push({key: 'pd_GROSS', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_GROSS}});
 
-
-    if (! currentProjectHasTrackingUsageBits(['users']) && currentProjectHasTrackingUsageBits(['payments'])) {
-        revenueChart.group.push({key: 'lt_ARPV', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_ARPV')}});
+    if (! currentProjectHasTrackingUsageBits(['visitors'])) {
+        revenueChart.group.push({key: 'pd_FEE', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_FEE}});
     } else {
-        revenueChart.group.push({key: 'pd_GROSS', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_GROSS}});
+        revenueChart.group.push({key: 'lt_ARPV', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_ARPV')}});
     }
 
     if (revenueChart.group.length > 0) charts.push(revenueChart);
@@ -236,10 +235,17 @@ charts.forEach(function(chartGroup) {
         });
     }
 });
+
+const chartLenght = charts.length;
 </script>
 
 <template>
-    <div class="grid gap-8 xl:grid-cols-2" :class="(page.props.auth.user.settings.showAdvanced) ? '3xl:grid-cols-3' : '5xl:grid-cols-4'">
-        <StatsChart v-for="(chart, chartIndex) in charts" :chart="chart" :chartIndex="chartIndex" />
+    <div class="grid gap-8" :class="{
+        'xl:grid-cols-1': chartLenght === 1,
+        'xl:grid-cols-2': chartLenght >= 2,
+        '3xl:grid-cols-3': page.props.auth.user.settings.showAdvanced && chartLenght > 2,
+        '5xl:grid-cols-4': !page.props.auth.user.settings.showAdvanced && chartLenght > 2
+    }">
+        <StatsChart v-for="(chart, chartIndex) in charts" :chart="chart" :chartLength="chartLenght" :chartIndex="chartIndex" />
     </div>
 </template>

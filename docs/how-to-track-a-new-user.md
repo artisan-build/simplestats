@@ -23,14 +23,14 @@ If you for any reason do **not** use the default user model from Laravel, you ma
 
 ## Trackable User
 
-To track a new user/registration, the only thing you have to do is to add the `TrackableUser` contract to your `User` model and then implement the methods defined in the contract.
+To track a new user/registration, the only thing you have to do is to add the `TrackableIndividual` contract to your `User` model and then implement the methods defined in the contract.
 
 It may look like this:
 
 ```php
-use SimpleStatsIo\LaravelClient\Contracts\TrackableUser;
+use SimpleStatsIo\LaravelClient\Contracts\TrackableIndividual;
 
-class User extends Authenticatable implements TrackableUser
+class User extends Authenticatable implements TrackableIndividual
 {
     // ...
     
@@ -54,12 +54,12 @@ You may tweak the `getTrackingTime` method to your needs. For instance, if your 
 
 ### With Condition
 
-Sometimes you may not want to count a newly created user immediately as a "valid" registration. For such cases, the `TrackableUserWithCondition` contract is designed to be utilized. Use it if you want to track/count a new registration only when a certain condition is fulfilled, such as the user has verified their email address.
+Sometimes you may not want to count a newly created user immediately as a "valid" registration. For such cases, the `TrackableIndividualWithCondition` contract is designed to be utilized. Use it if you want to track/count a new registration only when a certain condition is fulfilled, such as the user has verified their email address.
 
 ```php
-use SimpleStatsIo\LaravelClient\Contracts\TrackableUserWithCondition;
+use SimpleStatsIo\LaravelClient\Contracts\TrackableIndividualWithCondition;
 
-class User extends Authenticatable implements TrackableUserWithCondition
+class User extends Authenticatable implements TrackableIndividualWithCondition
 {
     // ...
 

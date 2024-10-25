@@ -22,6 +22,10 @@ trait HasStatsUserAssurance
      */
     public function ensureStatsUser(array $uniqueInstance = []): void
     {
+        if (! $this->stats_user_id) {
+            return;
+        }
+
         // our primary key is id + instance_id
         if (StatsUser::where([
             ['id', $this->stats_user_id],

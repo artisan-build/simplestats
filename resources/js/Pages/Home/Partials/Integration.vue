@@ -65,11 +65,11 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Add the TrackableUser contract" />
+                    <SmallStepText content="Add the TrackableIndividual contract" />
 
-                    <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackableUser contract" :code="snippetTrackUser" />
+                    <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackableIndividual contract" :code="snippetTrackUser" />
                     <GridPlaceholder />
-                    <StepText :content="`To make the client track your user registrations, you only have to add the TrackableUser interface and implement the contract.`" />
+                    <StepText :content="`To make the client track your user registrations, you only have to add the TrackableIndividual interface and implement the contract.`" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
@@ -80,7 +80,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <StepText :content="`To enable the client to track your app’s payments, you need to add the TrackablePayment interface to your payment/transaction model and implement the contract.`" />
                 </div>
             </div>
-            <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs">documentation</a> for more details.</div>
+            <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
         </div>
     </section>
 </template>

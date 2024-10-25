@@ -10,6 +10,7 @@ const ApexChart = defineComponent(VueApexCharts);
 
 const props = defineProps({
     chart: Object,
+    chartLength: Number,
     chartIndex: Number,
 });
 
@@ -110,6 +111,10 @@ const chartOptions = ref({
         // borderColor: '#f1f1f1',
     },
 });
+
+if (props.chartLength <= 1) {
+    chartOptions.value.title.text = 'Chart';
+}
 
 const latestPeriod = categories[categories.length - 1];
 const previousPeriod = categories[categories.length - 2];

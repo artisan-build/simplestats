@@ -58,6 +58,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                     :filters="filters"
                     :rangeTypes="rangeTypes"
                     :topReferers="topReferers"
+                    :trackingUsageBits="trackingUsageBits"
                 />
             </div>
             <div class="grid gap-8">

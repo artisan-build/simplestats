@@ -5,7 +5,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 <template>
     <Link href="/" class="inline-flex items-center">
-        <img src="/svg/logo_only.svg">
+        <img src="/svg/logo_only.svg" width="40" height="30">
     </Link>
 </template>
 

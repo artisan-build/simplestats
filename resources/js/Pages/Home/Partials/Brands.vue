@@ -14,12 +14,12 @@ const brands = [
         'img': '/images/brands/laravel-news.png',
         'alt': 'SimpleStats - The missing analytics tool for Laravel applications | Laravel News',
     },
-    {
-        'name': 'Reddit',
-        'url': 'https://www.reddit.com/r/laravel/comments/1cbryw7/simplestats_a_lightweight_statistics_tool_for/',
-        'img': '/images/brands/reddit.png',
-        'alt': 'SimpleStats - a lightweight statistics tool for Laravel applications | Reddit',
-    },
+    // {
+    //     'name': 'Reddit',
+    //     'url': 'https://www.reddit.com/r/laravel/comments/1cbryw7/simplestats_a_lightweight_statistics_tool_for/',
+    //     'img': '/images/brands/reddit.png',
+    //     'alt': 'SimpleStats - a lightweight statistics tool for Laravel applications | Reddit',
+    // },
 ];
 </script>
 
@@ -32,7 +32,7 @@ const brands = [
             <div class="flex flex-wrap items-center justify-center">
                 <div v-for="brand in brands" class="p-3">
                     <a :href="brand.url" rel="noreferrer" target="_blank">
-                        <img :src="brand.img" :alt="brand.alt" style="width: 250px; height: 54px;" width="250" height="54" />
+                        <img :src="brand.img" :alt="brand.alt" width="250" height="54" />
                     </a>
                 </div>
             </div>

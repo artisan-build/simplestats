@@ -111,16 +111,16 @@ const appName = import.meta.env.VITE_APP_NAME;
 <!--                    </TabContent>-->
                     <TabContent class="pt-10 pb-20 text-center" title="Usage">
                         <div class="text-xl font-medium mb-10">
-                            How do you want to use {{ appName }}?
+                            How do you plan to use {{ appName }}?
                             <p class="text-base mt-2">
-                                Choose every option that meets your requirements!
+                                Select all options that fit your needs!
                             </p>
                         </div>
 
                         <div class="w-10/12 m-auto">
                             <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" border="4" />
-                            <div class="text-base mt-5">
-                                In the most cases it's best to select all...
+                            <div class="text-sm mt-5">
+                                In most cases, it’s best to select all options…
                             </div>
                         </div>
                     </TabContent>

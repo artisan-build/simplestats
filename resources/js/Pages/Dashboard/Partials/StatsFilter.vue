@@ -6,7 +6,6 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
-import {truncate} from "lodash";
 import EnvBadge from "@/Components/EnvBadge.vue";
 import {
     addHours,
@@ -30,7 +29,10 @@ const props = defineProps({
     filters: Object,
     rangeTypes: Array,
     topReferers: Object,
+    trackingUsageBits: Object,
 });
+
+const maxTrackingUsageBits = Object.values(props.trackingUsageBits).reduce((a, b) => a + b);
 
 const page = usePage();
 
@@ -142,6 +144,8 @@ function isStatsGroupSet() {
         statsGroup.some(group => props.filters[group.type])
     );
 }
+
+const currentProject = props.teamStats.projects[props.filters.projectId];
 </script>
 
 <template>
@@ -175,13 +179,13 @@ function isStatsGroupSet() {
                                         @change="filterChanged"
                                     />
                                 </div>
-                                <div v-if="teamStats.projects[filters.projectId].instances && teamStats.totalInstancesCount > 1">
+                                <div v-if="currentProject.instances && teamStats.totalInstancesCount > 1">
                                     <InputLabel class="hidden" for="instanceId" value="Instance" />
                                     <SelectInput
                                         id="instanceId"
                                         v-model="form.instanceId"
                                         class="mt-1 block w-40"
-                                        :options="teamStats.projects[filters.projectId].instances"
+                                        :options="currentProject.instances"
                                         @change="filterChanged"
                                     />
                                 </div>
@@ -242,7 +246,7 @@ function isStatsGroupSet() {
                                         @change="presetChanged"
                                     />
                                 </div>
-                                <div class="pl-3">
+                                <div v-if="maxTrackingUsageBits === currentProject.usage" class="pl-3">
                                     <InputLabel class="hidden" for="advanced" value="&nbsp;" />
                                     <ToggleButton class="mt-1" id="advanced" title="Toggle Advanced View" v-model:checked="page.props.auth.user.settings.showAdvanced" @click="$inertia.get(route('user-settings.toggle-advanced'))">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">

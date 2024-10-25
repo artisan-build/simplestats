@@ -116,7 +116,7 @@ return [
                     'yearly_id' => 0,
                     'features' => [
                         Project::class => '1 Project',
-                        Instance::class => '1 Instance',
+//                        Instance::class => '1 Instance',
                         StatsUser::class => '5,000 Users',
                         StatsPayment::class => '1,000 Payments',
                         StatsLogin::class => '10,000 Logins',
@@ -144,7 +144,7 @@ return [
                     'yearly_incentive' => 'Save 13%',
                     'features' => [
                         Project::class => '2 Projects',
-                        Instance::class => '5 Instances',
+//                        Instance::class => '5 Instances',
                         StatsUser::class => '100,000 Users',
                         StatsPayment::class => '50,000 Payments',
                         StatsLogin::class => '500,000 Logins',
@@ -172,7 +172,7 @@ return [
                     'yearly_incentive' => 'Save 15%',
                     'features' => [
                         Project::class => '8 Projects',
-                        Instance::class => '20 Instances',
+//                        Instance::class => '20 Instances',
                         StatsUser::class => '1,000,000 Users',
                         StatsPayment::class => '500,000 Payments',
                         StatsLogin::class => '5,000,000 Logins',
@@ -201,7 +201,7 @@ return [
                     'yearly_incentive' => 'Save 16%',
                     'features' => [
                         Project::class => '20 Projects',
-                        Instance::class => '100 Instances',
+//                        Instance::class => '100 Instances',
                         StatsUser::class => '10,000,000 Users',
                         StatsPayment::class => 'Unlimited Payments',
                         StatsLogin::class => 'Unlimited Logins',

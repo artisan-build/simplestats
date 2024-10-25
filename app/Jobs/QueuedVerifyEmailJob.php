@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use App\Notifications\NewRegistration;
+use App\Notifications\NewRegistrationNotification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,7 +31,7 @@ class QueuedVerifyEmailJob implements ShouldQueue
 
         if (app()->isProduction()) {
             User::query()->where('is_admin', 1)->each(function (User $user) {
-                $user->notify(new NewRegistration($this->user));
+                $user->notify(new NewRegistrationNotification($this->user));
             });
         }
     }

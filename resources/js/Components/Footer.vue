@@ -11,7 +11,7 @@
         a brand of
         <a class="hover:underline" href="https://leto.games" target="_blank">Leto GmbH</a>.
         <span class="px-2">&nbsp;|&nbsp;</span>
-        <a class="hover:underline" href="/terms-of-service" target="_blank">Terms &amp; Conditions</a>
+        <a class="hover:underline" href="/terms-of-service" target="_blank">Terms</a>
         &nbsp;·&nbsp;
         <a class="hover:underline" href="/privacy-policy" target="_blank">Privacy</a>
         &nbsp;·&nbsp;

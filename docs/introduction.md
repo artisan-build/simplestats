@@ -29,7 +29,7 @@ You can invite co-workers to your **team** and assign roles, such as _Administra
 **Ad blockers** and other privacy tools have a significant impact on the effectiveness of client-side analytics. Estimates suggest that up to **30-50%** of tracking data can be **blocked** when using client-side analytics due to these tools.
 This can lead to incomplete datasets, skewed metrics, and ultimately, inaccurate insights.
 
-On the other hand, server-side analytics are largely unaffected by ad blockers since the data collection occurs on the server rather than the user’s device.
+On the other hand, server-side analytics like _SimpleStats_ are largely unaffected by ad blockers since the data collection occurs on the server rather than the user’s device.
 This method ensures more accurate and comprehensive data collection, as it bypasses the limitations imposed by client-side tracking methods.
 
 Furthermore, server-side tracking offers enhanced data security and privacy since it does not rely on third-party cookies and is less vulnerable to browser restrictions and privacy settings.
