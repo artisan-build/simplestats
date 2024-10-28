@@ -14,6 +14,10 @@ trait HasStatsUserAssurance
         static::creating(function ($statsModel) {
             $statsModel->ensureStatsUser();
         });
+
+        static::updating(function ($statsModel) {
+            $statsModel->ensureStatsUser();
+        });
     }
 
     /**
