@@ -25,6 +25,8 @@ const updateProject = () => {
         preserveScroll: true,
     });
 };
+
+const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
@@ -54,7 +56,7 @@ const updateProject = () => {
             </div>
 
             <div class="col-span-6">
-                <InputLabel for="usage" value="Project usage" />
+                <InputLabel for="usage" :value="`How do you want to use ${appName} for this project?`" />
                 <div class="mt-1">
                     <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" />
                 </div>

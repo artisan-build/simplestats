@@ -31,6 +31,7 @@ const createProject = () => {
     });
 };
 
+const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
@@ -64,7 +65,7 @@ const createProject = () => {
                             <InputError :message="createProjectForm.errors.name" class="mt-2" />
                         </div>
                         <div class="col-span-6">
-                            <InputLabel for="usage" value="Project usage" />
+                            <InputLabel for="usage" :value="`How do you want to use ${appName} for this project?`" />
                             <div class="mt-1">
                                 <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="createProjectForm.usage" />
                             </div>
