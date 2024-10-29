@@ -25,6 +25,7 @@ class StatsPayment extends BaseStat
         'id',
         'stats_user_id',
         'stats_user_time', // used for HasStatsUserAssurance
+        'stats_visitor_id',
         'gross',
         'net',
         'currency',

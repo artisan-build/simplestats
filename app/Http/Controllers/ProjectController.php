@@ -64,16 +64,22 @@ class ProjectController extends Controller
 
     public function update(ProjectRequest $request, Project $project): RedirectResponse
     {
-        $project->update($request->validated());
+        $validated = $request->validated();
+
+        if ($validated['usage'] != $project->usage) {
+            app(StatsAggregationsService::class)->clearByProject($project);
+        }
+
+        $project->update($validated);
 
         return redirect()->back();
     }
 
-    public function destroy(Request $request, Project $project, StatefulGuard $guard, StatsAggregationsService $statsAggregationsService): RedirectResponse
+    public function destroy(Request $request, Project $project, StatefulGuard $guard): RedirectResponse
     {
         app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
 
-        $statsAggregationsService->clearByProject($project);
+        app(StatsAggregationsService::class)->clearByProject($project);
 
         $project->delete();
 

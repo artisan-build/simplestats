@@ -2,15 +2,16 @@
 
 namespace App\Services;
 
+use App\Builder\StatsAggregationsGroupedSqlBuilder;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
+use App\Enums\TrackableIndividual;
 use App\Models\BaseStat;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Carbon\CarbonPeriod;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -39,76 +40,43 @@ class StatsAggregationsService
         StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time'], update: ['data']);
     }
 
+    /**
+     * convert the objects to arrays for consistency
+     *
+     * @param  string  $sql
+     * @return array
+     */
+    protected function getDataArray(string $sql): array
+    {
+        return json_decode(json_encode(DB::select($sql)), true);
+    }
+
+    /**
+     * TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
+     */
     public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9): Collection
     {
-        // TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
-
-        $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
         $statsTypeSnake = str($statsType)->snake()->toString();
-        $statsDBType = 'stats_'.$statsTypeSnake.'_id';
 
+        $statsDBType = 'stats_'.$statsTypeSnake.'_id';
         $statsTable = "stats_".str($statsTypeSnake)->plural()->toString();
 
         // for track not but for referer we also want to know the Direct / Unknown
         $typeIdFallback =  (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
-        // TODO just a simple join from the $statsTable?
+        $trackableIndividual = TrackableIndividual::USER;
+        if ($project = Project::find($filters->projectId)) {
+            if (! $project->hasTrackingUsageBits([
+                StatsService::TRACKING_USAGE_BITS_VISITORS,
+                StatsService::TRACKING_USAGE_BITS_USERS,
+            ])) {
+                $trackableIndividual = TrackableIndividual::VISITOR;
+            }
+        }
 
-        $sql = "
-        WITH stats_groups AS (
-            SELECT id as type_id, name FROM $statsTable stats WHERE 1 :projectCondition
-            UNION ALL
-            SELECT $typeIdFallback as type_id, 'Direct / Unknown' as name
-        ),
-        # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
-        pd_dau AS (
-            SELECT COALESCE(su.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-            FROM stats_logins stats
-            :trackingJoinConditions :projectInstanceCondition
-            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
-            GROUP BY su.$statsDBType
-        ),
-        # lifetime visitpors
-        lt_visitors AS (
-            SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
-            FROM stats_visitors stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
-            :trackingConditions :projectInstanceCondition
-            GROUP BY stats.$statsDBType
-        ),
-        # lifetime regs
-        lt_reg AS (
-            SELECT COALESCE(stats.$statsDBType, $typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
-            FROM stats_users stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
-            :trackingConditions :projectInstanceCondition
-            GROUP BY stats.$statsDBType
-        ),
-        # lifetime net revenue
-        lt_net AS (
-            SELECT COALESCE(su.$statsDBType, $typeIdFallback) as type_id, SUM(stats.net) as count
-            FROM stats_payments stats
-            :trackingJoinConditions :projectInstanceCondition
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
-            GROUP BY su.$statsDBType
-        )
-        SELECT
-            sg.type_id as type_id,
-            sg.name as name,
-            COALESCE(lt_visitors.count, 0) AS visitors,
-            COALESCE(lt_reg.count, 0) AS reg,
-            COALESCE(lt_reg.count / lt_visitors.count * 100, 0) AS cr,
-            COALESCE(pd_dau.count, 0) AS dau,
-            COALESCE(ROUND(lt_net.count,2), 0) AS net
-        FROM
-            stats_groups sg
-            LEFT JOIN pd_dau ON sg.type_id = pd_dau.type_id
-            LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id
-            LEFT JOIN lt_visitors ON sg.type_id = lt_visitors.type_id
-            LEFT JOIN lt_net ON sg.type_id = lt_net.type_id
-        ORDER BY
-            $statsSort DESC;
-        ";
+        $sql = (new StatsAggregationsGroupedSqlBuilder(
+            $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackableIndividual)
+        )->build();
 
         $filterConditions = $this->getFilterConditions($filters);
 
@@ -116,50 +84,55 @@ class StatsAggregationsService
             $filterConditions['startDateStart'] = '1970-01-01';
         }
 
-        $endDateStart = $filterConditions['endDateStart'];
+        if ($trackableIndividual === TrackableIndividual::USER) {
+            $endDateStart = $filterConditions['endDateStart'];
 
-        $dauDates = match($filters->rangeType->value) {
-            'hours' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfHour()) ? [
-                'start' => now()->subHour()->startOfHour()->format(StatsRangeType::DATE_FORMAT),
-                'end' => now()->subHour()->endOfHour()->format(StatsRangeType::DATE_FORMAT),
-            ] : [],
-            'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
-                'start' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
-                'end' => now()->subDay()->endOfDay()->format(StatsRangeType::DATE_FORMAT),
-            ] : [],
-            'weeks' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfWeek()) ? [
-                'start' => now()->subWeek()->startOfWeek()->format(StatsRangeType::DATE_FORMAT),
-                'end' => now()->subWeek()->endOfWeek()->format(StatsRangeType::DATE_FORMAT),
-            ] : [],
-            'months' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfMonth()) ? [
-                'start' => now()->subMonth()->startOfMonth()->format(StatsRangeType::DATE_FORMAT),
-                'end' => now()->subMonth()->endOfMonth()->format(StatsRangeType::DATE_FORMAT),
-            ] : [],
-            'years' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfYear()) ? [
-                'start' => now()->subYear()->startOfYear()->format(StatsRangeType::DATE_FORMAT),
-                'end' => now()->subYear()->endOfYear()->format(StatsRangeType::DATE_FORMAT),
-            ] : [],
-        };
+            $dauDates = match($filters->rangeType->value) {
+                'hours' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfHour()) ? [
+                    'start' => now()->subHour()->startOfHour()->format(StatsRangeType::DATE_FORMAT),
+                    'end' => now()->subHour()->endOfHour()->format(StatsRangeType::DATE_FORMAT),
+                ] : [],
+                'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
+                    'start' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
+                    'end' => now()->subDay()->endOfDay()->format(StatsRangeType::DATE_FORMAT),
+                ] : [],
+                'weeks' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfWeek()) ? [
+                    'start' => now()->subWeek()->startOfWeek()->format(StatsRangeType::DATE_FORMAT),
+                    'end' => now()->subWeek()->endOfWeek()->format(StatsRangeType::DATE_FORMAT),
+                ] : [],
+                'months' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfMonth()) ? [
+                    'start' => now()->subMonth()->startOfMonth()->format(StatsRangeType::DATE_FORMAT),
+                    'end' => now()->subMonth()->endOfMonth()->format(StatsRangeType::DATE_FORMAT),
+                ] : [],
+                'years' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfYear()) ? [
+                    'start' => now()->subYear()->startOfYear()->format(StatsRangeType::DATE_FORMAT),
+                    'end' => now()->subYear()->endOfYear()->format(StatsRangeType::DATE_FORMAT),
+                ] : [],
+            };
 
-        if (empty($dauDates)) {
-            $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];
-            $filterConditions['dauEndDateEnd'] = $filterConditions['endDateEnd'];
-        } else {
-            $filterConditions['dauEndDateStart'] = $dauDates['start'];
-            $filterConditions['dauEndDateEnd'] = $dauDates['end'];
+            if (empty($dauDates)) {
+                $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];
+                $filterConditions['dauEndDateEnd'] = $filterConditions['endDateEnd'];
+            } else {
+                $filterConditions['dauEndDateStart'] = $dauDates['start'];
+                $filterConditions['dauEndDateEnd'] = $dauDates['end'];
+            }
         }
 
         if (empty($filterConditions['trackingJoinConditions'])) {
-            $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
+            $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_{$trackableIndividual->value}s su ON su.id = stats.stats_{$trackableIndividual->value}_id AND su.instance_id = stats.instance_id";
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-        //echo nl2br($sql);die;
-        // convert the objects to arrays for consistency
-        $dataArray = json_decode(json_encode(DB::select($sql)), true);
+//        echo nl2br($sql);die;
+
+        $dataArray = $this->getDataArray($sql);
 
         return collect($dataArray)->reject(function ($item) {
-            return $item['dau'] == 0 && $item['reg'] == 0 && $item['net'] == 0 && $item['visitors'] == 0;
+            return (! isset($item['dau']) || $item['dau'] == 0)
+                && (! isset($item['reg']) || $item['reg'] == 0)
+                && (! isset($item['net']) || $item['net'] == 0)
+                && (! isset($item['visitors']) || $item['visitors'] == 0);
         })->take($limit);
     }
 
@@ -188,7 +161,7 @@ class StatsAggregationsService
         }
 
         if ($aggregatedData->isEmpty()) {
-            $aggregatedData = $this->getRawData($filterConditions);
+            $aggregatedData = $this->getRawData($filterConditions, $filters->projectId);
             $this->storeAggregatedData($aggregatedData, $filters);
         } else {
             $missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filters);
@@ -273,9 +246,16 @@ class StatsAggregationsService
         }
 
         if (!empty($trackingCondition)) {
+            $trackableIndividual = TrackableIndividual::USER;
+            if ($project = Project::find($filters->projectId)) {
+                if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS, StatsService::TRACKING_USAGE_BITS_USERS])) {
+                    $trackableIndividual = TrackableIndividual::VISITOR;
+                }
+            }
+
             $conditions['trackingConditions'] = $trackingCondition;
             $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
-            $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
+            $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_{$trackableIndividual->value}s su ON su.id = stats.stats_{$trackableIndividual->value}_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
         } else {
             $conditions['trackingConditions'] = "";
             $conditions['trackingJoinConditions'] = "";
@@ -330,7 +310,7 @@ class StatsAggregationsService
                 'rangeStart' => current($missingBeforePeriod),
             ]));
 
-            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersBefore)));
+            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersBefore), $filtersBefore->projectId));
         }
 
         if (! empty($missingAfterPeriod)) {
@@ -340,15 +320,22 @@ class StatsAggregationsService
                 'rangeStart' => current($missingAfterPeriod),
             ]));
 
-            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersAfter)));
+            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersAfter), $filtersBefore->projectId));
         }
 
         return $missingAggregatedData;
     }
 
-    public function getRawData(array $filterConditions): Collection
+    public function getRawData(array $filterConditions, ?int $projectId): Collection
     {
         $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
+
+        $trackableIndividual = 'user';
+        if ($project = Project::find($projectId)) {
+            if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS, StatsService::TRACKING_USAGE_BITS_USERS])) {
+                $trackableIndividual = 'visitor';
+            }
+        }
 
         $sql = "
         WITH RECURSIVE date_sequence AS (
@@ -357,16 +344,12 @@ class StatsAggregationsService
             SELECT DATE_ADD(date, INTERVAL 1 :intervalType)
             FROM date_sequence
             WHERE date < ':endDateStart'
-        ),
+        ),";
+        if ($trackableIndividual === 'user') {
+        $sql .= "
         pd_reg AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_users stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
-            GROUP BY date
-        ),
-        pd_visitor AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
-            FROM stats_visitors stats
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
             GROUP BY date
         ),
@@ -422,6 +405,15 @@ class StatsAggregationsService
             ) :projectInstanceCondition
             GROUP BY date
         ),
+        ";
+        }
+        $sql .= "
+        pd_visitor AS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            FROM stats_visitors stats
+            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
+            GROUP BY date
+        ),
         # gross
         pd_gross AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
@@ -438,17 +430,9 @@ class StatsAggregationsService
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY date
         ),
-        # lifetime visitors
-        lt_visitor AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
-                    FROM stats_visitors stats
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition :trackingConditions
-                ) AS count
-            FROM date_sequence ds
-        ),
+        ";
+        if ($trackableIndividual === 'user') {
+        $sql .= "
         # lifetime regs
         lt_reg AS (
             SELECT
@@ -469,6 +453,32 @@ class StatsAggregationsService
                     FROM stats_logins stats
                     :trackingJoinConditions
                     WHERE stats.time <= :intervalEnd and stats.counter = $nauLoginCounter :projectInstanceCondition
+                ) AS count
+            FROM date_sequence ds
+        ),
+        # lifetime paying user
+        lt_pu AS (
+            SELECT
+                DATE_FORMAT(ds.date, ':dateFormat') AS date,
+                (
+                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
+                    FROM stats_payments stats
+                    :trackingJoinConditions
+                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
+                ) AS count
+            FROM date_sequence ds
+        ),
+        ";
+        }
+        $sql .= "
+        # lifetime visitors
+        lt_visitor AS (
+            SELECT
+                DATE_FORMAT(ds.date, ':dateFormat') AS date,
+                (
+                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
+                    FROM stats_visitors stats
+                    WHERE stats.time <= :intervalEnd :projectInstanceCondition :trackingConditions
                 ) AS count
             FROM date_sequence ds
         ),
@@ -495,52 +505,52 @@ class StatsAggregationsService
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
-        ),
-        # lifetime paying user
-        lt_pu AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
-                    FROM stats_payments stats
-                    :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
-                ) AS count
-            FROM date_sequence ds
         )
         SELECT
             DATE_FORMAT(ds.date, ':dateFormat') as date,
             DATE_FORMAT(ds.date, ':dateFormatClear') as date_clear,
+            ";
+            if ($trackableIndividual === 'user') {
+            $sql .= "
             COALESCE(pd_reg.count, 0) AS pd_REG,
-            COALESCE(pd_visitor.count, 0) AS pd_VISITOR,
             COALESCE(pd_nau.count, 0) AS pd_NAU,
             COALESCE(pd_napu.count, 0) AS pd_NAPU,
             COALESCE(pd_dau.count, 0) AS pd_DAU,
             COALESCE(pd_dapu.count, 0) AS pd_DAPU,
             COALESCE(pd_daapu.count, 0) AS pd_DAAPU,
-            COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
-            COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
-            COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
             COALESCE(lt_reg.count, 0) AS lt_REG,
             COALESCE(lt_pu.count, 0) AS lt_PU,
             COALESCE(lt_tau.count, 0) AS lt_TAU,
+            ";
+            }
+            $sql .= "
+            COALESCE(pd_visitor.count, 0) AS pd_VISITOR,
+            COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
+            COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
+            COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
             COALESCE(ROUND(lt_net.count,2), 0) AS lt_NET,
             COALESCE(ROUND(lt_gross.count,2), 0) AS lt_GROSS
         FROM
             date_sequence ds
+            ";
+            if ($trackableIndividual === 'user') {
+            $sql .= "
             LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
-            LEFT JOIN pd_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = pd_visitor.date
             LEFT JOIN pd_nau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_nau.date
             LEFT JOIN pd_napu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_napu.date
             LEFT JOIN pd_dau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dau.date
             LEFT JOIN pd_dapu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dapu.date
             LEFT JOIN pd_daapu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_daapu.date
-            LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
-            LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
             LEFT JOIN lt_reg ON DATE_FORMAT(ds.date, ':dateFormat') = lt_reg.date
-            LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
             LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
             LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
+            ";
+            }
+            $sql .= "
+            LEFT JOIN pd_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = pd_visitor.date
+            LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
+            LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
+            LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
             LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
             LEFT JOIN lt_gross ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross.date
         ORDER BY
@@ -549,9 +559,9 @@ class StatsAggregationsService
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
 //         echo nl2br($sql);die;
-        // convert the objects to arrays for consistency
-        $array = json_decode(json_encode(DB::select($sql)), true);
-        return $this->formatAggregatedData(collect($array));
+
+        $dataArray = $this->getDataArray($sql);
+        return $this->formatAggregatedData(collect($dataArray));
     }
 
     /**
@@ -575,21 +585,17 @@ class StatsAggregationsService
                 ['type', '=', $case->value],
             ])->where(function ($query) use ($stat) {
                 // stats must be re-aggregated on team basis
-                $query->where([
-                    ['team_id', '=', $stat->team_id],
-                    ['project_id', '=', null],
-                    ['instance_id', '=', null],
+                $query->where(function ($query) use ($stat) {
+                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
+                })
                 // stats must be re-aggregated on project basis
-                ])->orWhere([
-                    ['team_id', '=', $stat->team_id],
-                    ['project_id', '=', $stat->project_id],
-                    ['instance_id', '=', null],
+                ->orWhere(function ($query) use ($stat) {
+                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', null);
+                })
                 // stats must be re-aggregated on instance basis
-                ])->orWhere([
-                    ['team_id', '=', $stat->team_id],
-                    ['project_id', '=', $stat->project_id],
-                    ['instance_id', '=', $stat->instance_id],
-                ]);
+                ->orWhere(function ($query) use ($stat) {
+                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', $stat->instance_id);
+                });
             })->delete();
             // other projects and instances aggregations will remain
             // but unfortunately we have to re-aggregate the whole team
@@ -598,33 +604,34 @@ class StatsAggregationsService
 
     public function clearByInstance(Instance $instance): void
     {
-        StatsAggregation::where([
-            ['team_id', '=', $instance->team_id],
-            ['project_id', '=', null],
-            ['instance_id', '=', null],
+        StatsAggregation::where(function ($query) use ($instance) {
+            // stats must be re-aggregated on team basis
+            $query->where(function ($query) use ($instance) {
+                $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
+            })
             // stats must be re-aggregated on project basis
-        ])->orWhere([
-            ['team_id', '=', $instance->team_id],
-            ['project_id', '=', $instance->project_id],
-            ['instance_id', '=', null],
+            ->orWhere(function ($query) use ($instance) {
+                $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', null);
+            })
             // stats must be re-aggregated on instance basis
-        ])->orWhere([
-            ['team_id', '=', $instance->team_id],
-            ['project_id', '=', $instance->project_id],
-            ['instance_id', '=', $instance->id],
-        ])->delete();
+            ->orWhere(function ($query) use ($instance) {
+                $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', $instance->id);
+            });
+        })->delete();
     }
 
     public function clearByProject(Project $project): void
     {
-        StatsAggregation::where([
-            ['team_id', '=', $project->team_id],
-            ['project_id', '=', null],
+        StatsAggregation::where(function ($query) use ($project) {
+            // stats must be re-aggregated on team basis
+            $query->where(function ($query) use ($project) {
+                $query->where('team_id', '=', $project->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
+            })
             // stats must be re-aggregated on project basis
-        ])->orWhere([
-            ['team_id', '=', $project->team_id],
-            ['project_id', '=', $project->id],
-        ])->delete();
+            ->orWhere(function ($query) use ($project) {
+                $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id)->where('instance_id', '=', null);
+            });
+        })->delete();
     }
 
     private function formatFilter(array $filterConditions): array
