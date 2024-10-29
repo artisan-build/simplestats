@@ -71,7 +71,7 @@ _Core parameters:_
 | **track_content**  | _string_ `nullable`  | The tracking `content` of the user.                                                    |
 | **page_entry**     | _string_ `nullable`  | The tracking `page_entry` of the user.                                                 |
 
-_Additional parameters:_
+_Optional parameters:_
 
 | Key                  | Type                 | Description                                                                                                          |
 |----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -126,7 +126,7 @@ _Core parameters:_
 | **track_content**  | _string_ `nullable` | The tracking `content` of the user.                                                      |
 | **page_entry**     | _string_ `nullable` | The tracking `page_entry` of the user.                                                   |
 
-_Additional parameters:_
+_Optional parameters:_
 
 | Key                  | Type                 | Description                                                                                                          |
 |----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|

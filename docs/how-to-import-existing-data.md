@@ -31,7 +31,7 @@ _Core fields:_
 | **id**               | _mixed_ `required`  | The user id.                                                                           |
 | **time**             | _string_ `required` | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
 
-_Additional fields:_
+_Optional fields:_
 
 | Key                  | Type                 | Description                                                                                                          |
 |----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
