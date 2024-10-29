@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
+use App\Builder\StatsAggregationsSqlBuilder;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Enums\TrackableIndividual;
@@ -64,15 +65,7 @@ class StatsAggregationsService
         // for track not but for referer we also want to know the Direct / Unknown
         $typeIdFallback =  (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
-        $trackableIndividual = TrackableIndividual::USER;
-        if ($project = Project::find($filters->projectId)) {
-            if (! $project->hasTrackingUsageBits([
-                StatsService::TRACKING_USAGE_BITS_VISITORS,
-                StatsService::TRACKING_USAGE_BITS_USERS,
-            ])) {
-                $trackableIndividual = TrackableIndividual::VISITOR;
-            }
-        }
+        $trackableIndividual = $this->getTrackableIndividualByProject(Project::find($filters->projectId));
 
         $sql = (new StatsAggregationsGroupedSqlBuilder(
             $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackableIndividual)
@@ -246,13 +239,7 @@ class StatsAggregationsService
         }
 
         if (!empty($trackingCondition)) {
-            $trackableIndividual = TrackableIndividual::USER;
-            if ($project = Project::find($filters->projectId)) {
-                if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS, StatsService::TRACKING_USAGE_BITS_USERS])) {
-                    $trackableIndividual = TrackableIndividual::VISITOR;
-                }
-            }
-
+            $trackableIndividual = $this->getTrackableIndividualByProject(Project::find($filters->projectId));
             $conditions['trackingConditions'] = $trackingCondition;
             $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
             $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_{$trackableIndividual->value}s su ON su.id = stats.stats_{$trackableIndividual->value}_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
@@ -328,236 +315,12 @@ class StatsAggregationsService
 
     public function getRawData(array $filterConditions, ?int $projectId): Collection
     {
-        $nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
+        $trackableIndividual = $this->getTrackableIndividualByProject(Project::find($projectId));
 
-        $trackableIndividual = 'user';
-        if ($project = Project::find($projectId)) {
-            if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS, StatsService::TRACKING_USAGE_BITS_USERS])) {
-                $trackableIndividual = 'visitor';
-            }
-        }
-
-        $sql = "
-        WITH RECURSIVE date_sequence AS (
-            SELECT ':startDateStart' AS date
-            UNION ALL
-            SELECT DATE_ADD(date, INTERVAL 1 :intervalType)
-            FROM date_sequence
-            WHERE date < ':endDateStart'
-        ),";
-        if ($trackableIndividual === 'user') {
-        $sql .= "
-        pd_reg AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
-            FROM stats_users stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
-            GROUP BY date
-        ),
-        # nau: Number of unique accounts who returned on this day (=2nd login) after the registration (=1st login)
-        pd_nau AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-            FROM stats_logins stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter = $nauLoginCounter :projectInstanceCondition
-            GROUP BY date
-        ),
-        # napu: Number of unique accounts who did their first payment on this day
-        pd_napu AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-            FROM stats_payments stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter = 1 :projectInstanceCondition
-            GROUP BY date
-        ),
-        # dau: Number of unique accounts who logged in on this day (without 1st login = registration)
-        pd_dau AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-            FROM stats_logins stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter >= $nauLoginCounter :projectInstanceCondition
-            GROUP BY date
-        ),
-        # dapu: Number of unique accounts who logged in or registered on this day and did at least one payment over lifetime (including today)
-        pd_dapu AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-            FROM stats_logins stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
-                SELECT 1
-                FROM stats_payments sp
-                WHERE stats.stats_user_id = sp.stats_user_id
-                    AND stats.instance_id = sp.instance_id
-            ) :projectInstanceCondition
-            GROUP BY date
-        ),
-        # daapu: Number of unique accounts who logged in or registered on this day and did at least one payment in the last 20 days (including today)
-        pd_daapu AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
-            FROM stats_logins stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
-                SELECT 1
-                FROM stats_payments sp
-                WHERE stats.stats_user_id = sp.stats_user_id
-                    AND stats.instance_id = sp.instance_id
-                    AND sp.time >= DATE_SUB(stats.time, INTERVAL 20 DAY)
-                    AND sp.time <= stats.time
-            ) :projectInstanceCondition
-            GROUP BY date
-        ),
-        ";
-        }
-        $sql .= "
-        pd_visitor AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
-            FROM stats_visitors stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition :trackingConditions
-            GROUP BY date
-        ),
-        # gross
-        pd_gross AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
-            FROM stats_payments stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
-            GROUP BY date
-        ),
-        # net
-        pd_net AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
-            FROM stats_payments stats
-            :trackingJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
-            GROUP BY date
-        ),
-        ";
-        if ($trackableIndividual === 'user') {
-        $sql .= "
-        # lifetime regs
-        lt_reg AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
-                    FROM stats_users stats
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition :trackingConditions
-                ) AS count
-            FROM date_sequence ds
-        ),
-        # lifetime total actives
-        lt_tau AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
-                    FROM stats_logins stats
-                    :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd and stats.counter = $nauLoginCounter :projectInstanceCondition
-                ) AS count
-            FROM date_sequence ds
-        ),
-        # lifetime paying user
-        lt_pu AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
-                    FROM stats_payments stats
-                    :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
-                ) AS count
-            FROM date_sequence ds
-        ),
-        ";
-        }
-        $sql .= "
-        # lifetime visitors
-        lt_visitor AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
-                    FROM stats_visitors stats
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition :trackingConditions
-                ) AS count
-            FROM date_sequence ds
-        ),
-        # lifetime net revenue
-        lt_net AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT SUM(stats.net)
-                    FROM stats_payments stats
-                    :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
-                ) AS count
-            FROM date_sequence ds
-        ),
-        # lifetime gross revenue
-        lt_gross AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT SUM(stats.gross)
-                    FROM stats_payments stats
-                    :trackingJoinConditions
-                    WHERE stats.time <= :intervalEnd :projectInstanceCondition
-                ) AS count
-            FROM date_sequence ds
-        )
-        SELECT
-            DATE_FORMAT(ds.date, ':dateFormat') as date,
-            DATE_FORMAT(ds.date, ':dateFormatClear') as date_clear,
-            ";
-            if ($trackableIndividual === 'user') {
-            $sql .= "
-            COALESCE(pd_reg.count, 0) AS pd_REG,
-            COALESCE(pd_nau.count, 0) AS pd_NAU,
-            COALESCE(pd_napu.count, 0) AS pd_NAPU,
-            COALESCE(pd_dau.count, 0) AS pd_DAU,
-            COALESCE(pd_dapu.count, 0) AS pd_DAPU,
-            COALESCE(pd_daapu.count, 0) AS pd_DAAPU,
-            COALESCE(lt_reg.count, 0) AS lt_REG,
-            COALESCE(lt_pu.count, 0) AS lt_PU,
-            COALESCE(lt_tau.count, 0) AS lt_TAU,
-            ";
-            }
-            $sql .= "
-            COALESCE(pd_visitor.count, 0) AS pd_VISITOR,
-            COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
-            COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
-            COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
-            COALESCE(ROUND(lt_net.count,2), 0) AS lt_NET,
-            COALESCE(ROUND(lt_gross.count,2), 0) AS lt_GROSS
-        FROM
-            date_sequence ds
-            ";
-            if ($trackableIndividual === 'user') {
-            $sql .= "
-            LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
-            LEFT JOIN pd_nau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_nau.date
-            LEFT JOIN pd_napu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_napu.date
-            LEFT JOIN pd_dau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dau.date
-            LEFT JOIN pd_dapu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dapu.date
-            LEFT JOIN pd_daapu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_daapu.date
-            LEFT JOIN lt_reg ON DATE_FORMAT(ds.date, ':dateFormat') = lt_reg.date
-            LEFT JOIN lt_pu ON DATE_FORMAT(ds.date, ':dateFormat') = lt_pu.date
-            LEFT JOIN lt_tau ON DATE_FORMAT(ds.date, ':dateFormat') = lt_tau.date
-            ";
-            }
-            $sql .= "
-            LEFT JOIN pd_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = pd_visitor.date
-            LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
-            LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
-            LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
-            LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
-            LEFT JOIN lt_gross ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross.date
-        ORDER BY
-            DATE_FORMAT(ds.date, ':dateFormat') DESC;
-        ";
-
-        $sql = strtr($sql, $this->formatFilter($filterConditions));
+        $sql = strtr(
+            (new StatsAggregationsSqlBuilder($trackableIndividual))->build(),
+            $this->formatFilter($filterConditions)
+        );
 //         echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
@@ -639,5 +402,16 @@ class StatsAggregationsService
         return collect($filterConditions)->mapWithKeys(function ($value, $key) {
             return [':'.$key => $value];
         })->toArray();
+    }
+
+    private function getTrackableIndividualByProject(?Project $project): TrackableIndividual
+    {
+        $trackableIndividual = TrackableIndividual::USER;
+
+        if ($project && ! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS, StatsService::TRACKING_USAGE_BITS_USERS])) {
+            $trackableIndividual = TrackableIndividual::VISITOR;
+        }
+
+        return $trackableIndividual;
     }
 }

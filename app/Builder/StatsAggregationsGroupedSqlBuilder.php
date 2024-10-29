@@ -5,10 +5,8 @@ namespace App\Builder;
 use App\Enums\TrackableIndividual;
 use App\Services\StatsService;
 
-class StatsAggregationsGroupedSqlBuilder
+class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 {
-    protected string $sql = '';
-
     protected int $nauLoginCounter;
 
     public function __construct(
@@ -21,29 +19,16 @@ class StatsAggregationsGroupedSqlBuilder
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
 
-    protected function applySql(string $sql, bool $addComma): void
-    {
-        $this->sql .= $sql;
-
-        if ($addComma) {
-            $this->sql .= ',';
-        }
-
-        // break
-        $this->sql .= '
-        ';
-    }
-
     public function build(): string
     {
-        $this->applySql($this->getCTE(), true);
+        $this->applySql($this->getCTE());
 
         if ($this->trackableIndividual === TrackableIndividual::USER) {
-            $this->applySql($this->getPD_DAU(), true);
-            $this->applySql($this->getLT_REG(), true);
+            $this->applySql($this->getPD_DAU());
+            $this->applySql($this->getLT_REG());
         }
 
-        $this->applySql($this->getLT_VISITORS(), true);
+        $this->applySql($this->getLT_VISITORS());
         $this->applySql($this->getLT_NET(), false);
 
         $this->applySql($this->getSELECT(), false);
@@ -120,38 +105,38 @@ class StatsAggregationsGroupedSqlBuilder
 
     protected function getSELECT(): string
     {
-        $sql = 'SELECT
+        $sql = "SELECT
             sg.type_id as type_id,
-            sg.name as name,';
+            sg.name as name,";
 
         if ($this->trackableIndividual === TrackableIndividual::USER) {
-            $sql .= '
+            $sql .= "
                 COALESCE(lt_reg.count, 0) as reg,
                 COALESCE(lt_reg.count / lt_visitors.count * 100, 0) as cr,
-                COALESCE(pd_dau.count, 0) AS dau,';
+                COALESCE(pd_dau.count, 0) AS dau,";
         }
 
-        $sql .= '
+        $sql .= "
             COALESCE(lt_visitors.count, 0) AS visitors,
-            COALESCE(ROUND(lt_net.count,2), 0) AS net';
+            COALESCE(ROUND(lt_net.count,2), 0) AS net";
 
         return $sql;
     }
 
     protected function getFROM(): string
     {
-        $sql = 'FROM
-            stats_groups sg';
+        $sql = "FROM
+            stats_groups sg";
 
         if ($this->trackableIndividual === TrackableIndividual::USER) {
-            $sql .= '
+            $sql .= "
                 LEFT JOIN pd_dau ON sg.type_id = pd_dau.type_id
-                LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id';
+                LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id";
         }
 
-        $sql .= '
+        $sql .= "
             LEFT JOIN lt_visitors ON sg.type_id = lt_visitors.type_id
-            LEFT JOIN lt_net ON sg.type_id = lt_net.type_id';
+            LEFT JOIN lt_net ON sg.type_id = lt_net.type_id";
 
         return $sql;
     }
