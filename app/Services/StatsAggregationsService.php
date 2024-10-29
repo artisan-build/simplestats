@@ -406,10 +406,10 @@ class StatsAggregationsService
 
     private function getTrackableIndividualByProject(?Project $project): TrackableIndividual
     {
-        $trackableIndividual = TrackableIndividual::USER;
+        $trackableIndividual = TrackableIndividual::VISITOR;
 
-        if ($project && ! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS, StatsService::TRACKING_USAGE_BITS_USERS])) {
-            $trackableIndividual = TrackableIndividual::VISITOR;
+        if ($project && $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
+            $trackableIndividual = TrackableIndividual::USER;
         }
 
         return $trackableIndividual;

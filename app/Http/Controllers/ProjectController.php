@@ -68,6 +68,7 @@ class ProjectController extends Controller
 
         if ($validated['usage'] != $project->usage) {
             app(StatsAggregationsService::class)->clearByProject($project);
+            $request->user()->updateSettings('showAdvanced', false);
         }
 
         $project->update($validated);

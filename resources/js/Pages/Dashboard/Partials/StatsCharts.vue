@@ -136,20 +136,20 @@ if (currentProjectHasTrackingUsageBits(['payments'])) {
     if (revenueChart.group.length > 0) charts.push(revenueChart);
 }
 
-// !! GROWTH
-if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
-    const growthChart = {
-        name: 'Growth',
+// !! ACTIVE USERS
+if (currentProjectHasTrackingUsageBits(['users'])) {
+    const activeUsersChart = {
+        name: 'Active Users',
         formatter: 'number',
-        class: 'order-3 3xl:order-4',
+        class: 'order-3 3xl:order-5',
         group: [],
     };
 
-    growthChart.group.push({key: 'pd_NAU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAU}});
-    growthChart.group.push({key: 'pd_NAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAPU}});
-    growthChart.group.push({key: 'lt_PU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return lastStat('lt_PU')}});
+    activeUsersChart.group.push({key: 'pd_DAU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAU')}});
+    activeUsersChart.group.push({key: 'pd_DAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAPU')}});
+    activeUsersChart.group.push({key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAAPU')}});
 
-    if (growthChart.group.length > 0) charts.push(growthChart);
+    if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
 }
 
 // !! AVERAGE REVENUE
@@ -168,20 +168,20 @@ if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
     if (avgRevChart.group.length > 0) charts.push(avgRevChart);
 }
 
-// !! ACTIVE USERS
-if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users'])) {
-    const activeUsersChart = {
-        name: 'Active Users',
+// !! GROWTH
+if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users', 'payments'])) {
+    const growthChart = {
+        name: 'Growth',
         formatter: 'number',
         class: 'order-5 3xl:order-5',
         group: [],
     };
 
-    activeUsersChart.group.push({key: 'pd_DAU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAU')}});
-    activeUsersChart.group.push({key: 'pd_DAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAPU')}});
-    activeUsersChart.group.push({key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAAPU')}});
+    growthChart.group.push({key: 'pd_NAU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAU}});
+    growthChart.group.push({key: 'pd_NAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAPU}});
+    growthChart.group.push({key: 'lt_PU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return lastStat('lt_PU')}});
 
-    if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
+    if (growthChart.group.length > 0) charts.push(growthChart);
 }
 
 // !! ENGAGEMENT
