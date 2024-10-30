@@ -4,7 +4,7 @@ Now that you've installed the _SimpleStats_ **client package**, you can finally 
 
 ## Configuration
 
-If you for any reason do **not** use the default user model from Laravel, you may define your user model here:
+If you for any reason do **not** use the default user model from Laravel, you may define your user model to track here:
 
 ```php
 //config/simplestats-client.php
@@ -13,7 +13,7 @@ If you for any reason do **not** use the default user model from Laravel, you ma
         // ...
         
         'user' => [
-            'model' => App\Models\CustomUser::class,
+            'model' => App\Models\Account::class,
         ],
         
         // ...
