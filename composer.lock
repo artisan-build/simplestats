@@ -6798,6 +6798,9 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
                 "psr-4": {
                     "SimpleStatsIo\\LaravelClient\\": "src",
                     "SimpleStatsIo\\LaravelClient\\Database\\Factories\\": "database/factories"
@@ -14303,9 +14306,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "simplestats-io/laravel-client": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
