@@ -30,7 +30,7 @@ const linkCategories = [
     {
         "header": `Company`,
         "links": [
-            {"title": "Status", "url": "https://stats.uptimerobot.com/IrGhXgRGLC"},
+            {"title": "Status", "url": "https://status.simplestats.io"},
             {"title": "Help & Support", "url": "https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g"},
             {"title": "Documentation", "url": "/docs"},
             {"title": "Imprint", "url": "/imprint"},
