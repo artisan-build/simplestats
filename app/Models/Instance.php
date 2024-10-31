@@ -31,6 +31,7 @@ class Instance extends Authenticatable
     protected $fillable = [
         'name',
         'project_id',
+        'client_version',
         'stats_starting_at',
     ];
 

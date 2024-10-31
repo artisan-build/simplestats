@@ -35,6 +35,10 @@ class BaseStatsValidator
                 'before_or_equal:now',
                 'date_format:Y-m-d H:i:s P',
             ],
+            'client_version' => [
+                'nullable',
+                'string',
+            ],
         ];
     }
 
