@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
 
             $schedule->command('app:recalc-stats-starting-at')->daily()->at('01:45');
 
-            $schedule->command('app:check-subscription-plan-alarm')->weekly()->at('3:30');
+            $schedule->command('app:check-subscription-plan-alarm')->daily()->at('3:30');
 
             $schedule->command('app:download-referer-favicons')->weekly()->at('04:00');
         }

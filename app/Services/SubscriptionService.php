@@ -20,7 +20,7 @@ class SubscriptionService
     const PLAN_ENTERPRISE = 'Enterprise';
 
     const UNLIMITED_AMOUNT = -1;
-    const ALARM_PERCENTAGE = 80;
+    const ALARM_PERCENTAGE = 70;
 
     public function getFrontendPlans(string $billableType = 'user'): Collection
     {
