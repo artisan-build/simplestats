@@ -63,7 +63,7 @@ onUnmounted(() => {
                         :teamStats="teamStats"
                     />
                 </div>
-                <div v-if="filters.projectId">
+                <div>
                     <StatsGroups
                         :filters="filters"
                         :statsGroups="statsGroups"
