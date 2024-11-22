@@ -106,7 +106,7 @@ class SubscriptionService
 
     public function getDiscount(): ?array
     {
-        if (! app()->isProduction()) {
+        if (app()->environment('demo')) {
             return null;
         }
 
