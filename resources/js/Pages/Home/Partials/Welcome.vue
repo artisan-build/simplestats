@@ -9,15 +9,19 @@ import Testimonials from "@/Pages/Home/Partials/Testimonials.vue";
 import Integration from "@/Pages/Home/Partials/Integration.vue";
 import Brands from "@/Pages/Home/Partials/Brands.vue";
 import Bottom from "@/Pages/Home/Partials/Bottom.vue";
+import Banners from "@/Pages/Home/Partials/Banners.vue";
 
 defineProps({
     plans: Array,
+    banners: Array,
 });
 
 const appEnv = import.meta.env.VITE_APP_ENV;
 </script>
 
 <template>
+    <Banners :banners="banners" />
+
     <Header />
 
     <div class="min-h-screen bg-white">

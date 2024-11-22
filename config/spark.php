@@ -222,8 +222,16 @@ return [
                     'archived' => false,
                 ],
             ],
-
         ],
+    ],
 
+    'discount' => [
+        'percent' => 50,
+        'duration' => [
+            'start' => '2024-11-21',
+            'end' => '2024-12-02',
+        ],
+        'text' => '🎉 50% OFF ALL PLANS! Use code "BLACKWEEK2024" at checkout. 🎉',
+        'link' => '#pricing',
     ],
 ];

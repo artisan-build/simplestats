@@ -6,6 +6,7 @@ use App\Mail\SubscriptionPlanAlarm;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
@@ -20,7 +21,7 @@ class SubscriptionService
     const PLAN_ENTERPRISE = 'Enterprise';
 
     const UNLIMITED_AMOUNT = -1;
-    const ALARM_PERCENTAGE = 80;
+    const ALARM_PERCENTAGE = 70;
 
     public function getFrontendPlans(string $billableType = 'user'): Collection
     {
@@ -28,13 +29,15 @@ class SubscriptionService
         $planIds = $plans->flatMap(fn($item) => [$item['monthly_id'], $item['yearly_id']])->filter();
         $planPrices = $this->getPlanIdToPrices($planIds);
 
-        return $plans->map(function ($item) use ($planPrices) {
+        $discount = $this->getDiscount();
+
+        return $plans->map(function ($item) use ($planPrices, $discount) {
 //            if (isset($planPrices[$item['monthly_id']])) dd($planPrices[$item['yearly_id']]);
             return [
                 'name' => $item['name'],
                 'short_description' => $item['short_description'],
-                'price_monthly' => $planPrices[$item['monthly_id']]->formatted_unit_totals['subtotal'] ?? '$0',
-                'price_yearly' => $planPrices[$item['yearly_id']]->formatted_unit_totals['subtotal'] ?? '$0',
+                'price_monthly' => $planPrices[$item['monthly_id']]->totals['subtotal'] ?? 0,
+                'price_yearly' => $planPrices[$item['yearly_id']]->totals['subtotal'] ?? 0,
                 'tax_mode_monthly' => $planPrices[$item['monthly_id']]->price['tax_mode'] ?? '',
                 'tax_mode_yearly' => $planPrices[$item['yearly_id']]->price['tax_mode'] ?? '',
                 'yearly_incentive' => $item['yearly_incentive'] ?? 0,
@@ -42,6 +45,7 @@ class SubscriptionService
                 'features' => collect($item['features'])->mapWithKeys(fn($item, $key) => [class_basename($key) => $item]),
                 'options' => collect($item['options'])->mapWithKeys(fn($item, $key) => [class_basename($key) => $item]),
                 'promoted' => $item['promoted'] ?? false,
+                'discount' => $discount['percent'] ?? 0,
             ];
         });
     }
@@ -98,5 +102,20 @@ class SubscriptionService
         }
 
         return $alarms;
+    }
+
+    public function getDiscount(): ?array
+    {
+        if (app()->environment('demo')) {
+            return null;
+        }
+
+        $discount = config('spark.discount');
+
+        if (now()->gte(Carbon::parse($discount['duration']['start'])->startOfDay()) && now()->lte(Carbon::parse($discount['duration']['end'])->endOfDay())) {
+            return $discount;
+        }
+
+        return null;
     }
 }
