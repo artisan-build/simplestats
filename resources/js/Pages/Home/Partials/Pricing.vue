@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {computed, ref} from "vue";
 
-const props = defineProps({
+defineProps({
     plans: Array,
 });
 
@@ -28,6 +28,16 @@ const taxIntervalKey = computed(() => {
 const priceIntervalString = computed(() => {
     return selectedInterval.value === 'monthly' ? 'month' : 'year';
 });
+
+const getPlanPrice = (amount, discount) => {
+    amount = amount  / 100;
+
+    if (discount) {
+        amount = Math.floor(amount * (discount / 100));
+    }
+
+    return '$' + amount;
+}
 </script>
 
 <template>
@@ -63,7 +73,15 @@ const priceIntervalString = computed(() => {
                     </div>
 
                     <h4 class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
-                        {{ plan[priceIntervalKey].replace(/\.00$/, '') }}
+                        <span v-if="plan.discount && plan[priceIntervalKey] > 0">
+                            <span class="line-through text-base">
+                                {{ getPlanPrice(plan[priceIntervalKey], 0) }}
+                            </span>
+                            {{ getPlanPrice(plan[priceIntervalKey], plan.discount) }}
+                        </span>
+                        <span v-else>
+                            {{ getPlanPrice(plan[priceIntervalKey], 0) }}
+                        </span>
                         <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
                             / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
                         </span>
@@ -97,7 +115,7 @@ const priceIntervalString = computed(() => {
                     </Link>
                 </div>
             </div>
-            <div v-if="props.plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length"
+            <div v-if="plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length"
                  class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
                 * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
             </div>
