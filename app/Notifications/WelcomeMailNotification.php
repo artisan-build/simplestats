@@ -47,7 +47,7 @@ class WelcomeMailNotification extends Notification implements ShouldQueue
                 'support' => 'https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g',
                 'call' => 'https://calendly.com/simplestats/30min',
             ]))
-            ->line(Lang::get('In the meantime, here’s a quick start guide to help you set up :app_name right away: [Quick Start Guide Link](:guide).', [
+            ->line(Lang::get('In the meantime, here’s a quick start guide to help you set up :app_name right away: [Quick Start Guide](:guide).', [
                 'app_name' => $appName,
                 'guide' => config('app.url').'/docs/installation.html',
             ]))
