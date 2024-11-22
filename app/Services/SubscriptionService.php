@@ -106,6 +106,10 @@ class SubscriptionService
 
     public function getDiscount(): ?array
     {
+        if (! app()->isProduction()) {
+            return null;
+        }
+
         $discount = config('spark.discount');
 
         if (now()->gte(Carbon::parse($discount['duration']['start'])->startOfDay()) && now()->lte(Carbon::parse($discount['duration']['end'])->endOfDay())) {
