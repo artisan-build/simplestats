@@ -5,6 +5,7 @@ namespace App\Actions\Socialstream;
 use App\Actions\Fortify\CreateNewUser;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\DB;
 use JoelButcher\Socialstream\Contracts\CreatesConnectedAccounts;
 use JoelButcher\Socialstream\Contracts\CreatesUserFromProvider;
@@ -37,7 +38,12 @@ class CreateUserFromProvider implements CreatesUserFromProvider
             'sso' => true,
         ]);
 
-        $user->markEmailAsVerified();
+        // here we do not want to trigger SimpleStatsIo\LaravelClient\Observers\UserObserver
+        User::withoutEvents(function () use ($user) {
+            if ($user->markEmailAsVerified()) {
+                event(new Verified($user));
+            }
+        });
 
         if (Socialstream::hasProviderAvatarsFeature() && $providerUser->getAvatar()) {
             $user->setProfilePhotoFromUrl($providerUser->getAvatar());
