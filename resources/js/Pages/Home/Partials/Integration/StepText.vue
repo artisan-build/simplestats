@@ -5,5 +5,5 @@ defineProps({
 </script>
 
 <template>
-    <div class="self-start font-light text-gray-700 text-xl">{{ content }}</div>
+    <div v-html="content" class="self-start font-light text-gray-700 text-xl"></div>
 </template>

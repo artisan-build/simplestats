@@ -15,3 +15,7 @@ a.simpleLink:hover {
     @apply font-medium;
     @apply underline;
 }
+
+strong, b {
+    font-weight: bold;
+}

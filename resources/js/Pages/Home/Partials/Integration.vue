@@ -37,7 +37,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <CodeWrapper lang="bash" theme="github-dark" :title="`Install ${appName}`" :code="snippetInstallPackage" />
                     <GridPlaceholder />
-                    <StepText :content="`In your Laravel project, you just need to install the ${appName} client. Congrats, the tool is now already tracking your visitors!`" />
+                    <StepText :content="`In your Laravel project, you just need to <b>install</b> the ${appName} <b>client</b>. Congrats, the tool is now already tracking your visitors!`" />
 
 <!--                    <GridPlaceholder />-->
 <!--                    <BigStepBullet content="2" />-->
@@ -69,7 +69,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePerson contract" :code="snippetTrackUser" />
                     <GridPlaceholder />
-                    <StepText :content="`To make the client track your user registrations, you only have to add the TrackablePerson interface and implement the contract.`" />
+                    <StepText :content="`To make the client <b>track</b> your user <b>registrations</b>, you only have to add the <b>TrackablePerson</b> interface and implement the contract.`" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
@@ -77,7 +77,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePayment contract" :code="snippetTrackPayment" />
                     <GridPlaceholder />
-                    <StepText :content="`To enable the client to track your app’s payments, you need to add the TrackablePayment interface to your payment/transaction model and implement the contract.`" />
+                    <StepText :content="`To enable the client to <b>track</b> your app’s <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
                 </div>
             </div>
             <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
