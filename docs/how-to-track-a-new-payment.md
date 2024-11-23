@@ -96,7 +96,7 @@ Remember that **Gross** and **Net** must return cents!
 
 If your application does not have any users at all, a payment can also be associated with a visitor.
 
-::: info
+::: tip
 You can safely skip to the [next section](#with-condition) if that's not the case for you.
 :::
 
