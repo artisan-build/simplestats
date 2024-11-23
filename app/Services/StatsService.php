@@ -165,17 +165,17 @@ class StatsService
         return collect([
             'visitors' => [
                 'bit' => self::TRACKING_USAGE_BITS_VISITORS,
-                'name' => 'Visitor Tracking',
+                'name' => 'Visitors',
                 'descr' => 'Track app visitors and capture UTMs, location, device etc.',
             ],
             'users' => [
                 'bit' => self::TRACKING_USAGE_BITS_USERS,
-                'name' => 'User Tracking',
+                'name' => 'Users',
                 'descr' => 'Track users, including the registration time and their logins.',
             ],
             'payments' => [
                 'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
-                'name' => 'Payment Tracking',
+                'name' => 'Payments',
                 'descr' => 'Track payments with associated campaigns - ideal to measure ROI.',
             ],
         ]);

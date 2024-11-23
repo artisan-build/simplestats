@@ -56,7 +56,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
 
             <div class="col-span-6">
-                <InputLabel for="usage" :value="`How do you want to use ${appName} for this project?`" />
+                <InputLabel for="usage" :value="`What do you want to track?`" />
                 <div class="mt-1">
                     <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" />
                 </div>

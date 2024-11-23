@@ -111,7 +111,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 <!--                    </TabContent>-->
                     <TabContent class="pt-10 pb-20 text-center" title="Usage">
                         <div class="text-xl font-medium mb-10">
-                            How do you plan to use {{ appName }}?
+                            What do you want to track?
                             <p class="text-base mt-2">
                                 Select all options that fit your needs!
                             </p>
