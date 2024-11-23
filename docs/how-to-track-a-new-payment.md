@@ -94,7 +94,7 @@ Remember that **Gross** and **Net** must return cents!
 
 ### Payment Tracking for Visitors
 
-If your application does not have any users at all, a payment can also be associated with a visitor.
+If your application does not have any users at all, a payment can also be associated with a visitor (this feature is only available since version `3.0` of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client).
 
 ::: tip
 You can safely skip to the [next section](#with-condition) if that's not the case for you.
