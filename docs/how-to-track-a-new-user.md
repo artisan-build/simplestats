@@ -21,7 +21,7 @@ If you for any reason do **not** use the default user model from Laravel, you ma
 
 ```
 
-## Trackable Person
+## User Tracking
 
 To track a new user/registration, the only thing you have to do is to add the `TrackablePerson` contract to your `User` model and then implement the methods defined in the contract.
 

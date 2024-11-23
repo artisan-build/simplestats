@@ -1,6 +1,16 @@
 # How to track a new visitor
 
-Once you have installed the _SimpleStats_ [client package](installation.md#composer), visitor tracking is set up **automatically** — no additional configuration is required on your part. We ensure this process is **GDPR**-compliant by generating a unique `visitor_hash`, crafted from a combination of the visitor’s browser `User-Agent`, `IP address`, and a `daily salt`. This allows us to track unique visitors without storing any personally identifiable information, keeping their data **safe** and **private**.
+Once you have installed the _SimpleStats_ [client package](installation.md#composer),
+visitor tracking is set up **automatically** —
+no additional configuration is required on your part.
+We ensure
+this process is **GDPR**-compliant by generating a unique `visitor_hash` if a new visitor visits your site.
+
+## The Visitor Hash
+
+The hash is created from a combination of the visitor’s `User-Agent`, the `IP address` and a `daily salt`.
+This allows us to track unique visitors without storing any personally identifiable information,
+keeping their data **safe** and **private**.
 
 The `visitor_hash` enables seamless visitor identification across different sessions and provides insights into how your **marketing campaigns** and UTM parameters drive traffic.
 
