@@ -65,11 +65,11 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Add the TrackableIndividual contract" />
+                    <SmallStepText content="Add the TrackablePerson contract" />
 
-                    <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackableIndividual contract" :code="snippetTrackUser" />
+                    <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePerson contract" :code="snippetTrackUser" />
                     <GridPlaceholder />
-                    <StepText :content="`To make the client track your user registrations, you only have to add the TrackableIndividual interface and implement the contract.`" />
+                    <StepText :content="`To make the client track your user registrations, you only have to add the TrackablePerson interface and implement the contract.`" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />

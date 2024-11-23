@@ -2,7 +2,7 @@
 
 namespace App\Builder;
 
-use App\Enums\TrackableIndividual;
+use App\Enums\TrackablePerson;
 use App\Services\StatsService;
 
 class StatsAggregationsSqlBuilder extends BaseSqlBuilder
@@ -10,7 +10,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected int $nauLoginCounter;
 
     public function __construct(
-        protected TrackableIndividual $trackableIndividual
+        protected TrackablePerson $trackablePerson
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -19,7 +19,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     {
         $this->applySql($this->getCTE());
 
-        if ($this->trackableIndividual === TrackableIndividual::USER) {
+        if ($this->trackablePerson === TrackablePerson::USER) {
             // per date
             $this->applySql($this->getPD_REG());
             $this->applySql($this->getPD_NAU());
@@ -307,7 +307,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             DATE_FORMAT(ds.date, ':dateFormat') as date,
             DATE_FORMAT(ds.date, ':dateFormatClear') as date_clear,";
 
-        if ($this->trackableIndividual === TrackableIndividual::USER) {
+        if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
                 COALESCE(pd_reg.count, 0) AS pd_REG,
                 COALESCE(pd_nau.count, 0) AS pd_NAU,
@@ -336,7 +336,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         $sql = "FROM
             date_sequence ds";
 
-        if ($this->trackableIndividual === TrackableIndividual::USER) {
+        if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
                 LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
                 LEFT JOIN pd_nau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_nau.date

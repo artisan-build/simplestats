@@ -1,6 +1,6 @@
 class Transaction extends Model implements TrackablePayment
 {
-    public function getTrackingIndividual(): TrackableIndividual
+    public function getTrackingPerson(): TrackablePerson
     {
         return User::find($this->user_id);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Builder;
 
-use App\Enums\TrackableIndividual;
+use App\Enums\TrackablePerson;
 use App\Services\StatsService;
 
 class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
@@ -14,7 +14,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected string $statsDBType,
         protected string $statsSort,
         protected string $typeIdFallback,
-        protected TrackableIndividual $trackableIndividual
+        protected TrackablePerson $trackablePerson
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -23,7 +23,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     {
         $this->applySql($this->getCTE());
 
-        if ($this->trackableIndividual === TrackableIndividual::USER) {
+        if ($this->trackablePerson === TrackablePerson::USER) {
             $this->applySql($this->getPD_DAU());
             $this->applySql($this->getLT_REG());
         }
@@ -109,7 +109,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             sg.type_id as type_id,
             sg.name as name,";
 
-        if ($this->trackableIndividual === TrackableIndividual::USER) {
+        if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
                 COALESCE(lt_reg.count, 0) as reg,
                 COALESCE(lt_reg.count / lt_visitors.count * 100, 0) as cr,
@@ -128,7 +128,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         $sql = "FROM
             stats_groups sg";
 
-        if ($this->trackableIndividual === TrackableIndividual::USER) {
+        if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
                 LEFT JOIN pd_dau ON sg.type_id = pd_dau.type_id
                 LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id";

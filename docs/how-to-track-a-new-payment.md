@@ -37,10 +37,10 @@ class Transaction extends Model implements TrackablePayment
     //..
     
     /**
-     * The individual associated with the payment.
+     * The person associated with the payment.
      * This may either be a user or a visitor.
      */
-    public function getTrackingIndividual(): TrackableIndividual
+    public function getTrackingPerson(): TrackablePerson
     {
         return User::find($this->user_id);
     }

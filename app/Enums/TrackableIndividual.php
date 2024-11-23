@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum TrackableIndividual: string
+enum TrackablePerson: string
 {
     case USER = 'user';
     case VISITOR = 'visitor';

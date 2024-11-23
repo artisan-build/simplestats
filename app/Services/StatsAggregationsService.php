@@ -6,7 +6,7 @@ use App\Builder\StatsAggregationsGroupedSqlBuilder;
 use App\Builder\StatsAggregationsSqlBuilder;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
-use App\Enums\TrackableIndividual;
+use App\Enums\TrackablePerson;
 use App\Models\BaseStat;
 use App\Models\Instance;
 use App\Models\Project;
@@ -65,10 +65,10 @@ class StatsAggregationsService
         // for track not but for referer we also want to know the Direct / Unknown
         $typeIdFallback =  (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
-        $trackableIndividual = $this->getTrackableIndividualByProject(Project::find($filters->projectId));
+        $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
 
         $sql = (new StatsAggregationsGroupedSqlBuilder(
-            $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackableIndividual)
+            $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson)
         )->build();
 
         $filterConditions = $this->getFilterConditions($filters);
@@ -77,7 +77,7 @@ class StatsAggregationsService
             $filterConditions['startDateStart'] = '1970-01-01';
         }
 
-        if ($trackableIndividual === TrackableIndividual::USER) {
+        if ($trackablePerson === TrackablePerson::USER) {
             $endDateStart = $filterConditions['endDateStart'];
 
             $dauDates = match($filters->rangeType->value) {
@@ -113,7 +113,7 @@ class StatsAggregationsService
         }
 
         if (empty($filterConditions['trackingJoinConditions'])) {
-            $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_{$trackableIndividual->value}s su ON su.id = stats.stats_{$trackableIndividual->value}_id AND su.instance_id = stats.instance_id";
+            $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_{$trackablePerson->value}s su ON su.id = stats.stats_{$trackablePerson->value}_id AND su.instance_id = stats.instance_id";
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
@@ -239,10 +239,10 @@ class StatsAggregationsService
         }
 
         if (!empty($trackingCondition)) {
-            $trackableIndividual = $this->getTrackableIndividualByProject(Project::find($filters->projectId));
+            $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
             $conditions['trackingConditions'] = $trackingCondition;
             $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
-            $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_{$trackableIndividual->value}s su ON su.id = stats.stats_{$trackableIndividual->value}_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
+            $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_{$trackablePerson->value}s su ON su.id = stats.stats_{$trackablePerson->value}_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
         } else {
             $conditions['trackingConditions'] = "";
             $conditions['trackingJoinConditions'] = "";
@@ -315,10 +315,10 @@ class StatsAggregationsService
 
     public function getRawData(array $filterConditions, ?int $projectId): Collection
     {
-        $trackableIndividual = $this->getTrackableIndividualByProject(Project::find($projectId));
+        $trackablePerson = $this->getTrackablePersonByProject(Project::find($projectId));
 
         $sql = strtr(
-            (new StatsAggregationsSqlBuilder($trackableIndividual))->build(),
+            (new StatsAggregationsSqlBuilder($trackablePerson))->build(),
             $this->formatFilter($filterConditions)
         );
 //         echo nl2br($sql);die;
@@ -404,14 +404,14 @@ class StatsAggregationsService
         })->toArray();
     }
 
-    private function getTrackableIndividualByProject(?Project $project): TrackableIndividual
+    private function getTrackablePersonByProject(?Project $project): TrackablePerson
     {
-        $trackableIndividual = TrackableIndividual::VISITOR;
+        $trackablePerson = TrackablePerson::VISITOR;
 
         if ($project && $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
-            $trackableIndividual = TrackableIndividual::USER;
+            $trackablePerson = TrackablePerson::USER;
         }
 
-        return $trackableIndividual;
+        return $trackablePerson;
     }
 }

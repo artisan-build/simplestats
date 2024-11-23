@@ -1,4 +1,4 @@
-class User extends Authenticatable implements TrackableIndividual
+class User extends Authenticatable implements TrackablePerson
 {
     public function getTrackingTime(): CarbonInterface
     {
