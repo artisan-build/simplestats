@@ -70,7 +70,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                         :trackingUsageBits="trackingUsageBits"
                     />
                 </div>
-                <div v-if="filters.projectId">
+                <div>
                     <StatsGroups
                         :filters="filters"
                         :statsGroups="statsGroups"
