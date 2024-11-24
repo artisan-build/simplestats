@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Listeners\EmailVerificationListener;
 use App\Listeners\SetCurrentTeam;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -50,6 +51,10 @@ class EventServiceProvider extends ServiceProvider
                 'password_hash_sanctum' => $event->impersonator->getAuthPassword(),
             ]);
             Auth::setUser($event->impersonator);
+        });
+
+        Event::listen(Login::class, function ($event) {
+            $event->user->update(['last_login_at' => now()]);
         });
     }
 

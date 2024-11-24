@@ -50,6 +50,8 @@ class User extends Authenticatable implements TrackablePersonWithCondition, Must
         'email',
         'password',
         'settings',
+        'last_login_at',
+        'inactive_since',
     ];
 
     /**

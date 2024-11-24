@@ -32,10 +32,10 @@ class Kernel extends ConsoleKernel
             $schedule->command('backup:run')->daily()->at('01:30');
             $schedule->command('app:recalc-stats-starting-at')->daily()->at('01:45');
             $schedule->command('app:check-subscription-plan-alarm')->daily()->at('3:30');
+            $schedule->command('app:check-inactive-users')->daily()->at('03:45');
 
             // WEEKLY
             $schedule->command('app:download-referer-favicons')->weekly()->at('04:00');
-            $schedule->command('app:clean-old-users-and-teams')->weekly()->at('04:30');
         }
 
         $schedule->command('app:clear-old-stats-aggregations')->weekly()->at('4:00');
