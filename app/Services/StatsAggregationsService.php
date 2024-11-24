@@ -408,7 +408,7 @@ class StatsAggregationsService
     {
         $trackablePerson = TrackablePerson::VISITOR;
 
-        if ($project && $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
+        if (! $project || $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
             $trackablePerson = TrackablePerson::USER;
         }
 
