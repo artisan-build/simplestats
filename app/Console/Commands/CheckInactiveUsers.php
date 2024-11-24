@@ -20,8 +20,14 @@ class CheckInactiveUsers extends Command
             ->where('last_login_at', '<', now()->subDays(50))
             ->whereNull('inactive_since')
             ->each(function (User $user) {
-                $user->notify(new UserInactiveNotification($user));
+                $user->notify(new UserInactiveNotification($user, 10));
                 $user->update(['inactive_since' => now()]);
+            });
+
+        User::query()
+            ->where('inactive_since', '<', now()->subDays(1))
+            ->each(function (User $user) {
+                $user->notify(new UserInactiveNotification($user, 1));
             });
 
         User::query()

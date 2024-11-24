@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Lang;
 class UserInactiveNotification extends Notification
 {
     public function __construct(
-        public User $user
+        public User $user,
+        public int $daysLeft,
     ) {
     }
 
@@ -22,12 +23,18 @@ class UserInactiveNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Action Required: Your Account Will Be Deleted Soon Due to Inactivity')
+            ->subject(Lang::get('Action Required: Your Account Will Be Deleted in :days_left :days Due to Inactivity', [
+                'days_left' => $this->daysLeft,
+                'days' => str('day')->plural($this->daysLeft)->ucfirst(),
+            ]))
             ->greeting(Lang::get('Hi :user,', ['user' => $this->user->name]))
             ->line('We noticed that you haven’t logged into your account for quite some time.
             To ensure our platform remains active and efficient for all users,
             we periodically delete accounts that have been inactive for extended periods.')
-            ->line('Your account is scheduled for deletion in 10 days due to inactivity.')
+            ->line(Lang::get('Your account is scheduled for deletion in :days_left :days due to inactivity.', [
+                'days_left' => $this->daysLeft,
+                'days' => str('day')->plural($this->daysLeft),
+            ]))
             ->line('If you wish to keep your account, simply log in before that day.
             This will confirm that you’d like to continue using our service.');
     }
