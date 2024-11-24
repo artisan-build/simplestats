@@ -16,25 +16,26 @@ class Kernel extends ConsoleKernel
         if (app()->environment('demo')) {
             $schedule->command('migrate:fresh --seed')
                 ->daily()
-                ->before(fn() => Artisan::call('down'))
-                ->after(fn() => Artisan::call('up'))
+                ->before(fn () => Artisan::call('down'))
+                ->after(fn () => Artisan::call('up'))
                 ->runInBackground()
                 ->withoutOverlapping();
         }
 
-        # It is generally a good idea to avoid the timeslot between 02:00 and 03:00 at night
-        # in areas where daylight saving time changes occur, as this causes sometimes a
-        # double backup or (worse) no backup at all.
+        // It is generally a good idea to avoid the timeslot between 02:00 and 03:00 at night
+        // in areas where daylight saving time changes occur, as this causes sometimes a
+        // double backup or (worse) no backup at all.
 
         if (app()->isProduction()) {
+            // DAILY
             $schedule->command('backup:clean')->daily()->at('01:00');
             $schedule->command('backup:run')->daily()->at('01:30');
-
             $schedule->command('app:recalc-stats-starting-at')->daily()->at('01:45');
-
             $schedule->command('app:check-subscription-plan-alarm')->daily()->at('3:30');
 
+            // WEEKLY
             $schedule->command('app:download-referer-favicons')->weekly()->at('04:00');
+            $schedule->command('app:clean-old-users-and-teams')->weekly()->at('04:30');
         }
 
         $schedule->command('app:clear-old-stats-aggregations')->weekly()->at('4:00');
