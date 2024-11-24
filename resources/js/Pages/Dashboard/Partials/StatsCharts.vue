@@ -1,10 +1,8 @@
 <script setup>
 import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
 import {formatDate} from "@/Helpers/NumberHelpers.js";
-import { periodMap, XAU} from "@/Helpers/StringHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
-import {forEach} from "lodash";
 
 const props = defineProps({
     filters: Object,
@@ -24,6 +22,7 @@ const extractStatsData4Chart = (statsGroups) => {
                 acc.series[group.key] = {
                     // chart specific
                     data: [],
+                    dates: [],
                     name: group.title ?? group.key,
                     nameSmall: group.titleSmall ?? group.title ?? group.key,
                     color: group.color ?? '',
@@ -35,6 +34,7 @@ const extractStatsData4Chart = (statsGroups) => {
             }
 
             acc.series[group.key].data.push(item[group.key]);
+            acc.series[group.key].dates.push(item.date_clear);
         }
 
         acc.categories.push(formatDate(item.date, props.filters.rangeType));
@@ -44,7 +44,8 @@ const extractStatsData4Chart = (statsGroups) => {
 
     data.series = Object.values(data.series).map(item => ({
         ...item,
-        data: item.data.reverse()
+        data: item.data.reverse(),
+        dates: item.dates.reverse()
     }));
 
     data.categories.reverse();
@@ -240,6 +241,11 @@ const chartLenght = charts.length;
         '3xl:grid-cols-3': page.props.auth.user.settings.showAdvanced && chartLenght > 2,
         '5xl:grid-cols-4': !page.props.auth.user.settings.showAdvanced && chartLenght > 2
     }">
-        <StatsChart v-for="(chart, chartIndex) in charts" :chart="chart" :chartLength="chartLenght" :chartIndex="chartIndex" />
+        <StatsChart v-for="(chart, chartIndex) in charts"
+            :chart="chart"
+            :chartLength="chartLenght"
+            :chartIndex="chartIndex"
+            :filters="filters"
+        />
     </div>
 </template>

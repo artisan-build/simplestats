@@ -91,17 +91,18 @@ if (allTimeRange > (12 * 4)) {
     allTimeRange = differenceInYears(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
 }
 
+let dateFormat = 'y-MM-dd';
 const presets = [
-    {name: 'Today', rangeStart: format(startOfDay(new Date()), 'y-MM-dd'), rangeAmount: differenceInHours(startOfHour(addHours(new Date(), 1)), startOfDay(new Date())), rangeType: 'hours'},
-    {name: 'Yesterday', rangeStart: format(startOfDay(subDays(new Date(), 1)), 'y-MM-dd'), rangeAmount: 24, rangeType: 'hours'},
-    {name: 'Last 7 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 7, rangeType: 'days'},
-    {name: 'Last 30 Days', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: 30, rangeType: 'days'},
-    // {name: 'Last 12 Months', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},
-    {name: 'This Month', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
-    {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
-    {name: 'This Year', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
-    {name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), 'y-MM-dd'), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
-    {name: 'All Time', rangeStart: format(new Date(), 'y-MM-dd'), rangeAmount: allTimeRange + 2, rangeType: allTimeType},
+    {name: 'Today', rangeStart: format(startOfDay(new Date()), dateFormat), rangeAmount: differenceInHours(startOfHour(addHours(new Date(), 1)), startOfDay(new Date())), rangeType: 'hours'},
+    {name: 'Yesterday', rangeStart: format(startOfDay(subDays(new Date(), 1)), dateFormat), rangeAmount: 24, rangeType: 'hours'},
+    {name: 'Last 7 Days', rangeStart: format(new Date(), dateFormat), rangeAmount: 7, rangeType: 'days'},
+    {name: 'Last 30 Days', rangeStart: format(new Date(), dateFormat), rangeAmount: 30, rangeType: 'days'},
+    // {name: 'Last 12 Months', rangeStart: format(new Date(), dateFormat'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},
+    {name: 'This Month', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
+    {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), dateFormat), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
+    {name: 'This Year', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
+    {name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), dateFormat), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
+    {name: 'All Time', rangeStart: format(new Date(), dateFormat), rangeAmount: allTimeRange + 2, rangeType: allTimeType},
     {name: 'Custom', rangeStart: '', rangeAmount: 0, rangeType: ''},
 ].map((preset, index) => ({ ...preset, id: index }));
 

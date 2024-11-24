@@ -1,10 +1,20 @@
 <script setup>
-import {ref, defineComponent, onMounted, nextTick} from 'vue';
+import {defineComponent, ref} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
-import {usePage} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import StatsIndicator from "@/Pages/Dashboard/Partials/StatsIndicator.vue";
 import axios from 'axios';
+import {
+    differenceInDays, differenceInHours,
+    differenceInMonths,
+    endOfDay, endOfHour,
+    endOfMonth,
+    endOfYear,
+    format, getDaysInMonth,
+    isAfter, startOfDay, startOfMonth,
+    startOfYear
+} from "date-fns";
 
 const ApexChart = defineComponent(VueApexCharts);
 
@@ -12,6 +22,7 @@ const props = defineProps({
     chart: Object,
     chartLength: Number,
     chartIndex: Number,
+    filters: Object,
 });
 
 const page = usePage();
@@ -27,8 +38,63 @@ const formatter = () => {
     return props.chart.group[selectedSerieIndex.value].formatter;
 };
 
+const newFilterForDataPoint = (clickedDate) => {
+    let newFilter = {};
+    let dateFormat = 'y-MM-dd';
+
+    if (props.filters.rangeType === 'years') {
+        newFilter.rangeType = 'months';
+        let endOfYearDate = endOfYear(clickedDate);
+
+        if ((isAfter(endOfYearDate, new Date()))) {
+            newFilter.rangeStart = format(endOfMonth(new Date()), dateFormat);
+            newFilter.rangeAmount = differenceInMonths(new Date(), startOfYear(clickedDate))+1;
+        } else {
+            newFilter.rangeStart = format(endOfYearDate, dateFormat);
+            newFilter.rangeAmount = 12;
+        }
+    } else if (props.filters.rangeType === 'months') {
+        newFilter.rangeType = 'days';
+        let endOfMonthDate = endOfMonth(clickedDate);
+
+        if ((isAfter(endOfMonthDate, new Date()))) {
+            newFilter.rangeStart = format(endOfDay(new Date()), dateFormat);
+            newFilter.rangeAmount = differenceInDays(new Date(), startOfMonth(clickedDate))+1;
+        } else {
+            newFilter.rangeStart = format(endOfMonthDate, dateFormat);
+            newFilter.rangeAmount = getDaysInMonth(endOfMonthDate);
+        }
+    } else if (props.filters.rangeType === 'days') {
+        newFilter.rangeType = 'hours';
+        let endOfDayDate = endOfDay(clickedDate);
+
+        if ((isAfter(endOfDayDate, new Date()))) {
+            newFilter.rangeStart = format(endOfHour(new Date()), dateFormat);
+            newFilter.rangeAmount = differenceInHours(new Date(), startOfDay(clickedDate))+1;
+        } else {
+            newFilter.rangeStart = format(endOfDayDate, dateFormat);
+            newFilter.rangeAmount = 24;
+        }
+    }
+
+    return newFilter;
+}
+
 const chartOptions = ref({
     chart: {
+        events: {
+            click: function(event, chartContext, opts) {
+                let clickedDate = series.value[selectedSerieIndex.value].dates[opts.dataPointIndex];
+
+                if (clickedDate) {
+                    let newFilter = newFilterForDataPoint(clickedDate);
+
+                    if ((Object.keys(newFilter).length > 0)) {
+                        router.get(route('dashboard'), { ...props.filters, ...newFilter }, {preserveScroll: true})
+                    }
+                }
+            }
+        },
         height: 250,
         type: 'area',
         zoom: {
@@ -181,7 +247,14 @@ const selectedSeries = () => {
                 type="area"
                 :height="chartOptions.chart.height"
                 :options="chartOptions"
-                :series="selectedSeries()" />
+                :series="selectedSeries()"
+            />
         </div>
     </div>
 </template>
+
+<style scoped>
+.vue-apexcharts {
+    cursor: pointer;
+}
+</style>
