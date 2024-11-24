@@ -71,9 +71,9 @@ export function formatPercent(value, additionalOptions) {
 
 export function formatDate(date, rangeType) {
     if (rangeType === 'days') {
-        return new Date(date).toLocaleString(locale, { month: 'short', day: 'numeric' });
+        return new Intl.DateTimeFormat(locale, { weekday: 'short', month: 'short', day: 'numeric' }).format(new Date(date));
     } else if (rangeType === 'months') {
-        return new Date(date).toLocaleString(locale, { month: 'short', year: 'numeric' });
+        return new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric' }).format(new Date(date));
     }
 
     return date;
