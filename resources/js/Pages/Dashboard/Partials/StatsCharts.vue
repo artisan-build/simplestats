@@ -96,7 +96,6 @@ const charts = [];
 // !! CONVERSION
 const conversionChart = {
     name: 'Conversion',
-    formatter: 'number',
     class: 'order-1 3xl:order-1',
     group: [],
 };
@@ -119,7 +118,6 @@ if (conversionChart.group.length > 0) charts.push(conversionChart);
 if (currentProjectHasTrackingUsageBits(['payments'])) {
     const revenueChart = {
         name: 'Revenue',
-        formatter: 'currency',
         class: 'order-2 3xl:order-2',
         group: [],
     };
@@ -140,7 +138,6 @@ if (currentProjectHasTrackingUsageBits(['payments'])) {
 if (currentProjectHasTrackingUsageBits(['users'])) {
     const activeUsersChart = {
         name: 'Active Users',
-        formatter: 'number',
         class: 'order-3 3xl:order-5',
         group: [],
     };
@@ -156,7 +153,6 @@ if (currentProjectHasTrackingUsageBits(['users'])) {
 if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
     const avgRevChart = {
         name: 'Average Revenue',
-        formatter: 'currency',
         class: 'order-4 3xl:order-3',
         group: [],
     };
@@ -172,7 +168,6 @@ if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
 if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users', 'payments'])) {
     const growthChart = {
         name: 'Growth',
-        formatter: 'number',
         class: 'order-5 3xl:order-5',
         group: [],
     };
@@ -188,7 +183,6 @@ if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && curren
 if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users'])) {
     const engagementChart = {
         name: 'Engagement',
-        formatter: 'percent',
         class: 'order-6 3xl:order-6',
         group: [],
     };

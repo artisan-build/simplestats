@@ -20,6 +20,12 @@ const chartInstance = ref(null);
 const series = ref(props.chart.data.series);
 const categories = props.chart.data.categories;
 
+const selectedSerieIndex = ref(Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0));
+
+const formatter = () => {
+    return props.chart.group[selectedSerieIndex.value].formatter;
+};
+
 const chartOptions = ref({
     chart: {
         height: 250,
@@ -70,18 +76,18 @@ const chartOptions = ref({
         opposite: true,
         labels: {
             formatter: function (value) {
-                if (props.chart.formatter === 'percent') {
-                    return formatMap[props.chart.formatter](value, {
+                if (formatter() === 'percent') {
+                    return formatMap[formatter()](value, {
                         minimumFractionDigits: 1,
                         maximumFractionDigits: 1,
                     }, page.props.teamCurrency);
-                } else if (props.chart.formatter === 'currency') {
-                    return formatMap[props.chart.formatter](value, {
+                } else if (formatter() === 'currency') {
+                    return formatMap[formatter()](value, {
                         minimumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
                         maximumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
                     }, page.props.teamCurrency);
                 } else {
-                    return formatMap[props.chart.formatter](value, {
+                    return formatMap[formatter()](value, {
                         minimumFractionDigits: (value >= 1000) ? 1 : 0,
                         maximumFractionDigits: (value >= 1000) ? 1 : 0,
                     }, page.props.teamCurrency);
@@ -92,13 +98,13 @@ const chartOptions = ref({
     tooltip: {
         y: {
             formatter: function(value) {
-                if (props.chart.formatter === 'number') {
-                    return formatMap[props.chart.formatter](value, {
+                if (formatter() === 'number') {
+                    return formatMap[formatter()](value, {
                         minimumFractionDigits: (value >= 1000) ? 2 : 0,
                         maximumFractionDigits: (value >= 1000) ? 2 : 0,
                     }, page.props.teamCurrency);
                 } else {
-                    return formatMap[props.chart.formatter](value, {
+                    return formatMap[formatter()](value, {
                         minimumFractionDigits: (value === 0) ? 0 : 2,
                         maximumFractionDigits: (value === 0) ? 0 :2,
                     }, page.props.teamCurrency);
@@ -134,8 +140,6 @@ if (hasCurrentPeriod) {
     };
 }
 
-const selectedSerieIndex = ref(Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0));
-
 const selectSeries = (selectedSerie) => {
     selectedSerieIndex.value = selectedSerie.index;
 
@@ -161,7 +165,6 @@ const selectedSeries = () => {
                 :serie="serie"
                 :serieIndex="serieIndex"
                 :selectedSerieIndex="selectedSerieIndex"
-                :formatter="chart.formatter"
                 :hasCurrent="hasCurrentPeriod"
                 @selectSeries="selectSeries"
             />

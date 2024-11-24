@@ -8,7 +8,6 @@ const props = defineProps({
     serie: Object,
     serieIndex: Number,
     selectedSerieIndex: Number,
-    formatter: String,
     hasCurrent: Boolean,
 });
 
