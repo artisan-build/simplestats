@@ -44,7 +44,7 @@ trait HasStatsTracking
 
                     $statsProperty = "stats_{$property}_id";
                     $item['model']::unguard();
-                    $statsModel->$statsProperty = $item['model']::where($track)->first()?->id ?? $item['model']::create($track)->id;
+                    $statsModel->$statsProperty = $item['model']::firstOrCreate($track)->id;
                 }
                 unset($statsModel->$property);
             }
