@@ -20,7 +20,8 @@ const chartInstance = ref(null);
 const series = ref(props.chart.data.series);
 const categories = props.chart.data.categories;
 
-const selectedSerieIndex = ref(Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0));
+let tmpSeriesIndex = Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0);
+const selectedSerieIndex = ref((series.value[tmpSeriesIndex] ? tmpSeriesIndex : 0));
 
 const formatter = () => {
     return props.chart.group[selectedSerieIndex.value].formatter;
