@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
 use App\Http\Requests\StatsFilterRequest;
-use App\Models\Instance;
-use App\Models\Project;
 use App\Models\StatsUser;
 use App\Services\RefererService;
 use App\Services\StatsAggregationsService;
@@ -13,8 +11,6 @@ use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class StatsController extends Controller
@@ -74,7 +70,7 @@ class StatsController extends Controller
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
             'freePlanWarning' => [
                 'show' => $currentPlan->name === SubscriptionService::PLAN_FREE && ! $hideFreePlanWarning,
-                'users' => $currentPlan->options[StatsUser::class]
+                'users' => $currentPlan->options[StatsUser::class],
             ],
             'subscriptionPlanAlarm' => $subscriptionService->checkPlanAlarm($user->team),
             'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
@@ -113,7 +109,7 @@ class StatsController extends Controller
 
     public function hideFreePlanWarning(Request $request)
     {
-        $request->user()->updateSettings("hideFreePlanWarning", true);
+        $request->user()->updateSettings('hideFreePlanWarning', true);
 
         return back();
     }
