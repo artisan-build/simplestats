@@ -17,6 +17,9 @@ class CheckInactiveUsers extends Command
     public function handle(): void
     {
         User::query()
+            ->whereDoesntHave('subscriptions', function ($query) {
+                $query->where('status', 'active');
+            })
             ->where('last_login_at', '<', now()->subDays(50))
             ->whereNull('inactive_since')
             ->each(function (User $user) {
