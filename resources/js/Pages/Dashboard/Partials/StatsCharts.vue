@@ -22,7 +22,9 @@ const extractStatsData4Chart = (statsGroups) => {
                 acc.series[group.key] = {
                     // chart specific
                     data: [],
+                    dataPrev: [],
                     dates: [],
+                    datesPrev: [],
                     name: group.title ?? group.key,
                     nameSmall: group.titleSmall ?? group.title ?? group.key,
                     color: group.color ?? '',
@@ -31,10 +33,21 @@ const extractStatsData4Chart = (statsGroups) => {
                     formatter: group.formatter,
                     indicator: group.indicatorCallback(),
                 };
+
+                if (props.teamStats.statsPrev) {
+                    acc.series[group.key].namePrev = 'Previous ' + acc.series[group.key].name;
+                    acc.series[group.key].nameSmallPrev = 'Previous ' + acc.series[group.key].nameSmall;
+                    acc.series[group.key].colorPrev = '#a3b8d3';
+                }
             }
 
             acc.series[group.key].data.push(item[group.key]);
             acc.series[group.key].dates.push(item.date_clear);
+
+            if (props.teamStats.statsPrev) {
+                acc.series[group.key].dataPrev.push(props.teamStats.statsPrev[key][group.key]);
+                acc.series[group.key].datesPrev.push(props.teamStats.statsPrev[key].date);
+            }
         }
 
         acc.categories.push(formatDate(item.date, props.filters.rangeType));
@@ -45,7 +58,9 @@ const extractStatsData4Chart = (statsGroups) => {
     data.series = Object.values(data.series).map(item => ({
         ...item,
         data: item.data.reverse(),
-        dates: item.dates.reverse()
+        dates: item.dates.reverse(),
+        dataPrev: item.dataPrev.reverse(),
+        datesPrev: item.datesPrev.reverse()
     }));
 
     data.categories.reverse();

@@ -118,4 +118,16 @@ enum StatsRangeType: string
             default => throw new \Exception('Unexpected match value'),
         };
     }
+
+    public function getPrevStartForComparison(CarbonImmutable $date): CarbonImmutable
+    {
+        return match($this) {
+            self::HOUR => $date->subDay(),
+            self::DAY => $date->subWeek(),
+            self::WEEK => $date->subMonth(),
+            self::MONTH => $date->subYear(),
+//            self::YEAR => $date->startOfYear(),
+            default => throw new \Exception('Unexpected match value'),
+        };
+    }
 }

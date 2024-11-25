@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\ComparisonTypes;
+use App\Enums\StatsRangeType;
+use App\Helpers\AppHelper;
 use App\Http\Requests\StatsFilterRequest;
 use App\Models\StatsUser;
 use App\Services\RefererService;
@@ -10,11 +13,16 @@ use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
+use Carbon\CarbonImmutable;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class StatsController extends Controller
 {
+    /**
+     * @throws Exception
+     */
     public function index(
         StatsFilterRequest $request,
         StatsDetailsService $statsDetailsService,
@@ -50,6 +58,12 @@ class StatsController extends Controller
 
         $filters = StatsFilterDto::fromRequest($request);
         $teamStats->stats = $statsDetailsService->getStats($filters);
+
+        if ($request->has('comparison') && $request->rangeType !== StatsRangeType::YEAR->value) {
+            $teamStats->statsPrev = array_values($statsDetailsService->getStats(
+                AppHelper::createPrevFiltersForComparison($filters),
+            ));
+        }
 
         $teamOwner = $user->team->owner;
         $currentPlan = $teamOwner->sparkPlan();

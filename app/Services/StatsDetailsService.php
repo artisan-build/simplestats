@@ -60,12 +60,4 @@ class StatsDetailsService
             'usage' => StatsService::getTrackingUsageBitsCount()
         ];
     }
-
-    public function getOrganicFilter(string $name = 'Direct / Unknown'): array
-    {
-        return [
-            'id' => StatsFilterDto::TRACK_ORGANIC,
-            'name' => $name
-        ];
-    }
 }

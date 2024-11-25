@@ -2,12 +2,12 @@
 
 namespace App\DTOs;
 
+use App\Enums\ComparisonTypes;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Date;
 
-readonly class StatsFilterDto
+class StatsFilterDto
 {
     const TRACK_ALL = 0;
     const TRACK_ORGANIC = -1;
@@ -19,6 +19,7 @@ readonly class StatsFilterDto
         public int $rangeAmount,
         public StatsRangeType $rangeType,
         public CarbonImmutable $rangeStart,
+        public ?ComparisonTypes $comparison,
         public int $trackReferer = 0,
         public int $trackSource = 0,
         public int $trackMedium = 0,
@@ -38,13 +39,15 @@ readonly class StatsFilterDto
     {
         $rangeType = StatsRangeType::from($request->rangeType ?? StatsRangeType::DAY->value);
         $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
-        $rangeStart = Date::parse($request->rangeStart ?? now());
+        $rangeStart = CarbonImmutable::parse($request->rangeStart ?? now());
 
         if ($rangeStart->isToday()) {
             $rangeStart = now();
         } else {
             $rangeStart = $rangeStart->endOfDay();
         }
+
+        $comparison = ($request->has('comparison')) ? ComparisonTypes::from($request->comparison) : null;
 
         return new self(
             projectId: $request->projectId ?? 0,
@@ -53,6 +56,7 @@ readonly class StatsFilterDto
             rangeAmount: $rangeAmount,
             rangeType: $rangeType,
             rangeStart: $rangeStart,
+            comparison: $comparison,
             trackReferer: $request->trackReferer ?? 0,
             trackSource: $request->trackSource ?? 0,
             trackMedium: $request->trackMedium ?? 0,

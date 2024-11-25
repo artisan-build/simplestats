@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ComparisonTypes;
 use App\Enums\StatsRangeType;
 use App\Models\Instance;
 use App\Models\Project;
@@ -24,6 +25,7 @@ use App\Services\StatsService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class StatsFilterRequest extends FormRequest
 {
@@ -159,6 +161,10 @@ class StatsFilterRequest extends FormRequest
             'limit' => [
                 'sometimes',
                 'integer',
+            ],
+            'comparison' => [
+                'sometimes',
+                new Enum(ComparisonTypes::class),
             ],
         ];
     }

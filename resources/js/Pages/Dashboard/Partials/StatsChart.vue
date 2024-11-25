@@ -143,39 +143,53 @@ const chartOptions = ref({
         opposite: true,
         labels: {
             formatter: function (value) {
+                let format = '';
+
                 if (formatter() === 'percent') {
-                    return formatMap[formatter()](value, {
+                    format = formatMap[formatter()](value, {
                         minimumFractionDigits: 1,
                         maximumFractionDigits: 1,
                     }, page.props.teamCurrency);
                 } else if (formatter() === 'currency') {
-                    return formatMap[formatter()](value, {
+                    format = formatMap[formatter()](value, {
                         minimumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
                         maximumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
                     }, page.props.teamCurrency);
                 } else {
-                    return formatMap[formatter()](value, {
+                    format = formatMap[formatter()](value, {
                         minimumFractionDigits: (value >= 1000) ? 1 : 0,
                         maximumFractionDigits: (value >= 1000) ? 1 : 0,
                     }, page.props.teamCurrency);
                 }
+
+                return format;
             }
         }
     },
     tooltip: {
         y: {
-            formatter: function(value) {
+            formatter: function(value, options) {
+                let format = '';
+
                 if (formatter() === 'number') {
-                    return formatMap[formatter()](value, {
+                    format = formatMap[formatter()](value, {
                         minimumFractionDigits: (value >= 1000) ? 2 : 0,
                         maximumFractionDigits: (value >= 1000) ? 2 : 0,
                     }, page.props.teamCurrency);
                 } else {
-                    return formatMap[formatter()](value, {
+                    format = formatMap[formatter()](value, {
                         minimumFractionDigits: (value === 0) ? 0 : 2,
                         maximumFractionDigits: (value === 0) ? 0 :2,
                     }, page.props.teamCurrency);
                 }
+
+                // console.log(selectedSeries, options.seriesIndex)
+                if (series.value[0].datesPrev.length && options.seriesIndex === 1) {
+                    let prevDate = formatDate(series.value[0].datesPrev[options.dataPointIndex], props.filters.rangeType);
+                    format += ` (${prevDate})`;
+                }
+
+                return format;
             }
         }
     },
@@ -219,7 +233,18 @@ const selectSeries = (selectedSerie) => {
 };
 
 const selectedSeries = () => {
-    return series.value.filter((serie, index) => index === selectedSerieIndex.value);
+    let tmpSelectedSeries = series.value.filter((serie, index) => index === selectedSerieIndex.value);
+
+    if (tmpSelectedSeries[0].dataPrev.length) {
+        tmpSelectedSeries[1] = { ...tmpSelectedSeries[0] };
+        tmpSelectedSeries[1].data = tmpSelectedSeries[1].dataPrev;
+        tmpSelectedSeries[1].dates = tmpSelectedSeries[1].datesPrev;
+        tmpSelectedSeries[1].name = tmpSelectedSeries[1].namePrev;
+        tmpSelectedSeries[1].nameSmall = tmpSelectedSeries[1].nameSmallPrev;
+        tmpSelectedSeries[1].color = tmpSelectedSeries[1].colorPrev;
+    }
+
+    return tmpSelectedSeries;
 };
 </script>
 
