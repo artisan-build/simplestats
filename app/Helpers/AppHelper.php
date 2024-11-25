@@ -27,7 +27,10 @@ class AppHelper
         $prevFilters = clone $filters;
 
         if ($filters->comparison === ComparisonTypes::PERIOD) {
-            $prevFilters->rangeStart = $prevFilters->rangeType->getPrevStartForComparison($prevFilters->rangeStart);
+            $prevFilters->rangeStart = $prevFilters->rangeType->getPrevStartForComparison(
+                $prevFilters->rangeStart,
+                $prevFilters->rangeAmount,
+            );
         } else {
             $prevFilters->rangeStart = $prevFilters->rangeStart->subYear();
         }
