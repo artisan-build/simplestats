@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\ComparisonType;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsDeviceBrowser;
@@ -126,6 +127,9 @@ class StatsService
         if (! isset($formatted['instanceId'])) {
             $formatted['instanceId'] = 0;
         }
+        if (! isset($formatted['comparison'])) {
+            $formatted['comparison'] = 0;
+        }
 
         return $formatted;
     }
@@ -184,5 +188,15 @@ class StatsService
     public static function getTrackingUsageBitsCount()
     {
         return self::getTrackingUsages()->sum('bit');
+    }
+
+    public static function getComparisonTypes(): array
+    {
+        return collect(ComparisonType::cases())->map(function ($type) {
+            return [
+                'id' => $type->value,
+                'name' => $type->getTitle(),
+            ];
+        })->toArray();
     }
 }

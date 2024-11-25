@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\ComparisonTypes;
+use App\Enums\ComparisonType;
 use App\Enums\StatsRangeType;
 use App\Helpers\AppHelper;
 use App\Http\Requests\StatsFilterRequest;
@@ -59,7 +59,7 @@ class StatsController extends Controller
         $filters = StatsFilterDto::fromRequest($request);
         $teamStats->stats = $statsDetailsService->getStats($filters);
 
-        if ($request->has('comparison') && $request->rangeType !== StatsRangeType::YEAR->value) {
+        if ($filters->comparison && $filters->rangeType !== StatsRangeType::YEAR) {
             $teamStats->statsPrev = array_values($statsDetailsService->getStats(
                 AppHelper::createPrevFiltersForComparison($filters),
             ));
@@ -90,6 +90,7 @@ class StatsController extends Controller
             'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
                 return [$key => $item['bit']];
             }),
+            'comparisonTypes' => StatsService::getComparisonTypes(),
         ];
 
         return Inertia::render('Dashboard/Index', $data);

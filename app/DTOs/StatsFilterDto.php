@@ -2,7 +2,7 @@
 
 namespace App\DTOs;
 
-use App\Enums\ComparisonTypes;
+use App\Enums\ComparisonType;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use Carbon\CarbonImmutable;
@@ -19,7 +19,7 @@ class StatsFilterDto
         public int $rangeAmount,
         public StatsRangeType $rangeType,
         public CarbonImmutable $rangeStart,
-        public ?ComparisonTypes $comparison,
+        public string $comparison,
         public int $trackReferer = 0,
         public int $trackSource = 0,
         public int $trackMedium = 0,
@@ -47,8 +47,6 @@ class StatsFilterDto
             $rangeStart = $rangeStart->endOfDay();
         }
 
-        $comparison = ($request->has('comparison')) ? ComparisonTypes::from($request->comparison) : null;
-
         return new self(
             projectId: $request->projectId ?? 0,
             instanceId: $request->instanceId ?? 0,
@@ -56,7 +54,7 @@ class StatsFilterDto
             rangeAmount: $rangeAmount,
             rangeType: $rangeType,
             rangeStart: $rangeStart,
-            comparison: $comparison,
+            comparison: $request->comparison ?? '0',
             trackReferer: $request->trackReferer ?? 0,
             trackSource: $request->trackSource ?? 0,
             trackMedium: $request->trackMedium ?? 0,

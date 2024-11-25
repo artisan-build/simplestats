@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ComparisonTypes;
+use App\Enums\ComparisonType;
 use App\Enums\StatsRangeType;
 use App\Models\Instance;
 use App\Models\Project;
@@ -164,7 +164,7 @@ class StatsFilterRequest extends FormRequest
             ],
             'comparison' => [
                 'sometimes',
-                new Enum(ComparisonTypes::class),
+                new Enum(ComparisonType::class),
             ],
         ];
     }

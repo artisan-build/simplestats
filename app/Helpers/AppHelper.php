@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\ComparisonTypes;
+use App\Enums\ComparisonType;
 use Exception;
 use Illuminate\Support\Facades\Config;
 
@@ -26,11 +26,8 @@ class AppHelper
     {
         $prevFilters = clone $filters;
 
-        if ($filters->comparison === ComparisonTypes::PERIOD) {
-            $prevFilters->rangeStart = $prevFilters->rangeType->getPrevStartForComparison(
-                $prevFilters->rangeStart,
-                $prevFilters->rangeAmount,
-            );
+        if ($filters->comparison === ComparisonType::PERIOD->value) {
+            $prevFilters->rangeStart = $prevFilters->rangeType->getPrevStartForComparison($prevFilters->rangeStart);
         } else {
             $prevFilters->rangeStart = $prevFilters->rangeStart->subYear();
         }

@@ -119,13 +119,13 @@ enum StatsRangeType: string
         };
     }
 
-    public function getPrevStartForComparison(CarbonImmutable $rangeStart, int $rangeAmount): CarbonImmutable
+    public function getPrevStartForComparison(CarbonImmutable $rangeStart): CarbonImmutable
     {
         return match($this) {
-            self::HOUR => $rangeStart->subHours($rangeAmount),
-            self::DAY => $rangeStart->subDays($rangeAmount),
-            self::WEEK => $rangeStart->subMonths($rangeAmount),
-            self::MONTH => $rangeStart->subYears($rangeAmount),
+            self::HOUR => $rangeStart->subDay(),
+            self::DAY => $rangeStart->subWeek(),
+            self::WEEK => $rangeStart->subMonth(),
+            self::MONTH => $rangeStart->subYear(),
 //            self::YEAR => $date->startOfYear(),
             default => throw new \Exception('Unexpected match value'),
         };

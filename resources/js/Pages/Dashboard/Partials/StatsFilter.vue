@@ -30,6 +30,7 @@ const props = defineProps({
     rangeTypes: Array,
     topReferers: Object,
     trackingUsageBits: Object,
+    comparisonTypes: Object,
 });
 
 const maxTrackingUsageBits = Object.values(props.trackingUsageBits).reduce((a, b) => a + b);
@@ -247,7 +248,27 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                         @change="presetChanged"
                                     />
                                 </div>
-                                <div v-if="maxTrackingUsageBits === currentProject.usage" class="pl-3">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
+                                        <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <InputLabel class="hidden" for="rangeComparison" value="Comparison" />
+                                    <SelectInput
+                                        id="rangeComparison"
+                                        v-model="form.comparison"
+                                        class="mt-1 block w-18"
+                                        :options="comparisonTypes"
+                                        @change="filterChanged"
+                                    />
+                                </div>
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dot" viewBox="0 0 16 16">
+                                        <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+                                    </svg>
+                                </div>
+                                <div v-if="maxTrackingUsageBits === currentProject.usage">
                                     <InputLabel class="hidden" for="advanced" value="&nbsp;" />
                                     <ToggleButton class="mt-1" id="advanced" title="Toggle Advanced View" v-model:checked="page.props.auth.user.settings.showAdvanced" @click="$inertia.get(route('user-settings.toggle-advanced'))">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">

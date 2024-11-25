@@ -19,6 +19,7 @@ const props = defineProps({
     freePlanWarning: Object,
     subscriptionPlanAlarm: Array,
     trackingUsageBits: Object,
+    comparisonTypes: Object,
 });
 
 const isScrolled = ref(false)
@@ -59,6 +60,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                     :rangeTypes="rangeTypes"
                     :topReferers="topReferers"
                     :trackingUsageBits="trackingUsageBits"
+                    :comparisonTypes="comparisonTypes"
                 />
             </div>
             <div class="grid gap-8">
