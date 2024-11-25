@@ -185,8 +185,14 @@ const chartOptions = ref({
 
                 // console.log(selectedSeries, options.seriesIndex)
                 if (series.value[0].datesPrev.length && options.seriesIndex === 1) {
-                    let prevDate = formatDate(series.value[0].datesPrev[options.dataPointIndex], props.filters.rangeType);
-                    format += ` (${prevDate})`;
+                    let prevDate = series.value[0].datesPrev[options.dataPointIndex];
+                    let prevDateFormatted = formatDate(prevDate, props.filters.rangeType);
+
+                    if (props.filters.comparison === 'year') {
+                        prevDateFormatted += ', ' + new Date(prevDate).getFullYear();
+                    }
+
+                    format += ` (${prevDateFormatted})`;
                 }
 
                 return format;
