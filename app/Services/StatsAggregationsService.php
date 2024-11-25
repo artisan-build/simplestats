@@ -307,7 +307,7 @@ class StatsAggregationsService
                 'rangeStart' => current($missingAfterPeriod),
             ]));
 
-            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersAfter), $filtersBefore->projectId));
+            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersAfter), $filtersAfter->projectId));
         }
 
         return $missingAggregatedData;
