@@ -27,12 +27,10 @@ class BaseStatsValidator
         return [
             'time' => [
                 'required',
-                'before_or_equal:now',
                 'date_format:Y-m-d H:i:s P',
             ],
             'stats_user_time' => [
                 'sometimes',
-                'before_or_equal:now',
                 'date_format:Y-m-d H:i:s P',
             ],
             'client_version' => [
