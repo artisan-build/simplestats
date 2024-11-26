@@ -35,7 +35,6 @@ class StatsDetailsService
                 $stat['lt_REG2DAU'] = round($this->statsService->safeDivision($stat['pd_DAU'], $stat['lt_REG']) * 100, 2);
                 $stat['lt_REG2PU'] = round($this->statsService->safeDivision($stat['lt_PU'], $stat['lt_REG']) * 100, 2);
                 $stat['lt_REG2TAU'] = round($this->statsService->safeDivision($stat['lt_TAU'], $stat['lt_REG']) * 100, 2);
-                dump("net: {$stat['lt_NET']}, reg: {$stat['lt_REG']}");
                 $stat['lt_ARPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_REG']), 2);
                 $stat['lt_ARPPU'] = round($this->statsService->safeDivision($stat['lt_NET'], $stat['lt_PU']), 2);
             }
