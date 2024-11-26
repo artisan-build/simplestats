@@ -54,7 +54,10 @@ class EventServiceProvider extends ServiceProvider
         });
 
         Event::listen(Login::class, function ($event) {
-            $event->user->update(['last_login_at' => now()]);
+            $event->user->update([
+                'last_login_at' => now(),
+                'inactive_since' => null,
+            ]);
         });
     }
 
