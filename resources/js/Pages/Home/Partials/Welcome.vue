@@ -14,6 +14,7 @@ import Banners from "@/Pages/Home/Partials/Banners.vue";
 defineProps({
     plans: Array,
     banners: Array,
+    discount: Number,
 });
 
 const appEnv = import.meta.env.VITE_APP_ENV;
@@ -62,7 +63,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 
         <Pricing :plans="plans" />
 
-        <SelfHosted />
+        <SelfHosted :discount="discount" />
 
         <Bottom />
     </div>

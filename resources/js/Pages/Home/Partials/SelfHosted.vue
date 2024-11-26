@@ -2,13 +2,27 @@
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {Link} from "@inertiajs/vue3";
 
+const props = defineProps({
+    discount: Number,
+})
+
 const appName = import.meta.env.VITE_APP_NAME;
+
+const getPlanPrice = (amount, discount) => {
+    amount = amount  / 100;
+
+    if (discount) {
+        amount = Math.floor(amount * (discount / 100));
+    }
+
+    return '$' + amount;
+}
 
 const licenses = [
     {
         "name": "Single domain",
         "short_description": "For one domain or subdomain. Powerful analytics with package and API. One year of updates, no subscription.",
-        "price": '$249.00',
+        "price": 24900,
         "promoted": false,
         "features": [
             "One domain or subdomain",
@@ -21,7 +35,7 @@ const licenses = [
     {
         "name": "Unlimited domains",
         "short_description": "No domain limits. Integrate into products. Full analytics suite. One year of updates, no subscription.",
-        "price": '$999.00',
+        "price": 99900,
         "promoted": true,
         "features": [
             "No domain restrictions",
@@ -53,7 +67,15 @@ const licenses = [
                     </div>
 
                     <h4 class="mt-2 text-3xl font-semibold" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
-                        {{ license.price.replace(/\.00$/, '') }}
+                        <span v-if="discount">
+                            <span class="line-through text-base">
+                                {{ getPlanPrice(license.price, 0) }}
+                            </span>
+                            {{ getPlanPrice(license.price, discount) }}
+                        </span>
+                        <span v-else>
+                            {{ getPlanPrice(license.price, 0) }}
+                        </span>
                     </h4>
 
                     <p class="mt-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">

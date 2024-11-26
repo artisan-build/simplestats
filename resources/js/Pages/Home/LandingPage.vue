@@ -6,13 +6,14 @@ import Footer from "@/Components/Footer.vue";
 defineProps({
     plans: Array,
     banners: Array,
+    discount: Number,
 });
 </script>
 
 <template>
     <Head title="The missing analytics tool for your Laravel application." />
 
-    <Welcome :plans="plans" :banners="banners" />
+    <Welcome :plans="plans" :banners="banners" :discount="discount" />
 
     <Footer />
 </template>

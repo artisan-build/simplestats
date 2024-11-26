@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -14,11 +13,14 @@ class HomeController extends Controller
      */
     public function __invoke(Request $request, SubscriptionService $subscriptionService)
     {
+        $discount = $subscriptionService->getDiscount();
+
         return Inertia::render('Home/LandingPage', [
             'plans' => $subscriptionService->getFrontendPlans(),
             'banners' => collect([
-                $subscriptionService->getDiscount(),
+                $discount,
             ])->filter(),
+            'discount' => $discount['percent'] ?? 0,
         ]);
     }
 }
