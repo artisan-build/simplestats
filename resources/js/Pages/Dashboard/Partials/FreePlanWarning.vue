@@ -13,8 +13,8 @@ const appName = import.meta.env.VITE_APP_NAME;
 <template>
     <div class="flex justify-between items-center px-5 py-3 bg-blue-500 text-white rounded-md mb-6">
         <div>
-            With the free plan of {{ appName }} you can track up to <a href="/#pricing" target="_blank" class="font-bold underline">{{ formatNumber(freePlanWarning.users) }}</a> users/registrations.
-            <Link class="font-bold underline" :href="route('spark.portal')">Upgrade</Link> your plan to enable limitless tracking!
+            With the <a href="/#pricing" target="_blank" class="font-bold underline">free plan</a> of {{ appName }} you can only track a limited amount of data.
+            <Link class="font-bold underline" :href="route('spark.portal')">Upgrade</Link> to unlock the full power of {{ appName }}!
         </div>
         <div>
             <div class="flex items-center gap-2">
