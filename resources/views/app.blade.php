@@ -34,23 +34,6 @@
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
-
-        @if(app()->isProduction())
-        <!-- Brevo Conversations {literal} -->
-        <script>
-            (function(d, w, c) {
-                w.BrevoConversationsID = '66035b07a8bd503a9a7dc21d';
-                w[c] = w[c] || function() {
-                    (w[c].q = w[c].q || []).push(arguments);
-                };
-                var s = d.createElement('script');
-                s.async = true;
-                s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-                if (d.head) d.head.appendChild(s);
-            })(document, window, 'BrevoConversations');
-        </script>
-        <!-- /Brevo Conversations {/literal} -->
-        @endif
     </head>
     <body class="font-sans min-h-screen bg-white dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
         @impersonating($guard = null)
@@ -62,20 +45,21 @@
 
         @inertia
 
-{{--        @if(app()->isProduction())--}}
-{{--            <!--Start of Tawk.to Script-->--}}
-{{--            <script type="text/javascript">--}}
-{{--                var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();--}}
-{{--                (function(){--}}
-{{--                    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];--}}
-{{--                    s1.async=true;--}}
-{{--                    s1.src='https://embed.tawk.to/6601f04ea0c6737bd124880f/1hprp5d8g';--}}
-{{--                    s1.charset='UTF-8';--}}
-{{--                    s1.setAttribute('crossorigin','*');--}}
-{{--                    s0.parentNode.insertBefore(s1,s0);--}}
-{{--                })();--}}
-{{--            </script>--}}
-{{--            <!--End of Tawk.to Script-->--}}
-{{--        @endif--}}
+        @if(app()->isProduction())
+            <!-- Brevo Conversations {literal} -->
+            <script>
+                (function(d, w, c) {
+                    w.BrevoConversationsID = '66035b07a8bd503a9a7dc21d';
+                    w[c] = w[c] || function() {
+                        (w[c].q = w[c].q || []).push(arguments);
+                    };
+                    var s = d.createElement('script');
+                    s.async = true;
+                    s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+                    if (d.head) d.head.appendChild(s);
+                })(document, window, 'BrevoConversations');
+            </script>
+            <!-- /Brevo Conversations {/literal} -->
+        @endif
     </body>
 </html>
