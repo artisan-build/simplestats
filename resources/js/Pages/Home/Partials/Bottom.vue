@@ -57,7 +57,7 @@ const linkCategories = [
                             Based and hosted in the EU <span class="text-lg">🇪🇺</span>
                         </div>
                         <div class="mt-4">
-                            <img class="rounded-xl shadow-md border border-gray-300" src="/images/gdpr.png" alt="GDPR compliant" width="192" height="66">
+                            <img class="rounded-xl shadow-md border border-gray-300" src="/images/gdpr.png" loading="lazy" alt="GDPR compliant" width="192" height="66">
                         </div>
                     </div>
                     <div class="grid gap-8 grid-cols-1" :class="`md:grid-cols-${linkCategories.length}`">
