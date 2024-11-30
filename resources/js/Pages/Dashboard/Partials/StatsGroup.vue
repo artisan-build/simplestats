@@ -2,7 +2,7 @@
 import {onMounted, ref} from 'vue';
 import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
 import {Link, usePage} from "@inertiajs/vue3";
-import _ from 'lodash';
+import {snakeCase} from 'lodash';
 import {get} from 'country-flag-emoji';
 import {XAU} from "@/Helpers/StringHelpers.js";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -172,9 +172,9 @@ function currentProjectHasTrackingUsageBits(bits){
                                 <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
                                     <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
                                         <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
-                                        <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
+                                        <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
                                     </span>
-                                    <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ _.snakeCase(filters.statsType) +'/'+ _.snakeCase(item.name) +'.svg'" :alt="item.name">
+                                    <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+ snakeCase(item.name) +'.svg'" :alt="item.name">
                                     <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
                                     <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
                                 </Link>
