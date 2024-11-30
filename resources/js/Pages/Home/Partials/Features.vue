@@ -71,9 +71,9 @@ const features = [
                 <div v-for="feature in features">
                     <div class="mr-4 flex items-center gap-x-5 lg:mr-0 text-indigo-600">
                         <component class="h-10 w-10" :is="feature.icon" />
-                        <h4 class="text-sm font-semibold text-gray-800 lg:text-lg xl:text-xl">
+                        <div class="text-sm font-semibold text-gray-800 lg:text-lg xl:text-xl">
                             {{ feature.title }}
-                        </h4>
+                        </div>
                     </div>
                     <div class="lg:mt-5">
                         <p class="mt-2 leading-normal text-gray-600 text-base">

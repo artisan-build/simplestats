@@ -72,7 +72,7 @@ const getPlanPrice = (amount, discount) => {
                         </div>
                     </div>
 
-                    <h4 class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
+                    <div class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <span v-if="plan.discount && plan[priceIntervalKey] > 0">
                             <span class="line-through text-base">
                                 {{ getPlanPrice(plan[priceIntervalKey], 0) }}
@@ -85,7 +85,7 @@ const getPlanPrice = (amount, discount) => {
                         <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
                             / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
                         </span>
-                    </h4>
+                    </div>
 
                     <p class="mt-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         {{ plan.short_description }}

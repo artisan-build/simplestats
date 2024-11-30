@@ -48,23 +48,23 @@ const linkCategories = [
             <div class="container py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
                 <div class="xl:grid xl:grid-cols-[1fr_2fr] xl:gap-8">
                     <div class="my-8 xl:my-0">
-                        <h4 class="leading-5 font-semibold tracking-wider text-gray-300">
+                        <div class="leading-5 font-semibold tracking-wider text-gray-300">
                             <Link href="/" class="inline-flex items-center">
                                 <ApplicationLogo />
                             </Link>
-                        </h4>
+                        </div>
                         <div class="mt-4 text-base leading-6">
                             Based and hosted in the EU <span class="text-lg">🇪🇺</span>
                         </div>
                         <div class="mt-4">
-                            <img class="rounded-xl shadow-md border border-gray-300" src="/images/gdpr.png" alt="GDPR" width="192" height="66">
+                            <img class="rounded-xl shadow-md border border-gray-300" src="/images/gdpr.png" alt="GDPR compliant" width="192" height="66">
                         </div>
                     </div>
                     <div class="grid gap-8 grid-cols-1" :class="`md:grid-cols-${linkCategories.length}`">
                         <div v-for="category in linkCategories">
-                            <h4 class="leading-5 font-semibold tracking-wider uppercase">
+                            <div class="leading-5 font-semibold tracking-wider uppercase">
                                 {{ category.header }}
-                            </h4>
+                            </div>
                             <ul class="mt-4">
                                 <li class="mt-4" v-for="link in category.links">
                                     <a :href="link.url" target="_blank" rel="noreferrer" class="text-sm leading-6 hover:underline">{{ link.title }}</a>

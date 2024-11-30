@@ -66,7 +66,7 @@ const licenses = [
                         <div>{{ license.name }}</div>
                     </div>
 
-                    <h4 class="mt-2 text-3xl font-semibold" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
+                    <div class="mt-2 text-3xl font-semibold" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <span v-if="discount">
                             <span class="line-through text-base">
                                 {{ getPlanPrice(license.price, 0) }}
@@ -76,7 +76,7 @@ const licenses = [
                         <span v-else>
                             {{ getPlanPrice(license.price, 0) }}
                         </span>
-                    </h4>
+                    </div>
 
                     <p class="mt-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
                         {{ license.short_description }}

@@ -34,7 +34,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
                 Server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple
                 counts of views and visits. Discover in-depth metrics like Registrations, Conversion Rate, campaign ROI and much more in just a few <a href="/docs" target="_blank" class="font-bold text-indigo-500">minutes</a>!
                 <a href="docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:block absolute right-0 top-0 -mr-64 -mt-16 " style="transform: rotate(30deg);">
-                    <img width="250" height="112" class="hover:scale-105 transition" src="images/ad-blockers-badge.png" />
+                    <img alt="Can't be blocked by ad blockers!" width="250" height="112" class="hover:scale-105 transition" src="images/ad-blockers-badge.png" />
                 </a>
             </div>
             <Link v-if="$page.props.canRegister" :href="route('register')" class="mb-4 inline-flex items-center justify-center px-5 py-3 mx-1.5 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
