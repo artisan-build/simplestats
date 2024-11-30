@@ -11,7 +11,7 @@ const selectedInterval = ref('monthly');
 
 const getIntervalClass = (interval) => {
     if (selectedInterval.value === interval) {
-        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-100 bg-indigo-500 rounded-md';
+        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-white bg-indigo-500 rounded-md';
     } else {
         return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-gray-200 dark:hover:bg-gray-800 bg-transparent rounded-md hover:bg-gray-200';
     }

@@ -5,7 +5,7 @@ const brands = [
     {
         'name': 'Product Hunt',
         'url': 'https://www.producthunt.com/posts/simplestats?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-simplestats',
-        'img': 'https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=472898&theme=light',
+        'img': '/images/brands/producthunt.png',
         'alt': 'SimpleStats - The missing statistics tool for Laravel applications | Product Hunt',
     },
     {
