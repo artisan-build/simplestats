@@ -28,7 +28,7 @@ class CheckInactiveUsers extends Command
             });
 
         User::query()
-            ->where('inactive_since', '<', now()->subDays(1))
+            ->where('inactive_since', '<', now()->subDays(9))
             ->each(function (User $user) {
                 $user->notify(new UserInactiveNotification($user, 1));
             });
