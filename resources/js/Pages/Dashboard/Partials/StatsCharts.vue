@@ -159,8 +159,14 @@ if (currentProjectHasTrackingUsageBits(['users'])) {
     };
 
     activeUsersChart.group.push({key: 'pd_DAU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAU')}});
-    activeUsersChart.group.push({key: 'pd_DAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAPU')}});
-    activeUsersChart.group.push({key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAAPU')}});
+
+    if (currentProjectHasTrackingUsageBits(['payments'])) {
+        activeUsersChart.group.push({key: 'pd_DAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAPU')}});
+        activeUsersChart.group.push({key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAAPU')}});
+    } else {
+        activeUsersChart.group.push({key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2DAU')}});
+        activeUsersChart.group.push({key: 'pd_NAU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAU}});
+    }
 
     if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
 }
