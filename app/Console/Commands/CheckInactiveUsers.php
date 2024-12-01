@@ -28,12 +28,18 @@ class CheckInactiveUsers extends Command
             });
 
         User::query()
+            ->whereDoesntHave('subscriptions', function ($query) {
+                $query->where('status', 'active');
+            })
             ->where('inactive_since', '<', now()->subDays(9))
             ->each(function (User $user) {
                 $user->notify(new UserInactiveNotification($user, 1));
             });
 
         User::query()
+            ->whereDoesntHave('subscriptions', function ($query) {
+                $query->where('status', 'active');
+            })
             ->where('inactive_since', '<', now()->subDays(10))
             ->each(function (User $user) {
                 $user->notify(new UserDeletedNotification($user));
