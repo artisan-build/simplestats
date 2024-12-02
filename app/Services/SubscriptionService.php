@@ -92,7 +92,7 @@ class SubscriptionService
             if ($currentPercent > self::ALARM_PERCENTAGE) {
                 $alarms[] = [
                     'percent' => $currentPercent,
-                    'text' => "You reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.",
+                    'text' => "You've reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.",
                 ];
             }
         }
