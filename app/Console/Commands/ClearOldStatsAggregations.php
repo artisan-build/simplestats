@@ -26,6 +26,6 @@ class ClearOldStatsAggregations extends Command
      */
     public function handle()
     {
-        StatsAggregation::where('selected_at', '<', now()->subDays(30))->delete();
+        StatsAggregation::where('selected_at', '<', now()->subDays(400))->delete();
     }
 }
