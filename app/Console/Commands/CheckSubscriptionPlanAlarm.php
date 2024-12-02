@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\SubscriptionPlanAlarm;
 use App\Models\Team;
 use App\Services\SubscriptionService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class CheckSubscriptionPlanAlarm extends Command
 {
@@ -27,10 +29,17 @@ class CheckSubscriptionPlanAlarm extends Command
      */
     public function handle()
     {
-        Team::with('owner')->get()->each(function(Team $team) {
-            if (empty($team->owner)) return;
+        Team::with('owner')->get()->each(function (Team $team) {
+            if (empty($team->owner)) {
+                return;
+            }
+
             $team->owner->load('subscriptions');
-            app(SubscriptionService::class)->checkPlanAlarm($team, true);
+
+            if ($alarms = app(SubscriptionService::class)->getPlanAlarm($team)) {
+                Mail::to($team->owner->email)->send(new SubscriptionPlanAlarm($team->owner, $alarms));
+                $this->info('Alarm Mail sent to '.$team->owner->email);
+            }
         });
     }
 }

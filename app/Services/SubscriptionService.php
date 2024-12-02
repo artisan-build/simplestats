@@ -62,7 +62,7 @@ class SubscriptionService
         });
     }
 
-    public function checkPlanAlarm(Team $team, bool $sendMail = false): array
+    public function getPlanAlarm(Team $team): array
     {
         $teamOwner = $team->owner;
         $teamPlan = $teamOwner->sparkPlan();
@@ -95,10 +95,6 @@ class SubscriptionService
                     'text' => "You've reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.",
                 ];
             }
-        }
-
-        if (! empty($alarms) && $sendMail) {
-            Mail::to($teamOwner->email)->send(new SubscriptionPlanAlarm($teamOwner, $alarms));
         }
 
         return $alarms;
