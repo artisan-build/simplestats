@@ -27,13 +27,11 @@ class Kernel extends ConsoleKernel
         // double backup or (worse) no backup at all.
 
         if (app()->isProduction()) {
-            // hourly
-            $schedule->command('app:check-subscription-plan-alarm')->hourly();
-
             // DAILY
             $schedule->command('backup:clean')->daily()->at('01:00');
             $schedule->command('backup:run')->daily()->at('01:30');
             $schedule->command('app:recalc-stats-starting-at')->daily()->at('01:45');
+            $schedule->command('app:check-subscription-plan-alarm')->daily()->at('3:30');
             $schedule->command('app:check-inactive-users')->daily()->at('03:45');
 
             // WEEKLY
