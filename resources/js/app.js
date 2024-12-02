@@ -6,14 +6,12 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
-import {vTooltip} from 'floating-vue'
-import * as Sentry from "@sentry/vue";
-import {capitalize} from "lodash";
+import {vTooltip} from 'floating-vue';
 
 let appName = import.meta.env.VITE_APP_NAME;
 
 if (import.meta.env.VITE_APP_ENV !== 'production') {
-    appName = capitalize(import.meta.env.VITE_APP_ENV) +' '+import.meta.env.VITE_APP_NAME;
+    appName = import.meta.env.VITE_APP_ENV +' '+import.meta.env.VITE_APP_NAME;
 }
 
 createInertiaApp({
@@ -22,17 +20,21 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) });
 
-        Sentry.init({
-            app,
-            dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
-            environment: import.meta.env.APP_ENV,
-        });
-
         app
             .use(plugin)
             .use(ZiggyVue)
             .directive('tooltip', vTooltip)
-            .mount(el)
+            .mount(el);
+
+        if (import.meta.env.VITE_SENTRY_DSN_PUBLIC) {
+            import('@sentry/vue').then((Sentry) => {
+                Sentry.init({
+                    app,
+                    dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
+                    environment: import.meta.env.VITE_APP_ENV,
+                });
+            });
+        }
 
         return app;
     },
