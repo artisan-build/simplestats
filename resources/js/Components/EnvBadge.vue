@@ -1,6 +1,5 @@
 <script setup>
 import InputLabel from "@/Components/InputLabel.vue";
-import _ from "lodash";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const appEnv = import.meta.env.VITE_APP_ENV;
