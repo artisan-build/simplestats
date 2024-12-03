@@ -35,10 +35,10 @@ cd simplestats
 
 ### Dependencies
 
-Next, install the dependencies using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
+Next, install the dependencies for the self-hosted version using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
 
 ```bash
-composer install
+COMPOSER=composer.self-hosted.json composer install --no-dev
 
 npm install
 ```
