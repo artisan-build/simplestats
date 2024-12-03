@@ -19,6 +19,10 @@ class SparkServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('app.app_type') !== 'default') {
+            return;
+        }
+
         Cashier::useTransactionModel(Transaction::class);
 
         Spark::billable(User::class)->resolve(function (Request $request) {
