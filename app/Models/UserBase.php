@@ -19,10 +19,9 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
-use SimpleStatsIo\LaravelClient\Contracts\TrackablePersonWithCondition;
 use Spark\Plan;
 
-abstract class UserBase extends Authenticatable implements MustVerifyEmail, TrackablePersonWithCondition
+abstract class UserBase extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasConnectedAccounts;
@@ -103,21 +102,6 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Trac
     {
         //dispactches the job to the queue passing it this User object
         QueuedVerifyEmailJob::dispatch($this);
-    }
-
-    public function passTrackingCondition(): bool
-    {
-        return $this->email_verified_at != null;
-    }
-
-    public function watchTrackingFields(): array
-    {
-        return ['email_verified_at'];
-    }
-
-    public function getTrackingTime(): CarbonInterface
-    {
-        return $this->{self::CREATED_AT};
     }
 
     // Compatibility for auth()->team() checks in request/validator classes,

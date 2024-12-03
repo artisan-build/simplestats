@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
+use SimpleStatsIo\LaravelClient\Contracts\TrackablePersonWithCondition;
 use Spark\Billable;
 use Spark\Plan;
 
 if (config('app.app_type') === 'default') {
-    class User extends UserBase
+    class User extends UserBase implements TrackablePersonWithCondition
     {
         use Billable {
             sparkPlan as aliasSparkPlan;
@@ -27,6 +29,21 @@ if (config('app.app_type') === 'default') {
             }
 
             return $plan;
+        }
+
+        public function passTrackingCondition(): bool
+        {
+            return $this->email_verified_at != null;
+        }
+
+        public function watchTrackingFields(): array
+        {
+            return ['email_verified_at'];
+        }
+
+        public function getTrackingTime(): CarbonInterface
+        {
+            return $this->{self::CREATED_AT};
         }
     }
 } else {
