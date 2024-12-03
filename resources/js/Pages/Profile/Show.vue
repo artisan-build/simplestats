@@ -57,18 +57,18 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 
             <div v-if="$page.props.socialstream.providers.length && $page.props.socialstream.show">
                 <ConnectedAccountsForm class="mt-10 sm:mt-0"/>
+
+                <SectionBorder/>
             </div>
 
             <div v-if="$page.props.socialstream.hasPassword && appEnv !== 'demo'">
-                <SectionBorder/>
-
                 <LogoutOtherBrowserSessionsForm :sessions="sessions" class="mt-10 sm:mt-0" />
+
+                <SectionBorder/>
             </div>
 
             <template
                 v-if="$page.props.jetstream.hasAccountDeletionFeatures && $page.props.socialstream.hasPassword">
-                <SectionBorder/>
-
                 <DeleteUserForm class="mt-10 sm:mt-0"/>
             </template>
         </div>
