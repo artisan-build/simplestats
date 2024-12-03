@@ -55,7 +55,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
                 <SectionBorder />
             </div>
 
-            <div v-if="$page.props.socialstream.show">
+            <div v-if="$page.props.socialstream.providers.length && $page.props.socialstream.show">
                 <ConnectedAccountsForm class="mt-10 sm:mt-0"/>
             </div>
 
