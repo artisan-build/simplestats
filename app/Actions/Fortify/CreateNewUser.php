@@ -25,7 +25,7 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        $invitationRule = (config('app.app_type') === 'default') ? 'nullable' : 'required';
+        $invitationRule = (config('app.app_type') === 'default' || app()->runningInConsole()) ? 'nullable' : 'required';
 
         $rules = [
             'name' => ['required', 'string', 'max:255'],
