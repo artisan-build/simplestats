@@ -1,6 +1,6 @@
-# SimpleStats
+# SimpleStats.io
 
-This is the official SimpleStats.io application!
+This is the official SimpleStats.io application repository!
 
 ![screenshot](https://simplestats.io/images/screenshot.png)
 
@@ -15,7 +15,7 @@ Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 * PHP 8.2 or higher
 * ext-zip
 * MySQL 8.0 or higher
-* Node.js 21.6 or higher
+* Node.js 21.6 or higher (might also work with a lower version)
 
 And the default [Laravel requirements](https://laravel.com/docs/11.x/deployment#server-requirements).
 
@@ -23,21 +23,33 @@ And the default [Laravel requirements](https://laravel.com/docs/11.x/deployment#
 
 SimpleStats is a regular Laravel application; it's build on top of Laravel 11 and uses Vue / Inertia.js / Tailwind CSS for the frontend (VILT stack). If you are familiar with Laravel, you should feel right at home.
 
+### Repository
+
 ```bash
 mkdir simplestats
 
-git clone https://github.com/simplestats-io/app.git ./simplestats
+git clone git@github.com:simplestats-io/app.git ./simplestats
 
 cd simplestats
+
+mkdir -p storage/framework/cache
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
 ```
 
-Next, install the dependencies using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
+### Dependencies
+
+Next, install the dependencies for the self-hosted version using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
 
 ```bash
-composer install
+COMPOSER=composer.self-hosted.json composer install
 
 npm install
 ```
+
+**Note:** for self-hosted you always have to use the self-hosted composer json file!
+
+### Branding and Environment
 
 After that, set up your `.env` file.
 
@@ -49,11 +61,15 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+### Database
+
 Prepare your database and run the migrations:
 
 ```bash
 php artisan migrate
 ```
+
+### Storage
 
 Link the storage to the public folder:
 
@@ -61,17 +77,23 @@ Link the storage to the public folder:
 php artisan storage:link
 ```
 
+### Assets
+
 Build the assets:
 
 ```bash
 npm run build
 ```
 
-Run the scheduler:
+### Scheduler
 
 Make sure to run the Laravel [scheduler](https://laravel.com/docs/11.x/scheduling#running-the-scheduler) it performs daily backups, updates GeoIP and executes other important commands.
 
-### Post Installation
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Post Installation
 
 After the installation is finished, make sure to create the first user:
 
