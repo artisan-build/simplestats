@@ -81,9 +81,11 @@ npm run build
 
 ### Scheduler
 
-Run the scheduler:
-
 Make sure to run the Laravel [scheduler](https://laravel.com/docs/11.x/scheduling#running-the-scheduler) it performs daily backups, updates GeoIP and executes other important commands.
+
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
 
 ## Post Installation
 
