@@ -25,4 +25,3 @@ docs/.vitepress/dist
 docs/.vitepress/cache
 /current
 /releases
-composer.self-hosted.lock
