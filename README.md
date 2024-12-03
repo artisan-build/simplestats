@@ -1,6 +1,6 @@
-# SimpleStats
+# SimpleStats.io
 
-This is the official SimpleStats.io application!
+This is the official SimpleStats.io application repository!
 
 ![screenshot](https://simplestats.io/images/screenshot.png)
 
@@ -15,7 +15,7 @@ Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 * PHP 8.2 or higher
 * ext-zip
 * MySQL 8.0 or higher
-* Node.js 21.6 or higher
+* Node.js 21.6 or higher (might also work with a lower version)
 
 And the default [Laravel requirements](https://laravel.com/docs/11.x/deployment#server-requirements).
 
@@ -26,7 +26,7 @@ SimpleStats is a regular Laravel application; it's build on top of Laravel 11 an
 ```bash
 mkdir simplestats
 
-git clone https://github.com/simplestats-io/app.git ./simplestats
+git clone git@github.com:simplestats-io/app.git ./simplestats
 
 cd simplestats
 ```
