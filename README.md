@@ -31,6 +31,10 @@ mkdir simplestats
 git clone git@github.com:simplestats-io/app.git ./simplestats
 
 cd simplestats
+
+mkdir -p storage/framework/cache
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
 ```
 
 ### Dependencies
@@ -38,10 +42,12 @@ cd simplestats
 Next, install the dependencies for the self-hosted version using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
 
 ```bash
-COMPOSER=composer.self-hosted.json composer install --no-dev
+COMPOSER=composer.self-hosted.json composer install
 
 npm install
 ```
+
+**Note:** for self-hosted you always have to use the self-hosted composer json file!
 
 ### Branding and Environment
 
