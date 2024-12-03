@@ -54,7 +54,7 @@ return [
     */
 
      'brand' =>  [
-         'logo' => realpath(__DIR__.'/../public/svg/logo.svg'),
+         'logo' => realpath(__DIR__.'/../public/svg/app_mark.svg'),
          'color' => 'bg-indigo-500',
      ],
 

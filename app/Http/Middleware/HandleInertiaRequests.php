@@ -42,6 +42,8 @@ class HandleInertiaRequests extends Middleware
         $merge = [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
+            'branding' => config('app.branding'),
+            'appType' => config('app.app_type'),
         ];
 
         if (auth()->user()) {

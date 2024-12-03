@@ -52,7 +52,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             {{ status }}
         </div>
 
-        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length && $page.props.canRegister"
+        <Socialstream v-if="$page.props.appType === 'default' && $page.props.socialstream.show && $page.props.socialstream.providers.length && $page.props.canRegister"
                       :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
                       :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
 
@@ -100,7 +100,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
 
             <div class="flex items-center justify-around mt-4">
-                <Link v-if="$page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="$page.props.appType === 'default' && $page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Sign up
                 </Link>
 
@@ -108,7 +108,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     Forgot your password?
                 </Link>
 
-                <Link :href="route('home')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="$page.props.appType === 'default'" :href="route('home')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Home
                 </Link>
             </div>

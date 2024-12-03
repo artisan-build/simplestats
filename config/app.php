@@ -5,20 +5,67 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
-    'test' => [
-        'user' => [
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-            'password' => 'password',
-        ],
-    ],
-
-    'plan_auto_max_users' => explode(',', env('PLAN_AUTO_MAX_USERS', '')),
+    /*
+    |--------------------------------------------------------------------------
+    | Mail Settings
+    |--------------------------------------------------------------------------
+    |
+    | Mail addresses from which intern app and admin mails are sent from.
+    |
+    */
 
     'app_mail' => env('APP_MAIL', 'simplestats@laracraft.tech'),
     'admin_mail' => env('ADMIN_MAIL', 'admin@laracraft.tech'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Branding Settings
+    |--------------------------------------------------------------------------
+    |
+    | Change the brand images to your needs here.
+    |
+    */
+
+    'branding' => [
+        'app_mark' => env('APP_MARK_IMG', '/svg/app_mark.svg'),
+        'app_logo' => env('APP_LOGO_IMG', '/svg/app_logo.svg'),
+        'app_logo_mail' => env('APP_LOGO_MAIL', '/images/logo.png'),
+        'app_background' => env('APP_BACKGROUND', '/images/side_bg.jpg'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auto Subscription Users
+    |--------------------------------------------------------------------------
+    |
+    | A comma separated list of user ids how automatically will get an enterprise subscription plan.
+    |
+    */
+
+    'plan_auto_max_users' => explode(',', env('PLAN_AUTO_MAX_USERS', '')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Aggregation Settings
+    |--------------------------------------------------------------------------
+    |
+    | Whether all stats are calculated always from scratch or the aggregation table is used.
+    | We highly recommend leaving true here. Maybe set to false for local debugging.
+    |
+    */
+
     'stats_aggregation_enabled' => env('STATS_AGGREGATION_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Type
+    |--------------------------------------------------------------------------
+    |
+    | Here you can define your app type.
+    |
+    */
+
+    'app_type' => env('APP_TYPE', 'default'),
 
     /*
     |--------------------------------------------------------------------------
@@ -186,7 +233,7 @@ return [
         App\Providers\SparkServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\SocialstreamServiceProvider::class,
-//        App\Providers\TelescopeServiceProvider::class,
+        //        App\Providers\TelescopeServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
@@ -207,4 +254,18 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Local/Test/Demo User Credentials
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'test' => [
+        'user' => [
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+            'password' => 'password',
+        ],
+    ],
 ];

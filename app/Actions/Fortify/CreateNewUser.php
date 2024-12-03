@@ -2,7 +2,6 @@
 
 namespace App\Actions\Fortify;
 
-use App\Enums\StatsRangeType;
 use App\Models\Team;
 use App\Models\User;
 use App\Rules\SignedUrl;
@@ -10,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
@@ -27,12 +25,14 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        $invitationRule = (config('app.app_type') === 'default') ? 'nullable' : 'required';
+
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
-            'accept_invitation_link' => ['nullable', new SignedUrl()]
+            'accept_invitation_link' => [$invitationRule, new SignedUrl()],
         ];
 
         if (isset($input['sso']) && $input['sso']) {
@@ -84,9 +84,6 @@ class CreateNewUser implements CreatesNewUsers
 
     /**
      * Accepts a team invitation
-     *
-     * @param Request $request
-     * @param TeamInvitation $invitation
      */
     protected function acceptTeamInvitation(Request $request, TeamInvitation $invitation): void
     {

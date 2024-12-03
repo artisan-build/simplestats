@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
     <footer class="text-center px-4 text-sm md:px-4 py-4  bg-gray-100 text-gray-600 text-xs">
         <span>&copy; {{ new Date().getFullYear() }} Leto GmbH</span>

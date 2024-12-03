@@ -44,7 +44,7 @@ const logout = () => {
                 API Tokens
             </DropdownLink>
 
-            <DropdownLink as="a" :href="route('spark.portal')">
+            <DropdownLink v-if="$page.props.appType === 'default'" as="a" :href="route('spark.portal')">
                 Subscription
             </DropdownLink>
 

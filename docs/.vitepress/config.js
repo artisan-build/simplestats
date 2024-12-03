@@ -20,7 +20,7 @@ export default defineConfig({
         ])
     },
     themeConfig: {
-        logo: '../svg/logo_only.svg',
+        logo: '../svg/app_logo.svg',
         logoLink: { link: '/', target: '_self' },
         search: {
             provider: 'local'

@@ -36,6 +36,7 @@ class Kernel extends ConsoleKernel
 
             // WEEKLY
             $schedule->command('app:download-referer-favicons')->weekly()->at('04:00');
+            $schedule->command('app:location:update')->weekly()->at('05:00');
         }
 
         $schedule->command('app:clear-old-stats-aggregations')->weekly()->at('4:00');

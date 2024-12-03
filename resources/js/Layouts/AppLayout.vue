@@ -77,7 +77,7 @@ const sidebarIsOpen = ref(false);
 
                 <slot />
             </main>
-            <Footer />
+            <Footer v-if="$page.props.appType === 'default'" />
         </div>
     </div>
 </template>

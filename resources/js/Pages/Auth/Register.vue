@@ -44,7 +44,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             <span class="text-sm text-gray-500" v-if="params.teamName">and join the following team: {{ params.teamName }}</span>
         </template>
 
-        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length"
+        <Socialstream v-if="$page.props.appType === 'default' && $page.props.socialstream.show && $page.props.socialstream.providers.length"
                       :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
                       :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
 
@@ -110,7 +110,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </PrimaryButton>
             </div>
 
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
+            <div v-if="$page.props.appType === 'default' && $page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
                 <InputLabel for="terms">
                     <div class="flex items-center px-2 lg:px-6">
                         <Checkbox class="hidden" id="terms" v-model:checked="form.terms" name="terms" required />
