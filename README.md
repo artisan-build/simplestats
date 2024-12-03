@@ -23,6 +23,8 @@ And the default [Laravel requirements](https://laravel.com/docs/11.x/deployment#
 
 SimpleStats is a regular Laravel application; it's build on top of Laravel 11 and uses Vue / Inertia.js / Tailwind CSS for the frontend (VILT stack). If you are familiar with Laravel, you should feel right at home.
 
+### Repository
+
 ```bash
 mkdir simplestats
 
@@ -31,6 +33,8 @@ git clone git@github.com:simplestats-io/app.git ./simplestats
 cd simplestats
 ```
 
+### Dependencies
+
 Next, install the dependencies using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
 
 ```bash
@@ -38,6 +42,8 @@ composer install
 
 npm install
 ```
+
+### Branding and Environment
 
 After that, set up your `.env` file.
 
@@ -49,11 +55,15 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+### Database
+
 Prepare your database and run the migrations:
 
 ```bash
 php artisan migrate
 ```
+
+### Storage
 
 Link the storage to the public folder:
 
@@ -61,17 +71,21 @@ Link the storage to the public folder:
 php artisan storage:link
 ```
 
+### Assets
+
 Build the assets:
 
 ```bash
 npm run build
 ```
 
+### Scheduler
+
 Run the scheduler:
 
 Make sure to run the Laravel [scheduler](https://laravel.com/docs/11.x/scheduling#running-the-scheduler) it performs daily backups, updates GeoIP and executes other important commands.
 
-### Post Installation
+## Post Installation
 
 After the installation is finished, make sure to create the first user:
 
