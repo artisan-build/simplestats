@@ -3,7 +3,7 @@
 use JoelButcher\Socialstream\Features;
 use JoelButcher\Socialstream\Providers;
 
-return [
+$config = [
     'guard' => 'web', // used if Fortify is not installed
     'middleware' => ['web'],
     'prompt' => 'Or',
@@ -30,3 +30,9 @@ return [
         'provider-link-failed' => '/user/profile',
     ],
 ];
+
+if (env('APP_TYPE') !== 'default') {
+    $config['providers'] = [];
+}
+
+return $config;

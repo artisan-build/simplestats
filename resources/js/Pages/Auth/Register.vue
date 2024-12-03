@@ -44,7 +44,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             <span class="text-sm text-gray-500" v-if="params.teamName">and join the following team: {{ params.teamName }}</span>
         </template>
 
-        <Socialstream v-if="$page.props.appType === 'default' && $page.props.socialstream.show && $page.props.socialstream.providers.length"
+        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length"
                       :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
                       :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
 

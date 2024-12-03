@@ -52,7 +52,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             {{ status }}
         </div>
 
-        <Socialstream v-if="$page.props.appType === 'default' && $page.props.socialstream.show && $page.props.socialstream.providers.length && $page.props.canRegister"
+        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length && $page.props.canRegister"
                       :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
                       :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
 
