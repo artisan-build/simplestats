@@ -8,7 +8,9 @@ use App\PulseUsers;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pulse\Contracts\ResolvesUsers;
 use Laravel\Sanctum\Sanctum;
@@ -38,6 +40,12 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
         Model::preventLazyLoading(! app()->isProduction());
         Model::shouldBeStrict(! app()->isProduction());
+
+        DB::prohibitDestructiveCommands(
+            $this->app->isProduction(),
+        );
+
+        Vite::usePrefetchStrategy('aggressive');
 
         Gate::define('viewPulse', function (User $user) {
             return $user->isAdmin();
