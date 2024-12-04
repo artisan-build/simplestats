@@ -1,6 +1,6 @@
-# SimpleStats.io
+# Welcome to SimpleStats.io!
 
-This is the official SimpleStats.io application repository!
+This is the official SimpleStats.io application repository.
 
 ![screenshot](https://simplestats.io/images/screenshot.png)
 
