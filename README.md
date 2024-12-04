@@ -105,7 +105,7 @@ php artisan app:create-new-user {name} {email} {password}
 
 ### Client Package
 
-In your application you want to track, make sure to install the SimpleStats [client package](https://github.com/simplestats-io/laravel-client) and follow the documentation.
+In your application you want to track, make sure to install the SimpleStats [client package](https://simplestats.io/docs/installation.html) and follow the documentation.
 
 ## Contributing
 
