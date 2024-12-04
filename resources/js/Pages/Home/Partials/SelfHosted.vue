@@ -46,6 +46,28 @@ const licenses = [
         ]
     }
 ];
+
+const mailSubject = "New Self-Hosted Customer";
+const mailBody = `Thank you for your interest in the self-hosted version of SimpleStats.io!
+
+Once you've completed the questions below and sent us the email, we'll issue an invoice.
+After we receive your payment, we'll grant your GitHub account access to the SimpleStats repository, which includes the installation instructions.
+
+---------------
+
+Please answer the following questions:
+
+Which license type would you like to purchase (Single Domain or Unlimited Domains)?
+YOUR ANSWER HERE
+
+What is your billing address?
+YOUR ANSWER HERE
+
+Do you have a VAT ID (optional)?
+YOUR ANSWER HERE
+
+What is your GitHub username?
+YOUR ANSWER HERE`;
 </script>
 
 <template>
@@ -109,7 +131,7 @@ const licenses = [
                 </p>
 
                 <div class="md:inline-flex mt-10">
-                    <a href="mailto:simplestats@laracraft.tech" class="whitespace-nowrap block text-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
+                    <a :href="`mailto:simplestats@laracraft.tech?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`" class="whitespace-nowrap block text-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
                         Contact Sales
                     </a>
                     &nbsp;&nbsp;&nbsp;
