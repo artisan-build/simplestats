@@ -14,7 +14,7 @@ At the moment, the following Laravel **versions** are supported: _8, 9, 10 and 1
 
 ## Configuration
 
-After you registered an **account** and obtained an API token by creating a project and an instance, you should publish the config and set your `SIMPLESTATS_API_TOKEN` in your `.env` file.
+After you registered an **account** and obtained an API token by creating a project, you should publish the config and set your `SIMPLESTATS_API_TOKEN` in your `.env` file.
 
 ::: info
 The **token** will be displayed right after you've created an instance or you may view it **again** inside the app on the instance page.
