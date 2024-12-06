@@ -94,23 +94,15 @@ Remember that **Gross** and **Net** must return cents!
 
 ### Payment Tracking for Visitors
 
-If your application does not have any users at all, a payment can also be associated with a visitor (this feature is only available since version `3.0` of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client).
+If a payment is made from a visitor and not a registered user you can handle this by returning a `Visitor` object instead of a `User` in the `getTrackingPerson` method (this feature is only available since version `3.0` of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client)).
 
 ::: tip
-You can safely skip to the [next section](#with-condition) if that's not the case for you.
+You can safely [skip]((#with-condition)) this section if that's never the case for you.
 :::
 
 #### Adding a Visitor Hash to Your Payment Model
 
-When a new visitor visits your site, our package creates a [Visitor Hash](how-to-track-a-new-visitor.md#the-visitor-hash) and stores it in `session('simplestats.visitor_hash')`, you can use it to associate a payment with a visitor, which allows us to calculate the [ROI](https://en.wikipedia.org/wiki/Return_on_investment) of your marketing campaigns. So make sure to add the hash when creating a new payment:
-
-```php
-Transation::create([
-    ...
-    // make sure to add visitor_hash to the models fillable array
-    'visitor_hash' => session('simplestats.visitor_hash')
-]);
-```
+When a new visitor visits your site, our package creates a [Visitor Hash](how-to-track-a-new-visitor.md#the-visitor-hash) and stores it in `session('simplestats.visitor_hash')`, you can use it to associate a payment with a visitor, which allows us to calculate the [ROI](https://en.wikipedia.org/wiki/Return_on_investment) of your marketing campaigns.
 
 We recommend adding a `visitor_hash` column to your payment model. You can do that by publishing the following migration:
 
@@ -119,8 +111,18 @@ php artisan vendor:publish --tag=simplestats-client-migrations
 php artisan migrate
 ```
 
+Now make sure to add the hash when creating a new payment: 
+
+```php
+Transation::create([
+    ...
+    // add the visitor_hash to the models fillable array
+    'visitor_hash' => session('simplestats.visitor_hash')
+]);
+```
+
 :::info
-Sometimes you create the payment model in the completed webhook of your payment provider. As you can't use the current session there, you need to make sure to pass the `visitor_hash` as additional metadata to the request. Here are some common payment providers and how you can accomplish that: [Stripe](https://docs.stripe.com/metadata), [Paddle](https://developer.paddle.com/build/transactions/custom-data), [Lemon Squeezy](https://docs.lemonsqueezy.com/help/checkout/passing-custom-data)
+Sometimes, you might need to create the payment model exclusively within the completed webhook of your payment provider. As you can't use the current session there, you need to make sure to pass the `visitor_hash` as additional metadata to the request. Here are some common payment providers and how you can accomplish that: [Stripe](https://docs.stripe.com/metadata), [Paddle](https://developer.paddle.com/build/transactions/custom-data), [Lemon Squeezy](https://docs.lemonsqueezy.com/help/checkout/passing-custom-data)
 :::
 
 Finally, you need to make sure to return a `Visitor` object in your payment model:
