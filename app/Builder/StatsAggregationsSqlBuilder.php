@@ -61,8 +61,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * number of registrations
-     *
-     * @return string
      */
     protected function getPD_REG(): string
     {
@@ -76,8 +74,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * nau: Number of unique accounts who returned on this day (=2nd login) after the registration (=1st login)
-     *
-     * @return string
      */
     protected function getPD_NAU(): string
     {
@@ -92,8 +88,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * napu: Number of unique accounts who did their first payment on this day
-     *
-     * @return string
      */
     protected function getPD_NAPU(): string
     {
@@ -108,8 +102,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * dau: Number of unique accounts who logged in on this day (without 1st login = registration)
-     *
-     * @return string
      */
     protected function getPD_DAU(): string
     {
@@ -124,8 +116,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * dapu: Number of unique accounts who logged in or registered on this day and did at least one payment over lifetime (including today)
-     *
-     * @return string
      */
     protected function getPD_DAPU(): string
     {
@@ -145,8 +135,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * daapu: Number of unique accounts who logged in or registered on this day and did at least one payment in the last 20 days (including today)
-     *
-     * @return string
      */
     protected function getPD_DAAPU(): string
     {
@@ -168,8 +156,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * lifetime regs
-     *
-     * @return string
      */
     protected function getLT_REG(): string
     {
@@ -187,8 +173,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * lifetime total actives
-     *
-     * @return string
      */
     protected function getLT_TAU(): string
     {
@@ -207,8 +191,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     /**
      * lifetime paying user
-     *
-     * @return string
      */
     protected function getLT_PU(): string
     {
@@ -308,7 +290,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             DATE_FORMAT(ds.date, ':dateFormatClear') as date_clear,";
 
         if ($this->trackablePerson === TrackablePerson::USER) {
-            $sql .= "
+            $sql .= '
                 COALESCE(pd_reg.count, 0) AS pd_REG,
                 COALESCE(pd_nau.count, 0) AS pd_NAU,
                 COALESCE(pd_napu.count, 0) AS pd_NAPU,
@@ -317,24 +299,24 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 COALESCE(pd_daapu.count, 0) AS pd_DAAPU,
                 COALESCE(lt_reg.count, 0) AS lt_REG,
                 COALESCE(lt_pu.count, 0) AS lt_PU,
-                COALESCE(lt_tau.count, 0) AS lt_TAU,";
+                COALESCE(lt_tau.count, 0) AS lt_TAU,';
         }
 
-        $sql .= "
+        $sql .= '
             COALESCE(pd_visitor.count, 0) AS pd_VISITOR,
             COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
             COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
             COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
             COALESCE(ROUND(lt_net.count,2), 0) AS lt_NET,
-            COALESCE(ROUND(lt_gross.count,2), 0) AS lt_GROSS";
+            COALESCE(ROUND(lt_gross.count,2), 0) AS lt_GROSS';
 
         return $sql;
     }
 
     protected function getFROM(): string
     {
-        $sql = "FROM
-            date_sequence ds";
+        $sql = 'FROM
+            date_sequence ds';
 
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
