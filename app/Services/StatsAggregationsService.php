@@ -13,6 +13,7 @@ use App\Models\Project;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -78,30 +79,7 @@ class StatsAggregationsService
         }
 
         if ($trackablePerson === TrackablePerson::USER) {
-            $endDateStart = $filterConditions['endDateStart'];
-
-            $dauDates = match($filters->rangeType->value) {
-                'hours' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfHour()) ? [
-                    'start' => now()->subHour()->startOfHour()->format(StatsRangeType::DATE_FORMAT),
-                    'end' => now()->subHour()->endOfHour()->format(StatsRangeType::DATE_FORMAT),
-                ] : [],
-                'days' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfDay()) ? [
-                    'start' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
-                    'end' => now()->subDay()->endOfDay()->format(StatsRangeType::DATE_FORMAT),
-                ] : [],
-                'weeks' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfWeek()) ? [
-                    'start' => now()->subWeek()->startOfWeek()->format(StatsRangeType::DATE_FORMAT),
-                    'end' => now()->subWeek()->endOfWeek()->format(StatsRangeType::DATE_FORMAT),
-                ] : [],
-                'months' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfMonth()) ? [
-                    'start' => now()->subMonth()->startOfMonth()->format(StatsRangeType::DATE_FORMAT),
-                    'end' => now()->subMonth()->endOfMonth()->format(StatsRangeType::DATE_FORMAT),
-                ] : [],
-                'years' => Carbon::parse($endDateStart)->greaterThanOrEqualTo(now()->startOfYear()) ? [
-                    'start' => now()->subYear()->startOfYear()->format(StatsRangeType::DATE_FORMAT),
-                    'end' => now()->subYear()->endOfYear()->format(StatsRangeType::DATE_FORMAT),
-                ] : [],
-            };
+            $dauDates = $filters->rangeType->getDAUDates(Carbon::parse($filterConditions['endDateStart']));
 
             if (empty($dauDates)) {
                 $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];
@@ -110,14 +88,6 @@ class StatsAggregationsService
                 $filterConditions['dauEndDateStart'] = $dauDates['start'];
                 $filterConditions['dauEndDateEnd'] = $dauDates['end'];
             }
-        }
-
-        if (empty($filterConditions['trackingUserJoinConditions'])) {
-            $filterConditions['trackingUserJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
-        }
-
-        if (empty($filterConditions['trackingVisitorJoinConditions'])) {
-            $filterConditions['trackingVisitorJoinConditions'] = "RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id";
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
@@ -242,17 +212,14 @@ class StatsAggregationsService
             $trackingCondition .= " AND stats.stats_page_entry_id $pageEntryCondition ";
         }
 
+        $conditions['trackingConditions'] = "";
+        $conditions['trackingUserJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
+        $conditions['trackingVisitorJoinConditions'] = "RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id";
+
         if (!empty($trackingCondition)) {
             $conditions['trackingConditions'] = $trackingCondition;
-            $trackingUserJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
-            $trackingVisitorJoinCondition = str_replace('stats.', 'sv.', $trackingCondition);
-
-            $conditions['trackingUserJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id $trackingUserJoinCondition";
-            $conditions['trackingVisitorJoinConditions'] = "RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id $trackingVisitorJoinCondition";
-        } else {
-            $conditions['trackingConditions'] = "";
-            $conditions['trackingUserJoinConditions'] = "";
-            $conditions['trackingVisitorJoinConditions'] = "";
+            $conditions['trackingUserJoinConditions'] .= ' ' . str_replace('stats.', 'su.', $trackingCondition);
+            $conditions['trackingVisitorJoinConditions'] .= ' ' . str_replace('stats.', 'sv.', $trackingCondition);
         }
 
         return $conditions;

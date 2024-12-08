@@ -38,8 +38,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         $this->applySql($this->getPD_NET());
 
         $this->applySql($this->getLT_VISITORS());
-        $this->applySql($this->getLT_GROSS());
-        $this->applySql($this->getLT_NET(), false);
+        $this->applySql($this->getLT_GROSS_USER());
+        $this->applySql($this->getLT_NET_USER());
+        $this->applySql($this->getLT_NET_ALL(), false);
 
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
@@ -220,10 +221,20 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_GROSS(): string
     {
         return "pd_gross AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
-            FROM stats_payments stats
-            :trackingUserJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+            SELECT date, SUM(count) as count
+            FROM (
+                SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
+                FROM stats_payments stats
+                :trackingUserJoinConditions
+                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                GROUP BY date
+                UNION ALL
+                SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
+                FROM stats_payments stats
+                :trackingVisitorJoinConditions
+                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                GROUP BY date
+            ) as combined_results
             GROUP BY date
         )";
     }
@@ -231,10 +242,20 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_NET(): string
     {
         return "pd_net AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
-            FROM stats_payments stats
-            :trackingUserJoinConditions
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+            SELECT date, SUM(count) as count
+            FROM (
+                SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
+                FROM stats_payments stats
+                :trackingUserJoinConditions
+                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                GROUP BY date
+                UNION ALL
+                SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
+                FROM stats_payments stats
+                :trackingVisitorJoinConditions
+                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                GROUP BY date
+            ) as combined_results
             GROUP BY date
         )";
     }
@@ -253,9 +274,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         )";
     }
 
-    protected function getLT_GROSS(): string
+    protected function getLT_GROSS_USER(): string
     {
-        return "lt_gross AS (
+        return "lt_gross_user AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
                 (
@@ -268,9 +289,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         )";
     }
 
-    protected function getLT_NET(): string
+    protected function getLT_NET_USER(): string
     {
-        return "lt_net AS (
+        return "lt_net_user AS (
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
                 (
@@ -280,6 +301,35 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
+        )";
+    }
+
+    protected function getLT_NET_ALL(): string
+    {
+        return "lt_net_all AS (
+            SELECT date, SUM(count) as count
+            FROM (
+                SELECT
+                    DATE_FORMAT(ds.date, ':dateFormat') AS date,
+                    (
+                        SELECT SUM(stats.net)
+                        FROM stats_payments stats
+                        :trackingUserJoinConditions
+                        WHERE stats.time <= :intervalEnd :projectInstanceCondition
+                    ) AS count
+                FROM date_sequence ds
+                UNION ALL
+                SELECT
+                    DATE_FORMAT(ds.date, ':dateFormat') AS date,
+                    (
+                        SELECT SUM(stats.net)
+                        FROM stats_payments stats
+                        :trackingVisitorJoinConditions
+                        WHERE stats.time <= :intervalEnd :projectInstanceCondition
+                    ) AS count
+                FROM date_sequence ds
+            ) as combined_results
+            GROUP BY date
         )";
     }
 
@@ -307,8 +357,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
             COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
             COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
-            COALESCE(ROUND(lt_net.count,2), 0) AS lt_NET,
-            COALESCE(ROUND(lt_gross.count,2), 0) AS lt_GROSS';
+            COALESCE(ROUND(lt_net_user.count,2), 0) AS lt_NET_USER,
+            COALESCE(ROUND(lt_gross_user.count,2), 0) AS lt_GROSS_USER,
+            COALESCE(ROUND(lt_net_all.count,2), 0) AS lt_NET_ALL';
 
         return $sql;
     }
@@ -336,8 +387,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
             LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
             LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
-            LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date
-            LEFT JOIN lt_gross ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross.date";
+            LEFT JOIN lt_net_user ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net_user.date
+            LEFT JOIN lt_gross_user ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross_user.date
+            LEFT JOIN lt_net_all ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net_all.date";
 
         return $sql;
     }

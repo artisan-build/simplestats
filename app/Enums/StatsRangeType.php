@@ -4,6 +4,7 @@ namespace App\Enums;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
 enum StatsRangeType: string
@@ -73,7 +74,7 @@ enum StatsRangeType: string
 
     public function dateFormat(): array
     {
-        return match($this) {
+        return match ($this) {
             self::HOUR =>   ['mysql' => '%H:00',    'php' => 'Y-m-d H:00'],
             self::DAY =>    ['mysql' => '%Y-%m-%d', 'php' => 'Y-m-d'],
             self::WEEK =>   ['mysql' => '%Y-%v',    'php' => 'o-W'],
@@ -85,7 +86,7 @@ enum StatsRangeType: string
 
     public function dateFormatClear(): array
     {
-        return match($this) {
+        return match ($this) {
             self::HOUR =>   ['mysql' => '%Y-%m-%d %H:00',   'php' => 'Y-m-d H:00'],
             self::DAY =>    ['mysql' => '%Y-%m-%d',         'php' => 'Y-m-d'],
             self::WEEK =>   ['mysql' => '%Y-%m-%d',         'php' => 'Y-m-d '],
@@ -97,7 +98,7 @@ enum StatsRangeType: string
 
     public function rangeStart(CarbonImmutable $date): CarbonImmutable
     {
-        return match($this) {
+        return match ($this) {
             self::HOUR => $date->startOfHour(),
             self::DAY => $date->startOfDay(),
             self::WEEK => $date->startOfWeek(),
@@ -109,7 +110,7 @@ enum StatsRangeType: string
 
     public function defaultRangeAmount(): int
     {
-        return match($this) {
+        return match ($this) {
             self::HOUR => 24,
             self::DAY => 7,
             self::WEEK => 4,
@@ -121,13 +122,39 @@ enum StatsRangeType: string
 
     public function getPrevStartForComparison(CarbonImmutable $rangeStart): CarbonImmutable
     {
-        return match($this) {
+        return match ($this) {
             self::HOUR => $rangeStart->subDay(),
             self::DAY => $rangeStart->subWeek(),
             self::WEEK => $rangeStart->subMonth(),
             self::MONTH => $rangeStart->subYear(),
 //            self::YEAR => $date->startOfYear(),
             default => throw new \Exception('Unexpected match value'),
+        };
+    }
+
+    public function getDAUDates(CarbonInterface $endDateStart): array
+    {
+        return match ($this) {
+            self::HOUR => $endDateStart->greaterThanOrEqualTo(now()->startOfHour()) ? [
+                'start' => now()->subHour()->startOfHour()->format(self::DATE_FORMAT),
+                'end' => now()->subHour()->endOfHour()->format(self::DATE_FORMAT),
+            ] : [],
+            self::DAY => $endDateStart->greaterThanOrEqualTo(now()->startOfDay()) ? [
+                'start' => now()->subDay()->startOfDay()->format(self::DATE_FORMAT),
+                'end' => now()->subDay()->endOfDay()->format(self::DATE_FORMAT),
+            ] : [],
+            self::WEEK => $endDateStart->greaterThanOrEqualTo(now()->startOfWeek()) ? [
+                'start' => now()->subWeek()->startOfWeek()->format(self::DATE_FORMAT),
+                'end' => now()->subWeek()->endOfWeek()->format(self::DATE_FORMAT),
+            ] : [],
+            self::MONTH => $endDateStart->greaterThanOrEqualTo(now()->startOfMonth()) ? [
+                'start' => now()->subMonth()->startOfMonth()->format(self::DATE_FORMAT),
+                'end' => now()->subMonth()->endOfMonth()->format(self::DATE_FORMAT),
+            ] : [],
+            self::YEAR => $endDateStart->greaterThanOrEqualTo(now()->startOfYear()) ? [
+                'start' => now()->subYear()->startOfYear()->format(self::DATE_FORMAT),
+                'end' => now()->subYear()->endOfYear()->format(self::DATE_FORMAT),
+            ] : [],
         };
     }
 }
