@@ -112,8 +112,12 @@ class StatsAggregationsService
             }
         }
 
-        if (empty($filterConditions['trackingJoinConditions'])) {
-            $filterConditions['trackingJoinConditions'] = "LEFT JOIN stats_{$trackablePerson->value}s su ON su.id = stats.stats_{$trackablePerson->value}_id AND su.instance_id = stats.instance_id";
+        if (empty($filterConditions['trackingUserJoinConditions'])) {
+            $filterConditions['trackingUserJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
+        }
+
+        if (empty($filterConditions['trackingVisitorJoinConditions'])) {
+            $filterConditions['trackingVisitorJoinConditions'] = "RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id";
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
@@ -239,13 +243,16 @@ class StatsAggregationsService
         }
 
         if (!empty($trackingCondition)) {
-            $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
             $conditions['trackingConditions'] = $trackingCondition;
-            $trackingJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
-            $conditions['trackingJoinConditions'] = "RIGHT JOIN stats_{$trackablePerson->value}s su ON su.id = stats.stats_{$trackablePerson->value}_id AND su.instance_id = stats.instance_id $trackingJoinCondition";
+            $trackingUserJoinCondition = str_replace('stats.', 'su.', $trackingCondition);
+            $trackingVisitorJoinCondition = str_replace('stats.', 'sv.', $trackingCondition);
+
+            $conditions['trackingUserJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id $trackingUserJoinCondition";
+            $conditions['trackingVisitorJoinConditions'] = "RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id $trackingVisitorJoinCondition";
         } else {
             $conditions['trackingConditions'] = "";
-            $conditions['trackingJoinConditions'] = "";
+            $conditions['trackingUserJoinConditions'] = "";
+            $conditions['trackingVisitorJoinConditions'] = "";
         }
 
         return $conditions;

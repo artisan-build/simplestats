@@ -80,7 +80,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_nau AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter = $this->nauLoginCounter :projectInstanceCondition
             GROUP BY date
         )";
@@ -94,7 +94,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_napu AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_payments stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter = 1 :projectInstanceCondition
             GROUP BY date
         )";
@@ -108,7 +108,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_dau AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' and stats.counter >= $this->nauLoginCounter :projectInstanceCondition
             GROUP BY date
         )";
@@ -122,7 +122,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_dapu AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
                 SELECT 1
                 FROM stats_payments sp
@@ -141,7 +141,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_daapu AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
                 SELECT 1
                 FROM stats_payments sp
@@ -182,7 +182,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
                     FROM stats_logins stats
-                    :trackingJoinConditions
+                    :trackingUserJoinConditions
                     WHERE stats.time <= :intervalEnd and stats.counter = $this->nauLoginCounter :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
@@ -200,7 +200,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT COUNT(DISTINCT stats.stats_user_id, stats.instance_id)
                     FROM stats_payments stats
-                    :trackingJoinConditions
+                    :trackingUserJoinConditions
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
@@ -222,7 +222,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_gross AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.gross) AS count
             FROM stats_payments stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY date
         )";
@@ -233,7 +233,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return "pd_net AS (
             SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, SUM(stats.net) AS count
             FROM stats_payments stats
-            :trackingJoinConditions
+            :trackingUserJoinConditions
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
             GROUP BY date
         )";
@@ -261,7 +261,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT SUM(stats.gross)
                     FROM stats_payments stats
-                    :trackingJoinConditions
+                    :trackingUserJoinConditions
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds
@@ -276,7 +276,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT SUM(stats.net)
                     FROM stats_payments stats
-                    :trackingJoinConditions
+                    :trackingUserJoinConditions
                     WHERE stats.time <= :intervalEnd :projectInstanceCondition
                 ) AS count
             FROM date_sequence ds

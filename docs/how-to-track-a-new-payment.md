@@ -94,10 +94,10 @@ Remember that **Gross** and **Net** must return cents!
 
 ### Payment Tracking for Visitors
 
-If a payment is made from a visitor and not a registered user you can handle this by returning a `Visitor` object instead of a `User` in the `getTrackingPerson` method (this feature is only available since version `3.0` of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client)).
+If a payment is made from a visitor and not a registered user you can handle this by returning a `Visitor` instead of a `User` object in the `getTrackingPerson` method (this feature is only available since version `3.0` of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client)).
 
 ::: tip
-You can safely [skip]((#with-condition)) this section if that's never the case for you.
+You can safely [skip](#with-condition) this section if that's never the case for you.
 :::
 
 #### Adding a Visitor Hash to Your Payment Model
@@ -125,7 +125,7 @@ Transation::create([
 Sometimes, you might need to create the payment model exclusively within the completed webhook of your payment provider. As you can't use the current session there, you need to make sure to pass the `visitor_hash` as additional metadata to the request. Here are some common payment providers and how you can accomplish that: [Stripe](https://docs.stripe.com/metadata), [Paddle](https://developer.paddle.com/build/transactions/custom-data), [Lemon Squeezy](https://docs.lemonsqueezy.com/help/checkout/passing-custom-data)
 :::
 
-Finally, you need to make sure to return a `Visitor` object in your payment model:
+Finally, you need to make sure to return a `Visitor` object in your payment model if it's a visitor payment:
 
 ```php
 use SimpleStatsIo\LaravelClient\Visitor;
@@ -140,12 +140,20 @@ class Transaction extends Model implements TrackablePayment
      */
     public function getTrackingPerson(): TrackablePerson
     {
-        return new Visitor($this->visitor_hash);
+        if (! emtpy($this->visitor_hash)) {
+            return new Visitor($this->visitor_hash);
+        } else {
+            return User::find($this->user_id);
+        }
     }
     
     // ...
 }
 ```
+
+::: info
+If your application does not have any users at all, just always return a `Visitor` object.
+:::
 
 Congrats, now each time a new **Transaction** model gets created, an API request is sent to _SimpleStats_ to count a new payment.
 

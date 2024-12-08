@@ -55,9 +55,9 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return "pd_dau AS (
             SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingJoinConditions :projectInstanceCondition
+            :trackingUserJoinConditions :projectInstanceCondition
             WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter :projectInstanceCondition
-            GROUP BY su.$this->statsDBType
+            GROUP BY type_id
         )";
     }
 
@@ -71,7 +71,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             FROM stats_users stats
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
             :trackingConditions :projectInstanceCondition
-            GROUP BY stats.$this->statsDBType
+            GROUP BY type_id
         )";
     }
 
@@ -85,7 +85,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             FROM stats_visitors stats
             WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
             :trackingConditions :projectInstanceCondition
-            GROUP BY stats.$this->statsDBType
+            GROUP BY type_id
         )";
     }
 
@@ -95,11 +95,21 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_NET(): string
     {
         return "lt_net AS (
-            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
-            FROM stats_payments stats
-            :trackingJoinConditions :projectInstanceCondition
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
-            GROUP BY su.$this->statsDBType
+            SELECT type_id, SUM(count) as count
+            FROM (
+                SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
+                FROM stats_payments stats
+                :trackingUserJoinConditions :projectInstanceCondition
+                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                GROUP BY type_id
+                UNION ALL
+                SELECT COALESCE(sv.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
+                FROM stats_payments stats
+                :trackingVisitorJoinConditions :projectInstanceCondition
+                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                GROUP BY type_id
+            ) as combined_results
+            GROUP BY type_id
         )";
     }
 
