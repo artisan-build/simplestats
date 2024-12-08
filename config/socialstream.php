@@ -31,7 +31,7 @@ $config = [
     ],
 ];
 
-if (env('APP_TYPE') !== 'default') {
+if (config('app.app_type') !== 'default') {
     $config['providers'] = [];
 }
 
