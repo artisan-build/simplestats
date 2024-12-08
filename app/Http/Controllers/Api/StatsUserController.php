@@ -24,10 +24,6 @@ class StatsUserController extends Controller
             return response()->json(['message' => 'Bots are not allowed.']);
         }
 
-        if (! auth()->user()->project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
-            return response()->json(['message' => 'Tracking Usage not set'], 200);
-        }
-
         TrackStatsUser::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),

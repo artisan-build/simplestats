@@ -30,10 +30,6 @@ class StatsVisitorController extends Controller
             return response()->json(['message' => 'Bots are not allowed'], 200);
         }
 
-        if (! auth()->user()->project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS])) {
-            return response()->json(['message' => 'Tracking Usage not set'], 200);
-        }
-
         TrackStatsVisitor::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),

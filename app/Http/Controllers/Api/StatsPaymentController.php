@@ -18,10 +18,6 @@ class StatsPaymentController extends Controller
 
     public function store(StatsPaymentRequest $request): JsonResponse
     {
-        if (! auth()->user()->project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS])) {
-            return response()->json(['message' => 'Tracking Usage not set'], 200);
-        }
-
         TrackStatsPayment::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),
