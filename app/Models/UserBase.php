@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Jobs\QueuedVerifyEmailJob;
-use Carbon\CarbonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +18,6 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
-use Spark\Plan;
 
 abstract class UserBase extends Authenticatable implements MustVerifyEmail
 {

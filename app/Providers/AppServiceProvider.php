@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
 use App\Models\User;
+use App\Observers\UserObserver;
 use App\PulseUsers;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        User::observe(UserObserver::class);
+
         Sanctum::$personalAccessTokenModel = PersonalAccessToken::class;
 
         Date::use(CarbonImmutable::class);
