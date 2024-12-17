@@ -4,18 +4,17 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <meta name="description" content="The missing analytics tool for your Laravel application. A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
+        <title inertia>{{ config('app.name', 'Laravel') }} - The missing analytics tool for Laravel applications</title>
+        <meta name="description" content="A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
 
-        <meta property="og:title" content="{{ config('app.name', 'Laravel') }}">
-        <meta property="og:description" content="The missing analytics tool for your Laravel application. A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
+        <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - The missing analytics tool for Laravel applications">
+        <meta property="og:description" content="A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
         <meta property="og:image" content="{{ asset('/images/screenshot.png') }}">
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
 
         {{-- change this also in docs vitepress config.js --}}
         <link rel="canonical" href="https://simplestats.io{{ request()->getPathInfo() }}">
-
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
