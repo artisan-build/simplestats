@@ -146,9 +146,9 @@ class StatsAggregationsService
     {
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
-        // add team_id is very important
-        $projectCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
-        $projectInstanceCondition = $projectCondition;
+        $teamCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
+        $projectCondition = "";
+        $projectInstanceCondition = "";
         if (!empty($filters->projectId)) {
             $projectCondition .= " AND stats.project_id = {$filters->projectId} ";
             $projectInstanceCondition .= $projectCondition;
@@ -157,8 +157,8 @@ class StatsAggregationsService
             }
         }
 
-        $conditions['projectCondition'] = $projectCondition;
-        $conditions['projectInstanceCondition'] = $projectInstanceCondition;
+        $conditions['projectCondition'] = $teamCondition.$projectCondition;
+        $conditions['projectInstanceCondition'] = $teamCondition.$projectInstanceCondition;
 
         $trackingCondition = "";
 
