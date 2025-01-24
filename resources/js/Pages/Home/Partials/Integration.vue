@@ -65,7 +65,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Add the TrackablePerson contract" />
+                    <SmallStepText content="Track your users" />
 
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePerson contract" :code="snippetTrackUser" />
                     <GridPlaceholder />
@@ -73,7 +73,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Add the TrackablePayment contract" />
+                    <SmallStepText content="Track your sales" />
 
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePayment contract" :code="snippetTrackPayment" />
                     <GridPlaceholder />
