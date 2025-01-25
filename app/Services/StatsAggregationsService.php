@@ -146,7 +146,7 @@ class StatsAggregationsService
     {
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
-        $teamCondition = " AND stats.team_id = ".auth()->user()->current_team_id." ";
+        $teamCondition = " stats.team_id = ".auth()->user()->current_team_id." ";
         $projectCondition = "";
         $projectInstanceCondition = "";
         if (!empty($filters->projectId)) {
