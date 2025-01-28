@@ -18,6 +18,7 @@ use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class StatsAggregationsService
 {
@@ -94,6 +95,13 @@ class StatsAggregationsService
 //        echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
+
+        // hack to fix rtl stats grouped page names
+        foreach ($dataArray as &$item) {
+            if (Str::startsWith($item['name'], '/')) {
+                $item['name'] = Str::replaceFirst('/', '', $item['name']).'/';
+            }
+        }
 
         return collect($dataArray)->reject(function ($item) {
             return (! isset($item['dau']) || $item['dau'] == 0)
