@@ -18,10 +18,10 @@ class StatsPaymentController extends Controller
 
     public function store(StatsPaymentRequest $request): JsonResponse
     {
-        TrackStatsPayment::dispatch(
+        defer(fn() => TrackStatsPayment::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),
-        );
+        ));
 
         return response()->json(['message' => 'Stats Payment Request accepted.']);
     }

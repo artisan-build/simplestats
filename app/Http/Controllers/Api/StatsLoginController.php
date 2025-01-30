@@ -17,10 +17,10 @@ class StatsLoginController extends Controller
 
     public function store(StatsLoginRequest $request): JsonResponse
     {
-        TrackStatsLogin::dispatch(
+        defer(fn() => TrackStatsLogin::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),
-        );
+        ));
 
         return response()->json(['message' => 'Stats Login Request accepted.']);
     }

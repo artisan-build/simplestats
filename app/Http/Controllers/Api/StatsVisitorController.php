@@ -30,10 +30,10 @@ class StatsVisitorController extends Controller
             return response()->json(['message' => 'Bots are not allowed'], 200);
         }
 
-        TrackStatsVisitor::dispatch(
+        defer(fn() => TrackStatsVisitor::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),
-        );
+        ));
 
         return response()->json(['message' => 'Stats Visitor Request accepted.'], 200);
     }
