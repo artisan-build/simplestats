@@ -16,6 +16,34 @@ class CheckInactiveUsers extends Command
 
     public function handle(): void
     {
+        // first delete already warned users, so that they do not get another notification
+        $this->deleteInactiveUsers();
+
+        // notify inactive users
+        $this->notifyInactiveUsers();
+    }
+
+    private function deleteInactiveUsers(): void
+    {
+        User::query()
+            ->whereDoesntHave('subscriptions', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->where('inactive_since', '<', now()->subDays(10))
+            ->each(function (User $user) {
+                $user->notify(new UserDeletedNotification($user));
+                $user->delete();
+            });
+
+        Team::with('users', 'owner')->each(function ($team) {
+            if ($team->users->isEmpty() && ! $team->owner) {
+                $team->delete();
+            }
+        });
+    }
+
+    private function notifyInactiveUsers(): void
+    {
         User::query()
             ->whereDoesntHave('subscriptions', function ($query) {
                 $query->where('status', 'active');
@@ -35,21 +63,5 @@ class CheckInactiveUsers extends Command
             ->each(function (User $user) {
                 $user->notify(new UserInactiveNotification($user, 1));
             });
-
-        User::query()
-            ->whereDoesntHave('subscriptions', function ($query) {
-                $query->where('status', 'active');
-            })
-            ->where('inactive_since', '<', now()->subDays(10))
-            ->each(function (User $user) {
-                $user->notify(new UserDeletedNotification($user));
-                $user->delete();
-            });
-
-        Team::with('users', 'owner')->each(function ($team) {
-            if ($team->users->isEmpty() && ! $team->owner) {
-                $team->delete();
-            }
-        });
     }
 }
