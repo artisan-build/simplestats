@@ -11,6 +11,7 @@ import Brands from "@/Pages/Home/Partials/Brands.vue";
 import Bottom from "@/Pages/Home/Partials/Bottom.vue";
 import Banners from "@/Pages/Home/Partials/Banners.vue";
 import Faq from "@/Pages/Home/Faq.vue";
+import Gradient from "@/Pages/Home/Partials/Gradient.vue";
 
 defineProps({
     plans: Array,
@@ -22,11 +23,13 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 </script>
 
 <template>
+    <Gradient />
+
     <Banners :banners="banners" />
 
     <Header />
 
-    <div class="min-h-screen bg-white">
+    <div class="min-h-screen relative">
         <section class="text-center pt-24">
             <h1 class="m-auto mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white px-6 sm:px-3 max-w-screen-md">
                 The missing analytics tool for your&nbsp;<span class="text-indigo-500">Laravel</span> application.

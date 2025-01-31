@@ -4,7 +4,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 </script>
 
 <template>
-    <div class="z-10 relative bg-white">
+    <div class="z-10 relative">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
             <Link href="/" class="inline-flex items-center">
                 <ApplicationLogo />
