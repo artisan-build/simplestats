@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2b9943df2dcd51abdd4fb7ac6fdb023",
+    "content-hash": "5ea9be6dbd1ca07265f01a2518fe8ba8",
     "packages": [
         {
             "name": "ashallendesign/favicon-fetcher",
@@ -205,6 +205,70 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.1"
             },
             "time": "2024-10-01T13:55:55+00:00"
+        },
+        {
+            "name": "beyondcode/laravel-favicon",
+            "version": "1.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beyondcode/laravel-favicon.git",
+                "reference": "afb5b4d4de692bbdff7ff038d081e01bba721db3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beyondcode/laravel-favicon/zipball/afb5b4d4de692bbdff7ff038d081e01bba721db3",
+                "reference": "afb5b4d4de692bbdff7ff038d081e01bba721db3",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/http": "5.6.*|5.7.*|5.8.*|6.*|7.*|8.*|9.*|^10.0|^11.0",
+                "illuminate/support": "5.6.*|5.7.*|5.8.*|6.*|7.*|8.*|9.*|^10.0|^11.0",
+                "intervention/image": "^2.4",
+                "php": "^7.1|^8.0|^8.1|^8.2|^8.3"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.7|^4.0|^5.0|^6.0|^7.0|^8.0|^9.0",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0|^10.0|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "BeyondCode\\LaravelFavicon\\FaviconServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "BeyondCode\\LaravelFavicon\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marcel Pociot",
+                    "email": "marcel@beyondco.de",
+                    "homepage": "https://beyondcode.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Create dynamic favicons based on your environment settings.",
+            "homepage": "https://github.com/beyondcode/laravel-favicon",
+            "keywords": [
+                "beyondcode",
+                "laravel-favicon"
+            ],
+            "support": {
+                "issues": "https://github.com/beyondcode/laravel-favicon/issues",
+                "source": "https://github.com/beyondcode/laravel-favicon/tree/1.6.1"
+            },
+            "time": "2024-12-16T19:34:33+00:00"
         },
         {
             "name": "brick/math",
@@ -1908,6 +1972,90 @@
                 }
             ],
             "time": "2024-03-09T00:30:58+00:00"
+        },
+        {
+            "name": "intervention/image",
+            "version": "2.7.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/image.git",
+                "reference": "04be355f8d6734c826045d02a1079ad658322dad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/04be355f8d6734c826045d02a1079ad658322dad",
+                "reference": "04be355f8d6734c826045d02a1079ad658322dad",
+                "shasum": ""
+            },
+            "require": {
+                "ext-fileinfo": "*",
+                "guzzlehttp/psr7": "~1.1 || ^2.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9.2",
+                "phpunit/phpunit": "^4.8 || ^5.7 || ^7.5.15"
+            },
+            "suggest": {
+                "ext-gd": "to use GD library based image processing.",
+                "ext-imagick": "to use Imagick based image processing.",
+                "intervention/imagecache": "Caching extension for the Intervention Image library"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Image": "Intervention\\Image\\Facades\\Image"
+                    },
+                    "providers": [
+                        "Intervention\\Image\\ImageServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Image\\": "src/Intervention/Image"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "Image handling and manipulation library with support for Laravel integration",
+            "homepage": "http://image.intervention.io/",
+            "keywords": [
+                "gd",
+                "image",
+                "imagick",
+                "laravel",
+                "thumbnail",
+                "watermark"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/image/issues",
+                "source": "https://github.com/Intervention/image/tree/2.7.2"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/interventionio",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Intervention",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-05-21T17:30:32+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -6764,7 +6912,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/simplestats-io/laravel-client",
-                "reference": "c8fddc3c7384c21f3ab9bfce5fb1e9452fe8c9cf"
+                "reference": "55788db41c535668074ba8b225b434a45356166c"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
@@ -14306,13 +14454,15 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "simplestats-io/laravel-client": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2",
         "ext-zip": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

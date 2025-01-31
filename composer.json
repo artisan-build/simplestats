@@ -9,6 +9,7 @@
         "ext-zip": "*",
         "ashallendesign/favicon-fetcher": "^3.5",
         "ashallendesign/laravel-exchange-rates": "^7.2",
+        "beyondcode/laravel-favicon": "^1.6",
         "fakerphp/faker": "^1.9.1",
         "guzzlehttp/guzzle": "^7.2",
         "hisorange/browser-detect": "^5.0",
