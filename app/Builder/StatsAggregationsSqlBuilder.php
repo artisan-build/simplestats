@@ -22,6 +22,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         if ($this->trackablePerson === TrackablePerson::USER) {
             // per date
             $this->applySql($this->getPD_REG());
+            $this->applySql($this->getPD_TAU());
+            $this->applySql($this->getPD_PU());
             $this->applySql($this->getPD_NAU());
             $this->applySql($this->getPD_NAPU());
             $this->applySql($this->getPD_DAU());
@@ -38,9 +40,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         $this->applySql($this->getPD_NET());
 
         $this->applySql($this->getLT_VISITORS());
-        $this->applySql($this->getLT_GROSS_USER());
-        $this->applySql($this->getLT_NET_USER());
-        $this->applySql($this->getLT_NET_ALL(), false);
+        $this->applySql($this->getLT_NET(), false);
 
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
@@ -66,9 +66,37 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_REG(): string
     {
         return "pd_reg AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(*) as count
             FROM stats_users stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            GROUP BY date
+        )";
+    }
+
+    /**
+     * number of total actives
+     */
+    protected function getPD_TAU(): string
+    {
+        return "pd_tau AS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) as count
+            FROM stats_logins stats
+            :trackingUserJoinConditions
+            WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = $this->nauLoginCounter
+            GROUP BY date
+        )";
+    }
+
+    /**
+     * paying user
+     */
+    protected function getPD_PU(): string
+    {
+        return "pd_pu AS (
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) as count
+            FROM stats_payments stats
+            :trackingUserJoinConditions
+            WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = 1
             GROUP BY date
         )";
     }
@@ -164,7 +192,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
                 (
-                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
+                    SELECT COUNT(*)
                     FROM stats_users stats
                     WHERE :projectInstanceCondition AND stats.time <= :intervalEnd :trackingConditions
                 ) AS count
@@ -211,7 +239,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_VISITORS(): string
     {
         return "pd_visitor AS (
-            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT DATE_FORMAT(stats.time, ':dateFormat') AS date, COUNT(*) as count
             FROM stats_visitors stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY date
@@ -266,7 +294,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT
                 DATE_FORMAT(ds.date, ':dateFormat') AS date,
                 (
-                    SELECT COUNT(DISTINCT stats.id, stats.instance_id)
+                    SELECT COUNT(*)
                     FROM stats_visitors stats
                     WHERE :projectInstanceCondition AND stats.time <= :intervalEnd :trackingConditions
                 ) AS count
@@ -274,39 +302,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         )";
     }
 
-    protected function getLT_GROSS_USER(): string
+    protected function getLT_NET(): string
     {
-        return "lt_gross_user AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT SUM(stats.gross)
-                    FROM stats_payments stats
-                    :trackingUserJoinConditions
-                    WHERE :projectInstanceCondition AND stats.time <= :intervalEnd
-                ) AS count
-            FROM date_sequence ds
-        )";
-    }
-
-    protected function getLT_NET_USER(): string
-    {
-        return "lt_net_user AS (
-            SELECT
-                DATE_FORMAT(ds.date, ':dateFormat') AS date,
-                (
-                    SELECT SUM(stats.net)
-                    FROM stats_payments stats
-                    :trackingUserJoinConditions
-                    WHERE :projectInstanceCondition AND stats.time <= :intervalEnd
-                ) AS count
-            FROM date_sequence ds
-        )";
-    }
-
-    protected function getLT_NET_ALL(): string
-    {
-        return "lt_net_all AS (
+        return "lt_net AS (
             SELECT date, SUM(count) as count
             FROM (
                 SELECT
@@ -342,6 +340,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= '
                 COALESCE(pd_reg.count, 0) AS pd_REG,
+                COALESCE(pd_tau.count, 0) AS pd_TAU,
+                COALESCE(pd_pu.count, 0) AS pd_PU,
                 COALESCE(pd_nau.count, 0) AS pd_NAU,
                 COALESCE(pd_napu.count, 0) AS pd_NAPU,
                 COALESCE(pd_dau.count, 0) AS pd_DAU,
@@ -357,9 +357,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             COALESCE(ROUND(pd_gross.count,2), 0) AS pd_GROSS,
             COALESCE(ROUND(pd_net.count,2), 0) AS pd_NET,
             COALESCE(lt_visitor.count, 0) AS lt_VISITOR,
-            COALESCE(ROUND(lt_net_user.count,2), 0) AS lt_NET_USER,
-            COALESCE(ROUND(lt_gross_user.count,2), 0) AS lt_GROSS_USER,
-            COALESCE(ROUND(lt_net_all.count,2), 0) AS lt_NET_ALL';
+            COALESCE(ROUND(lt_net.count,2), 0) AS lt_NET';
 
         return $sql;
     }
@@ -372,6 +370,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
                 LEFT JOIN pd_reg ON DATE_FORMAT(ds.date, ':dateFormat') = pd_reg.date
+                LEFT JOIN pd_tau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_tau.date
+                LEFT JOIN pd_pu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_pu.date
                 LEFT JOIN pd_nau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_nau.date
                 LEFT JOIN pd_napu ON DATE_FORMAT(ds.date, ':dateFormat') = pd_napu.date
                 LEFT JOIN pd_dau ON DATE_FORMAT(ds.date, ':dateFormat') = pd_dau.date
@@ -387,9 +387,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             LEFT JOIN pd_gross ON DATE_FORMAT(ds.date, ':dateFormat') = pd_gross.date
             LEFT JOIN pd_net ON DATE_FORMAT(ds.date, ':dateFormat') = pd_net.date
             LEFT JOIN lt_visitor ON DATE_FORMAT(ds.date, ':dateFormat') = lt_visitor.date
-            LEFT JOIN lt_net_user ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net_user.date
-            LEFT JOIN lt_gross_user ON DATE_FORMAT(ds.date, ':dateFormat') = lt_gross_user.date
-            LEFT JOIN lt_net_all ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net_all.date";
+            LEFT JOIN lt_net ON DATE_FORMAT(ds.date, ':dateFormat') = lt_net.date";
 
         return $sql;
     }

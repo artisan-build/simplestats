@@ -18,6 +18,7 @@ use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class StatsAggregationsService
 {
@@ -147,14 +148,17 @@ class StatsAggregationsService
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
         $teamCondition = " stats.team_id = ".auth()->user()->current_team_id." ";
+
         $projectCondition = "";
-        $projectInstanceCondition = "";
         if (!empty($filters->projectId)) {
             $projectCondition .= " AND stats.project_id = {$filters->projectId} ";
+        }
+
+        $projectInstanceCondition = "";
+        if (!empty($filters->instanceId)) {
+            $projectInstanceCondition .= " AND stats.instance_id = {$filters->instanceId} ";
+        } elseif (!empty($filters->projectId)) {
             $projectInstanceCondition .= $projectCondition;
-            if (!empty($filters->instanceId)) {
-                $projectInstanceCondition .= " AND stats.instance_id = {$filters->instanceId} ";
-            }
         }
 
         $conditions['projectCondition'] = $teamCondition.$projectCondition;
@@ -295,10 +299,33 @@ class StatsAggregationsService
             (new StatsAggregationsSqlBuilder($trackablePerson))->build(),
             $this->formatFilter($filterConditions)
         );
-//         echo nl2br($sql);die;
+//        echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
+//        $this->applyContinuousLTAggregation($dataArray);
+//dd($dataArray);
         return $this->formatAggregatedData(collect($dataArray));
+    }
+
+    private function applyContinuousLTAggregation(array &$dataArray): void
+    {
+        $dataArray = array_reverse($dataArray);
+//dd($dataArray);
+        $i = 0;
+        foreach ($dataArray as $item) {
+            foreach ($item as $key => $value) {
+                $prevI = $i - 1;
+
+                if (isset($dataArray[$prevI]) && Str::startsWith($key, 'lt_')) {
+                    $pdKey = Str::replaceFirst('lt_', 'pd_', $key);
+                    $dataArray[$i][$key] = $dataArray[$prevI][$key] + $dataArray[$prevI][$pdKey];
+                }
+            }
+
+            $i++;
+        }
+
+        $dataArray = array_reverse($dataArray);
     }
 
     /**

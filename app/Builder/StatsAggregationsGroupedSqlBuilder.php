@@ -41,7 +41,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getCTE(): string
     {
         return "WITH stats_groups AS (
-            SELECT id as type_id, name FROM $this->statsTable stats WHERE 1 :projectCondition
+            SELECT id as type_id, name FROM $this->statsTable stats WHERE 1 AND :projectCondition
             UNION ALL
             SELECT $this->typeIdFallback as type_id, 'Direct / Unknown' as name
         )";
@@ -55,8 +55,8 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return "pd_dau AS (
             SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
             FROM stats_logins stats
-            :trackingUserJoinConditions :projectInstanceCondition
-            WHERE stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter :projectInstanceCondition
+            :trackingUserJoinConditions AND :projectInstanceCondition
+            WHERE :projectInstanceCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter
             GROUP BY type_id
         )";
     }
@@ -67,10 +67,9 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_REG(): string
     {
         return "lt_reg AS (
-            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
             FROM stats_users stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
-            :trackingConditions :projectInstanceCondition
+            WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
         )";
     }
@@ -81,10 +80,9 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_VISITORS(): string
     {
         return "lt_visitors AS (
-            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
             FROM stats_visitors stats
-            WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
-            :trackingConditions :projectInstanceCondition
+            WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
         )";
     }
@@ -99,14 +97,14 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             FROM (
                 SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
                 FROM stats_payments stats
-                :trackingUserJoinConditions :projectInstanceCondition
-                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                :trackingUserJoinConditions AND :projectInstanceCondition
+                WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
                 GROUP BY type_id
                 UNION ALL
                 SELECT COALESCE(sv.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
                 FROM stats_payments stats
-                :trackingVisitorJoinConditions :projectInstanceCondition
-                WHERE stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :projectInstanceCondition
+                :trackingVisitorJoinConditions AND :projectInstanceCondition
+                WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
                 GROUP BY type_id
             ) as combined_results
             GROUP BY type_id

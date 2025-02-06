@@ -11,7 +11,5 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->timestamp('last_login_at')->after('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
         });
-
-        DB::statement('UPDATE users SET last_login_at = CURRENT_TIMESTAMP - INTERVAL 50 DAY');
     }
 };
