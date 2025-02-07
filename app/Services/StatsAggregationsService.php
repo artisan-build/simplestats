@@ -299,10 +299,10 @@ class StatsAggregationsService
             (new StatsAggregationsSqlBuilder($trackablePerson))->build(),
             $this->formatFilter($filterConditions)
         );
-//        echo nl2br($sql);die;
+        echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
-//        $this->applyContinuousLTAggregation($dataArray);
+        $this->applyContinuousLTAggregation($dataArray);
 //dd($dataArray);
         return $this->formatAggregatedData(collect($dataArray));
     }
@@ -314,11 +314,14 @@ class StatsAggregationsService
         $i = 0;
         foreach ($dataArray as $item) {
             foreach ($item as $key => $value) {
-                $prevI = $i - 1;
-
-                if (isset($dataArray[$prevI]) && Str::startsWith($key, 'lt_')) {
+                if (Str::startsWith($key, 'lt_')) {
                     $pdKey = Str::replaceFirst('lt_', 'pd_', $key);
-                    $dataArray[$i][$key] = $dataArray[$prevI][$key] + $dataArray[$prevI][$pdKey];
+                    $dataArray[$i][$key] += $dataArray[$i][$pdKey];
+
+                    $nextI = $i + 1;
+                    if (isset($dataArray[$nextI])) {
+                        $dataArray[$nextI][$key] = $dataArray[$i][$key];
+                    }
                 }
             }
 

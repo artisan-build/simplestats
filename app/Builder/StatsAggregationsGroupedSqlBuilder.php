@@ -67,7 +67,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_REG(): string
     {
         return "lt_reg AS (
-            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_users stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
@@ -80,7 +80,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_VISITORS(): string
     {
         return "lt_visitors AS (
-            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
             FROM stats_visitors stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id

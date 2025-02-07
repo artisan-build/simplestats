@@ -29,7 +29,6 @@ enum StatsRangeType: string
                 'endDateStart' => $rangeStart->startOfHour()->format(self::DATE_FORMAT),
                 'endDateEnd' => $rangeStart->endOfHour()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::HOUR->value)->upper()->singular(),
-                'intervalEnd' => 'DATE_ADD(ds.date, INTERVAL 1 HOUR) - INTERVAL 1 SECOND', // the end of the current interval
                 'dateFormat' => self::HOUR->dateFormat()['mysql'],
                 'dateFormatClear' => self::HOUR->dateFormatClear()['mysql'],
             ],
@@ -38,7 +37,6 @@ enum StatsRangeType: string
                 'endDateStart' => $rangeStart->startOfDay()->format(self::DATE_FORMAT),
                 'endDateEnd' => $rangeStart->endOfDay()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::DAY->value)->upper()->singular(),
-                'intervalEnd' => 'ds.date', // the end of the current interval
                 'dateFormat' => self::DAY->dateFormat()['mysql'],
                 'dateFormatClear' => self::DAY->dateFormatClear()['mysql'],
             ],
@@ -47,7 +45,6 @@ enum StatsRangeType: string
                 'endDateStart' => $rangeStart->startOfWeek()->format(self::DATE_FORMAT),
                 'endDateEnd' => $rangeStart->endOfWeek()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::WEEK->value)->upper()->singular(),
-                'intervalEnd' => 'DATE_ADD(ds.date, INTERVAL 6 DAY)', // the end of the current interval
                 'dateFormat' => self::WEEK->dateFormat()['mysql'],
                 'dateFormatClear' => self::WEEK->dateFormatClear()['mysql'],
             ],
@@ -56,7 +53,6 @@ enum StatsRangeType: string
                 'endDateStart' => $rangeStart->startOfMonth()->format(self::DATE_FORMAT),
                 'endDateEnd' => $rangeStart->endOfMonth()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::MONTH->value)->upper()->singular(),
-                'intervalEnd' => 'LAST_DAY(ds.date)', // the end of the current interval
                 'dateFormat' => self::MONTH->dateFormat()['mysql'],
                 'dateFormatClear' => self::MONTH->dateFormatClear()['mysql'],
             ],
@@ -65,7 +61,6 @@ enum StatsRangeType: string
                 'endDateStart' => $rangeStart->startOfYear()->format(self::DATE_FORMAT),
                 'endDateEnd' => $rangeStart->endOfYear()->format(self::DATE_FORMAT),
                 'intervalType' => str(self::YEAR->value)->upper()->singular(),
-                'intervalEnd' => 'LAST_DAY(DATE_ADD(ds.date, INTERVAL 11 MONTH))', // the end of the current interval
                 'dateFormat' => self::YEAR->dateFormat()['mysql'],
                 'dateFormatClear' => self::YEAR->dateFormatClear()['mysql'],
             ],
