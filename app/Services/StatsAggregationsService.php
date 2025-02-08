@@ -303,14 +303,14 @@ class StatsAggregationsService
 
         $dataArray = $this->getDataArray($sql);
         $this->applyContinuousLTAggregation($dataArray);
-//dd($dataArray);
+
         return $this->formatAggregatedData(collect($dataArray));
     }
 
     private function applyContinuousLTAggregation(array &$dataArray): void
     {
         $dataArray = array_reverse($dataArray);
-//dd($dataArray);
+
         $i = 0;
         foreach ($dataArray as $item) {
             foreach ($item as $key => $value) {

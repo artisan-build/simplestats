@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\AppHelper;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->dropIndex('stats_logins_counter_index');
         });
 
-        if (config('database.default') === 'mysql') {
+        if (AppHelper::getDBConnection() === 'mysql') {
             Schema::table('stats_users', function (Blueprint $table) {
                 $table->index(['team_id', 'time']);
                 $table->index(['team_id', 'project_id', 'time']);
