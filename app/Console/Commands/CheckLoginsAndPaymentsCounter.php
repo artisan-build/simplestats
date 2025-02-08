@@ -33,7 +33,7 @@ class CheckLoginsAndPaymentsCounter extends Command
     public function handle(): void
     {
         foreach ($this->tables as $table) {
-            if (AppHelper::getDBConnection() === 'pgsql') {
+            if (AppHelper::getDBDriver() === 'pgsql') {
                 DB::statement("
                     UPDATE $table
                     SET counter = ranked.rn

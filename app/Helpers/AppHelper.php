@@ -35,7 +35,7 @@ class AppHelper
         return $prevFilters;
     }
 
-    public static function getDBConnection(): string
+    public static function getDBDriver(): string
     {
         $connectionName = config('database.default');
         return config("database.connections.$connectionName.driver");

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Builder\Drivers\AggregationBuilderType;
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
 use App\Builder\StatsAggregationsSqlBuilder;
 use App\DTOs\StatsFilterDto;
@@ -70,7 +71,7 @@ class StatsAggregationsService
         $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
 
         $sql = (new StatsAggregationsGroupedSqlBuilder(
-            $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson)
+            $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, app(AggregationBuilderType::class))
         )->build();
 
         $filterConditions = $this->getFilterConditions($filters);
@@ -94,7 +95,10 @@ class StatsAggregationsService
         $sql = strtr($sql, $this->formatFilter($filterConditions));
 //        echo nl2br($sql);die;
 
-        $dataArray = $this->getDataArray($sql);
+        $dataArray = array_map(function ($item) {
+            $item['net'] = round($item['net'], 2);
+            return $item;
+        }, $this->getDataArray($sql));
 
         return collect($dataArray)->reject(function ($item) {
             return (! isset($item['dau']) || $item['dau'] == 0)
@@ -293,12 +297,12 @@ class StatsAggregationsService
 
     public function getRawData(array $filterConditions, ?int $projectId): Collection
     {
-        $trackablePerson = $this->getTrackablePersonByProject(Project::find($projectId));
-
-        $sql = strtr(
-            (new StatsAggregationsSqlBuilder($trackablePerson))->build(),
-            $this->formatFilter($filterConditions)
+        $builder = new StatsAggregationsSqlBuilder(
+            $this->getTrackablePersonByProject(Project::find($projectId)),
+            app(AggregationBuilderType::class),
         );
+
+        $sql = strtr($builder->build(), $this->formatFilter($filterConditions));
 //        echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);

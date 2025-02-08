@@ -2,6 +2,7 @@
 
 namespace App\Builder;
 
+use App\Builder\Drivers\AggregationBuilderType;
 use App\Enums\TrackablePerson;
 use App\Services\StatsService;
 
@@ -14,7 +15,8 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected string $statsDBType,
         protected string $statsSort,
         protected string $typeIdFallback,
-        protected TrackablePerson $trackablePerson
+        protected TrackablePerson $trackablePerson,
+        protected AggregationBuilderType $aggregationBuilderType,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -38,10 +40,16 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return $this->sql;
     }
 
+    // shorties
+    protected function getDistinctFields(array $fields)
+    {
+        return $this->aggregationBuilderType->getDistinctFields(...func_get_args());
+    }
+
     protected function getCTE(): string
     {
         return "WITH stats_groups AS (
-            SELECT id as type_id, name FROM $this->statsTable stats WHERE 1 AND :projectCondition
+            SELECT id as type_id, name FROM $this->statsTable stats WHERE :projectCondition
             UNION ALL
             SELECT $this->typeIdFallback as type_id, 'Direct / Unknown' as name
         )";
@@ -53,7 +61,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getPD_DAU(): string
     {
         return "pd_dau AS (
-            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.stats_user_id, stats.instance_id) AS count
+            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions AND :projectInstanceCondition
             WHERE :projectInstanceCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter
@@ -67,7 +75,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_REG(): string
     {
         return "lt_reg AS (
-            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.id', 'stats.instance_id']).") as count
             FROM stats_users stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
@@ -80,7 +88,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getLT_VISITORS(): string
     {
         return "lt_visitors AS (
-            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT stats.id, stats.instance_id) as count
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.id', 'stats.instance_id']).") as count
             FROM stats_visitors stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
@@ -126,7 +134,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
         $sql .= "
             COALESCE(lt_visitors.count, 0) AS visitors,
-            COALESCE(ROUND(lt_net.count,2), 0) AS net";
+            COALESCE(lt_net.count, 0) AS net";
 
         return $sql;
     }

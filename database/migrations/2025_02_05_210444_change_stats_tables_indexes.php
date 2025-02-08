@@ -27,7 +27,7 @@ return new class extends Migration
             $table->dropIndex('stats_logins_counter_index');
         });
 
-        if (AppHelper::getDBConnection() === 'mysql') {
+        if (AppHelper::getDBDriver() === 'mysql') {
             Schema::table('stats_users', function (Blueprint $table) {
                 $table->index(['team_id', 'time']);
                 $table->index(['team_id', 'project_id', 'time']);

@@ -117,14 +117,14 @@ const conversionChart = {
 };
 
 if (currentProjectHasTrackingUsageBits(['visitors'])) {
-    conversionChart.group.push({key: 'pd_VISITOR', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_VISITOR}});
+    conversionChart.group.push({key: 'pd_visitor', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_visitor}});
 }
 
 if (currentProjectHasTrackingUsageBits(['users'])) {
-    conversionChart.group.push({key: 'pd_REG', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_REG}});
+    conversionChart.group.push({key: 'pd_reg', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_reg}});
 
     if (currentProjectHasTrackingUsageBits(['visitors'])) {
-        conversionChart.group.push({key: 'pd_CR', color: '#93c5fd', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_REG, statsSum.pd_VISITOR) * 100}});
+        conversionChart.group.push({key: 'pd_cr', color: '#93c5fd', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100}});
     }
 }
 
@@ -138,13 +138,13 @@ if (currentProjectHasTrackingUsageBits(['payments'])) {
         group: [],
     };
 
-    revenueChart.group.push({key: 'pd_NET', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_NET}});
-    revenueChart.group.push({key: 'pd_GROSS', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_GROSS}});
+    revenueChart.group.push({key: 'pd_net', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_net}});
+    revenueChart.group.push({key: 'pd_gross', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_gross}});
 
     if (! currentProjectHasTrackingUsageBits(['visitors'])) {
-        revenueChart.group.push({key: 'pd_FEE', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_FEE}});
+        revenueChart.group.push({key: 'pd_fee', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_fee}});
     } else {
-        revenueChart.group.push({key: 'lt_ARPV', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_ARPV')}});
+        revenueChart.group.push({key: 'lt_arpv', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_arpv')}});
     }
 
     if (revenueChart.group.length > 0) charts.push(revenueChart);
@@ -158,14 +158,14 @@ if (currentProjectHasTrackingUsageBits(['users'])) {
         group: [],
     };
 
-    activeUsersChart.group.push({key: 'pd_DAU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAU')}});
+    activeUsersChart.group.push({key: 'pd_dau', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dau')}});
 
     if (currentProjectHasTrackingUsageBits(['payments'])) {
-        activeUsersChart.group.push({key: 'pd_DAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAPU')}});
-        activeUsersChart.group.push({key: 'pd_DAAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_DAAPU')}});
+        activeUsersChart.group.push({key: 'pd_dapu', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dapu')}});
+        activeUsersChart.group.push({key: 'pd_daapu', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_daapu')}});
     } else {
-        activeUsersChart.group.push({key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2DAU')}});
-        activeUsersChart.group.push({key: 'pd_NAU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAU}});
+        activeUsersChart.group.push({key: 'lt_reg2dau', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
+        activeUsersChart.group.push({key: 'pd_nau', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
     }
 
     if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
@@ -179,9 +179,9 @@ if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
         group: [],
     };
 
-    avgRevChart.group.push({key: 'lt_ARPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_ARPU')}});
-    avgRevChart.group.push({key: 'lt_ARPPU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_ARPPU')}});
-    avgRevChart.group.push({key: 'pd_ARPDAU', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('pd_ARPDAU')}});
+    avgRevChart.group.push({key: 'lt_arpu', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arpu')}});
+    avgRevChart.group.push({key: 'lt_arppu', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arppu')}});
+    avgRevChart.group.push({key: 'pd_arpdau', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('pd_arpdau')}});
 
     if (avgRevChart.group.length > 0) charts.push(avgRevChart);
 }
@@ -194,9 +194,9 @@ if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && curren
         group: [],
     };
 
-    growthChart.group.push({key: 'pd_NAU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAU}});
-    growthChart.group.push({key: 'pd_NAPU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_NAPU}});
-    growthChart.group.push({key: 'lt_PU', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return lastStat('lt_PU')}});
+    growthChart.group.push({key: 'pd_nau', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
+    growthChart.group.push({key: 'pd_napu', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_napu}});
+    growthChart.group.push({key: 'lt_pu', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return lastStat('lt_pu')}});
 
     if (growthChart.group.length > 0) charts.push(growthChart);
 }
@@ -210,11 +210,11 @@ if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && curren
     };
 
     if (currentProjectHasTrackingUsageBits(['payments'])) {
-        engagementChart.group.push({key: 'lt_REG2PU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2PU')}});
+        engagementChart.group.push({key: 'lt_reg2pu', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2pu')}});
     }
 
-    engagementChart.group.push({key: 'lt_REG2DAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2DAU')}});
-    engagementChart.group.push({key: 'lt_REG2TAU', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_REG2TAU')}});
+    engagementChart.group.push({key: 'lt_reg2dau', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
+    engagementChart.group.push({key: 'lt_reg2tau', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2tau')}});
 
     if (engagementChart.group.length > 0) charts.push(engagementChart);
 }
