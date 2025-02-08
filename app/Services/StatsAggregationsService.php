@@ -299,7 +299,7 @@ class StatsAggregationsService
             (new StatsAggregationsSqlBuilder($trackablePerson))->build(),
             $this->formatFilter($filterConditions)
         );
-        echo nl2br($sql);die;
+//        echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
         $this->applyContinuousLTAggregation($dataArray);
