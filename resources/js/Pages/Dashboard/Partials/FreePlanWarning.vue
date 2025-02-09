@@ -1,7 +1,6 @@
 <script setup>
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { Link } from '@inertiajs/vue3';
-import {formatNumber} from "chart.js/helpers";
 
 defineProps({
     freePlanWarning: Object,
