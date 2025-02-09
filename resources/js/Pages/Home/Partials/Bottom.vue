@@ -42,7 +42,7 @@ const linkCategories = [
 </script>
 
 <template>
-    <section class="pb-20 flex justify-center px-4 bg-gray-100 text-gray-600">
+    <section class="pb-20 flex justify-center px-4 bg-gray-100 text-gray-60 border-t border-gray-200">
         <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4"></div>
         <div class="w-full max-w-screen-xl">
             <div class="container py-12 px-4 sm:px-6 lg:py-16 lg:px-8">

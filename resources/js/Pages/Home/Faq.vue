@@ -31,7 +31,7 @@ const toggleQuestion = (index) => {
 </script>
 
 <template>
-    <section class="pb-32 bg-white dark:bg-gray-900">
+    <section class="pb-32">
         <div class="container max-w-4xl px-6 py-10 mx-auto">
 
             <SectionHeader id="self-hosted">

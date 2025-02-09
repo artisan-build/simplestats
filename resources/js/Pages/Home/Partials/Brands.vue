@@ -32,7 +32,7 @@ const brands = [
             <div class="flex flex-wrap items-center justify-center">
                 <div v-for="brand in brands" class="p-3">
                     <a :href="brand.url" rel="noreferrer" target="_blank">
-                        <img :src="brand.img" :alt="brand.alt" width="250" height="54" />
+                        <img class="rounded-lg" :src="brand.img" :alt="brand.alt" width="250" height="54" />
                     </a>
                 </div>
             </div>

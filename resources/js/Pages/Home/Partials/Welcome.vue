@@ -23,7 +23,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 </script>
 
 <template>
-    <Gradient />
+    <Gradient position="fixed" />
 
     <Banners :banners="banners" />
 
