@@ -15,13 +15,14 @@ readonly class ValidProjectModel implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // if its the project model itself, we just need to check the id...
-        $validProjectModel = $this->model::where('id', $value)
-            ->when($this->model != Project::class, function ($query) {
-                $query->where('project_id', $this->projectId);
-            })->exists();
+        $projectModel = $this->model::where('id', $value);
 
-        if ($value == -1 || $value == 0 || $validProjectModel) {
+        // If it's the project model itself, the id check above is enough
+        if ($this->model != Project::class && $this->projectId) {
+            $projectModel->where('project_id', $this->projectId);
+        }
+
+        if ($value == -1 || $value == 0 || $projectModel->exists()) {
             return;
         }
 
