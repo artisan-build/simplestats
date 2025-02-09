@@ -169,8 +169,8 @@ class DatabaseSeeder extends Seeder
     protected function getUserSeedCount(): array
     {
         return [
-            'from' => app()->isLocal() ? 100 : 500,
-            'to' => app()->isLocal() ? 300 : 1000,
+            'from' => app()->isLocal() ? 1100 : 500,
+            'to' => app()->isLocal() ? 1300 : 1000,
         ];
     }
 }

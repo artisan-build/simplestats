@@ -80,6 +80,8 @@ const newFilterForDataPoint = (clickedDate) => {
     return newFilter;
 }
 
+const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+
 const chartOptions = ref({
     chart: {
         events: {
@@ -104,6 +106,7 @@ const chartOptions = ref({
             show: false,
             offsetY: 12,
         },
+        background: isDarkMode.value ? '#212121' : '#FFFFFF',
     },
     title: {
         text: props.chart.name,
@@ -113,8 +116,11 @@ const chartOptions = ref({
             fontSize: '17px',
             fontWeight: '600',
             fontFamily: 'Figtree, ui-sans-serif',
-            color: '#374151'
+            color: isDarkMode.value ? '#AAAAAA' : '#374151',
         },
+    },
+    theme: {
+        mode: isDarkMode.value ? 'dark' : 'light' // Native Unterstützung für Dark Mode
     },
     legend: {
         show: false,
@@ -202,6 +208,7 @@ const chartOptions = ref({
     grid: {
         show: true,
         // borderColor: '#f1f1f1',
+        borderColor: isDarkMode.value ? '#333333' : '#E5E7EB', // Linienfarbe für Dark/Light Mode
     },
 });
 
@@ -221,7 +228,7 @@ if (hasCurrentPeriod) {
             {
                 x: previousPeriod,
                 x2: latestPeriod,
-                fillColor: '#DDDDDD',
+                fillColor: isDarkMode.value ? '#444444' : '#DDDDDD',
             }
         ]
     };
@@ -255,7 +262,7 @@ const selectedSeries = () => {
 </script>
 
 <template>
-    <div class="@container bg-white dark:bg-gray-800 border shadow-md rounded-md" :class="chart.class">
+    <div class="@container bg-white dark:bg-dark-800 border shadow-md rounded-md" :class="chart.class">
         <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3"></div>
         <div :class="'grid gap-3 grid-cols-'+series.length+' pt-3 px-3'">
             <StatsIndicator

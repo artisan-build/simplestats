@@ -27,7 +27,7 @@ const extractStatsData4Chart = (statsGroups) => {
                     datesPrev: [],
                     name: group.title ?? group.key,
                     nameSmall: group.titleSmall ?? group.title ?? group.key,
-                    color: group.color ?? '',
+                    color: '#93c5fd',
                     // extras...
                     key: group.key,
                     formatter: group.formatter,
@@ -117,14 +117,14 @@ const conversionChart = {
 };
 
 if (currentProjectHasTrackingUsageBits(['visitors'])) {
-    conversionChart.group.push({key: 'pd_visitor', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_visitor}});
+    conversionChart.group.push({key: 'pd_visitor', formatter: 'number', indicatorCallback: () => {return statsSum.pd_visitor}});
 }
 
 if (currentProjectHasTrackingUsageBits(['users'])) {
-    conversionChart.group.push({key: 'pd_reg', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_reg}});
+    conversionChart.group.push({key: 'pd_reg', formatter: 'number', indicatorCallback: () => {return statsSum.pd_reg}});
 
     if (currentProjectHasTrackingUsageBits(['visitors'])) {
-        conversionChart.group.push({key: 'pd_cr', color: '#93c5fd', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100}});
+        conversionChart.group.push({key: 'pd_cr', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100}});
     }
 }
 
@@ -138,13 +138,13 @@ if (currentProjectHasTrackingUsageBits(['payments'])) {
         group: [],
     };
 
-    revenueChart.group.push({key: 'pd_net', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_net}});
-    revenueChart.group.push({key: 'pd_gross', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_gross}});
+    revenueChart.group.push({key: 'pd_net', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_net}});
+    revenueChart.group.push({key: 'pd_gross', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_gross}});
 
     if (! currentProjectHasTrackingUsageBits(['visitors'])) {
-        revenueChart.group.push({key: 'pd_fee', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_fee}});
+        revenueChart.group.push({key: 'pd_fee', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_fee}});
     } else {
-        revenueChart.group.push({key: 'lt_arpv', color: '#93c5fd', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_arpv')}});
+        revenueChart.group.push({key: 'lt_arpv', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_arpv')}});
     }
 
     if (revenueChart.group.length > 0) charts.push(revenueChart);
@@ -158,14 +158,14 @@ if (currentProjectHasTrackingUsageBits(['users'])) {
         group: [],
     };
 
-    activeUsersChart.group.push({key: 'pd_dau', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dau')}});
+    activeUsersChart.group.push({key: 'pd_dau', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dau')}});
 
     if (currentProjectHasTrackingUsageBits(['payments'])) {
-        activeUsersChart.group.push({key: 'pd_dapu', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dapu')}});
-        activeUsersChart.group.push({key: 'pd_daapu', color: '#93c5fd', formatter: 'number', indicatorCallback: function () {return lastStat('pd_daapu')}});
+        activeUsersChart.group.push({key: 'pd_dapu', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dapu')}});
+        activeUsersChart.group.push({key: 'pd_daapu', formatter: 'number', indicatorCallback: function () {return lastStat('pd_daapu')}});
     } else {
-        activeUsersChart.group.push({key: 'lt_reg2dau', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
-        activeUsersChart.group.push({key: 'pd_nau', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
+        activeUsersChart.group.push({key: 'lt_reg2dau', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
+        activeUsersChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
     }
 
     if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
@@ -179,9 +179,9 @@ if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
         group: [],
     };
 
-    avgRevChart.group.push({key: 'lt_arpu', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arpu')}});
-    avgRevChart.group.push({key: 'lt_arppu', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arppu')}});
-    avgRevChart.group.push({key: 'pd_arpdau', color: '#93c5fd', formatter: 'currency',  indicatorCallback: () => {return lastStat('pd_arpdau')}});
+    avgRevChart.group.push({key: 'lt_arpu', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arpu')}});
+    avgRevChart.group.push({key: 'lt_arppu', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arppu')}});
+    avgRevChart.group.push({key: 'pd_arpdau', formatter: 'currency',  indicatorCallback: () => {return lastStat('pd_arpdau')}});
 
     if (avgRevChart.group.length > 0) charts.push(avgRevChart);
 }
@@ -194,9 +194,9 @@ if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && curren
         group: [],
     };
 
-    growthChart.group.push({key: 'pd_nau', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
-    growthChart.group.push({key: 'pd_napu', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return statsSum.pd_napu}});
-    growthChart.group.push({key: 'lt_pu', color: '#93c5fd', formatter: 'number', indicatorCallback: () => {return lastStat('lt_pu')}});
+    growthChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
+    growthChart.group.push({key: 'pd_napu', formatter: 'number', indicatorCallback: () => {return statsSum.pd_napu}});
+    growthChart.group.push({key: 'lt_pu', formatter: 'number', indicatorCallback: () => {return lastStat('lt_pu')}});
 
     if (growthChart.group.length > 0) charts.push(growthChart);
 }
@@ -210,11 +210,11 @@ if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && curren
     };
 
     if (currentProjectHasTrackingUsageBits(['payments'])) {
-        engagementChart.group.push({key: 'lt_reg2pu', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2pu')}});
+        engagementChart.group.push({key: 'lt_reg2pu', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2pu')}});
     }
 
-    engagementChart.group.push({key: 'lt_reg2dau', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
-    engagementChart.group.push({key: 'lt_reg2tau', color: '#93c5fd', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2tau')}});
+    engagementChart.group.push({key: 'lt_reg2dau', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
+    engagementChart.group.push({key: 'lt_reg2tau', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2tau')}});
 
     if (engagementChart.group.length > 0) charts.push(engagementChart);
 }

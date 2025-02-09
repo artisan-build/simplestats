@@ -156,7 +156,7 @@ const copyToClipboard = async () => {
                         Please copy your new API token and paste it into your <strong>.env</strong> file!
                     </div>
 
-                    <div class="flex justify-between mt-4 bg-gray-100 dark:bg-gray-900 px-4 py-2 rounded font-mono text-sm text-gray-500 break-all">
+                    <div class="flex justify-between mt-4 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded font-mono text-sm text-gray-500 dark:text-gray-400 break-all">
                         <div>
                             {{ $page.props.jetstream.flash.token }}
                         </div>

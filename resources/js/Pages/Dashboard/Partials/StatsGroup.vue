@@ -89,6 +89,9 @@ onMounted(fetchData);
 function currentProjectHasTrackingUsageBits(bits){
     return bits.every(bit => (props.trackingUsageBits[bit] & props.currentProject.usage));
 }
+
+const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+const gradientColor = (isDarkMode.value) ? '60, 60, 60' : '238, 242, 255';
 </script>
 
 <template>
@@ -105,14 +108,14 @@ function currentProjectHasTrackingUsageBits(bits){
             <div class="flex justify-between mb-4">
                 <div class="font-bold text-center hidden @xl:block">{{ group2Name[statsGroupType] }}</div>
                 <div class="flex">
-                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 hover:text-indigo-500 border-b" :class="{'text-indigo-600  border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
+                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 dark:text-gray-300 hover:text-indigo-500 border-b" :class="{'text-indigo-600 border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
                         {{ stat.title }}
                     </button>
                 </div>
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full table-fixed">
-                    <tr class="sticky top-0 bg-white font-medium text-gray-600">
+                    <tr class="sticky top-0 font-medium text-gray-600 dark:text-gray-300">
                         <td style="width: 44%;" class="py-1.5">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
                                 <span>Name</span>
@@ -168,7 +171,9 @@ function currentProjectHasTrackingUsageBits(bits){
                     <tr v-for="item in data">
                         <td class="py-1.5">
                             <!-- direction: rtl; is that on small screens the page uris got truncated from left so that you can see the end of the uri with prio -->
-                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l" :style="'background: linear-gradient(to right, rgba(238, 242, 255, 1) '+calculatePercentage(item)+'%, rgba(238, 242, 255, 0) '+calculatePercentage(item)+'%);'">
+                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l"
+                                 :style="'background: linear-gradient(to right, rgba('+gradientColor+', 1) '+calculatePercentage(item)+'%, rgba('+gradientColor+', 0) '+calculatePercentage(item)+'%);'"
+                            >
                                 <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
                                     <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
                                         <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">

@@ -14,7 +14,7 @@ defineProps({
         <th class="pb-4 pt-6 px-6">Your existing Instances</th>
         <th v-if="! insideProject" class="pb-4 pt-6 px-6">Project</th>
     </tr>
-    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300" v-if="instances.length > 0" v-for="instance in instances" :key="instance.id">
+    <tr class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-gray-300" v-if="instances.length > 0" v-for="instance in instances" :key="instance.id">
         <td class="border-t">
             <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('projects.instances.show', [instance.project_id, instance.id])">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="inline-block w-5 h-5 mr-2">

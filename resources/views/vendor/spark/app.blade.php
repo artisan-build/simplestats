@@ -31,7 +31,38 @@
         .font-sans {
             font-family: Figtree, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
+
+        .dark * {
+            color: white;
+        }
+
+        .dark .bg-white {
+            background-color: #0f172a !important;
+        }
+
+        .dark .bg-gray-100, .dark .bg-gray-200 {
+            background-color: #1e293b !important;
+        }
+
+        .dark .text-gray-500, .dark .text-gray-600 {
+            color: #e5e7eb !important;
+        }
+
+        .dark .text-gray-700, .dark .text-gray-800, .dark .text-gray-900 {
+            color: #ffffff !important;
+        }
+
+        .dark .border-gray-100, .dark .border-gray-200 {
+            border-color: #4b5563 !important;
+        }
+
+        .dark textarea {
+            background-color: #0f172a !important;
+            color: #ffffff !important;
+        }
     </style>
+
+    <script src="js/dark_mode.js"></script>
 
     @inertiaHead
 </head>

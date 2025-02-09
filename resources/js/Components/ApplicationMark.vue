@@ -1,7 +1,11 @@
-<script setup>
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-</script>
-
 <template>
-    <ApplicationLogo />
+    <img v-if="$page.props.branding.app_mark" :src="$page.props.branding.app_mark" alt="SimpleStats" width="160" height="30">
+    <svg v-else xmlns="http://www.w3.org/2000/svg" width="160" height="30" version="1.1">
+        <rect x="0" y="20" width="10" height="10" fill="#716bdd"/>
+        <rect x="15" y="10" width="10" height="20" fill="#716bdd"/>
+        <rect x="30" y="00" width="10" height="30" fill="#716bdd"/>
+        <text x="55" y="22" fill="currentColor" font-size="19" font-weight="500" font-family="Figtree, Chinese Quotes, Inter var, Inter, ui-sans-serif, system-ui">
+            SimpleStats
+        </text>
+    </svg>
 </template>

@@ -51,7 +51,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
         <div>
-            <div class="sticky top-0 px-8 py-4 -mx-8 -my-4 mb-4 bg-gray-50 z-20" :class="{'border-b shadow-sm': isScrolled}">
+            <div class="sticky top-0 px-8 py-4 -mx-8 -my-4 mb-4 bg-gray-50 dark:bg-dark-900 z-20" :class="{'border-b dark:border-black shadow-sm': isScrolled}">
                 <StatsFilter
                     :teamStats="teamStats"
                     :statsGroups="statsGroups"

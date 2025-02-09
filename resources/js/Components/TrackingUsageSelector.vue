@@ -25,7 +25,7 @@ const selectUsageType = (bit) => {
         <div class="hidden border-2 border-4"></div>
         <div v-for="(track, type) in trackingUsages"
              @click="selectUsageType(track.bit)"
-             class="cursor-pointer rounded-xl p-4 hover:border-indigo-200 transition"
+             class="cursor-pointer rounded-xl p-4 hover:border-indigo-200 dark:hover:border-gray-400 transition"
              :class="['border-'+border, (track.bit & bits) ? '!border-indigo-400' : '']"
         >
             <div class="flex items-center">

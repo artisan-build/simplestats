@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    *,
+    ::before,
+    ::after {
+        @apply dark:border-gray-700;
+    }
+}
+
 [x-cloak] {
     display: none;
 }

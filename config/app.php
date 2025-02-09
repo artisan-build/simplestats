@@ -27,8 +27,8 @@ return [
     */
 
     'branding' => [
-        'app_mark' => env('APP_MARK_IMG', '/svg/app_mark.svg'),
-        'app_logo' => env('APP_LOGO_IMG', '/svg/app_logo.svg'),
+        'app_mark' => env('APP_MARK_IMG'),
+        'app_logo' => env('APP_LOGO_IMG'),
         'app_logo_mail' => env('APP_LOGO_MAIL', '/images/logo.png'),
         'app_background' => env('APP_BACKGROUND', '/images/side_bg.jpg'),
     ],

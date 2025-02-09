@@ -131,6 +131,18 @@ const appName = import.meta.env.VITE_APP_NAME;
 </template>
 
 <style>
+.dark .wizard-nav .wizard-icon-circle {
+    background-color: gray;
+}
+
+.dark .wizard-nav .wizard-icon-circle .wizard-icon {
+    color: white !important;
+}
+
+.dark .wizard-nav .stepTitle {
+    color: white;
+}
+
 .wizard-footer-left {
     display: none;
 }

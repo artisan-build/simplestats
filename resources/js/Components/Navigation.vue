@@ -1,6 +1,7 @@
 <script setup>
 import NavLink from "@/Components/NavLink.vue";
 import {Link} from "@inertiajs/vue3";
+import ApplicationIcon from "@/Components/ApplicationIcon.vue";
 
 const helpAction = (e) => {
     e.preventDefault();
@@ -16,9 +17,9 @@ const docsAction = (e) => {
 <template>
     <div class="flex flex-col gap-y-1"  style="scrollbar-gutter: stable;">
         <div class="overflow-x-clip">
-            <header class="pt-8 pb-7 dark:bg-neutral-900 text-center">
+            <header class="pt-8 pb-7 text-center">
                 <Link class="inline-block mt-2" :href="route('dashboard')">
-                    <img :src="$page.props.branding.app_logo" width="40" height="30">
+                    <ApplicationIcon />
                 </Link>
             </header>
         </div>

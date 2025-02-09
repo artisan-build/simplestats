@@ -34,13 +34,14 @@
         <link rel="prefetch" href="{{ asset('/images/side_bg.jpg') }}" as="image">
 
         <!-- Scripts -->
+        <script src="js/dark_mode.js"></script>
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
-    <body class="font-sans min-h-screen bg-white dark:bg-gray-950 font-normal text-gray-950 dark:text-gray-200 antialiased">
+    <body class="font-sans min-h-screen bg-white dark:bg-gray-950 font-normal text-gray-950 dark:text-white antialiased">
         @impersonating($guard = null)
-            <div class="relative z-10 w-full bg-red-200 px-20 py-2 text-center">
+            <div class="relative z-10 w-full bg-red-200 dark:text-gray-800 px-20 py-2 text-center">
                 Attention: you are impersonating user <span class="font-bold">{{ auth()->user()->name }}</span>
                 <a class="rounded-md bg-gray-100 hover:bg-gray-200 px-3 py-1 border border-gray-400 ml-2" href="{{ route('impersonate.leave') }}">Leave</a>
             </div>

@@ -19,7 +19,7 @@ const props = defineProps({
         </SectionTitle>
 
         <div class="mt-5 md:mt-0 md:col-span-2">
-            <div class="bg-white dark:bg-gray-800 border rounded-md shadow overflow-x-auto">
+            <div class="bg-white dark:bg-dark-800 border rounded-md shadow overflow-x-auto">
                 <table class="w-full whitespace-nowrap">
                     <slot name="content" />
                 </table>

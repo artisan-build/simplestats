@@ -62,8 +62,8 @@ function isSerieVisible() {
 </script>
 
 <template>
-    <button class="group py-1 px-2 sm:py-2 sm:px-3 text-left border-b-2 hover:border-b-blue-300 hover:bg-gray-100 rounded-md"
-            :class="isSerieVisible() ? 'border-b-blue-300 bg-gray-100' : 'border-white'"
+    <button class="group py-1 px-2 sm:py-2 sm:px-3 text-left border-b-2 hover:border-b-blue-300 dark:hover:border-b-dark-900 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-md"
+            :class="isSerieVisible() ? 'border-b-blue-300 dark:border-dark-900 bg-gray-100 dark:bg-dark-700' : 'border-white dark:border-dark-800'"
             @click="$emit('selectSeries', {index: serieIndex, data: serie})"
     >
         <div class="flex justify-between text-lg font-medium" :class="isSerieVisible() ? 'text-black dark:text-gray-200' : 'text-gray-700 dark:text-gray-400'">

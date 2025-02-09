@@ -23,7 +23,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
                 <template v-else>
                     <Link v-if="$page.props.canLogin" :href="route('login')" class="">Sign in</Link>
 
-                    <Link v-if="$page.props.canRegister" :href="route('register')" class="border-indigo-700 hover:border-indigo-600 text-indigo-700 hover:text-indigo-600 hidden rounded-md border px-8 py-3 text-center font-bold md:inline-block">Get Started</Link>
+                    <Link v-if="$page.props.canRegister" :href="route('register')" class="border-indigo-700 hover:border-indigo-600 dark:border-indigo-500 dark:hover:border-indigo-600 text-indigo-700 hover:text-indigo-600 dark:text-indigo-600 dark:hover:text-indigo-700 hidden rounded-md border px-8 py-3 text-center font-bold md:inline-block">Get Started</Link>
                 </template>
             </div>
         </div>
