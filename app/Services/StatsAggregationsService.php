@@ -100,6 +100,13 @@ class StatsAggregationsService
             return $item;
         }, $this->getDataArray($sql));
 
+        // hack to fix rtl stats grouped page names
+        foreach ($dataArray as &$item) {
+            if (Str::startsWith($item['name'], '/')) {
+                $item['name'] = Str::replaceFirst('/', '', $item['name']).'/';
+            }
+        }
+
         return collect($dataArray)->reject(function ($item) {
             return (! isset($item['dau']) || $item['dau'] == 0)
                 && (! isset($item['reg']) || $item['reg'] == 0)

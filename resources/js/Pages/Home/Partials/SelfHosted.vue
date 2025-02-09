@@ -71,7 +71,7 @@ YOUR ANSWER HERE`;
 </script>
 
 <template>
-    <section class="pb-32 flex justify-center">
+    <section class="flex justify-center">
         <div class="max-w-screen-lg px-4 sm:pm-0">
             <SectionHeader id="self-hosted">
                 Take full control with&nbsp;<span class="text-indigo-500">Self-Hosted</span>

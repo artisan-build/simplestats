@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsPaymentRequest;
 use App\Jobs\TrackStatsPayment;
 use App\Models\StatsPayment;
-use App\Services\StatsService;
 use Illuminate\Http\JsonResponse;
 
 class StatsPaymentController extends Controller
@@ -18,10 +17,10 @@ class StatsPaymentController extends Controller
 
     public function store(StatsPaymentRequest $request): JsonResponse
     {
-        TrackStatsPayment::dispatch(
+        safeDefer(fn() => TrackStatsPayment::dispatch(
 //            instanceId: auth()->user()->id,
             input: $request->validated(),
-        );
+        ));
 
         return response()->json(['message' => 'Stats Payment Request accepted.']);
     }
