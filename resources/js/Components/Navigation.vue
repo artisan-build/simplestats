@@ -16,7 +16,7 @@ const docsAction = (e) => {
 <template>
     <div class="flex flex-col gap-y-1"  style="scrollbar-gutter: stable;">
         <div class="overflow-x-clip">
-            <header class="pt-8 pb-7 dark:bg-gray-900 text-center">
+            <header class="pt-8 pb-7 dark:bg-neutral-900 text-center">
                 <Link class="inline-block mt-2" :href="route('dashboard')">
                     <img :src="$page.props.branding.app_logo" width="40" height="30">
                 </Link>
