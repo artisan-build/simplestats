@@ -27,7 +27,7 @@ const sidebarIsOpen = ref(false);
         <div @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"></div>
 
         <aside
-            class="bg-white px-3 fixed border-r shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all dark:bg-gray-900 -translate-x-full rtl:translate-x-full"
+            class="overflow-y-auto bg-white px-3 fixed border-r shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all dark:bg-gray-900 -translate-x-full rtl:translate-x-full"
             :class="{
                 'lg:z-0 lg:ring-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
                 'translate-x-0 shadow-xl ring-1 ring-gray-950\/5 rtl:-translate-x-0 dark:ring-white\/10 lg:sticky': sidebarIsOpen,
