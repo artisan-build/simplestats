@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Helpers\FileHelper;
 use App\Models\BaseStat;
 use App\Services\FaviconService;
 use App\Services\RefererService;
@@ -153,9 +154,13 @@ trait HasStatsTracking
     {
         return Attribute::make(
             set: function(?string $value) {
-                // it the page is only "/" we keep it else remove last "/" from page entry for consistency
+                // if the page is only "/" we keep it else remove last "/" from page entry for consistency
                 if ($value !== '/' && Str::endsWith($value, '/')) {
                     $value = Str::beforeLast($value, '/');
+                }
+
+                if (FileHelper::hasNonExecutableWebFileExtension($value)) {
+                    return null;
                 }
 
                 return $value;
