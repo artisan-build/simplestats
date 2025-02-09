@@ -18,6 +18,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
 abstract class UserBase extends Authenticatable implements MustVerifyEmail
 {
@@ -32,6 +33,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
+    use KeepsDeletedModels;
 
     /**
      * The attributes that are mass assignable.

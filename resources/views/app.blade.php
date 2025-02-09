@@ -40,7 +40,7 @@
     </head>
     <body class="font-sans min-h-screen bg-white dark:bg-gray-900 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
         @impersonating($guard = null)
-            <div class="w-full bg-red-200 px-20 py-2 text-center">
+            <div class="relative z-10 w-full bg-red-200 px-20 py-2 text-center">
                 Attention: you are impersonating user <span class="font-bold">{{ auth()->user()->name }}</span>
                 <a class="rounded-md bg-gray-100 hover:bg-gray-200 px-3 py-1 border border-gray-400 ml-2" href="{{ route('impersonate.leave') }}">Leave</a>
             </div>
