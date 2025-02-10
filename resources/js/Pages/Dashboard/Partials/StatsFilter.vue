@@ -10,13 +10,13 @@ import EnvBadge from "@/Components/EnvBadge.vue";
 import {
     addHours,
     differenceInDays, differenceInHours,
-    differenceInMonths, differenceInYears,
-    endOfMonth, endOfYear,
+    differenceInMonths, differenceInWeeks, differenceInYears,
+    endOfMonth, endOfWeek, endOfYear,
     format, startOfDay, startOfHour,
-    startOfMonth,
+    startOfMonth, startOfWeek,
     startOfYear,
     subDays,
-    subMonths, subYears
+    subMonths, subWeeks, subYears
 } from "date-fns";
 import TextInput from "@/Components/TextInput.vue";
 import {onMounted, ref} from "vue";
@@ -98,7 +98,8 @@ const presets = [
     {name: 'Yesterday', rangeStart: format(startOfDay(subDays(new Date(), 1)), dateFormat), rangeAmount: 24, rangeType: 'hours'},
     {name: 'Last 7 Days', rangeStart: format(new Date(), dateFormat), rangeAmount: 7, rangeType: 'days'},
     {name: 'Last 30 Days', rangeStart: format(new Date(), dateFormat), rangeAmount: 30, rangeType: 'days'},
-    // {name: 'Last 12 Months', rangeStart: format(new Date(), dateFormat'), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 12))), rangeType: 'months'},
+    {name: 'Last 12 Weeks', rangeStart: format(endOfWeek(subWeeks(new Date(), 1)), dateFormat), rangeAmount: differenceInWeeks(new Date(), startOfWeek(subWeeks(new Date(), 11))) + 1, rangeType: 'weeks'},
+    {name: 'Last 6 Months', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 6))), rangeType: 'months'},
     {name: 'This Month', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
     {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), dateFormat), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
     {name: 'This Year', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
