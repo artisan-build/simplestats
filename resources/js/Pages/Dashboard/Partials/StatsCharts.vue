@@ -3,6 +3,7 @@ import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
 import {formatDate} from "@/Helpers/NumberHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
+import {ref} from "vue";
 
 const props = defineProps({
     filters: Object,
@@ -14,6 +15,8 @@ const props = defineProps({
 const page = usePage();
 
 const kpiDefs = getKpiDefinitions(props.filters.rangeType);
+
+const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
 
 const extractStatsData4Chart = (statsGroups) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
@@ -27,7 +30,7 @@ const extractStatsData4Chart = (statsGroups) => {
                     datesPrev: [],
                     name: group.title ?? group.key,
                     nameSmall: group.titleSmall ?? group.title ?? group.key,
-                    color: '#93c5fd',
+                    color: isDarkMode.value ? '#00A3E0' : '#93c5fd',
                     // extras...
                     key: group.key,
                     formatter: group.formatter,

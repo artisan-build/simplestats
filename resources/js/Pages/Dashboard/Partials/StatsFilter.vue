@@ -299,14 +299,14 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                 </div>
             </form>
         </div>
-        <div v-if="isStatsGroupSet()" class="w-full bg-indigo-300 mt-3 p-1.5 rounded-lg">
+        <div v-if="isStatsGroupSet()" class="w-full bg-indigo-300 dark:bg-indigo-600 text-white dark:text-gray-800 mt-3 p-1.5 rounded-lg">
             <div class="flex flex-wrap gap-2 items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
                 <template v-for="statsGroup in statsGroups">
                     <template v-for="group in statsGroup">
-                        <div v-if="filters[group.type]" class="bg-indigo-100 border rounded-md px-1 py-0.5">
+                        <div v-if="filters[group.type]" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
                             {{ pluralize.singular(group.title) }} is <strong>{{ topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type] }}</strong>
                             <button class="ml-1 hover:text-red-700" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
