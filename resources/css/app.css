@@ -24,6 +24,14 @@ a.simpleLink:hover {
     @apply underline;
 }
 
+.dark a.simpleLink {
+    @apply text-indigo-400;
+}
+
+.dark a.simpleLink:hover {
+    @apply text-indigo-300;
+}
+
 strong, b {
     font-weight: bold;
 }
