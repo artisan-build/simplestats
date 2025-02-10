@@ -154,6 +154,10 @@ trait HasStatsTracking
     {
         return Attribute::make(
             set: function(?string $value) {
+                if (is_null($value)) {
+                    return null;
+                }
+
                 // if the page is only "/" we keep it else remove last "/" from page entry for consistency
                 if ($value !== '/' && Str::endsWith($value, '/')) {
                     $value = Str::beforeLast($value, '/');
