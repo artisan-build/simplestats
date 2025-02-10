@@ -7,10 +7,10 @@
     <br>
     <h2>Here’s what’s new:</h2>
     <ul>
-        <li><b>Massive performance improvements</b> – navigating your dashboard is now much faster and smoother.</li>
+        <li><b>Massive performance improvements</b> – it should be much more fun now to navigate through your dashboard!</li>
         <li><b>Optimized API performance</b> – improved response times for API endpoints.</li>
         <li><b>Dark mode</b> is finally here!</li>
-        <li><b>New date presets</b> – quickly filter by Last 12 Weeks or Last 6 Months.</li>
+        <li><b>New date presets</b> – quickly filter by "Last 12 Weeks" or "Last 6 Months".</li>
         <li><b>UI/UX enhancements</b> for a better experience.</li>
         <li><b>Various bug fixes</b> for increased stability.</li>
         <li><b>FAQ</b></li>
