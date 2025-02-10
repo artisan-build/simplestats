@@ -6,7 +6,7 @@
     *,
     ::before,
     ::after {
-        @apply dark:border-gray-700;
+        @apply dark:border-dark-600;
     }
 }
 
