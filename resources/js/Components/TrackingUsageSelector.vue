@@ -21,7 +21,7 @@ const selectUsageType = (bit) => {
 </script>
 
 <template>
-    <div class="grid grid-cols-3 gap-6 text-left">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 text-left">
         <div class="hidden border-2 border-4"></div>
         <div v-for="(track, type) in trackingUsages"
              @click="selectUsageType(track.bit)"
