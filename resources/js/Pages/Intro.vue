@@ -19,7 +19,7 @@ const form = useForm({
     currency: '',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
     project: '',
-    instance: 'Default',
+    // instance: 'Default',
     usage: 0,
 });
 

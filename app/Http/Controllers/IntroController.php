@@ -19,7 +19,7 @@ class IntroController extends Controller
             $request->has('currency') &&
             $request->has('timezone') &&
             $request->has('project') &&
-            $request->has('instance') &&
+//            $request->has('instance') &&
             $request->has('usage')
         ) {
             $request->user()->currentTeam->update([
@@ -34,7 +34,7 @@ class IntroController extends Controller
             ]);
 
             $instance = $project->instances()->create([
-                'name' => $request->instance,
+                'name' => $request->instance ?? $request->project,
             ]);
 
             return redirect()->route('projects.instances.token-view', [$project, $instance])->with('flash', [
