@@ -115,7 +115,7 @@ const gradientColor = (isDarkMode.value) ? '60, 60, 60' : '238, 242, 255';
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full table-fixed">
-                    <tr class="sticky top-0 font-medium text-gray-600 dark:text-gray-300">
+                    <tr class="sticky bg-white dark:bg-dark-800 top-0 font-medium text-gray-600 dark:text-gray-300">
                         <td style="width: 44%;" class="py-1.5">
                             <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
                                 <span>Name</span>
