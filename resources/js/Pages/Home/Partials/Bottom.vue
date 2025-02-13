@@ -48,11 +48,9 @@ const linkCategories = [
             <div class="container py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
                 <div class="xl:grid xl:grid-cols-[1fr_2fr] xl:gap-8">
                     <div class="my-8 xl:my-0">
-                        <div class="leading-5 font-semibold tracking-wider text-gray-300">
-                            <Link href="/" class="inline-flex items-center">
-                                <ApplicationLogo />
-                            </Link>
-                        </div>
+                        <Link href="/">
+                            <ApplicationLogo />
+                        </Link>
                         <div class="mt-4 text-base leading-6">
                             Based and hosted in the EU <span class="text-lg">🇪🇺</span>
                         </div>
