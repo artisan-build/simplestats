@@ -115,82 +115,84 @@ const gradientColor = (isDarkMode.value) ? '60, 60, 60' : '238, 242, 255';
             </div>
             <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full table-fixed">
-                    <tr class="sticky bg-white dark:bg-dark-800 top-0 font-medium text-gray-600 dark:text-gray-300">
-                        <td style="width: 44%;" class="py-1.5">
-                            <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
-                                <span>Name</span>
-                                <svg v-if="filters.statsSort === 'name'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" style="width: 12%;" class="p-1.5 text-right">
-                            <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
-                                <span class="inline-block @2xl:hidden">Visits</span>
-                                <span class="hidden @2xl:inline-block">Visitors</span>
-                                <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" style="width: 10%;" class="p-1.5 text-right">
-                            <button class="whitespace-nowrap" :class="filters.statsSort === 'reg' ? 'text-indigo-600' : ''" @click="changeSort('reg')">
-                                <span>Regs</span>
-                                <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" style="width: 12%;" class="p-1.5 text-right">
-                            <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
-                                <span class="inline-block @2xl:hidden">CR</span>
-                                <span class="hidden @2xl:inline-block">Conversion</span>
-                                <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" style="width: 10%;" class="p-1.5 text-right">
-                            <button class="whitespace-nowrap" :class="filters.statsSort === 'dau' ? 'text-indigo-600' : ''" @click="changeSort('dau')">
-                                <span>{{ XAU(filters.rangeType) }}</span><!-- the span removes whitespace -->
-                                <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['payments'])" style="width: 12%;" class="p-1.5 text-right">
-                            <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
-                                <span class="inline-block @2xl:hidden">Rev.</span>
-                                <span class="hidden @2xl:inline-block">Revenue</span>
-                                <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                    <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr v-for="item in data">
-                        <td class="py-1.5">
-                            <!-- direction: rtl; is that on small screens the page uris got truncated from left so that you can see the end of the uri with prio -->
-                            <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l"
-                                 :style="'background: linear-gradient(to right, rgba('+gradientColor+', 1) '+calculatePercentage(item)+'%, rgba('+gradientColor+', 0) '+calculatePercentage(item)+'%);'"
-                            >
-                                <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
-                                    <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
-                                        <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
-                                        <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
-                                    </span>
-                                    <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+ snakeCase(item.name) +'.svg'" :alt="item.name">
-                                    <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
-                                    <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
-                                </Link>
-                            </div>
-                        </td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
-                        <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
-                    </tr>
+                    <tbody>
+                        <tr class="sticky bg-white dark:bg-dark-800 top-0 font-medium text-gray-600 dark:text-gray-300">
+                            <td style="width: 44%;" class="py-1.5">
+                                <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
+                                    <span>Name</span>
+                                    <svg v-if="filters.statsSort === 'name'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" style="width: 12%;" class="p-1.5 text-right">
+                                <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
+                                    <span class="inline-block @2xl:hidden">Visits</span>
+                                    <span class="hidden @2xl:inline-block">Visitors</span>
+                                    <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['users'])" style="width: 10%;" class="p-1.5 text-right">
+                                <button class="whitespace-nowrap" :class="filters.statsSort === 'reg' ? 'text-indigo-600' : ''" @click="changeSort('reg')">
+                                    <span>Regs</span>
+                                    <svg v-if="filters.statsSort === 'reg'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" style="width: 12%;" class="p-1.5 text-right">
+                                <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
+                                    <span class="inline-block @2xl:hidden">CR</span>
+                                    <span class="hidden @2xl:inline-block">Conversion</span>
+                                    <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['users'])" style="width: 10%;" class="p-1.5 text-right">
+                                <button class="whitespace-nowrap" :class="filters.statsSort === 'dau' ? 'text-indigo-600' : ''" @click="changeSort('dau')">
+                                    <span>{{ XAU(filters.rangeType) }}</span><!-- the span removes whitespace -->
+                                    <svg v-if="filters.statsSort === 'dau'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['payments'])" style="width: 12%;" class="p-1.5 text-right">
+                                <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
+                                    <span class="inline-block @2xl:hidden">Rev.</span>
+                                    <span class="hidden @2xl:inline-block">Revenue</span>
+                                    <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr v-for="item in data">
+                            <td class="py-1.5">
+                                <!-- direction: rtl; is that on small screens the page uris got truncated from left so that you can see the end of the uri with prio -->
+                                <div class="flex items-center h-9 w-full px-2 py-1.5 rounded-l"
+                                     :style="'background: linear-gradient(to right, rgba('+gradientColor+', 1) '+calculatePercentage(item)+'%, rgba('+gradientColor+', 0) '+calculatePercentage(item)+'%);'"
+                                >
+                                    <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
+                                        <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
+                                            <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
+                                            <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
+                                        </span>
+                                        <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+ snakeCase(item.name) +'.svg'" :alt="item.name">
+                                        <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
+                                        <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
+                                    </Link>
+                                </div>
+                            </td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
+                            <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div v-if="data.length >= 5" class="flex justify-center mt-2">

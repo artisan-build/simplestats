@@ -29,8 +29,8 @@ const sidebarIsOpen = ref(false);
         <aside
             class="overflow-y-auto bg-white dark:bg-dark-950 px-3 fixed border-r dark:border-black shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all -translate-x-full rtl:translate-x-full"
             :class="{
-                'lg:z-0 lg:ring-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
-                'translate-x-0 shadow-xl ring-1 ring-gray-950\/5 rtl:-translate-x-0 dark:ring-white\/10 lg:sticky': sidebarIsOpen,
+                'lg:z-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
+                'translate-x-0 shadow-xl rtl:-translate-x-0 lg:sticky': sidebarIsOpen,
             }"
         >
                 <Navigation />
