@@ -23,10 +23,6 @@ Route::get('/', HomeController::class)->name('home');
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 
-Route::get('/test123', function() {
-    dd($_SERVER['SCRIPT_FILENAME']);
-});
-
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
