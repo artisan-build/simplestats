@@ -39,7 +39,7 @@ const toggleQuestion = (index) => {
             </SectionHeader>
 
             <div class="space-y-8">
-                <div v-for="(question, index) in questions" class="border-2 border-gray-100 rounded-lg dark:border-gray-700">
+                <div v-for="(question, index) in questions" class="border-2 border-gray-100 rounded-lg dark:border-gray-700 bg-white dark:bg-gray-900">
                     <button @click="toggleQuestion(index)" class="flex items-center justify-between w-full p-8">
                         <h3 class="font-semibold text-gray-700 dark:text-gray-300">{{ question.title }}</h3>
 
