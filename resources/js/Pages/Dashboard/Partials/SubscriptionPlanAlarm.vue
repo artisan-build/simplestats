@@ -13,7 +13,7 @@ defineProps({
         <div class="flex justify-between">
             <div class="text-base">
                 <span v-for="alarm in subscriptionPlanAlarm">
-                    <span class="font-bold text-red-500">{{ alarm.text }}</span><br>
+                    <span class="font-bold text-red-600 dark:text-red-200">{{ alarm.text }}</span><br>
                 </span>
                 <span v-if="subscriptionPlanAlarm[0].percent < 100">Once you reach the limit, we will stop tracking and storing your data!</span>
                 Consider upgrading your subscription plan.
