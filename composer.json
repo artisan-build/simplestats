@@ -22,7 +22,7 @@
         "laravel/jetstream": "^5.0",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
-        "laravel/spark-paddle": "^5.1",
+        "laravel/spark-paddle": "^5.3",
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/iso3166": "^4.3",
