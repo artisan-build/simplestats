@@ -1,9 +1,9 @@
 # Queue
 
-To **prevent** the tracking API calls to the _SimpleStats_ server **blocking** your app requests and to ensure fault tolerance and retries, we **strongly** recommend using Laravel's built-in [queue service](https://laravel.com/docs/11.x/queues).
+To **prevent** the tracking API calls to the _SimpleStats_ server **blocking** your app requests and to ensure fault tolerance and retries, we **strongly** recommend using Laravel's built-in [queue service](https://laravel.com/docs/12.x/queues).
 
 ::: info
-Starting from version [2.0.13](https://github.com/simplestats-io/laravel-client/releases/tag/v2.0.13), the _SimpleStats_ client attempts to use Laravel's [defer](https://laravel.com/docs/11.x/helpers#deferred-functions) helper (supported since Laravel 11) to handle API calls to our server. This reduces the necessity of using a queue, as API calls no longer block your requests. However, for fault tolerance, retries, or high traffic, we still recommend using the queue.
+Starting from version [2.0.13](https://github.com/simplestats-io/laravel-client/releases/tag/v2.0.13), the _SimpleStats_ client attempts to use Laravel's [defer](https://laravel.com/docs/12.x/helpers#deferred-functions) helper (supported since Laravel 11) to handle API calls to our server. This reduces the necessity of using a queue, as API calls no longer block your requests. However, for fault tolerance, retries, or high traffic, we still recommend using the queue.
 :::
 
 ::: warning
@@ -23,7 +23,7 @@ Here you can define to which queue the tracking **API calls** should be **dispat
 
 ## Job Monitoring
 
-It's important to know if your queue is **running** and if the API calls are getting dispatched **successfully**. For that, if you want something light-weight, we highly recommend spaties [laravel-failed-job-monitor](https://github.com/spatie/laravel-failed-job-monitor) package, which can notify you via mail or Slack when a queued job fails. If you want something more **robust**, you may use [Horizon](https://laravel.com/docs/11.x/horizon), Laravel's incredible powerful native queue monitoring service!
+It's important to know if your queue is **running** and if the API calls are getting dispatched **successfully**. For that, if you want something light-weight, we highly recommend spaties [laravel-failed-job-monitor](https://github.com/spatie/laravel-failed-job-monitor) package, which can notify you via mail or Slack when a queued job fails. If you want something more **robust**, you may use [Horizon](https://laravel.com/docs/12.x/horizon), Laravel's incredible powerful native queue monitoring service!
 
 ## Fault Tolerance and Retries
 

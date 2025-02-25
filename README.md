@@ -17,7 +17,7 @@ Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 * MySQL 8.0 or higher
 * Node.js 21.6 or higher (might also work with a lower version)
 
-And the default [Laravel requirements](https://laravel.com/docs/11.x/deployment#server-requirements).
+And the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
 
 ## Installation
 
@@ -87,7 +87,7 @@ npm run build
 
 ### Scheduler
 
-Make sure to run the Laravel [scheduler](https://laravel.com/docs/11.x/scheduling#running-the-scheduler) it performs daily backups, updates GeoIP and executes other important commands.
+Make sure to run the Laravel [scheduler](https://laravel.com/docs/12.x/scheduling#running-the-scheduler) it performs daily backups, updates GeoIP and executes other important commands.
 
 ```bash
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
