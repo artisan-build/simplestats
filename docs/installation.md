@@ -9,7 +9,7 @@ composer require simplestats-io/laravel-client
 ```
 
 ::: info
-At the moment, the following Laravel **versions** are supported: _8, 9, 10 and 11_
+At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11 and 12_
 :::
 
 ## Configuration
