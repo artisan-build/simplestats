@@ -5,7 +5,7 @@ import {ref} from "vue";
 const questions = ref([
     {
         'title': 'Why is tracking not working even though everything is set up correctly?',
-        'answer': 'Most often, this is a queue-related issue. Ensure you have cleared your config cache and restarted your queue after adding the API token to your .env file.',
+        'answer': 'Most often, this is a queue-related issue. Ensure you have cleared your config cache and restarted your queue after adding the API token to your .env file. If you need more help, check out our <a href="/docs/troubleshooting.html" class="simpleLink">Troubleshooting</a> page!',
         'active': false,
     },
     {
@@ -58,9 +58,7 @@ const toggleQuestion = (index) => {
                     <div v-show="question.active">
                         <hr class="border-gray-200 dark:border-gray-700">
 
-                        <p class="p-8 text-gray-500 dark:text-gray-300">
-                            {{ question.answer }}
-                        </p>
+                        <p v-html="question.answer" class="p-8 text-gray-500 dark:text-gray-300"></p>
                     </div>
                 </div>
             </div>

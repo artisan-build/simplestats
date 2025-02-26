@@ -78,4 +78,4 @@ It's easier to understand it when you see it in action on the dashboard.
 
 ## Help
 
-Do you have a question? Feel free to reach out to us if you need some [help](https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g).
+Do you have a question? Feel free to reach out to us if you need some [help](https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g) or check out our [troubleshooting](troubleshooting.md) page.

@@ -80,8 +80,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <StepText :content="`To enable the client to <b>track</b> your app’s <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
                 </div>
             </div>
-            <div class="mt-10 text-center">After signing up, add the API token to .env, recache your config, and restart the queue (and maybe PHP-FPM if using opcache).</div>
-            <div class="mt-2 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
+            <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
         </div>
     </section>
 </template>
