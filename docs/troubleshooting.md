@@ -1,6 +1,6 @@
 # Troubleshooting
 
-If _SimpleStats_ isn’t working on your site despite a correct setup, here’s how to resolve common issues:
+If _SimpleStats_ isn’t working for your app despite a correct setup, here’s how to resolve common issues:
 
 ## Double-Check the API Token
 
