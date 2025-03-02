@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Number;
 use Inertia\Middleware;
+use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -44,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
             'branding' => config('app.branding'),
             'appType' => config('app.app_type'),
+            'ziggy' => (new Ziggy)->toArray(),
         ];
 
         if (auth()->user()) {
