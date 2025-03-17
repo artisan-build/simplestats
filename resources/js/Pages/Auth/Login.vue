@@ -48,7 +48,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             Sign in to {{ appName }}
         </template>
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
+        <div v-if="status" class="text-center mb-4 font-medium text-sm text-green-600 dark:text-green-400">
             {{ status }}
         </div>
 
