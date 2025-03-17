@@ -17,11 +17,6 @@ class AggregationBuilderTypePgSQL implements AggregationBuilderType
         return "$date $func INTERVAL '$amount $interval'";
     }
 
-    public function getDistinctFields(array $fields): string
-    {
-        return "(".implode(', ', $fields).")";
-    }
-
     public function getDateFormat(string $date, string $format): string
     {
         return "TO_CHAR($date, '$format')";

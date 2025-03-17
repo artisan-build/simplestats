@@ -62,11 +62,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return $this->aggregationBuilderType->getDateInterval(...func_get_args());
     }
 
-    protected function getDistinctFields(array $fields)
-    {
-        return $this->aggregationBuilderType->getDistinctFields(...func_get_args());
-    }
-
     protected function getDateFormat(string $date, string $format): string
     {
         return $this->aggregationBuilderType->getDateFormat(...func_get_args());
@@ -89,7 +84,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_REG(): string
     {
         return "pd_reg_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_users stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY date
@@ -102,7 +97,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_TAU(): string
     {
         return "pd_tau_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = $this->nauLoginCounter
@@ -116,7 +111,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_PU(): string
     {
         return "pd_pu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_payments stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = 1
@@ -130,7 +125,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_NAU(): string
     {
         return "pd_nau_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = $this->nauLoginCounter
@@ -144,7 +139,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_NAPU(): string
     {
         return "pd_napu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_payments stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = 1
@@ -158,7 +153,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_DAU(): string
     {
         return "pd_dau_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter >= $this->nauLoginCounter
@@ -172,7 +167,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_DAPU(): string
     {
         return "pd_dapu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
@@ -191,7 +186,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getPD_DAAPU(): string
     {
         return "pd_daapu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
@@ -215,7 +210,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT
                 ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
-                    SELECT COUNT(DISTINCT ".$this->getDistinctFields(['stats.id', 'stats.instance_id']).")
+                    SELECT COUNT(*)
                     FROM stats_users stats
                     WHERE :projectInstanceCondition AND stats.time < ':startDateStart' :trackingConditions
                 ) AS count
@@ -232,7 +227,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT
                 ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
-                    SELECT COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).")
+                    SELECT COUNT(*)
                     FROM stats_logins stats
                     :trackingUserJoinConditions
                     WHERE :projectInstanceCondition AND stats.time < ':startDateStart' AND stats.counter = $this->nauLoginCounter
@@ -250,7 +245,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT
                 ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
-                    SELECT COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).")
+                    SELECT COUNT(*)
                     FROM stats_payments stats
                     :trackingUserJoinConditions
                     WHERE :projectInstanceCondition AND stats.time < ':startDateStart' AND stats.counter = 1
