@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Junges\TrackableJobs\Models\TrackedJob;
-use Maatwebsite\Excel\Facades\Excel;
 
 class DataImportController extends Controller
 {
