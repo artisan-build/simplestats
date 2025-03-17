@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\AppHelper;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,13 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('stats_logins', function (Blueprint $table) {
-            $table->dropForeign('stats_logins_stats_user_id_instance_id_foreign');
-        });
+        if (AppHelper::getDBDriver() !== 'sqlite') {
+            Schema::table('stats_logins', function (Blueprint $table) {
+                $table->dropForeign('stats_logins_stats_user_id_instance_id_foreign');
+            });
 
-        Schema::table('stats_payments', function (Blueprint $table) {
-            $table->dropForeign('stats_payments_stats_user_id_instance_id_foreign');
-        });
+            Schema::table('stats_payments', function (Blueprint $table) {
+                $table->dropForeign('stats_payments_stats_user_id_instance_id_foreign');
+            });
+        }
 
         Schema::table('stats_users', function (Blueprint $table) {
             $table->string('id', 36)->change();

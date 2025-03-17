@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Jetstream\Features;
-use Laravel\Jetstream\Mail\TeamInvitation;
+use App\Mail\TeamInvitation;
 
 test('team members can be invited to team', function () {
     Mail::fake();
@@ -15,7 +15,7 @@ test('team members can be invited to team', function () {
         'role' => 'admin',
     ]);
 
-    Mail::assertSent(TeamInvitation::class);
+    Mail::assertQueued(TeamInvitation::class);
 
     expect($user->currentTeam->fresh()->teamInvitations)->toHaveCount(1);
 })->skip(function () {

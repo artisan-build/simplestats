@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cbb1409cc4006be8c4c0318e2e570d3c",
+    "content-hash": "743c4fa622104d380da5c5f95ced73f9",
     "packages": [
         {
             "name": "ashallendesign/favicon-fetcher",
@@ -2468,43 +2468,43 @@
         },
         {
             "name": "laracraft-tech/laravel-useful-additions",
-            "version": "v4.0.0",
+            "version": "v4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laracraft-tech/laravel-useful-additions.git",
-                "reference": "a8bf2dceacb550654d6fc122a9655693a1851b16"
+                "reference": "95e7e5e36ac72c3235198790c88c49f08737ed66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laracraft-tech/laravel-useful-additions/zipball/a8bf2dceacb550654d6fc122a9655693a1851b16",
-                "reference": "a8bf2dceacb550654d6fc122a9655693a1851b16",
+                "url": "https://api.github.com/repos/laracraft-tech/laravel-useful-additions/zipball/95e7e5e36ac72c3235198790c88c49f08737ed66",
+                "reference": "95e7e5e36ac72c3235198790c88c49f08737ed66",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^9.0 || ^10.0 || ^11.0",
-                "illuminate/database": "^9.0 || ^10.0 || ^11.0",
-                "illuminate/support": "^9.0 || ^10.0 || ^11.0",
-                "illuminate/testing": "^9.0 || ^10.0 || ^11.0",
+                "illuminate/contracts": "^9.0 || ^10.0 || ^11.0 || ^12.0",
+                "illuminate/database": "^9.0 || ^10.0 || ^11.0 || ^12.0",
+                "illuminate/support": "^9.0 || ^10.0 || ^11.0 || ^12.0",
+                "illuminate/testing": "^9.0 || ^10.0 || ^11.0 || ^12.0",
                 "php": "^8.0",
                 "spatie/laravel-package-tools": "^1.12 || ^1.14"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.13",
-                "nunomaduro/larastan": "^1.0 || ^2.5",
-                "orchestra/testbench": "^6.27 || ^7.0 || ^8.0 || ^9.0",
-                "pestphp/pest": "^1.22 || ^2.0",
-                "pestphp/pest-plugin-laravel": "^1.22 || ^2.0",
+                "nunomaduro/larastan": "^1.0 || ^2.5 || ^3.1",
+                "orchestra/testbench": "^7.0 || ^8.0 || ^9.0 || ^10.0",
+                "pestphp/pest": "^1.22 || ^2.0 || ^3.7",
+                "pestphp/pest-plugin-laravel": "^1.22 || ^2.0 || ^3.1",
                 "spatie/laravel-ray": "^1.32"
             },
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "LaracraftTech\\LaravelUsefulAdditions\\LaravelUsefulAdditionsServiceProvider"
-                    ],
                     "aliases": {
                         "LaravelUsefulAdditions": "LaracraftTech\\LaravelUsefulAdditions\\Facades\\LaravelUsefulAdditions"
-                    }
+                    },
+                    "providers": [
+                        "LaracraftTech\\LaravelUsefulAdditions\\LaravelUsefulAdditionsServiceProvider"
+                    ]
                 }
             },
             "autoload": {
@@ -2533,9 +2533,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laracraft-tech/laravel-useful-additions/issues",
-                "source": "https://github.com/laracraft-tech/laravel-useful-additions/tree/v4.0.0"
+                "source": "https://github.com/laracraft-tech/laravel-useful-additions/tree/v4.1.0"
             },
-            "time": "2024-03-07T19:52:18+00:00"
+            "time": "2025-02-23T14:10:59+00:00"
         },
         {
             "name": "laravel/cashier-paddle",
@@ -15012,6 +15012,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2",
+        "ext-pdo": "*",
         "ext-zip": "*"
     },
     "platform-dev": {},

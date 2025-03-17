@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Session;
 use JoelButcher\Socialstream\Providers;
 use Laravel\Fortify\Features as FortifyFeatures;
@@ -11,8 +10,6 @@ use Laravel\Socialite\Two\User;
 use Mockery;
 
 use function Pest\Laravel\get;
-
-uses(RefreshDatabase::class);
 
 test('users get redirected correctly', function (string $provider) {
     if (! Providers::enabled($provider)) {

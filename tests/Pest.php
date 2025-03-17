@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use LaracraftTech\LaravelUsefulAdditions\Traits\RefreshDatabaseFast;
 use Tests\TestCase;
 
 /*
@@ -14,7 +15,7 @@ use Tests\TestCase;
 |
 */
 
-uses(TestCase::class, RefreshDatabase::class)->in('Feature');
+uses(TestCase::class, RefreshDatabaseFast::class)->in('Feature');
 
 /*
 |--------------------------------------------------------------------------

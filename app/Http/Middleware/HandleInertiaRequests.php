@@ -49,10 +49,11 @@ class HandleInertiaRequests extends Middleware
         ];
 
         if (auth()->user()) {
-            $currentTeam = auth()->user()->currentTeam;
-            $merge['projectsCount'] = $currentTeam->projects()->count();
-            $merge['introPassed'] = $currentTeam->instances()->count() > 0;
-            $merge['teamCurrency'] = $currentTeam->currency;
+            if ($currentTeam = auth()->user()->currentTeam) {
+                $merge['projectsCount'] = $currentTeam->projects()->count();
+                $merge['introPassed'] = $currentTeam->instances()->count() > 0;
+                $merge['teamCurrency'] = $currentTeam->currency;
+            }
         }
 
         return array_merge(parent::share($request), $merge);
