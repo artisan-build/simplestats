@@ -52,9 +52,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     }
 
     // shorties
-    protected function getDateTypeAnnotation(): string
+    protected function getDateSelect(): string
     {
-        return $this->aggregationBuilderType->getDateTypeAnnotation();
+        return $this->aggregationBuilderType->getDateSelect();
     }
 
     protected function getDateInterval(string $calc, string $date, int $amount, string $interval): string
@@ -75,11 +75,11 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getCTE(): string
     {
         return "WITH RECURSIVE date_sequence AS (
-            SELECT ':startDateStart'".$this->getDateTypeAnnotation()." AS date
+            SELECT ".$this->getDateSelect()." AS date_seq
             UNION ALL
-            SELECT ".$this->getDateInterval('add', 'date', 1, ':intervalType')."
+            SELECT ".$this->getDateInterval('add', 'date_seq', 1, ':intervalType')."
             FROM date_sequence
-            WHERE date < ':endDateStart'
+            WHERE date_seq < ':endDateStart'
         )";
     }
 
@@ -213,7 +213,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     {
         return "lt_reg_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
+                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(DISTINCT ".$this->getDistinctFields(['stats.id', 'stats.instance_id']).")
                     FROM stats_users stats
@@ -230,7 +230,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     {
         return "lt_tau_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
+                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).")
                     FROM stats_logins stats
@@ -248,7 +248,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     {
         return "lt_pu_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
+                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).")
                     FROM stats_payments stats
@@ -315,7 +315,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     {
         return "lt_visitor_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
+                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(*)
                     FROM stats_visitors stats
@@ -331,7 +331,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT date, SUM(count) AS count
             FROM (
                 SELECT
-                    ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
+                    ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                     (
                         SELECT SUM(stats.net)
                         FROM stats_payments stats
@@ -341,7 +341,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 FROM date_sequence ds
                 UNION ALL
                 SELECT
-                    ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
+                    ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                     (
                         SELECT SUM(stats.net)
                         FROM stats_payments stats
@@ -357,8 +357,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     protected function getSELECT(): string
     {
         $sql = "SELECT
-            ".$this->getDateFormat('ds.date', ':dateFormat')." AS date,
-            ".$this->getDateFormat('ds.date', ':dateFormatClear')." AS date_clear,";
+            ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
+            ".$this->getDateFormat('ds.date_seq', ':dateFormatClear')." AS date_clear,";
 
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= '
@@ -392,25 +392,25 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
-                LEFT JOIN pd_reg_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_reg_cte.date
-                LEFT JOIN pd_tau_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_tau_cte.date
-                LEFT JOIN pd_pu_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_pu_cte.date
-                LEFT JOIN pd_nau_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_nau_cte.date
-                LEFT JOIN pd_napu_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_napu_cte.date
-                LEFT JOIN pd_dau_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_dau_cte.date
-                LEFT JOIN pd_dapu_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_dapu_cte.date
-                LEFT JOIN pd_daapu_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_daapu_cte.date
-                LEFT JOIN lt_reg_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = lt_reg_cte.date
-                LEFT JOIN lt_pu_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = lt_pu_cte.date
-                LEFT JOIN lt_tau_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = lt_tau_cte.date";
+                LEFT JOIN pd_reg_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_reg_cte.date
+                LEFT JOIN pd_tau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_tau_cte.date
+                LEFT JOIN pd_pu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_pu_cte.date
+                LEFT JOIN pd_nau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_nau_cte.date
+                LEFT JOIN pd_napu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_napu_cte.date
+                LEFT JOIN pd_dau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_dau_cte.date
+                LEFT JOIN pd_dapu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_dapu_cte.date
+                LEFT JOIN pd_daapu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_daapu_cte.date
+                LEFT JOIN lt_reg_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_reg_cte.date
+                LEFT JOIN lt_pu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_pu_cte.date
+                LEFT JOIN lt_tau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_tau_cte.date";
         }
 
         $sql .= "
-            LEFT JOIN pd_visitors_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_visitors_cte.date
-            LEFT JOIN pd_gross_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_gross_cte.date
-            LEFT JOIN pd_net_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = pd_net_cte.date
-            LEFT JOIN lt_visitor_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = lt_visitor_cte.date
-            LEFT JOIN lt_net_cte ON ".$this->getDateFormat('ds.date', ':dateFormat')." = lt_net_cte.date";
+            LEFT JOIN pd_visitors_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_visitors_cte.date
+            LEFT JOIN pd_gross_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_gross_cte.date
+            LEFT JOIN pd_net_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_net_cte.date
+            LEFT JOIN lt_visitor_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_visitor_cte.date
+            LEFT JOIN lt_net_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_net_cte.date";
 
         return $sql;
     }

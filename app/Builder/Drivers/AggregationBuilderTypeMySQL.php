@@ -6,9 +6,9 @@ use App\Enums\StatsRangeType;
 
 class AggregationBuilderTypeMySQL implements AggregationBuilderType
 {
-    public function getDateTypeAnnotation(): string
+    public function getDateSelect(): string
     {
-        return '';
+        return "CAST(':startDateStart' AS DATETIME)";
     }
 
     public function getDateInterval(string $calc, string $date, int $amount, string $interval): string

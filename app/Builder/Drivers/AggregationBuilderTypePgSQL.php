@@ -6,9 +6,9 @@ use App\Enums\StatsRangeType;
 
 class AggregationBuilderTypePgSQL implements AggregationBuilderType
 {
-    public function getDateTypeAnnotation(): string
+    public function getDateSelect(): string
     {
-        return '::timestamp';
+        return "':startDateStart'::timestamp";
     }
 
     public function getDateInterval(string $calc, string $date, int $amount, string $interval): string
