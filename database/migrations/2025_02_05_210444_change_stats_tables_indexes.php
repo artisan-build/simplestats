@@ -27,47 +27,28 @@ return new class extends Migration
             $table->dropIndex('stats_logins_counter_index');
         });
 
-        if (AppHelper::getDBDriver() === 'mysql') {
-            Schema::table('stats_users', function (Blueprint $table) {
-                $table->index(['team_id', 'time']);
-                $table->index(['team_id', 'project_id', 'time']);
-                $table->index(['team_id', 'instance_id', 'time']);
-            });
+        Schema::table('stats_users', function (Blueprint $table) {
+            $table->index(['team_id', 'time']);
+            $table->index(['team_id', 'project_id', 'time']);
+            $table->index(['team_id', 'instance_id', 'time']);
+        });
 
-            Schema::table('stats_visitors', function (Blueprint $table) {
-                $table->index(['team_id', 'time']);
-                $table->index(['team_id', 'project_id', 'time']);
-                $table->index(['team_id', 'instance_id', 'time']);
-            });
+        Schema::table('stats_visitors', function (Blueprint $table) {
+            $table->index(['team_id', 'time']);
+            $table->index(['team_id', 'project_id', 'time']);
+            $table->index(['team_id', 'instance_id', 'time']);
+        });
 
-            Schema::table('stats_payments', function (Blueprint $table) {
-                $table->index(['team_id', 'time']);
-                $table->index(['team_id', 'project_id', 'time']);
-                $table->index(['team_id', 'instance_id', 'time']);
-            });
+        Schema::table('stats_payments', function (Blueprint $table) {
+            $table->index(['team_id', 'time']);
+            $table->index(['team_id', 'project_id', 'time']);
+            $table->index(['team_id', 'instance_id', 'time']);
+        });
 
-            Schema::table('stats_logins', function (Blueprint $table) {
-                $table->index(['team_id', 'time']);
-                $table->index(['team_id', 'project_id', 'time']);
-                $table->index(['team_id', 'instance_id', 'time']);
-            });
-        } else {
-            // in postgres this is enough
-            Schema::table('stats_users', function (Blueprint $table) {
-                $table->index(['team_id', 'instance_id', 'project_id', 'time']);
-            });
-
-            Schema::table('stats_visitors', function (Blueprint $table) {
-                $table->index(['team_id', 'instance_id', 'project_id', 'time']);
-            });
-
-            Schema::table('stats_payments', function (Blueprint $table) {
-                $table->index(['team_id', 'instance_id', 'project_id', 'time']);
-            });
-
-            Schema::table('stats_logins', function (Blueprint $table) {
-                $table->index(['team_id', 'instance_id', 'project_id', 'time']);
-            });
-        }
+        Schema::table('stats_logins', function (Blueprint $table) {
+            $table->index(['team_id', 'time']);
+            $table->index(['team_id', 'project_id', 'time']);
+            $table->index(['team_id', 'instance_id', 'time']);
+        });
     }
 };
