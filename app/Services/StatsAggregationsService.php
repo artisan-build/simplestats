@@ -126,10 +126,12 @@ class StatsAggregationsService
         $filterConditions = $this->getFilterConditions($filters);
 
         if (config('app.stats_aggregation_enabled')) {
-            $aggregatedDataKeyedById = StatsAggregation::whereBetween('time', [
-                $filterConditions['startDateStart'],
-                $filterConditions['endDateEnd']
-            ])->where('filter_hash', $filters->makeHash())
+            $aggregatedDataKeyedById = StatsAggregation::query()
+                ->where('filter_hash', $filters->makeHash())
+                ->whereBetween('time', [
+                    $filterConditions['startDateStart'],
+                    $filterConditions['endDateEnd']
+                ])
                 ->orderBy('time', 'desc')
                 ->pluck('data', 'id');
 
