@@ -36,3 +36,22 @@ Ensure your production server’s queue is also operational!
 If new [registrations](how-to-track-a-new-user.html) or [payments](how-to-track-a-new-payment.html) aren’t appearing on the dashboard:
 - Confirm you’ve correctly implemented the tracking contracts.
 - Verify your user/payment models are listed in the `tracking_types` section of your [config file](installation.html#configuration).
+
+## Deferred Function Compatibility
+
+If you're on Laravel 11.x and above and your application's skeleton still contains an `app/Http/Kernel.php` file,
+you should add the `InvokeDeferredCallbacks` middleware to the beginning of the kernel's `$middleware` property:
+
+```php
+//app/Http/Kernel.php
+
+    // ...
+    
+    protected $middleware = [
+        \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class, 
+        \App\Http\Middleware\TrustProxies::class,
+        // ...
+    ];
+    
+    // ...
+```
