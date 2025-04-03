@@ -43,6 +43,17 @@ abstract class BaseStat extends Model
         return $this->belongsTo(Instance::class);
     }
 
+    /**
+     * stats have a combined primary key, and we need it for updateOrCreate to work...
+     *
+     * @see https://github.com/laravel/framework/issues/55253
+     */
+    protected function setKeysForSaveQuery($query)
+    {
+        return $query->where('id', $this->id)
+            ->where('instance_id', $this->instance_id);
+    }
+
     public function time(): Attribute
     {
         return Attribute::make(
