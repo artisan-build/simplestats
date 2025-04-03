@@ -63,7 +63,7 @@ const toggleQuestion = (index) => {
                 </div>
             </div>
             <p class="text-center mt-4">
-                If you need more help, check out our <a href="/docs/troubleshooting.html" class="simpleLink">Troubleshooting</a> page!
+                If you need more help, check out our <a href="/docs/troubleshooting.html" target="_blank" class="simpleLink">Troubleshooting</a> page!
             </p>
         </div>
     </section>
