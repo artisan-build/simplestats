@@ -1,5 +1,4 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
 import WarningBox from "@/Components/WarningBox.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 
@@ -16,6 +15,7 @@ defineProps({
                     <span class="font-bold text-red-600 dark:text-red-200">{{ alarm.text }}</span><br>
                 </span>
                 <span v-if="subscriptionPlanAlarm[0].percent < 100">Once you reach the limit, we will stop tracking and storing your data!</span>
+                <span v-else-if="subscriptionPlanAlarm[0].percent === 100">We will now stop tracking and storing your data!</span>
                 Consider upgrading your subscription plan.
             </div>
             <div>

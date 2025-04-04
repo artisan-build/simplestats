@@ -77,10 +77,10 @@ class SubscriptionService
             /** @var $featureType Model */
             // as this is also called in the cronjob (here we have no team), we need to apply the team_id manually
             $currentAmount = $featureType::where('team_id', $team->id)->withoutGlobalScope('instance')->count();
-            $currentPercent = round($currentAmount / $featureAmount * 100, 0);
+            $currentPercent = floor($currentAmount / $featureAmount * 100);
 
             // this can only happen if the subscription can't be renewed
-            if ($currentPercent >= 100) {
+            if ($currentPercent > 100) {
                 $alarms[0] = [
                     'percent' => $currentPercent,
                     'text' => "It seems like your subscription is canceled or could not be renewed automatically! You're now back on the free plan and reached the tracking limit. We will stop tracking and storing your data!"
