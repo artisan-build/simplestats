@@ -4,6 +4,10 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        @if (! app()->isProduction())
+            <meta name="robots" content="noindex, nofollow">
+        @endif
+
         <title inertia>{{ config('app.name', 'Laravel') }} - The missing analytics tool for Laravel applications</title>
         <meta name="description" content="A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
 
