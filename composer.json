@@ -45,9 +45,10 @@
         "laravel/telescope": "^5.0",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "pestphp/pest": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0",
-        "spatie/laravel-ignition": "^2.0"
+        "pestphp/pest": "^3.0",
+        "pestphp/pest-plugin-laravel": "^3.0",
+        "spatie/laravel-ignition": "^2.0",
+        "spatie/pest-plugin-route-testing": "^1.0"
     },
     "autoload": {
         "psr-4": {

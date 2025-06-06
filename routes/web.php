@@ -43,10 +43,10 @@ Route::middleware([
     Route::post('data-import/{data_import}/rollback', [App\Http\Controllers\DataImportController::class, 'rollback'])->name('data-import.rollback');
 
     // Projects
-    Route::resource('projects', App\Http\Controllers\ProjectController::class);
+    Route::resource('projects', App\Http\Controllers\ProjectController::class)->except(['create', 'edit']);
 
     // Instances
-    Route::resource('projects.instances', App\Http\Controllers\ProjectInstanceController::class);
+    Route::resource('projects.instances', App\Http\Controllers\ProjectInstanceController::class)->except(['create', 'edit']);
     Route::get('projects/{project}/instances/{instance}/token-view', [App\Http\Controllers\ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
     Route::get('projects/{project}/instances/{instance}/token-regenerate', [App\Http\Controllers\ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
 

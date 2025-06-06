@@ -65,13 +65,15 @@ class DatabaseSeeder extends Seeder
                         ]);
                     }))->create();
 
-            $this->changeEnv([
-                'SIMPLESTATS_API_TOKEN' => Instance::find(1)->tokens()->first()->token_plain,
-            ]);
+            if (! app()->environment('testing')) {
+                $this->changeEnv([
+                    'SIMPLESTATS_API_TOKEN' => Instance::find(1)->tokens()->first()->token_plain,
+                ]);
+            }
         }
 
         //make sure the next project gets created at least 1 sec after the first...
-        sleep(1);
+//        sleep(1);
 
         $projects = [
             //['name' => 'My cool SaaS'],
@@ -169,8 +171,16 @@ class DatabaseSeeder extends Seeder
     protected function getUserSeedCount(): array
     {
         return [
-            'from' => app()->isLocal() ? 1100 : 500,
-            'to' => app()->isLocal() ? 1300 : 1000,
+            'from' => match (true) {
+                app()->environment('demo') => 500,
+                app()->environment('testing') => 5,
+                default => 500,
+            },
+            'to' => match (true) {
+                app()->environment('demo') => 1000,
+                app()->environment('testing') => 10,
+                default => 1000,
+            },
         ];
     }
 }
