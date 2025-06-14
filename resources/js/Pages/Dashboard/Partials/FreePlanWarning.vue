@@ -1,6 +1,6 @@
 <script setup>
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import { Link } from '@inertiajs/vue3';
+import {Link} from '@inertiajs/vue3';
 
 defineProps({
     freePlanWarning: Object,
@@ -33,7 +33,3 @@ const appName = import.meta.env.VITE_APP_NAME;
         </div>
     </div>
 </template>
-
-<style scoped>
-
-</style>

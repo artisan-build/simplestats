@@ -83,7 +83,7 @@ class SubscriptionService
             if ($currentPercent > 100) {
                 $alarms[0] = [
                     'percent' => $currentPercent,
-                    'text' => "It seems like your subscription is canceled or could not be renewed automatically! You're now back on the free plan and reached the tracking limit."
+                    'text' => "It seems like your subscription is canceled or could not be renewed automatically!<br>You're now back on the free plan and reached the tracking limit."
                 ];
 
                 break;
