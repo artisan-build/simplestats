@@ -43,7 +43,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getCTE(): string
     {
         return "WITH stats_groups AS (
-            SELECT id as type_id, name FROM $this->statsTable stats WHERE :projectCondition
+            SELECT id as type_id, name FROM $this->statsTable stats WHERE :teamCondition
             UNION ALL
             SELECT $this->typeIdFallback as type_id, 'Direct / Unknown' as name
         )";

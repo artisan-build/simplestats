@@ -24,9 +24,4 @@ class StatsTrackMedium extends Model
     {
         return $this->belongsTo(Team::class);
     }
-
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
-    }
 }

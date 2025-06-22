@@ -174,6 +174,7 @@ class StatsAggregationsService
             $projectInstanceCondition .= $projectCondition;
         }
 
+        $conditions['teamCondition'] = $teamCondition;
         $conditions['projectCondition'] = $teamCondition.$projectCondition;
         $conditions['projectInstanceCondition'] = $teamCondition.$projectInstanceCondition;
 

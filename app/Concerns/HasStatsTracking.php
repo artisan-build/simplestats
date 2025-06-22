@@ -37,7 +37,6 @@ trait HasStatsTracking
                 if (!empty($statsModel->$property)) {
                     $track = [
                         'team_id' => $statsModel->team_id,
-                        'project_id' => $statsModel->project_id,
                         // there is a composite index on the name col
                         // we can't make it longer then 255 charts (string indexes can't be so long), so we need to trim
                         'name' => Str::limit($statsModel->$property, 252)
