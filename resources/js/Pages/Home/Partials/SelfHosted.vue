@@ -1,6 +1,5 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
-import {Link} from "@inertiajs/vue3";
 
 const props = defineProps({
     discount: Number,
@@ -127,7 +126,7 @@ YOUR ANSWER HERE`;
                 </p>
 
                 <p class="mt-10 leading-normal text-gray-600 dark:text-gray-300 text-lg">
-                    Start <span class="italic">{{ appName }} Self-Hosted</span> today and take full control!
+                    Start <a class="simpleLink italic" href="/docs/self-hosted.html" target="_blank">{{ appName }} Self-Hosted</a> today and take full control!<br>
                 </p>
 
                 <div class="md:inline-flex mt-10">

@@ -63,6 +63,12 @@ export default defineConfig({
                     {text: 'Contribution', link: '/contribution'},
                 ]
             },
+            {
+                text: 'Self-Hosted',
+                items: [
+                    {text: 'Overview', link: '/self-hosted'},
+                ]
+            },
         ],
     }
 })
