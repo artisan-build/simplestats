@@ -7,6 +7,7 @@ use App\Http\Controllers\IntroController;
 use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
+use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,10 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    Route::middleware(['admin'])->group(function () {
+        Route::get('health', HealthCheckResultsController::class);
+    });
+
     Route::impersonate();
 
     Route::any('intro', IntroController::class)->name('intro');

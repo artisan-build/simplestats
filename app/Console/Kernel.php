@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
+use Spatie\Health\Commands\RunHealthChecksCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -27,6 +28,9 @@ class Kernel extends ConsoleKernel
         // double backup or (worse) no backup at all.
 
         if (app()->isProduction()) {
+            // MINUTELY
+            $schedule->command(RunHealthChecksCommand::class)->everyMinute();
+
             // DAILY
             $schedule->command('backup:clean')->daily()->at('01:00');
             $schedule->command('backup:run')->daily()->at('01:30');

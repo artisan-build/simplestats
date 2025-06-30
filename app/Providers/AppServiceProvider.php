@@ -20,6 +20,16 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Pulse\Contracts\ResolvesUsers;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\HorizonCheck;
+use Spatie\Health\Checks\Checks\RedisCheck;
+use Spatie\Health\Checks\Checks\RedisMemoryUsageCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,6 +59,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Health::checks([
+            HorizonCheck::new(),
+            DatabaseCheck::new(),
+            CacheCheck::new(),
+            RedisCheck::new(),
+            RedisMemoryUsageCheck::new(),
+            ScheduleCheck::new(),
+            UsedDiskSpaceCheck::new(),
+            EnvironmentCheck::new(),
+            DebugModeCheck::new(),
+        ]);
+
         User::observe(UserObserver::class);
 
         Sanctum::$personalAccessTokenModel = PersonalAccessToken::class;
