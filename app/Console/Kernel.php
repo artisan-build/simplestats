@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Health\Commands\RunHealthChecksCommand;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,6 +31,7 @@ class Kernel extends ConsoleKernel
         if (app()->isProduction()) {
             // MINUTELY
             $schedule->command(RunHealthChecksCommand::class)->everyMinute();
+            $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
 
             // DAILY
             $schedule->command('backup:clean')->daily()->at('01:00');
