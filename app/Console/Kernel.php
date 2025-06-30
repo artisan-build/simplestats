@@ -30,8 +30,8 @@ class Kernel extends ConsoleKernel
 
         if (app()->isProduction()) {
             // MINUTELY
-            $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
             $schedule->command(RunHealthChecksCommand::class)->everyMinute();
+            $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
 
             // DAILY
             $schedule->command('backup:clean')->daily()->at('01:00');
