@@ -7,10 +7,7 @@ import SmallStepBullet from "@/Pages/Home/Partials/Integration/SmallStepBullet.v
 import SmallStepText from "@/Pages/Home/Partials/Integration/SmallStepText.vue";
 import StepText from "@/Pages/Home/Partials/Integration/StepText.vue";
 import GridPlaceholder from "@/Pages/Home/Partials/Integration/GridPlaceholder.vue";
-import snippetInstallLaravel from "@/Pages/Home/Partials/Integration/Snippets/install_laravel.txt?raw";
 import snippetInstallPackage from "@/Pages/Home/Partials/Integration/Snippets/install_package.txt?raw";
-import snippetSetupEnv from "@/Pages/Home/Partials/Integration/Snippets/setup_env.txt?raw";
-import snippetSetupConfig from "@/Pages/Home/Partials/Integration/Snippets/setup_config.txt?raw";
 import snippetTrackUser from "@/Pages/Home/Partials/Integration/Snippets/track_user.txt?raw";
 import snippetTrackPayment from "@/Pages/Home/Partials/Integration/Snippets/track_payment.txt?raw";
 
@@ -29,7 +26,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <div class="flex-grow grid gap-4 grid-cols-1 xl:grid-cols-[1fr_auto_1fr] items-center relative">
                     <GridPlaceholder />
                     <BigStepBullet content="1" />
-                    <BigStepText :content="`Install ${appName}`" />
+                    <BigStepText :content="`Install`" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
@@ -61,7 +58,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <BigStepBullet content="2" />
-                    <BigStepText content="Add tracking" />
+                    <BigStepText content="Track" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
@@ -78,6 +75,14 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePayment contract" :code="snippetTrackPayment" />
                     <GridPlaceholder />
                     <StepText :content="`To enable the client to <b>track</b> your app’s <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
+
+                    <GridPlaceholder />
+                    <BigStepBullet content="3" />
+                    <BigStepText content="Analyze" />
+
+                    <GridPlaceholder />
+                    <GridPlaceholder />
+                    <StepText :content="`You’re all set! <b>${appName}</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what’s happening in your app - in real time.`" />
                 </div>
             </div>
             <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
