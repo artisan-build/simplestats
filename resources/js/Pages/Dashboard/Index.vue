@@ -1,10 +1,8 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import StatsCols from "@/Pages/Dashboard/Partials/StatsCols.vue";
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups.vue";
-import {ARPXAU, XAAPU, XAPU, XAU} from "@/Helpers/StringHelpers.js";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
 import {onMounted, onUnmounted, ref} from "vue";
@@ -51,7 +49,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
         <div>
-            <div class="sticky top-0 px-8 py-4 -mx-8 -my-4 mb-4 bg-gray-50 dark:bg-dark-900 z-20" :class="{'border-b dark:border-black shadow-sm': isScrolled}">
+            <div class="sticky top-0 px-8 py-4 -mx-8 -my-4 mb-4 bg-gray-50 dark:bg-dark-900 z-20" :class="{'border-b dark:border-dark-700 shadow-sm': isScrolled}">
                 <StatsFilter
                     :teamStats="teamStats"
                     :statsGroups="statsGroups"

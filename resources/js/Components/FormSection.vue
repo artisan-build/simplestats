@@ -1,5 +1,5 @@
 <script setup>
-import { computed, useSlots } from 'vue';
+import {computed, useSlots} from 'vue';
 import SectionTitle from './SectionTitle.vue';
 
 defineEmits(['submitted']);
@@ -29,7 +29,7 @@ const hasActions = computed(() => !! useSlots().actions);
                     </div>
                 </div>
 
-                <div v-if="hasActions" class="flex items-center justify-end px-4 py-3 bg-gray-50 dark:bg-dark-700 text-end sm:px-6 shadow sm:rounded-bl-md sm:rounded-br-md">
+                <div v-if="hasActions" class="flex items-center justify-end px-4 py-3 bg-gray-50 dark:bg-dark-700/80 text-end sm:px-6 shadow sm:rounded-bl-md sm:rounded-br-md">
                     <slot name="actions" />
                 </div>
             </form>

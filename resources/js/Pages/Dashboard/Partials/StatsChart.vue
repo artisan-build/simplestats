@@ -6,13 +6,18 @@ import {router, usePage} from "@inertiajs/vue3";
 import StatsIndicator from "@/Pages/Dashboard/Partials/StatsIndicator.vue";
 import axios from 'axios';
 import {
-    differenceInDays, differenceInHours,
+    differenceInDays,
+    differenceInHours,
     differenceInMonths,
-    endOfDay, endOfHour,
+    endOfDay,
+    endOfHour,
     endOfMonth,
     endOfYear,
-    format, getDaysInMonth,
-    isAfter, startOfDay, startOfMonth,
+    format,
+    getDaysInMonth,
+    isAfter,
+    startOfDay,
+    startOfMonth,
     startOfYear
 } from "date-fns";
 
@@ -106,7 +111,7 @@ const chartOptions = ref({
             show: false,
             offsetY: 12,
         },
-        background: isDarkMode.value ? '#212121' : '#FFFFFF',
+        background: isDarkMode.value ? '#272733' : '#FFFFFF',
     },
     title: {
         text: props.chart.name,
@@ -208,7 +213,7 @@ const chartOptions = ref({
     grid: {
         show: true,
         // borderColor: '#f1f1f1',
-        borderColor: isDarkMode.value ? '#333333' : '#E5E7EB', // Linienfarbe für Dark/Light Mode
+        borderColor: isDarkMode.value ? '#3f3f46' : '#E5E7EB', // Linienfarbe für Dark/Light Mode
     },
 });
 

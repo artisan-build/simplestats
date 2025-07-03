@@ -81,7 +81,7 @@ YOUR ANSWER HERE`;
             <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+licenses.length/2+' lg:grid-cols-'+licenses.length">
                 <div v-for="license in licenses"
                      class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-gray-800"
-                     :class="license.promoted ? 'bg-gray-700' : 'hover:bg-gray-200'"
+                     :class="license.promoted ? 'bg-gray-800' : 'hover:bg-gray-200'"
                 >
                     <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-gray-100" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ license.name }}</div>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import Navigation from "@/Components/Navigation.vue";
@@ -27,7 +27,7 @@ const sidebarIsOpen = ref(false);
         <div @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-dark-950/75 lg:hidden"></div>
 
         <aside
-            class="overflow-y-auto bg-white dark:bg-dark-950 px-3 fixed border-r dark:border-black shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all -translate-x-full rtl:translate-x-full"
+            class="overflow-y-auto bg-white dark:bg-dark-800 px-3 fixed border-r dark:border-dark-700 shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all -translate-x-full rtl:translate-x-full"
             :class="{
                 'lg:z-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
                 'translate-x-0 shadow-xl rtl:-translate-x-0 lg:sticky': sidebarIsOpen,

@@ -1,5 +1,5 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import {Link} from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {computed, ref} from "vue";
 
@@ -61,7 +61,7 @@ const getPlanPrice = (amount, discount) => {
             <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+plans.length/2+' lg:grid-cols-'+plans.length">
                 <div v-for="plan in plans"
                      class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-gray-800"
-                     :class="plan.promoted ? 'bg-gray-700' : 'hover:bg-gray-200'"
+                     :class="plan.promoted ? 'bg-gray-800' : 'hover:bg-gray-200'"
                 >
                     <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-gray-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ plan.name }}</div>
@@ -119,7 +119,7 @@ const getPlanPrice = (amount, discount) => {
                  class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
                 * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
             </div>
-            <div class="mt-4 text-base text-center text-gray-600 px-4 sm:pm-0">
+            <div class="mt-4 text-base text-center text-gray-600 dark:text-gray-400 px-4 sm:pm-0">
                 If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact us</a>!
             </div>
         </div>
