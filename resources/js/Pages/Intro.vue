@@ -49,7 +49,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                             id="team"
                             v-model="form.team"
                             type="text"
-                            class="mt-1 inline-block w-2/5"
+                            class="mt-1 inline-block w-2/5 dark:bg-dark-950"
                         />
                     </TabContent>
                     <TabContent class="pt-10 pb-20 text-center" title="Currency">
@@ -64,7 +64,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                             id="currency"
                             v-model="form.currency"
                             type="text"
-                            class="mt-1 inline-block w-2/5"
+                            class="mt-1 inline-block w-2/5 dark:bg-dark-950"
                             placeholder="e.g. USD"
                         />
                     </TabContent>
@@ -76,7 +76,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                         <SelectInput
                             id="timezone"
                             v-model="form.timezone"
-                            class="mt-1 inline-block w-2/5"
+                            class="mt-1 inline-block w-2/5 dark:bg-dark-950"
                             :options="timezones"
                         />
                     </TabContent>
@@ -89,7 +89,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                             id="project"
                             v-model="form.project"
                             type="text"
-                            class="mt-1 inline-block w-2/5"
+                            class="mt-1 inline-block w-2/5 dark:bg-dark-950"
                             placeholder="e.g. My great SaaS"
                         />
                     </TabContent>
@@ -106,7 +106,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 <!--                            id="project"-->
 <!--                            v-model="form.instance"-->
 <!--                            type="text"-->
-<!--                            class="mt-1 inline-block w-2/5"-->
+<!--                            class="mt-1 inline-block w-2/5 dark:bg-dark-950"-->
 <!--                        />-->
 <!--                    </TabContent>-->
                     <TabContent class="pt-10 pb-20 text-center" title="Usage">
