@@ -91,7 +91,7 @@ function currentProjectHasTrackingUsageBits(bits){
 }
 
 const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
-const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '238, 242, 255';
+const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
 </script>
 
 <template>
