@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {FormWizard,TabContent} from "vue3-form-wizard";
+import {FormWizard, TabContent} from "vue3-form-wizard";
 import 'vue3-form-wizard/dist/style.css';
 import {useForm} from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
@@ -131,8 +131,12 @@ const appName = import.meta.env.VITE_APP_NAME;
 </template>
 
 <style>
+.wizard-icon {
+    font-style: normal;
+}
+
 .dark .wizard-nav .wizard-icon-circle {
-    background-color: gray;
+    background-color: #444;
 }
 
 .dark .wizard-nav .wizard-icon-circle .wizard-icon {
