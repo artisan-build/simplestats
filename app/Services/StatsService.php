@@ -31,9 +31,7 @@ class StatsService
     const NAU_LOGIN_COUNTER = 2;
 
     const TRACKING_USAGE_BITS_VISITORS = 1;
-
     const TRACKING_USAGE_BITS_USERS = 2;
-
     const TRACKING_USAGE_BITS_PAYMENTS = 4;
 
     protected static array $statsModels = [

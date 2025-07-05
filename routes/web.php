@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\IntroController;
-use App\Http\Controllers\UserSettingsController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectInstanceController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\UserNotificationController;
+use App\Http\Controllers\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
@@ -43,20 +47,24 @@ Route::middleware([
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
 
     // Data Import
-    Route::resource('data-import', App\Http\Controllers\DataImportController::class)->only(['index', 'store']);
-    Route::post('data-import/{data_import}/cancel', [App\Http\Controllers\DataImportController::class, 'cancel'])->name('data-import.cancel');
-    Route::post('data-import/{data_import}/rollback', [App\Http\Controllers\DataImportController::class, 'rollback'])->name('data-import.rollback');
+    Route::resource('data-import', DataImportController::class)->only(['index', 'store']);
+    Route::post('data-import/{data_import}/cancel', [DataImportController::class, 'cancel'])->name('data-import.cancel');
+    Route::post('data-import/{data_import}/rollback', [DataImportController::class, 'rollback'])->name('data-import.rollback');
 
     // Projects
-    Route::resource('projects', App\Http\Controllers\ProjectController::class)->except(['create', 'edit']);
+    Route::resource('projects', ProjectController::class)->except(['create', 'edit']);
 
     // Instances
-    Route::resource('projects.instances', App\Http\Controllers\ProjectInstanceController::class)->except(['create', 'edit']);
-    Route::get('projects/{project}/instances/{instance}/token-view', [App\Http\Controllers\ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
-    Route::get('projects/{project}/instances/{instance}/token-regenerate', [App\Http\Controllers\ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
+    Route::resource('projects.instances', ProjectInstanceController::class)->except(['create', 'edit']);
+    Route::get('projects/{project}/instances/{instance}/token-view', [ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
+    Route::get('projects/{project}/instances/{instance}/token-regenerate', [ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
 
+    // User Settings
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::get('user-settings/toggle-advanced', [UserSettingsController::class, 'toggleAdvanced'])->name('user-settings.toggle-advanced');
+
+    // User Notification Settings
+    Route::resource('user/notifications', UserNotificationController::class)->only(['index', 'update']);
 });
 
 require __DIR__.'/socialstream.php';

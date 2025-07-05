@@ -36,9 +36,9 @@ const logout = () => {
                 Manage Account
             </div>
 
-<!--            <DropdownLink :href="route('profile.show')">-->
-<!--                Profile-->
-<!--            </DropdownLink>-->
+            <DropdownLink :href="route('profile.show')">
+                Profile
+            </DropdownLink>
 
             <DropdownLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')">
                 API Tokens
@@ -46,6 +46,10 @@ const logout = () => {
 
             <DropdownLink v-if="$page.props.appType === 'default'" as="a" :href="route('spark.portal')">
                 Subscription
+            </DropdownLink>
+
+            <DropdownLink :href="route('notifications.index')">
+                Notifications
             </DropdownLink>
 
             <div class="border-t border-gray-200 dark:border-gray-600" />
