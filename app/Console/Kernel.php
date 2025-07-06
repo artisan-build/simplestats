@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\SendProjectReports;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Artisan;
@@ -32,6 +33,9 @@ class Kernel extends ConsoleKernel
             // MINUTELY
             $schedule->command(RunHealthChecksCommand::class)->everyMinute();
             $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
+
+            // HOURLY
+            $schedule->command(SendProjectReports::class)->hourly();
 
             // DAILY
             $schedule->command('backup:clean')->daily()->at('01:00');

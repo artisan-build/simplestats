@@ -6,16 +6,22 @@ import SectionBorder from "@/Components/SectionBorder.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import {capitalize} from "lodash";
-import {router} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+
+const page = usePage();
 
 defineProps({
     notifications: Object,
     notificationFrequencies: Array,
 })
 
-const update = (groupNotification) => {
-    router.patch(route("notifications.update", groupNotification), groupNotification);
+const update = (notification) => {
+    router.patch(route("notifications.update", notification), notification);
+}
+
+const trigger = (notification) => {
+    router.post(route("notifications.trigger", notification), notification);
 }
 
 const group2Name = {
@@ -24,6 +30,8 @@ const group2Name = {
         "description": "Choose which stats to include and how often you’d like to receive the report – or send a report manually anytime.",
     },
 }
+
+const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' in a ? 1 : 0) - ('membership' in b ? 1 : 0));
 </script>
 
 <template>
@@ -33,7 +41,7 @@ const group2Name = {
             <ProfileDropdown />
         </template>
         <div class="mt-3">
-            <div v-for="(team, index) in $page.props.auth.user.all_teams">
+            <div v-for="(team, index) in sortedTeams">
                 <FormSection>
                     <template #title>
                         {{ team.name }}
@@ -52,21 +60,21 @@ const group2Name = {
                                 </p>
                             </div>
                             <div
-                                v-for="groupNotification in groupNotifications"
+                                v-for="notification in groupNotifications"
                                 class="w-full mt-3 px-3 py-2 gap-3 border rounded-md flex flex-col lg:flex-row justify-between items-start lg:items-center bg-gray-50 dark:bg-dark-900"
                             >
                                 <div>
-                                    {{ groupNotification.notifiable.name }}
+                                    {{ notification.notifiable.name }}
                                 </div>
                                 <div class="flex gap-3 flex-col sm:flex-row">
                                     <div class="flex items-center gap-3">
-                                        <div v-for="(enabled, setting) in groupNotification.settings">
+                                        <div v-for="(enabled, setting) in notification.settings">
                                             <label class="flex items-center">
                                                 <Checkbox
                                                     :name="setting"
-                                                    :disabled="groupNotification.frequency === 'disabled'"
-                                                    @change="() => update(groupNotification)"
-                                                    v-model:checked="groupNotification.settings[setting]"
+                                                    :disabled="notification.frequency === 'disabled'"
+                                                    @change="() => update(notification)"
+                                                    v-model:checked="notification.settings[setting]"
                                                 />
                                                 <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
                                                     {{ capitalize(setting) }}
@@ -77,15 +85,15 @@ const group2Name = {
                                     <div class="flex items-center gap-3">
                                         <div>
                                             <SelectInput
-                                                v-model="groupNotification.frequency"
+                                                v-model="notification.frequency"
                                                 name="frequency"
                                                 class="py-1 w-32 dark:bg-dark-950"
                                                 :options="notificationFrequencies"
-                                                @change="() => update(groupNotification)"
+                                                @change="() => update(notification)"
                                             />
                                         </div>
                                         <div>
-                                            <PrimaryButton type="button">Send Now</PrimaryButton>
+                                            <PrimaryButton type="button" @click="trigger(notification)">Send Now</PrimaryButton>
                                         </div>
                                     </div>
                                 </div>

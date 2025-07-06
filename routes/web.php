@@ -65,6 +65,7 @@ Route::middleware([
 
     // User Notification Settings
     Route::resource('user/notifications', UserNotificationController::class)->only(['index', 'update']);
+    Route::post('user/notifications/{notification}/trigger', [UserNotificationController::class, 'trigger'])->name('notifications.trigger');
 });
 
 require __DIR__.'/socialstream.php';
