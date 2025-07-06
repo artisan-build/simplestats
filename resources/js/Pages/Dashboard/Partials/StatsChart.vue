@@ -267,7 +267,7 @@ const selectedSeries = () => {
 </script>
 
 <template>
-    <div class="@container bg-white dark:bg-dark-800 border shadow-md rounded-md" :class="chart.class">
+    <div class="@container bg-white dark:bg-dark-800 border rounded-md" :class="chart.class">
         <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3"></div>
         <div :class="'grid gap-3 grid-cols-'+series.length+' pt-3 px-3'">
             <StatsIndicator

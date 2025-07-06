@@ -259,7 +259,7 @@ const chartLenght = charts.length;
 </script>
 
 <template>
-    <div class="grid gap-8" :class="{
+    <div class="grid gap-4" :class="{
         'xl:grid-cols-1': chartLenght === 1,
         'xl:grid-cols-2': chartLenght >= 2,
         '3xl:grid-cols-3': page.props.auth.user.settings.showAdvanced && chartLenght > 2,

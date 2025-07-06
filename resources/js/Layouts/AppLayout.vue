@@ -62,8 +62,8 @@ const sidebarIsOpen = ref(false);
                     </svg>
                 </button>
             </div>
-            <main class="mx-auto h-full w-full p-8" :class="{'max-w-screen-2xl': ! fullscreen}">
-                <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-8 pb-8">
+            <main class="mx-auto h-full w-full p-4" :class="{'max-w-screen-2xl': ! fullscreen}">
+                <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-4 pb-4">
                     <h1 class="flex items-center w-full text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
                         <div v-if="! ($page.props.auth.user.settings?.showMenu ?? true)">
                             <MenuToggler />
