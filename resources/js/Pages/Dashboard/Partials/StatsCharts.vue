@@ -16,7 +16,7 @@ const page = usePage();
 
 const kpiDefs = getKpiDefinitions(props.filters.rangeType);
 
-const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+const isDarkMode = ref(document.documentElement.classList.contains('dark'));
 
 const extractStatsData4Chart = (statsGroups) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {

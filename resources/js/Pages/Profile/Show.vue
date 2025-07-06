@@ -9,6 +9,7 @@ import TwoFactorAuthenticationForm from '@/Pages/Profile/Partials/TwoFactorAuthe
 import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm.vue';
 import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
+import AppearanceSettingsForm from "@/Pages/Profile/Partials/AppearanceSettingsForm.vue";
 
 defineProps({
     confirmsTwoFactorAuthentication: Boolean,
@@ -29,6 +30,12 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 
             <div v-if="$page.props.jetstream.canUpdateProfileInformation">
                 <UpdateProfileInformationForm :user="$page.props.auth.user" />
+
+                <SectionBorder />
+            </div>
+
+            <div>
+                <AppearanceSettingsForm />
 
                 <SectionBorder />
             </div>

@@ -85,7 +85,7 @@ const newFilterForDataPoint = (clickedDate) => {
     return newFilter;
 }
 
-const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+const isDarkMode = ref(document.documentElement.classList.contains('dark'));
 
 const chartOptions = ref({
     chart: {

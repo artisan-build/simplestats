@@ -38,7 +38,7 @@
         <link rel="prefetch" href="{{ asset('/images/side_bg.jpg') }}" as="image">
 
         <!-- Scripts -->
-        <script src="js/dark_mode.js"></script>
+        <script src="/js/dark_mode.js"></script>
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead

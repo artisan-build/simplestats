@@ -90,7 +90,7 @@ function currentProjectHasTrackingUsageBits(bits){
     return bits.every(bit => (props.trackingUsageBits[bit] & props.currentProject.usage));
 }
 
-const isDarkMode = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+const isDarkMode = ref(document.documentElement.classList.contains('dark'));
 const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
 </script>
 

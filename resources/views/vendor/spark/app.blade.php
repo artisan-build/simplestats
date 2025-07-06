@@ -41,7 +41,7 @@
         .dark textarea {background-color: #0f172a !important; color: #ffffff !important;}
     </style>
 
-    <script src="js/dark_mode.js"></script>
+    <script src="/js/dark_mode.js"></script>
 
     @inertiaHead
 </head>
