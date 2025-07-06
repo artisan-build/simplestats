@@ -17,7 +17,7 @@ const docsAction = (e) => {
 <template>
     <div class="flex flex-col gap-y-1"  style="scrollbar-gutter: stable;">
         <div class="overflow-x-clip">
-            <header class="pt-8 pb-7 text-center">
+            <header class="py-4 text-center">
                 <Link class="inline-block mt-2" :href="route('dashboard')">
                     <ApplicationIcon />
                 </Link>
