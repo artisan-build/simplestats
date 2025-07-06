@@ -7,6 +7,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import {capitalize} from "lodash";
 import {router} from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 defineProps({
     notifications: Object,
@@ -18,7 +19,10 @@ const update = (groupNotification) => {
 }
 
 const group2Name = {
-    "App\\Models\\Project": "Project Reporting",
+    "App\\Models\\Project": {
+        "title": "Project Reporting",
+        "description": "Choose which stats to include and how often you’d like to receive the report – or send a report manually anytime.",
+    },
 }
 </script>
 
@@ -41,16 +45,21 @@ const group2Name = {
 
                     <template #form>
                         <div v-for="(groupNotifications, group) in notifications[team.id]" class="col-span-6">
-                            <h3>{{ group2Name[group] ?? group }}:</h3>
+                            <div>
+                                <h3>{{ group2Name[group]?.title ?? group }}</h3>
+                                <p v-if="group2Name[group]?.description" class="mt-1 text-sm text-gray-600 dark:text-gray-400 text-justify">
+                                    {{ group2Name[group]?.description }}
+                                </p>
+                            </div>
                             <div
                                 v-for="groupNotification in groupNotifications"
-                                class="w-full mt-3 px-3 py-2 border rounded-md flex justify-between items-center bg-gray-50 dark:bg-dark-900"
+                                class="w-full mt-3 px-3 py-2 gap-3 border rounded-md flex flex-col lg:flex-row justify-between items-start lg:items-center bg-gray-50 dark:bg-dark-900"
                             >
                                 <div>
                                     {{ groupNotification.notifiable.name }}
                                 </div>
-                                <div class="flex gap-x-3">
-                                    <div class="flex items-center gap-x-3">
+                                <div class="flex gap-3 flex-col sm:flex-row">
+                                    <div class="flex items-center gap-3">
                                         <div v-for="(enabled, setting) in groupNotification.settings">
                                             <label class="flex items-center">
                                                 <Checkbox
@@ -65,14 +74,19 @@ const group2Name = {
                                             </label>
                                         </div>
                                     </div>
-                                    <div>
-                                        <SelectInput
-                                            v-model="groupNotification.frequency"
-                                            name="frequency"
-                                            class="py-1 w-32 dark:bg-dark-950"
-                                            :options="notificationFrequencies"
-                                            @change="() => update(groupNotification)"
-                                        />
+                                    <div class="flex items-center gap-3">
+                                        <div>
+                                            <SelectInput
+                                                v-model="groupNotification.frequency"
+                                                name="frequency"
+                                                class="py-1 w-32 dark:bg-dark-950"
+                                                :options="notificationFrequencies"
+                                                @change="() => update(groupNotification)"
+                                            />
+                                        </div>
+                                        <div>
+                                            <PrimaryButton type="button">Send Now</PrimaryButton>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
