@@ -8,7 +8,7 @@ enum UserNotificationFrequency: string
 {
     use UsefulEnums;
 
-    case MINUTELY = 'minutely';
+    case HOURLY = 'hourly';
     case DAILY = 'daily';
     case WEEKLY = 'weekly';
     case MONTHLY = 'monthly';

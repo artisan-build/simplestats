@@ -17,6 +17,8 @@ return new class extends Migration
             $table->json('settings');
             $table->timestamps();
 
+            $table->index('user_id');
+
             $table->unique(['user_id', 'notifiable_type', 'notifiable_id']);
         });
     }
