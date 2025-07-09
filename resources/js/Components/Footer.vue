@@ -1,11 +1,13 @@
+<script setup>
+const appName = import.meta.env.VITE_APP_NAME;
+</script>
+
 <template>
     <footer class="relative text-center px-4 text-sm md:px-4 py-4  bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs">
-        <span>&copy; {{ new Date().getFullYear() }} Leto GmbH</span>
+        <span>&copy; {{ new Date().getFullYear() }} {{ appName }}</span>
         <span class="px-2">&nbsp;|&nbsp;</span>
-        SimpleStats is a product by
-        <a class="hover:underline" href="https://laracraft.tech" target="_blank">Laracraft</a>,
-        a brand of
-        <a class="hover:underline" href="https://leto.games" target="_blank">Leto GmbH</a>.
+        A product by
+        <a class="hover:underline" href="https://laracraft.tech" target="_blank">Laracraft</a>
         <span class="px-2">&nbsp;|&nbsp;</span>
         <a class="hover:underline" href="/terms-of-service" target="_blank">Terms</a>
         &nbsp;·&nbsp;

@@ -1,6 +1,8 @@
 # Legal notice / Imprint 
 
-Last updated: March 26, 2024
+Last updated: July 9, 2025
+
+SimpleStats is a product by Laracraft, a brand of Leto GmbH.
 
 ## Address
 
