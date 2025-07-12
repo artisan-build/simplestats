@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->morphs('notifiable');
-            $table->string('frequency')->default(UserNotificationFrequency::DAILY->value);
+            $table->string('frequency')->default(UserNotificationFrequency::WEEKLY->value);
             $table->json('settings');
             $table->timestamps();
 

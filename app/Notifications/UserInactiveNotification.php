@@ -38,9 +38,4 @@ class UserInactiveNotification extends Notification
             ->line('If you wish to keep your account, simply log in before that day.
             This will confirm that you’d like to continue using our service.');
     }
-
-    public function toArray($notifiable): array
-    {
-        return [];
-    }
 }

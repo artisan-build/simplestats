@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserNotificationFrequency;
 use App\Http\Requests\UpdateUserNotificationRequest;
-use App\Jobs\SendProjectReport2User;
 use App\Models\UserNotification;
+use App\Notifications\ProjectReportNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -45,7 +45,9 @@ class UserNotificationController extends Controller
      */
     public function trigger(Request $request, UserNotification $notification)
     {
-        SendProjectReport2User::dispatch($notification);
+        $notification->load('user', 'notifiable');
+
+        $notification->user->notify(new ProjectReportNotification($notification));
 
         return back()->with('flash', [
             'banner' => 'Report sent',

@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Enums\UserNotificationFrequency;
-use App\Jobs\SendProjectReport2User;
 use App\Models\Project;
 use App\Models\UserNotification;
+use App\Notifications\ProjectReportNotification;
 use Illuminate\Console\Command;
 
 class SendProjectReports extends Command
@@ -47,7 +47,7 @@ class SendProjectReports extends Command
                     };
 
                     if ($shouldSend) {
-                        SendProjectReport2User::dispatch($userNotification);
+                        $userNotification->user->notify(new ProjectReportNotification($userNotification, $tzNow->copy()));
                     }
                 });
             });

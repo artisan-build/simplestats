@@ -27,9 +27,4 @@ class UserDeletedNotification extends Notification
             ->line('We wanted to inform you that your account has been deleted due to prolonged inactivity.')
             ->line('This means that all data associated with your account has been permanently removed and can no longer be recovered.');
     }
-
-    public function toArray($notifiable): array
-    {
-        return [];
-    }
 }
