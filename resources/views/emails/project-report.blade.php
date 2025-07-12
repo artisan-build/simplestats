@@ -12,3 +12,5 @@ Here is your weekly SimpleStats reporting.
 |Col 3 is|Right-Aligned |$20|
 @endcomponent
 @endcomponent
+
+Unsubscibe
