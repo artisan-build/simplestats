@@ -28,11 +28,5 @@ class QueuedVerifyEmailJob implements ShouldQueue
     public function handle(): void
     {
         $this->user->notify(new VerifyEmail);
-
-        if (app()->isProduction()) {
-            User::query()->where('is_admin', 1)->each(function (User $user) {
-                $user->notify(new NewRegistrationNotification($this->user));
-            });
-        }
     }
 }
