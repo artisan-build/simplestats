@@ -16,11 +16,16 @@ enum UserNotificationFrequency: string
 
     public static function toOptions(): array
     {
-        return collect(self::array())->map(function ($frequency) {
+        return collect(self::cases())->map(function (UserNotificationFrequency $frequency) {
             return [
-                'id' => $frequency,
-                'name' => ucfirst($frequency),
+                'id' => $frequency->value,
+                'name' => $frequency->title(),
             ];
         })->values()->toArray();
+    }
+
+    public function title(): string
+    {
+        return ucfirst($this->value);
     }
 }
