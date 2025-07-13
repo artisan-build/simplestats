@@ -7,6 +7,7 @@ use App\Enums\UserNotificationFrequency;
 use App\Models\UserNotification;
 use App\Services\StatsAggregationsService;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -21,7 +22,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
      */
     public function __construct(
         public UserNotification $notification,
-        public CarbonImmutable $time,
+        public CarbonInterface $time,
     ) {
     }
 

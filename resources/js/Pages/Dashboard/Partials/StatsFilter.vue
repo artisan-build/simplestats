@@ -9,14 +9,24 @@ import MenuToggler from "@/Components/MenuToggler.vue";
 import EnvBadge from "@/Components/EnvBadge.vue";
 import {
     addHours,
-    differenceInDays, differenceInHours,
-    differenceInMonths, differenceInWeeks, differenceInYears,
-    endOfMonth, endOfWeek, endOfYear,
-    format, startOfDay, startOfHour,
-    startOfMonth, startOfWeek,
+    differenceInDays,
+    differenceInHours,
+    differenceInMonths,
+    differenceInWeeks,
+    differenceInYears,
+    endOfMonth,
+    endOfWeek,
+    endOfYear,
+    format,
+    startOfDay,
+    startOfHour,
+    startOfMonth,
+    startOfWeek,
     startOfYear,
     subDays,
-    subMonths, subWeeks, subYears
+    subMonths,
+    subWeeks,
+    subYears
 } from "date-fns";
 import TextInput from "@/Components/TextInput.vue";
 import {onMounted, ref} from "vue";
@@ -182,7 +192,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                         @change="filterChanged"
                                     />
                                 </div>
-                                <div v-if="currentProject.instances && teamStats.totalInstancesCount > 1">
+                                <div v-if="currentProject.instances && Object.keys(currentProject.instances).length > 2">
                                     <InputLabel class="hidden" for="instanceId" value="Instance" />
                                     <SelectInput
                                         id="instanceId"
