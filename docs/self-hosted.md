@@ -18,6 +18,11 @@ _**SimpleStats**_ Self-hosted requires:
 - **Laravel:** 11 or higher
 - **Database:** MySQL 8.0 or higher | PostgreSQL 14 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip
+- **Node.js** 21.6 (lower versions might work)
+
+Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
+
+**Note:** We recommend using **PostgreSQL**, as it handles complex aggregations and large datasets more efficiently than MySQL.
 
 ## License
 

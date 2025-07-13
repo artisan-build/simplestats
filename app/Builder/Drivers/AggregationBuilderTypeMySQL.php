@@ -43,4 +43,9 @@ class AggregationBuilderTypeMySQL implements AggregationBuilderType
             StatsRangeType::YEAR->value => '%Y-%m-%d',
         ];
     }
+
+    public function getGroupedOrderBy(string $sort): string
+    {
+        return "ORDER BY $sort IS NULL, $sort DESC, visitors DESC;";
+    }
 }

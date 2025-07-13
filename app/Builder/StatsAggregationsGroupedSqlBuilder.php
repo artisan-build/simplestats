@@ -153,7 +153,6 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
     protected function getORDER(): string
     {
-        return "ORDER BY
-            $this->statsSort DESC;";
+        return $this->aggregationBuilderType->getGroupedOrderBy($this->statsSort);
     }
 }

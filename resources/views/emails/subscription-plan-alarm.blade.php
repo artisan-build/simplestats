@@ -2,7 +2,7 @@
 Hi {{ $teamOwner->name }},<br>
 <br>
 @foreach($alarms as $alarm)
-{{ $alarm['text'] }}<br><br>
+{!!  ($alarm['text']) !!}<br><br>
 @endforeach
 @if($alarms[0]['percent'] < 100)
 Once you hit the limit, we'll stop tracking and storing your data!<br>

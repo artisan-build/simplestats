@@ -32,7 +32,11 @@ if (props.statsGroupSelected) {
 }
 
 if (! filters.statsSort) {
-    filters.statsSort = 'visitors';
+    switch (true) {
+        case currentProjectHasTrackingUsageBits(['payments']): filters.statsSort = 'net'; break;
+        case currentProjectHasTrackingUsageBits(['users']): filters.statsSort = 'reg'; break;
+        default: filters.statsSort = 'visitors';
+    }
 }
 
 const fetchData = async () => {
@@ -67,7 +71,7 @@ const changeSort = (sort) => {
 };
 
 const calculatePercentage = (current) => {
-    const sort = (filters.statsSort !== 'name') ? filters.statsSort : 'visitors' ;
+    const sort = (filters.statsSort === 'name') ?  'visitors' : filters.statsSort ;
 
     let highest = data.value.reduce((max, item) => item[sort] > max[sort] ? item : max, data.value[0])[sort] ?? 0;
 

@@ -2,7 +2,6 @@
 
 namespace App\DTOs;
 
-use App\Enums\ComparisonType;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use Carbon\CarbonImmutable;
@@ -15,7 +14,6 @@ class StatsFilterDto
     public function __construct(
         public int $projectId,
         public int $instanceId,
-        public bool $lifetime,
         public int $rangeAmount,
         public StatsRangeType $rangeType,
         public CarbonImmutable $rangeStart,
@@ -50,7 +48,6 @@ class StatsFilterDto
         return new self(
             projectId: $request->projectId ?? 0,
             instanceId: $request->instanceId ?? 0,
-            lifetime: $request->lifetime ?? false,
             rangeAmount: $rangeAmount,
             rangeType: $rangeType,
             rangeStart: $rangeStart,

@@ -43,4 +43,9 @@ class AggregationBuilderTypePgSQL implements AggregationBuilderType
             StatsRangeType::YEAR->value => 'YYYY-MM-DD',
         ];
     }
+
+    public function getGroupedOrderBy(string $sort): string
+    {
+        return "ORDER BY $sort DESC NULLS LAST, visitors DESC;";
+    }
 }

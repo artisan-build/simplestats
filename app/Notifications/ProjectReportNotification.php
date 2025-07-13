@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
+use App\DTOs\StatsFilterDto;
 use App\Enums\UserNotificationFrequency;
 use App\Models\UserNotification;
-use Carbon\Carbon;
+use App\Services\StatsAggregationsService;
 use Carbon\CarbonImmutable;
-use DateTimeInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -46,6 +46,25 @@ class ProjectReportNotification extends Notification implements ShouldQueue
             $this->notification->frequency->title().' '.
             $projectName.' '.
             'Report';
+
+        $filter = new StatsFilterDto(
+            projectId: $this->notification->notifiable_id,
+            instanceId: 0,
+            rangeAmount: 1,
+            rangeType: 0,
+            rangeStart: 0,
+            comparison: '0'
+        );
+
+        $sort = match (true) {
+            $this->notification->settings['payments'] => 'net',
+            $this->notification->settings['users'] => 'reg',
+            default => 'visitors',
+        };
+
+        app(StatsAggregationsService::class)
+            ->getAggregatedGroupedData($filter, 'trackSource', $sort, 5)
+            ->values()->toArray();
 
         return (new MailMessage)
             ->subject($subject)

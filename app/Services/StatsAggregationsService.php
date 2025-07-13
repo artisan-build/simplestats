@@ -76,10 +76,6 @@ class StatsAggregationsService
 
         $filterConditions = $this->getFilterConditions($filters);
 
-        if ($filters->lifetime) {
-            $filterConditions['startDateStart'] = '1970-01-01';
-        }
-
         if ($trackablePerson === TrackablePerson::USER) {
             $dauDates = $filters->rangeType->getDAUDates(Carbon::parse($filterConditions['endDateStart']));
 
