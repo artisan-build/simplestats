@@ -33,7 +33,7 @@ class SendProjectReports extends Command
         $stickyNow = now()->utc();
 
         Project::withWhereHas('userNotifications.user:id,name,email')
-            ->with(['team:id,name,timezone', 'userNotifications.notifiable'])
+            ->with(['team:id,name,timezone,currency', 'userNotifications.notifiable'])
             ->each(function ($project) use ($stickyNow) {
                 $project->userNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project) {
                     $tzNow = $stickyNow->copy()->setTimezone($project->team->timezone ?? config('app.timezone'));
@@ -46,7 +46,7 @@ class SendProjectReports extends Command
                     };
 
                     if ($shouldSend) {
-                        $userNotification->user->notify(new ProjectReportNotification($userNotification, $tzNow->copy()));
+                        $userNotification->user->notify(new ProjectReportNotification($userNotification, $tzNow->copy(), $project->team));
                     }
                 });
             });

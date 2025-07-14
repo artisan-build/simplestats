@@ -149,7 +149,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                             <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" style="width: 12%;" class="p-1.5 text-right">
                                 <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
                                     <span class="inline-block @2xl:hidden">CR</span>
-                                    <span class="hidden @2xl:inline-block">Conversion</span>
+                                    <span class="hidden @2xl:inline-block">Conv.</span>
                                     <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                         <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                     </svg>

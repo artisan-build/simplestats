@@ -46,14 +46,14 @@ class StatsService
     protected static array $statsTypes = [
         'track' => [
             ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon', 'descr' => 'referrers'],
-            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source', 'descr' => 'sources'],
-            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium', 'descr' => 'media'],
-            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign', 'descr' => 'campaigns'],
-            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term', 'descr' => 'terms'],
-            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content', 'descr' => 'contents'],
+            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source', 'descr' => 'UTM sources'],
+            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium', 'descr' => 'UTM media'],
+            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign', 'descr' => 'UTM campaigns'],
+            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term', 'descr' => 'UTM terms'],
+            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content', 'descr' => 'UTM contents'],
         ],
         'page' => [
-            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages', 'descr' => 'pages'],
+            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages', 'descr' => 'entry pages'],
         ],
         'location' => [
             ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries', 'icon' => 'country', 'descr' => 'countries'],
@@ -104,7 +104,7 @@ class StatsService
         return collect(self::getStatsTypesCamelFlatMap($skip))->map(function ($type) {
             return [
                 'id' => $type['model'],
-                'name' => ucfirst($type['descr']),
+                'name' => ucfirst($type['title']),
             ];
         })->values();
     }

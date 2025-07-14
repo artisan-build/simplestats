@@ -50,7 +50,7 @@ class UserNotificationController extends Controller
     {
         $notification->load('user', 'notifiable');
 
-        $notification->user->notify(new ProjectReportNotification($notification, now()));
+        $notification->user->notify(new ProjectReportNotification($notification, now(), auth()->user()->currentTeam));
 
         return back()->with('flash', [
             'banner' => 'Report sent',

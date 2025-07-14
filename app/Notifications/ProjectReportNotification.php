@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Enums\UserNotificationFrequency;
+use App\Models\Team;
 use App\Models\UserNotification;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
@@ -25,6 +26,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
     public function __construct(
         public UserNotification $notification,
         public CarbonInterface $time,
+        public Team $team,
     ) {
     }
 
@@ -60,7 +62,8 @@ class ProjectReportNotification extends Notification implements ShouldQueue
                 'frequency' => $this->notification->frequency,
                 'timeRange' => $this->getTimeRange(),
                 'projectName' => $projectName,
-                'project' => $this->notification->notifiable,
+                'trackingSettings' => $this->notification->settings['tracking'],
+                'currency' => $this->team->currency,
                 'statsGroups' => $statsGroups,
             ]);
     }
