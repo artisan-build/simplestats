@@ -25,7 +25,7 @@ class ProjectObserver
     public function updated(Project $project): void
     {
         if ($project->wasChanged('usage')) {
-            $allowedKeys = array_keys($project->getDefaultNotificationSettings());
+            $allowedKeys = array_keys($project->getDefaultNotificationSettings()['tracking']);
 
             $project->userNotifications()->each(function (UserNotification $notification) use ($project, $allowedKeys) {
                 $filteredSettings = collect($notification->settings)
@@ -33,10 +33,10 @@ class ProjectObserver
                     ->toArray();
 
                 // Falls neue Default-Werte dazukommen (z. B. wenn vorher keine Einstellung da war)
-                $defaults = $project->getDefaultNotificationSettings();
+                $defaults = $project->getDefaultNotificationSettings()['tracking'];
 
                 $notification->update([
-                    'settings' => array_merge($defaults, $filteredSettings),
+                    'settings->tracking' => array_merge($defaults, $filteredSettings),
                 ]);
             });
         }
