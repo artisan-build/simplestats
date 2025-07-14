@@ -39,7 +39,6 @@ class SendProjectReports extends Command
                     $tzNow = $stickyNow->copy()->setTimezone($project->team->timezone ?? config('app.timezone'));
 
                     $shouldSend = match ($userNotification->frequency) {
-                        UserNotificationFrequency::HOURLY => $tzNow->format('i') === '00',
                         UserNotificationFrequency::DAILY => $tzNow->format('H:i') === '00:00',
                         UserNotificationFrequency::WEEKLY => $tzNow->format('H:i') === '00:00' && $tzNow->isMonday(),
                         UserNotificationFrequency::MONTHLY => $tzNow->format('H:i') === '00:00' && $tzNow->isSameDay($tzNow->copy()->startOfMonth()),

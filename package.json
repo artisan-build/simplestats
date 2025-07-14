@@ -24,6 +24,7 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.7.23",
         "@heroicons/vue": "^2.1.1",
         "@sentry/react": "^7.40.0",
         "@sentry/vue": "^7.40.0",

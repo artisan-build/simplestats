@@ -31,7 +31,9 @@ class StatsService
     const NAU_LOGIN_COUNTER = 2;
 
     const TRACKING_USAGE_BITS_VISITORS = 1;
+
     const TRACKING_USAGE_BITS_USERS = 2;
+
     const TRACKING_USAGE_BITS_PAYMENTS = 4;
 
     protected static array $statsModels = [
@@ -43,25 +45,25 @@ class StatsService
 
     protected static array $statsTypes = [
         'track' => [
-            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon'],
-            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source'],
-            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium'],
-            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign'],
-            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term'],
-            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content'],
+            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon', 'descr' => 'referrers'],
+            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source', 'descr' => 'sources'],
+            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium', 'descr' => 'media'],
+            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign', 'descr' => 'campaigns'],
+            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term', 'descr' => 'terms'],
+            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content', 'descr' => 'contents'],
         ],
         'page' => [
-            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages'],
+            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages', 'descr' => 'pages'],
         ],
         'location' => [
-            ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries', 'icon' => 'country'],
-            ['model' => StatsLocationRegion::class, 'type' => 'location_region', 'title' => 'Regions', 'icon' => 'country'],
-            ['model' => StatsLocationCity::class, 'type' => 'location_city', 'title' => 'Cities', 'icon' => 'country'],
+            ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries', 'icon' => 'country', 'descr' => 'countries'],
+            ['model' => StatsLocationRegion::class, 'type' => 'location_region', 'title' => 'Regions', 'icon' => 'country', 'descr' => 'regions'],
+            ['model' => StatsLocationCity::class, 'type' => 'location_city', 'title' => 'Cities', 'icon' => 'country', 'descr' => 'cities'],
         ],
         'device' => [
-            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS'],
-            ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path'],
-            ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
+            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS', 'descr' => 'operating systems'],
+            ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path', 'descr' => 'browsers'],
+            ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path', 'descr' => 'devices'],
         ],
     ];
 
@@ -90,6 +92,21 @@ class StatsService
                 return $item;
             });
         });
+    }
+
+    public static function getStatsTypesCamelFlatMap(array $skip = []): Collection
+    {
+        return collect(self::getStatsTypesCamel($skip))->flatMap(fn ($group) => $group);
+    }
+
+    public static function asOptions(array $skip = []): Collection
+    {
+        return collect(self::getStatsTypesCamelFlatMap($skip))->map(function ($type) {
+            return [
+                'id' => $type['model'],
+                'name' => ucfirst($type['descr']),
+            ];
+        })->values();
     }
 
     public static function getStatsTypesCamelFlat(): Collection

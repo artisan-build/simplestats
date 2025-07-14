@@ -3,6 +3,7 @@
 namespace App\Builder\Drivers;
 
 use App\Enums\StatsRangeType;
+use App\Enums\TrackablePerson;
 
 class AggregationBuilderTypePgSQL implements AggregationBuilderType
 {
@@ -14,6 +15,7 @@ class AggregationBuilderTypePgSQL implements AggregationBuilderType
     public function getDateInterval(string $calc, string $date, int $amount, string $interval): string
     {
         $func = ($calc === 'add') ? '+' : '-';
+
         return "$date $func INTERVAL '$amount $interval'";
     }
 
@@ -44,8 +46,16 @@ class AggregationBuilderTypePgSQL implements AggregationBuilderType
         ];
     }
 
-    public function getGroupedOrderBy(string $sort): string
+    public function getGroupedOrderBy(string $sort, TrackablePerson $trackablePerson): string
     {
-        return "ORDER BY $sort DESC NULLS LAST, visitors DESC;";
+        $oder = "ORDER BY $sort DESC NULLS LAST, net DESC NULLS LAST";
+
+        if ($trackablePerson === TrackablePerson::USER) {
+            $oder .= ', reg DESC NULLS LAST';
+        }
+
+        $oder .= ', visitors DESC;';
+
+        return $oder;
     }
 }

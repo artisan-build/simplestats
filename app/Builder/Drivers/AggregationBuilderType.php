@@ -2,6 +2,8 @@
 
 namespace App\Builder\Drivers;
 
+use App\Enums\TrackablePerson;
+
 interface AggregationBuilderType
 {
     /**
@@ -47,8 +49,9 @@ interface AggregationBuilderType
      * Get the grouped order by clause based on the given sort parameter.
      *
      * @param  string  $sort  The sorting parameter to group order by.
+     * @param  TrackablePerson  $trackablePerson  The trackable person enum value.
      * @return string The grouped order by clause.
      */
-    public function getGroupedOrderBy(string $sort): string;
+    public function getGroupedOrderBy(string $sort, TrackablePerson $trackablePerson): string;
 
 }

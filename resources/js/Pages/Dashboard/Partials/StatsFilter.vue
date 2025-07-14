@@ -60,7 +60,7 @@ const submit = () => {
 
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
-    if (event && event.target.id === 'projectId') {
+    if (event && event.name === 'projectId') {
         form.instanceId = 0;
 
         // reset group filters...
@@ -229,7 +229,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangeAmount"
                                         v-model="form.rangeAmount"
-                                        class="mt-1 block w-18"
+                                        class="mt-1 block"
                                         :options="rangeAmounts"
                                         @change="filterChanged"
                                     />
@@ -254,7 +254,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangePreset"
                                         v-model="presetSelected"
-                                        class="mt-1 block w-18"
+                                        class="mt-1 block w-40"
                                         :options="presets"
                                         @change="presetChanged"
                                     />
@@ -269,7 +269,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangeComparison"
                                         v-model="form.comparison"
-                                        class="mt-1 block w-18"
+                                        class="mt-1 block"
                                         :options="comparisonTypes"
                                         @change="filterChanged"
                                     />

@@ -20,7 +20,7 @@ enum StatsRangeType: string
     case MONTH = 'months';
     case YEAR = 'years';
 
-    public static function conditions(CarbonImmutable $rangeStart, int $rangeAmount): array
+    public static function conditions(CarbonInterface $rangeStart, int $rangeAmount): array
     {
         $rangeAmount -= 1;
 
@@ -96,7 +96,7 @@ enum StatsRangeType: string
         };
     }
 
-    public function rangeStart(CarbonImmutable $date): CarbonImmutable
+    public function rangeStart(CarbonInterface $date): CarbonInterface
     {
         return match ($this) {
             self::HOUR => $date->startOfHour(),
@@ -120,7 +120,7 @@ enum StatsRangeType: string
         };
     }
 
-    public function getPrevStartForComparison(CarbonImmutable $rangeStart): CarbonImmutable
+    public function getPrevStartForComparison(CarbonInterface $rangeStart): CarbonInterface
     {
         return match ($this) {
             self::HOUR => $rangeStart->subDay(),

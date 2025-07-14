@@ -1,33 +1,127 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {computed, ref, watch} from 'vue'
+import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/vue'
+import {ChevronUpDownIcon} from '@heroicons/vue/16/solid'
+import {CheckIcon} from '@heroicons/vue/20/solid'
 
-defineProps({
-    modelValue: [String, Number],
-    options: [Array, Object]
-});
+const props = defineProps({
+    modelValue: [Array, Object, String, Number, null],
+    options: { type: [Array, Object], required: true },
+    multiple: { type: Boolean, default: false },
+    trackBy: { type: String, default: 'id' },
+    labelBy: { type: String, default: 'name' },
+    class: { type: String, default: '' },
+    name: { type: String, default: '' },
+    id: { type: String, default: '' },
+})
 
-defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'change'])
 
-const select = ref(null);
+const open = ref(false)
+const internalSelectedValues = ref([])
+const initialSelectedValues = ref([])
 
-onMounted(() => {
-    if (select.value && select.value.autofocus) {
-        select.value.focus();
+const normalizedOptions = computed(() => {
+    if (Array.isArray(props.options)) return props.options
+    if (typeof props.options === 'object' && props.options !== null) {
+        return Object.values(props.options)
     }
-});
+    return []
+})
 
-defineExpose({ focus: () => select.value.focus() });
+const selected = computed({
+    get() {
+        if (props.multiple) {
+            if (!Array.isArray(props.modelValue)) return []
+            return normalizedOptions.value.filter(option => props.modelValue.includes(option[props.trackBy]))
+        } else {
+            return (normalizedOptions.value.find(option => option[props.trackBy] == props.modelValue) ?? null)
+        }
+    },
+    set(val) {
+        if (props.multiple) {
+            const ids = val.map(v => v[props.trackBy])
+            internalSelectedValues.value = ids
+            emit('update:modelValue', ids)
+        } else {
+            const id = val?.[props.trackBy] ?? null
+            emit('update:modelValue', id)
+            emit('change', { name: props.name ?? props.id, value: id })
+        }
+    }
+})
+
+watch(() => props.modelValue, val => {
+    if (props.multiple && Array.isArray(val)) {
+        internalSelectedValues.value = [...val]
+    }
+})
+
+watch(open, (val) => {
+    if (val && props.multiple) {
+        initialSelectedValues.value = [...internalSelectedValues.value]
+    }
+
+    if (!val && props.multiple) {
+        const hasChanged = JSON.stringify(initialSelectedValues.value) !== JSON.stringify(internalSelectedValues.value)
+
+        if (hasChanged) {
+            emit('change', { name: props.name ?? props.id, value: internalSelectedValues.value })
+        }
+    }
+})
 </script>
 
 <template>
-    <select
-        ref="select"
-        class="border-gray-300 dark:border-gray-700 dark:bg-dark-800 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-        :value="modelValue"
-        @change="$emit('update:modelValue', $event.target.value)"
+    <Listbox
+        :modelValue="selected"
+        @update:modelValue="selected = $event"
+        :multiple="multiple"
+        as="div"
+        v-slot="{ open: isOpen }"
     >
-        <option v-for="option in options" :key="option.id" :value="option.id">
-            {{ option.name }}
-        </option>
-    </select>
+        <div class="relative">
+            <ListboxButton :class="['relative cursor-default rounded-md border bg-white dark:bg-dark-800 py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200', props.class]">
+                <span class="block truncate">
+                  <template v-if="multiple">
+                    {{ selected.length ? selected.map(o => o[labelBy]).join(', ') : 'Select...' }}
+                  </template>
+                  <template v-else>
+                    {{ selected?.[labelBy] ?? 'Select...' }}
+                  </template>
+                </span>
+                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                  <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                </span>
+            </ListboxButton>
+
+            <ListboxOptions class="absolute z-10 mt-1 w-full overflow-auto rounded-md bg-white dark:bg-dark-800 py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
+                <ListboxOption
+                    v-for="option in normalizedOptions"
+                    :key="option[trackBy]"
+                    :value="option"
+                    v-slot="{ active, selected: isSelected }"
+                    as="template"
+                >
+                    <li :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900 dark:text-gray-200', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                        <span :class="[isSelected ? 'font-semibold' : 'font-normal', 'block truncate']">
+                          {{ option[labelBy] }}
+                        </span>
+                        <span v-if="isSelected && multiple" :class="[active ? 'text-white' : 'text-indigo-500', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                          <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                        </span>
+                    </li>
+                </ListboxOption>
+            </ListboxOptions>
+        </div>
+
+        <!-- track open state for dropdown close detection -->
+        <template v-if="isOpen">
+            <span v-show="false">{{ open = true }}</span>
+        </template>
+        <template v-else>
+            <span v-show="false">{{ open = false }}</span>
+        </template>
+    </Listbox>
 </template>
+

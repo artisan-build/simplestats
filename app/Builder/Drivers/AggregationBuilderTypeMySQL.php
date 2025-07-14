@@ -3,6 +3,7 @@
 namespace App\Builder\Drivers;
 
 use App\Enums\StatsRangeType;
+use App\Enums\TrackablePerson;
 
 class AggregationBuilderTypeMySQL implements AggregationBuilderType
 {
@@ -44,8 +45,16 @@ class AggregationBuilderTypeMySQL implements AggregationBuilderType
         ];
     }
 
-    public function getGroupedOrderBy(string $sort): string
+    public function getGroupedOrderBy(string $sort, TrackablePerson $trackablePerson): string
     {
-        return "ORDER BY $sort IS NULL, $sort DESC, visitors DESC;";
+        $oder = "ORDER BY $sort IS NULL, $sort DESC, net IS NULL, net DESC";
+
+        if ($trackablePerson === TrackablePerson::USER) {
+            $oder .= ', reg IS NULL, reg DESC';
+        }
+
+        $oder .= ', visitors DESC;';
+
+        return $oder;
     }
 }

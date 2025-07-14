@@ -8,6 +8,7 @@ use App\Exceptions\ImportCanceledException;
 use App\Models\DataImport;
 use App\Validators\BaseStatsValidator;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -25,7 +26,7 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     public int $idTo = 0;
 
     // we need to take track of the lowest imported data (for aggregation invalidation)
-    private CarbonImmutable $lowestImportedDate;
+    private CarbonInterface $lowestImportedDate;
 
     private int $counterUpdateStep = 0;
 

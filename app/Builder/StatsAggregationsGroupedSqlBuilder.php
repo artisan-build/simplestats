@@ -153,6 +153,6 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
     protected function getORDER(): string
     {
-        return $this->aggregationBuilderType->getGroupedOrderBy($this->statsSort);
+        return $this->aggregationBuilderType->getGroupedOrderBy($this->statsSort, $this->trackablePerson);
     }
 }

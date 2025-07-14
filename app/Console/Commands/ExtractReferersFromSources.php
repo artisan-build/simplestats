@@ -11,7 +11,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
-class ExtractReferersFromSources extends Command
+class
+ExtractReferersFromSources extends Command
 {
     /**
      * The name and signature of the console command.

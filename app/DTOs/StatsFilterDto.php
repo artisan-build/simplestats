@@ -5,6 +5,7 @@ namespace App\DTOs;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 
 class StatsFilterDto
 {
@@ -16,7 +17,7 @@ class StatsFilterDto
         public int $instanceId,
         public int $rangeAmount,
         public StatsRangeType $rangeType,
-        public CarbonImmutable $rangeStart,
+        public CarbonInterface $rangeStart,
         public string $comparison,
         public int $trackReferer = 0,
         public int $trackSource = 0,

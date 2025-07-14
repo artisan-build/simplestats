@@ -57,10 +57,19 @@ class Project extends Model implements NotifiableToUser
 
     public function getDefaultNotificationSettings(): array
     {
-        return array_filter([
-            'visitors' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS]),
-            'users' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS]),
-            'payments' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS]),
-        ]);
+        return [
+            'tracking' => array_filter([
+                'visitors' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS]),
+                'users' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS]),
+                'payments' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS]),
+            ]),
+            'types' => [
+                StatsTrackReferer::class,
+                StatsTrackSource::class,
+                StatsPageEntry::class,
+                StatsLocationCountry::class,
+                StatsDevicePlatform::class,
+            ],
+        ];
     }
 }

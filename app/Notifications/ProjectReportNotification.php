@@ -3,15 +3,17 @@
 namespace App\Notifications;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\StatsRangeType;
 use App\Enums\UserNotificationFrequency;
 use App\Models\UserNotification;
 use App\Services\StatsAggregationsService;
-use Carbon\CarbonImmutable;
+use App\Services\StatsService;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Collection;
 
 class ProjectReportNotification extends Notification implements ShouldQueue
 {
@@ -48,24 +50,9 @@ class ProjectReportNotification extends Notification implements ShouldQueue
             $projectName.' '.
             'Report';
 
-        $filter = new StatsFilterDto(
-            projectId: $this->notification->notifiable_id,
-            instanceId: 0,
-            rangeAmount: 1,
-            rangeType: 0,
-            rangeStart: 0,
-            comparison: '0'
-        );
+        //TODO only send notification mail if even any data is found! (skip demo stuff)
 
-        $sort = match (true) {
-            $this->notification->settings['payments'] => 'net',
-            $this->notification->settings['users'] => 'reg',
-            default => 'visitors',
-        };
-
-        app(StatsAggregationsService::class)
-            ->getAggregatedGroupedData($filter, 'trackSource', $sort, 5)
-            ->values()->toArray();
+        $statsGroups = $this->getStatsGroups();
 
         return (new MailMessage)
             ->subject($subject)
@@ -73,17 +60,76 @@ class ProjectReportNotification extends Notification implements ShouldQueue
                 'frequency' => $this->notification->frequency,
                 'timeRange' => $this->getTimeRange(),
                 'projectName' => $projectName,
+                'project' => $this->notification->notifiable,
+                'statsGroups' => $statsGroups,
             ]);
     }
 
     private function getTimeRange(): string
     {
         return match ($this->notification->frequency) {
-            UserNotificationFrequency::HOURLY => $this->time->format('M jS g:00a'),
             UserNotificationFrequency::DAILY => $this->time->subDay()->format('M jS'),
             UserNotificationFrequency::WEEKLY => $this->time->subWeek()->startOfWeek()->format('M jS').' - '.$this->time->subWeek()->endOfWeek()->format('M jS'),
             UserNotificationFrequency::MONTHLY => $this->time->subMonth()->startOfMonth()->format('M jS').' - '.$this->time->subMonth()->endOfMonth()->format('M jS'),
             default => '',
         };
+    }
+
+    private function getRange(): array
+    {
+        return match ($this->notification->frequency) {
+            UserNotificationFrequency::DAILY => [
+                'amount' => 1,
+                'type' => StatsRangeType::DAY,
+                'start' => StatsRangeType::DAY->rangeStart($this->time->subDay()),
+            ],
+            UserNotificationFrequency::WEEKLY => [
+                'amount' => 1,
+                'type' => StatsRangeType::WEEK,
+                'start' => StatsRangeType::WEEK->rangeStart($this->time->subWeek()),
+            ],
+            UserNotificationFrequency::MONTHLY => [
+                'amount' => 1,
+                'type' => StatsRangeType::MONTH,
+                'start' => StatsRangeType::MONTH->rangeStart($this->time->subMonth()),
+            ],
+            default => [],
+        };
+    }
+
+    private function getFilter(): StatsFilterDto
+    {
+        $range = $this->getRange();
+
+        return new StatsFilterDto(
+            projectId: $this->notification->notifiable_id,
+            instanceId: 0,
+            rangeAmount: $range['amount'],
+            rangeType: $range['type'],
+            rangeStart: $range['start'],
+            comparison: '0'
+        );
+    }
+
+    public function getStatsGroups(): Collection
+    {
+        $filter = $this->getFilter();
+
+        $sort = match (true) {
+            $this->notification->settings['tracking']['payments'] ?? false => 'net',
+            $this->notification->settings['tracking']['users'] ?? false => 'reg',
+            default => 'visitors',
+        };
+
+        return collect($this->notification->settings['types'])->map(function ($type) use ($filter, $sort) {
+            $typeData = StatsService::getStatsTypesCamelFlatMap()->keyBy('model')[$type];
+
+            return [
+                'descr' => $typeData['descr'],
+                'stats' => app(StatsAggregationsService::class)
+                    ->getAggregatedGroupedData($filter, $typeData['type'], $sort, 5)
+                    ->values()->toArray(),
+            ];
+        });
     }
 }

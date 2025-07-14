@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ExchangeRate;
 use AshAllenDesign\LaravelExchangeRates\Facades\ExchangeRate as ExchangeRateFacade;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ValidationRules\Rules\Currency;
@@ -14,7 +15,7 @@ class ExchangeRateService
     /**
      * @throws Exception
      */
-    public function getFor(CarbonImmutable $date, string $fromCurrency, string $toCurrency): float|int
+    public function getFor(CarbonInterface $date, string $fromCurrency, string $toCurrency): float|int
     {
         $validator = Validator::make(
             ['fromCurrency' => $fromCurrency, 'toCurrency' => $toCurrency],

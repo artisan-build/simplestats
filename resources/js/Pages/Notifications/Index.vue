@@ -11,8 +11,9 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const page = usePage();
 
-defineProps({
+const props = defineProps({
     notifications: Object,
+    notificationTypes: Array,
     notificationFrequencies: Array,
 })
 
@@ -30,7 +31,7 @@ const group2Name = {
         "description": "Choose which stats to include and how often you’d like to receive the report – or send a report manually anytime.",
     },
 }
-
+console.log(props.notifications)
 const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' in a ? 1 : 0) - ('membership' in b ? 1 : 0));
 </script>
 
@@ -68,13 +69,13 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                 </div>
                                 <div class="flex gap-3 flex-col sm:flex-row">
                                     <div class="flex items-center gap-3">
-                                        <div v-for="(enabled, setting) in notification.settings">
+                                        <div v-for="(enabled, setting) in notification.settings['tracking']">
                                             <label class="flex items-center">
                                                 <Checkbox
                                                     :name="setting"
                                                     :disabled="notification.frequency === 'disabled'"
                                                     @change="() => update(notification)"
-                                                    v-model:checked="notification.settings[setting]"
+                                                    v-model:checked="notification.settings['tracking'][setting]"
                                                 />
                                                 <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
                                                     {{ capitalize(setting) }}
@@ -85,9 +86,18 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                     <div class="flex items-center gap-3">
                                         <div>
                                             <SelectInput
+                                                v-model="notification.settings['types']"
+                                                class="w-32 dark:bg-dark-950 !py-1"
+                                                :options="notificationTypes"
+                                                :multiple="true"
+                                                @change="() => update(notification)"
+                                            />
+                                        </div>
+                                        <div>
+                                            <SelectInput
                                                 v-model="notification.frequency"
                                                 name="frequency"
-                                                class="py-1 w-32 dark:bg-dark-950"
+                                                class="w-32 dark:bg-dark-950 !py-1"
                                                 :options="notificationFrequencies"
                                                 @change="() => update(notification)"
                                             />
