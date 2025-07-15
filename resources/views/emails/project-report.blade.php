@@ -45,7 +45,7 @@ $statsGroupsHeader .= '|';
 
 $statsGroupsSeparator = '';
 $columnCount = substr_count($statsGroupsHeader, '|') - 1;
-$statsGroupsSeparatorParts = array_fill(0, $columnCount, ':-:');
+$statsGroupsSeparatorParts = array_fill(0, $columnCount, '-:');
 $statsGroupsSeparatorParts[0] = ':-';
 $statsGroupsSeparator = '|' . implode('|', $statsGroupsSeparatorParts) . '|';
 
