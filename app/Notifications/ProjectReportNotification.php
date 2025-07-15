@@ -8,6 +8,7 @@ use App\Enums\UserNotificationFrequency;
 use App\Models\Team;
 use App\Models\UserNotification;
 use App\Services\StatsAggregationsService;
+use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
@@ -52,10 +53,6 @@ class ProjectReportNotification extends Notification implements ShouldQueue
             $projectName.' '.
             'Report';
 
-        //TODO only send notification mail if even any data is found! (skip demo stuff)
-
-        $statsGroups = $this->getStatsGroups();
-
         return (new MailMessage)
             ->subject($subject)
             ->markdown('emails.project-report', [
@@ -64,7 +61,8 @@ class ProjectReportNotification extends Notification implements ShouldQueue
                 'projectName' => $projectName,
                 'trackingSettings' => $this->notification->settings['tracking'],
                 'currency' => $this->team->currency,
-                'statsGroups' => $statsGroups,
+                'statsAll' => $this->getStats(),
+                'statsGroups' => $this->getStatsGroups(),
             ]);
     }
 
@@ -114,6 +112,11 @@ class ProjectReportNotification extends Notification implements ShouldQueue
         );
     }
 
+    private function getStats()
+    {
+        return current(app(StatsDetailsService::class)->getStats($this->getFilter()));
+    }
+
     public function getStatsGroups(): Collection
     {
         $filter = $this->getFilter();
@@ -128,7 +131,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
             $typeData = StatsService::getStatsTypesCamelFlatMap()->keyBy('model')[$type];
 
             return [
-                'descr' => $typeData['descr'],
+                'title' => $typeData['title'],
                 'stats' => app(StatsAggregationsService::class)
                     ->getAggregatedGroupedData($filter, $typeData['type'], $sort, 5)
                     ->values()->toArray(),

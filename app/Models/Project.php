@@ -65,7 +65,6 @@ class Project extends Model implements NotifiableToUser
             ]),
             'types' => [
                 StatsTrackReferer::class,
-                StatsTrackSource::class,
                 StatsPageEntry::class,
                 StatsLocationCountry::class,
                 StatsDevicePlatform::class,

@@ -45,25 +45,25 @@ class StatsService
 
     protected static array $statsTypes = [
         'track' => [
-            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon', 'descr' => 'referrers'],
-            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source', 'descr' => 'UTM sources'],
-            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium', 'descr' => 'UTM media'],
-            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign', 'descr' => 'UTM campaigns'],
-            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term', 'descr' => 'UTM terms'],
-            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content', 'descr' => 'UTM contents'],
+            ['model' => StatsTrackReferer::class, 'type' => 'track_referer', 'title' => 'Referrer', 'icon' => 'favicon'],
+            ['model' => StatsTrackSource::class, 'type' => 'track_source', 'title' => 'Source'],
+            ['model' => StatsTrackMedium::class, 'type' => 'track_medium', 'title' => 'Medium'],
+            ['model' => StatsTrackCampaign::class, 'type' => 'track_campaign', 'title' => 'Campaign'],
+            ['model' => StatsTrackTerm::class, 'type' => 'track_term', 'title' => 'Term'],
+            ['model' => StatsTrackContent::class, 'type' => 'track_content', 'title' => 'Content'],
         ],
         'page' => [
-            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages', 'descr' => 'entry pages'],
+            ['model' => StatsPageEntry::class, 'type' => 'page_entry', 'title' => 'Entry Pages'],
         ],
         'location' => [
-            ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries', 'icon' => 'country', 'descr' => 'countries'],
-            ['model' => StatsLocationRegion::class, 'type' => 'location_region', 'title' => 'Regions', 'icon' => 'country', 'descr' => 'regions'],
-            ['model' => StatsLocationCity::class, 'type' => 'location_city', 'title' => 'Cities', 'icon' => 'country', 'descr' => 'cities'],
+            ['model' => StatsLocationCountry::class, 'type' => 'location_country', 'title' => 'Countries', 'icon' => 'country'],
+            ['model' => StatsLocationRegion::class, 'type' => 'location_region', 'title' => 'Regions', 'icon' => 'country'],
+            ['model' => StatsLocationCity::class, 'type' => 'location_city', 'title' => 'Cities', 'icon' => 'country'],
         ],
         'device' => [
-            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS', 'descr' => 'operating systems'],
-            ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path', 'descr' => 'browsers'],
-            ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path', 'descr' => 'devices'],
+            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'OS'],
+            ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path'],
+            ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
         ],
     ];
 
