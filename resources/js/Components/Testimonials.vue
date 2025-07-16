@@ -8,7 +8,7 @@ defineProps({
 
 <template>
     <div v-for="testimonial in testimonials">
-        <div class="bg-white dark:bg-dark-800 p-8 border shadow-md border-gray-200 rounded-lg dark:border-gray-700  break-inside-avoid mb-6">
+        <div class="bg-white dark:bg-dark-800 p-8 border shadow-md border-gray-200 rounded-lg dark:border-dark-700  break-inside-avoid mb-6">
             <p class="leading-loose text-sm text-gray-500 dark:text-gray-400">
                 {{ testimonial.descr }}
             </p>

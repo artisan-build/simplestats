@@ -35,7 +35,7 @@ const highligtTeam = route().current().includes('teams') || (route().current().i
 
         <template #content>
             <div class="w-60">
-                <div v-if="showMangeTeams && $page.props.jetstream.canCreateTeams" class="border-b border-gray-200 dark:border-gray-600">
+                <div v-if="showMangeTeams && $page.props.jetstream.canCreateTeams" class="border-b border-gray-200 dark:border-dark-600">
                     <!-- Team Management -->
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         Manage Team

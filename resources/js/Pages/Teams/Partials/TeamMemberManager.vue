@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { router, useForm, usePage } from '@inertiajs/vue3';
+import {ref} from 'vue';
+import {router, useForm, usePage} from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import ActionSection from '@/Components/ActionSection.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
@@ -138,13 +138,13 @@ const displayableRole = (role) => {
                         <InputLabel for="roles" value="Role" />
                         <InputError :message="addTeamMemberForm.errors.role" class="mt-2" />
 
-                        <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                        <div class="relative z-0 mt-1 border border-gray-200 dark:border-dark-700 rounded-lg cursor-pointer">
                             <button
                                 v-for="(role, i) in availableRoles"
                                 :key="role.key"
                                 type="button"
                                 class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRoles).length - 1}"
+                                :class="{'border-t border-gray-200 dark:border-dark-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRoles).length - 1}"
                                 @click="addTeamMemberForm.role = role.key"
                             >
                                 <div :class="{'opacity-50': addTeamMemberForm.role && addTeamMemberForm.role != role.key}">
@@ -289,13 +289,13 @@ const displayableRole = (role) => {
 
             <template #content>
                 <div v-if="managingRoleFor">
-                    <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                    <div class="relative z-0 mt-1 border border-gray-200 dark:border-dark-700 rounded-lg cursor-pointer">
                         <button
                             v-for="(role, i) in availableRoles"
                             :key="role.key"
                             type="button"
                             class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                            :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i !== Object.keys(availableRoles).length - 1}"
+                            :class="{'border-t border-gray-200 dark:border-dark-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i !== Object.keys(availableRoles).length - 1}"
                             @click="updateRoleForm.role = role.key"
                         >
                             <div :class="{'opacity-50': updateRoleForm.role && updateRoleForm.role !== role.key}">

@@ -13,7 +13,7 @@ const getIntervalClass = (interval) => {
     if (selectedInterval.value === interval) {
         return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-white bg-indigo-500 rounded-md';
     } else {
-        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-gray-200 dark:hover:bg-gray-800 bg-transparent rounded-md hover:bg-gray-200';
+        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-gray-200 dark:hover:bg-dark-800 bg-transparent rounded-md hover:bg-gray-200';
     }
 };
 
@@ -48,7 +48,7 @@ const getPlanPrice = (amount, discount) => {
             </SectionHeader>
 
             <div class="text-center -mt-10 mb-10">
-                <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-gray-700">
+                <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-dark-700">
                     <div class="sm:-mx-0.5 flex">
                         <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">monthly</button>
                         <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">yearly</button>
@@ -60,8 +60,8 @@ const getPlanPrice = (amount, discount) => {
             <div class="hidden md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
             <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+plans.length/2+' lg:grid-cols-'+plans.length">
                 <div v-for="plan in plans"
-                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-gray-800"
-                     :class="plan.promoted ? 'bg-gray-800' : 'hover:bg-gray-200'"
+                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-dark-800"
+                     :class="plan.promoted ? 'bg-gray-800 dark:bg-dark-800' : ''"
                 >
                     <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-gray-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ plan.name }}</div>

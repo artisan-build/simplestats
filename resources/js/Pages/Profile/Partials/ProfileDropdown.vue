@@ -52,7 +52,7 @@ const logout = () => {
                 Notifications
             </DropdownLink>
 
-            <div class="border-t border-gray-200 dark:border-gray-600" />
+            <div class="border-t border-gray-200 dark:border-dark-600" />
 
             <!-- Authentication -->
             <form @submit.prevent="logout">

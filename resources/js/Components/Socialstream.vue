@@ -35,11 +35,11 @@ defineProps({
         </div>
 
         <div class="relative flex items-center pb-5 pt-3">
-            <div class="flex-grow border-t border-gray-200 dark:border-gray-300"></div>
+            <div class="flex-grow border-t border-gray-200 dark:border-dark-300"></div>
             <span class="flex-shrink text-gray-400 dark:text-gray-500 px-6">
                 {{ prompt }}
              </span>
-            <div class="flex-grow border-t border-gray-200 dark:border-gray-300"></div>
+            <div class="flex-grow border-t border-gray-200 dark:border-dark-300"></div>
         </div>
     </div>
 </template>
