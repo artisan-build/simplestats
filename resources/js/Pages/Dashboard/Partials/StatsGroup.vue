@@ -114,7 +114,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                     {{ group2Name[statsGroupType] }}
                 </div>
                 <div class="flex">
-                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 dark:text-gray-300 hover:text-indigo-500 border-b" :class="{'text-indigo-600 border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
+                    <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 dark:text-dark-300 hover:text-indigo-500 border-b" :class="{'text-indigo-600 border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
                         {{ stat.title }}
                     </button>
                 </div>
@@ -122,7 +122,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
             <div class="overflow-y-auto" style="max-height: 300px;">
                 <table class="w-full table-fixed">
                     <tbody>
-                        <tr class="sticky bg-white dark:bg-dark-800 top-0 font-medium text-gray-600 dark:text-gray-300">
+                        <tr class="sticky bg-white dark:bg-dark-800 top-0 font-medium text-gray-600 dark:text-dark-300">
                             <td style="width: 44%;" class="py-1.5">
                                 <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
                                     <span>Name</span>

@@ -87,7 +87,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+                    <span class="ms-2 text-sm text-gray-600 dark:text-dark-400">Remember me</span>
                 </label>
             </div>
 
@@ -100,15 +100,15 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
 
             <div class="flex items-center justify-around mt-4">
-                <Link v-if="$page.props.appType === 'default' && $page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="$page.props.appType === 'default' && $page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Sign up
                 </Link>
 
-                <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Forgot your password?
                 </Link>
 
-                <Link v-if="$page.props.appType === 'default'" :href="route('home')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="$page.props.appType === 'default'" :href="route('home')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Home
                 </Link>
             </div>

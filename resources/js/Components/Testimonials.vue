@@ -9,7 +9,7 @@ defineProps({
 <template>
     <div v-for="testimonial in testimonials">
         <div class="bg-white dark:bg-dark-800 p-8 border shadow-md border-gray-200 rounded-lg dark:border-dark-700  break-inside-avoid mb-6">
-            <p class="leading-loose text-sm text-gray-500 dark:text-gray-400">
+            <p class="leading-loose text-sm text-gray-500 dark:text-dark-400">
                 {{ testimonial.descr }}
             </p>
 
@@ -25,7 +25,7 @@ defineProps({
                             {{ testimonial.name }}
                         </span>
                     </div>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">{{ testimonial.title }} of <a class="underline hover:text-indigo-600" :href="testimonial.company_link" target="_blank">{{ testimonial.company }}</a></span>
+                    <span class="text-sm text-gray-500 dark:text-dark-400">{{ testimonial.title }} of <a class="underline hover:text-indigo-600" :href="testimonial.company_link" target="_blank">{{ testimonial.company }}</a></span>
                 </div>
             </div>
         </div>

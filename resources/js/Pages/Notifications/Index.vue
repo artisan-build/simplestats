@@ -56,7 +56,7 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                         <div v-for="(groupNotifications, group) in notifications[team.id]" class="col-span-6">
                             <div>
                                 <h3>{{ group2Name[group]?.title ?? group }}</h3>
-                                <p v-if="group2Name[group]?.description" class="mt-1 text-sm text-gray-600 dark:text-gray-400 text-justify">
+                                <p v-if="group2Name[group]?.description" class="mt-1 text-sm text-gray-600 dark:text-dark-400 text-justify">
                                     {{ group2Name[group]?.description }}
                                 </p>
                             </div>
@@ -77,7 +77,7 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                                     @change="() => update(notification)"
                                                     v-model:checked="notification.settings['tracking'][setting]"
                                                 />
-                                                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">
+                                                <span class="ms-2 text-sm text-gray-600 dark:text-dark-400">
                                                     {{ capitalize(setting) }}
                                                 </span>
                                             </label>

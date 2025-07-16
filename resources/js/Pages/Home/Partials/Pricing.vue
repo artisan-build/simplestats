@@ -13,7 +13,7 @@ const getIntervalClass = (interval) => {
     if (selectedInterval.value === interval) {
         return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-white bg-indigo-500 rounded-md';
     } else {
-        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-gray-200 dark:hover:bg-dark-800 bg-transparent rounded-md hover:bg-gray-200';
+        return 'focus:outline-none px-3 w-1/2 sm:w-auto py-1 sm:mx-0.5 text-gray-800 dark:text-dark-200 dark:hover:bg-dark-800 bg-transparent rounded-md hover:bg-gray-200';
     }
 };
 
@@ -63,7 +63,7 @@ const getPlanPrice = (amount, discount) => {
                      class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-dark-800"
                      :class="plan.promoted ? 'bg-gray-800 dark:bg-dark-800' : ''"
                 >
-                    <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-gray-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
+                    <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ plan.name }}</div>
                         <div v-if="selectedInterval === 'yearly' && plan.yearly_incentive !== 0">
                             <div class="text-sm bg-green-400 px-2 py-1 rounded text-gray-800">
@@ -72,7 +72,7 @@ const getPlanPrice = (amount, discount) => {
                         </div>
                     </div>
 
-                    <div class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-100'">
+                    <div class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-100'">
                         <span v-if="plan.discount && plan[priceIntervalKey] > 0">
                             <span class="line-through text-base">
                                 {{ getPlanPrice(plan[priceIntervalKey], 0) }}
@@ -82,23 +82,23 @@ const getPlanPrice = (amount, discount) => {
                         <span v-else>
                             {{ getPlanPrice(plan[priceIntervalKey], 0) }}
                         </span>
-                        <span class="text-base font-normal dark:text-gray-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
+                        <span class="text-base font-normal dark:text-dark-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
                             / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
                         </span>
                     </div>
 
-                    <p class="mt-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-400'">
+                    <p class="mt-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
                         {{ plan.short_description }}
                     </p>
 
                     <div class="mt-8 space-y-8">
                         <div v-for="(feature, option) in plan.features">
-                            <div v-if="plan.options[option]" class="flex items-center" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-400'">
+                            <div v-if="plan.options[option]" class="flex items-center" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-indigo-500">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                 </svg>
 
-                                <span class="mx-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-400'">{{ feature }}</span>
+                                <span class="mx-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ feature }}</span>
                             </div>
                             <div v-else class="flex items-center text-gray-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -119,7 +119,7 @@ const getPlanPrice = (amount, discount) => {
                  class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
                 * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
             </div>
-            <div class="mt-4 text-base text-center text-gray-600 dark:text-gray-400 px-4 sm:pm-0">
+            <div class="mt-4 text-base text-center text-gray-600 dark:text-dark-400 px-4 sm:pm-0">
                 If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact us</a>!
             </div>
         </div>

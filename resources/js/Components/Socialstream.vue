@@ -30,13 +30,13 @@ defineProps({
                class="flex gap-2 items-center justify-center transition duration-200 border border-gray-400 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
                :href="route('oauth.redirect', provider.id)">
                 <ProviderIcon :provider="provider" classes="h-6 w-6 mx-2"/>
-                <span class="block font-medium text-sm text-gray-700 dark:text-gray-300">{{ provider.buttonLabel || provider.name }}</span>
+                <span class="block font-medium text-sm text-gray-700 dark:text-dark-300">{{ provider.buttonLabel || provider.name }}</span>
             </a>
         </div>
 
         <div class="relative flex items-center pb-5 pt-3">
             <div class="flex-grow border-t border-gray-200 dark:border-dark-300"></div>
-            <span class="flex-shrink text-gray-400 dark:text-gray-500 px-6">
+            <span class="flex-shrink text-gray-400 dark:text-dark-500 px-6">
                 {{ prompt }}
              </span>
             <div class="flex-grow border-t border-gray-200 dark:border-dark-300"></div>

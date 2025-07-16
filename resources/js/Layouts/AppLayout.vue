@@ -37,7 +37,7 @@ const sidebarIsOpen = ref(false);
 
         <div class="w-screen flex flex-1 flex-col bg-gray-50 dark:bg-dark-900">
             <div class="lg:hidden px-6 py-3 -mb-6">
-                <button v-if="$page.props.introPassed" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="sidebarIsOpen = ! sidebarIsOpen">
+                <button v-if="$page.props.introPassed" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-dark-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="sidebarIsOpen = ! sidebarIsOpen">
                     <svg
                         class="h-6 w-6"
                         stroke="currentColor"

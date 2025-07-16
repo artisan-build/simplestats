@@ -39,7 +39,7 @@ const deleteInstance = () => {
         </template>
 
         <template #content>
-            <div class="max-w-xl text-sm text-gray-600 dark:text-gray-400">
+            <div class="max-w-xl text-sm text-gray-600 dark:text-dark-400">
                 Once an Instance is deleted, all of its data will be permanently deleted.
             </div>
 

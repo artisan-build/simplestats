@@ -44,7 +44,7 @@ const updateTeamName = () => {
 
                     <div class="leading-tight">
                         <span class="text-gray-900 dark:text-white">{{ team.owner.name }}</span>
-                        <span class="text-gray-700 dark:text-gray-300 text-sm">
+                        <span class="text-gray-700 dark:text-dark-300 text-sm">
                             ({{ team.owner.email }})
                         </span>
                     </div>

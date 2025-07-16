@@ -83,11 +83,11 @@ YOUR ANSWER HERE`;
                      class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-dark-800"
                      :class="license.promoted ? 'bg-gray-800 dark:bg-dark-800' : ''"
                 >
-                    <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-gray-100" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
+                    <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ license.name }}</div>
                     </div>
 
-                    <div class="mt-2 text-3xl font-semibold" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-200'">
+                    <div class="mt-2 text-3xl font-semibold" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-200'">
                         <span v-if="discount">
                             <span class="line-through text-base">
                                 {{ getPlanPrice(license.price, 0) }}
@@ -99,18 +99,18 @@ YOUR ANSWER HERE`;
                         </span>
                     </div>
 
-                    <p class="mt-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-400'">
+                    <p class="mt-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
                         {{ license.short_description }}
                     </p>
 
                     <div class="mt-8 space-y-8">
                         <div v-for="(feature, option) in license.features">
-                            <div class="flex items-center" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-400'">
+                            <div class="flex items-center" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-indigo-500">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                 </svg>
 
-                                <span class="mx-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-gray-400'">{{ feature }}</span>
+                                <span class="mx-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ feature }}</span>
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,7 @@ YOUR ANSWER HERE`;
                     ensuring complete data sovereignty and customizable security.
                 </p>
 
-                <p class="mt-10 leading-normal text-gray-600 dark:text-gray-300 text-lg">
+                <p class="mt-10 leading-normal text-gray-600 dark:text-dark-300 text-lg">
                     Start <a class="simpleLink italic" href="/docs/self-hosted.html" target="_blank">{{ appName }} Self-Hosted</a> today and take full control!<br>
                 </p>
 

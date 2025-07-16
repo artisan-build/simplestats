@@ -17,7 +17,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
                 <a href="/docs" class="px-3">Docs</a>
 
-                <Link v-if="$page.props.auth.user" :href="route('dashboard')" class=" text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                <Link v-if="$page.props.auth.user" :href="route('dashboard')" class=" text-gray-600 hover:text-gray-900 dark:text-dark-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
                     Dashboard
                 </Link>
                 <template v-else>

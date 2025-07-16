@@ -115,7 +115,7 @@ onMounted(() => {
                                class="flex items-center justify-center gap-2 p-2 text-sm font-medium rounded-lg cursor-pointer transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-dark-800"
                                :class="[
                                    form.theme === option.value
-                                   ? 'bg-white text-gray-700 dark:bg-dark-800 dark:text-gray-300'
+                                   ? 'bg-white text-gray-700 dark:bg-dark-800 dark:text-dark-300'
                                    : 'bg-gray-200 text-gray-900 dark:bg-dark-700 dark:text-white'
                                ]">
                         <component :is="option.icon" class="h-5 w-5"/>

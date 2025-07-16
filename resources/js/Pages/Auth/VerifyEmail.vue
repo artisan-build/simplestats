@@ -30,7 +30,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
             Email verification
         </template>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <div class="mb-4 text-sm text-gray-600 dark:text-dark-400">
             Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
         </div>
 
@@ -48,11 +48,11 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
             </div>
 
             <div class="flex items-center justify-around mt-4">
-                <Link :href="route('profile.show')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link :href="route('profile.show')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Profile
                 </Link>
 
-                <Link as="button" method="post" :href="route('logout')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link as="button" method="post" :href="route('logout')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Sign out
                 </Link>
             </div>

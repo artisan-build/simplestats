@@ -116,7 +116,7 @@ const displayableRole = (role) => {
 
                 <template #form>
                     <div class="col-span-6">
-                        <div class="max-w-xl text-sm text-gray-600 dark:text-gray-400">
+                        <div class="max-w-xl text-sm text-gray-600 dark:text-dark-400">
                             Please provide the email address of the person you would like to add to this team.
                         </div>
                     </div>
@@ -150,7 +150,7 @@ const displayableRole = (role) => {
                                 <div :class="{'opacity-50': addTeamMemberForm.role && addTeamMemberForm.role != role.key}">
                                     <!-- Role Name -->
                                     <div class="flex items-center">
-                                        <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': addTeamMemberForm.role == role.key}">
+                                        <div class="text-sm text-gray-600 dark:text-dark-400" :class="{'font-semibold': addTeamMemberForm.role == role.key}">
                                             <component class="inline-block h-4 w-4" :is="roleIcons[role.key]" />
                                             {{ role.name }}
                                         </div>
@@ -161,7 +161,7 @@ const displayableRole = (role) => {
                                     </div>
 
                                     <!-- Role Description -->
-                                    <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-start">
+                                    <div class="mt-2 text-xs text-gray-600 dark:text-dark-400 text-start">
                                         {{ role.description }}
                                     </div>
                                 </div>
@@ -199,7 +199,7 @@ const displayableRole = (role) => {
                 <template #content>
                     <div class="space-y-6">
                         <div v-for="invitation in team.team_invitations" :key="invitation.id" class="flex items-center justify-between">
-                            <div class="text-gray-600 dark:text-gray-400">
+                            <div class="text-gray-600 dark:text-dark-400">
                                 {{ invitation.email }}
                             </div>
 
@@ -301,7 +301,7 @@ const displayableRole = (role) => {
                             <div :class="{'opacity-50': updateRoleForm.role && updateRoleForm.role !== role.key}">
                                 <!-- Role Name -->
                                 <div class="flex items-center">
-                                    <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': updateRoleForm.role === role.key}">
+                                    <div class="text-sm text-gray-600 dark:text-dark-400" :class="{'font-semibold': updateRoleForm.role === role.key}">
                                         {{ role.name }}
                                     </div>
 
@@ -311,7 +311,7 @@ const displayableRole = (role) => {
                                 </div>
 
                                 <!-- Role Description -->
-                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                                <div class="mt-2 text-xs text-gray-600 dark:text-dark-400">
                                     {{ role.description }}
                                 </div>
                             </div>

@@ -81,7 +81,7 @@ watch(open, (val) => {
         v-slot="{ open: isOpen }"
     >
         <div class="relative">
-            <ListboxButton :class="['relative cursor-default rounded-md border bg-white dark:bg-dark-900 py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 dark:border-dark-700 text-gray-900 dark:text-gray-200', props.class]">
+            <ListboxButton :class="['relative cursor-default rounded-md border bg-white dark:bg-dark-900 py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 dark:border-dark-700 text-gray-900 dark:text-dark-200', props.class]">
                 <span class="block truncate">
                   <template v-if="multiple">
                     {{ selected.length ? selected.map(o => o[labelBy]).join(', ') : 'Select...' }}
@@ -103,7 +103,7 @@ watch(open, (val) => {
                     v-slot="{ active, selected: isSelected }"
                     as="template"
                 >
-                    <li :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900 dark:text-gray-200', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                    <li :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900 dark:text-dark-200', 'relative cursor-default select-none py-2 pl-3 pr-9']">
                         <span :class="[isSelected ? 'font-semibold' : 'font-normal', 'block truncate']">
                           {{ option[labelBy] }}
                         </span>

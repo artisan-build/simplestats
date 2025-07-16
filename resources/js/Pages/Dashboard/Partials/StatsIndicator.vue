@@ -64,7 +64,7 @@ function isSerieVisible() {
             :class="isSerieVisible() ? 'border-b-blue-400 bg-gray-100 dark:bg-dark-900/50' : 'border-white dark:border-dark-800'"
             @click="$emit('selectSeries', {index: serieIndex, data: serie})"
     >
-        <div class="flex justify-between text-sm @lg:text-lg font-medium" :class="isSerieVisible() ? 'text-black dark:text-gray-200' : 'text-gray-700 dark:text-gray-400'">
+        <div class="flex justify-between text-sm @lg:text-lg font-medium" :class="isSerieVisible() ? 'text-black dark:text-dark-200' : 'text-gray-700 dark:text-dark-400'">
             <div class="tracking-wider">
                 <span class="hidden @2xl:block">{{ serie.name }}</span>
                 <span class="block @2xl:hidden">{{ serie.nameSmall }}</span>
