@@ -14,7 +14,6 @@ use App\Models\Project;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Carbon\CarbonInterface;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -25,8 +24,9 @@ class StatsAggregationsService
 {
     public function storeAggregatedData(Collection $data, StatsFilterDto $filters): void
     {
-        if (! config('app.stats_aggregation_enabled'))
+        if (! config('app.stats_aggregation_enabled')) {
             return;
+        }
 
         $upsertData = $data->map(function ($item) use ($filters) {
             return [
@@ -46,9 +46,6 @@ class StatsAggregationsService
 
     /**
      * convert the objects to arrays for consistency
-     *
-     * @param  string  $sql
-     * @return array
      */
     protected function getDataArray(string $sql): array
     {
@@ -63,10 +60,10 @@ class StatsAggregationsService
         $statsTypeSnake = str($statsType)->snake()->toString();
 
         $statsDBType = 'stats_'.$statsTypeSnake.'_id';
-        $statsTable = "stats_".str($statsTypeSnake)->plural()->toString();
+        $statsTable = 'stats_'.str($statsTypeSnake)->plural()->toString();
 
         // for track not but for referer we also want to know the Direct / Unknown
-        $typeIdFallback =  (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
+        $typeIdFallback = (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
         $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
 
@@ -89,10 +86,11 @@ class StatsAggregationsService
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-//        echo nl2br($sql);die;
+        //        echo nl2br($sql);die;
 
         $dataArray = array_map(function ($item) {
             $item['net'] = round($item['net'], 2);
+
             return $item;
         }, $this->getDataArray($sql));
 
@@ -126,7 +124,7 @@ class StatsAggregationsService
                 ->where('filter_hash', $filters->makeHash())
                 ->whereBetween('time', [
                     $filterConditions['startDateStart'],
-                    $filterConditions['endDateEnd']
+                    $filterConditions['endDateEnd'],
                 ])
                 ->orderBy('time', 'desc')
                 ->pluck('data', 'id');
@@ -156,17 +154,17 @@ class StatsAggregationsService
     {
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
-        $teamCondition = " stats.team_id = ".auth()->user()->current_team_id." ";
+        $teamCondition = ' stats.team_id = '.auth()->user()->current_team_id.' ';
 
-        $projectCondition = "";
-        if (!empty($filters->projectId)) {
+        $projectCondition = '';
+        if (! empty($filters->projectId)) {
             $projectCondition .= " AND stats.project_id = {$filters->projectId} ";
         }
 
-        $projectInstanceCondition = "";
-        if (!empty($filters->instanceId)) {
+        $projectInstanceCondition = '';
+        if (! empty($filters->instanceId)) {
             $projectInstanceCondition .= " AND stats.instance_id = {$filters->instanceId} ";
-        } elseif (!empty($filters->projectId)) {
+        } elseif (! empty($filters->projectId)) {
             $projectInstanceCondition .= $projectCondition;
         }
 
@@ -174,66 +172,74 @@ class StatsAggregationsService
         $conditions['projectCondition'] = $teamCondition.$projectCondition;
         $conditions['projectInstanceCondition'] = $teamCondition.$projectInstanceCondition;
 
-        $trackingCondition = "";
+        $trackingCondition = '';
 
-        if (!empty($filters->locationCountry)) {
-            $locationCountryCondition = ($filters->locationCountry === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationCountry} ";
+        if (! empty($filters->locationCountry)) {
+            $locationCountryCondition = ($filters->locationCountry === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->locationCountry} ";
             $trackingCondition .= " AND stats.stats_location_country_id $locationCountryCondition ";
         }
 
-        if (!empty($filters->locationRegion)) {
-            $locationRegionCondition = ($filters->locationRegion === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationRegion} ";
+        if (! empty($filters->locationRegion)) {
+            $locationRegionCondition = ($filters->locationRegion === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->locationRegion} ";
             $trackingCondition .= " AND stats.stats_location_region_id $locationRegionCondition ";
         }
 
-        if (!empty($filters->locationCity)) {
-            $locationCityCondition = ($filters->locationCity === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->locationCity} ";
+        if (! empty($filters->locationCity)) {
+            $locationCityCondition = ($filters->locationCity === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->locationCity} ";
             $trackingCondition .= " AND stats.stats_location_city_id $locationCityCondition ";
         }
 
-        if (!empty($filters->deviceType)) {
-            $deviceTypeCondition = ($filters->deviceType === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->deviceType} ";
+        if (! empty($filters->deviceType)) {
+            $deviceTypeCondition = ($filters->deviceType === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->deviceType} ";
             $trackingCondition .= " AND stats.stats_device_type_id $deviceTypeCondition ";
         }
 
-        if (!empty($filters->devicePlatform)) {
-            $devicePlatformCondition = ($filters->devicePlatform === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->devicePlatform} ";
+        if (! empty($filters->devicePlatform)) {
+            $devicePlatformCondition = ($filters->devicePlatform === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->devicePlatform} ";
             $trackingCondition .= " AND stats.stats_device_platform_id $devicePlatformCondition ";
         }
 
-        if (!empty($filters->deviceBrowser)) {
-            $deviceBrowserCondition = ($filters->deviceBrowser === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->deviceBrowser} ";
+        if (! empty($filters->deviceBrowser)) {
+            $deviceBrowserCondition = ($filters->deviceBrowser === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->deviceBrowser} ";
             $trackingCondition .= " AND stats.stats_device_browser_id $deviceBrowserCondition ";
         }
 
-        if (!empty($filters->trackReferer)) {
-            $trackRefererCondition = ($filters->trackReferer === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackReferer} ";
+        if (! empty($filters->trackReferer)) {
+            $trackRefererCondition = ($filters->trackReferer === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->trackReferer} ";
             $trackingCondition .= " AND stats.stats_track_referer_id $trackRefererCondition ";
         }
 
-        if (!empty($filters->trackSource)) {
-            $trackSourceCondition = ($filters->trackSource === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->trackSource} ";
+        if (! empty($filters->trackSource)) {
+            $trackSourceCondition = ($filters->trackSource === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->trackSource} ";
             $trackingCondition .= " AND stats.stats_track_source_id $trackSourceCondition ";
         }
 
-        if (!empty($filters->trackMedium) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)      $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
-        if (!empty($filters->trackCampaign) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)    $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
-        if (!empty($filters->trackTerm) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)        $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
-        if (!empty($filters->trackContent) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC)     $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
+        if (! empty($filters->trackMedium) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC) {
+            $trackingCondition .= " AND stats.stats_track_medium_id = {$filters->trackMedium} ";
+        }
+        if (! empty($filters->trackCampaign) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC) {
+            $trackingCondition .= " AND stats.stats_track_campaign_id = {$filters->trackCampaign} ";
+        }
+        if (! empty($filters->trackTerm) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC) {
+            $trackingCondition .= " AND stats.stats_track_term_id = {$filters->trackTerm} ";
+        }
+        if (! empty($filters->trackContent) && $filters->trackSource !== StatsFilterDto::TRACK_ORGANIC) {
+            $trackingCondition .= " AND stats.stats_track_content_id = {$filters->trackContent} ";
+        }
 
-        if (!empty($filters->pageEntry)) {
-            $pageEntryCondition = ($filters->pageEntry === StatsFilterDto::TRACK_ORGANIC) ? " IS NULL " : " = {$filters->pageEntry} ";
+        if (! empty($filters->pageEntry)) {
+            $pageEntryCondition = ($filters->pageEntry === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->pageEntry} ";
             $trackingCondition .= " AND stats.stats_page_entry_id $pageEntryCondition ";
         }
 
-        $conditions['trackingConditions'] = "";
-        $conditions['trackingUserJoinConditions'] = "RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id";
-        $conditions['trackingVisitorJoinConditions'] = "RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id";
+        $conditions['trackingConditions'] = '';
+        $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id';
+        $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id';
 
-        if (!empty($trackingCondition)) {
+        if (! empty($trackingCondition)) {
             $conditions['trackingConditions'] = $trackingCondition;
-            $conditions['trackingUserJoinConditions'] .= ' ' . str_replace('stats.', 'su.', $trackingCondition);
-            $conditions['trackingVisitorJoinConditions'] .= ' ' . str_replace('stats.', 'sv.', $trackingCondition);
+            $conditions['trackingUserJoinConditions'] .= ' '.str_replace('stats.', 'su.', $trackingCondition);
+            $conditions['trackingVisitorJoinConditions'] .= ' '.str_replace('stats.', 'sv.', $trackingCondition);
         }
 
         return $conditions;
@@ -243,10 +249,6 @@ class StatsAggregationsService
      * We consider every data above a missing date as compromised.
      * If data changes in retrospective (e.g., when a payment state gets changed or updated),
      * every data above may not be properly evaluated. So we "getRawData" of all data above the date.
-     *
-     * @param  Collection  $aggregatedData
-     * @param  StatsFilterDto  $filters
-     * @return Collection
      */
     private function getMissingAggregatedData(Collection $aggregatedData, StatsFilterDto $filters): Collection
     {
@@ -309,7 +311,7 @@ class StatsAggregationsService
         );
 
         $sql = strtr($builder->build(), $this->formatFilter($filterConditions));
-//        echo nl2br($sql);die;
+        //        echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
         $this->applyContinuousLTAggregation($dataArray);
@@ -345,8 +347,6 @@ class StatsAggregationsService
      * If a stat updates, every data above the stat time is invalid, so we need to delete it.
      * Same counts for data-imports.
      *
-     * @param  BaseStat  $stat
-     * @return void
      * @throws Exception
      */
     public function invalidateByStatsUpdate(BaseStat $stat): void
@@ -366,13 +366,13 @@ class StatsAggregationsService
                     $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
                 })
                 // stats must be re-aggregated on project basis
-                ->orWhere(function ($query) use ($stat) {
-                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', null);
-                })
+                    ->orWhere(function ($query) use ($stat) {
+                        $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', null);
+                    })
                 // stats must be re-aggregated on instance basis
-                ->orWhere(function ($query) use ($stat) {
-                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', $stat->instance_id);
-                });
+                    ->orWhere(function ($query) use ($stat) {
+                        $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', $stat->instance_id);
+                    });
             })->delete();
             // other projects and instances aggregations will remain
             // but unfortunately we have to re-aggregate the whole team
@@ -387,13 +387,13 @@ class StatsAggregationsService
                 $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
             })
             // stats must be re-aggregated on project basis
-            ->orWhere(function ($query) use ($instance) {
-                $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', null);
-            })
+                ->orWhere(function ($query) use ($instance) {
+                    $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', null);
+                })
             // stats must be re-aggregated on instance basis
-            ->orWhere(function ($query) use ($instance) {
-                $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', $instance->id);
-            });
+                ->orWhere(function ($query) use ($instance) {
+                    $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', $instance->id);
+                });
         })->delete();
     }
 
@@ -405,9 +405,9 @@ class StatsAggregationsService
                 $query->where('team_id', '=', $project->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
             })
             // stats must be re-aggregated on project basis
-            ->orWhere(function ($query) use ($project) {
-                $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id)->where('instance_id', '=', null);
-            });
+                ->orWhere(function ($query) use ($project) {
+                    $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id)->where('instance_id', '=', null);
+                });
         })->delete();
     }
 

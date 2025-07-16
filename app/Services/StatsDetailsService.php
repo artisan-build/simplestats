@@ -11,7 +11,8 @@ class StatsDetailsService
     public function __construct(
         private StatsService $statsService,
         private StatsAggregationsService $statsAggregationsService,
-    ) {}
+    ) {
+    }
 
     public function getStats(StatsFilterDto $filters)
     {
@@ -51,9 +52,9 @@ class StatsDetailsService
 
     public function getRangeTypes(): Collection
     {
-        return collect(StatsRangeType::values())->transform(fn($name, $key) => [
+        return collect(StatsRangeType::values())->transform(fn ($name, $key) => [
             'id' => $name,
-            'name' => ucfirst($name)
+            'name' => ucfirst($name),
         ]);
     }
 
@@ -62,7 +63,7 @@ class StatsDetailsService
         return [
             'id' => StatsFilterDto::TRACK_ALL,
             'name' => 'All',
-            'usage' => StatsService::getTrackingUsageBitsCount()
+            'usage' => StatsService::getTrackingUsageBitsCount(),
         ];
     }
 }

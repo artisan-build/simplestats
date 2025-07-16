@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\StatsTrackReferer;
 use AshAllenDesign\FaviconFetcher\Facades\Favicon;
 use Exception;
 use Illuminate\Http\Client\PendingRequest;
@@ -23,18 +22,18 @@ class FaviconService
     }
 
     /**
-     * @param  string  $domain domain without http or www prefixed...
+     * @param  string  $domain  domain without http or www prefixed...
      */
     public function download(string $domain): bool
     {
-        $basePath = public_path("icons");
-        $refererPath = $basePath . "/track_referer";
+        $basePath = public_path('icons');
+        $refererPath = $basePath.'/track_referer';
 
         if (! is_dir($refererPath)) {
             mkdir($refererPath, 0775, true);
         }
 
-        $filePath = $refererPath . "/$domain.ico";
+        $filePath = $refererPath."/$domain.ico";
 
         // TODO evtl. last modify prüfen und monatlich favicon neu fetchen?
         if (file_exists($filePath)) {
@@ -55,7 +54,7 @@ class FaviconService
         return true;
     }
 
-    private function tryDirectly (string $faviconUrl, string $filePath): bool
+    private function tryDirectly(string $faviconUrl, string $filePath): bool
     {
         return $this->try2GetAndStoreFavicon($faviconUrl, $filePath);
     }
@@ -68,7 +67,8 @@ class FaviconService
             if ($favicon = Favicon::fetch($domainUrl)) {
                 $faviconUrl = $favicon->getFaviconUrl();
             }
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         return $this->try2GetAndStoreFavicon($faviconUrl, $filePath);
     }
@@ -77,7 +77,8 @@ class FaviconService
     {
         try {
             $faviconResponse = $this->httpClient->get($faviconUrl);
-        } catch (Exception $e) {}
+        } catch (Exception $e) {
+        }
 
         if (isset($faviconResponse) && $faviconResponse->successful()) {
             $contentType = $faviconResponse->header('Content-Type');
@@ -86,6 +87,7 @@ class FaviconService
             // Check if the Content-Type is an image
             if (strpos($contentType, 'image') !== false && strpos($contentType, 'svg') === false && strlen($body) > 0) {
                 file_put_contents($filePath, $body);
+
                 return true;
             }
         }
