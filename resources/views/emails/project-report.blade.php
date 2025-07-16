@@ -78,9 +78,10 @@ foreach ($statsGroups as $key => $statsGroup) {
 @endphp
 
 @component('mail::message')
-# {{ $frequency->title() }} report
+# {{ $frequency->title() }} Report
 
-## {{ $timeRange }}<br>
+## {{ $timeRange }}
+![Chart]({{ asset('images/mail/report_chart.png') }})<br>
 <br>
 📬 Here is your {{ $frequency->value }} report for {{ $projectName }}:<br>
 @component('mail::table')
