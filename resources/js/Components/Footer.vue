@@ -3,7 +3,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
-    <footer class="relative text-center px-4 text-sm md:px-4 py-4  bg-gray-100 dark:bg-dark-800 text-gray-600 dark:text-gray-400 text-xs">
+    <footer class="relative text-center px-4 text-sm md:px-4 py-4  bg-gray-50 dark:bg-dark-800 text-gray-600 dark:text-gray-400 text-xs">
         <span>&copy; {{ new Date().getFullYear() }} {{ appName }}</span>
         <span class="px-2">&nbsp;|&nbsp;</span>
         A product by

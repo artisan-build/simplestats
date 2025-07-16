@@ -3,7 +3,6 @@ import {ref} from 'vue';
 import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import Navigation from "@/Components/Navigation.vue";
-import Footer from "@/Components/Footer.vue";
 import MenuToggler from "@/Components/MenuToggler.vue";
 import EnvBadge from "@/Components/EnvBadge.vue";
 
@@ -77,7 +76,6 @@ const sidebarIsOpen = ref(false);
 
                 <slot />
             </main>
-            <Footer v-if="$page.props.appType === 'default' && $page.props.introPassed" />
         </div>
     </div>
 </template>
