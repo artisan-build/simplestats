@@ -86,7 +86,7 @@ class StatsAggregationsService
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-        //        echo nl2br($sql);die;
+        //echo nl2br($sql);die;
 
         $dataArray = array_map(function ($item) {
             $item['net'] = round($item['net'], 2);

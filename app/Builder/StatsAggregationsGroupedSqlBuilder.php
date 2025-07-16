@@ -122,7 +122,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= "
                 COALESCE(lt_reg.count, 0) as reg,
-                COALESCE(lt_reg.count / lt_visitors.count * 100, 0) as cr,
+                ROUND(COALESCE((lt_reg.count * 100.0 / NULLIF(lt_visitors.count, 0)), 0), 2) AS cr,
                 COALESCE(pd_dau.count, 0) AS dau,";
         }
 
