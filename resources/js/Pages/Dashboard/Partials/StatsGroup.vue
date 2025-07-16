@@ -109,8 +109,10 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
             </div>
         </div>
         <div v-else class="p-4 text-sm @md:text-base">
-            <div class="flex justify-between mb-4">
-                <div class="font-bold text-center hidden @xl:block">{{ group2Name[statsGroupType] }}</div>
+            <div class="flex flex-col @lg:flex-row justify-between mb-4">
+                <div class="font-bold text-center mb-3 @lg:mb-0">
+                    {{ group2Name[statsGroupType] }}
+                </div>
                 <div class="flex">
                     <button v-for="stat in statsGroup" class="flex pb-2 px-2 font-medium text-gray-500 dark:text-gray-300 hover:text-indigo-500 border-b" :class="{'text-indigo-600 border-b-indigo-600': filters.statsType === stat.type}" @click="changeGroup(stat.type, statsGroupType)">
                         {{ stat.title }}

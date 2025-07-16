@@ -260,8 +260,8 @@ const chartLenght = charts.length;
 
 <template>
     <div class="grid gap-4" :class="{
-        'xl:grid-cols-1': chartLenght === 1,
-        'xl:grid-cols-2': chartLenght >= 2,
+        'md:grid-cols-1': chartLenght === 1,
+        'md:grid-cols-2': chartLenght >= 2,
         '3xl:grid-cols-3': page.props.auth.user.settings.showAdvanced && chartLenght > 2,
         '5xl:grid-cols-4': !page.props.auth.user.settings.showAdvanced && chartLenght > 2
     }">

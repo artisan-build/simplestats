@@ -300,4 +300,10 @@ const selectedSeries = () => {
 .vue-apexcharts {
     cursor: pointer;
 }
+
+@media (max-width: 1023px) {
+    :deep(.apexcharts-xaxis) {
+        display: none;
+    }
+}
 </style>

@@ -64,7 +64,7 @@ function isSerieVisible() {
             :class="isSerieVisible() ? 'border-b-blue-400 bg-gray-100 dark:bg-dark-900/60' : 'border-white dark:border-dark-800'"
             @click="$emit('selectSeries', {index: serieIndex, data: serie})"
     >
-        <div class="flex justify-between text-lg font-medium" :class="isSerieVisible() ? 'text-black dark:text-gray-200' : 'text-gray-700 dark:text-gray-400'">
+        <div class="flex justify-between text-sm @lg:text-lg font-medium" :class="isSerieVisible() ? 'text-black dark:text-gray-200' : 'text-gray-700 dark:text-gray-400'">
             <div class="tracking-wider">
                 <span class="hidden @2xl:block">{{ serie.name }}</span>
                 <span class="block @2xl:hidden">{{ serie.nameSmall }}</span>
@@ -74,7 +74,7 @@ function isSerieVisible() {
             </div>
         </div>
         <div class="flex justify-between items-center">
-            <div class="text-base @md:text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
+            <div class="text-sm @lg:text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
                 <span v-if="serie.formatter === 'percent'">
                     {{
                          formatMap[serie.formatter](serie.indicator, {
@@ -100,7 +100,7 @@ function isSerieVisible() {
                     }}
                 </span>
             </div>
-            <div class="text-sm font-bold" :class="increaseType.class">
+            <div class="text-xs @lg:text-sm font-bold" :class="increaseType.class">
                     <span v-if="increase !== 0">
                         {{ increaseType.formatter(increase, {
                         minimumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
