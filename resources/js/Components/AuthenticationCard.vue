@@ -4,14 +4,13 @@ import Footer from "@/Components/Footer.vue";
 import Testimonials from "@/Components/Testimonials.vue";
 import {testimonials} from "@/Data/testimonials.js";
 import {sample} from "lodash";
-import {usePage} from "@inertiajs/vue3";
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
 
 const selectedTestimonial = sample(testimonials);
 </script>
 
 <template>
-    <div class="w-full min-h-screen flex bg-white dark:bg-gray-900">
+    <div class="w-full min-h-screen flex bg-white dark:bg-dark-900">
         <div class="relative w-full md:w-1/2 flex items-center">
             <Gradient position="absolute" />
             <div class="relative mx-auto w-full sm:max-w-lg px-10 xl:px-0">
