@@ -111,7 +111,7 @@ const chartOptions = ref({
             show: false,
             offsetY: 12,
         },
-        background: isDarkMode.value ? '#272733' : '#FFFFFF',
+        background: isDarkMode.value ? '#262626' : '#FFFFFF',
     },
     title: {
         text: props.chart.name,

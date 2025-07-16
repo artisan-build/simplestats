@@ -24,9 +24,9 @@ const sidebarIsOpen = ref(false);
 
         <Banner />
 
-        <div @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-dark-950/75 lg:hidden"></div>
+        <div v-if="$page.props.introPassed" @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-dark-950/75 lg:hidden"></div>
 
-        <aside
+        <aside v-if="$page.props.introPassed"
             class="overflow-y-auto bg-white dark:bg-dark-800 px-3 fixed border-r dark:border-dark-700 shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all -translate-x-full rtl:translate-x-full"
             :class="{
                 'lg:z-0 lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
@@ -38,7 +38,7 @@ const sidebarIsOpen = ref(false);
 
         <div class="w-screen flex flex-1 flex-col bg-gray-50 dark:bg-dark-900">
             <div class="lg:hidden px-6 py-3 -mb-6">
-                <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="sidebarIsOpen = ! sidebarIsOpen">
+                <button v-if="$page.props.introPassed" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out" @click="sidebarIsOpen = ! sidebarIsOpen">
                     <svg
                         class="h-6 w-6"
                         stroke="currentColor"
@@ -77,7 +77,7 @@ const sidebarIsOpen = ref(false);
 
                 <slot />
             </main>
-            <Footer v-if="$page.props.appType === 'default'" />
+            <Footer v-if="$page.props.appType === 'default' && $page.props.introPassed" />
         </div>
     </div>
 </template>

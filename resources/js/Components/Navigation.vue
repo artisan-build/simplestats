@@ -23,7 +23,7 @@ const docsAction = (e) => {
                 </Link>
             </header>
         </div>
-        <ul v-if="$page.props.introPassed" class="flex flex-col gap-y-3">
+        <ul class="flex flex-col gap-y-3">
             <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('dashboard')" :active="route().current().startsWith('dashboard')">
                     <template #icon>
@@ -88,7 +88,7 @@ const docsAction = (e) => {
                     Support
                 </NavLink>
             </li>
-            <li v-if="$page.props.introPassed" class="flex flex-col gap-y-1">
+            <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('teams.show', $page.props.auth.user.current_team)" :active="route().current().startsWith('teams')">
                     <template #icon>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

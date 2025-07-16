@@ -177,7 +177,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="teamId"
                                         v-model="$page.props.auth.user.current_team_id"
-                                        class="mt-1 block w-40"
+                                        class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="$page.props.auth.user.all_teams"
                                         @change="teamChanged"
                                     />
@@ -187,7 +187,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="projectId"
                                         v-model="form.projectId"
-                                        class="mt-1 block w-40"
+                                        class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="teamStats.projects"
                                         @change="filterChanged"
                                     />
@@ -197,7 +197,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="instanceId"
                                         v-model="form.instanceId"
-                                        class="mt-1 block w-40"
+                                        class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="currentProject.instances"
                                         @change="filterChanged"
                                     />
@@ -229,7 +229,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangeAmount"
                                         v-model="form.rangeAmount"
-                                        class="mt-1 block"
+                                        class="mt-1 block dark:!bg-dark-800"
                                         :options="rangeAmounts"
                                         @change="filterChanged"
                                     />
@@ -239,7 +239,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangeType"
                                         v-model="form.rangeType"
-                                        class="mt-1 block w-28"
+                                        class="mt-1 block w-28 dark:!bg-dark-800"
                                         :options="rangeTypes"
                                         @change="filterChanged"
                                     />
@@ -254,7 +254,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangePreset"
                                         v-model="presetSelected"
-                                        class="mt-1 block w-40"
+                                        class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="presets"
                                         @change="presetChanged"
                                     />
@@ -269,7 +269,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangeComparison"
                                         v-model="form.comparison"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full dark:!bg-dark-800"
                                         :options="comparisonTypes"
                                         @change="filterChanged"
                                     />
