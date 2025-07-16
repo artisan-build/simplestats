@@ -21,7 +21,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 Powerful analytics with&nbsp;<span class="text-indigo-500">zero effort</span>
             </SectionHeader>
 
-            <div class="flex mx-auto -mt-20 xl:-mt-0 max-w-screen-md xl:max-w-screen-xl">
+            <div class="flex mx-auto max-w-screen-md xl:max-w-screen-xl">
                 <div class="hidden xl:block border-r-2 border-dotted border-indigo-400 relative left-1/2"></div>
                 <div class="flex-grow grid gap-4 grid-cols-1 xl:grid-cols-[1fr_auto_1fr] items-center relative">
                     <GridPlaceholder />
@@ -82,7 +82,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <GridPlaceholder />
-                    <StepText :content="`You’re all set! <b>${appName}</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what’s happening in your app - in real time.`" />
+                    <StepText class="hidden xl:block" :content="`You’re all set! <b>${appName}</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what’s happening in your app - in real time.`" />
                 </div>
             </div>
             <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
