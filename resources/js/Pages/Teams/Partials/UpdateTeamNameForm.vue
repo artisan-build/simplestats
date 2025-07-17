@@ -1,24 +1,39 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {onMounted, ref} from "vue";
+import SelectInput from "@/Components/SelectInput.vue";
 
 const props = defineProps({
     team: Object,
     permissions: Object,
 });
 
+const timezones = ref([]);
+
 const form = useForm({
     name: props.team.name,
+    currency: props.team.currency,
+    timezone: props.team.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+});
+
+const fetchTimezones = async () => {
+    const response = await axios.get(route('timezones.index'));
+    timezones.value = response.data;
+};
+
+onMounted(() => {
+    fetchTimezones();
 });
 
 const updateTeamName = () => {
     form.put(route('teams.update', props.team), {
-        errorBag: 'updateTeamName',
+        errorBag: 'updateTeam',
         preserveScroll: true,
     });
 };
@@ -27,11 +42,11 @@ const updateTeamName = () => {
 <template>
     <FormSection @submitted="updateTeamName">
         <template #title>
-            Team Name
+            Team Details
         </template>
 
         <template #description>
-            The team's name and owner information.
+            The team details and information.
         </template>
 
         <template #form>
@@ -64,6 +79,37 @@ const updateTeamName = () => {
                 />
 
                 <InputError :message="form.errors.name" class="mt-2" />
+            </div>
+
+            <!-- Team Currency -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="currency" value="Team Currency" />
+
+                <TextInput
+                    id="currency"
+                    v-model="form.currency"
+                    type="text"
+                    class="mt-1 block w-full"
+                    :disabled="! permissions.canUpdateTeam"
+                    placeholder="USD"
+                />
+
+                <InputError :message="form.errors.currency" class="mt-2" />
+            </div>
+
+            <!-- Team Timezone -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="timezone" value="Team Timezone" />
+
+                <SelectInput
+                    id="timezone"
+                    v-model="form.timezone"
+                    class="mt-1 block w-full"
+                    :disabled="! permissions.canUpdateTeam"
+                    :options="timezones"
+                />
+
+                <InputError :message="form.errors.timezone" class="mt-2" />
             </div>
         </template>
 

@@ -11,7 +11,7 @@ class AppHelper
 {
     public static function ensureTeamTimezone(): void
     {
-        $teamTimezone = auth()->user()->team->timezone;
+        $teamTimezone = auth()->user()->team->timezone ?: 'UTC';
 
         if (config('app.timezone') !== $teamTimezone) {
             Config::set('app.timezone', $teamTimezone);

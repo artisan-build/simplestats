@@ -33,10 +33,6 @@ routeTesting('all GET routes')
             $project = Project::get()->first();
             $instance = Instance::get()->first();
 
-            if ($uri === 'intro') {
-                $project->delete();
-            }
-
             $user = User::where('email', config('app.test.user')['email'])->firstOrFail();
             $this->actingAs($user);
 

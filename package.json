@@ -37,7 +37,6 @@
         "floating-vue": "^5.2.2",
         "lodash": "^4.17.21",
         "pluralize": "^8.0.0",
-        "vue3-apexcharts": "^1.6.0",
-        "vue3-form-wizard": "^0.2.3"
+        "vue3-apexcharts": "^1.6.0"
     }
 }

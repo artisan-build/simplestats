@@ -1,16 +1,21 @@
 <?php
 
+use App\Http\Controllers\TeamEditController;
+use App\Models\Team;
+use Illuminate\Http\Request;
 use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
-use App\Http\Controllers\IntroController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectInstanceController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\UserSettingsController;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 /*
@@ -27,6 +32,7 @@ use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 Route::get('/', HomeController::class)->name('home');
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
+Route::resource('timezones', TimezoneController::class)->only(['index']);
 
 Route::middleware([
     'auth:sanctum',
@@ -39,7 +45,7 @@ Route::middleware([
 
     Route::impersonate();
 
-    Route::any('intro', IntroController::class)->name('intro');
+    Route::get('teams/{team}/edit', TeamEditController::class)->name('teams.edit');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
@@ -52,7 +58,7 @@ Route::middleware([
     Route::post('data-import/{data_import}/rollback', [DataImportController::class, 'rollback'])->name('data-import.rollback');
 
     // Projects
-    Route::resource('projects', ProjectController::class)->except(['create', 'edit']);
+    Route::resource('projects', ProjectController::class)->except(['edit']);
 
     // Instances
     Route::resource('projects.instances', ProjectInstanceController::class)->except(['create', 'edit']);

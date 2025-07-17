@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DisableMutateEndpointsInDemoEnv
+class DisableMutateRequestsInDemoEnv
 {
     /**
      * Handle an incoming request.
@@ -20,7 +20,6 @@ class DisableMutateEndpointsInDemoEnv
         }
 
         if ($request->isMethod('get') ||
-            $request->is('intro') ||
             $request->is('login') ||
             $request->is('logout') ||
             $request->is('spark/*') ||

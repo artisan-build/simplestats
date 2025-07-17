@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-class ForwardToIntro
+class ForwardToOnboarding
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,15 @@ class ForwardToIntro
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Str::of($request->getRequestUri())->contains(RouteServiceProvider::HOME) &&
-            $request->user()->currentTeam->instances()->count() < 1
-        ) {
-            return redirect()->route('intro');
+        $currentTeam = $request->user()?->currentTeam;
+
+        if (Str::of($request->getRequestUri())->contains(RouteServiceProvider::HOME)) {
+            // indicator that team onboarding is not finished
+            if (! $currentTeam->currency) {
+                return redirect()->route('teams.edit', $currentTeam);
+            } elseif ($currentTeam->instances()->count() < 1) {
+                //return redirect()->route('intro');
+            }
         }
 
         return $next($request);

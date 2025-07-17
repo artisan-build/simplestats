@@ -102,11 +102,9 @@ class ProjectInstanceController extends Controller
 
         $token = $instance->tokens()->first();
 
-        // as we also redirect here from the intro, we can't use redirect->back() here...
-        return redirect()->route('projects.instances.show', [$project, $instance])->with('flash', array_merge(
-            session('flash') ?? [], [
+        return redirect()->route('projects.instances.show', [$project, $instance])->with('flash', [
             'token' => $token->token_plain_part,
             'trackedVisitors' => StatsVisitor::count(),
-        ]));
+        ]);
     }
 }

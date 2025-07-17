@@ -6,7 +6,9 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Contracts\UpdatesTeamNames;
+use Spatie\ValidationRules\Rules\Currency;
 
 class UpdateTeamName implements UpdatesTeamNames
 {
@@ -21,10 +23,14 @@ class UpdateTeamName implements UpdatesTeamNames
 
         Validator::make($input, [
             'name' => ['required', 'string', 'min:1', 'max:30'],
-        ])->validateWithBag('updateTeamName');
+            'currency' => ['required', new Currency()],
+            'timezone' => ['required', Rule::in(timezone_identifiers_list())],
+        ])->validateWithBag('updateTeam');
 
         $team->forceFill([
             'name' => $input['name'],
+            'currency' => $input['currency'],
+            'timezone' => $input['timezone'],
         ])->save();
     }
 }
