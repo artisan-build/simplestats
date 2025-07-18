@@ -1,6 +1,6 @@
 <script setup>
 import {formatMap, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
-import {ArrowTrendingDownIcon, ArrowTrendingUpIcon, ScaleIcon} from "@heroicons/vue/20/solid/index.js";
+import {ArrowTrendingDownIcon, ArrowTrendingUpIcon} from "@heroicons/vue/20/solid/index.js";
 
 const props = defineProps({
     serie: Object,
@@ -32,10 +32,10 @@ if (increase === Infinity) {
 
 const increaseTypes = {
     "0": {
-        f: formatNumber,
+        formatter: formatNumber,
         description: 'stable',
-        class: 'text-yellow-600',
-        icon: ScaleIcon,
+        class: 'text-blue-400',
+        // icon: ScaleIcon,
     },
     "1": {
         formatter: formatPercent,
@@ -69,7 +69,7 @@ function isSerieVisible() {
                 <span class="hidden @2xl:block">{{ serie.name }}</span>
                 <span class="block @2xl:hidden">{{ serie.nameSmall }}</span>
             </div>
-            <div class="hidden sm:block" :class="increaseType.class">
+            <div v-if="increaseType.icon" class="hidden sm:block" :class="increaseType.class">
                 <component class="inline-block h-5 w-5" :is="increaseType.icon" />
             </div>
         </div>
@@ -101,13 +101,13 @@ function isSerieVisible() {
                 </span>
             </div>
             <div class="text-xs @lg:text-sm font-bold" :class="increaseType.class">
-                    <span v-if="increase !== 0">
-                        {{ increaseType.formatter(increase, {
-                        minimumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
-                        maximumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
-                    }) }}
-                    </span>
-                <span v-else class="text-sm">stable</span>
+                <span v-if="increase !== 0">
+                    {{ increaseType.formatter(increase, {
+                    minimumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
+                    maximumFractionDigits: (Math.abs(increase) >= 10) ? 1 : 2,
+                }) }}
+                </span>
+<!--                <span v-else class="text-sm">stable</span>-->
             </div>
         </div>
     </button>
