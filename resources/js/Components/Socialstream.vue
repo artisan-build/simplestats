@@ -27,7 +27,7 @@ defineProps({
         <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3"></div>
         <div class="grid gap-4" :class="'grid-cols-'+providers.length">
             <a v-for="provider in providers" :key="provider.id"
-               class="flex gap-2 items-center justify-center transition duration-200 border border-gray-400 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
+               class="flex gap-2 items-center justify-center transition duration-200 border border-gray-400 dark:border-dark-600 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md dark:hover:border-dark-400 font-normal text-center"
                :href="route('oauth.redirect', provider.id)">
                 <ProviderIcon :provider="provider" classes="h-6 w-6 mx-2"/>
                 <span class="block font-medium text-sm text-gray-700 dark:text-dark-300">{{ provider.buttonLabel || provider.name }}</span>
@@ -35,11 +35,11 @@ defineProps({
         </div>
 
         <div class="relative flex items-center pb-5 pt-3">
-            <div class="flex-grow border-t border-gray-200 dark:border-dark-300"></div>
+            <div class="flex-grow border-t border-gray-200 dark:border-dark-500"></div>
             <span class="flex-shrink text-gray-400 dark:text-dark-500 px-6">
                 {{ prompt }}
              </span>
-            <div class="flex-grow border-t border-gray-200 dark:border-dark-300"></div>
+            <div class="flex-grow border-t border-gray-200 dark:border-dark-500"></div>
         </div>
     </div>
 </template>
