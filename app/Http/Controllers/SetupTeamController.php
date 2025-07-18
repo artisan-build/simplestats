@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Jetstream\UpdateTeam;
-use App\Http\Requests\ProjectRequest;
-use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class SetupTeamController extends Controller
 {
-    public function create(Request $request)
+    public function index(Request $request)
     {
         return Inertia::render('Setup/Team', [
             'team' => $request->user()->currentTeam,
@@ -32,6 +29,6 @@ class SetupTeamController extends Controller
             ]);
         }
 
-        return redirect()->route('setup.project.create');
+        return redirect()->route('setup.project.index');
     }
 }

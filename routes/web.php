@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SetupInstallController;
 use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\SetupTeamController;
 use App\Models\Team;
@@ -46,8 +47,9 @@ Route::middleware([
 
     Route::impersonate();
 
-    Route::resource('setup/team', SetupTeamController::class)->only(['create', 'store'])->names('setup.team');
-    Route::resource('setup/project', SetupProjectController::class)->only(['create', 'store'])->names('setup.project');
+    Route::resource('setup/team', SetupTeamController::class)->only(['index', 'store'])->names('setup.team');
+    Route::resource('setup/project', SetupProjectController::class)->only(['index', 'store'])->names('setup.project');
+    Route::resource('setup/installation', SetupInstallController::class)->only(['index'])->names('setup.installation');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');

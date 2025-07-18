@@ -14,7 +14,7 @@ use Inertia\Inertia;
 
 class SetupProjectController extends Controller
 {
-    public function create(Request $request)
+    public function index(Request $request)
     {
         return Inertia::render('Setup/Project', [
             'project' => $request->user()->currentTeam->projects()->first(),
@@ -34,6 +34,6 @@ class SetupProjectController extends Controller
             ]);
         }
 
-        return redirect()->route('setup.install.create');
+        return redirect()->route('setup.installation.index');
     }
 }

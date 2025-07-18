@@ -22,11 +22,11 @@ class ForwardToOnboarding
         if (Str::of($request->getRequestUri())->contains(RouteServiceProvider::HOME)) {
             // we use the currency as the indicator that team onboarding is not finished
             if (! $currentTeam->currency) {
-                return redirect()->route('setup.team.create');
+                return redirect()->route('setup.team.index');
             }
             // we use the name as the indicator that project onboarding is not finished
             elseif (! $currentTeam->projects()->first()->name) {
-                return redirect()->route('setup.project.create');
+                return redirect()->route('setup.project.index');
             }
         }
 

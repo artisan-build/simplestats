@@ -24,7 +24,7 @@ const action = (props.project.name) ? 'Update Project' : 'Create Project';
 </script>
 
 <template>
-    <FullscreenCard :title="action" description="Please provide your project details.">
+    <FullscreenCard :title="action" description="Provide your project details.">
         <form @submit.prevent="submit">
             <div class="mb-6">
                 <label for="project" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

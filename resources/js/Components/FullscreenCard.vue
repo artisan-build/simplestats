@@ -3,6 +3,7 @@ import {ArrowLeftIcon} from '@heroicons/vue/24/solid';
 import {ArrowLeftEndOnRectangleIcon} from '@heroicons/vue/24/outline';
 import {Head, router} from '@inertiajs/vue3';
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
+import Banner from "@/Components/Banner.vue";
 
 defineProps({
     title: {
@@ -22,6 +23,7 @@ const logout = () => router.post(route('logout'));
 <template>
     <Head :title="title" />
     <Gradient position="fixed" />
+    <Banner />
     <div class="fixed top-4 left-4 z-50 flex gap-2">
         <button @click="goBack" class="p-2 rounded-full dark:bg-dark-600/50 dark:hover:bg-dark-500/50">
             <ArrowLeftIcon class="size-5"/>
