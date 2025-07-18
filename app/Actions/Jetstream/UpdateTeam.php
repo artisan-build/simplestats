@@ -10,14 +10,14 @@ use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Contracts\UpdatesTeamNames;
 use Spatie\ValidationRules\Rules\Currency;
 
-class UpdateTeamName implements UpdatesTeamNames
+class UpdateTeam implements UpdatesTeamNames
 {
     /**
      * Validate and update the given team's name.
      *
      * @param  array<string, string>  $input
      */
-    public function update(User $user, Team $team, array $input): void
+    public function update(User $user, Team $team, array $input): Team
     {
         Gate::forUser($user)->authorize('update', $team);
 
@@ -32,5 +32,7 @@ class UpdateTeamName implements UpdatesTeamNames
             'currency' => $input['currency'],
             'timezone' => $input['timezone'],
         ])->save();
+
+        return $team;
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CheckPasswordConfirmation;
+use App\Actions\CreateProject;
+use App\Actions\UpdateProject;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Instance;
 use App\Models\Project;
@@ -40,7 +42,7 @@ class ProjectController extends Controller
 
     public function store(ProjectRequest $request): RedirectResponse
     {
-        $project = Project::create($request->validated());
+        $project = app(CreateProject::class)($request->user(), $request->validated());
 
         return redirect()->route('projects.show', $project->id)->banner('Project created: '.$project->name);
     }
@@ -71,7 +73,7 @@ class ProjectController extends Controller
             $request->user()->updateSettings('showAdvanced', false);
         }
 
-        $project->update($validated);
+        app(UpdateProject::class)($request->user(), $project, $validated);
 
         return redirect()->back();
     }

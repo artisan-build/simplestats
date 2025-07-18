@@ -1,14 +1,11 @@
 <script setup>
-import {useForm, usePage} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import {onMounted, ref} from "vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import SelectInput from "@/Components/SelectInput.vue";
-import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import FullscreenCard from "@/Components/FullscreenCard.vue";
-
-const page = usePage();
 
 const props = defineProps({
     team: Object,
@@ -17,9 +14,9 @@ const props = defineProps({
 const timezones = ref([]);
 
 const form = useForm({
-    name: props.team?.name || page.props.auth.user.current_team?.name || '',
-    currency: props.team?.currency || page.props.auth.user.current_team?.currency || '',
-    timezone: props.team?.timezone || page.props.auth.user.current_team?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+    name: props.team.name || '',
+    currency: props.team.currency || '',
+    timezone: props.team.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
 });
 
 const fetchTimezones = async () => {
@@ -32,20 +29,16 @@ onMounted(() => {
 });
 
 const submit = () => {
-    if (props.team) {
-        form.put(route('teams.update', props.team), {
-            errorBag: 'updateTeam',
-        });
-    } else {
-        form.post(route('teams.store'), {
-            errorBag: 'createTeam',
-        });
-    }
+    form.post(route('setup.team.store'), {
+        errorBag: 'updateTeam',
+    });
 };
+
+const action = (props.team.currency) ? 'Update Team' : 'Create Team';
 </script>
 
 <template>
-    <FullscreenCard title="Create Team" description="Please provide your team and project details.">
+    <FullscreenCard :title="action" description="Please provide your team details.">
         <form @submit.prevent="submit">
             <div class="mb-6">
                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -90,39 +83,9 @@ const submit = () => {
                 <InputError :message="form.errors.timezone" class="mt-2" />
             </div>
 
-            <div class="mb-6">
-                <label for="project" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Name of your project
-                </label>
-                <TextInput
-                    id="project"
-                    v-model="form.project"
-                    type="text"
-                    class="block w-full dark:bg-dark-950"
-                    placeholder="My great SaaS"
-                />
-                <InputError :message="form.errors.project" class="mt-2" />
-            </div>
-
-            <div class="hidden mb-6">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    What do you want to track?
-                </label>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    Select all options that fit your needs!
-                </p>
-                <div class="w-full">
-                    <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" border="4" />
-                    <div class="text-sm mt-2 text-gray-500 dark:text-gray-400">
-                        In most cases, it's best to select all options…
-                    </div>
-                </div>
-                <InputError :message="form.errors.usage" class="mt-2" />
-            </div>
-
             <div class="mt-8">
                 <PrimaryButton class="w-full !text-sm justify-center !p-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Create Team
+                    {{ action }}
                 </PrimaryButton>
             </div>
         </form>

@@ -20,11 +20,13 @@ class ForwardToOnboarding
         $currentTeam = $request->user()?->currentTeam;
 
         if (Str::of($request->getRequestUri())->contains(RouteServiceProvider::HOME)) {
-            // indicator that team onboarding is not finished
+            // we use the currency as the indicator that team onboarding is not finished
             if (! $currentTeam->currency) {
-                return redirect()->route('teams.edit', $currentTeam);
-            } elseif ($currentTeam->instances()->count() < 1) {
-                //return redirect()->route('intro');
+                return redirect()->route('setup.team.create');
+            }
+            // we use the name as the indicator that project onboarding is not finished
+            elseif (! $currentTeam->projects()->first()->name) {
+                return redirect()->route('setup.project.create');
             }
         }
 

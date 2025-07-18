@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CheckPasswordConfirmation;
+use App\Actions\CreateInstance;
 use App\Http\Requests\InstanceRequest;
 use App\Models\Instance;
 use App\Models\Project;
@@ -33,7 +34,7 @@ class ProjectInstanceController extends Controller
 
     public function store(InstanceRequest $request, Project $project): RedirectResponse
     {
-        $instance = $project->instances()->create($request->validated());
+        $instance = app(CreateInstance::class)($request->user(), $project, $request->validated());
 
         return redirect()->route('projects.instances.show', [$project->id, $instance->id])->with('flash', [
             'token' => $instance->tokens->first()->token_plain_part,

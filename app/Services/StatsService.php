@@ -185,17 +185,17 @@ class StatsService
             'visitors' => [
                 'bit' => self::TRACKING_USAGE_BITS_VISITORS,
                 'name' => 'Visitors',
-                'descr' => 'Track app visitors and capture UTMs, location, device etc.',
+                'descr' => 'Track anonymous visitors with UTMs, location, device info, etc.',
             ],
             'users' => [
                 'bit' => self::TRACKING_USAGE_BITS_USERS,
-                'name' => 'Users',
-                'descr' => 'Track users, including the registration time and their logins.',
+                'name' => 'Registrations',
+                'descr' => 'Track user signups and logins, including timestamps.',
             ],
             'payments' => [
                 'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
                 'name' => 'Payments',
-                'descr' => 'Track payments with associated campaigns - ideal to measure ROI.',
+                'descr' => 'Track revenue and link it back to visitors or registrations.',
             ],
         ]);
     }

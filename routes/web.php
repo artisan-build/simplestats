@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\TeamEditController;
+use App\Http\Controllers\SetupProjectController;
+use App\Http\Controllers\SetupTeamController;
 use App\Models\Team;
 use Illuminate\Http\Request;
 use App\Http\Controllers\DataImportController;
@@ -45,7 +46,8 @@ Route::middleware([
 
     Route::impersonate();
 
-    Route::get('teams/{team}/edit', TeamEditController::class)->name('teams.edit');
+    Route::resource('setup/team', SetupTeamController::class)->only(['create', 'store'])->names('setup.team');
+    Route::resource('setup/project', SetupProjectController::class)->only(['create', 'store'])->names('setup.project');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');

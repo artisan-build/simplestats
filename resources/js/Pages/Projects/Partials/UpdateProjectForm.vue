@@ -1,5 +1,5 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
@@ -56,9 +56,9 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
 
             <div class="col-span-6">
-                <InputLabel for="usage" :value="`What do you want to track?`" />
+                <InputLabel for="usage" :value="`What would you like to track?`" />
                 <div class="mt-1">
-                    <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="form.usage" />
+                    <TrackingUsageSelector v-model="form.usage" :trackingUsages="trackingUsages" />
                 </div>
                 <InputError :message="form.errors.usage" class="mt-2" />
             </div>

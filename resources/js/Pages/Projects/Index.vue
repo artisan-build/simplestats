@@ -65,9 +65,9 @@ const appName = import.meta.env.VITE_APP_NAME;
                             <InputError :message="createProjectForm.errors.name" class="mt-2" />
                         </div>
                         <div class="col-span-6">
-                            <InputLabel for="usage" :value="`What do you want to track?`" />
+                            <InputLabel for="usage" :value="`What would you like to track?`" />
                             <div class="mt-1">
-                                <TrackingUsageSelector :trackingUsages="trackingUsages" v-model="createProjectForm.usage" />
+                                <TrackingUsageSelector v-model="createProjectForm.usage" :trackingUsages="trackingUsages" />
                             </div>
                             <InputError :message="createProjectForm.errors.usage" class="mt-2" />
                         </div>
