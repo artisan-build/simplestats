@@ -2,7 +2,7 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\api\CheckClientVersionMiddleware;
+use App\Http\Middleware\Api\CheckClientVersionMiddleware;
 use App\Http\Middleware\CheckAppType;
 use App\Http\Middleware\DisableMutateRequestsInDemoEnv;
 use App\Http\Middleware\ForwardToOnboarding;
