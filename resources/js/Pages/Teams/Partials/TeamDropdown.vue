@@ -17,7 +17,7 @@ const highligtTeam = route().current().includes('teams') || (route().current().i
 </script>
 
 <template>
-    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="left" width="60">
+    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
         <template #trigger>
             <span class="inline-flex rounded-md">
                 <button type="button"

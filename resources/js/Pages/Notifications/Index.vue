@@ -5,9 +5,10 @@ import FormSection from "@/Components/FormSection.vue";
 import SectionBorder from "@/Components/SectionBorder.vue";
 import SelectInput from "@/Components/SelectInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
-import {capitalize} from "lodash";
 import {router, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {PaperAirplaneIcon} from '@heroicons/vue/24/solid';
+import {capitalize} from "@vue/shared";
 
 const page = usePage();
 
@@ -41,15 +42,15 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
             <div>Notifications</div>
             <ProfileDropdown />
         </template>
-        <div class="mt-3">
+        <div>
+            <div class="max-w-3xl mx-auto mb-4">
+                Customize your settings to receive only the notifications that matter to you.<br>
+                These changes won't affect your team members.
+            </div>
             <div v-for="(team, index) in sortedTeams">
                 <FormSection>
                     <template #title>
                         {{ team.name }}
-                    </template>
-
-                    <template #description>
-                        Customize your settings to receive only the notifications that matter to you. These changes won't affect your team members.
                     </template>
 
                     <template #form>
@@ -64,7 +65,7 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                 v-for="notification in groupNotifications"
                                 class="w-full mt-3 px-3 py-2 gap-3 border rounded-md flex flex-col lg:flex-row justify-between items-start lg:items-center bg-gray-50 dark:bg-dark-900"
                             >
-                                <div>
+                                <div class="truncate">
                                     {{ notification.notifiable.name }}
                                 </div>
                                 <div class="flex gap-3 flex-col sm:flex-row">
@@ -103,7 +104,9 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                             />
                                         </div>
                                         <div>
-                                            <PrimaryButton type="button" @click="trigger(notification)">Send Now</PrimaryButton>
+                                            <PrimaryButton v-tooltip="'Send Now'" type="button" @click="trigger(notification)">
+                                                <PaperAirplaneIcon class="size-4" />
+                                            </PrimaryButton>
                                         </div>
                                     </div>
                                 </div>

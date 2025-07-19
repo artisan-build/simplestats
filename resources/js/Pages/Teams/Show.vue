@@ -16,16 +16,20 @@ defineProps({
 <template>
     <AppLayout title="Team Settings">
         <template #header>
-            {{ team.name }}
-        </template>
-
-        <div>
-            <div v-if="$page.props.auth.user.all_teams.length > 1" class="mb-10">
+            <div>
+                {{ team.name }}
+            </div>
+            <div v-if="$page.props.auth.user.all_teams.length > 1">
                 <div class="flex items-center">
-                    <div class="mr-2 font-medium">Team:</div>
+                    <div class="text-sm pt-2 mr-3">
+                        Select Team:
+                    </div>
                     <TeamDropdown />
                 </div>
             </div>
+        </template>
+
+        <div>
 
             <UpdateTeamNameForm :team="team" :permissions="permissions" />
 

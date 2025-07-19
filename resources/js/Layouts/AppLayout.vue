@@ -67,7 +67,7 @@ const sidebarIsOpen = ref(false);
                         <div v-if="! ($page.props.auth.user.settings?.showMenu ?? true)">
                             <MenuToggler />
                         </div>
-                        <div class="flex flex-grow justify-between">
+                        <div class="flex flex-grow justify-between max-w-3xl mx-auto">
                             <slot name="header" />
                         </div>
                         <EnvBadge />

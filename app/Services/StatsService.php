@@ -186,7 +186,7 @@ class StatsService
             'visitors' => [
                 'bit' => self::TRACKING_USAGE_BITS_VISITORS,
                 'name' => 'Visitors',
-                'descr' => 'Track anonymous visitors with UTMs, location, device info, etc.',
+                'descr' => 'Track anonymous visitors with UTMs, location, devices, etc.',
             ],
             'users' => [
                 'bit' => self::TRACKING_USAGE_BITS_USERS,

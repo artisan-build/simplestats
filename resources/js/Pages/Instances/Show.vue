@@ -10,7 +10,6 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import DialogModal from "@/Components/DialogModal.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import {copyToClipboard} from "@/Helpers/ClipboardHelpers.js";
@@ -70,14 +69,6 @@ const regenerateApiToken = () => {
         <template #header>
             <div>
                 Instance: {{ instance.name }}
-            </div>
-            <div>
-                <PrimaryButton class="h-10" type="button" @click="$inertia.get(route('dashboard', {projectId: instance.project_id, instanceId: instance.id}))">
-                    Go To Dashboard
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 ml-3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-                    </svg>
-                </PrimaryButton>
             </div>
         </template>
 

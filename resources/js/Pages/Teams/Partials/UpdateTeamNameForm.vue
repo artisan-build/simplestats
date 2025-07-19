@@ -52,7 +52,7 @@ const updateTeamName = () => {
         <template #form>
             <!-- Team Owner Information -->
             <div class="col-span-6">
-                <InputLabel value="Team Owner" />
+                <InputLabel value="Owner" />
 
                 <div class="flex items-center mt-2">
                     <img v-if="$page.props.jetstream.managesProfilePhotos" class="mr-4 w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
@@ -68,7 +68,7 @@ const updateTeamName = () => {
 
             <!-- Team Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Team Name" />
+                <InputLabel for="name" value="Name" />
 
                 <TextInput
                     id="name"
@@ -83,7 +83,7 @@ const updateTeamName = () => {
 
             <!-- Team Currency -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="currency" value="Team Currency" />
+                <InputLabel for="currency" value="Currency" />
 
                 <TextInput
                     id="currency"
@@ -99,7 +99,7 @@ const updateTeamName = () => {
 
             <!-- Team Timezone -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="timezone" value="Team Timezone" />
+                <InputLabel for="timezone" value="Timezone" />
 
                 <SelectInput
                     id="timezone"
