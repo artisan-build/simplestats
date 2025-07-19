@@ -3,9 +3,11 @@
 namespace App\Http;
 
 use App\Http\Middleware\Api\CheckClientVersion;
+use App\Http\Middleware\Api\SetInstanceContext;
 use App\Http\Middleware\CheckAppType;
 use App\Http\Middleware\DisableMutateRequestsInDemoEnv;
 use App\Http\Middleware\ForwardToOnboarding;
+use App\Http\Middleware\SetTeamContext;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -43,6 +45,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            SetTeamContext::class,
             DisableMutateRequestsInDemoEnv::class,
             ForwardToOnboarding::class,
             CheckAppType::class,
@@ -53,6 +56,8 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             CheckClientVersion::class,
+            SetTeamContext::class,
+            SetInstanceContext::class,
         ],
     ];
 

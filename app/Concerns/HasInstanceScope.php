@@ -3,6 +3,7 @@
 namespace App\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Request;
 
 trait HasInstanceScope
@@ -16,16 +17,22 @@ trait HasInstanceScope
         }
 
         parent::addGlobalScope('instance', function (Builder $query) {
-            if (auth()->check()) {
-                $query->where('instance_id', auth()->user()->id);
-                $query->where('project_id', auth()->user()->project_id);
+            if ($instanceId = Context::get('instance_id')) {
+                $query->where('instance_id', $instanceId);
+            }
+
+            if ($projectId = Context::get('project_id')) {
+                $query->where('project_id', $projectId);
             }
         });
 
         static::saving(function ($model) {
-            if (auth()->check()) {
-                $model->instance_id = auth()->user()->id;
-                $model->project_id = auth()->user()->project_id;
+            if ($instanceId = Context::get('instance_id')) {
+                $model->instance_id = $instanceId;
+            }
+
+            if ($projectId = Context::get('project_id')) {
+                $model->project_id = $projectId;
             }
         });
     }

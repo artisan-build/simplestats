@@ -6,6 +6,7 @@ use App\Helpers\AppHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Context;
 
 trait HasTeamScope
 {
@@ -16,19 +17,15 @@ trait HasTeamScope
     public static function bootHasTeamScope(): void
     {
         parent::addGlobalScope('team', function (Builder $query) {
-            if (auth()->check()) {
+            if ($teamId = Context::get('team_id')) {
                 AppHelper::ensureTeamTimezone();
-                // important check first team_id then current_team_id
-                $teamId = auth()->user()->team_id ?? auth()->user()->current_team_id;
                 $query->where('team_id', $teamId);
             }
         });
 
         static::saving(function ($model) {
-            if (auth()->check()) {
+            if ($teamId = Context::get('team_id')) {
                 AppHelper::ensureTeamTimezone();
-                // important check first team_id then current_team_id
-                $teamId = auth()->user()->team_id ?? auth()->user()->current_team_id;
                 $model->team_id = $teamId;
             }
         });
