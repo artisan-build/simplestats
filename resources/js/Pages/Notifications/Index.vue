@@ -8,7 +8,7 @@ import Checkbox from "@/Components/Checkbox.vue";
 import {router, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {PaperAirplaneIcon} from '@heroicons/vue/24/solid';
-import {capitalize} from "@vue/shared";
+import {capitalize} from "lodash";
 
 const page = usePage();
 
