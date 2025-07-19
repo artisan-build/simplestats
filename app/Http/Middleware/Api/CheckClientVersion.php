@@ -5,7 +5,7 @@ namespace App\Http\Middleware\Api;
 use Closure;
 use Illuminate\Http\Request;
 
-class CheckClientVersionMiddleware
+class CheckClientVersion
 {
     public function handle(Request $request, Closure $next)
     {
