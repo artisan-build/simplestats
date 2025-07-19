@@ -63,7 +63,7 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                             </div>
                             <div
                                 v-for="notification in groupNotifications"
-                                class="w-full mt-3 px-3 py-2 gap-3 border rounded-md flex flex-col lg:flex-row justify-between items-start lg:items-center bg-gray-50 dark:bg-dark-900"
+                                class="w-full mt-3 px-3 py-2 gap-3 border rounded-md flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50 dark:bg-dark-900"
                             >
                                 <div class="truncate">
                                     {{ notification.notifiable.name }}
