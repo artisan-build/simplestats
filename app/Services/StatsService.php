@@ -24,6 +24,7 @@ use App\Models\StatsTrackTerm;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Support\Collection;
 
 class StatsService
@@ -213,5 +214,21 @@ class StatsService
                 'name' => $type->getTitle(),
             ];
         })->toArray();
+    }
+
+    public static function showFreePlanWarning(User $user): bool
+    {
+        return $user->team->owner->sparkPlan()->name === SubscriptionService::PLAN_FREE
+            && $user->created_at->diffInDays(now()) > 7
+            && ! ($user->settings['hideFreePlanWarning'] ?? false);
+    }
+
+    public static function showReadDocsWarning(User $user): bool
+    {
+        return StatsVisitor::withoutGlobalScope('instance')->count() === 0
+            && StatsUser::withoutGlobalScope('instance')->count() === 0
+            && StatsPayment::withoutGlobalScope('instance')->count() === 0
+            && $user->created_at->diffInDays(now()) > 1
+            && ! ($user->settings['hideReadDocsWarning'] ?? false);
     }
 }

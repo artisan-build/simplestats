@@ -55,6 +55,7 @@ Route::middleware([
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
+    Route::post('stats/hide-read-docs-warning', [StatsController::class, 'hideReadDocsWarning'])->name('stats.hide-read-docs-warning');
 
     // Data Import
     Route::resource('data-import', DataImportController::class)->only(['index', 'store']);

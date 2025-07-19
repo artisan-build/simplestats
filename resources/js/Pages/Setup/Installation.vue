@@ -59,7 +59,7 @@ const composerInstallCmd = 'composer require simplestats-io/laravel-client';
                     Next steps
                 </label>
                 <p class="text-sm text-gray-600 dark:text-dark-400 mb-2">
-                    To enable <strong>user and payment tracking</strong> and for further instructions, check the setup guide in the <a class="simpleLink underline" href="/docs" target="_blank">documentation</a>.
+                    To enable <strong>tracking</strong> and for further instructions, check the setup guide in the <a class="simpleLink underline" href="/docs" target="_blank">documentation</a>.
                 </p>
             </div>
 

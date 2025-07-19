@@ -65,9 +65,6 @@ class StatsController extends Controller
             ));
         }
 
-        $teamOwner = $user->team->owner;
-        $currentPlan = $teamOwner->sparkPlan();
-        $hideFreePlanWarning = $user->settings['hideFreePlanWarning'] ?? false;
         $data = [
             'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
@@ -82,10 +79,8 @@ class StatsController extends Controller
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
-            'freePlanWarning' => [
-                'show' => $currentPlan->name === SubscriptionService::PLAN_FREE && ! $hideFreePlanWarning,
-                'users' => $currentPlan->options[StatsUser::class],
-            ],
+            'freePlanWarning' => ['show' => StatsService::showFreePlanWarning($user)],
+            'readDocsWarning' => ['show' => StatsService::showReadDocsWarning($user)],
             'subscriptionPlanAlarm' => $subscriptionService->getPlanAlarm($user->team),
             'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
                 return [$key => $item['bit']];
@@ -125,6 +120,13 @@ class StatsController extends Controller
     public function hideFreePlanWarning(Request $request)
     {
         $request->user()->updateSettings('hideFreePlanWarning', true);
+
+        return back();
+    }
+
+    public function hideReadDocsWarning(Request $request)
+    {
+        $request->user()->updateSettings('hideReadDocsWarning', true);
 
         return back();
     }

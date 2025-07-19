@@ -4,6 +4,7 @@ import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups.vue";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
+import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
 import {onMounted, onUnmounted, ref} from "vue";
 
@@ -15,6 +16,7 @@ const props = defineProps({
     topReferers: Object,
     rangeTypes: Array,
     freePlanWarning: Object,
+    readDocsWarning: Object,
     subscriptionPlanAlarm: Array,
     trackingUsageBits: Object,
     comparisonTypes: Object,
@@ -43,7 +45,10 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
 <!--        <template #header>Dashboard</template>-->
 
         <div v-if="freePlanWarning.show">
-            <FreePlanWarning :freePlanWarning="freePlanWarning" />
+            <FreePlanWarning />
+        </div>
+        <div v-if="readDocsWarning.show">
+            <ReadDocsWarning />
         </div>
         <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
