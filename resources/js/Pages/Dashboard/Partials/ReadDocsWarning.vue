@@ -13,7 +13,7 @@ const docsAction = (e) => {
 <template>
     <div class="flex justify-between items-center px-5 py-3 bg-blue-500 text-white rounded-md mb-6">
         <div>
-            To enable <strong>tracking</strong> and for further instructions, check the setup guide in the documentation.
+            To enable <strong>advanced tracking</strong> and for further instructions, check the setup guide in the documentation.
         </div>
         <div>
             <div class="flex items-center gap-2">
