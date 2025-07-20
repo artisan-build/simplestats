@@ -5,15 +5,23 @@ import Testimonials from "@/Components/Testimonials.vue";
 import {testimonials} from "@/Data/testimonials.js";
 import {sample} from "lodash";
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
+import {onMounted, ref} from 'vue';
 
 const selectedTestimonial = sample(testimonials);
+const isVisible = ref(false);
+
+onMounted(() => {
+    setTimeout(() => {
+        isVisible.value = true;
+    }, 100);
+});
 </script>
 
 <template>
     <div class="w-full min-h-screen flex bg-white dark:bg-dark-900">
         <div class="relative w-full md:w-1/2 flex items-center">
             <Gradient position="absolute" />
-            <div class="relative mx-auto w-full sm:max-w-lg px-10 xl:px-0">
+            <div class="animationElement relative mx-auto w-full sm:max-w-lg px-10 xl:px-0" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
                 <div class="text-center">
                     <Header class="mb-10" />
 
@@ -33,3 +41,9 @@ const selectedTestimonial = sample(testimonials);
 
     <Footer class="hidden" />
 </template>
+
+<style scoped>
+.animationElement {
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+</style>

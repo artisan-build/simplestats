@@ -1,7 +1,7 @@
 <script setup>
 import {Link} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import { ref, onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 
 const isVisible = ref(false);
 
@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="z-10 relative" :class="{ 'opacity-0': !isVisible }">
+    <div class="animationElement z-10 relative" :class="{ 'opacity-0': !isVisible }">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
             <Link href="/" class="inline-flex items-center">
                 <ApplicationLogo />
@@ -40,7 +40,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-div {
+.animationElement {
   transition: opacity 0.6s ease;
 }
 </style>

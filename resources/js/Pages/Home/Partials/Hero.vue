@@ -1,6 +1,6 @@
 <script setup>
 import {Link} from "@inertiajs/vue3";
-import { ref, onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 
 const appEnv = import.meta.env.VITE_APP_ENV;
 const isVisible = ref(false);
@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="text-center pt-24" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
+    <section class="animationElement text-center pt-24" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
         <h1 class="m-auto mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white px-6 sm:px-3 max-w-screen-md">
             The missing analytics tool for your&nbsp;<span class="text-indigo-500">Laravel</span> application.
         </h1>
@@ -44,7 +44,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-section {
+.animationElement {
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 </style>

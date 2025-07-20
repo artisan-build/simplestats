@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import {onMounted, ref} from 'vue';
 
 const isVisible = ref(false);
 
@@ -11,7 +11,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="mt-20 flex justify-center px-4" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
+    <section class="animationElement mt-20 flex justify-center px-4" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
         <div class="w-full max-w-screen-xl">
             <img class="block dark:hidden" width="1280" height="825" src="images/screenshot.png" alt="Web analytics dashboard for Laravel apps">
             <img class="hidden dark:block" width="1280" height="825" src="images/screenshot_dark.png" alt="Web analytics dashboard for Laravel apps">
@@ -20,7 +20,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-section {
+.animationElement {
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 </style>
