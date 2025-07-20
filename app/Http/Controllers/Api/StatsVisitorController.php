@@ -27,8 +27,7 @@ class StatsVisitorController extends Controller
             return response()->json(['message' => 'Bots are not allowed'], 200);
         }
 
-        safeDefer(fn() => TrackStatsVisitor::dispatch(
-//            instanceId: auth()->user()->id,
+        safeDefer(fn () => TrackStatsVisitor::dispatch(
             input: $request->validated(),
         ));
 

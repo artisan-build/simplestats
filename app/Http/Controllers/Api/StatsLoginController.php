@@ -17,8 +17,7 @@ class StatsLoginController extends Controller
 
     public function store(StatsLoginRequest $request): JsonResponse
     {
-        safeDefer(fn() => TrackStatsLogin::dispatch(
-//            instanceId: auth()->user()->id,
+        safeDefer(fn () => TrackStatsLogin::dispatch(
             input: $request->validated(),
         ));
 

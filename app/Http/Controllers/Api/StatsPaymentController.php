@@ -17,8 +17,7 @@ class StatsPaymentController extends Controller
 
     public function store(StatsPaymentRequest $request): JsonResponse
     {
-        safeDefer(fn() => TrackStatsPayment::dispatch(
-//            instanceId: auth()->user()->id,
+        safeDefer(fn () => TrackStatsPayment::dispatch(
             input: $request->validated(),
         ));
 

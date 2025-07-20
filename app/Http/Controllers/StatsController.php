@@ -61,7 +61,7 @@ class StatsController extends Controller
 
         if ($filters->comparison && $filters->rangeType !== StatsRangeType::YEAR) {
             $teamStats->statsPrev = array_values($statsDetailsService->getStats(
-                AppHelper::createPrevFiltersForComparison($filters),
+                StatsService::createPrevFiltersForComparison($filters),
             ));
         }
 

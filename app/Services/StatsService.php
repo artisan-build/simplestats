@@ -25,6 +25,7 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Collection;
 
 class StatsService
@@ -67,6 +68,22 @@ class StatsService
             ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
         ],
     ];
+
+    /**
+     * @throws Exception
+     */
+    public static function createPrevFiltersForComparison(StatsFilterDto $filters): StatsFilterDto
+    {
+        $prevFilters = clone $filters;
+
+        if ($filters->comparison === ComparisonType::PERIOD->value) {
+            $prevFilters->rangeStart = $prevFilters->rangeType->getPrevStartForComparison($prevFilters->rangeStart);
+        } else {
+            $prevFilters->rangeStart = $prevFilters->rangeStart->subYear();
+        }
+
+        return $prevFilters;
+    }
 
     public static function getStatsModels(): Collection
     {

@@ -23,8 +23,7 @@ class StatsUserController extends Controller
             return response()->json(['message' => 'Bots are not allowed.']);
         }
 
-        safeDefer(fn() => TrackStatsUser::dispatch(
-//            instanceId: auth()->user()->id,
+        safeDefer(fn () => TrackStatsUser::dispatch(
             input: $request->validated(),
         ));
 

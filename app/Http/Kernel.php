@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Api\CheckClientVersion;
 use App\Http\Middleware\Api\SetInstanceContext;
+use App\Http\Middleware\Api\SetRequestContext;
 use App\Http\Middleware\CheckAppType;
 use App\Http\Middleware\DisableMutateRequestsInDemoEnv;
 use App\Http\Middleware\ForwardToOnboarding;
@@ -58,6 +59,7 @@ class Kernel extends HttpKernel
             CheckClientVersion::class,
             SetTeamContext::class,
             SetInstanceContext::class,
+            SetRequestContext::class,
         ],
     ];
 
