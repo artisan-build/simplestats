@@ -1,10 +1,19 @@
 <script setup>
 import {Link} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import { ref, onMounted } from 'vue';
+
+const isVisible = ref(false);
+
+onMounted(() => {
+    setTimeout(() => {
+        isVisible.value = true;
+    }, 50); // Shorter delay for header to appear first
+});
 </script>
 
 <template>
-    <div class="z-10 relative">
+    <div class="z-10 relative" :class="{ 'opacity-0': !isVisible }">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
             <Link href="/" class="inline-flex items-center">
                 <ApplicationLogo />
@@ -31,5 +40,7 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 </template>
 
 <style scoped>
-
+div {
+  transition: opacity 0.6s ease;
+}
 </style>
