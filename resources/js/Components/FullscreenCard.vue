@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {ArrowLeftIcon} from '@heroicons/vue/24/solid';
 import {ArrowLeftEndOnRectangleIcon} from '@heroicons/vue/24/outline';
 import {Head, router} from '@inertiajs/vue3';
