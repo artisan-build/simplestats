@@ -7,7 +7,7 @@ const isVisible = ref(false);
 const hasScrolled = ref(false);
 
 const handleScroll = () => {
-    hasScrolled.value = window.scrollY > 0;
+    hasScrolled.value = window.scrollY > 50;
 };
 
 onMounted(() => {
