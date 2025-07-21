@@ -1,33 +1,58 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 
 const questions = ref([
     {
+        'id': 'tracking-setup',
         'title': 'Why is tracking not working even though everything is set up correctly?',
         'answer': 'Most often, this is a queue-related issue. Ensure you have cleared your config cache and restarted your queue after adding the API token to your .env file.',
         'active': false,
     },
     {
-        'title': 'Are the limits for different plans applied monthly or as a total?',
-        'answer': 'The limits are total values. Once you reach 70% of your quota, we’ll prompt you to upgrade your plan. If you don’t, we will stop storing new data as soon as you reach 100%.',
+        'id': 'what-is-an-event',
+        'title': `What is an event?`,
+        'answer': `An event is any tracked activity - such as a unique visitor, registration, login, or payment. Each of these counts as one event towards your monthly usage.`,
         'active': false,
     },
     {
+        'id': 'how-are-visitors-tracked',
         'title': 'How are unique visitors tracked?',
         'answer': 'We track unique visitors in a GDPR-compliant way by generating a unique visitor hash each time a new visitor accesses your site. This hash is derived from a combination of the visitor’s User-Agent, IP address, and a daily salt. This method enables unique visitor tracking without storing personally identifiable information such as cookies, ensuring privacy and data protection.',
         'active': false,
     },
     {
+        'id': 'custom-events',
         'title': 'Do you support custom events?',
         'answer': 'Not yet, but it’s on our roadmap!',
         'active': false,
     },
 ]);
 
-const toggleQuestion = (index) => {
-    questions.value[index].active = ! questions.value[index].active;
+const handleHash = () => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+        const index = questions.value.findIndex(q => q.id === hash);
+        if (index !== -1) {
+            questions.value.forEach((q, i) => q.active = i === index);
+        }
+    }
 };
+
+const toggleQuestion = (index) => {
+    questions.value.forEach((q, i) => q.active = i === index ? !q.active : false);
+    const id = questions.value[index].id;
+    if (questions.value[index].active) {
+        window.location.hash = id;
+    } else {
+        history.pushState('', document.title, window.location.pathname + window.location.search);
+    }
+};
+
+onMounted(() => {
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+});
 </script>
 
 <template>
@@ -39,7 +64,7 @@ const toggleQuestion = (index) => {
             </SectionHeader>
 
             <div class="space-y-8">
-                <div v-for="(question, index) in questions" class="border-2 border-gray-100 rounded-lg dark:border-dark-700 bg-white dark:bg-dark-900">
+                <div v-for="(question, index) in questions" :id="question.id" class="border-2 border-gray-100 rounded-lg dark:border-dark-700 bg-white dark:bg-dark-900">
                     <button @click="toggleQuestion(index)" class="flex items-center justify-between w-full p-8">
                         <h3 class="font-semibold text-gray-700 dark:text-dark-300">{{ question.title }}</h3>
 

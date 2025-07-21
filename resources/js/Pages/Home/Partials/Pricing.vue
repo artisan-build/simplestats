@@ -120,7 +120,10 @@ const getPlanPrice = (amount, discount) => {
                 * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
             </div>
             <div class="mt-4 text-base text-center text-gray-600 dark:text-dark-400 px-4 sm:pm-0">
-                If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact us</a>!
+                If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact sales</a>.
+            </div>
+            <div class="mt-4 text-base text-center text-gray-600 dark:text-dark-400 px-4 sm:pm-0">
+                Wonder what an <a class="underline" href="#what-is-an-event">event</a> is?
             </div>
         </div>
     </section>

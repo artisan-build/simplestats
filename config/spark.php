@@ -3,13 +3,10 @@
 use App\Models\DataImport;
 use App\Models\Instance;
 use App\Models\Project;
-use App\Models\StatsLogin;
-use App\Models\StatsPayment;
-use App\Models\StatsUser;
-use App\Models\StatsVisitor;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Services\SubscriptionService;
+use \Illuminate\Support\Number;
 
 return [
 
@@ -111,113 +108,89 @@ return [
                 [
                     //free plan must be the first in the array
                     'name' => SubscriptionService::PLAN_FREE,
-                    'short_description' => 'Starter to get in touch. Explore the strength of analytics. No card required.',
+                    'short_description' => 'Get started with simple analytics. No card required.',
                     'monthly_id' => 0,
                     'yearly_id' => 0,
                     'features' => [
                         Project::class => '1 Project',
 //                        Instance::class => '1 Instance',
-                        StatsUser::class => '5,000 User',
-                        StatsPayment::class => '1,000 Payments',
-                        StatsLogin::class => '10,000 Logins',
-                        StatsVisitor::class => '30,000 Unique Visitors',
-                        DataImport::class => 'Data Import',
+                        'Events' => Number::abbreviate(10_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
                         Project::class => 1,
                         Instance::class => 1,
-                        StatsUser::class => 5_000,
-                        StatsPayment::class => 1_000,
-                        StatsLogin::class => 10_000,
-                        StatsVisitor::class => 30_000,
-                        DataImport::class => false,
+                        'Events' => 10_000,
                         'MultiCurrency' => false,
+                        DataImport::class => false,
                     ],
                     'archived' => true,
                 ],
                 [
                     'name' => SubscriptionService::PLAN_PLUS,
-                    'short_description' => 'Advanced marketeer with strong ambitions and great plans to expand.',
+                    'short_description' => 'For marketers with strong ambitions and growing needs.',
                     'monthly_id' => env('SPARK_PLUS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_PLUS_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 13%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
 //                        Instance::class => 'Unlimited Instances',
-                        StatsUser::class => '100,000 User',
-                        StatsPayment::class => '50,000 Payments',
-                        StatsLogin::class => '500,000 Logins',
-                        StatsVisitor::class => '1,500,000 Unique Visitors',
-                        DataImport::class => 'Data Import',
+                        'Events' => Number::abbreviate(200_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         Instance::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        StatsUser::class => 100_000,
-                        StatsPayment::class => 50_000,
-                        StatsLogin::class => 500_000,
-                        StatsVisitor::class => 1_500_000,
-                        DataImport::class => true,
+                        'Events' => 200_000,
                         'MultiCurrency' => true,
+                        DataImport::class => true,
                     ],
                     'archived' => false,
                 ],
                 [
                     'name' => SubscriptionService::PLAN_BUSINESS,
-                    'short_description' => 'Finally see which of your campaign activities are generating revenue.',
+                    'short_description' => 'Scale your tracking and stay on top of growing activity.',
                     'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 15%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
 //                        Instance::class => 'Unlimited Instances',
-                        StatsUser::class => '1,000,000 User',
-                        StatsPayment::class => '500,000 Payments',
-                        StatsLogin::class => '5,000,000 Logins',
-                        StatsVisitor::class => '15,000,000 Unique Visitors',
-                        DataImport::class => 'Data Import',
+                        'Events' => Number::abbreviate(500_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         Instance::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        StatsUser::class => 1_000_000,
-                        StatsPayment::class => 500_000,
-                        StatsLogin::class => 5_000_000,
-                        StatsVisitor::class => 15_000_000,
-                        DataImport::class => true,
+                        'Events' => 500_000,
                         'MultiCurrency' => true,
+                        DataImport::class => true,
                     ],
                     'archived' => false,
                     'promoted' => true,
                 ],
                 [
                     'name' => SubscriptionService::PLAN_ENTERPRISE,
-                    'short_description' => 'Get an unlimited high level overview of your marketing efforts.',
+                    'short_description' => 'Full-scale analytics without limits for large teams.',
                     'monthly_id' => env('SPARK_ENTERPRISE_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_ENTERPRISE_YEARLY_PLAN'),
                     'yearly_incentive' => 'Save 16%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
 //                        Instance::class => 'Unlimited Instances',
-                        StatsUser::class => '10,000,000 User',
-                        StatsPayment::class => 'Unlimited Payments',
-                        StatsLogin::class => 'Unlimited Logins',
-                        StatsVisitor::class => 'Unlimited Unique Visitors',
-                        DataImport::class => 'Data Import',
+                        'Events' => Number::abbreviate(10_000_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
+                        DataImport::class => 'Data Import',
                     ],
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         Instance::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        StatsUser::class => 10_000_000,
-                        StatsPayment::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        StatsLogin::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        StatsVisitor::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        DataImport::class => true,
+                        'Events' => 10_000_000,
                         'MultiCurrency' => true,
+                        DataImport::class => true,
                     ],
                     'archived' => false,
                 ],

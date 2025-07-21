@@ -242,6 +242,7 @@ class StatsService
 
     public static function showReadDocsWarning(User $user): bool
     {
+        // TODO just check for events count greater 1 when event based pricing is introduced
         return StatsVisitor::withoutGlobalScope('instance')->count() === 0
             && StatsUser::withoutGlobalScope('instance')->count() === 0
             && StatsPayment::withoutGlobalScope('instance')->count() === 0
