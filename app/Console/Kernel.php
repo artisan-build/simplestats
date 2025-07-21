@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ResetEventsCounter;
 use App\Console\Commands\SendProjectReports;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -35,6 +36,7 @@ class Kernel extends ConsoleKernel
             $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
 
             // HOURLY
+            $schedule->command(ResetEventsCounter::class)->hourly();
             $schedule->command(SendProjectReports::class)->hourly();
 
             // DAILY

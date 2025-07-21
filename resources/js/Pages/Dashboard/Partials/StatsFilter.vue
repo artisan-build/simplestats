@@ -215,7 +215,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                         type="date"
                                         id="rangeStart"
                                         v-model="form.rangeStart"
-                                        class="mt-1 block w-36"
+                                        class="mt-1 block w-36 dark:!bg-dark-800"
                                         @change="filterChanged"
                                     />
                                 </div>

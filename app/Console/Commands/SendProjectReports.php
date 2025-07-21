@@ -15,7 +15,7 @@ class SendProjectReports extends Command
      *
      * @var string
      */
-    protected $signature = 'app:send-project-reports';
+    protected $signature = 'app:send-project-reports {project? : The ID of the project to send reports for}';
 
     /**
      * The console command description.
@@ -29,24 +29,35 @@ class SendProjectReports extends Command
      */
     public function handle(): void
     {
-        // avoid bugs if the command takes longer than a minute...
+        // avoid bugs if the command takes longer
         $stickyNow = now()->utc();
 
-        Project::withWhereHas('userNotifications.user:id,name,email')
+        Project::withWhereHas('userNotifications.user')
+            ->when($this->argument('project'), fn($query, $project) => $query->where('id', $project))
             ->with(['team:id,name,timezone,currency', 'userNotifications.notifiable'])
             ->each(function ($project) use ($stickyNow) {
                 $project->userNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project) {
+                    $lastSent = $userNotification->sent_at;
                     $tzNow = $stickyNow->copy()->setTimezone($project->team->timezone ?? config('app.timezone'));
 
-                    $shouldSend = match ($userNotification->frequency) {
-                        UserNotificationFrequency::DAILY => $tzNow->format('H:i') === '00:00',
-                        UserNotificationFrequency::WEEKLY => $tzNow->format('H:i') === '00:00' && $tzNow->isMonday(),
-                        UserNotificationFrequency::MONTHLY => $tzNow->format('H:i') === '00:00' && $tzNow->isSameDay($tzNow->copy()->startOfMonth()),
+                    $alreadySent = match ($userNotification->frequency) {
+                        UserNotificationFrequency::DAILY => $lastSent?->isSameDay($tzNow),
+                        UserNotificationFrequency::WEEKLY => $lastSent?->isSameWeek($tzNow),
+                        UserNotificationFrequency::MONTHLY => $lastSent?->format('Y-m') === $tzNow->format('Y-m'),
                         default => false,
                     };
 
-                    if ($shouldSend) {
+                    $shouldSend = ! $alreadySent && match ($userNotification->frequency) {
+                        UserNotificationFrequency::DAILY => true,
+                        UserNotificationFrequency::WEEKLY => $tzNow->isMonday(),
+                        UserNotificationFrequency::MONTHLY => $tzNow->day === 1,
+                        default => false,
+                    };
+
+                    // If the user has not set any tracking settings, we skip sending the notification
+                    if ($shouldSend && array_filter($userNotification->settings['tracking'] ?? [])) {
                         $userNotification->user->notify(new ProjectReportNotification($userNotification, $tzNow->copy(), $project->team));
+                        $userNotification->update(['sent_at' => $tzNow]);
                     }
                 });
             });

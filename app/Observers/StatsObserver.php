@@ -9,7 +9,8 @@ class StatsObserver
 {
     public function __construct(
         protected StatsAggregationsService $statsAggregationsService
-    ) {}
+    ) {
+    }
 
     public function updated(BaseStat $stat): void
     {
@@ -18,6 +19,9 @@ class StatsObserver
 
     public function created(BaseStat $stat): void
     {
+        $stat->team->increment('events_count_monthly');
+        $stat->team->increment('events_count_overall');
+
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);
     }
 

@@ -6,25 +6,6 @@ use App\Models\StatsPayment;
 use App\Services\SubscriptionService;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class StatsPaymentPolicy
+class StatsPaymentPolicy extends StatsBasePolicy
 {
-    use HandlesAuthorization;
-
-    /**
-     * Determine whether the auth model can create models.
-     * Auth Model can be instance (rest api with personal instance access token) or auth user
-     *
-     * @param $authModel
-     * @param  int  $delta
-     * @return bool
-     */
-    public function create($authModel, int $delta = 0): bool
-    {
-        $allowedPayments = $authModel->team->owner->sparkPlan()->options[StatsPayment::class];
-
-        if ($allowedPayments === SubscriptionService::UNLIMITED_AMOUNT)
-            return true;
-
-        return StatsPayment::withoutGlobalScope('instance')->count()+$delta < $allowedPayments;
-    }
 }

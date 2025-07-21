@@ -12,7 +12,7 @@ $enabledPayments = $trackingSettings['payments'] ?? false;
 $statsHeader = '';
 if ($enabledVisitors) $statsHeader .= '|Visitors';
 if ($enabledUsers) $statsHeader .= '|Registrations';
-if ($enabledUsers || $enabledVisitors) $statsHeader .= '|Conversion';
+if ($enabledUsers && $enabledVisitors) $statsHeader .= '|Conversion';
 if ($enabledUsers) $statsHeader .= '|'.$frequency->title()[0].'AU';
 if ($enabledPayments) $statsHeader .= '|Revenue';
 $statsHeader .= '|';
@@ -27,7 +27,7 @@ $statsTH = $statsHeader . PHP_EOL . $statsSeparator;
 $td = '';
 if ($enabledVisitors) $td .= '|'.($statsAll['pd_visitor'] >= 1000 ? Number::abbreviate($statsAll['pd_visitor'], 2) : $statsAll['pd_visitor']);
 if ($enabledUsers) $td .= '|'.($statsAll['pd_reg'] >= 1000 ? Number::abbreviate($statsAll['pd_reg'], 2) : $statsAll['pd_reg']);
-if ($enabledUsers || $enabledVisitors) $td .= '|'.Number::percentage($statsAll['pd_cr'], 2);
+if ($enabledUsers && $enabledVisitors) $td .= '|'.Number::percentage($statsAll['pd_cr'], 2);
 if ($enabledUsers) $td .= '|'.($statsAll['pd_dau'] >= 1000 ? Number::abbreviate($statsAll['pd_dau'], 2) : $statsAll['pd_dau']);
 if ($enabledPayments) $td .= '|'.Number::currency($statsAll['pd_net']/100, in: $currency, precision: 2);
 
@@ -38,7 +38,7 @@ $statsTable = $statsTH. PHP_EOL.$td .'|'. PHP_EOL;
 $statsGroupsHeader = '|Name';
 if ($enabledVisitors) $statsGroupsHeader .= '|Visitors';
 if ($enabledUsers) $statsGroupsHeader .= '|Regs';
-if ($enabledUsers || $enabledVisitors) $statsGroupsHeader .= '|Conv.';
+if ($enabledUsers && $enabledVisitors) $statsGroupsHeader .= '|Conv.';
 if ($enabledUsers) $statsGroupsHeader .= '|'.$frequency->title()[0].'AU';
 if ($enabledPayments) $statsGroupsHeader .= '|Revenue';
 $statsGroupsHeader .= '|';
@@ -68,7 +68,7 @@ foreach ($statsGroups as $key => $statsGroup) {
         $td = '|'.Str::reverse(Str::limit(Str::reverse($name), 25));
         if ($enabledVisitors) $td .= '|'.($stats['visitors'] >= 1000 ? Number::abbreviate($stats['visitors'], 2) : $stats['visitors']);
         if ($enabledUsers) $td .= '|'.($stats['reg'] >= 1000 ? Number::abbreviate($stats['reg'], 2) : $stats['reg']);
-        if ($enabledUsers || $enabledVisitors) $td .= '|'.Number::percentage($stats['cr'], 2);
+        if ($enabledUsers && $enabledVisitors) $td .= '|'.Number::percentage($stats['cr'], 2);
         if ($enabledUsers) $td .= '|'.($stats['dau'] >= 1000 ? Number::abbreviate($stats['dau'], 2) : $stats['dau']);
         if ($enabledPayments) $td .= '|'.Number::currency($stats['net']/100, in: $currency, precision: 2);
 

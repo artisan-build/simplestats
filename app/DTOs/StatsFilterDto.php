@@ -94,6 +94,6 @@ class StatsFilterDto
 
     public function getTeamId()
     {
-        return auth()->user()->currentTeam->id;
+        return auth()->user()->team->id;
     }
 }

@@ -114,14 +114,14 @@ return [
                     'features' => [
                         Project::class => '1 Project',
 //                        Instance::class => '1 Instance',
-                        'Events' => Number::abbreviate(10_000).' Monthly Events',
+                        'Events' => Number::abbreviate(5_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
                         DataImport::class => 'Data Import',
                     ],
                     'options' => [
                         Project::class => 1,
                         Instance::class => 1,
-                        'Events' => 10_000,
+                        'Events' => 5_000,
                         'MultiCurrency' => false,
                         DataImport::class => false,
                     ],

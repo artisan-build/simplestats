@@ -15,6 +15,7 @@ class UserNotification extends Model
     protected $casts = [
         'frequency' => UserNotificationFrequency::class,
         'settings' => 'array',
+        'sent_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

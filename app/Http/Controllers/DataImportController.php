@@ -81,7 +81,6 @@ class DataImportController extends Controller
 
         $baseValidator = app(BaseStatsValidator::class);
         $baseValidator->validateImportFields($dataImport, ImportHelper::getImportFields($file));
-        $baseValidator->validateImportCount($dataImport);
 
         // only additional validation is done, we start the import...
         $dataImport->save();

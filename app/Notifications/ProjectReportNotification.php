@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Context;
 
 class ProjectReportNotification extends Notification implements ShouldQueue
 {
@@ -29,6 +30,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
         public CarbonInterface $time,
         public Team $team,
     ) {
+        auth()->setUser($this->notification->user);
     }
 
     /**

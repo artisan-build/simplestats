@@ -20,6 +20,7 @@ class Team extends JetstreamTeam
      */
     protected $casts = [
         'personal_team' => 'boolean',
+        'events_reset_at' => 'datetime',
     ];
 
     /**
@@ -32,6 +33,9 @@ class Team extends JetstreamTeam
         'currency',
         'timezone',
         'personal_team',
+        'events_reset_at',
+        'events_count_monthly',
+        'events_count_overall',
     ];
 
     /**
