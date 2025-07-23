@@ -23,6 +23,12 @@ interface AggregationBuilderType
     public function getDateInterval(string $calc, string $date, int $amount, string $interval): string;
 
     /**
+     * @param  array  $fields
+     * @return string
+     */
+    public function getDistinctFields(array $fields): string;
+
+    /**
      * Formats the given date string into the specified format.
      *
      * @param  string  $date  The date string to be formatted.

@@ -40,6 +40,12 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return $this->sql;
     }
 
+    // shorties
+    protected function getDistinctFields(array $fields): string
+    {
+        return $this->aggregationBuilderType->getDistinctFields(...func_get_args());
+    }
+
     protected function getCTE(): string
     {
         return "WITH stats_groups AS (
@@ -55,7 +61,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getPD_DAU(): string
     {
         return "pd_dau AS (
-            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) AS count
+            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions AND :projectInstanceCondition
             WHERE :projectInstanceCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter

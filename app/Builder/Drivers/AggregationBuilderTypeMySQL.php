@@ -18,6 +18,12 @@ class AggregationBuilderTypeMySQL implements AggregationBuilderType
         return "$func($date, INTERVAL $amount $interval)";
     }
 
+    public function getDistinctFields(array $fields): string
+    {
+        return implode(', ', $fields);
+    }
+
+
     public function getDateFormat(string $date, string $format): string
     {
         return "DATE_FORMAT($date, '$format')";
