@@ -10,19 +10,17 @@ use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
 use App\Models\StatsLocationCity;
+use App\Models\StatsLocationCountry;
 use App\Models\StatsLocationRegion;
 use App\Models\StatsPageEntry;
 use App\Models\StatsTrackCampaign;
 use App\Models\StatsTrackContent;
-use App\Models\StatsLocationCountry;
 use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackReferer;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
-use App\Models\StatsUser;
 use App\Rules\ValidProjectModel;
 use App\Services\StatsService;
-use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -37,7 +35,7 @@ class StatsFilterRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation()
+    protected function prepareForValidation(): void
     {
         $projects = $this->user()->currentTeam->projects();
 
@@ -146,17 +144,17 @@ class StatsFilterRequest extends FormRequest
             'statsType' => [
                 'sometimes',
                 'string',
-                Rule::in(StatsService::getStatsTypesCamelFlat()->toArray())
+                Rule::in(StatsService::getStatsTypesCamelFlat()->toArray()),
             ],
             'statsSort' => [
                 'sometimes',
                 'string',
-                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau'])
+                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau']),
             ],
             'groupType' => [
                 'sometimes',
                 'string',
-                Rule::in(array_keys(StatsService::getStatsTypes()->toArray()))
+                Rule::in(array_keys(StatsService::getStatsTypes()->toArray())),
             ],
             'limit' => [
                 'sometimes',

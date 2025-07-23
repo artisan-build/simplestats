@@ -3,17 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\ComparisonType;
 use App\Enums\StatsRangeType;
-use App\Helpers\AppHelper;
 use App\Http\Requests\StatsFilterRequest;
-use App\Models\StatsUser;
 use App\Services\RefererService;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
-use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,6 +26,8 @@ class StatsController extends Controller
         RefererService $refererService,
     ) {
         $user = $request->user();
+        // hack: as project_id and instance_id may be defined in the request, we need to check $_GET
+        $hasFilterRequest = ! empty($_GET);
 
         $teamStats = $user->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
@@ -55,6 +53,13 @@ class StatsController extends Controller
         }
 
         $teamStats->setRelation('projects', $projects);
+
+        $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
+        if (! $hasFilterRequest && ! empty($userFilterSettings)) {
+            $request = new StatsFilterRequest($userFilterSettings);
+        } else {
+            $user->updateSettings('statsFilters.'.$user->current_team_id, $request->all());
+        }
 
         $filters = StatsFilterDto::fromRequest($request);
         $teamStats->stats = $statsDetailsService->getStats($filters);
