@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Team;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -68,31 +67,22 @@ class SubscriptionService
         $teamPlan = $teamOwner->sparkPlan();
 
         $alarms = [];
-        foreach ($teamPlan->options as $featureType => $featureAmount) {
-            $featureTypeBase = class_basename($featureType);
-            if (! str($featureTypeBase)->startsWith('Stats') || $featureAmount === self::UNLIMITED_AMOUNT) {
-                continue;
-            }
 
-            /** @var $featureType Model */
-            // as this is also called in the cronjob (here we have no team), we need to apply the team_id manually
-            $currentAmount = $featureType::where('team_id', $team->id)->withoutGlobalScope('instance')->count();
-            $currentPercent = floor($currentAmount / $featureAmount * 100);
+        if ($teamPlan->options['Events'] !== self::UNLIMITED_AMOUNT) {
+            $currentAmount = $team->events_count_monthly;
+            $currentPercent = floor($currentAmount / $teamPlan->options['Events'] * 100);
 
             // this can only happen if the subscription can't be renewed
             if ($currentPercent > 100) {
                 $alarms[0] = [
                     'percent' => $currentPercent,
-                    'text' => "It seems like your subscription is canceled or could not be renewed automatically!<br>You're now back on the free plan and reached the tracking limit.",
+                    'text' => "Your subscription has been canceled or couldn't be renewed automatically. You're now on the free plan and have reached your monthly events limit.",
                 ];
-
-                break;
-            }
-
-            if ($currentPercent > self::ALARM_PERCENTAGE) {
+            } elseif ($currentPercent > self::ALARM_PERCENTAGE) {
+                $monthlyEventsDescr = strtolower($teamPlan->features['Events']);
                 $alarms[] = [
                     'percent' => $currentPercent,
-                    'text' => "You've reached $currentPercent% of the {$teamPlan->features[$featureType]} tracking limit of your {$teamPlan->name} plan.",
+                    'text' => "You've used $currentPercent% of your {$teamPlan->name} plan's {$monthlyEventsDescr}.",
                 ];
             }
         }

@@ -78,7 +78,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                             Created.
                         </ActionMessage>
 
-                        <PrimaryButton v-tooltip="!permissions.canCreateProject ? 'You are not allowed to create new Projects due to plan or role limitations!' : ''"
+                        <PrimaryButton v-tooltip="!permissions.canCreateProject ? 'You are not allowed to create new projects due to plan or role limitations!' : ''"
                                        :class="{ 'opacity-25': createProjectForm.processing }"
                                        :disabled="createProjectForm.processing || !permissions.canCreateProject"
                         >

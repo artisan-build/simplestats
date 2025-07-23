@@ -59,7 +59,7 @@ const createInstance = () => {
                 Created.
             </ActionMessage>
 
-            <PrimaryButton  v-tooltip="!permissions.canCreateInstance ? 'You are not allowed to create new Instances due to plan or role limitations!' : ''"
+            <PrimaryButton  v-tooltip="!permissions.canCreateInstance ? 'You are not allowed to create new instances due to plan or role limitations!' : ''"
                             :class="{ 'opacity-25': createInstanceForm.processing }"
                             :disabled="createInstanceForm.processing || !permissions.canCreateInstance">
                 Create

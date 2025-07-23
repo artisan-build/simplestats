@@ -10,7 +10,6 @@ import {computed, ref} from "vue";
 import FileInput from "@/Components/FileInput.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import WarningBox from "@/Components/WarningBox.vue";
 import InfoBox from "@/Components/InfoBox.vue";
 
 const props = defineProps({
@@ -88,7 +87,7 @@ const currentImportNotFinishedYet = computed(() => {
         <template #form>
             <div v-if="! permissions.canCreateDataImport" class="col-span-6">
                 <InfoBox>
-                    You are not allowed to create Data Imports due to plan or role limitations!
+                    You are not allowed to create data imports due to plan or role limitations!
                 </InfoBox>
             </div>
             <div v-else-if="currentImportNotFinishedYet" class="col-span-6">
@@ -150,7 +149,7 @@ const currentImportNotFinishedYet = computed(() => {
                     Started.
                 </ActionMessage>
 
-                <PrimaryButton v-tooltip="!permissions.canCreateDataImport ? 'You are not allowed to create new Data Imports due to plan or role limitations!' : ''"
+                <PrimaryButton v-tooltip="!permissions.canCreateDataImport ? 'You are not allowed to create new data imports due to plan or role limitations!' : ''"
                                :class="{ 'opacity-25': createDataImportForm.processing }"
                                :disabled="createDataImportForm.processing || !permissions.canCreateDataImport"
                                @click="confirmDataImportCreation"
