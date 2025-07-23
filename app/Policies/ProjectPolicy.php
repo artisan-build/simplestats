@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Services\SubscriptionService;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ProjectPolicy
@@ -31,8 +32,9 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
+        $allowedProjects = $user->currentTeam->owner->sparkPlan()->options[Project::class];
         return $user->hasTeamPermission($user->currentTeam, 'action:create')
-            && Project::count() < $user->currentTeam->owner->sparkPlan()->options[Project::class];
+            && (Project::count() < $allowedProjects || $allowedProjects === SubscriptionService::UNLIMITED_AMOUNT);
     }
 
     /**

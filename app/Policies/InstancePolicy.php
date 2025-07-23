@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Instance;
 use App\Models\User;
+use App\Services\SubscriptionService;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class InstancePolicy
@@ -31,8 +32,9 @@ class InstancePolicy
      */
     public function create(User $user): bool
     {
+        $allowedInstances = $user->currentTeam->owner->sparkPlan()->options[Instance::class];
         return $user->hasTeamPermission($user->currentTeam, 'action:create')
-            && Instance::count() < $user->currentTeam->owner->sparkPlan()->options[Instance::class];
+            && (Instance::count() < $allowedInstances || $allowedInstances === SubscriptionService::UNLIMITED_AMOUNT);
     }
 
     /**

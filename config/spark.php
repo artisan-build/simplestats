@@ -181,14 +181,14 @@ return [
                     'features' => [
                         Project::class => 'Unlimited Projects',
 //                        Instance::class => 'Unlimited Instances',
-                        'Events' => Number::abbreviate(700).' Monthly Events',
+                        'Events' => Number::abbreviate(10_000_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
                         DataImport::class => 'Data Import',
                     ],
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         Instance::class => SubscriptionService::UNLIMITED_AMOUNT,
-                        'Events' => 700,
+                        'Events' => 10_000_000,
                         'MultiCurrency' => true,
                         DataImport::class => true,
                     ],
