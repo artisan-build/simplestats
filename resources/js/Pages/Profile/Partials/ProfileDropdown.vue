@@ -41,12 +41,12 @@ const logout = () => {
                 API Tokens
             </DropdownLink>
 
-            <DropdownLink v-if="$page.props.appType === 'default'" as="a" :href="route('spark.portal')">
-                Subscription
-            </DropdownLink>
-
             <DropdownLink :href="route('notifications.index')">
                 Notifications
+            </DropdownLink>
+
+            <DropdownLink v-if="$page.props.appType === 'default'" as="a" :href="route('spark.portal')">
+                Subscription
             </DropdownLink>
 
             <div class="border-t border-gray-200 dark:border-dark-600" />

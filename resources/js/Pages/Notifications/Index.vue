@@ -31,7 +31,7 @@ const group2Name = {
         "description": "Choose which stats to include and how often you’d like to receive the report – or send a report manually anytime.",
     },
 }
-console.log(props.notifications)
+
 const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' in a ? 1 : 0) - ('membership' in b ? 1 : 0));
 </script>
 
