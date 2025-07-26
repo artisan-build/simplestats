@@ -2,8 +2,9 @@
 import NavLink from "@/Components/NavLink.vue";
 import {Link} from "@inertiajs/vue3";
 import ApplicationIcon from "@/Components/ApplicationIcon.vue";
+import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 
-const helpAction = (e) => {
+const supportAction = (e) => {
     e.preventDefault();
     window.open('https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g');
 }
@@ -39,16 +40,6 @@ const helpAction = (e) => {
                     Projects
                 </NavLink>
             </li>
-            <li class="hidden flex flex-col gap-y-1">
-                <NavLink :href="route('projects.instances.index', 1)" :active="route().current().startsWith('instances')">
-                    <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                        </svg>
-                    </template>
-                    Instances
-                </NavLink>
-            </li>
             <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('data-import.index')" :active="route().current().startsWith('data-import')">
                     <template #icon>
@@ -64,7 +55,7 @@ const helpAction = (e) => {
     <div class="flex flex-col gap-y-1 mb-3">
         <ul class="flex flex-col gap-y-3">
             <li class="flex flex-col gap-y-1">
-                <NavLink @click="helpAction">
+                <NavLink @click="supportAction">
                     <template #icon>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
@@ -84,19 +75,13 @@ const helpAction = (e) => {
                 </NavLink>
             </li>
             <li class="flex flex-col gap-y-1">
-                <NavLink :href="route('profile.show')" :active="route().t.routes[route().current()].uri.includes('user')">
+                <NavLink as="button" :active="route().t.routes[route().current()].uri.includes('user')">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        </svg>
+                        <ProfileDropdown direction="up" />
                     </template>
-                    Profile
+                    <div class="w-[58px] truncate">{{ $page.props.auth.user.name }}</div>
                 </NavLink>
             </li>
         </ul>
     </div>
 </template>
-
-<style scoped>
-
-</style>

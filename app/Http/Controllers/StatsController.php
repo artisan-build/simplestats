@@ -26,8 +26,16 @@ class StatsController extends Controller
         RefererService $refererService,
     ) {
         $user = $request->user();
+
         // hack: as project_id and instance_id may be defined in the request, we need to check $_GET
         $hasFilterRequest = ! empty($_GET);
+
+        $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
+        if (! $hasFilterRequest && ! empty($userFilterSettings)) {
+            $request = new StatsFilterRequest($userFilterSettings);
+        } else {
+            $user->updateSettings('statsFilters.'.$user->current_team_id, $request->all());
+        }
 
         $teamStats = $user->currentTeam()->with('projects', function ($query) use ($request) {
             $query->with('instances', function ($query) use ($request) {
@@ -53,13 +61,6 @@ class StatsController extends Controller
         }
 
         $teamStats->setRelation('projects', $projects);
-
-        $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
-        if (! $hasFilterRequest && ! empty($userFilterSettings)) {
-            $request = new StatsFilterRequest($userFilterSettings);
-        } else {
-            $user->updateSettings('statsFilters.'.$user->current_team_id, $request->all());
-        }
 
         $filters = StatsFilterDto::fromRequest($request);
         $teamStats->stats = $statsDetailsService->getStats($filters);

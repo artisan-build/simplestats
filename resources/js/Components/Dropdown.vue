@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import {computed, onMounted, onUnmounted, ref} from 'vue';
 
 const props = defineProps({
     align: {
@@ -9,6 +9,10 @@ const props = defineProps({
     width: {
         type: String,
         default: '48',
+    },
+    direction: {
+        type: String,
+        default: 'down',
     },
     contentClasses: {
         type: Array,
@@ -24,8 +28,20 @@ const closeOnEscape = (e) => {
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
-onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
+const closeOnClickOutside = (e) => {
+    if (!e.target.closest('.relative')) {
+        open.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('keydown', closeOnEscape);
+    document.addEventListener('click', closeOnClickOutside);
+});
+onUnmounted(() => {
+    document.removeEventListener('keydown', closeOnEscape);
+    document.removeEventListener('click', closeOnClickOutside);
+});
 
 const widthClass = computed(() => {
     return {
@@ -34,39 +50,41 @@ const widthClass = computed(() => {
 });
 
 const alignmentClasses = computed(() => {
+    const origin = props.direction === 'up' ? 'bottom' : 'top';
     if (props.align === 'left') {
-        return 'ltr:origin-top-left rtl:origin-top-right start-0';
+        return `ltr:origin-${origin}-left rtl:origin-${origin}-right start-0`;
     }
 
     if (props.align === 'right') {
-        return 'ltr:origin-top-right rtl:origin-top-left end-0';
+        return `ltr:origin-${origin}-right rtl:origin-${origin}-left end-0`;
     }
 
-    return 'origin-top';
+    return `origin-${origin}`;
 });
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative text-left">
         <div @click="open = ! open">
             <slot name="trigger" />
         </div>
 
-        <!-- Full Screen Dropdown Overlay -->
-        <div v-show="open" class="fixed inset-0 z-40" @click="open = false" />
-
         <transition
             enter-active-class="transition ease-out duration-200"
-            enter-from-class="transform opacity-0 scale-95"
+            :enter-from-class="'transform opacity-0 ' + (props.direction === 'up' ? 'scale-95 -translate-y-1' : 'scale-95')"
             enter-to-class="transform opacity-100 scale-100"
             leave-active-class="transition ease-in duration-75"
             leave-from-class="transform opacity-100 scale-100"
-            leave-to-class="transform opacity-0 scale-95"
+            :leave-to-class="'transform opacity-0 ' + (props.direction === 'up' ? 'scale-95 -translate-y-1' : 'scale-95')"
         >
             <div
                 v-show="open"
-                class="absolute z-50 mt-2 rounded-md shadow-lg font-normal"
-                :class="[widthClass, alignmentClasses]"
+                class="absolute z-50 rounded-md shadow-lg font-normal"
+                :class="[
+                    widthClass,
+                    alignmentClasses,
+                    props.direction === 'up' ? 'mb-2 bottom-full' : 'mt-2'
+                ]"
                 style="display: none;"
                 @click="open = false"
             >

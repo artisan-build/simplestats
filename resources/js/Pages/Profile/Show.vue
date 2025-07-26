@@ -8,7 +8,6 @@ import SetPasswordForm from '@/Pages/Profile/Partials/SetPasswordForm.vue';
 import TwoFactorAuthenticationForm from '@/Pages/Profile/Partials/TwoFactorAuthenticationForm.vue';
 import UpdatePasswordForm from '@/Pages/Profile/Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from '@/Pages/Profile/Partials/UpdateProfileInformationForm.vue';
-import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import AppearanceSettingsForm from "@/Pages/Profile/Partials/AppearanceSettingsForm.vue";
 
 defineProps({
@@ -22,8 +21,7 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 <template>
     <AppLayout title="Profile">
         <template #header>
-            <div>Profile</div>
-            <ProfileDropdown />
+            Profile
         </template>
 
         <div>

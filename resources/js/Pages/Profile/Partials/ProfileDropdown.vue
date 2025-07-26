@@ -10,13 +10,10 @@ const logout = () => {
 </script>
 
 <template>
-    <Dropdown align="right" width="48" class="ml-auto">
+    <Dropdown align="left" width="48" class="ml-auto">
         <template #trigger>
-            <button v-if="$page.props.jetstream.managesProfilePhotos"
-                    class="flex text-sm border-2 rounded-full focus:outline-none focus:border-gray-300 transition"
-                    :class="{ 'border-indigo-300' : route().t.routes[route().current()].uri.includes('user') }"
-            >
-                <img class="h-8 w-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+            <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-gray-500 rounded-full focus:outline-none transition">
+                <img class="size-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
             </button>
 
             <span v-else class="inline-flex rounded-md">
@@ -32,7 +29,7 @@ const logout = () => {
 
         <template #content>
             <!-- Account Management -->
-            <div class="block px-4 py-2 text-xs text-gray-400">
+            <div class="hidden px-4 py-2 text-xs text-gray-400">
                 Manage Account
             </div>
 

@@ -1,6 +1,5 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import FormSection from "@/Components/FormSection.vue";
 import SectionBorder from "@/Components/SectionBorder.vue";
 import SelectInput from "@/Components/SelectInput.vue";
@@ -39,13 +38,11 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
 <template>
     <AppLayout title="Notifications">
         <template #header>
-            <div>Notifications</div>
-            <ProfileDropdown />
+            Notifications
         </template>
         <div>
             <div class="max-w-3xl mx-auto mb-4">
-                Customize your settings to receive only the notifications that matter to you.<br>
-                These changes won't affect your team members.
+                Customize your notification settings to receive only the notifications that matter to you.
             </div>
             <div v-for="(team, index) in sortedTeams">
                 <FormSection>
