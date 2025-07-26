@@ -21,7 +21,7 @@ const classes = computed(() => {
     return props.active
         ? 'bg-gray-100 dark:bg-dark-700'
         : 'text-gray-700 dark:text-dark-200';
-}).value + " relative flex flex-col items-center justify-center gap-x-3 rounded-lg px-2 py-2  outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-dark-700";
+}).value + " relative flex flex-col items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-dark-700";
 </script>
 
 <template>

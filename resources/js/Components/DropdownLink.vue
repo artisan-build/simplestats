@@ -11,11 +11,11 @@ const classes = "block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-dark-
 
 <template>
     <div>
-        <button v-if="as == 'button'" type="submit" :class="`w-full text-start ${classes}`">
+        <button v-if="as === 'button'" type="submit" :class="`w-full text-start ${classes}`">
             <slot />
         </button>
 
-        <a v-else-if="as =='a'" :href="href" :class="classes">
+        <a v-else-if="as === 'a'" :href="href" :class="classes">
             <slot />
         </a>
 

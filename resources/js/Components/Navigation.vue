@@ -77,9 +77,8 @@ const supportAction = (e) => {
             <li class="flex flex-col gap-y-1">
                 <NavLink as="button" :active="route().t.routes[route().current()].uri.includes('user')">
                     <template #icon>
-                        <ProfileDropdown direction="up" />
+                        <ProfileDropdown direction="up" :triggerText="$page.props.auth.user.name" />
                     </template>
-                    <div class="w-[58px] truncate">{{ $page.props.auth.user.name }}</div>
                 </NavLink>
             </li>
         </ul>

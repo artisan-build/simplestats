@@ -1,8 +1,14 @@
 <script setup>
-
 import DropdownLink from "@/Components/DropdownLink.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import {router} from "@inertiajs/vue3";
+
+defineProps({
+    triggerText: {
+        type: String,
+        default: '',
+    }
+})
 
 const logout = () => {
     router.post(route('logout'));
@@ -12,10 +18,12 @@ const logout = () => {
 <template>
     <Dropdown align="left" width="48" class="ml-auto">
         <template #trigger>
-            <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-gray-500 rounded-full focus:outline-none transition">
-                <img class="size-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
-            </button>
-
+            <div v-if="$page.props.jetstream.managesProfilePhotos" class="text-center">
+                <button class="border-2 border-gray-500 rounded-full focus:outline-none transition">
+                    <img class="size-8 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.name">
+                </button>
+                <div v-if="triggerText" class="text-xs w-[58px] truncate">{{ triggerText }}</div>
+            </div>
             <span v-else class="inline-flex rounded-md">
                 <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-dark-400 bg-white dark:bg-dark-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
                     {{ $page.props.auth.user.name }}
