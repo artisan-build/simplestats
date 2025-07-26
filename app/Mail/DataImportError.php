@@ -4,10 +4,7 @@ namespace App\Mail;
 
 use App\Models\DataImport;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Crypt;
 
@@ -20,7 +17,8 @@ class DataImportError extends Mailable
      */
     public function __construct(
         public DataImport $dataImport
-    ) {}
+    ) {
+    }
 
     /**
      * Build the message.

@@ -2,14 +2,6 @@
 
 namespace App\Concerns;
 
-use App\Models\BaseStat;
-use App\Services\FaviconService;
-use App\Services\RefererService;
-use App\Services\StatsService;
-use hisorange\BrowserDetect\Facade as Browser;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Stevebauman\Location\Facades\Location;
-
 trait HasStatsTrackingValidation
 {
     protected array $trackingValidation = [

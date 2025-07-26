@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Mail\CustomMail;
-use App\Mail\UpdateAnnouncement;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;

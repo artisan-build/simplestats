@@ -2,8 +2,6 @@
 
 namespace App;
 
-use App\Models\Instance;
-use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Laravel\Pulse\Contracts\ResolvesUsers;
@@ -43,6 +41,7 @@ class PulseUsers implements ResolvesUsers
 
         $groupedKeys = $keys->mapToGroups(function ($key) {
             [$model, $id] = explode(':', $key);
+
             return [$model => $id];
         });
 
@@ -71,12 +70,12 @@ class PulseUsers implements ResolvesUsers
         $name = $user->name ?? '';
 
         return (object) [
-            'name' => $name. " - ID: $id",
+            'name' => $name." - ID: $id",
             'extra' => explode('\\', $model)[2],
             'avatar' => $user->avatar ?? (($user->email ?? false)
                     ? sprintf('https://gravatar.com/avatar/%s?d=mp', hash('sha256', trim(strtolower($user->email)))) // @phpstan-ignore property.nonObject
                     : sprintf('https://gravatar.com/avatar?d=mp')
-                ),
+            ),
         ];
     }
 

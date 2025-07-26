@@ -33,6 +33,7 @@ class InstancePolicy
     public function create(User $user): bool
     {
         $allowedInstances = $user->currentTeam->owner->sparkPlan()->options[Instance::class];
+
         return $user->hasTeamPermission($user->currentTeam, 'action:create')
             && (Instance::count() < $allowedInstances || $allowedInstances === SubscriptionService::UNLIMITED_AMOUNT);
     }

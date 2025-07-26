@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Carbon\CarbonInterface;
-use \Laravel\Paddle\Transaction as PaddleTransaction;
-use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
+use Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
+use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
 
 class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
 {

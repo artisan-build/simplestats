@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\User;
-use App\Notifications\NewRegistrationNotification;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,7 +19,8 @@ class QueuedVerifyEmailJob implements ShouldQueue
      */
     public function __construct(
         protected User $user
-    ) {}
+    ) {
+    }
 
     /**
      * Execute the job.

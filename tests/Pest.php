@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaracraftTech\LaravelUsefulAdditions\Traits\RefreshDatabaseFast;
 use Tests\TestCase;
 

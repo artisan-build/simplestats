@@ -11,7 +11,8 @@ readonly class ValidProjectModel implements ValidationRule
     public function __construct(
         private ?int $projectId,
         private string $model,
-    ) {}
+    ) {
+    }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

@@ -7,7 +7,6 @@ use App\Actions\CreateInstance;
 use App\Http\Requests\InstanceRequest;
 use App\Models\Instance;
 use App\Models\Project;
-use App\Models\StatsAggregation;
 use App\Models\StatsVisitor;
 use App\Services\StatsAggregationsService;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -59,7 +58,7 @@ class ProjectInstanceController extends Controller
                 'canDeleteInstance' => Gate::check('delete', $instance),
                 'canUpdateInstance' => Gate::check('update', $instance),
                 'canRegenerateInstanceToken' => Gate::check('regenerateInstanceToken', $instance),
-            ]
+            ],
         ]);
     }
 

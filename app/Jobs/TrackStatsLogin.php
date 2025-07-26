@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Models\StatsLogin;
 use App\Services\StatsService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Context;
 
 class TrackStatsLogin extends BaseStatsTrack
 {

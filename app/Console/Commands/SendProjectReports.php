@@ -33,7 +33,7 @@ class SendProjectReports extends Command
         $stickyNow = now()->utc();
 
         Project::withWhereHas('userNotifications.user')
-            ->when($this->argument('project'), fn($query, $project) => $query->where('id', $project))
+            ->when($this->argument('project'), fn ($query, $project) => $query->where('id', $project))
             ->with(['team:id,name,timezone,currency', 'userNotifications.notifiable'])
             ->each(function ($project) use ($stickyNow) {
                 $project->userNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project) {

@@ -2,9 +2,8 @@
 
 namespace App\Rules;
 
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\Lang;
+use Illuminate\Http\Request;
 
 class SignedUrl implements Rule
 {
@@ -29,8 +28,10 @@ class SignedUrl implements Rule
     {
         try {
             $request = Request::create($value);
+
             return $request->hasValidSignature();
-        } catch (\TypeError $e) {}
+        } catch (\TypeError $e) {
+        }
 
         return false;
     }

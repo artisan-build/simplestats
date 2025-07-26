@@ -74,10 +74,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getCTE(): string
     {
-        return "WITH RECURSIVE date_sequence AS (
-            SELECT ".$this->getDateSelect()." AS date_seq
+        return 'WITH RECURSIVE date_sequence AS (
+            SELECT '.$this->getDateSelect().' AS date_seq
             UNION ALL
-            SELECT ".$this->getDateInterval('add', 'date_seq', 1, ':intervalType')."
+            SELECT '.$this->getDateInterval('add', 'date_seq', 1, ':intervalType')."
             FROM date_sequence
             WHERE date_seq < ':endDateStart'
         )";
@@ -88,8 +88,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_REG(): string
     {
-        return "pd_reg_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
+        return 'pd_reg_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_users stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY date
@@ -101,8 +101,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_TAU(): string
     {
-        return "pd_tau_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
+        return 'pd_tau_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = $this->nauLoginCounter
@@ -115,8 +115,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_PU(): string
     {
-        return "pd_pu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
+        return 'pd_pu_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_payments stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = 1
@@ -129,8 +129,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_NAU(): string
     {
-        return "pd_nau_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
+        return 'pd_nau_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = $this->nauLoginCounter
@@ -143,8 +143,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_NAPU(): string
     {
-        return "pd_napu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
+        return 'pd_napu_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_payments stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = 1
@@ -157,8 +157,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_DAU(): string
     {
-        return "pd_dau_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+        return 'pd_dau_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat').' AS date, COUNT(DISTINCT '.$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter >= $this->nauLoginCounter
@@ -171,8 +171,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_DAPU(): string
     {
-        return "pd_dapu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+        return 'pd_dapu_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat').' AS date, COUNT(DISTINCT '.$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
@@ -190,8 +190,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getPD_DAAPU(): string
     {
-        return "pd_daapu_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+        return 'pd_daapu_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat').' AS date, COUNT(DISTINCT '.$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND EXISTS (
@@ -199,11 +199,11 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 FROM stats_payments sp
                 WHERE stats.stats_user_id = sp.stats_user_id
                     AND stats.instance_id = sp.instance_id
-                    AND sp.time >= ".$this->getDateInterval('sub', 'stats.time', 20, 'day')."
+                    AND sp.time >= ".$this->getDateInterval('sub', 'stats.time', 20, 'day').'
                     AND sp.time <= stats.time
             )
             GROUP BY date
-        )";
+        )';
     }
 
     /**
@@ -211,9 +211,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getLT_REG(): string
     {
-        return "lt_reg_cte AS (
+        return 'lt_reg_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
+                '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(*)
                     FROM stats_users stats
@@ -228,9 +228,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getLT_TAU(): string
     {
-        return "lt_tau_cte AS (
+        return 'lt_tau_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
+                '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(*)
                     FROM stats_logins stats
@@ -246,9 +246,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getLT_PU(): string
     {
-        return "lt_pu_cte AS (
+        return 'lt_pu_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
+                '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(*)
                     FROM stats_payments stats
@@ -261,8 +261,8 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getPD_VISITORS(): string
     {
-        return "pd_visitors_cte AS (
-            SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
+        return 'pd_visitors_cte AS (
+            SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_visitors stats
             WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY date
@@ -271,10 +271,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getPD_GROSS(): string
     {
-        return "pd_gross_cte AS (
+        return 'pd_gross_cte AS (
             SELECT date, SUM(count) AS count
             FROM (
-                SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, SUM(stats.gross) AS count
+                SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, SUM(stats.gross) AS count
                 FROM stats_payments stats
                 :trackingUserJoinConditions
                 WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
@@ -292,10 +292,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getPD_NET(): string
     {
-        return "pd_net_cte AS (
+        return 'pd_net_cte AS (
             SELECT date, SUM(count) AS count
             FROM (
-                SELECT ".$this->getDateFormat('stats.time', ':dateFormat')." AS date, SUM(stats.net) AS count
+                SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, SUM(stats.net) AS count
                 FROM stats_payments stats
                 :trackingUserJoinConditions
                 WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
@@ -313,9 +313,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getLT_VISITORS(): string
     {
-        return "lt_visitor_cte AS (
+        return 'lt_visitor_cte AS (
             SELECT
-                ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
+                '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                 (
                     SELECT COUNT(*)
                     FROM stats_visitors stats
@@ -327,11 +327,11 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getLT_NET(): string
     {
-        return "lt_net_cte AS (
+        return 'lt_net_cte AS (
             SELECT date, SUM(count) AS count
             FROM (
                 SELECT
-                    ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
+                    '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
                     (
                         SELECT SUM(stats.net)
                         FROM stats_payments stats
@@ -356,9 +356,9 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getSELECT(): string
     {
-        $sql = "SELECT
-            ".$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
-            ".$this->getDateFormat('ds.date_seq', ':dateFormatClear')." AS date_clear,";
+        $sql = 'SELECT
+            '.$this->getDateFormat('ds.date_seq', ':dateFormat').' AS date,
+            '.$this->getDateFormat('ds.date_seq', ':dateFormatClear').' AS date_clear,';
 
         if ($this->trackablePerson === TrackablePerson::USER) {
             $sql .= '
@@ -391,32 +391,32 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             date_sequence ds';
 
         if ($this->trackablePerson === TrackablePerson::USER) {
-            $sql .= "
-                LEFT JOIN pd_reg_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_reg_cte.date
-                LEFT JOIN pd_tau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_tau_cte.date
-                LEFT JOIN pd_pu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_pu_cte.date
-                LEFT JOIN pd_nau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_nau_cte.date
-                LEFT JOIN pd_napu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_napu_cte.date
-                LEFT JOIN pd_dau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_dau_cte.date
-                LEFT JOIN pd_dapu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_dapu_cte.date
-                LEFT JOIN pd_daapu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_daapu_cte.date
-                LEFT JOIN lt_reg_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_reg_cte.date
-                LEFT JOIN lt_pu_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_pu_cte.date
-                LEFT JOIN lt_tau_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_tau_cte.date";
+            $sql .= '
+                LEFT JOIN pd_reg_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_reg_cte.date
+                LEFT JOIN pd_tau_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_tau_cte.date
+                LEFT JOIN pd_pu_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_pu_cte.date
+                LEFT JOIN pd_nau_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_nau_cte.date
+                LEFT JOIN pd_napu_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_napu_cte.date
+                LEFT JOIN pd_dau_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_dau_cte.date
+                LEFT JOIN pd_dapu_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_dapu_cte.date
+                LEFT JOIN pd_daapu_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_daapu_cte.date
+                LEFT JOIN lt_reg_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = lt_reg_cte.date
+                LEFT JOIN lt_pu_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = lt_pu_cte.date
+                LEFT JOIN lt_tau_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = lt_tau_cte.date';
         }
 
-        $sql .= "
-            LEFT JOIN pd_visitors_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_visitors_cte.date
-            LEFT JOIN pd_gross_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_gross_cte.date
-            LEFT JOIN pd_net_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = pd_net_cte.date
-            LEFT JOIN lt_visitor_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_visitor_cte.date
-            LEFT JOIN lt_net_cte ON ".$this->getDateFormat('ds.date_seq', ':dateFormat')." = lt_net_cte.date";
+        $sql .= '
+            LEFT JOIN pd_visitors_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_visitors_cte.date
+            LEFT JOIN pd_gross_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_gross_cte.date
+            LEFT JOIN pd_net_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = pd_net_cte.date
+            LEFT JOIN lt_visitor_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = lt_visitor_cte.date
+            LEFT JOIN lt_net_cte ON '.$this->getDateFormat('ds.date_seq', ':dateFormat').' = lt_net_cte.date';
 
         return $sql;
     }
 
     protected function getORDER(): string
     {
-        return "ORDER BY date_clear DESC;";
+        return 'ORDER BY date_clear DESC;';
     }
 }

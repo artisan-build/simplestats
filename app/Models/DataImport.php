@@ -32,7 +32,7 @@ class DataImport extends Model
     ];
 
     protected $appends = [
-        'rows_progress'
+        'rows_progress',
     ];
 
     public function rowsProgress(): Attribute

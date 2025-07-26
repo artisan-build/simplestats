@@ -17,12 +17,14 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidation, WithChunkReading, WithBatchInserts
+abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkReading, WithHeadingRow, WithValidation
 {
     const BATCH_CHUNK_SIZE = 1000;
 
     public int $counter = 0;
+
     public int $idFrom = 0;
+
     public int $idTo = 0;
 
     // we need to take track of the lowest imported data (for aggregation invalidation)
@@ -60,9 +62,8 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
     }
 
     /**
-     * @param  array  $row
-     *
      * @return \Illuminate\Database\Eloquent\Model|null
+     *
      * @throws ImportCanceledException
      */
     public function model(array $row)
@@ -79,11 +80,19 @@ abstract class BaseStatsImport implements ToModel, WithHeadingRow, WithValidatio
         $this->counter++;
 
         // make from/to work also if the order is not correct...
-        if (empty($this->idFrom)) $this->idFrom = $row['id'];
-        if (empty($this->idTo)) $this->idTo = $row['id'];
+        if (empty($this->idFrom)) {
+            $this->idFrom = $row['id'];
+        }
+        if (empty($this->idTo)) {
+            $this->idTo = $row['id'];
+        }
 
-        if ($row['id'] < $this->idFrom) $this->idFrom = $row['id'];
-        if ($row['id'] > $this->idTo) $this->idTo = $row['id'];
+        if ($row['id'] < $this->idFrom) {
+            $this->idFrom = $row['id'];
+        }
+        if ($row['id'] > $this->idTo) {
+            $this->idTo = $row['id'];
+        }
 
         $time = CarbonImmutable::parse($row['time']);
         if ($this->lowestImportedDate->gt($time)) {

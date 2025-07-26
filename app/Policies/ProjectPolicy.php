@@ -33,6 +33,7 @@ class ProjectPolicy
     public function create(User $user): bool
     {
         $allowedProjects = $user->currentTeam->owner->sparkPlan()->options[Project::class];
+
         return $user->hasTeamPermission($user->currentTeam, 'action:create')
             && (Project::count() < $allowedProjects || $allowedProjects === SubscriptionService::UNLIMITED_AMOUNT);
     }

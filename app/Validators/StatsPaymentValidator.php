@@ -31,9 +31,15 @@ class StatsPaymentValidator extends BaseStatsValidator
         }
 
         // these fields need to exist for the batch import upsert
-        if (! isset($input['orig_gross'])) $input['orig_gross'] = null;
-        if (! isset($input['orig_net'])) $input['orig_net'] = null;
-        if (! isset($input['orig_currency'])) $input['orig_currency'] = null;
+        if (! isset($input['orig_gross'])) {
+            $input['orig_gross'] = null;
+        }
+        if (! isset($input['orig_net'])) {
+            $input['orig_net'] = null;
+        }
+        if (! isset($input['orig_currency'])) {
+            $input['orig_currency'] = null;
+        }
 
         // check if we have to convert currencies
         $teamCurrency = $team->currency;
@@ -49,11 +55,19 @@ class StatsPaymentValidator extends BaseStatsValidator
             ]);
         }
 
-        if (isset($input['gross']))        $input['gross'] = round($input['gross'], 2);
-        if (isset($input['orig_gross']))   $input['orig_gross'] = round($input['orig_gross'], 2);
+        if (isset($input['gross'])) {
+            $input['gross'] = round($input['gross'], 2);
+        }
+        if (isset($input['orig_gross'])) {
+            $input['orig_gross'] = round($input['orig_gross'], 2);
+        }
 
-        if (isset($input['net']))          $input['net'] = round($input['net'], 2);
-        if (isset($input['orig_net']))     $input['orig_net'] = round($input['orig_net'], 2);
+        if (isset($input['net'])) {
+            $input['net'] = round($input['net'], 2);
+        }
+        if (isset($input['orig_net'])) {
+            $input['orig_net'] = round($input['orig_net'], 2);
+        }
 
         return $input;
     }

@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StatsPaymentFactory extends Factory
 {
@@ -24,6 +23,7 @@ class StatsPaymentFactory extends Factory
     public function initialize()
     {
         self::$id = 1;
+
         return $this;
     }
 
@@ -42,7 +42,7 @@ class StatsPaymentFactory extends Factory
             'project_id' => Project::inRandomOrder()->first()->id,
             'instance_id' => Instance::inRandomOrder()->first()->id,
             'gross' => $gross,
-            'net' => $gross*0.8,
+            'net' => $gross * 0.8,
             'currency' => 'EUR',
             'time' => $date->format('Y-m-d H:i:s'),
             'time_utc' => $date->format('Y-m-d H:i:s'),

@@ -31,7 +31,7 @@ class DataImportController extends Controller
             'project',
             'instance',
             'createdBy',
-            'trackedJob'
+            'trackedJob',
         ])->orderBy('created_at', 'desc')->paginate(10);
 
         // if for some reason the import has no tracked job (shouldn't happen) and one, so that FE/Vue parses...
@@ -51,9 +51,9 @@ class DataImportController extends Controller
         $projects = Project::orderBy('created_at', 'desc')->get()->prepend(['id' => 0, 'name' => 'Please Select']);
         $instances = Instance::orderBy('created_at', 'desc')->get();
 
-        $importTypes = collect(DataImportType::values())->map(fn($item) => ['id' => $item, 'name' => ucfirst($item)])->prepend(['id' => null, 'name' => 'Please Select']);
+        $importTypes = collect(DataImportType::values())->map(fn ($item) => ['id' => $item, 'name' => ucfirst($item)])->prepend(['id' => null, 'name' => 'Please Select']);
         // csv geht irgendwie nur mit txt, aber das soll im FE nicht angezeigt werden...
-        $mimeTypes = collect(DataImportRequest::MIMETYPES)->filter(fn($type) => $type !== 'txt');
+        $mimeTypes = collect(DataImportRequest::MIMETYPES)->filter(fn ($type) => $type !== 'txt');
 
         return Inertia::render('DataImports/Index', [
             'dataImports' => $imports,
@@ -64,7 +64,7 @@ class DataImportController extends Controller
             'filters' => $request->all(),
             'permissions' => [
                 'canCreateDataImport' => Gate::check('create', DataImport::class),
-            ]
+            ],
         ]);
     }
 

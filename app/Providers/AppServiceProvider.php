@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Builder\Drivers\AggregationBuilderType;
 use App\Builder\Drivers\AggregationBuilderTypeMySQL;
 use App\Builder\Drivers\AggregationBuilderTypePgSQL;
-use App\Builder\Drivers\AggregationBuilderType;
 use App\Helpers\AppHelper;
 use App\Models\PersonalAccessToken;
 use App\Models\User;

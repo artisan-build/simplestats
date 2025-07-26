@@ -4,12 +4,9 @@ namespace App\Providers;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\ValidationException;
 use Laravel\Paddle\Cashier;
-use Spark\Plan;
 use Spark\Spark;
 
 class SparkServiceProvider extends ServiceProvider

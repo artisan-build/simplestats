@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\StatsVisitor;
-use Carbon\Carbon;
 
 class TrackStatsVisitor extends BaseStatsTrack
 {

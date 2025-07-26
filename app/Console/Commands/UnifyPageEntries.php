@@ -4,12 +4,10 @@ namespace App\Console\Commands;
 
 use App\Models\StatsAggregation;
 use App\Models\StatsPageEntry;
-use App\Models\StatsTrackReferer;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class UnifyPageEntries extends Command

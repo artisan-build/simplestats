@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
         }
 
         //make sure the next project gets created at least 1 sec after the first...
-//        sleep(1);
+        //        sleep(1);
 
         $projects = [
             //['name' => 'My cool SaaS'],

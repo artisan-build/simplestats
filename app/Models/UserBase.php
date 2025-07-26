@@ -30,10 +30,10 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     }
     use HasTeams;
     use Impersonate;
+    use KeepsDeletedModels;
     use Notifiable;
     use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
-    use KeepsDeletedModels;
 
     /**
      * The attributes that are mass assignable.

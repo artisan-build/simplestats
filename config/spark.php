@@ -6,7 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use App\Services\SubscriptionService;
-use \Illuminate\Support\Number;
+use Illuminate\Support\Number;
 
 return [
 
@@ -50,10 +50,10 @@ return [
     |
     */
 
-     'brand' =>  [
-         'logo' => realpath(__DIR__.'/../public/svg/app_mark.svg'),
-         'color' => 'bg-indigo-500',
-     ],
+    'brand' => [
+        'logo' => realpath(__DIR__.'/../public/svg/app_mark.svg'),
+        'color' => 'bg-indigo-500',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -113,7 +113,7 @@ return [
                     'yearly_id' => 0,
                     'features' => [
                         Project::class => '1 Project',
-//                        Instance::class => '1 Instance',
+                        //                        Instance::class => '1 Instance',
                         'Events' => Number::abbreviate(5_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
                         DataImport::class => 'Data Import',
@@ -135,7 +135,7 @@ return [
                     'yearly_incentive' => 'Save 13%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
-//                        Instance::class => 'Unlimited Instances',
+                        //                        Instance::class => 'Unlimited Instances',
                         'Events' => Number::abbreviate(200_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
                         DataImport::class => 'Data Import',
@@ -157,7 +157,7 @@ return [
                     'yearly_incentive' => 'Save 15%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
-//                        Instance::class => 'Unlimited Instances',
+                        //                        Instance::class => 'Unlimited Instances',
                         'Events' => Number::abbreviate(500_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
                         DataImport::class => 'Data Import',
@@ -180,7 +180,7 @@ return [
                     'yearly_incentive' => 'Save 16%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
-//                        Instance::class => 'Unlimited Instances',
+                        //                        Instance::class => 'Unlimited Instances',
                         'Events' => Number::abbreviate(10_000_000).' Monthly Events',
                         'MultiCurrency' => 'Multi Currency Support',
                         DataImport::class => 'Data Import',

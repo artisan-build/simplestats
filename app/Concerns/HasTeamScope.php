@@ -4,8 +4,6 @@ namespace App\Concerns;
 
 use App\Helpers\AppHelper;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
 
 trait HasTeamScope

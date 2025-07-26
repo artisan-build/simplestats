@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Instance;
 use App\Services\StatsService;
 use Illuminate\Console\Command;
 

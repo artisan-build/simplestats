@@ -2,14 +2,11 @@
 
 namespace App\Concerns;
 
-use Illuminate\Database\Eloquent\Builder;
-
 trait HasCounterByStatsUser
 {
     /**
      * If you change these things here, make sure to also reflect it in the import process
      */
-
     public static function bootHasCounterByStatsUser(): void
     {
         static::creating(function ($model) {
@@ -33,6 +30,6 @@ trait HasCounterByStatsUser
         return $this->where([
             'stats_user_id' => $this->stats_user_id,
             'instance_id' => $this->instance_id,
-        ])->count()+1;
+        ])->count() + 1;
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
+use App\Mail\TeamInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Jetstream\Features;
-use App\Mail\TeamInvitation;
 
 test('team members can be invited to team', function () {
     Mail::fake();

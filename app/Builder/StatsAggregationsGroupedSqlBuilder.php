@@ -121,38 +121,38 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
     protected function getSELECT(): string
     {
-        $sql = "SELECT
+        $sql = 'SELECT
             sg.type_id as type_id,
-            sg.name as name,";
+            sg.name as name,';
 
         if ($this->trackablePerson === TrackablePerson::USER) {
-            $sql .= "
+            $sql .= '
                 COALESCE(lt_reg.count, 0) as reg,
                 ROUND(COALESCE((lt_reg.count * 100.0 / NULLIF(lt_visitors.count, 0)), 0), 2) AS cr,
-                COALESCE(pd_dau.count, 0) AS dau,";
+                COALESCE(pd_dau.count, 0) AS dau,';
         }
 
-        $sql .= "
+        $sql .= '
             COALESCE(lt_visitors.count, 0) AS visitors,
-            COALESCE(lt_net.count, 0) AS net";
+            COALESCE(lt_net.count, 0) AS net';
 
         return $sql;
     }
 
     protected function getFROM(): string
     {
-        $sql = "FROM
-            stats_groups sg";
+        $sql = 'FROM
+            stats_groups sg';
 
         if ($this->trackablePerson === TrackablePerson::USER) {
-            $sql .= "
+            $sql .= '
                 LEFT JOIN pd_dau ON sg.type_id = pd_dau.type_id
-                LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id";
+                LEFT JOIN lt_reg ON sg.type_id = lt_reg.type_id';
         }
 
-        $sql .= "
+        $sql .= '
             LEFT JOIN lt_visitors ON sg.type_id = lt_visitors.type_id
-            LEFT JOIN lt_net ON sg.type_id = lt_net.type_id";
+            LEFT JOIN lt_net ON sg.type_id = lt_net.type_id';
 
         return $sql;
     }

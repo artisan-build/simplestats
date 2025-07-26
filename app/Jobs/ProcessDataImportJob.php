@@ -2,16 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Concerns\HasTeamScope;
 use App\Exceptions\ImportCanceledException;
 use App\Helpers\AppHelper;
 use App\Imports\BaseStatsImport;
 use App\Mail\DataImportCanceled;
+use App\Mail\DataImportCompleted;
 use App\Mail\DataImportError;
 use App\Mail\DataImportFailed;
-use App\Mail\DataImportCompleted;
 use App\Models\DataImport;
-use App\Models\Team;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
 use Illuminate\Bus\Queueable;
@@ -19,7 +17,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -35,6 +32,7 @@ class ProcessDataImportJob implements ShouldQueue
 
     // do not retry on failure
     public int $tries = 1;
+
     public int $timeout = 3600;
 
     public string $filepath;
@@ -73,7 +71,7 @@ class ProcessDataImportJob implements ShouldQueue
             $this->model->trackedJob->output = $e->getMessage();
 
             // higher exceptions must be listed before Throwable, else it's always true
-            match(true) {
+            match (true) {
                 $e instanceof ImportCanceledException => Mail::to($this->model->createdBy->email)->queue(new DataImportCanceled($this->model)),
                 $e instanceof ValidationException => Mail::to($this->model->createdBy->email)->queue(new DataImportFailed($this->model)),
                 $e instanceof Throwable => Mail::to($this->model->createdBy->email)->queue(new DataImportError($this->model)),
@@ -104,7 +102,7 @@ class ProcessDataImportJob implements ShouldQueue
             'team_id' => $this->model->team_id,
             'project_id' => $this->model->project_id,
             'instance_id' => $this->model->instance_id,
-            'time' => $importer->getLowestImportedDate()
+            'time' => $importer->getLowestImportedDate(),
         ]);
         $modelClass::reguard();
 

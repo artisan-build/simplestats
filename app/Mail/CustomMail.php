@@ -2,13 +2,9 @@
 
 namespace App\Mail;
 
-use App\Models\DataImport;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class CustomMail extends Mailable
@@ -22,8 +18,8 @@ class CustomMail extends Mailable
         public User $user,
         public string $title,
         public string $message,
-    )
-    {}
+    ) {
+    }
 
     /**
      * Build the message.

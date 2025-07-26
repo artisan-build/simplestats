@@ -27,7 +27,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         Verified::class => [
-            EmailVerificationListener::class
+            EmailVerificationListener::class,
         ],
         TeamMemberAdded::class => [
             SetCurrentTeam::class,

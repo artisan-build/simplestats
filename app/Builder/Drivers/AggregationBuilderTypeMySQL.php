@@ -15,6 +15,7 @@ class AggregationBuilderTypeMySQL implements AggregationBuilderType
     public function getDateInterval(string $calc, string $date, int $amount, string $interval): string
     {
         $func = ($calc === 'add') ? 'DATE_ADD' : 'DATE_SUB';
+
         return "$func($date, INTERVAL $amount $interval)";
     }
 
@@ -22,7 +23,6 @@ class AggregationBuilderTypeMySQL implements AggregationBuilderType
     {
         return implode(', ', $fields);
     }
-
 
     public function getDateFormat(string $date, string $format): string
     {

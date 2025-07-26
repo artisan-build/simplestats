@@ -7,14 +7,14 @@ use App\Concerns\HasTeamScope;
 use App\Events\InstanceCreated;
 use App\Events\InstanceDeleted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Instance extends Authenticatable
 {
-    use HasFactory;
     use HasApiPlainTokens;
+    use HasFactory;
     use HasTeamScope;
 
     const TOKEN_NAME = 'API Token';

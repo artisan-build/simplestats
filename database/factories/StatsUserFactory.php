@@ -2,12 +2,11 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsUser;
 use App\Models\Team;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StatsUserFactory extends Factory
 {
@@ -23,6 +22,7 @@ class StatsUserFactory extends Factory
     public function initialize()
     {
         self::$id = 1;
+
         return $this;
     }
 
@@ -51,7 +51,7 @@ class StatsUserFactory extends Factory
             'time_utc' => $date,
         ];
 
-        if (!is_null($data['track_source'])) {
+        if (! is_null($data['track_source'])) {
             $data = array_merge($data, [
                 'track_medium' => $this->faker->randomElement(['cpc', 'email', 'social', 'banner', 'referral']),
                 'track_campaign' => $this->faker->randomElement(['summer_sale_2023', 'new_product_launch', 'christmas_special', 'brand_awareness', 'customer_retention']),

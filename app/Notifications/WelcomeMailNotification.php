@@ -15,7 +15,8 @@ class WelcomeMailNotification extends Notification implements ShouldQueue
 
     public function __construct(
         public User $user
-    ) {}
+    ) {
+    }
 
     /**
      * Get the notification's delivery channels.

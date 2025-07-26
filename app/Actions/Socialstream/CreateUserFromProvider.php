@@ -3,10 +3,8 @@
 namespace App\Actions\Socialstream;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\DB;
 use JoelButcher\Socialstream\Contracts\CreatesConnectedAccounts;
 use JoelButcher\Socialstream\Contracts\CreatesUserFromProvider;
 use JoelButcher\Socialstream\Socialstream;

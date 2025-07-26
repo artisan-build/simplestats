@@ -3,8 +3,6 @@
 namespace App\Enums;
 
 use App\Builder\Drivers\AggregationBuilderType;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
@@ -73,11 +71,11 @@ enum StatsRangeType: string
         $dbDateFormats = app(AggregationBuilderType::class)->getDateFormats();
 
         return match ($this) {
-            self::HOUR =>   ['db' => $dbDateFormats[self::HOUR->value], 'php' => 'Y-m-d H:00'],
-            self::DAY =>    ['db' => $dbDateFormats[self::DAY->value], 'php' => 'Y-m-d'],
-            self::WEEK =>   ['db' => $dbDateFormats[self::WEEK->value], 'php' => 'o-W'],
-            self::MONTH =>  ['db' => $dbDateFormats[self::MONTH->value], 'php' => 'Y-m'],
-            self::YEAR =>   ['db' => $dbDateFormats[self::YEAR->value], 'php' => 'Y'],
+            self::HOUR => ['db' => $dbDateFormats[self::HOUR->value], 'php' => 'Y-m-d H:00'],
+            self::DAY => ['db' => $dbDateFormats[self::DAY->value], 'php' => 'Y-m-d'],
+            self::WEEK => ['db' => $dbDateFormats[self::WEEK->value], 'php' => 'o-W'],
+            self::MONTH => ['db' => $dbDateFormats[self::MONTH->value], 'php' => 'Y-m'],
+            self::YEAR => ['db' => $dbDateFormats[self::YEAR->value], 'php' => 'Y'],
             default => throw new \Exception('Unexpected match value'),
         };
     }
@@ -87,11 +85,11 @@ enum StatsRangeType: string
         $dbDateFormatsClear = app(AggregationBuilderType::class)->getDateFormatsClear();
 
         return match ($this) {
-            self::HOUR =>   ['db' => $dbDateFormatsClear[self::HOUR->value], 'php' => 'Y-m-d H:00'],
-            self::DAY =>    ['db' => $dbDateFormatsClear[self::DAY->value], 'php' => 'Y-m-d'],
-            self::WEEK =>   ['db' => $dbDateFormatsClear[self::WEEK->value], 'php' => 'Y-m-d '],
-            self::MONTH =>  ['db' => $dbDateFormatsClear[self::MONTH->value], 'php' => 'Y-m-d '],
-            self::YEAR =>   ['db' => $dbDateFormatsClear[self::YEAR->value], 'php' => 'Y-m-d '],
+            self::HOUR => ['db' => $dbDateFormatsClear[self::HOUR->value], 'php' => 'Y-m-d H:00'],
+            self::DAY => ['db' => $dbDateFormatsClear[self::DAY->value], 'php' => 'Y-m-d'],
+            self::WEEK => ['db' => $dbDateFormatsClear[self::WEEK->value], 'php' => 'Y-m-d '],
+            self::MONTH => ['db' => $dbDateFormatsClear[self::MONTH->value], 'php' => 'Y-m-d '],
+            self::YEAR => ['db' => $dbDateFormatsClear[self::YEAR->value], 'php' => 'Y-m-d '],
             default => throw new \Exception('Unexpected match value'),
         };
     }
@@ -127,7 +125,7 @@ enum StatsRangeType: string
             self::DAY => $rangeStart->subWeek(),
             self::WEEK => $rangeStart->subMonth(),
             self::MONTH => $rangeStart->subYear(),
-//            self::YEAR => $date->startOfYear(),
+            //            self::YEAR => $date->startOfYear(),
             default => throw new \Exception('Unexpected match value'),
         };
     }

@@ -15,10 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use Laravel\Fortify\Actions\ConfirmPassword;
 
 class ProjectController extends Controller
 {
@@ -36,7 +34,7 @@ class ProjectController extends Controller
             'trackingUsages' => StatsService::getTrackingUsages(),
             'permissions' => [
                 'canCreateProject' => Gate::check('create', Project::class),
-            ]
+            ],
         ]);
     }
 
@@ -49,7 +47,7 @@ class ProjectController extends Controller
 
     public function show(Request $request, Project $project): Response
     {
-        $project->load(['instances' => function(HasMany $query) {
+        $project->load(['instances' => function (HasMany $query) {
             $query->orderBy('created_at', 'DESC');
         }]);
 

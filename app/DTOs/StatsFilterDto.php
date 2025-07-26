@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 class StatsFilterDto
 {
     const TRACK_ALL = 0;
+
     const TRACK_ORGANIC = -1;
 
     public function __construct(
@@ -32,7 +33,8 @@ class StatsFilterDto
         public int $devicePlatform = 0,
         public int $deviceBrowser = 0,
         public int $pageEntry = 0,
-    ) {}
+    ) {
+    }
 
     public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
     {

@@ -1,23 +1,19 @@
 <?php
 
-use App\Http\Controllers\SetupInstallController;
-use App\Http\Controllers\SetupProjectController;
-use App\Http\Controllers\SetupTeamController;
-use App\Models\Team;
-use Illuminate\Http\Request;
 use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectInstanceController;
+use App\Http\Controllers\SetupInstallController;
+use App\Http\Controllers\SetupProjectController;
+use App\Http\Controllers\SetupTeamController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\UserSettingsController;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 /*

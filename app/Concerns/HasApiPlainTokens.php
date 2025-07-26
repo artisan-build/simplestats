@@ -10,7 +10,7 @@ trait HasApiPlainTokens
 {
     use HasApiTokens;
 
-    public function createTokenPlain(string $name, array $abilities = ['*'], DateTimeInterface $expiresAt = null): NewAccessToken
+    public function createTokenPlain(string $name, array $abilities = ['*'], ?DateTimeInterface $expiresAt = null): NewAccessToken
     {
         $token = $this->createToken(...func_get_args());
 

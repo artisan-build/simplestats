@@ -34,12 +34,12 @@ trait HasStatsTracking
         foreach (StatsService::getStatsTypes() as $statsTypes) {
             foreach ($statsTypes as $item) {
                 $property = $item['type'];
-                if (!empty($statsModel->$property)) {
+                if (! empty($statsModel->$property)) {
                     $track = [
                         'team_id' => $statsModel->team_id,
                         // there is a composite index on the name col
                         // we can't make it longer then 255 charts (string indexes can't be so long), so we need to trim
-                        'name' => Str::limit($statsModel->$property, 252)
+                        'name' => Str::limit($statsModel->$property, 252),
                     ];
 
                     $statsProperty = "stats_{$property}_id";
@@ -55,20 +55,20 @@ trait HasStatsTracking
     {
         return Attribute::make(
             // if the ip is set, we set the location data corresponding to it
-            set: function(?string $value) {
+            set: function (?string $value) {
                 if ($value === 'localhost' || str($value)->startsWith('127.') || $value === '::1') {
                     return [
-                        'location_country' => "Localhost",
-                        'location_region' => "Cyberland",
-                        'location_city' => "Hackertwon",
+                        'location_country' => 'Localhost',
+                        'location_region' => 'Cyberland',
+                        'location_city' => 'Hackertwon',
                     ];
                 }
 
                 if (str($value)->startsWith('172.') || str($value)->startsWith('192.') || str($value)->startsWith('169.')) {
                     return [
-                        'location_country' => "Intranet",
-                        'location_region' => "Network",
-                        'location_city' => "LAN",
+                        'location_country' => 'Intranet',
+                        'location_region' => 'Network',
+                        'location_city' => 'LAN',
                     ];
                 }
 
@@ -88,7 +88,7 @@ trait HasStatsTracking
     public function trackReferer(): Attribute
     {
         return Attribute::make(
-            set: function(?string $value) {
+            set: function (?string $value) {
                 return $this->setReferer($value);
             },
         );
@@ -97,7 +97,7 @@ trait HasStatsTracking
     public function trackSource(): Attribute
     {
         return Attribute::make(
-            set: function(?string $value) {
+            set: function (?string $value) {
                 // if source contains a dot, we assume it's a referrer.
                 // compatibility where referers where sent via source
                 if (str($value)->contains('.')) {
@@ -113,7 +113,7 @@ trait HasStatsTracking
     protected function setReferer(?string $value): array
     {
         // falsy values und ips werden zu null referers (Direct/Unknown)
-        if (!$value || filter_var($value, FILTER_VALIDATE_IP) !== false) {
+        if (! $value || filter_var($value, FILTER_VALIDATE_IP) !== false) {
             return ['track_referer' => null];
         }
 
@@ -121,6 +121,7 @@ trait HasStatsTracking
 
         $value = app(RefererService::class)->getTopReferer($value);
         app(FaviconService::class)->download($value);
+
         return ['track_referer' => $value];
     }
 
@@ -128,7 +129,7 @@ trait HasStatsTracking
     {
         return Attribute::make(
             // if the user agent is set, we set the device data corresponding to it
-            set: function(?string $value) {
+            set: function (?string $value) {
                 if ($browser = Browser::parse(urldecode($value))) {
                     return [
                         'device_type' => $browser->deviceType(),
@@ -140,7 +141,7 @@ trait HasStatsTracking
                             $browser->isSafari() => 'Safari',
                             $browser->isEdge() => 'Microsoft Edge',
                             default => null,
-                        }
+                        },
                     ];
                 }
 
@@ -152,7 +153,7 @@ trait HasStatsTracking
     public function pageEntry(): Attribute
     {
         return Attribute::make(
-            set: function(?string $value) {
+            set: function (?string $value) {
                 if (is_null($value)) {
                     return null;
                 }

@@ -5,7 +5,6 @@ namespace App\Events;
 use App\Models\Instance;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Laravel\Jetstream\Jetstream;
 
 class InstanceCreated
 {

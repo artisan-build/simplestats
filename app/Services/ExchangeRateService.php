@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\ExchangeRate;
 use AshAllenDesign\LaravelExchangeRates\Facades\ExchangeRate as ExchangeRateFacade;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -23,12 +22,12 @@ class ExchangeRateService
         );
 
         if ($validator->fails()) {
-            throw new Exception('Invalid currencies supplied: '.implode(', ',$validator->errors()->all()));
+            throw new Exception('Invalid currencies supplied: '.implode(', ', $validator->errors()->all()));
         }
 
         $rateKey = "$fromCurrency-$toCurrency";
 
-        $dateRate = ExchangeRate::where("date", $date->format("Y-m-d"))->first();
+        $dateRate = ExchangeRate::where('date', $date->format('Y-m-d'))->first();
 
         if (! $dateRate) {
             $dateRate = ExchangeRate::create([
@@ -36,7 +35,7 @@ class ExchangeRateService
                 'rates' => [
                     // curl request (we want to save this if possible for performance and api calls limits...)
                     $rateKey => ExchangeRateFacade::exchangeRate($fromCurrency, $toCurrency),
-                ]
+                ],
             ]);
         }
 

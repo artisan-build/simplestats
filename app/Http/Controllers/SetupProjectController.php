@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CreateInstance;
-use App\Actions\CreateProject;
 use App\Actions\UpdateProject;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Services\StatsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class SetupProjectController extends Controller

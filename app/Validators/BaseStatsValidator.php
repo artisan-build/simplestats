@@ -4,7 +4,6 @@ namespace App\Validators;
 
 use App\Enums\StatsRangeType;
 use App\Models\DataImport;
-use Gate;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;

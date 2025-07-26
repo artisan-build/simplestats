@@ -6,8 +6,8 @@ use App\Enums\DataImportType;
 use App\Models\Instance;
 use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class DataImportRequest extends FormRequest
 {
@@ -50,7 +50,7 @@ class DataImportRequest extends FormRequest
             ],
             'type' => [
                 'required',
-                Rule::enum(DataImportType::class)
+                Rule::enum(DataImportType::class),
             ],
             'file' => [
                 'required',

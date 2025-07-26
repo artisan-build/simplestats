@@ -9,7 +9,7 @@ use Laravel\Fortify\Actions\ConfirmPassword;
 
 class CheckPasswordConfirmation
 {
-    public function __invoke(StatefulGuard $guard, User $user, string|null $passwordInput): void
+    public function __invoke(StatefulGuard $guard, User $user, ?string $passwordInput): void
     {
         if (app('impersonate')->isImpersonating()) {
             return;
