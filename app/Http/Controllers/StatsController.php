@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use App\Services\RefererService;
@@ -27,14 +28,19 @@ class StatsController extends Controller
     ) {
         $user = $request->user();
 
-        // hack: as project_id and instance_id may be defined in the request, we need to check $_GET
+        // hack: as project_id and instance_id may be set within the request class, we need to check $_GET
         $hasFilterRequest = ! empty($_GET);
 
         $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
         if (! $hasFilterRequest && ! empty($userFilterSettings)) {
             $request = new StatsFilterRequest($userFilterSettings);
-        } else {
-            $user->updateSettings('statsFilters.'.$user->current_team_id, $request->all());
+        } elseif ($request->has('preset') && $request->preset !== StatsRangePreset::CUSTOM->value) {
+            // on preset, we do not save the range
+            $user->updateSettings('statsFilters.'.$user->current_team_id, $request->except([
+                'rangeStart',
+                'rangeAmount',
+                'rangeType',
+            ]));
         }
 
         $teamStats = $user->currentTeam()->with('projects', function ($query) use ($request) {
@@ -74,14 +80,10 @@ class StatsController extends Controller
         $data = [
             'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
+            'presets' => StatsRangePreset::toOptions(),
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            'statsStartingAt' => app(StatsService::class)->getStatsStartingAt([
-                'team_id' => $user->team->id,
-                'project_id' => $filters->projectId,
-                'id' => $filters->instanceId,
-            ]),
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
             'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),

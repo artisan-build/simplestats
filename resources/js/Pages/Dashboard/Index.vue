@@ -10,6 +10,7 @@ import {onMounted, onUnmounted, ref} from "vue";
 
 const props = defineProps({
     teamStats: Object,
+    presets: Array,
     filters: Object,
     statsGroups: Object,
     statsGroupNames: Object,
@@ -59,6 +60,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                     :teamStats="teamStats"
                     :statsGroups="statsGroups"
                     :statsGroupNames="statsGroupNames"
+                    :presets="presets"
                     :filters="filters"
                     :rangeTypes="rangeTypes"
                     :topReferers="topReferers"

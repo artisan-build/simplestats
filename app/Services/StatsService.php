@@ -25,6 +25,7 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 
@@ -172,12 +173,12 @@ class StatsService
         return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 
-    public function getStatsStartingAt(array $filter)
+    public function getStatsStartingAt(array $filter): Carbon
     {
         // filter to remove 0 key value pairs...
         $where = collect($filter)->filter()->toArray();
 
-        return Instance::where($where)->min('stats_starting_at');
+        return Carbon::parse(Instance::where($where)->min('stats_starting_at'));
     }
 
     /**

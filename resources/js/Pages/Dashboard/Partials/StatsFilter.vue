@@ -7,31 +7,14 @@ import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
 import EnvBadge from "@/Components/EnvBadge.vue";
-import {
-    addHours,
-    differenceInDays,
-    differenceInHours,
-    differenceInMonths,
-    differenceInYears,
-    endOfMonth,
-    endOfYear,
-    format,
-    startOfDay,
-    startOfHour,
-    startOfMonth,
-    startOfYear,
-    subDays,
-    subMonths,
-    subYears
-} from "date-fns";
 import TextInput from "@/Components/TextInput.vue";
-import {onMounted, ref} from "vue";
 import ToggleButton from "@/Components/ToggleButton.vue";
 
 const props = defineProps({
     teamStats: Object,
     statsGroups: Object,
     statsGroupNames: Object,
+    presets: Array,
     filters: Object,
     rangeTypes: Array,
     topReferers: Object,
@@ -67,6 +50,12 @@ const filterChanged = (event) => {
         }
     }
 
+    if (form.preset && form.preset !== 'custom') {
+        delete form.rangeStart;
+        delete form.rangeAmount;
+        delete form.rangeType;
+    }
+
     submit();
 };
 
@@ -89,63 +78,8 @@ const teamChanged = () => {
     });
 };
 
-let allTimeType = 'months';
-let allTimeRange = differenceInMonths(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
-
-// wenn all time range ist größer als 4 jahre, dann range type auf years stellen
-if (allTimeRange > (12 * 4)) {
-    allTimeType = 'years';
-    allTimeRange = differenceInYears(new Date(), page.props.statsStartingAt ?? startOfYear(subYears(new Date(), 1)));
-}
-
-let dateFormat = 'y-MM-dd';
-const presets = [
-    {name: 'Today', rangeStart: format(startOfDay(new Date()), dateFormat), rangeAmount: differenceInHours(startOfHour(addHours(new Date(), 1)), startOfDay(new Date())), rangeType: 'hours'},
-    {name: 'Yesterday', rangeStart: format(startOfDay(subDays(new Date(), 1)), dateFormat), rangeAmount: 24, rangeType: 'hours'},
-    {name: 'Last 7 Days', rangeStart: format(new Date(), dateFormat), rangeAmount: 7, rangeType: 'days'},
-    {name: 'Last 30 Days', rangeStart: format(new Date(), dateFormat), rangeAmount: 30, rangeType: 'days'},
-    {name: 'Last 12 Weeks', rangeStart: format(new Date(), dateFormat), rangeAmount: 12, rangeType: 'weeks'},
-    {name: 'Last 6 Months', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInMonths(new Date(), startOfMonth(subMonths(new Date(), 6))), rangeType: 'months'},
-    {name: 'This Month', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInDays(new Date(), startOfMonth(new Date())) + 1, rangeType: 'days'},
-    {name: 'Last Month', rangeStart: format(endOfMonth(subMonths(new Date(), 1)), dateFormat), rangeAmount: differenceInDays(endOfMonth(subMonths(new Date(), 1)), startOfMonth(subMonths(new Date(), 1))) + 1, rangeType: 'days'},
-    {name: 'This Year', rangeStart: format(new Date(), dateFormat), rangeAmount: differenceInMonths(new Date(), startOfYear(new Date())) + 1, rangeType: 'months'},
-    {name: 'Last Year', rangeStart: format(endOfYear(subYears(new Date(), 1)), dateFormat), rangeAmount: differenceInMonths(endOfYear(subYears(new Date(), 1)), startOfYear(subYears(new Date(), 1))) + 1, rangeType: 'months'},
-    {name: 'All Time', rangeStart: format(new Date(), dateFormat), rangeAmount: allTimeRange + 2, rangeType: allTimeType},
-    {name: 'Custom', rangeStart: '', rangeAmount: 0, rangeType: ''},
-].map((preset, index) => ({ ...preset, id: index }));
-
-const presetSelected = ref(null);
-const customRangeId = presets.length-1;
-
-onMounted(() => {
-    presets.some(function (preset) {
-        if (preset.rangeStart === form.rangeStart && preset.rangeAmount === form.rangeAmount && preset.rangeType === form.rangeType) {
-            presetSelected.value = preset.id;
-            return true;
-        }
-    });
-
-    if (presetSelected.value === null) {
-        presetSelected.value = customRangeId;
-    }
-});
-
-function isCustomRange() {
-    return presetSelected.value == customRangeId;
-}
-
-const presetChanged = (event) => {
-    const selectedPreset = presets[presetSelected.value];
-
-    if (isCustomRange()) {
-        return;
-    }
-
-    form.rangeStart = selectedPreset.rangeStart;
-    form.rangeAmount = selectedPreset.rangeAmount;
-    form.rangeType = selectedPreset.rangeType;
-
-    filterChanged(event);
+const isCustomRange = () => {
+    return form.preset === 'custom';
 };
 
 function isStatsGroupSet() {
@@ -225,7 +159,7 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <SelectInput
                                         id="rangeAmount"
                                         v-model="form.rangeAmount"
-                                        class="mt-1 block dark:!bg-dark-800"
+                                        class="mt-1 block w-20 dark:!bg-dark-800"
                                         :options="rangeAmounts"
                                         @change="filterChanged"
                                     />
@@ -249,10 +183,10 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                     <InputLabel class="hidden" for="rangePreset" value="Preset" />
                                     <SelectInput
                                         id="rangePreset"
-                                        v-model="presetSelected"
+                                        v-model="form.preset"
                                         class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="presets"
-                                        @change="presetChanged"
+                                        @change="filterChanged"
                                     />
                                 </div>
                                 <div class="hidden sm:block">

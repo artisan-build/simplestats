@@ -2,6 +2,7 @@
 
 namespace App\DTOs;
 
+use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use Carbon\CarbonImmutable;
@@ -20,6 +21,7 @@ class StatsFilterDto
         public StatsRangeType $rangeType,
         public CarbonInterface $rangeStart,
         public string $comparison,
+        public ?StatsRangePreset $preset = null,
         public int $trackReferer = 0,
         public int $trackSource = 0,
         public int $trackMedium = 0,
@@ -38,6 +40,15 @@ class StatsFilterDto
 
     public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
     {
+        if ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
+            $request->merge(StatsRangePreset::from($request->preset)->range($request->projectId, $request->instanceId));
+        } elseif (empty($_GET)) { // we use $_GET here cause request may be manipulated by request class...
+            $request->merge([
+                ...StatsRangePreset::LAST_7_DAYS->range($request->projectId, $request->instanceId),
+                'preset' => StatsRangePreset::LAST_7_DAYS->value,
+            ]);
+        }
+
         $rangeType = StatsRangeType::from($request->rangeType ?? StatsRangeType::DAY->value);
         $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
         $rangeStart = CarbonImmutable::parse($request->rangeStart ?? now());
@@ -55,6 +66,7 @@ class StatsFilterDto
             rangeType: $rangeType,
             rangeStart: $rangeStart,
             comparison: $request->comparison ?? '0',
+            preset: $request->preset ? StatsRangePreset::from($request->preset) : null,
             trackReferer: $request->trackReferer ?? 0,
             trackSource: $request->trackSource ?? 0,
             trackMedium: $request->trackMedium ?? 0,
