@@ -125,17 +125,17 @@ enum StatsRangePreset: string
         $now = now();
 
         $allTimeType = StatsRangeType::MONTH;
-        $allTimeRange = $statsStartingAt->diffInMonths($now);
+        $allTimeRange = $statsStartingAt->diffInMonths($now) + 2;
 
         // If the range is more than 12 months, switch to year
         if ($allTimeRange > (12 * 4)) {
             $allTimeType = StatsRangeType::YEAR;
-            $allTimeRange = $statsStartingAt->diffInYears($now);
+            $allTimeRange = $statsStartingAt->diffInYears($now) + 3;
         }
 
         return [
             'rangeStart' => $now->format('Y-m-d'),
-            'rangeAmount' => $allTimeRange + 2,
+            'rangeAmount' => $allTimeRange,
             'rangeType' => $allTimeType->value,
         ];
     }
