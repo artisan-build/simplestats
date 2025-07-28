@@ -127,9 +127,11 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
 
     public function updateSettings($key, $value): void
     {
-        $settings = $this->settings;
-        Arr::set($settings, $key, $value);
-        $this->update(['settings' => $settings]);
+        if (! $this->isImpersonated()) {
+            $settings = $this->settings;
+            Arr::set($settings, $key, $value);
+            $this->update(['settings' => $settings]);
+        }
     }
 
     public function makeAdmin()
