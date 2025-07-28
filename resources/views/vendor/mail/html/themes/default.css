@@ -188,12 +188,15 @@ img {
     -premailer-width: 100%;
     margin: 30px auto;
     width: 100%;
+    border: 1px solid #e8e5ef;
+    border-radius: 5px;
 }
 
 .table th {
     border-bottom: 1px solid #edeff2;
     margin: 0;
-    padding-bottom: 8px;
+    padding: 10px;
+    font-weight: 500;
 }
 
 .table td {
@@ -201,7 +204,7 @@ img {
     font-size: 15px;
     line-height: 18px;
     margin: 0;
-    padding: 10px 0;
+    padding: 10px;
 }
 
 .content-cell {
