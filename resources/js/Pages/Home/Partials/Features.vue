@@ -5,19 +5,19 @@ import {
     GiftIcon,
     LightBulbIcon,
     MapPinIcon,
+    PresentationChartBarIcon,
     RocketLaunchIcon,
     ShieldCheckIcon,
     UserGroupIcon
 } from "@heroicons/vue/24/outline/index.js";
 
-import LaravelIcon from "@/Components/CustomIcons/LaravelIcon.vue";
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
 const features = [
     {
         "icon": LightBulbIcon,
         "title": "Different",
-        "descr": "Traditional client-side analytic tools are only about 70% accurate because of ad blockers. They only show you data like visits and views. That's where server-side analytics like SimpleStats shines; it gives you superpowers without the integration hustle!"
+        "descr": "Traditional client-side analytic tools are only about 70% accurate because of ad blockers and they often only show you data like visits and views. That's where server-side analytics like SimpleStats shines; it gives you superpowers without the integration hustle!"
     },
     {
         "icon": RocketLaunchIcon,
@@ -25,9 +25,9 @@ const features = [
         "descr": "All you need to do to get SimpleStats up and running is: Install a composer package, adjust the config to your needs, create an account, and add the token to your env file. Congrats, you're ready to analyze your campaigns and users!"
     },
     {
-        "icon": LaravelIcon,
-        "title": "Laravel",
-        "descr": "Since the analytics tool and the composer client package are tailored precisely to Laravel, they can collect very interesting and important data without any additional complexity for you as the integrator of the package."
+        "icon": PresentationChartBarIcon,
+        "title": "Reporting",
+        "descr": "The tool provides you with a powerful reporting system that allows you to create custom reports, filter them by location, device, and UTM parameters. The frequency of the reports can be saved and scheduled individually, so you never miss important updates!"
     },
     {
         "icon": CodeBracketIcon,
