@@ -28,7 +28,7 @@ class UserInactiveNotification extends Notification
                 'days' => str('day')->plural($this->daysLeft)->ucfirst(),
             ]))
             ->greeting(Lang::get('Hi :user,', ['user' => $this->user->name]))
-            ->line('We noticed that you haven’t logged into your account for quite some time.
+            ->line('We noticed that you haven\'t logged into your account for quite some time.
             To ensure our platform remains active and efficient for all users,
             we periodically delete accounts that have been inactive for extended periods.')
             ->line(Lang::get('Your account is scheduled for deletion in :days_left :days due to inactivity.', [
@@ -36,6 +36,6 @@ class UserInactiveNotification extends Notification
                 'days' => str('day')->plural($this->daysLeft),
             ]))
             ->line('If you wish to keep your account, simply log in before that day.
-            This will confirm that you’d like to continue using our service.');
+            This will confirm that you\'d like to continue using our service.');
     }
 }

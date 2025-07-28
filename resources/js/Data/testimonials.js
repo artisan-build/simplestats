@@ -5,7 +5,7 @@ export const testimonials = [
         "company": "Finotive Group",
         "company_link": "https://www.finotivegroup.com",
         "social_link": "https://x.com/finotivecto",
-        "descr": "SimpleStats has been a game-changer for us. Its backend analytics ensure pinpoint accuracy, giving us reliable data that isn’t affected by ad blockers. We now have a crystal-clear view of our payment and registration conversions. Highly recommended for anyone needing precise stats!"
+        "descr": "SimpleStats has been a game-changer for us. Its backend analytics ensure pinpoint accuracy, giving us reliable data that isn't affected by ad blockers. We now have a crystal-clear view of our payment and registration conversions. Highly recommended for anyone needing precise stats!"
     },
     {
         "name": "Marc Loskill",
@@ -43,7 +43,7 @@ export const testimonials = [
         "title": "CEO",
         "company": "Trollgames",
         "company_link": "https://trollgames.de/?lang=en",
-        "descr": "Thanks to SimpleStats, we can quickly see which of our campaigns are truly profitable. The detailed conversion tracking for payments and registrations has helped us optimize our marketing strategies without any extra effort. It’s an essential tool for any data-driven business."
+        "descr": "Thanks to SimpleStats, we can quickly see which of our campaigns are truly profitable. The detailed conversion tracking for payments and registrations has helped us optimize our marketing strategies without any extra effort. It's an essential tool for any data-driven business."
     },
     {
         "name": "Martin Joo",

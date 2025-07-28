@@ -43,12 +43,12 @@ class WelcomeMailNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject($subject)
             ->greeting(Lang::get('Hi :user_name,', ['user_name' => $this->user->name]))
-            ->line(Lang::get('Welcome to :app_name! We’re thrilled to have you with us.', ['app_name' => $appName]))
-            ->line(Lang::get('If you have any questions or need assistance with getting started, we’re just an email away. Feel free to reply [here](:support) or schedule a quick call with us using the following link: [Calendly](:call).', [
+            ->line(Lang::get('Welcome to :app_name! We\'re thrilled to have you with us.', ['app_name' => $appName]))
+            ->line(Lang::get('If you have any questions or need assistance with getting started, we\'re just an email away. Feel free to reply [here](:support) or schedule a quick call with us using the following link: [Calendly](:call).', [
                 'support' => 'https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g',
                 'call' => 'https://calendly.com/simplestats/30min',
             ]))
-            ->line(Lang::get('In the meantime, here’s a quick start guide to help you set up :app_name right away: [Quick Start Guide](:guide).', [
+            ->line(Lang::get('In the meantime, here\'s a quick start guide to help you set up :app_name right away: [Quick Start Guide](:guide).', [
                 'app_name' => $appName,
                 'guide' => config('app.url').'/docs/installation.html',
             ]))

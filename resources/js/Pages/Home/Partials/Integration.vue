@@ -74,7 +74,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePayment contract" :code="snippetTrackPayment" />
                     <GridPlaceholder />
-                    <StepText :content="`To enable the client to <b>track</b> your app’s <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
+                    <StepText :content="`To enable the client to <b>track</b> your app's <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
 
                     <GridPlaceholder />
                     <BigStepBullet content="3" />
@@ -82,7 +82,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <GridPlaceholder />
                     <GridPlaceholder />
-                    <StepText class="hidden xl:block" :content="`You’re all set! <b>${appName}</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what’s happening in your app - in real time.`" />
+                    <StepText class="hidden xl:block" :content="`You're all set! <b>${appName}</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what's happening in your app - in real time.`" />
                 </div>
             </div>
             <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>

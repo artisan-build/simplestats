@@ -8,10 +8,10 @@ this process is **GDPR**-compliant by generating a unique `visitor_hash` if a ne
 
 ## The Visitor Hash
 
-The hash is created from a combination of the visitor’s `User-Agent`, the `IP address` and a `daily salt`.
+The hash is created from a combination of the visitor's `User-Agent`, the `IP address` and a `daily salt`.
 This allows us to track unique visitors without storing any personally identifiable information,
 keeping their data **safe** and **private**.
 
 The `visitor_hash` enables seamless visitor identification across different sessions and provides insights into how your **marketing campaigns** and UTM parameters drive traffic.
 
-With this, you gain a clear picture of which marketing efforts contribute most **effectively** to your site’s growth, all while respecting _user privacy_.
+With this, you gain a clear picture of which marketing efforts contribute most **effectively** to your site's growth, all while respecting _user privacy_.

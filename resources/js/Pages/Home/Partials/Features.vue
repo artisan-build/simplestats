@@ -3,7 +3,8 @@ import {
     ChartBarIcon,
     CodeBracketIcon,
     GiftIcon,
-    LightBulbIcon, MapPinIcon,
+    LightBulbIcon,
+    MapPinIcon,
     RocketLaunchIcon,
     ShieldCheckIcon,
     UserGroupIcon
@@ -31,7 +32,7 @@ const features = [
     {
         "icon": CodeBracketIcon,
         "title": "API",
-        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually and you’ll be able to use the tool for any custom project."
+        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually and you'll be able to use the tool for any custom project."
     },
     {
         "icon": MapPinIcon,

@@ -1,6 +1,6 @@
 # Troubleshooting
 
-If _SimpleStats_ isn’t working for your app despite a correct setup, here’s how to resolve common issues:
+If _SimpleStats_ isn't working for your app despite a correct setup, here's how to resolve common issues:
 
 ## Double-Check the API Token
 
@@ -13,28 +13,28 @@ After updating the **API token** in your `.env` file, refresh your configuration
 
 ## Restart PHP-FPM (if using OPCache)
 
-If you’re using OPCache, changes to PHP files may require restarting PHP-FPM:  
+If you're using OPCache, changes to PHP files may require restarting PHP-FPM:  
 `sudo service php-fpm reload`
 
 ## Delete Your Session
 
-_SimpleStats_ tracks you as a new [Unique Visitor](how-to-track-a-new-visitor.html) only if you don’t have an existing session. To test this, clear your session cookies:
+_SimpleStats_ tracks you as a new [Unique Visitor](how-to-track-a-new-visitor.html) only if you don't have an existing session. To test this, clear your session cookies:
 - Open **Browser Console** > **Application** > **Cookies**.
 - Remove the session cookies, then revisit your site to trigger a new visit.
 
 ## Fix Your Queue
 
 Check your `QUEUE_CONNECTION` setting in the `.env` file:
-- If it’s **not** set to `sync`, switch it to `sync` and test again. If it works, your queue setup needs attention.
+- If it's **not** set to `sync`, switch it to `sync` and test again. If it works, your queue setup needs attention.
 - For `database` queues, ensure the queue is running. Locally, run `php artisan queue:listen` to test.
 - For `redis` queues, confirm proper setup: [Laravel Queue Docs](https://laravel.com/docs/12.x/queues).
 
-Ensure your production server’s queue is also operational!
+Ensure your production server's queue is also operational!
 
 ## Add the Trackable Contracts
 
-If new [registrations](how-to-track-a-new-user.html) or [payments](how-to-track-a-new-payment.html) aren’t appearing on the dashboard:
-- Confirm you’ve correctly implemented the tracking contracts.
+If new [registrations](how-to-track-a-new-user.html) or [payments](how-to-track-a-new-payment.html) aren't appearing on the dashboard:
+- Confirm you've correctly implemented the tracking contracts.
 - Verify your user/payment models are listed in the `tracking_types` section of your [config file](installation.html#configuration).
 
 ## Deferred Function Compatibility

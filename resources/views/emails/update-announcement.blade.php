@@ -5,7 +5,7 @@
     <br>
     Today we released <b>SimpleStats 4.0 - "Dark Mode & Performance"</b> with a bunch of new features and improvements.<br>
     <br>
-    <h2>Here’s what’s new:</h2>
+    <h2>Here's what's new:</h2>
     <ul>
         <li><b>Massive performance improvements</b> – it should be much more fun now to navigate through your dashboard!</li>
         <li><b>Optimized API performance</b> – improved response times for API endpoints.</li>

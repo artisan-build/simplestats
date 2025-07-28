@@ -18,13 +18,13 @@ const questions = ref([
     {
         'id': 'how-are-visitors-tracked',
         'title': 'How are unique visitors tracked?',
-        'answer': 'We track unique visitors in a GDPR-compliant way by generating a unique visitor hash each time a new visitor accesses your site. This hash is derived from a combination of the visitor’s User-Agent, IP address, and a daily salt. This method enables unique visitor tracking without storing personally identifiable information such as cookies, ensuring privacy and data protection.',
+        'answer': 'We track unique visitors in a GDPR-compliant way by generating a unique visitor hash each time a new visitor accesses your site. This hash is derived from a combination of the visitor\'s User-Agent, IP address, and a daily salt. This method enables unique visitor tracking without storing personally identifiable information such as cookies, ensuring privacy and data protection.',
         'active': false,
     },
     {
         'id': 'custom-events',
         'title': 'Do you support custom events?',
-        'answer': 'Not yet, but it’s on our roadmap!',
+        'answer': 'Not yet, but it\'s on our roadmap!',
         'active': false,
     },
 ]);

@@ -28,7 +28,7 @@ const trigger = (notification) => {
 const group2Name = {
     "App\\Models\\Project": {
         "title": "Project Reporting",
-        "description": "Choose which stats to include and how often you’d like to receive the report – or send a report manually anytime.",
+        "description": "Choose which stats to include and how often you'd like to receive the report – or send a report manually anytime.",
     },
 }
 

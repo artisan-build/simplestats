@@ -48,4 +48,4 @@ https://example.com?my_ref=google&group=banner
 
 ## Payment Association with Tracking Codes
 
-New payments are **exclusively** associated with the tracking codes (campaigns) from the user’s registration. Individual payments cannot be associated with separate tracking codes. For example, if a user registers with a `utm_campaign` value of "facebook", all future payments by that user will be associated with the "facebook" campaign. This gives you the indication of how your campain is performing.
+New payments are **exclusively** associated with the tracking codes (campaigns) from the user's registration. Individual payments cannot be associated with separate tracking codes. For example, if a user registers with a `utm_campaign` value of "facebook", all future payments by that user will be associated with the "facebook" campaign. This gives you the indication of how your campain is performing.
