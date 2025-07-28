@@ -195,7 +195,7 @@ img {
 .table th {
     border-bottom: 1px solid #edeff2;
     margin: 0;
-    padding: 10px;
+    padding: 8px 6px;
     font-weight: 500;
 }
 
@@ -204,7 +204,7 @@ img {
     font-size: 15px;
     line-height: 18px;
     margin: 0;
-    padding: 10px;
+    padding: 8px 6px;
 }
 
 .content-cell {

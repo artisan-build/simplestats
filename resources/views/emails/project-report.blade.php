@@ -65,7 +65,7 @@ foreach ($statsGroups as $key => $statsGroup) {
             $name = '/' . Str::substr($name, 0, -1);
         }
 
-        $td = '|'.Str::reverse(Str::limit(Str::reverse($name), 25));
+        $td = '|'.Str::reverse(Str::limit(Str::reverse($name), 20));
         if ($enabledVisitors) $td .= '|'.($stats['visitors'] >= 1000 ? Number::abbreviate($stats['visitors'], 2) : $stats['visitors']);
         if ($enabledUsers) $td .= '|'.($stats['reg'] >= 1000 ? Number::abbreviate($stats['reg'], 2) : $stats['reg']);
         if ($enabledUsers && $enabledVisitors) $td .= '|'.Number::percentage($stats['cr'], 2);
