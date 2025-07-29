@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\AppHelper;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
@@ -16,10 +17,7 @@ class SetTeamContext
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check()) {
-            // important check first team_id then current_team_id
-            Context::add('team_id', auth()->user()->team_id ?? auth()->user()->current_team_id);
-        }
+        AppHelper::setTeamContextFromUser($request->user());
 
         return $next($request);
     }

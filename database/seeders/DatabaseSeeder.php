@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Actions\Fortify\CreateNewUser;
+use App\Helpers\AppHelper;
 use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsLogin;
@@ -52,6 +53,7 @@ class DatabaseSeeder extends Seeder
         });
 
         auth()->setUser($user);
+        AppHelper::setTeamContextFromUser($user);
 
         if (app()->isLocal()) {
             Project::factory()->count(1)->state(['name' => 'SimpleStats'])

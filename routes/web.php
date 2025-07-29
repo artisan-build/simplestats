@@ -59,7 +59,7 @@ Route::middleware([
     Route::post('data-import/{data_import}/rollback', [DataImportController::class, 'rollback'])->name('data-import.rollback');
 
     // Projects
-    Route::resource('projects', ProjectController::class)->except(['edit']);
+    Route::resource('projects', ProjectController::class)->except(['edit', 'create']);
 
     // Instances
     Route::resource('projects.instances', ProjectInstanceController::class)->except(['create', 'edit']);

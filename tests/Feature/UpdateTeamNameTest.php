@@ -7,6 +7,8 @@ test('team names can be updated', function () {
 
     $response = $this->put('/teams/'.$user->currentTeam->id, [
         'name' => 'Test Team',
+        'currency' => 'EUR',
+        'timezone' => 'Europe/Berlin',
     ]);
 
     expect($user->fresh()->ownedTeams)->toHaveCount(1);
