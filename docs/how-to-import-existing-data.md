@@ -31,7 +31,7 @@ _Core fields:_
 | **id**               | _mixed_ `required`  | The user id.                                                                           |
 | **time**             | _string_ `required` | The time when the user has registerd.<br/>Format: `Y-m-d H:i:s`, before or equal `now` |
 
-_Optional fields:_
+::: details Optional fields
 
 | Key                  | Type                 | Description                                                                                                          |
 |----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -50,6 +50,7 @@ _Optional fields:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+:::
 
 Here is an **example** of how such an SQL query may look like:
 

@@ -71,7 +71,7 @@ _Core parameters:_
 | **track_content**  | _string_ `nullable`  | The tracking `content` of the user.                                                    |
 | **page_entry**     | _string_ `nullable`  | The tracking `page_entry` of the user.                                                 |
 
-_Optional parameters:_
+::: details Optional parameters
 
 | Key                  | Type                 | Description                                                                                                          |
 |----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -82,6 +82,7 @@ _Optional parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+:::
 
 **Payload**
 
@@ -126,7 +127,7 @@ _Core parameters:_
 | **track_content**  | _string_ `nullable` | The tracking `content` of the user.                                                      |
 | **page_entry**     | _string_ `nullable` | The tracking `page_entry` of the user.                                                   |
 
-_Optional parameters:_
+::: details Optional parameters
 
 | Key                  | Type                 | Description                                                                                                          |
 |----------------------|----------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -137,6 +138,7 @@ _Optional parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+:::
 
 **Payload**
 
