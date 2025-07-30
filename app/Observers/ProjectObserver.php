@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Actions\CreateUserNotification;
 use App\Models\Project;
 use App\Models\UserNotification;
+use App\ValueObjects\UserNotificationTypeObject;
 
 class ProjectObserver
 {
@@ -25,20 +26,23 @@ class ProjectObserver
     public function updated(Project $project): void
     {
         if ($project->wasChanged('usage')) {
-            $allowedKeys = array_keys($project->getDefaultNotificationSettings()['tracking']);
+            //dd($project->getDefaultUserNotificationTypes());
+            $project->getDefaultUserNotificationTypes()->each(
+                function (UserNotificationTypeObject $notificationType) use ($project) {
+                    $allowedKeys = array_keys($notificationType->settings['tracking']);
 
-            $project->userNotifications()->each(function (UserNotification $notification) use ($project, $allowedKeys) {
-                $filteredSettings = collect($notification->settings)
-                    ->only($allowedKeys)
-                    ->toArray();
+                    $project->userNotifications()->where('type', $notificationType->type)
+                        ->each(function (UserNotification $notification) use ($allowedKeys, $notificationType) {
+                            $filteredSettings = collect($notification->settings)
+                                ->only($allowedKeys)
+                                ->toArray();
 
-                // Falls neue Default-Werte dazukommen (z. B. wenn vorher keine Einstellung da war)
-                $defaults = $project->getDefaultNotificationSettings()['tracking'];
-
-                $notification->update([
-                    'settings->tracking' => array_merge($defaults, $filteredSettings),
-                ]);
-            });
+                            $notification->update([
+                                'settings->tracking' => array_merge($notificationType->settings['tracking'], $filteredSettings),
+                            ]);
+                        });
+                }
+            );
         }
     }
 

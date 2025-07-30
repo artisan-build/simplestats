@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserNotificationFrequency;
+use App\Enums\UserNotificationType;
 use App\Http\Requests\UpdateUserNotificationRequest;
 use App\Models\UserNotification;
 use App\Notifications\ProjectReportNotification;
@@ -24,9 +25,10 @@ class UserNotificationController extends Controller
                 ->sortBy(fn ($n) => optional($n->notifiable)->created_at)
                 ->groupBy([
                     'notifiable.team_id',
-                    'notifiable_type',
+                    'type',
                 ]),
-            'notificationTypes' => StatsService::asOptions(),
+            'notificationTypes' => UserNotificationType::toArray(),
+            'notificationStatsTypes' => StatsService::asOptions(),
             'notificationFrequencies' => UserNotificationFrequency::toOptions(),
         ]);
     }

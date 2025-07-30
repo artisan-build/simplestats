@@ -3,10 +3,11 @@
 namespace App\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Collection;
 
 interface NotifiableToUser
 {
     public function userNotifications(): MorphMany;
 
-    public function getDefaultNotificationSettings(): array;
+    public function getDefaultUserNotificationTypes(): Collection;
 }

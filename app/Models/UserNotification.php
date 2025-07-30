@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserNotificationFrequency;
+use App\Enums\UserNotificationType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -14,6 +15,7 @@ class UserNotification extends Model
 
     protected $casts = [
         'frequency' => UserNotificationFrequency::class,
+        'type' => UserNotificationType::class,
         'settings' => 'array',
         'sent_at' => 'datetime',
     ];

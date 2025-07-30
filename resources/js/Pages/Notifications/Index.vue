@@ -14,24 +14,19 @@ const page = usePage();
 const props = defineProps({
     notifications: Object,
     notificationTypes: Array,
+    notificationStatsTypes: Array,
     notificationFrequencies: Array,
 })
 
 const update = (notification) => {
-    router.patch(route("notifications.update", notification), notification);
+    router.patch(route("notifications.update", notification), notification, {
+        preserveScroll: true,
+    });
 }
 
 const trigger = (notification) => {
     router.post(route("notifications.trigger", notification), notification);
 }
-
-const group2Name = {
-    "App\\Models\\Project": {
-        "title": "Reports",
-        "description": "Scheduled summaries with key metrics like visitors, registrations, payments, and conversion rates. Choose which stats to include and how often you'd like to receive the report – or send a report manually anytime.",
-    },
-}
-
 const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' in a ? 1 : 0) - ('membership' in b ? 1 : 0));
 </script>
 
@@ -53,9 +48,9 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                     <template #form>
                         <div v-for="(groupNotifications, group) in notifications[team.id]" class="col-span-6">
                             <div>
-                                <h3>{{ group2Name[group]?.title ?? group }}</h3>
-                                <p v-if="group2Name[group]?.description" class="mt-1 text-sm text-gray-600 dark:text-dark-400 text-justify">
-                                    {{ group2Name[group]?.description }}
+                                <h3>{{ notificationTypes[group]?.title ?? group }}</h3>
+                                <p v-if="notificationTypes[group]?.description" class="mt-1 text-sm text-gray-600 dark:text-dark-400 text-justify">
+                                    {{ notificationTypes[group]?.description }}
                                 </p>
                             </div>
                             <div
@@ -82,16 +77,16 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <div>
+                                        <div v-if="notification.settings['types']">
                                             <SelectInput
                                                 v-model="notification.settings['types']"
                                                 class="w-32 dark:bg-dark-950 !py-1"
-                                                :options="notificationTypes"
+                                                :options="notificationStatsTypes"
                                                 :multiple="true"
                                                 @change="() => update(notification)"
                                             />
                                         </div>
-                                        <div>
+                                        <div v-if="notification.frequency">
                                             <SelectInput
                                                 v-model="notification.frequency"
                                                 name="frequency"
@@ -100,7 +95,7 @@ const sortedTeams = page.props.auth.user.all_teams.sort((a, b) => ('membership' 
                                                 @change="() => update(notification)"
                                             />
                                         </div>
-                                        <div>
+                                        <div v-if="notification.frequency">
                                             <PrimaryButton v-tooltip="'Send Now'" type="button" @click="trigger(notification)">
                                                 <PaperAirplaneIcon class="size-4" />
                                             </PrimaryButton>

@@ -32,11 +32,11 @@ class SendProjectReports extends Command
         // avoid bugs if the command takes longer
         $stickyNow = now()->utc();
 
-        Project::withWhereHas('userNotifications.user')
+        Project::withWhereHas('userReportNotifications.user')
             ->when($this->argument('project'), fn ($query, $project) => $query->where('id', $project))
-            ->with(['team:id,name,timezone,currency', 'userNotifications.notifiable'])
+            ->with(['team:id,name,timezone,currency', 'userReportNotifications.notifiable'])
             ->each(function ($project) use ($stickyNow) {
-                $project->userNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project) {
+                $project->userReportNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project) {
                     $lastSent = $userNotification->sent_at;
                     $tzNow = $stickyNow->copy()->setTimezone($project->team->timezone ?? config('app.timezone'));
 

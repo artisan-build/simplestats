@@ -24,7 +24,7 @@ class UpdateUserNotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'frequency' => ['sometimes', Rule::enum(UserNotificationFrequency::class)],
+            'frequency' => ['nullable', Rule::enum(UserNotificationFrequency::class)],
             'settings' => ['sometimes', 'array'],
         ];
     }
