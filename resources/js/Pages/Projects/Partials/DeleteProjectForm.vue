@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import {ref} from 'vue';
+import {useForm} from '@inertiajs/vue3';
 import ActionSection from '@/Components/ActionSection.vue';
 import ConfirmationModal from '@/Components/ConfirmationModal.vue';
 import DangerButton from '@/Components/DangerButton.vue';
@@ -40,7 +40,7 @@ const deleteProject = () => {
 
         <template #content>
             <div class="max-w-xl text-sm text-gray-600 dark:text-dark-400">
-                Once a Project is deleted, all of its Instances and data will be permanently deleted.
+                Once a project is deleted, all of its instances and data will be permanently deleted.
             </div>
 
             <div class="mt-5">
@@ -56,7 +56,7 @@ const deleteProject = () => {
                 </template>
 
                 <template #content>
-                    Are you sure you want to delete this Project? Once a project is deleted, all of its Instances and data will be permanently deleted.
+                    Are you sure you want to delete this project? Once a project is deleted, all of its instances and data will be permanently deleted.
                     Please enter your password to confirm you would like to permanently delete this project.
 
                     <div class="mt-4">

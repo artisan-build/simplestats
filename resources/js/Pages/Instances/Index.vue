@@ -47,7 +47,7 @@ const createInstance = () => {
                 </template>
 
                 <template #description>
-                    Here you can create a new Instance for a given Project.
+                    Here you can create a new instance for a given project.
                 </template>
 
                 <template #form>
@@ -95,7 +95,7 @@ const createInstance = () => {
                         </template>
 
                         <template #description>
-                            Manage your existing Instances.
+                            Manage your instances.
                         </template>
 
                         <template #content>

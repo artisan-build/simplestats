@@ -48,7 +48,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </template>
 
                     <template #description>
-                        Create a new Project and then add a new Instance.
+                        Create a new project and then add a new instance.
                     </template>
 
                     <template #form>
@@ -93,11 +93,11 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <div class="mt-10 sm:mt-0">
                         <ActionTable :links="projects.links" >
                             <template #title>
-                                Your existing Projects
+                                Your Projects
                             </template>
 
                             <template #description>
-                                Manage your existing Projects.
+                                Manage your projects.
                             </template>
 
                             <template #content>

@@ -33,7 +33,7 @@ const updateInstance = () => {
         </template>
 
         <template #description>
-            Information about the instance.
+            Details about the instance.
         </template>
 
         <template #form>

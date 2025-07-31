@@ -4,7 +4,7 @@ If _SimpleStats_ isn't working for your app despite a correct setup, here's how 
 
 ## Double-Check the API Token
 
-Verify that the [API token](installation.html#configuration) in your `.env` file matches the one from our dashboard. You can review it under **Projects** > **Your Existing Projects** > **Your Existing Instances**. Ensure there are no extra spaces or typos.
+Verify that the [API token](installation.html#configuration) in your `.env` file matches the one from our dashboard. You can review it under **Projects** > **Your projects** > **Your instances**. Ensure there are no extra spaces or typos.
 
 ## Restart Your Config
 

@@ -135,7 +135,7 @@ const deleteApiToken = () => {
                     </template>
 
                     <template #description>
-                        You may delete any of your existing tokens if they are no longer needed.
+                        You may delete any of your tokens if they are no longer needed.
                     </template>
 
                     <!-- API Token List -->

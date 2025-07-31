@@ -36,7 +36,7 @@ const appName = import.meta.env.VITE_APP_NAME;
         </template>
 
         <template #description>
-            Information about the project.
+            Details about the project.
         </template>
 
         <template #form>

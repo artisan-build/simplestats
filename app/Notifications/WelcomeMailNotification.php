@@ -52,7 +52,7 @@ class WelcomeMailNotification extends Notification implements ShouldQueue
                 'app_name' => $appName,
                 'guide' => config('app.url').'/docs/installation.html',
             ]))
-            ->line(Lang::get('You can find your API token [here](:api_token) under **Project** > **Instance**.', [
+            ->line(Lang::get('You can find your API token [here](:api_token) under:<br>**** > **Instance** > **Manage API Token**.', [
                 'api_token' => route('projects.index'),
             ]));
     }

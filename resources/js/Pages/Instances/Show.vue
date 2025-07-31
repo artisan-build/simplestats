@@ -85,7 +85,7 @@ const regenerateApiToken = () => {
                         </template>
 
                         <template #description>
-                            You may regenerate your existing token or view it again.
+                            You may regenerate your token or view it again.
                         </template>
 
                         <template #content>
@@ -175,7 +175,7 @@ const regenerateApiToken = () => {
                 </template>
 
                 <template #content>
-                    Are you sure you would like to regenerate this API token? If you already used this token, make sure to replace it afterwards in the corresponding Instance!
+                    Are you sure you would like to regenerate this API token? If you already used this token, make sure to replace it afterwards in the corresponding instance!
                     Please enter your password to confirm you would like to permanently delete this instance.
 
                     <div class="mt-4">
