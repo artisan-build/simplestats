@@ -4,7 +4,10 @@ namespace App\Observers;
 
 use App\Models\BaseStat;
 use App\Models\StatsPayment;
-use App\Models\User;
+use App\Models\StatsUser;
+use App\Models\UserNotification;
+use App\Notifications\ProjectAlertPaymentNotification;
+use App\Notifications\ProjectAlertRegistrationNotification;
 use App\Services\StatsAggregationsService;
 
 class StatsObserver
@@ -24,10 +27,20 @@ class StatsObserver
         $stat->team->increment('events_count_monthly');
         $stat->team->increment('events_count_overall');
 
-        if ($stat instanceof StatsPayment && $projectPaymentAlertUsers = $stat->project->userAlertNotifications()->with('user')->where('settings->tracking->payments', true)->get()) {
-            $projectPaymentAlertUsers->each(function (User $user) {
-                //$user->notify(new \App\Notifications\ProjectPaymentAlertNotification($stat, $user));
-            });
+        if ($stat instanceof StatsUser) {
+            $stat->project->userAlertNotifications()->with('user')
+                ->where('settings->tracking->registrations', true)
+                ->each(function (UserNotification $notification) use ($stat) {
+                    $notification->user->notify(new ProjectAlertRegistrationNotification($stat, $notification));
+                });
+        }
+
+        if ($stat instanceof StatsPayment) {
+            $stat->project->userAlertNotifications()->with('user')
+                ->where('settings->tracking->payments', true)
+                ->each(function (UserNotification $notification) use ($stat) {
+                    $notification->user->notify(new ProjectAlertPaymentNotification($stat, $notification));
+                });
         }
 
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);

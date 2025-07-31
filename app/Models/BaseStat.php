@@ -14,8 +14,8 @@ use Illuminate\Support\Carbon;
 abstract class BaseStat extends Model
 {
     use HasFactory;
-    use HasInstanceScope;
     use HasTeamScope;
+    use HasInstanceScope;
 
     public $timestamps = false;
 

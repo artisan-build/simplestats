@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasStatsRelations;
 use App\Concerns\HasStatsTracking;
 use App\Observers\StatsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 class StatsVisitor extends BaseStat
 {
     use HasStatsTracking;
+    use HasStatsRelations;
 
     /**
      * The attributes that are mass assignable.

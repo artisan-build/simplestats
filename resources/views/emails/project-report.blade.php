@@ -78,10 +78,11 @@ foreach ($statsGroups as $key => $statsGroup) {
 @endphp
 
 @component('mail::message')
+![Chart]({{ asset('images/undraw/undraw_data_0ml2.png') }})<br>
+<br>
 # {{ $frequency->title() }} Report
 
 ## {{ $timeRange }}
-![Chart]({{ asset('images/mail/report_chart.png') }})<br>
 <br>
 📬 Here is your {{ $frequency->value }} report for {{ $projectName }}:<br>
 @component('mail::table')
@@ -96,5 +97,7 @@ foreach ($statsGroups as $key => $statsGroup) {
 <br>
 @endforeach
 
-<a href="{{ route('notifications.index') }}" target="_blank">Change notification settings</a>
+---
+
+<small>Don't want to receive these alerts? <a href="{{ route('notifications.index') }}" target="_blank">Change notification settings</a></small>
 @endcomponent

@@ -49,7 +49,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
     {
         $projectName = $this->notification->notifiable->name;
 
-        $subject = config('app.name').' '.
+        $subject = '📊 '.config('app.name').' '.
             $this->notification->frequency->title().' '.
             $projectName.' '.
             'Report';

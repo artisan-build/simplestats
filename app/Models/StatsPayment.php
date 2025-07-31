@@ -40,4 +40,9 @@ class StatsPayment extends BaseStat
     {
         return $this->belongsTo(StatsUser::class);
     }
+
+    public function statsVisitor(): BelongsTo
+    {
+        return $this->belongsTo(StatsVisitor::class);
+    }
 }
