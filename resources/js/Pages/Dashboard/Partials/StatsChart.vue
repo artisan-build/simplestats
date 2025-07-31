@@ -12,12 +12,14 @@ import {
     endOfDay,
     endOfHour,
     endOfMonth,
+    endOfWeek,
     endOfYear,
     format,
     getDaysInMonth,
     isAfter,
     startOfDay,
     startOfMonth,
+    startOfWeek,
     startOfYear
 } from "date-fns";
 
@@ -44,8 +46,10 @@ const formatter = () => {
 };
 
 const newFilterForDataPoint = (clickedDate) => {
-    let newFilter = {};
     let dateFormat = 'y-MM-dd';
+    let newFilter = {
+        preset: 'custom',
+    };
 
     if (props.filters.rangeType === 'years') {
         newFilter.rangeType = 'months';
@@ -69,6 +73,17 @@ const newFilterForDataPoint = (clickedDate) => {
             newFilter.rangeStart = format(endOfMonthDate, dateFormat);
             newFilter.rangeAmount = getDaysInMonth(endOfMonthDate);
         }
+    } else if (props.filters.rangeType === 'weeks') {
+        newFilter.rangeType = 'days';
+        let endOfWeekDate = endOfWeek(clickedDate);
+
+        if ((isAfter(endOfWeekDate, new Date()))) {
+            newFilter.rangeStart = format(endOfDay(new Date()), dateFormat);
+            newFilter.rangeAmount = differenceInDays(new Date(), startOfWeek(clickedDate)) + 1;
+        } else {
+            newFilter.rangeStart = format(endOfWeekDate, dateFormat);
+            newFilter.rangeAmount = 7;
+        }
     } else if (props.filters.rangeType === 'days') {
         newFilter.rangeType = 'hours';
         let endOfDayDate = endOfDay(clickedDate);
@@ -81,8 +96,6 @@ const newFilterForDataPoint = (clickedDate) => {
             newFilter.rangeAmount = 24;
         }
     }
-
-    newFilter.preset = 'custom';
 
     return newFilter;
 }
