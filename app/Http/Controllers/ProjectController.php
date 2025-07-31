@@ -57,6 +57,7 @@ class ProjectController extends Controller
             'permissions' => [
                 'canDeleteProject' => Gate::check('delete', $project),
                 'canUpdateProject' => Gate::check('update', $project),
+                'canCreateProject' => Gate::check('create', $project),
                 'canCreateInstance' => Gate::check('create', Instance::class),
             ],
         ]);

@@ -47,7 +47,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $projectName = class_basename($this->notification->notifiable->name);
+        $projectName = $this->notification->notifiable->name;
 
         $subject = config('app.name').' '.
             $this->notification->frequency->title().' '.

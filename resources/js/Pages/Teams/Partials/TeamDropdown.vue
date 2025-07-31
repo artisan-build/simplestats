@@ -13,7 +13,7 @@ const switchToTeam = (team) => {
 };
 
 const showMangeTeams = true;
-const highligtTeam = route().current().includes('teams') || (route().current().includes('projects'));
+const highligtTeam = true;//route().current().includes('teams') || (route().current().includes('projects'));
 </script>
 
 <template>

@@ -3,15 +3,17 @@
 namespace App\Helpers;
 
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
 
 class AppHelper
 {
-    public static function setTeamContextFromUser(?User $user): void
+    public static function setTeamContextFromUser(?Authenticatable $user): void
     {
         if ($user) {
             // important check first team_id then current_team_id
+            // on api the user model is the instance and else its normal user
             Context::add('team_id', $user->team_id ?? $user->current_team_id);
         }
     }

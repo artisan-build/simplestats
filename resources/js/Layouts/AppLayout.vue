@@ -4,7 +4,7 @@ import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import Navigation from "@/Components/Navigation.vue";
 import MenuToggler from "@/Components/MenuToggler.vue";
-import EnvBadge from "@/Components/EnvBadge.vue";
+import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 
 defineProps({
     title: String,
@@ -52,7 +52,14 @@ const sidebarIsOpen = ref(false);
                         </div>
                         <div class="flex flex-grow justify-between items-center max-w-3xl mx-auto">
                             <slot name="header" />
-                            <EnvBadge />
+                            <div v-if="$page.props.auth.user.all_teams.length > 1">
+                                <div class="flex items-center">
+                                    <div class="text-sm pt-2 mr-3">
+                                        Current Team:
+                                    </div>
+                                    <TeamDropdown />
+                                </div>
+                            </div>
                         </div>
                     </h1>
                 </header>

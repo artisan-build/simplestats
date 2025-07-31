@@ -41,8 +41,8 @@ trait HasStatsUserAssurance
                 'time' => $this->stats_user_time ?? now(),
                 // hack to set ip and user_agent when the user not yet exists on our side, but the user is doing a login,
                 // then an account gets created, and we want to store ip and user_agent
-                'ip' => $this->ip,
-                'user_agent' => $this->user_agent,
+                'ip' => $this->ip ?? null,
+                'user_agent' => $this->user_agent ?? null,
             ]));
         }
 

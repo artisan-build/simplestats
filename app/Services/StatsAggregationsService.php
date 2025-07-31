@@ -345,7 +345,7 @@ class StatsAggregationsService
 
     /**
      * If a stat updates, every data above the stat time is invalid, so we need to delete it.
-     * Same counts for data-imports.
+     * The same counts for data-imports.
      *
      * @throws Exception
      */
@@ -353,7 +353,7 @@ class StatsAggregationsService
     {
         foreach (StatsRangeType::cases() as $case) {
             // it's important to convert the time to the corresponding range types (days, weeks, months)
-            // for instance: if the update time is 2024-05-15 you'll also want to delete form its corresponding week,
+            // for instance: if the update time is 2024-05-15, you'll also want to delete form its corresponding week,
             // which starts at 2024-05-13 (same counts for months)
             $start = $case->rangeStart($stat->time)->format($case->dateFormatClear()['php']);
 
@@ -361,7 +361,7 @@ class StatsAggregationsService
                 ['time', '>=', $start],
                 ['type', '=', $case->value],
             ])->where(function ($query) use ($stat) {
-                // stats must be re-aggregated on team basis
+                // stats must be re-aggregated on a team basis
                 $query->where(function ($query) use ($stat) {
                     $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
                 })
@@ -374,23 +374,23 @@ class StatsAggregationsService
                         $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', $stat->instance_id);
                     });
             })->delete();
-            // other projects and instances aggregations will remain
-            // but unfortunately we have to re-aggregate the whole team
+            // other projects and instances aggregations will remain,
+            // but unfortunately, we have to re-aggregate the whole team
         }
     }
 
     public function clearByInstance(Instance $instance): void
     {
         StatsAggregation::where(function ($query) use ($instance) {
-            // stats must be re-aggregated on team basis
+            // stats must be re-aggregated on a team basis
             $query->where(function ($query) use ($instance) {
                 $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
             })
-            // stats must be re-aggregated on project basis
+            // stats must be re-aggregated on a project basis
                 ->orWhere(function ($query) use ($instance) {
                     $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', null);
                 })
-            // stats must be re-aggregated on instance basis
+            // stats must be re-aggregated on an instance basis
                 ->orWhere(function ($query) use ($instance) {
                     $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', $instance->id);
                 });
@@ -400,11 +400,11 @@ class StatsAggregationsService
     public function clearByProject(Project $project): void
     {
         StatsAggregation::where(function ($query) use ($project) {
-            // stats must be re-aggregated on team basis
+            // stats must be re-aggregated on a team basis
             $query->where(function ($query) use ($project) {
                 $query->where('team_id', '=', $project->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
             })
-            // stats must be re-aggregated on project basis
+            // stats must be re-aggregated on a project basis
                 ->orWhere(function ($query) use ($project) {
                     $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id)->where('instance_id', '=', null);
                 });

@@ -26,7 +26,6 @@ class ProjectObserver
     public function updated(Project $project): void
     {
         if ($project->wasChanged('usage')) {
-            //dd($project->getDefaultUserNotificationTypes());
             $project->getDefaultUserNotificationTypes()->each(
                 function (UserNotificationTypeObject $notificationType) use ($project) {
                     $allowedKeys = array_keys($notificationType->settings['tracking']);

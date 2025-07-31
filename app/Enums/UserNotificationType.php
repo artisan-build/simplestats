@@ -42,4 +42,13 @@ enum UserNotificationType: string
             ];
         })->toArray();
     }
+
+    public static function sorting(): array
+    {
+        return [
+            self::PROJECT_REPORT->value,
+            self::PROJECT_ALERT->value,
+            self::DEFAULT->value,
+        ];
+    }
 }

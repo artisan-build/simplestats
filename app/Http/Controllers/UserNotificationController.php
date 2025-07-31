@@ -18,15 +18,17 @@ class UserNotificationController extends Controller
      */
     public function index(Request $request)
     {
+        $notifications = UserNotification::withWhereHas('notifiable',
+            fn ($query) => $query->where('team_id', $request->user()->currentTeam->id)
+        )->where('user_id', $request->user()->id)->get()
+            ->sortBy(fn ($n) => optional($n->notifiable)->created_at)
+            ->groupBy('type')
+            ->sortBy(function ($group, $key) {
+                return array_search($key, UserNotificationType::sorting());
+            });
+
         return Inertia::render('Notifications/Index', [
-            'notifications' => UserNotification::with([
-                'notifiable' => fn ($query) => $query->withoutGlobalScope('team'),
-            ])->where('user_id', $request->user()->id)->get()
-                ->sortBy(fn ($n) => optional($n->notifiable)->created_at)
-                ->groupBy([
-                    'notifiable.team_id',
-                    'type',
-                ]),
+            'notifications' => $notifications,
             'notificationTypes' => UserNotificationType::toArray(),
             'notificationStatsTypes' => StatsService::asOptions(),
             'notificationFrequencies' => UserNotificationFrequency::toOptions(),

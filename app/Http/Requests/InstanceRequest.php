@@ -21,7 +21,7 @@ class InstanceRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:1', 'max:30'],
-            'project_id' => ['sometimes', 'integer', 'exists:Projects,id'],
+            'project_id' => ['sometimes', 'integer', 'exists:projects,id'],
         ];
     }
 }

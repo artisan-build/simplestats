@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
@@ -46,6 +47,8 @@ Route::middleware([
     Route::resource('setup/team', SetupTeamController::class)->only(['index', 'store'])->names('setup.team');
     Route::resource('setup/project', SetupProjectController::class)->only(['index', 'store'])->names('setup.project');
     Route::resource('setup/installation', SetupInstallController::class)->only(['index'])->names('setup.installation');
+
+    Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
