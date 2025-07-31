@@ -82,6 +82,8 @@ const newFilterForDataPoint = (clickedDate) => {
         }
     }
 
+    newFilter.preset = 'custom';
+
     return newFilter;
 }
 
