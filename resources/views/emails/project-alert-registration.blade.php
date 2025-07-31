@@ -6,7 +6,7 @@
 ## Someone just registered on your project *{{ $projectName }}*.
 
 @component('mail::table')
-| Overview|&nbsp;|
+| Details|&nbsp;|
 |:-------|:-----|
 |**User ID**|{{ $statsUser->id }}|
 |**Time**|{{ $statsUser->time->format('H:i:s') }}|

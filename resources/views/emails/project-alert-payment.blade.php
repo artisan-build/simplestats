@@ -7,7 +7,7 @@
 ## You’ve just received a new payment on *{{ $projectName }}*.
 
 @component('mail::table')
-| Overview|&nbsp;|
+| Details|&nbsp;|
 |:-------|:-----|
 |**Amount**|{{ Number::currency($statsPayment->gross/100, in: $statsPayment->currency, precision: 2) }}|
 @if($statsPerson instanceof StatsUser)
