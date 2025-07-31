@@ -10,7 +10,7 @@ defineProps({
 
 <template>
     <tr class="text-left font-bold">
-        <th class="pb-4 pt-6 px-6">Your instances</th>
+        <th class="pb-4 pt-6 px-6">Your Instances</th>
         <th v-if="! insideProject" class="pb-4 pt-6 px-6">Project</th>
     </tr>
     <tr class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300" v-if="instances.length > 0" v-for="instance in instances" :key="instance.id">
