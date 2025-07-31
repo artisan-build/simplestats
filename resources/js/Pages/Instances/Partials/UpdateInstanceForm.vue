@@ -1,12 +1,11 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import FormSection from '@/Components/FormSection.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import SelectInput from "@/Components/SelectInput.vue";
 
 const props = defineProps({
     instance: Object,
@@ -51,20 +50,6 @@ const updateInstance = () => {
                 />
 
                 <InputError :message="form.errors.name" class="mt-2" />
-            </div>
-
-            <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="project_id" value="Instance project" />
-
-                <SelectInput
-                    id="project_id"
-                    v-model="form.project_id"
-                    class="mt-1 block w-full"
-                    :disabled="! permissions.canUpdateInstance"
-                    :options="projects"
-                />
-
-                <InputError :message="form.errors.project_id" class="mt-2" />
             </div>
         </template>
 
