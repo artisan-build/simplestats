@@ -56,8 +56,9 @@ class SendProjectReports extends Command
 
                     // If the user has not set any tracking settings, we skip sending the notification
                     if ($shouldSend && array_filter($userNotification->settings['tracking'] ?? [])) {
-                        $userNotification->user->notify(new ProjectReportNotification($userNotification, $tzNow->copy(), $project->team));
-                        $userNotification->update(['sent_at' => $tzNow]);
+                        $userNotification->user->notify(
+                            new ProjectReportNotification($userNotification, $tzNow->copy(), $project->team)
+                        );
                     }
                 });
             });

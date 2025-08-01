@@ -80,7 +80,7 @@ foreach ($statsGroups as $key => $statsGroup) {
 @component('mail::message')
 ![Chart]({{ asset('images/undraw/undraw_data_0ml2.png') }})<br>
 <br>
-# {{ $frequency->title() }} Report
+# {{ $frequency->title() }} Report for {{ $projectName }}
 
 ## {{ $timeRange }}
 <br>

@@ -3,7 +3,7 @@
 <br>
 # New registration on {{ $projectName }}
 
-## Someone just registered on your project *{{ $projectName }}*.
+## Someone just registered on *{{ $projectName }}*.
 
 @component('mail::table')
 | Details|&nbsp;|

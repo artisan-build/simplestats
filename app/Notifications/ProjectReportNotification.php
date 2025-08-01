@@ -29,7 +29,6 @@ class ProjectReportNotification extends Notification implements ShouldQueue
         public CarbonInterface $time,
         public Team $team,
     ) {
-        auth()->setUser($this->notification->user);
     }
 
     /**
@@ -47,6 +46,8 @@ class ProjectReportNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
+        auth()->setUser($this->notification->user);
+
         $projectName = $this->notification->notifiable->name;
 
         $subject = '📊 '.config('app.name').' '.
@@ -54,7 +55,7 @@ class ProjectReportNotification extends Notification implements ShouldQueue
             $projectName.' '.
             'Report';
 
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject($subject)
             ->markdown('emails.project-report', [
                 'frequency' => $this->notification->frequency,
@@ -65,6 +66,10 @@ class ProjectReportNotification extends Notification implements ShouldQueue
                 'statsAll' => $this->getStats(),
                 'statsGroups' => $this->getStatsGroups(),
             ]);
+
+        $this->notification->update(['sent_at' => $this->time]);
+
+        return $mail;
     }
 
     private function getTimeRange(): string
