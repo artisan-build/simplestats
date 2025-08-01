@@ -48,7 +48,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     </template>
 
                     <template #description>
-                        Create a new project and then add a new instance.
+                        Create a new project and then add a new instance to track.
                     </template>
 
                     <template #form>
