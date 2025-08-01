@@ -72,7 +72,7 @@ class StatsFilterRequest extends FormRequest
             'instanceId' => [
                 'sometimes',
                 'integer',
-                new ValidTeamOrProjectModel(Instance::class, $this->projectId),
+                new ValidTeamOrProjectModel(Instance::class),
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],

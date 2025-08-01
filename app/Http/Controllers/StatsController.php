@@ -32,6 +32,12 @@ class StatsController extends Controller
         $hasFilterRequest = ! empty($_GET);
 
         $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
+
+        if ($request->projectId != $userFilterSettings['projectId'] ?? null) {
+            // if the projectId is not set, we need to reset the instanceId
+            $request->merge(['instanceId' => StatsFilterDto::TRACK_ALL]);
+        }
+
         if (! $hasFilterRequest && ! empty($userFilterSettings)) {
             $request = new StatsFilterRequest($userFilterSettings);
         } elseif ($request->has('preset') && $request->preset !== StatsRangePreset::CUSTOM->value) {
