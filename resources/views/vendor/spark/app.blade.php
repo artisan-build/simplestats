@@ -32,13 +32,37 @@
             font-family: Figtree, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
         }
 
-        .dark * {color: white;}
-        .dark .bg-white {background-color: #0f172a !important;}
-        .dark .bg-gray-100, .dark .bg-gray-200 {background-color: #1e293b !important;}
-        .dark .text-gray-500, .dark .text-gray-600 {color: #e5e7eb !important;}
-        .dark .text-gray-700, .dark .text-gray-800, .dark .text-gray-900 {color: #ffffff !important;}
-        .dark .border-gray-100, .dark .border-gray-200 {border-color: #4b5563 !important;}
-        .dark textarea {background-color: #0f172a !important; color: #ffffff !important;}
+        .dark * {
+            color: #f6f6f6; /* dark[100] */
+        }
+        .dark .bg-white {
+            background-color: #1a1a1a !important; /* dark[900] */
+        }
+        .dark .bg-gray-100,
+        .dark .bg-gray-200 {
+            background-color: #292929 !important; /* dark[800] */
+        }
+        .dark .text-gray-500,
+        .dark .text-gray-600 {
+            color: #d6d6d6 !important; /* dark[300] */
+        }
+        .dark .text-gray-700,
+        .dark .text-gray-800,
+        .dark .text-gray-900 {
+            color: #f6f6f6 !important; /* dark[100] */
+        }
+        .dark .border-gray-100,
+        .dark .border-gray-200 {
+            border-color: #555555 !important; /* dark[600] */
+        }
+        .dark textarea {
+            background-color: #1a1a1a !important; /* dark[900] */
+            color: #f6f6f6 !important; /* dark[100] */
+        }
+
+        .dark [class*="shadow-"] {
+            border: 1px solid #434343 !important; /* dark[700] */
+        }
     </style>
 
     <script src="/js/dark_mode.js"></script>
