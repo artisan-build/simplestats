@@ -4,7 +4,7 @@
 <br>
 # New payment received on {{ $projectName }}
 
-## You’ve just received a new payment on *{{ $projectName }}*.
+## You’ve just received a new payment on {{ $projectName }}.
 
 @component('mail::table')
 | Details|&nbsp;|

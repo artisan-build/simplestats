@@ -17,7 +17,11 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 
-class ProjectReportNotification extends Notification implements ShouldQueue
+/**
+ * currently we can't use ShouldQueue here because the notification is already triggered by a queued job,
+ * and we would get issues with the unserialization of the StatsPayment model, cause of missing team context
+ */
+class ProjectReportNotification extends Notification
 {
     use Queueable;
 

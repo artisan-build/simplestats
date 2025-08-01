@@ -10,7 +10,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 /**
- * we do not use ShouldQueue here because the notification is already triggered by a queued job,
+ * currently we can't use ShouldQueue here because the notification is already triggered by a queued job,
  * and we would get issues with the unserialization of the StatsPayment model, cause of missing team context
  */
 class ProjectAlertRegistrationNotification extends Notification
