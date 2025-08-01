@@ -52,8 +52,8 @@ class ProjectReportNotification extends Notification implements ShouldQueue
 
         $subject = '📊 '.config('app.name').' '.
             $this->notification->frequency->title().' '.
-            $projectName.' '.
-            'Report';
+            'Report for '.
+            $projectName;
 
         $mail = (new MailMessage)
             ->subject($subject)

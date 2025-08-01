@@ -80,11 +80,11 @@ foreach ($statsGroups as $key => $statsGroup) {
 @component('mail::message')
 ![Chart]({{ asset('images/undraw/undraw_data_0ml2.png') }})<br>
 <br>
-# {{ $frequency->title() }} Report for {{ $projectName }}
+# {{ $frequency->title() }} Report
 
 ## {{ $timeRange }}
 <br>
-📬 Here is your {{ $frequency->value }} report for {{ $projectName }}:<br>
+📬 Here is your {{ $frequency->value }} report for <b>{{ $projectName }}</b>:<br>
 @component('mail::table')
 {{ $statsTable }}
 @endcomponent
