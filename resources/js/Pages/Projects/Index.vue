@@ -42,7 +42,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
         <div>
             <div>
-                <FormSection v-if="permissions.canCreateProject" @submitted="createProject">
+                <FormSection @submitted="createProject">
                     <template #title>
                         Create new Project
                     </template>
@@ -88,7 +88,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </FormSection>
 
                 <div v-if="projects.total > 0">
-                    <SectionBorder v-if="permissions.canCreateProject" />
+                    <SectionBorder />
 
                     <div class="mt-10 sm:mt-0">
                         <ActionTable :links="projects.links" >

@@ -22,9 +22,9 @@ defineProps({
         </template>
 
         <div>
-            <UpdateProjectForm v-if="permissions.canCreateProject" :project="project" :permissions="permissions" :trackingUsages="trackingUsages" />
+            <UpdateProjectForm :project="project" :permissions="permissions" :trackingUsages="trackingUsages" />
 
-            <SectionBorder v-if="permissions.canCreateProject" />
+            <SectionBorder />
 
             <div class="mb-6">
                 <CreateProjectInstanceForm :permissions="permissions" :project="project" />
