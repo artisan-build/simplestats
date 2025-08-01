@@ -33,7 +33,7 @@ class StatsController extends Controller
 
         $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
 
-        if ($request->projectId != $userFilterSettings['projectId'] ?? null) {
+        if ($request->projectId != ($userFilterSettings['projectId'] ?? null)) {
             // if the projectId is not set, we need to reset the instanceId
             $request->merge(['instanceId' => StatsFilterDto::TRACK_ALL]);
         }
