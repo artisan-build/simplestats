@@ -20,7 +20,7 @@ use App\Models\StatsTrackMedium;
 use App\Models\StatsTrackReferer;
 use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
-use App\Rules\ValidProjectModel;
+use App\Rules\ValidTeamOrProjectModel;
 use App\Services\StatsService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -67,12 +67,12 @@ class StatsFilterRequest extends FormRequest
             'projectId' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel($this->projectId, Project::class),
+                new ValidTeamOrProjectModel(Project::class),
             ],
             'instanceId' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel($this->projectId, Instance::class),
+                new ValidTeamOrProjectModel(Instance::class, $this->projectId),
             ],
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
@@ -80,67 +80,67 @@ class StatsFilterRequest extends FormRequest
             'trackReferer' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsTrackReferer::class),
+                new ValidTeamOrProjectModel(StatsTrackReferer::class),
             ],
             'trackSource' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsTrackSource::class),
+                new ValidTeamOrProjectModel(StatsTrackSource::class),
             ],
             'trackMedium' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsTrackMedium::class),
+                new ValidTeamOrProjectModel(StatsTrackMedium::class),
             ],
             'trackCampaign' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsTrackCampaign::class),
+                new ValidTeamOrProjectModel(StatsTrackCampaign::class),
             ],
             'trackTerm' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsTrackTerm::class),
+                new ValidTeamOrProjectModel(StatsTrackTerm::class),
             ],
             'trackContent' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsTrackContent::class),
+                new ValidTeamOrProjectModel(StatsTrackContent::class),
             ],
             'locationCountry' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsLocationCountry::class),
+                new ValidTeamOrProjectModel(StatsLocationCountry::class),
             ],
             'locationRegion' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsLocationRegion::class),
+                new ValidTeamOrProjectModel(StatsLocationRegion::class),
             ],
             'locationCity' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsLocationCity::class),
+                new ValidTeamOrProjectModel(StatsLocationCity::class),
             ],
             'deviceType' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsDeviceType::class),
+                new ValidTeamOrProjectModel(StatsDeviceType::class),
             ],
             'devicePlatform' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsDevicePlatform::class),
+                new ValidTeamOrProjectModel(StatsDevicePlatform::class),
             ],
             'deviceBrowser' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsDeviceBrowser::class),
+                new ValidTeamOrProjectModel(StatsDeviceBrowser::class),
             ],
             'pageEntry' => [
                 'sometimes',
                 'integer',
-                new ValidProjectModel(null, StatsPageEntry::class),
+                new ValidTeamOrProjectModel(StatsPageEntry::class),
             ],
             'statsType' => [
                 'sometimes',
