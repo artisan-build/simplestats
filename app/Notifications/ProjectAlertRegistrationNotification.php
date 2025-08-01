@@ -6,11 +6,14 @@ use App\Models\StatsUser;
 use App\Models\UserNotification;
 use App\Services\StatsService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ProjectAlertRegistrationNotification extends Notification implements ShouldQueue
+/**
+ * we do not use ShouldQueue here because the notification is already triggered by a queued job,
+ * and we would get issues with the unserialization of the StatsPayment model, cause of missing team context
+ */
+class ProjectAlertRegistrationNotification extends Notification
 {
     use Queueable;
 
@@ -43,12 +46,16 @@ class ProjectAlertRegistrationNotification extends Notification implements Shoul
         $subject = '🎉 New registration on '.$projectName;
         $this->statsUser->load(StatsUser::statsRelations());
 
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject($subject)
             ->markdown('emails.project-alert-registration', [
                 'projectName' => $projectName,
                 'statsUser' => $this->statsUser,
                 'statsTypes' => StatsService::getStatsTypesCamelFlatMap(),
             ]);
+
+        $this->notification->update(['sent_at' => now()]);
+
+        return $mail;
     }
 }

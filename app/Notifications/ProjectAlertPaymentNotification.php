@@ -8,11 +8,14 @@ use App\Models\StatsVisitor;
 use App\Models\UserNotification;
 use App\Services\StatsService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ProjectAlertPaymentNotification extends Notification implements ShouldQueue
+/**
+ * we do not use ShouldQueue here because the notification is already triggered by a queued job,
+ * and we would get issues with the unserialization of the StatsPayment model, cause of missing team context
+ */
+class ProjectAlertPaymentNotification extends Notification
 {
     use Queueable;
 
@@ -49,7 +52,7 @@ class ProjectAlertPaymentNotification extends Notification implements ShouldQueu
             $this->statsPayment->statsUser->load(StatsUser::statsRelations());
         }
 
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject($subject)
             ->markdown('emails.project-alert-payment', [
                 'projectName' => $projectName,
@@ -57,5 +60,9 @@ class ProjectAlertPaymentNotification extends Notification implements ShouldQueu
                 'statsTypes' => StatsService::getStatsTypesCamelFlatMap(),
                 'statsPayment' => $this->statsPayment,
             ]);
+
+        $this->notification->update(['sent_at' => now()]);
+
+        return $mail;
     }
 }
