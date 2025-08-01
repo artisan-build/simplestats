@@ -25,7 +25,7 @@ class ForwardToOnboarding
                 return redirect()->route('setup.team.index');
             }
             // we use the name as the indicator that project onboarding is not finished
-            elseif (! $currentTeam->projects()->first()->name) {
+            elseif (! $currentTeam->projects()->first()?->name) {
                 return redirect()->route('setup.project.index');
             }
         }
