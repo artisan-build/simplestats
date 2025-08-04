@@ -32,19 +32,17 @@ trait HasStatsUserAssurance
         }
 
         // our primary key is id + instance_id
-        if (StatsUser::where([
-            ['id', $this->stats_user_id],
-            ['instance_id', $this->instance_id],
-        ])->doesntExist()) {
-            StatsUser::create(array_merge($uniqueInstance, [
-                'id' => $this->stats_user_id,
-                'time' => $this->stats_user_time ?? now(),
-                // hack to set ip and user_agent when the user not yet exists on our side, but the user is doing a login,
-                // then an account gets created, and we want to store ip and user_agent
-                'ip' => $this->ip ?? null,
-                'user_agent' => $this->user_agent ?? null,
-            ]));
-        }
+        StatsUser::firstOrCreate([
+            'id' => $this->stats_user_id,
+            'instance_id' => $this->instance_id,
+        ], array_merge($uniqueInstance, [
+            'id' => $this->stats_user_id,
+            'time' => $this->stats_user_time ?? now(),
+            // hack to set ip and user_agent when the user not yet exists on our side, but the user is doing a login,
+            // then an account gets created, and we want to store ip and user_agent
+            'ip' => $this->ip ?? null,
+            'user_agent' => $this->user_agent ?? null,
+        ]));
 
         unset($this->stats_user_time);
     }

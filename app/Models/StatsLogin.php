@@ -15,20 +15,6 @@ class StatsLogin extends BaseStat
     use HasCounterByStatsUser;
     use HasStatsUserAssurance;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'stats_user_id',
-        'stats_user_time', // used for HasStatsUserAssurance
-        'time',
-        'time_utc',
-        'ip',
-        'user_agent',
-    ];
-
     public function statsUser(): BelongsTo
     {
         return $this->belongsTo(StatsUser::class);

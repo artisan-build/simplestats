@@ -19,6 +19,8 @@ abstract class BaseStat extends Model
 
     public $timestamps = false;
 
+    protected $guarded = false;
+
     /**
      * The attributes that should be cast to native types.
      *
