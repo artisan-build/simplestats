@@ -14,7 +14,7 @@ class StatsDetailsService
     ) {
     }
 
-    public function getStats(StatsFilterDto $filters)
+    public function getStats(StatsFilterDto $filters): array
     {
         $stats = $this->getRaw($filters);
         $this->applyStatsDetails($stats);
