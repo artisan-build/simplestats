@@ -25,7 +25,7 @@ enum UserNotificationType: string
     public function description(): string
     {
         return match ($this) {
-            self::PROJECT_ALERT => 'Receive immediate notifications about key project events, such as new registrations or payments. Project Alerts are turned off by default and can be enabled at any time.',
+            self::PROJECT_ALERT => 'Receive immediate notifications about key project events, such as new registrations or payments. Project Alerts are turned off by default and can be enabled at any time - ideal for early-stage or smaller teams.',
             self::PROJECT_REPORT => "Scheduled summaries with key metrics like visitors, registrations, user activity, payments, and conversion rates. Choose which stats to include and how often you'd like to receive the report – or send a report manually anytime.",
             self::DEFAULT => 'Default notification type.',
         };
