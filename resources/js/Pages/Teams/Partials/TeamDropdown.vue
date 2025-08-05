@@ -4,11 +4,21 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import {router} from "@inertiajs/vue3";
 
+const emit = defineEmits(['switched-team']);
+
+const props = defineProps({
+    align: {
+        default: 'right',
+        type: String,
+    },
+});
+
 const switchToTeam = (team) => {
-    router.put(route('current-team.update'), {
-        team_id: team.id,
-    }, {
-        preserveState: false,
+    router.visit(route('current-team.update'), {
+        method: 'put',
+        data: {team_id: team.id},
+        preserveState: true,
+        onFinish: () => emit('switched-team', team),
     });
 };
 
@@ -17,8 +27,8 @@ const highligtTeam = true;//route().current().includes('teams') || (route().curr
 </script>
 
 <template>
-    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" align="right" width="60">
-        <template #trigger>
+    <Dropdown v-if="$page.props.jetstream.hasTeamFeatures" :align="align" width="60">
+    <template #trigger>
             <span class="inline-flex rounded-md">
                 <button type="button"
                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-dark-400 dark:bg-dark-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150"

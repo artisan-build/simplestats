@@ -4,6 +4,7 @@ import {ArrowLeftEndOnRectangleIcon} from '@heroicons/vue/24/outline';
 import {Head, router} from '@inertiajs/vue3';
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
 import Banner from "@/Components/Banner.vue";
+import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 
 defineProps({
     title: {
@@ -31,6 +32,9 @@ const logout = () => router.post(route('logout'));
         <button @click="logout" class="p-2 rounded-full dark:bg-dark-600/50 dark:hover:bg-dark-500/50">
             <ArrowLeftEndOnRectangleIcon class="size-5"/>
         </button>
+        <div v-if="$page.props.auth.user.all_teams.length > 1">
+            <TeamDropdown align="left" @switched-team="() => router.visit(route('dashboard'))"/>
+        </div>
     </div>
     <div class="w-full min-h-screen flex items-center">
         <div class="mx-auto w-full sm:max-w-lg p-1.5 rounded-lg bg-gray-200/50 dark:bg-dark-600/50 fade-in-bottom">
