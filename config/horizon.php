@@ -180,58 +180,79 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        'supervisor-default' => [
             'connection' => 'redis',
-            'queue' => ['default', 'low', 'ingest'],
+            'queue' => ['default'],
             'balance' => 'auto',
-            'autoScalingStrategy' => 'time',
+            'minProcesses' => 2,
+            'maxProcesses' => 5,
+            'timeout' => 60,
+            'tries' => 3,
+            'memory' => 128,
+        ],
+        'supervisor-low' => [
+            'connection' => 'redis',
+            'queue' => ['low'],
+            'balance' => 'simple',
             'minProcesses' => 1,
-            'maxProcesses' => 10,
-            'maxTime' => 0,
-            'maxJobs' => 0,
-            'memory' => 256,
-            'tries' => 1,
+            'maxProcesses' => 3,
             'timeout' => 0,
-            'nice' => 0,
+            'tries' => 1,
+            'memory' => 512,
+        ],
+        'supervisor-ingest' => [
+            'connection' => 'redis',
+            'queue' => ['ingest'],
+            'balance' => 'auto',
+            'minProcesses' => 3,
+            'maxProcesses' => 10,
+            'timeout' => 300,
+            'tries' => 1,
+            'memory' => 256,
         ],
     ],
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
-                'balanceMaxShift' => 1,
+            'supervisor-default' => [
+                'balanceMaxShift' => 2,
+                'balanceCooldown' => 5,
+            ],
+            'supervisor-low' => [],
+            'supervisor-ingest' => [
+                'balanceMaxShift' => 3,
                 'balanceCooldown' => 3,
             ],
         ],
 
         'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 2,
-            ],
+            'supervisor-default' => ['maxProcesses' => 2],
+            'supervisor-low' => ['maxProcesses' => 1],
+            'supervisor-ingest' => ['maxProcesses' => 2],
         ],
 
         'testing' => [
-            'supervisor-1' => [
-                'maxProcesses' => 2,
-            ],
+            'supervisor-default' => ['maxProcesses' => 2],
+            'supervisor-low' => ['maxProcesses' => 1],
+            'supervisor-ingest' => ['maxProcesses' => 2],
         ],
 
         'test' => [
-            'supervisor-1' => [
-                'maxProcesses' => 2,
-            ],
+            'supervisor-default' => ['maxProcesses' => 2],
+            'supervisor-low' => ['maxProcesses' => 1],
+            'supervisor-ingest' => ['maxProcesses' => 2],
         ],
 
         'demo' => [
-            'supervisor-1' => [
-                'maxProcesses' => 2,
-            ],
+            'supervisor-default' => ['maxProcesses' => 2],
+            'supervisor-low' => ['maxProcesses' => 1],
+            'supervisor-ingest' => ['maxProcesses' => 2],
         ],
 
         'dev' => [
-            'supervisor-1' => [
-                'maxProcesses' => 2,
-            ],
+            'supervisor-default' => ['maxProcesses' => 2],
+            'supervisor-low' => ['maxProcesses' => 1],
+            'supervisor-ingest' => ['maxProcesses' => 2],
         ],
     ],
 ];
