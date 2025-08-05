@@ -22,16 +22,10 @@ class TrackStatsLogin extends BaseStatsTrack
             'stats_user_id' => $this->input['stats_user_id'],
             'counter' => StatsService::NAU_LOGIN_COUNTER,
         ])->exists()) {
-            StatsLogin::firstOrCreate([
-                'stats_user_id' => $this->input['stats_user_id'],
-                'counter' => StatsService::NAU_LOGIN_COUNTER,
-            ], $this->input);
+            StatsLogin::create($this->input);
         } elseif (! StatsLogin::where('stats_user_id', $this->input['stats_user_id'])
-            ->whereDate('time', Carbon::parse($this->input['time'])->format('Y-m-d'))->exists()) {
-            StatsLogin::firstOrCreate([
-                'stats_user_id' => $this->input['stats_user_id'],
-                'time' => Carbon::parse($this->input['time']),
-            ], $this->input);
+            ->whereDate('time', Carbon::parse($this->input['time'])->format('Y-m-d'))->first()) {
+            StatsLogin::create($this->input);
         }
     }
 }

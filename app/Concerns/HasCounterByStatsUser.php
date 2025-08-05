@@ -18,12 +18,7 @@ trait HasCounterByStatsUser
     {
         // stats records are unique only per instance, so we can't use whereKey or find here...
 
-        $existingStatsRecord = $this->where([
-            'id' => $this->id,
-            'instance_id' => $this->instance_id,
-        ])->first();
-
-        if ($existingStatsRecord) {
+        if ($existingStatsRecord = $this->where(['id' => $this->id, 'instance_id' => $this->instance_id])->first()) {
             return $existingStatsRecord->counter;
         }
 
