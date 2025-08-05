@@ -19,7 +19,7 @@
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel/framework": "^11.0",
-        "laravel/horizon": "^5.24",
+        "laravel/horizon": "^5.33",
         "laravel/jetstream": "^5.0",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
