@@ -85,6 +85,8 @@ return [
 
     'waits' => [
         'redis:default' => 60,
+        'redis:ingest' => 60,
+        'redis:low' => 300,
     ],
 
     /*
@@ -99,9 +101,9 @@ return [
     */
 
     'trim' => [
-        'recent' => 60,
-        'pending' => 60,
-        'completed' => 60,
+        'recent' => 1440,
+        'pending' => 1440,
+        'completed' => 1440,
         'recent_failed' => 10080,
         'failed' => 10080,
         'monitored' => 10080,
@@ -135,8 +137,8 @@ return [
 
     'metrics' => [
         'trim_snapshots' => [
-            'job' => 24,
-            'queue' => 24,
+            'job' => 168,
+            'queue' => 168,
         ],
     ],
 
@@ -153,7 +155,7 @@ return [
     |
     */
 
-    'fast_termination' => false,
+    'fast_termination' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +168,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 128,
 
     /*
     |--------------------------------------------------------------------------
@@ -187,16 +189,18 @@ return [
             'minProcesses' => 2,
             'maxProcesses' => 5,
             'timeout' => 60,
+            'retry_after' => 90,
             'tries' => 3,
-            'memory' => 128,
+            'memory' => 256,
         ],
         'supervisor-low' => [
             'connection' => 'redis',
             'queue' => ['low'],
             'balance' => 'simple',
             'minProcesses' => 1,
-            'maxProcesses' => 3,
-            'timeout' => 0,
+            'maxProcesses' => 1,
+            'timeout' => 3600,
+            'retry_after' => 3700,
             'tries' => 1,
             'memory' => 512,
         ],
@@ -206,8 +210,9 @@ return [
             'balance' => 'auto',
             'minProcesses' => 3,
             'maxProcesses' => 10,
-            'timeout' => 300,
-            'tries' => 1,
+            'timeout' => 60,
+            'retry_after' => 90,
+            'tries' => 2,
             'memory' => 256,
         ],
     ],
