@@ -23,6 +23,27 @@ abstract class BaseStatsTrack implements ShouldQueue
         $this->onQueue('ingest');
     }
 
+    public function tags(): array
+    {
+        $tags = [
+            'StatsTrack',
+        ];
+
+        if ($instanceId = Context::get('instance_id')) {
+            $tags[] = 'Instance:'.$instanceId;
+        }
+
+        if (isset($this->input['id'])) {
+            $tags[] = 'ID:'.$this->input['id'];
+        }
+
+        if (isset($this->input['ip'])) {
+            $tags[] = 'IP:'.$this->input['ip'];
+        }
+
+        return $tags;
+    }
+
     public function handle(): void
     {
         auth()->setUser(Instance::withoutGlobalScope('team')->findOrFail(Context::get('instance_id')));
