@@ -56,6 +56,10 @@ trait HasStatsTracking
         return Attribute::make(
             // if the ip is set, we set the location data corresponding to it
             set: function (?string $value) {
+                if (is_null($value)) {
+                    return [];
+                }
+
                 if ($value === 'localhost' || str($value)->startsWith('127.') || $value === '::1') {
                     return [
                         'location_country' => 'Localhost',
