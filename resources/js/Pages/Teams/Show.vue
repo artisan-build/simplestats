@@ -4,6 +4,7 @@ import DeleteTeamForm from '@/Pages/Teams/Partials/DeleteTeamForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import TeamMemberManager from '@/Pages/Teams/Partials/TeamMemberManager.vue';
 import UpdateTeamNameForm from '@/Pages/Teams/Partials/UpdateTeamNameForm.vue';
+import TeamEventUsage from "@/Pages/Teams/Partials/TeamEventUsage.vue";
 
 defineProps({
     team: Object,
@@ -21,8 +22,12 @@ defineProps({
         </template>
 
         <div>
-
             <UpdateTeamNameForm :team="team" :permissions="permissions" />
+
+            <TeamEventUsage
+                class="mt-10 sm:mt-0"
+                :team="team"
+            />
 
             <TeamMemberManager
                 class="mt-10 sm:mt-0"
