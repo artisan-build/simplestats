@@ -24,21 +24,6 @@ class Team extends JetstreamTeam
     ];
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'currency',
-        'timezone',
-        'personal_team',
-        'events_reset_at',
-        'events_count_monthly',
-        'events_count_overall',
-    ];
-
-    /**
      * The event map for the model.
      *
      * @var array<string, class-string>
@@ -52,11 +37,6 @@ class Team extends JetstreamTeam
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
-    }
-
-    public function instances(): HasMany
-    {
-        return $this->hasMany(Instance::class);
     }
 
     public function statsUsers(): HasMany

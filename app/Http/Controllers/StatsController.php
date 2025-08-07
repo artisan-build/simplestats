@@ -28,15 +28,10 @@ class StatsController extends Controller
     ) {
         $user = $request->user();
 
-        // hack: as project_id and instance_id may be set within the request class, we need to check $_GET
+        // hack: as project_id may be set within the request class, we need to check $_GET
         $hasFilterRequest = ! empty($_GET);
 
         $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
-
-        if ($request->projectId != ($userFilterSettings['projectId'] ?? null)) {
-            // if the projectId is not set, we need to reset the instanceId
-            $request->merge(['instanceId' => StatsFilterDto::TRACK_ALL]);
-        }
 
         if (! $hasFilterRequest && ! empty($userFilterSettings)) {
             $request = new StatsFilterRequest($userFilterSettings);
@@ -49,30 +44,17 @@ class StatsController extends Controller
             ]));
         }
 
-        $teamStats = $user->currentTeam()->with('projects', function ($query) use ($request) {
-            $query->with('instances', function ($query) use ($request) {
-                $query->where('project_id', $request->projectId);
-            });
-        })->get()->first();
+        $teamStats = $user->currentTeam()->with('projects')->get()->first();
 
         // do this before prepend all filters...
         $teamStats->totalProjectsCount = $teamStats->projects->count(); // here we use the alreay loaded collection
-        $teamStats->totalInstancesCount = $teamStats->instances()->count(); // here we use the relationship
 
         // we need to do prepend before keyBy('id')
         $teamStats->projects->prepend($statsDetailsService->getAllFilterFor('Projects'));
 
         // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
         // this would not update $teamStats cause of laravel intern relation management...
-        $projects = $teamStats->projects->keyBy('id');
-        if ($request->projectId && $projects[$request->projectId]['id'] !== StatsFilterDto::TRACK_ALL) {
-            $selectedProject = $projects[$request->projectId];
-            // we need to do prepend before keyBy('id')
-            $selectedProject->instances->prepend($statsDetailsService->getAllFilterFor('Instances'));
-            $selectedProject->setRelation('instances', $selectedProject->instances->keyBy('id'));
-        }
-
-        $teamStats->setRelation('projects', $projects);
+        $teamStats->setRelation('projects', $teamStats->projects->keyBy('id'));
 
         $filters = StatsFilterDto::fromRequest($request);
         $teamStats->stats = $statsDetailsService->getStats($filters);

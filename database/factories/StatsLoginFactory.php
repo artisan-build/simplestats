@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsLogin;
 use App\Models\StatsUser;
@@ -29,7 +28,6 @@ class StatsLoginFactory extends Factory
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
-            'instance_id' => Instance::inRandomOrder()->first()->id,
             'time' => $date->format('Y-m-d H:i:s'),
             'time_utc' => $date->format('Y-m-d H:i:s'),
         ];

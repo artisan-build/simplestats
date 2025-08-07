@@ -16,7 +16,6 @@ class StatsFilterDto
 
     public function __construct(
         public int $projectId,
-        public int $instanceId,
         public int $rangeAmount,
         public StatsRangeType $rangeType,
         public CarbonInterface $rangeStart,
@@ -41,10 +40,10 @@ class StatsFilterDto
     public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
     {
         if ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
-            $request->merge(StatsRangePreset::from($request->preset)->range($request->projectId, $request->instanceId));
+            $request->merge(StatsRangePreset::from($request->preset)->range($request->projectId));
         } elseif (empty($_GET)) { // we use $_GET here cause request may be manipulated by request class...
             $request->merge([
-                ...StatsRangePreset::LAST_7_DAYS->range($request->projectId, $request->instanceId),
+                ...StatsRangePreset::LAST_7_DAYS->range($request->projectId),
                 'preset' => StatsRangePreset::LAST_7_DAYS->value,
             ]);
         }
@@ -61,7 +60,6 @@ class StatsFilterDto
 
         return new self(
             projectId: $request->projectId ?? 0,
-            instanceId: $request->instanceId ?? 0,
             rangeAmount: $rangeAmount,
             rangeType: $rangeType,
             rangeStart: $rangeStart,
@@ -88,7 +86,6 @@ class StatsFilterDto
         return md5(json_encode([
             $this->getTeamId(),
             $this->projectId,
-            $this->instanceId,
             $this->rangeType,
             $this->trackReferer,
             $this->trackSource,

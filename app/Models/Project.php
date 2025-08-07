@@ -2,45 +2,44 @@
 
 namespace App\Models;
 
+use App\Concerns\HasApiPlainTokens;
 use App\Concerns\HasTeamScope;
 use App\Contracts\NotifiableToUser;
 use App\Enums\UserNotificationFrequency;
 use App\Enums\UserNotificationType;
+use App\Events\ProjectCreated;
+use App\Events\ProjectDeleted;
 use App\Observers\ProjectObserver;
 use App\Services\StatsService;
 use App\ValueObjects\UserNotificationTypeObject;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 
 #[ObservedBy(ProjectObserver::class)]
-class Project extends Model implements NotifiableToUser
+class Project extends Authenticatable implements NotifiableToUser
 {
     use HasFactory;
     use HasTeamScope;
+    use HasApiPlainTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'usage',
+    const TOKEN_NAME = 'API Token';
+
+    protected $casts = [
+        'stats_starting_at' => 'date',
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => ProjectCreated::class,
+        'deleted' => ProjectDeleted::class,
     ];
 
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
-    }
-
-    public function instances(): HasMany
-    {
-        return $this->hasMany(Instance::class);
     }
 
     public function userNotifications(): MorphMany

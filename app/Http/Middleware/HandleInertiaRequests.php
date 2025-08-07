@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
 
         if (auth()->user()) {
             if ($currentTeam = auth()->user()->currentTeam) {
-                $merge['onboardingPassed'] = $currentTeam->instances()->count() > 0;
+                $merge['onboardingPassed'] = $currentTeam->projects()->first()?->name;
                 $merge['teamCurrency'] = $currentTeam->currency;
             }
         }

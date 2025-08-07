@@ -17,7 +17,7 @@ class SetTeamContext
      */
     public function handle(Request $request, Closure $next): Response
     {
-        AppHelper::setTeamContextFromUser($request->user());
+        AppHelper::setTeamContextFromAuth($request->user());
 
         return $next($request);
     }

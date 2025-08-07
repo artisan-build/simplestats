@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\DataImport;
-use App\Models\Instance;
 use App\Models\Job;
 use App\Models\Project;
 use App\Models\Team;
@@ -27,7 +26,6 @@ class DataImportFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'project_id' => Project::factory(),
-            'instance_id' => Instance::factory(),
             'job_id' => Job::factory(),
             'user_id' => User::factory(),
             'id_from' => $this->faker->numberBetween(-10000, 10000),

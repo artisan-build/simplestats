@@ -18,11 +18,11 @@ Basically all we do is provide a [composer package](/installation), which allows
 
 ### Data Visualisation
 
-We collect this data in a GDPR-compliant way, aggregate it and make it filterable and visible for you on our nice looking dashboard at https://simplestats.io. This allows you to see how your campaigns and users perform during a selected time period filtered by UTMs, referrers and countries!
+We collect this data in a GDPR-compliant way, aggregate it and make it filterable and visible for you on our nice-looking dashboard at https://simplestats.io. This allows you to see how your campaigns and users perform during a selected time period filtered by UTMs, referrers, and countries!
 
-### Teams, Projects and Instances
+### Teams and Projects
 
-You can invite co-workers to your **team** and assign roles, such as _Administrator_, _Editor_, _Viewer_ to them. Furthermore, if you like and want to, you can create multiple **projects** and multiple **instances** per project. For example, in a SaaS application, you might have different environments like “Environment A,” “Environment B,” etc. This allows you to view and analyze each instance separately or get an aggregated overview at the project level.
+You can invite co-workers to your **team** and assign roles, such as _Administrator_, _Editor_, _Viewer_ to them. Each team can have multiple **projects**. You can view and analyze each project separately – or get an aggregated overview at the team level that combines the stats of all your projects.
 
 ## Server-Side vs Client-Side Tracking
 

@@ -20,17 +20,6 @@ class DataImport extends Model
         'type' => DataImportType::class,
     ];
 
-    protected $fillable = [
-        'project_id',
-        'instance_id',
-        'created_by',
-        'type',
-        'rows_max',
-        'rows_imported',
-        'id_from',
-        'id_to',
-    ];
-
     protected $appends = [
         'rows_progress',
     ];
@@ -51,11 +40,6 @@ class DataImport extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
-    }
-
-    public function instance(): BelongsTo
-    {
-        return $this->belongsTo(Instance::class);
     }
 
     public function createdBy(): BelongsTo

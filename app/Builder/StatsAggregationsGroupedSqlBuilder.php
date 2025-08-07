@@ -61,10 +61,10 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     protected function getPD_DAU(): string
     {
         return "pd_dau AS (
-            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.instance_id']).") AS count
+            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.project_id']).") AS count
             FROM stats_logins stats
-            :trackingUserJoinConditions AND :projectInstanceCondition
-            WHERE :projectInstanceCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter
+            :trackingUserJoinConditions AND :projectCondition
+            WHERE :projectCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter
             GROUP BY type_id
         )";
     }
@@ -77,7 +77,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return "lt_reg AS (
             SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
             FROM stats_users stats
-            WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
         )";
     }
@@ -90,7 +90,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return "lt_visitors AS (
             SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
             FROM stats_visitors stats
-            WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
             GROUP BY type_id
         )";
     }
@@ -105,14 +105,14 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             FROM (
                 SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
                 FROM stats_payments stats
-                :trackingUserJoinConditions AND :projectInstanceCondition
-                WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
+                :trackingUserJoinConditions AND :projectCondition
+                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
                 GROUP BY type_id
                 UNION ALL
                 SELECT COALESCE(sv.$this->statsDBType, $this->typeIdFallback) as type_id, SUM(stats.net) as count
                 FROM stats_payments stats
-                :trackingVisitorJoinConditions AND :projectInstanceCondition
-                WHERE :projectInstanceCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
+                :trackingVisitorJoinConditions AND :projectCondition
+                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd'
                 GROUP BY type_id
             ) as combined_results
             GROUP BY type_id

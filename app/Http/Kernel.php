@@ -3,7 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Api\CheckClientVersion;
-use App\Http\Middleware\Api\SetInstanceContext;
+use App\Http\Middleware\Api\SetProjectContext;
 use App\Http\Middleware\Api\SetRequestContext;
 use App\Http\Middleware\CheckAppType;
 use App\Http\Middleware\DisableMutateRequestsInDemoEnv;
@@ -58,7 +58,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             CheckClientVersion::class,
             SetTeamContext::class,
-            SetInstanceContext::class,
+            SetProjectContext::class,
             SetRequestContext::class,
         ],
     ];

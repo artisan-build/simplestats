@@ -17,13 +17,12 @@ class DataImportSeeder extends Seeder
         $firstUser = User::first();
         auth()->setUser($firstUser);
 
-        $firstProject = Project::with('instances')->first();
+        $firstProject = Project::first();
 
         DataImport::unguard();
 
         DataImport::create([
             'project_id' => $firstProject->id,
-            'instance_id' => $firstProject->instances->first()->id,
             'created_by' => $firstUser->id,
             'type' => DataImportType::USERS,
             'rows_max' => 8921,
@@ -40,7 +39,6 @@ class DataImportSeeder extends Seeder
 
         DataImport::create([
             'project_id' => $firstProject->id,
-            'instance_id' => $firstProject->instances->first()->id,
             'created_by' => $firstUser->id,
             'type' => DataImportType::PAYMENTS,
             'rows_max' => 2132,
@@ -57,7 +55,6 @@ class DataImportSeeder extends Seeder
 
         DataImport::create([
             'project_id' => $firstProject->id,
-            'instance_id' => $firstProject->instances->first()->id,
             'created_by' => $firstUser->id,
             'type' => DataImportType::PAYMENTS,
             'rows_max' => 2132,

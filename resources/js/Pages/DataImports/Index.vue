@@ -11,7 +11,6 @@ import WarningBox from "@/Components/WarningBox.vue";
 const props = defineProps({
     filters: Object,
     projects: Array,
-    instances: Array,
     dataImports: Object,
     importTypes: Array,
     mimeTypes: Array,
@@ -61,7 +60,6 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
                 <CreateDataImportForm
                     :filters="filters"
                     :projects="projects"
-                    :instances="instances"
                     :dataImports="dataImports"
                     :importTypes="importTypes"
                     :mimeTypes="mimeTypes"
@@ -85,7 +83,6 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
                                 <tr class="text-left font-bold">
                                     <th class="pb-2 pt-3 px-3">Status</th>
                                     <th class="pb-2 pt-3 px-3">Project</th>
-                                    <th class="pb-2 pt-3 px-3">Instance</th>
 <!--                                    <th class="pb-2 pt-3 px-3">Type</th>-->
                                     <th class="pb-2 pt-3 px-3">Creator</th>
                                     <th class="pb-2 pt-3 px-3">Rows</th>
@@ -106,7 +103,7 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
                                     </td>
                                 </tr>
                                 <tr v-for="dataImport in dataImports.data" :key="dataImport.id">
-                                    <DataImportListRow :projects="projects" :instances="instances" :dataImport="dataImport" />
+                                    <DataImportListRow :projects="projects" :dataImport="dataImport" />
                                 </tr>
                             </template>
                         </ActionTable>

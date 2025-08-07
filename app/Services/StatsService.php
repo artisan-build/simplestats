@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\ComparisonType;
-use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
@@ -154,12 +153,9 @@ class StatsService
             'rangeStart' => $filters->rangeStart->format('Y-m-d'),
         ])->filter()->toArray(); //remove 0 values
 
-        // project and instance must have a default value...
+        // project must have a default value...
         if (! isset($formatted['projectId'])) {
             $formatted['projectId'] = 0;
-        }
-        if (! isset($formatted['instanceId'])) {
-            $formatted['instanceId'] = 0;
         }
         if (! isset($formatted['comparison'])) {
             $formatted['comparison'] = 0;
@@ -178,7 +174,7 @@ class StatsService
         // filter to remove 0 key value pairs...
         $where = collect($filter)->filter()->toArray();
 
-        return Carbon::parse(Instance::where($where)->min('stats_starting_at'));
+        return Carbon::parse(Project::where($where)->min('stats_starting_at'));
     }
 
     /**
@@ -187,13 +183,13 @@ class StatsService
      */
     public function recalculateStatsStartingAt(): void
     {
-        Instance::all()->each(function (Instance $instance) {
+        Project::all()->each(function (Project $project) {
             $start = collect(StatsService::getStatsModels())->map(
-                fn ($statsModel) => $statsModel::where(['instance_id' => $instance->id])->min('time')
+                fn ($statsModel) => $statsModel::where(['project_id' => $project->id])->min('time')
             )->filter()->min();
 
             if ($start) {
-                $instance->update(['stats_starting_at' => $start]);
+                $project->update(['stats_starting_at' => $start]);
             }
         });
     }

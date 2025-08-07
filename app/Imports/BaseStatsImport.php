@@ -106,17 +106,16 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
 
         $modelConcerns = class_uses(new $this->modelClass());
 
-        // team, project, instance id are normally set dynamically
+        // team and project id are normally set dynamically
         // this is safe, as we've validated the rows/cols before...
         return $this->modelClass::unguarded(function () use ($row, $modelConcerns) {
-            $uniqueInstance = [
+            $uniqueProject = [
                 'team_id' => $this->dataImport->team_id,
                 'project_id' => $this->dataImport->project_id,
-                'instance_id' => $this->dataImport->instance_id,
             ];
 
             // prepare validation tweaks data as we need/want it here
-            $data = array_merge($this->validator->prepareForValidation($row), $uniqueInstance);
+            $data = array_merge($this->validator->prepareForValidation($row), $uniqueProject);
 
             $model = new $this->modelClass($data);
 
@@ -126,7 +125,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
             }
 
             if (in_array(HasStatsUserAssurance::class, $modelConcerns)) {
-                $model->ensureStatsUser($uniqueInstance);
+                $model->ensureStatsUser($uniqueProject);
             }
 
             return $model;

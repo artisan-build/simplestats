@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Instance;
 use App\Models\Project;
 use App\Models\User;
 
@@ -18,7 +17,7 @@ $exclude = [
     'oauth/*',
     'spark/*',
     'billing/*',
-    'projects/{project}/instances/*', // token-view & token-regenerate routes
+    'projects/{project}/*', // token-view & token-regenerate routes
 ];
 
 routeTesting('all GET routes')
@@ -31,13 +30,11 @@ routeTesting('all GET routes')
         if (in_array('auth:sanctum', $route->middleware()) || in_array('auth:web', $route->middleware())) {
             $this->seed();
             $project = Project::get()->first();
-            $instance = Instance::get()->first();
 
             $user = User::where('email', config('app.test.user')['email'])->firstOrFail();
             $this->actingAs($user);
 
             $this->bind('project', $project);
-            $this->bind('instance', $instance);
         }
     })
     ->assertSuccessful();

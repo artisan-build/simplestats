@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
@@ -40,7 +39,6 @@ class StatsPaymentFactory extends Factory
             'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
-            'instance_id' => Instance::inRandomOrder()->first()->id,
             'gross' => $gross,
             'net' => $gross * 0.8,
             'currency' => 'EUR',

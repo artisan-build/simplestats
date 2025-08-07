@@ -16,15 +16,15 @@ trait HasCounterByStatsUser
 
     public function getCounter(): int
     {
-        // stats records are unique only per instance, so we can't use whereKey or find here...
+        // stats records are unique only per project, so we can't use whereKey or find here...
 
-        if ($existingStatsRecord = $this->where(['id' => $this->id, 'instance_id' => $this->instance_id])->first()) {
+        if ($existingStatsRecord = $this->where(['id' => $this->id, 'project_id' => $this->project_id])->first()) {
             return $existingStatsRecord->counter;
         }
 
         return $this->where([
             'stats_user_id' => $this->stats_user_id,
-            'instance_id' => $this->instance_id,
+            'project_id' => $this->project_id,
         ])->count() + 1;
     }
 }

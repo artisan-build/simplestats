@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
 use Symfony\Component\HttpFoundation\Response;
 
-class SetInstanceContext
+class SetProjectContext
 {
     /**
      * Handle an incoming request.
@@ -17,8 +17,7 @@ class SetInstanceContext
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->check()) {
-            Context::add('instance_id', auth()->user()->id);
-            Context::add('project_id', auth()->user()->project_id);
+            Context::add('project_id', auth()->user()->id);
         }
 
         return $next($request);

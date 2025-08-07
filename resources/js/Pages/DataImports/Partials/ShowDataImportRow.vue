@@ -18,7 +18,6 @@ import {
 
 const props = defineProps({
     projects: Array,
-    instances: Array,
     dataImport: Object,
 });
 
@@ -115,9 +114,6 @@ const getTrackedJobStatusOptions = (trackedJob) => {
     <td class="border-t px-2 py-1 focus:text-indigo-500">
         {{ truncate(dataImport.project.name, { length: 15 }) }}
     </td>
-    <td class="border-t px-2 py-1 focus:text-indigo-500">
-        {{ truncate(dataImport.instance.name, { length: 15 }) }}
-    </td>
 <!--    <td class="border-t px-2 py-1 focus:text-indigo-500">-->
 <!--        {{ dataImport.type }}-->
 <!--    </td>-->
@@ -157,7 +153,6 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                     Are you sure you want to <strong>{{ dataImportBeeingHandled }}</strong> the following data import?<br>
                     <br>
                     <strong>Project:</strong> {{ projects.filter((project) => project.id == dataImport.project_id)[0].name }}<br>
-                    <strong>Instance:</strong> {{ instances.filter((instance) => instance.id == dataImport.instance_id)[0].name }}<br>
                     <strong>Import Type:</strong> {{ dataImport.type }}<br>
                     <span v-if="dataImport.rows_imported > 0">
                         <strong>Rows:</strong> {{ dataImport.rows_imported }} rows - from id {{ dataImport.id_from }} to {{ dataImport.id_to }}<br>

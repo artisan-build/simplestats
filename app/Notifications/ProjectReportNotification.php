@@ -114,7 +114,6 @@ class ProjectReportNotification extends Notification
 
         return new StatsFilterDto(
             projectId: $this->notification->notifiable_id,
-            instanceId: 0,
             rangeAmount: $range['amount'],
             rangeType: $range['type'],
             rangeStart: $range['start'],

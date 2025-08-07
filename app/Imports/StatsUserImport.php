@@ -20,6 +20,6 @@ class StatsUserImport extends BaseStatsImport implements WithUpserts
 
     public function uniqueBy(): array
     {
-        return ['id', 'instance_id'];
+        return ['id', 'project_id'];
     }
 }

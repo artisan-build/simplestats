@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->index('user_id');
 
-            $table->unique(['user_id', 'notifiable_type', 'notifiable_id', 'type']);
+            $table->unique(['user_id', 'notifiable_type', 'notifiable_id', 'type'], 'user_notifications_combined_unique');
         });
     }
 };

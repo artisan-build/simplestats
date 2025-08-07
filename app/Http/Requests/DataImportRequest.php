@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Enums\DataImportType;
-use App\Models\Instance;
 use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -34,16 +33,6 @@ class DataImportRequest extends FormRequest
                 'integer',
                 Rule::exists(Project::class, 'id')->where(function ($query) {
                     $query->where([
-                        'team_id' => $this->user()->current_team_id,
-                    ]);
-                }),
-            ],
-            'instance_id' => [
-                'required',
-                'integer',
-                Rule::exists(Instance::class, 'id')->where(function ($query) {
-                    $query->where([
-                        'project_id' => $this->project_id,
                         'team_id' => $this->user()->current_team_id,
                     ]);
                 }),

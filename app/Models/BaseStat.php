@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Concerns\HasInstanceScope;
+use App\Concerns\HasProjectScope;
 use App\Concerns\HasTeamScope;
 use App\Enums\StatsRangeType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -15,7 +15,7 @@ abstract class BaseStat extends Model
 {
     use HasFactory;
     use HasTeamScope;
-    use HasInstanceScope;
+    use HasProjectScope;
 
     public $timestamps = false;
 
@@ -40,11 +40,6 @@ abstract class BaseStat extends Model
         return $this->belongsTo(Project::class);
     }
 
-    public function instance(): BelongsTo
-    {
-        return $this->belongsTo(Instance::class);
-    }
-
     /**
      * stats have a combined primary key, and we need it for updateOrCreate to work...
      *
@@ -53,7 +48,7 @@ abstract class BaseStat extends Model
     protected function setKeysForSaveQuery($query)
     {
         return $query->where('id', $this->id)
-            ->where('instance_id', $this->instance_id);
+            ->where('project_id', $this->project_id);
     }
 
     public function time(): Attribute

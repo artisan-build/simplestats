@@ -9,7 +9,6 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Enums\TrackablePerson;
 use App\Models\BaseStat;
-use App\Models\Instance;
 use App\Models\Project;
 use App\Models\StatsAggregation;
 use Carbon\Carbon;
@@ -32,7 +31,6 @@ class StatsAggregationsService
             return [
                 'team_id' => $filters->getTeamId(),
                 'project_id' => $filters->projectId ?: null,
-                'instance_id' => $filters->instanceId ?: null,
                 'filter_hash' => $filters->makeHash(),
                 'type' => $filters->rangeType,
                 'time' => $item['date_clear'],
@@ -161,16 +159,8 @@ class StatsAggregationsService
             $projectCondition .= " AND stats.project_id = {$filters->projectId} ";
         }
 
-        $projectInstanceCondition = '';
-        if (! empty($filters->instanceId)) {
-            $projectInstanceCondition .= " AND stats.instance_id = {$filters->instanceId} ";
-        } elseif (! empty($filters->projectId)) {
-            $projectInstanceCondition .= $projectCondition;
-        }
-
         $conditions['teamCondition'] = $teamCondition;
         $conditions['projectCondition'] = $teamCondition.$projectCondition;
-        $conditions['projectInstanceCondition'] = $teamCondition.$projectInstanceCondition;
 
         $trackingCondition = '';
 
@@ -233,8 +223,8 @@ class StatsAggregationsService
         }
 
         $conditions['trackingConditions'] = '';
-        $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.instance_id = stats.instance_id';
-        $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.instance_id = stats.instance_id';
+        $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.project_id = stats.project_id';
+        $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.project_id = stats.project_id';
 
         if (! empty($trackingCondition)) {
             $conditions['trackingConditions'] = $trackingCondition;
@@ -363,38 +353,16 @@ class StatsAggregationsService
             ])->where(function ($query) use ($stat) {
                 // stats must be re-aggregated on a team basis
                 $query->where(function ($query) use ($stat) {
-                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
+                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null);
                 })
                 // stats must be re-aggregated on project basis
                     ->orWhere(function ($query) use ($stat) {
-                        $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', null);
-                    })
-                // stats must be re-aggregated on instance basis
-                    ->orWhere(function ($query) use ($stat) {
-                        $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id)->where('instance_id', '=', $stat->instance_id);
+                        $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id);
                     });
             })->delete();
-            // other projects and instances aggregations will remain,
+            // other projects aggregations will remain,
             // but unfortunately, we have to re-aggregate the whole team
         }
-    }
-
-    public function clearByInstance(Instance $instance): void
-    {
-        StatsAggregation::where(function ($query) use ($instance) {
-            // stats must be re-aggregated on a team basis
-            $query->where(function ($query) use ($instance) {
-                $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
-            })
-            // stats must be re-aggregated on a project basis
-                ->orWhere(function ($query) use ($instance) {
-                    $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', null);
-                })
-            // stats must be re-aggregated on an instance basis
-                ->orWhere(function ($query) use ($instance) {
-                    $query->where('team_id', '=', $instance->team_id)->where('project_id', '=', $instance->project_id)->where('instance_id', '=', $instance->id);
-                });
-        })->delete();
     }
 
     public function clearByProject(Project $project): void
@@ -402,11 +370,11 @@ class StatsAggregationsService
         StatsAggregation::where(function ($query) use ($project) {
             // stats must be re-aggregated on a team basis
             $query->where(function ($query) use ($project) {
-                $query->where('team_id', '=', $project->team_id)->where('project_id', '=', null)->where('instance_id', '=', null);
+                $query->where('team_id', '=', $project->team_id)->where('project_id', '=', null);
             })
             // stats must be re-aggregated on a project basis
                 ->orWhere(function ($query) use ($project) {
-                    $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id)->where('instance_id', '=', null);
+                    $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id);
                 });
         })->delete();
     }

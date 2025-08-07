@@ -101,7 +101,6 @@ class ProcessDataImportJob implements ShouldQueue
         $stat = new $modelClass([
             'team_id' => $this->model->team_id,
             'project_id' => $this->model->project_id,
-            'instance_id' => $this->model->instance_id,
             'time' => $importer->getLowestImportedDate(),
         ]);
         $modelClass::reguard();

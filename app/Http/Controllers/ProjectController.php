@@ -6,12 +6,10 @@ use App\Actions\CheckPasswordConfirmation;
 use App\Actions\CreateProject;
 use App\Actions\UpdateProject;
 use App\Http\Requests\ProjectRequest;
-use App\Models\Instance;
 use App\Models\Project;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -47,9 +45,9 @@ class ProjectController extends Controller
 
     public function show(Request $request, Project $project): Response
     {
-        $project->load(['instances' => function (HasMany $query) {
-            $query->orderBy('created_at', 'DESC');
-        }]);
+        if (Gate::check('viewProjectToken', $project)) {
+            $project->load('tokens');
+        }
 
         return Inertia::render('Projects/Show', [
             'project' => $project,
@@ -58,7 +56,7 @@ class ProjectController extends Controller
                 'canDeleteProject' => Gate::check('delete', $project),
                 'canUpdateProject' => Gate::check('update', $project),
                 'canCreateProject' => Gate::check('create', $project),
-                'canCreateInstance' => Gate::check('create', Instance::class),
+                'canRegenerateProjectToken' => Gate::check('regenerateProjectToken', $project),
             ],
         ]);
     }
@@ -86,5 +84,32 @@ class ProjectController extends Controller
         $project->delete();
 
         return redirect()->route('projects.index')->banner('Project deleted: '.$project->name);
+    }
+
+    public function tokenRegenerate(Request $request, Project $project, StatefulGuard $guard)
+    {
+        $this->authorize('regenerateProjectToken', $project);
+
+        app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+
+        $project->tokens()->delete();
+
+        $token = $project->createTokenPlain(Project::TOKEN_NAME);
+
+        return back()->with('flash', [
+            'token' => $token->accessToken->token_plain_part,
+            'banner' => 'Token regenerated!',
+        ]);
+    }
+
+    public function tokenView(Project $project)
+    {
+        $this->authorize('viewProjectToken', $project);
+
+        $token = $project->tokens()->first();
+
+        return redirect()->route('projects.show', [$project])->with('flash', [
+            'token' => $token->token_plain_part,
+        ]);
     }
 }

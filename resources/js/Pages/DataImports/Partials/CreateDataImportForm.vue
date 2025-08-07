@@ -15,8 +15,6 @@ import InfoBox from "@/Components/InfoBox.vue";
 const props = defineProps({
     filters: Object,
     projects: Array,
-
-    instances: Array,
     dataImports: Object,
     importTypes: Array,
     mimeTypes: Array,
@@ -24,8 +22,7 @@ const props = defineProps({
 });
 
 const createDataImportForm = useForm({
-    project_id: props.filters.project_id ?? 0, //TODO reset to 0 default
-    instance_id: props.filters.instance_id ?? 0,
+    project_id: props.filters.project_id ?? 0,
     type: props.filters.type ?? 0,
     file: props.filters.file ?? null,
 });
@@ -47,19 +44,6 @@ const dataImportBeeingCreated = ref(false);
 const confirmDataImportCreation = () => {
     dataImportBeeingCreated.value = true;
 };
-
-const instancesOfSelectedProject = computed(() => {
-    let instances = props.instances.filter((instance) => instance.project_id == createDataImportForm.project_id);
-
-    if (instances.length) {
-        instances.unshift({
-            name: 'Please select',
-            id: 0,
-        });
-    }
-
-    return instances;
-});
 
 const currentImportNotFinishedYet = computed(() => {
     return props.dataImports.total > 0 && props.dataImports.data[0].tracked_job.finished_at === null;
@@ -110,17 +94,6 @@ const currentImportNotFinishedYet = computed(() => {
             </div>
 
             <div v-if="createDataImportForm.project_id" class="col-span-6 sm:col-span-4">
-                <InputLabel for="instance_id" value="Instance" />
-                <SelectInput
-                    id="instance_id"
-                    v-model="createDataImportForm.instance_id"
-                    class="mt-1 block w-full"
-                    :options="instancesOfSelectedProject"
-                />
-                <InputError :message="createDataImportForm.errors.instance_id" class="mt-2" />
-            </div>
-
-            <div v-if="createDataImportForm.instance_id" class="col-span-6 sm:col-span-4">
                 <InputLabel for="type" value="Import Type" />
                 <SelectInput
                     id="type"
@@ -161,7 +134,6 @@ const currentImportNotFinishedYet = computed(() => {
         </template>
     </FormSection>
 
-    <!-- Delete Instance Confirmation Modal -->
     <ConfirmationModal :show="dataImportBeeingCreated" @close="dataImportBeeingCreated = false">
         <template #title>
             Create Data Import
@@ -171,7 +143,6 @@ const currentImportNotFinishedYet = computed(() => {
             Do you really want to import this file with the following settings?<br>
             <br>
             <strong>Project:</strong> {{ projects.filter((project) => project.id == createDataImportForm.project_id)[0].name }}<br>
-            <strong>Instance:</strong> {{ instances.filter((instance) => instance.id == createDataImportForm.instance_id)[0].name }}<br>
             <strong>Import Type:</strong> {{ createDataImportForm.type }}<br>
             <strong>Import File:</strong> {{ createDataImportForm.file.name }}<br>
         </template>

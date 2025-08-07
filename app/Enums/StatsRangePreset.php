@@ -50,7 +50,7 @@ enum StatsRangePreset: string
         };
     }
 
-    public function range(?int $projectId, ?int $instanceId): array
+    public function range(?int $projectId): array
     {
         return match ($this) {
             self::TODAY => [
@@ -103,7 +103,7 @@ enum StatsRangePreset: string
                 'rangeAmount' => now()->subYear()->startOfYear()->diffInMonths(now()->subYear()->endOfYear()) + 1,
                 'rangeType' => StatsRangeType::MONTH->value,
             ],
-            self::ALL_TIME => $this->getAllTimeRange($projectId, $instanceId),
+            self::ALL_TIME => $this->getAllTimeRange($projectId),
             self::CUSTOM => [
                 'rangeStart' => null,
                 'rangeAmount' => null,
@@ -112,14 +112,13 @@ enum StatsRangePreset: string
         };
     }
 
-    private function getAllTimeRange(?int $projectId, ?int $instanceId): array
+    private function getAllTimeRange(?int $projectId): array
     {
         $user = auth()->user();
 
         $statsStartingAt = app(StatsService::class)->getStatsStartingAt([
             'team_id' => $user->team->id,
-            'project_id' => $projectId,
-            'id' => $instanceId,
+            'id' => $projectId,
         ]) ?? now()->subYears(1)->startOfYear();
 
         $now = now();

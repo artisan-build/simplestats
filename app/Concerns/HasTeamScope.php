@@ -10,7 +10,7 @@ trait HasTeamScope
 {
     /**
      * The "current_team_id is" used when the user is authenticated in the frontend.
-     * And "team_id" is used when using the api with the instance api token.
+     * And "team_id" is used when using the api with the project api token.
      */
     public static function bootHasTeamScope(): void
     {

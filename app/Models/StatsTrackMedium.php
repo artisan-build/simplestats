@@ -10,15 +10,6 @@ class StatsTrackMedium extends Model
 {
     use HasTeamScope;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-    ];
-
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

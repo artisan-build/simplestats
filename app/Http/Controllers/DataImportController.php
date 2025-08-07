@@ -7,7 +7,6 @@ use App\Helpers\ImportHelper;
 use App\Http\Requests\DataImportRequest;
 use App\Jobs\ProcessDataImportJob;
 use App\Models\DataImport;
-use App\Models\Instance;
 use App\Models\Project;
 use App\Validators\BaseStatsValidator;
 use Cache;
@@ -29,7 +28,6 @@ class DataImportController extends Controller
     {
         $imports = DataImport::with([
             'project',
-            'instance',
             'createdBy',
             'trackedJob',
         ])->orderBy('created_at', 'desc')->paginate(10);
@@ -49,7 +47,6 @@ class DataImportController extends Controller
         unset($items);
 
         $projects = Project::orderBy('created_at', 'desc')->get()->prepend(['id' => 0, 'name' => 'Please Select']);
-        $instances = Instance::orderBy('created_at', 'desc')->get();
 
         $importTypes = collect(DataImportType::values())->map(fn ($item) => ['id' => $item, 'name' => ucfirst($item)])->prepend(['id' => null, 'name' => 'Please Select']);
         // csv geht irgendwie nur mit txt, aber das soll im FE nicht angezeigt werden...
@@ -58,7 +55,6 @@ class DataImportController extends Controller
         return Inertia::render('DataImports/Index', [
             'dataImports' => $imports,
             'projects' => $projects,
-            'instances' => $instances,
             'importTypes' => $importTypes,
             'mimeTypes' => $mimeTypes,
             'filters' => $request->all(),

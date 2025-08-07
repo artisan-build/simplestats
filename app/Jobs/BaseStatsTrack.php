@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Instance;
+use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,8 +29,8 @@ abstract class BaseStatsTrack implements ShouldQueue
             'StatsTrack',
         ];
 
-        if ($instanceId = Context::get('instance_id')) {
-            $tags[] = 'Instance:'.$instanceId;
+        if ($projectId = Context::get('project_id')) {
+            $tags[] = 'Project:'.$projectId;
         }
 
         if (isset($this->input['id'])) {
@@ -46,6 +46,6 @@ abstract class BaseStatsTrack implements ShouldQueue
 
     public function handle(): void
     {
-        auth()->setUser(Instance::withoutGlobalScope('team')->findOrFail(Context::get('instance_id')));
+        auth()->setUser(Project::withoutGlobalScope('team')->findOrFail(Context::get('project_id')));
     }
 }

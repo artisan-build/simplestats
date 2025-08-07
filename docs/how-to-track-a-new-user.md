@@ -49,7 +49,7 @@ class User extends Authenticatable implements TrackablePerson
 Now each time a new **User** model gets created, an API request is sent to _SimpleStats_ to count a new registration.
 
 ::: info
-You may tweak the `getTrackingTime` method to your needs. For instance, if your `created_at` field is named differently you have to ajust it in the method.
+You may tweak the `getTrackingTime` method to your needs. For instance, if your `created_at` field is named differently you have to adjust it in the method.
 :::
 
 ### With Condition

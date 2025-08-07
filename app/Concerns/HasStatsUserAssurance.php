@@ -22,20 +22,20 @@ trait HasStatsUserAssurance
     }
 
     /**
-     * When we're in an auth context, $uniqueInstance is set by the class concerns.
-     * The $uniqueInstance param is for the import process only, as we have no auth context there.
+     * When we're in an auth context, $uniqueProject is set by the class concerns.
+     * The $uniqueProject param is for the import process only, as we have no auth context there.
      */
-    public function ensureStatsUser(array $uniqueInstance = []): void
+    public function ensureStatsUser(array $uniqueProject = []): void
     {
         if (! $this->stats_user_id) {
             return;
         }
 
-        // our primary key is id + instance_id
+        // our primary key is id + project_id
         StatsUser::firstOrCreate([
             'id' => $this->stats_user_id,
-            'instance_id' => $this->instance_id,
-        ], array_merge($uniqueInstance, [
+            'project_id' => $this->project_id,
+        ], array_merge($uniqueProject, [
             'id' => $this->stats_user_id,
             'time' => $this->stats_user_time ?? now(),
             // hack to set ip and user_agent when the user not yet exists on our side, but the user is doing a login,

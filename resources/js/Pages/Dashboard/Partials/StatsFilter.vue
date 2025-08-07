@@ -40,8 +40,6 @@ const submit = () => {
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
     if (event && event.name === 'projectId') {
-        form.instanceId = 0;
-
         // reset group filters...
         for(let groupKey in props.statsGroups) {
             props.statsGroups[groupKey].forEach(item => {
@@ -119,16 +117,6 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                         v-model="form.projectId"
                                         class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="teamStats.projects"
-                                        @change="filterChanged"
-                                    />
-                                </div>
-                                <div v-if="currentProject.instances && Object.keys(currentProject.instances).length > 2">
-                                    <InputLabel class="hidden" for="instanceId" value="Instance" />
-                                    <SelectInput
-                                        id="instanceId"
-                                        v-model="form.instanceId"
-                                        class="mt-1 block w-40 dark:!bg-dark-800"
-                                        :options="currentProject.instances"
                                         @change="filterChanged"
                                     />
                                 </div>

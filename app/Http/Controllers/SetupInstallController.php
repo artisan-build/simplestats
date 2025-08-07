@@ -10,7 +10,7 @@ class SetupInstallController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Setup/Installation', [
-            'apiToken' => $request->user()->currentTeam->instances()->first()->tokens->first()->token_plain_part,
+            'apiToken' => $request->user()->currentTeam->projects()->first()->tokens->first()->token_plain_part,
         ]);
     }
 }

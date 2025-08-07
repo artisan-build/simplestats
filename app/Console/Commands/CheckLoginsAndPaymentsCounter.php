@@ -38,7 +38,7 @@ class CheckLoginsAndPaymentsCounter extends Command
                     UPDATE $table
                     SET counter = ranked.rn
                     FROM (
-                        SELECT id, ROW_NUMBER() OVER (PARTITION BY instance_id, stats_user_id ORDER BY time) AS rn
+                        SELECT id, ROW_NUMBER() OVER (PARTITION BY project_id, stats_user_id ORDER BY time) AS rn
                         FROM $table
                     ) AS ranked
                     WHERE $table.id = ranked.id;
@@ -48,7 +48,7 @@ class CheckLoginsAndPaymentsCounter extends Command
                 UPDATE $table AS s
                 JOIN (
                     SELECT id,
-                           ROW_NUMBER() OVER (PARTITION BY instance_id, stats_user_id ORDER BY time) AS rn
+                           ROW_NUMBER() OVER (PARTITION BY project_id, stats_user_id ORDER BY time) AS rn
                     FROM $table
                 ) AS ranked
                 ON s.id = ranked.id

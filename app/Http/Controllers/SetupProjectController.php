@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\CreateInstance;
 use App\Actions\UpdateProject;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
@@ -23,14 +22,7 @@ class SetupProjectController extends Controller
     public function store(ProjectRequest $request)
     {
         $project = $request->user()->currentTeam->projects()->first();
-        $project = app(UpdateProject::class)($request->user(), $project, $request->validated());
-
-        // the first instance is created automatically and named after the project
-        if ($project->instances()->count() <= 0) {
-            app(CreateInstance::class)($request->user(), $project, [
-                'name' => $project->name,
-            ]);
-        }
+        app(UpdateProject::class)($request->user(), $project, $request->validated());
 
         return redirect()->route('setup.installation.index');
     }

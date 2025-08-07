@@ -6,7 +6,6 @@ use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\ProjectInstanceController;
 use App\Http\Controllers\SetupInstallController;
 use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\SetupTeamController;
@@ -63,11 +62,8 @@ Route::middleware([
 
     // Projects
     Route::resource('projects', ProjectController::class)->except(['edit', 'create']);
-
-    // Instances
-    Route::resource('projects.instances', ProjectInstanceController::class)->except(['create', 'edit']);
-    Route::get('projects/{project}/instances/{instance}/token-view', [ProjectInstanceController::class, 'tokenView'])->name('projects.instances.token-view');
-    Route::get('projects/{project}/instances/{instance}/token-regenerate', [ProjectInstanceController::class, 'tokenRegenerate'])->name('projects.instances.token-regenerate');
+    Route::get('projects/{project}/token-view', [ProjectController::class, 'tokenView'])->name('projects.token-view');
+    Route::get('projects/{project}/token-regenerate', [ProjectController::class, 'tokenRegenerate'])->name('projects.token-regenerate');
 
     // User Settings
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');

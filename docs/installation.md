@@ -17,7 +17,7 @@ At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11 a
 After you registered an **account** and got an API token, you should publish the config and set your `SIMPLESTATS_API_TOKEN` in your `.env` file.
 
 ::: info
-The **token** will be displayed right after registration or when you create a new instance. You can also find it later on the instance page in the app.
+The **token** will be displayed right after registration or when you create a new project. You can also find it later on the projects page in the app.
 :::
 
 Publish the config file with:
@@ -65,7 +65,7 @@ return [
      |
      | Define your API credentials here. If you are not told to change the API URL,
      | just keep the default. It's important to set an API token! You'll receive
-     | one, after creating an Instance for a Project on https://simplestats.io
+     | one, after creating your team and project on https://simplestats.io
      |
      */
 

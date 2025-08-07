@@ -36,20 +36,6 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     use TwoFactorAuthenticatable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'settings',
-        'last_login_at',
-        'inactive_since',
-    ];
-
-    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -105,7 +91,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     }
 
     // Compatibility for auth()->team() checks in request/validator classes,
-    // Which may be performed by the auth instance (api) or the auth user (normal request)
+    // Which may be performed by the auth project (api) or the auth user (normal request)
     public function team(): BelongsTo
     {
         if (is_null($this->current_team_id) && $this->id) {

@@ -53,4 +53,14 @@ class ProjectPolicy
     {
         return $user->hasTeamPermission($project->team, 'action:delete');
     }
+
+    public function regenerateProjectToken(User $user, Project $project): bool
+    {
+        return $user->hasTeamPermission($project->team, 'action:delete');
+    }
+
+    public function viewProjectToken(User $user, Project $project): bool
+    {
+        return $user->hasTeamPermission($project->team, 'action:readSensitives');
+    }
 }
