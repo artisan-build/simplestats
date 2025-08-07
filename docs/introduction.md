@@ -55,13 +55,13 @@ It's easier to understand it when you see it in action on the dashboard.
 | **NET**      | Net revenue                        | Net revenue for the selected period.                                                                                                                 |
 | **FEE**      | Fee                                | Fee for the selected period.                                                                                                                         |
 | **GROSS**    | Gross revenue                      | Gross revenue for the selected period.                                                                                                               |
-| **ARPDAU**   | Average revenue Per DAU            | The average revenue per DAU.                                                                                                                         |
-| **ARPU**     | Average revenue Per User           | The average revenue per User (how much is a user/lead/reg worth in money).                                                                           |
-| **ARPV**     | Average revenue Per Visitor        | The average revenue per Unique Visitor (how much is a unique visitor worth in money).                                                                |
+| **ARPDAU**   | Average Revenue Per DAU            | The average revenue per DAU.                                                                                                                         |
+| **ARPU**     | Average Revenue Per User           | The average revenue per User (how much is a user/lead/reg worth in money).                                                                           |
+| **ARPV**     | Average Revenue Per Visitor        | The average revenue per Unique Visitor (how much is a unique visitor worth in money).                                                                |
 | **NAU**      | New Active Users                   | Number of users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |
 | **NAPU**     | New Active Paying Users            | Number of users who did their first payment at the selected period.                                                                                  |
 | **PU**       | Paying Users                       | Number of users who did at least one payment over lifetime.                                                                                          |
-| **ARPPU**    | Average revenue Per Paying User    | The average revenue per paying User.                                                                                                                 |
+| **ARPPU**    | Average Revenue Per Paying User    | The average revenue per paying User.                                                                                                                 |
 | **DAU**      | Daily Active Users                 | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
 | **DAPU**     | Daily Active Paying Users          | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
 | **DAAPU**    | Daily Active Active Paying Users   | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
