@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Actions\CreateUserNotification;
 use App\Models\Team;
 use App\Models\User;
 use App\Rules\SignedUrl;
@@ -76,7 +77,7 @@ class CreateNewUser implements CreatesNewUsers
                 $this->createTeam($user);
 
                 if ($invitationRequest && $invitation) {
-                    $this->acceptTeamInvitation($invitationRequest, $invitation);
+                    $this->acceptTeamInvitation($invitationRequest, $invitation, $user);
                 }
             });
         });
@@ -85,10 +86,14 @@ class CreateNewUser implements CreatesNewUsers
     /**
      * Accepts a team invitation
      */
-    protected function acceptTeamInvitation(Request $request, TeamInvitation $invitation): void
+    protected function acceptTeamInvitation(Request $request, TeamInvitation $invitation, User $user): void
     {
         $teamInvitation = app(TeamInvitationController::class);
         $teamInvitation->accept($request, $invitation->id);
+
+        $invitation->team->projects->each(function ($project) use ($user) {
+            app(CreateUserNotification::class)($user, $project);
+        });
     }
 
     /**
