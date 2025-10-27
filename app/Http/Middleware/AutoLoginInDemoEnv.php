@@ -22,11 +22,7 @@ class AutoLoginInDemoEnv
 
             if ($testUser) {
                 auth()->login($testUser);
-
-                // Redirect to dashboard if not already there
-                if (! $request->is('dashboard') && ! $request->is('dashboard/*')) {
-                    return redirect()->route('dashboard');
-                }
+                return redirect()->route('dashboard');
             }
         }
 
