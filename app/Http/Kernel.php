@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\Api\CheckClientVersion;
 use App\Http\Middleware\Api\SetProjectContext;
 use App\Http\Middleware\Api\SetRequestContext;
+use App\Http\Middleware\AutoLoginInDemoEnv;
 use App\Http\Middleware\CheckAppType;
 use App\Http\Middleware\DisableMutateRequestsInDemoEnv;
 use App\Http\Middleware\ForwardToOnboarding;
@@ -47,6 +48,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             SetTeamContext::class,
+            AutoLoginInDemoEnv::class,
             DisableMutateRequestsInDemoEnv::class,
             ForwardToOnboarding::class,
             CheckAppType::class,

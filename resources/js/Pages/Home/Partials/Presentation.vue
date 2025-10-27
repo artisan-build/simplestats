@@ -40,11 +40,11 @@ const toggleFullscreen = () => {
                     <!-- Iframe content -->
                     <div class="relative w-full bg-white dark:bg-gray-900" style="padding-bottom: 64.45%;">
                         <iframe
-                            style="zoom:0.75;"
-                            :src="`${demoUrl}/login`"
-                            class="demo-iframe absolute top-0 left-0 w-full h-full border-0"
+                            :src="demoUrl"
                             allowfullscreen
+                            style="zoom:0.75;"
                             title="Interactive demo of SimpleStats dashboard"
+                            class="demo-iframe absolute top-0 left-0 w-full h-full border-0"
                         ></iframe>
                     </div>
                 </div>
