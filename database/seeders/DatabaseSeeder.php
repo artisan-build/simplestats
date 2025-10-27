@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
         Cache::clear();
 
         $user = User::withoutEvents(function () {
+            $isDemo = app()->environment('demo');
             $testUser = config('app.test.user');
             $user = app(CreateNewUser::class)->create([
                 'name' => $testUser['name'],
@@ -37,9 +38,15 @@ class DatabaseSeeder extends Seeder
                 'password' => $testUser['password'],
                 'password_confirmation' => $testUser['password'],
                 'terms' => true,
+                'settings' => [
+                    'showMenu' => ! $isDemo,
+                ],
             ]);
 
-            $user->makeAdmin();
+            if (! $isDemo) {
+                $user->makeAdmin();
+            }
+
             $user->markEmailAsVerified();
 
             $user->switchTeam($user->personalTeam());

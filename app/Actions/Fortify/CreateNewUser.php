@@ -65,7 +65,7 @@ class CreateNewUser implements CreatesNewUsers
             $createUser = [
                 'name' => $input['name'],
                 'email' => $input['email'],
-                'settings' => ['placeholder' => 1],
+                'settings' => $input['settings'] ?? ['placeholder' => 1],
             ];
 
             if (isset($input['password'])) {

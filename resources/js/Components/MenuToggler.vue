@@ -1,12 +1,11 @@
 <script setup>
 import {useForm} from "@inertiajs/vue3";
 import InputLabel from "@/Components/InputLabel.vue";
-import ToggleButton from "@/Components/ToggleButton.vue";
 
 const form = useForm({});
 
 const submitToggle = () => {
-    form.get(route('user-settings.toggle-menu'), {preserveScroll: true, only: ['auth']});
+    form.post(route('user-settings.toggle-menu'), {preserveScroll: true, only: ['auth']});
 };
 </script>
 

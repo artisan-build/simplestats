@@ -25,7 +25,7 @@ const brands = [
 </script>
 
 <template>
-    <section class="mt-4 flex justify-center px-4">
+    <section class="mt-16 flex justify-center px-4">
         <div class="w-full max-w-screen-xl">
 <!--            <SectionHeader id="partners">-->
 <!--                Community&nbsp;<span class="text-indigo-500">and</span>&nbsp;Partners-->

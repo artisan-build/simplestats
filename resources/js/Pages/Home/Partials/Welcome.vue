@@ -3,7 +3,7 @@ import Gradient from "@/Pages/Home/Partials/Gradient.vue";
 import Banners from "@/Pages/Home/Partials/Banners.vue";
 import Header from "@/Pages/Home/Partials/Header.vue";
 import Hero from "@/Pages/Home/Partials/Hero.vue";
-import Screenshot from "@/Pages/Home/Partials/Screenshot.vue";
+import Presentation from "@/Pages/Home/Partials/Presentation.vue";
 import Brands from "@/Pages/Home/Partials/Brands.vue";
 import Integration from "@/Pages/Home/Partials/Integration.vue";
 import Features from "@/Pages/Home/Partials/Features.vue";
@@ -30,7 +30,7 @@ defineProps({
     <div class="min-h-screen relative">
         <Hero />
 
-        <Screenshot />
+        <Presentation />
 
         <Brands />
 

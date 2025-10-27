@@ -6,7 +6,6 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
-import EnvBadge from "@/Components/EnvBadge.vue";
 import TextInput from "@/Components/TextInput.vue";
 import ToggleButton from "@/Components/ToggleButton.vue";
 
@@ -221,7 +220,6 @@ const currentProject = props.teamStats.projects[props.filters.projectId];
                                         <span class="ml-2 hidden">Refresh</span>
                                     </SecondaryButton>
                                 </div>
-                                <EnvBadge />
                             </div>
                         </div>
                     </div>
