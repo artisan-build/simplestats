@@ -14,8 +14,7 @@ class AllowIframeEmbedding
 
         $allowedOrigins = [
             'https://simplestats.io',
-            'http://simplestats.test',
-            'http://localhost:8000',
+            'https://simplestats.test',
         ];
 
         $csp = "frame-ancestors 'self' ".implode(' ', $allowedOrigins);
