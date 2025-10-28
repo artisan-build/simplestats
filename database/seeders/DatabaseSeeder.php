@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,6 +29,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Cache::clear();
+
+        DB::transaction(function () {
+            $this->seedData();
+        });
+    }
+
+    protected function seedData(): void
+    {
 
         $user = User::withoutEvents(function () {
             $isDemo = app()->environment('demo');
