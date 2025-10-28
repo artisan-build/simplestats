@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AllowIframeEmbedding;
 use App\Http\Middleware\Api\CheckClientVersion;
 use App\Http\Middleware\Api\SetProjectContext;
 use App\Http\Middleware\Api\SetRequestContext;
@@ -47,6 +48,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            AllowIframeEmbedding::class,
             SetTeamContext::class,
             AutoLoginInDemoEnv::class,
             DisableMutateRequestsInDemoEnv::class,
