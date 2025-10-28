@@ -19,10 +19,9 @@ class Kernel extends ConsoleKernel
     {
         if (app()->environment('demo')) {
             $schedule->command('migrate:fresh --seed')
-                ->daily()
+                ->monthly()->at('6:00')
                 ->before(fn () => Artisan::call('down'))
                 ->after(fn () => Artisan::call('up'))
-                ->runInBackground()
                 ->withoutOverlapping();
         }
 

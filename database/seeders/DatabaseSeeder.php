@@ -126,13 +126,8 @@ class DatabaseSeeder extends Seeder
             DataImportSeeder::class,
         ]);
 
-        // make sure no data greater than now is seeded
-        collect(StatsService::getStatsModels())->each(function ($statsModel) {
-            $statsModel::where('time', '>', now())->delete();
-        });
-
-        // Add extra data for current week to show activity
-        $this->seedCurrentWeekData();
+        // Add extra data for the next 30 days to show activity
+        $this->seedFutureData();
     }
 
     protected function changeEnv($data = [])
@@ -167,158 +162,107 @@ class DatabaseSeeder extends Seeder
         ];
     }
 
-    protected function seedCurrentWeekData(): void
+    protected function seedFutureData(): void
     {
         $projects = Project::all();
 
         foreach ($projects as $project) {
-            $sevenDaysAgo = now()->subDays(7);
+            // Track previous day values to ensure guaranteed growth
+            $lastDayRegs = 5;
+            $lastDayVisitors = 15;
+            $lastDayLogins = 8;
+            $lastDayPayments = 3;
 
-            // Extra registrations for last 7 days (5-15 new users)
-            $newUsersCount = rand(5, 15);
-            for ($i = 0; $i < $newUsersCount; $i++) {
-                $registrationTime = Carbon::instance(fake()->dateTimeBetween($sevenDaysAgo, now()));
+            // Seed data for each day for the next 30 days with guaranteed increasing trend
+            for ($day = 0; $day < 30; $day++) {
+                $dayStart = now()->addDays($day)->startOfDay();
+                $dayEnd = now()->addDays($day)->endOfDay();
 
-                $statsUser = StatsUser::factory()->create([
+                // Each metric increases by 0-2 per day (guaranteed not to decrease)
+                $dailyRegistrations = $lastDayRegs + rand(0, 2);
+                $extraVisitors = $lastDayVisitors + rand(0, 3);
+                $loginCount = $lastDayLogins + rand(0, 2);
+                $paymentCount = $lastDayPayments + rand(0, 1);
+
+                // Update for next iteration
+                $lastDayRegs = $dailyRegistrations;
+                $lastDayVisitors = $extraVisitors;
+                $lastDayLogins = $loginCount;
+                $lastDayPayments = $paymentCount;
+
+                // Create registrations
+                for ($i = 0; $i < $dailyRegistrations; $i++) {
+                    $registrationTime = Carbon::instance(fake()->dateTimeBetween($dayStart, $dayEnd));
+
+                    $statsUser = StatsUser::factory()->create([
+                        'project_id' => $project->id,
+                        'time' => $registrationTime,
+                    ]);
+
+                    // Create 2-4 visitors for each registration
+                    StatsVisitor::factory(rand(2, 4))->create([
+                        'project_id' => $project->id,
+                        'time' => $registrationTime,
+                    ]);
+
+                    // Each new user has 1-2 logins
+                    for ($j = 0; $j < rand(1, 2); $j++) {
+                        StatsLogin::factory()->create([
+                            'project_id' => $project->id,
+                            'stats_user_id' => $statsUser->id,
+                            'time' => Carbon::instance(fake()->dateTimeBetween($registrationTime, $dayEnd)),
+                        ]);
+                    }
+
+                    // 20% chance of payment for new users
+                    if (rand(0, 4) === 0) {
+                        StatsPayment::factory()->create([
+                            'project_id' => $project->id,
+                            'stats_user_id' => $statsUser->id,
+                            'currency' => self::DEFAULT_CURRENCY,
+                            'time' => Carbon::instance(fake()->dateTimeBetween($registrationTime, $dayEnd)),
+                        ]);
+                    }
+                }
+
+                // Extra visitors
+                StatsVisitor::factory($extraVisitors)->create([
                     'project_id' => $project->id,
-                    'time' => $registrationTime,
+                    'time' => Carbon::instance(fake()->dateTimeBetween($dayStart, $dayEnd)),
                 ]);
 
-                // For each registration, create 2-5 visitors around the same time
-                StatsVisitor::factory(rand(2, 5))->create([
-                    'project_id' => $project->id,
-                    'time' => $registrationTime,
-                ]);
+                // Logins from existing users
+                $existingUsers = StatsUser::query()
+                    ->where('project_id', $project->id)
+                    ->where('time', '<', $dayStart)
+                    ->inRandomOrder()
+                    ->limit($loginCount)
+                    ->get();
 
-                // Create 1-3 logins for each new user during the last 7 days
-                $loginCount = rand(1, 3);
-                for ($j = 0; $j < $loginCount; $j++) {
+                foreach ($existingUsers as $user) {
                     StatsLogin::factory()->create([
                         'project_id' => $project->id,
-                        'stats_user_id' => $statsUser->id,
-                        'time' => Carbon::instance(fake()->dateTimeBetween($registrationTime, now())),
+                        'stats_user_id' => $user->id,
+                        'time' => Carbon::instance(fake()->dateTimeBetween($dayStart, $dayEnd)),
                     ]);
                 }
 
-                // 20% chance of payment for new users
-                if (rand(0, 4) === 0) {
+                // Payments from existing users
+                $payingUsers = StatsUser::query()
+                    ->where('project_id', $project->id)
+                    ->where('time', '<', $dayStart)
+                    ->inRandomOrder()
+                    ->limit($paymentCount)
+                    ->get();
+
+                foreach ($payingUsers as $user) {
                     StatsPayment::factory()->create([
                         'project_id' => $project->id,
-                        'stats_user_id' => $statsUser->id,
+                        'stats_user_id' => $user->id,
                         'currency' => self::DEFAULT_CURRENCY,
-                        'time' => Carbon::instance(fake()->dateTimeBetween($registrationTime, now())),
+                        'time' => Carbon::instance(fake()->dateTimeBetween($dayStart, $dayEnd)),
                     ]);
                 }
-            }
-
-            // Extra visitors for last 7 days (20-40 additional visits)
-            $extraVisitors = rand(20, 40);
-            StatsVisitor::factory($extraVisitors)->create([
-                'project_id' => $project->id,
-                'time' => Carbon::instance(fake()->dateTimeBetween($sevenDaysAgo, now())),
-            ]);
-
-            // Extra logins from existing users (10-25 logins)
-            $existingUsers = StatsUser::query()
-                ->where('project_id', $project->id)
-                ->where('time', '<', $sevenDaysAgo)
-                ->inRandomOrder()
-                ->limit(rand(10, 25))
-                ->get();
-
-            foreach ($existingUsers as $existingUser) {
-                $loginTime = Carbon::instance(fake()->dateTimeBetween($sevenDaysAgo, now()));
-                StatsLogin::factory()->create([
-                    'project_id' => $project->id,
-                    'stats_user_id' => $existingUser->id,
-                    'time' => $loginTime,
-                ]);
-            }
-
-            // Extra payments from existing users (3-8 payments)
-            $payingUsers = StatsUser::query()
-                ->where('project_id', $project->id)
-                ->where('time', '<', $sevenDaysAgo)
-                ->inRandomOrder()
-                ->limit(rand(3, 8))
-                ->get();
-
-            foreach ($payingUsers as $payingUser) {
-                StatsPayment::factory()->create([
-                    'project_id' => $project->id,
-                    'stats_user_id' => $payingUser->id,
-                    'currency' => self::DEFAULT_CURRENCY,
-                    'time' => Carbon::instance(fake()->dateTimeBetween($sevenDaysAgo, now())),
-                ]);
-            }
-
-            // Extra data specifically for TODAY to ensure visible activity
-            $todayStart = now()->startOfDay();
-            $todayNow = now();
-
-            // Today: 3-8 new registrations
-            $todayRegistrations = rand(3, 8);
-            for ($i = 0; $i < $todayRegistrations; $i++) {
-                $registrationTime = Carbon::instance(fake()->dateTimeBetween($todayStart, $todayNow));
-
-                $statsUser = StatsUser::factory()->create([
-                    'project_id' => $project->id,
-                    'time' => $registrationTime,
-                ]);
-
-                // Create 2-4 visitors for each registration today
-                StatsVisitor::factory(rand(2, 4))->create([
-                    'project_id' => $project->id,
-                    'time' => $registrationTime,
-                ]);
-
-                // Each new user has 1-2 logins today
-                for ($j = 0; $j < rand(1, 2); $j++) {
-                    StatsLogin::factory()->create([
-                        'project_id' => $project->id,
-                        'stats_user_id' => $statsUser->id,
-                        'time' => Carbon::instance(fake()->dateTimeBetween($registrationTime, $todayNow)),
-                    ]);
-                }
-            }
-
-            // Today: 10-20 extra visitors
-            StatsVisitor::factory(rand(10, 20))->create([
-                'project_id' => $project->id,
-                'time' => Carbon::instance(fake()->dateTimeBetween($todayStart, $todayNow)),
-            ]);
-
-            // Today: 5-12 logins from existing users
-            $todayLoginUsers = StatsUser::query()
-                ->where('project_id', $project->id)
-                ->where('time', '<', $todayStart)
-                ->inRandomOrder()
-                ->limit(rand(5, 12))
-                ->get();
-
-            foreach ($todayLoginUsers as $user) {
-                StatsLogin::factory()->create([
-                    'project_id' => $project->id,
-                    'stats_user_id' => $user->id,
-                    'time' => Carbon::instance(fake()->dateTimeBetween($todayStart, $todayNow)),
-                ]);
-            }
-
-            // Today: 2-5 payments from existing users
-            $todayPayingUsers = StatsUser::query()
-                ->where('project_id', $project->id)
-                ->where('time', '<', $todayStart)
-                ->inRandomOrder()
-                ->limit(rand(2, 5))
-                ->get();
-
-            foreach ($todayPayingUsers as $user) {
-                StatsPayment::factory()->create([
-                    'project_id' => $project->id,
-                    'stats_user_id' => $user->id,
-                    'currency' => self::DEFAULT_CURRENCY,
-                    'time' => Carbon::instance(fake()->dateTimeBetween($todayStart, $todayNow)),
-                ]);
             }
         }
     }
