@@ -66,7 +66,7 @@ Route::middleware([
     Route::get('projects/{project}/token-regenerate', [ProjectController::class, 'tokenRegenerate'])->name('projects.token-regenerate');
 
     // User Settings
-    Route::post('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
+    Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::get('user-settings/toggle-advanced', [UserSettingsController::class, 'toggleAdvanced'])->name('user-settings.toggle-advanced');
 
     // User Notification Settings

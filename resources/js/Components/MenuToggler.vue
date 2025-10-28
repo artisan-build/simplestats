@@ -5,7 +5,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 const form = useForm({});
 
 const submitToggle = () => {
-    form.post(route('user-settings.toggle-menu'), {preserveScroll: true, only: ['auth']});
+    form.get(route('user-settings.toggle-menu'), {preserveScroll: true, only: ['auth']});
 };
 </script>
 
