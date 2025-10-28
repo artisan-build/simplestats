@@ -23,10 +23,9 @@ class AutoLoginInDemoEnv
 
                 if ($testUser) {
                     auth()->login($testUser);
-
                     return redirect()->route('dashboard');
                 }
-            } elseif (! $request->is('dashboard') && ! $request->is('dashboard/*')) {
+            } elseif ($request->is('/')) {
                 return redirect()->route('dashboard');
             }
         }
