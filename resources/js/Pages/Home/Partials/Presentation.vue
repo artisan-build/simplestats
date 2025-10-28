@@ -6,17 +6,6 @@ const isVisible = ref(false);
 
 const appEnv = import.meta.env.VITE_APP_ENV;
 
-const toggleFullscreen = () => {
-    const iframe = document.querySelector('.demo-iframe');
-    if (iframe) {
-        if (iframe.requestFullscreen) {
-            iframe.requestFullscreen();
-        } else if (iframe.webkitRequestFullscreen) {
-            iframe.webkitRequestFullscreen();
-        }
-    }
-};
-
 onMounted(() => {
     setTimeout(() => {
         isVisible.value = true;
@@ -41,12 +30,6 @@ onMounted(() => {
                             <span class="size-2.5 rounded-full bg-[#febc2e]"></span>
                             <span class="size-2.5 rounded-full bg-[#28c840]"></span>
                         </div>
-
-                        <button @click="toggleFullscreen" class="flex-shrink-0 size-5 flex items-center justify-center dark:text-gray-500 text-gray-400 hover:dark:text-gray-700 hover:text-gray-300 transition-colors" aria-label="Toggle fullscreen">
-                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                            </svg>
-                        </button>
                     </div>
 
                     <div class="relative w-full bg-white dark:bg-gray-900" style="padding-bottom: 64.45%;">
