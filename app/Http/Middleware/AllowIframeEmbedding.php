@@ -14,6 +14,7 @@ class AllowIframeEmbedding
 
         $allowedOrigins = [
             'https://simplestats.io',
+            'https://test.simplestats.io',
             'https://simplestats.test',
         ];
 
