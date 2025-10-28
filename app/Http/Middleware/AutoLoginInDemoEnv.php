@@ -17,11 +17,16 @@ class AutoLoginInDemoEnv
     public function handle(Request $request, Closure $next): Response
     {
         // Only auto-login in demo environment
-        if (app()->environment('demo') && ! auth()->check()) {
-            $testUser = User::where('email', config('app.test.user.email'))->first();
+        if (app()->environment('demo')) {
+            if (! auth()->check()) {
+                $testUser = User::where('email', config('app.test.user.email'))->first();
 
-            if ($testUser) {
-                auth()->login($testUser);
+                if ($testUser) {
+                    auth()->login($testUser);
+
+                    return redirect()->route('dashboard');
+                }
+            } elseif (! $request->is('dashboard') && ! $request->is('dashboard/*')) {
                 return redirect()->route('dashboard');
             }
         }

@@ -1,6 +1,6 @@
 <script setup>
 
-const demoUrl = 'https://demo.simplestats.io';
+const demoUrl = 'https://demo.simplestats.io/dashboard';
 
 const toggleFullscreen = () => {
     const iframe = document.querySelector('.demo-iframe');
