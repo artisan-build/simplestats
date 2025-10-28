@@ -30,14 +30,6 @@ class DatabaseSeeder extends Seeder
     {
         Cache::clear();
 
-        DB::transaction(function () {
-            $this->seedData();
-        });
-    }
-
-    protected function seedData(): void
-    {
-
         $user = User::withoutEvents(function () {
             $isDemo = app()->environment('demo');
             $testUser = config('app.test.user');
