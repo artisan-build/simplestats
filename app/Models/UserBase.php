@@ -57,6 +57,31 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
         'settings' => 'array',
     ];
 
+    const  SESSION_SETTINGS_KEY = 'temp_user_settings_';
+
+    private function useSessionSettings(): bool
+    {
+        return app()->environment('demo') || $this->isImpersonated();
+    }
+
+    /**
+     * Get the user's settings (from session in demo mode or when impersonating, otherwise from database).
+     */
+    protected function settings(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $dbSettings = json_decode($value, true) ?? [];
+
+                if ($this->useSessionSettings()) {
+                    return session()->get(self::SESSION_SETTINGS_KEY.$this->id, $dbSettings);
+                }
+
+                return $dbSettings;
+            }
+        );
+    }
+
     /**
      * The accessors to append to the model's array form.
      *
@@ -113,9 +138,12 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
 
     public function updateSettings($key, $value): void
     {
-        if (! $this->isImpersonated()) {
-            $settings = $this->settings;
-            Arr::set($settings, $key, $value);
+        $settings = $this->settings;
+        Arr::set($settings, $key, $value);
+
+        if ($this->useSessionSettings()) {
+            session()->put(self::SESSION_SETTINGS_KEY.$this->id, $settings);
+        } else {
             $this->update(['settings' => $settings]);
         }
     }
