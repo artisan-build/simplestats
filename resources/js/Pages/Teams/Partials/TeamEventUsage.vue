@@ -43,7 +43,7 @@ const getUsagePercentage = () => {
                         <div>Total usage - {{ dateRange }}</div>
                             <div>
                                 {{ used.toLocaleString() }} / {{ total.toLocaleString() }} events
-                                <span class="text-gray-500 dark:text-dark-500">({{ getUsagePercentage() }})%</span>
+                                <span class="text-gray-500 dark:text-dark-500">({{ getUsagePercentage() }}%)</span>
                             </div>
                         </div>
                         <div class="mt-3" aria-hidden="true">
