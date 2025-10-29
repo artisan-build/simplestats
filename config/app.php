@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'app_type' => env('APP_TYPE', 'default'),
+    'app_type' => env('APP_TYPE', 'self-hosted'),
 
     /*
     |--------------------------------------------------------------------------
