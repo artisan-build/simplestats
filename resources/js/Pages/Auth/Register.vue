@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import {Head, Link, useForm} from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
@@ -8,7 +8,6 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Socialstream from '@/Components/Socialstream.vue';
 import TextInput from '@/Components/TextInput.vue';
-import {onMounted} from "vue";
 
 const props = defineProps({
     params: Object,
@@ -29,6 +28,7 @@ const submit = () => {
 };
 
 const appName = import.meta.env.VITE_APP_NAME;
+const appType = import.meta.env.VITE_APP_TYPE;
 </script>
 
 <template>
@@ -110,7 +110,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                 </PrimaryButton>
             </div>
 
-            <div v-if="$page.props.appType === 'default' && $page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
+            <div v-if="appType === 'default' && $page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
                 <InputLabel for="terms">
                     <div class="flex items-center px-2 lg:px-6">
                         <Checkbox class="hidden" id="terms" v-model:checked="form.terms" name="terms" required />

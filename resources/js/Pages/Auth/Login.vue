@@ -17,6 +17,8 @@ const props = defineProps({
     },
 });
 
+const appType = import.meta.env.VITE_APP_TYPE;
+
 const form = useForm({
     email: props.testUser.email ?? '',
     password: props.testUser.password ?? '',
@@ -99,7 +101,7 @@ const appName = import.meta.env.VITE_APP_NAME;
             </div>
 
             <div class="flex items-center justify-around mt-4">
-                <Link v-if="$page.props.appType === 'default' && $page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="appType === 'default' && $page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Sign up
                 </Link>
 
@@ -107,7 +109,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     Forgot your password?
                 </Link>
 
-                <Link v-if="$page.props.appType === 'default'" :href="route('home')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
+                <Link v-if="appType === 'default'" :href="route('home')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
                     Home
                 </Link>
             </div>

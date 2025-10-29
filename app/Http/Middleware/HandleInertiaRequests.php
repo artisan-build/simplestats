@@ -39,7 +39,6 @@ class HandleInertiaRequests extends Middleware
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
             'branding' => config('app.branding'),
-            'appType' => config('app.app_type'),
             'ziggy' => (new Ziggy)->toArray(),
         ];
 

@@ -10,6 +10,8 @@ import {onMounted, ref} from 'vue';
 const selectedTestimonial = sample(testimonials);
 const isVisible = ref(false);
 
+const appType = import.meta.env.VITE_APP_TYPE;
+
 onMounted(() => {
     setTimeout(() => {
         isVisible.value = true;
@@ -20,7 +22,7 @@ onMounted(() => {
 <template>
     <div class="w-full min-h-screen flex bg-white dark:bg-dark-900">
         <div class="relative w-full md:w-1/2 flex items-center">
-            <Gradient position="absolute" />
+            <Gradient v-if="appType === 'default'" position="absolute" />
             <div class="animationElement relative mx-auto w-full sm:max-w-lg px-10 xl:px-0" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
                 <div class="text-center">
                     <Header class="mb-10" />
@@ -34,7 +36,7 @@ onMounted(() => {
         </div>
         <div class="w-1/2 hidden md:flex items-center" :style="`background: url('${$page.props.branding.app_background}'); background-size: cover;`">
             <div class="mx-auto w-full sm:max-w-lg px-10 xl:px-0">
-                <Testimonials v-if="$page.props.appType === 'default'" :testimonials="[selectedTestimonial]" />
+                <Testimonials v-if="appType === 'default'" :testimonials="[selectedTestimonial]" />
             </div>
         </div>
     </div>
