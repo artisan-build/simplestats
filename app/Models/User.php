@@ -4,22 +4,21 @@ namespace App\Models;
 
 use Carbon\CarbonInterface;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePersonWithCondition;
-use Spark\Billable;
-use Spark\Plan;
 
 if (config('app.app_type') === 'default') {
     class User extends UserBase implements TrackablePersonWithCondition
     {
-        use Billable {
+        // do not simplify FQN here, cause spark does not exist in self-hosted...
+        use \Spark\Billable {
             sparkPlan as aliasSparkPlan;
         }
 
-        public function sparkPlan(): Plan
+        public function sparkPlan(): \Spark\Plan
         {
             if (! ($plan = $this->aliasSparkPlan())) {
                 $planConfig = $this->getPlanConfig();
 
-                $plan = (new Plan($planConfig['name'], 0))
+                $plan = (new \Spark\Plan($planConfig['name'], 0))
                     ->interval('monthly')
                     ->incentive($planConfig['monthly_incentive'] ?? '', $planConfig['yearly_incentive'] ?? '')
                     ->shortDescription($planConfig['short_description'])
