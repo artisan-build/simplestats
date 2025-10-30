@@ -24,12 +24,18 @@ onMounted(() => {
                     <span class="text-gray-600 dark:text-gray-400 text-base italic -rotate-3 underline">interactive demo</span>
                 </div>
                 <div class="rounded-xl overflow-hidden  shadow-2xl border border-gray-300 dark:border-dark-600">
-                    <div class="flex items-center justify-between px-4 py-2.5 dark:bg-[#f3f1f1] bg-[#363534] border-b dark:border-gray-200 border-gray-700">
+                    <div class="flex items-center justify-between px-4 py-1.5 dark:bg-[#f3f1f1] bg-[#363534] border-b dark:border-gray-200 border-gray-700">
                         <div class="flex gap-2 flex-shrink-0">
                             <span class="size-2.5 rounded-full bg-[#ff5f57]"></span>
                             <span class="size-2.5 rounded-full bg-[#febc2e]"></span>
                             <span class="size-2.5 rounded-full bg-[#28c840]"></span>
                         </div>
+
+                        <a :href="demoUrl" target="_blank" class="flex-shrink-0 size-5 flex items-center justify-center dark:text-gray-500 text-gray-400 hover:dark:text-gray-700 hover:text-gray-300 transition-colors" aria-label="Toggle fullscreen">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                            </svg>
+                        </a>
                     </div>
 
                     <div class="relative w-full bg-white dark:bg-gray-900" style="padding-bottom: 64.45%;">
