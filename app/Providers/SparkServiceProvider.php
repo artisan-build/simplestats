@@ -16,7 +16,7 @@ class SparkServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('app.app_type') !== 'default') {
+        if (config('app.app_type') !== 'saas') {
             return;
         }
 

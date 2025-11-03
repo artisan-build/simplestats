@@ -31,7 +31,7 @@ $config = [
     ],
 ];
 
-if (config('app.app_type') !== 'default') {
+if (config('app.app_type') !== 'saas') {
     $config['providers'] = [];
 }
 

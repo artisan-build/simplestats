@@ -76,7 +76,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                 </div>
             </DropdownLink>
 
-            <DropdownLink v-if="appType === 'default'" as="a" :href="route('spark.portal')">
+            <DropdownLink v-if="appType === 'saas'" as="a" :href="route('spark.portal')">
                 <div class="flex items-center gap-2">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">

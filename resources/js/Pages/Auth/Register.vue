@@ -110,7 +110,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                 </PrimaryButton>
             </div>
 
-            <div v-if="appType === 'default' && $page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
+            <div v-if="appType === 'saas' && $page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4 text-center">
                 <InputLabel for="terms">
                     <div class="flex items-center px-2 lg:px-6">
                         <Checkbox class="hidden" id="terms" v-model:checked="form.terms" name="terms" required />

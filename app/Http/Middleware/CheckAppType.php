@@ -15,7 +15,7 @@ class CheckAppType
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('/') && config('app.app_type') !== 'default') {
+        if ($request->is('/') && config('app.app_type') !== 'saas') {
             return redirect()->route('login');
         }
 
