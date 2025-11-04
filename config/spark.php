@@ -192,10 +192,10 @@ return [
     'discount' => [
         'percent' => 50,
         'duration' => [
-            'start' => '2024-11-21',
-            'end' => '2024-12-02',
+            'start' => '2025-11-24',
+            'end' => '2025-12-01',
         ],
-        'text' => '🎉 50% OFF ALL PLANS! Use code "BLACKWEEK2024" at checkout. 🎉',
+        'text' => '🎉 50% OFF ALL PLANS! Use code "BLACKWEEK2025" at checkout. 🎉',
         'link' => '#pricing',
     ],
 ];
