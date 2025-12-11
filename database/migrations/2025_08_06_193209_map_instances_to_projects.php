@@ -49,20 +49,45 @@ return new class extends Migration
             ->orderBy('id')
             ->delete();
 
-        collect([
-            'data_imports',
-            'stats_aggregations',
-            'stats_logins',
-            'stats_payments',
-            'stats_users',
-            'stats_visitors',
-        ])->each(function ($table) {
-            Schema::table($table, function (Blueprint $table) {
-                $table->dropColumn('instance_id');
+        Schema::withoutForeignKeyConstraints(function () {
+            // Drop composite foreign keys that reference stats_users(id, instance_id)
+            Schema::table('stats_logins', function (Blueprint $table) {
+                $table->dropForeign('stats_logins_stats_user_id_instance_id_foreign');
             });
-        });
+            Schema::table('stats_payments', function (Blueprint $table) {
+                $table->dropForeign('stats_payments_stats_user_id_instance_id_foreign');
+            });
 
-        Schema::dropIfExists('instances');
+            // Drop composite primary keys
+            Schema::table('stats_users', function (Blueprint $table) {
+                $table->dropPrimary(['id', 'instance_id']);
+            });
+            Schema::table('stats_payments', function (Blueprint $table) {
+                $table->dropPrimary(['id', 'instance_id']);
+            });
+
+            // Drop unique constraint with instance_id
+            Schema::table('stats_visitors', function (Blueprint $table) {
+                $table->dropUnique('stats_visitors_team_id_instance_id_visitor_hash_unique');
+            });
+
+            // Drop instance_id foreign keys and columns
+            collect([
+                'data_imports',
+                'stats_aggregations',
+                'stats_logins',
+                'stats_payments',
+                'stats_users',
+                'stats_visitors',
+            ])->each(function ($tableName) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->dropForeign(['instance_id']);
+                    $table->dropColumn('instance_id');
+                });
+            });
+
+            Schema::dropIfExists('instances');
+        });
 
         DB::table('stats_aggregations')->truncate();
 
