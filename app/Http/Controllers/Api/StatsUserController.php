@@ -8,6 +8,7 @@ use App\Jobs\TrackStatsUser;
 use App\Models\StatsUser;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Http\JsonResponse;
+use function Illuminate\Support\defer;
 
 class StatsUserController extends Controller
 {
@@ -23,7 +24,7 @@ class StatsUserController extends Controller
             return response()->json(['message' => 'Bots are not allowed.']);
         }
 
-        safeDefer(fn () => TrackStatsUser::dispatch(
+        defer(fn () => TrackStatsUser::dispatch(
             input: $request->validated(),
         ));
 

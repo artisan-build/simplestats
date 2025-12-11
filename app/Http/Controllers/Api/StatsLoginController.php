@@ -7,6 +7,7 @@ use App\Http\Requests\Api\StatsLoginRequest;
 use App\Jobs\TrackStatsLogin;
 use App\Models\StatsLogin;
 use Illuminate\Http\JsonResponse;
+use function Illuminate\Support\defer;
 
 class StatsLoginController extends Controller
 {
@@ -17,7 +18,7 @@ class StatsLoginController extends Controller
 
     public function store(StatsLoginRequest $request): JsonResponse
     {
-        safeDefer(fn () => TrackStatsLogin::dispatch(
+        defer(fn () => TrackStatsLogin::dispatch(
             input: $request->validated(),
         ));
 

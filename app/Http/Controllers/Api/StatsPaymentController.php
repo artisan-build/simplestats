@@ -7,6 +7,7 @@ use App\Http\Requests\Api\StatsPaymentRequest;
 use App\Jobs\TrackStatsPayment;
 use App\Models\StatsPayment;
 use Illuminate\Http\JsonResponse;
+use function Illuminate\Support\defer;
 
 class StatsPaymentController extends Controller
 {
@@ -17,7 +18,7 @@ class StatsPaymentController extends Controller
 
     public function store(StatsPaymentRequest $request): JsonResponse
     {
-        safeDefer(fn () => TrackStatsPayment::dispatch(
+        defer(fn () => TrackStatsPayment::dispatch(
             input: $request->validated(),
         ));
 
