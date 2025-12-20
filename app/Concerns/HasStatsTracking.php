@@ -4,7 +4,6 @@ namespace App\Concerns;
 
 use App\Helpers\FileHelper;
 use App\Models\BaseStat;
-use App\Services\FaviconService;
 use App\Services\RefererService;
 use App\Services\StatsService;
 use hisorange\BrowserDetect\Facade as Browser;
@@ -124,7 +123,6 @@ trait HasStatsTracking
         $value = Str::replace('www.', '', $value);
 
         $value = app(RefererService::class)->getTopReferer($value);
-        app(FaviconService::class)->download($value);
 
         return ['track_referer' => $value];
     }

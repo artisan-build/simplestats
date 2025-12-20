@@ -47,7 +47,6 @@ class Kernel extends ConsoleKernel
             $schedule->command('app:check-logins-and-payments-counter')->daily()->at('04:00');
 
             // WEEKLY
-            $schedule->command('app:download-referer-favicons')->weekly()->at('04:00');
             $schedule->command('location:update')->weekly()->at('05:00');
         }
 

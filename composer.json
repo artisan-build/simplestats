@@ -8,7 +8,6 @@
         "php": "^8.2",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "ashallendesign/favicon-fetcher": "^3.5",
         "ashallendesign/laravel-exchange-rates": "^7.2",
         "beyondcode/laravel-favicon": "^1.6",
         "fakerphp/faker": "^1.9.1",

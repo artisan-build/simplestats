@@ -72,7 +72,5 @@ class ExtractReferersFromSources extends Command
 
             DB::commit();
         });
-
-        Artisan::call('app:download-referer-favicons');
     }
 }

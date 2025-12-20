@@ -202,6 +202,12 @@ Jobs include automatic retry logic for fault tolerance.
 
 ## Development Guidelines
 
+### Git Workflow
+
+- Do NOT stage changes automatically after making edits
+- Do NOT ask if commits should be created - the user will commit when ready
+- Only commit when explicitly requested by the user
+
 ### When Working on the Main App
 
 - Prioritize query performance for high-volume data

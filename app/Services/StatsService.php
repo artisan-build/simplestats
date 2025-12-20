@@ -63,7 +63,7 @@ class StatsService
             ['model' => StatsLocationCity::class, 'type' => 'location_city', 'title' => 'Cities', 'icon' => 'country'],
         ],
         'device' => [
-            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'Platform'],
+            ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'Platform', 'icon' => 'path'],
             ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path'],
             ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
         ],

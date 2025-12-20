@@ -2,11 +2,10 @@
 import {onMounted, ref} from 'vue';
 import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
 import {Link, usePage} from "@inertiajs/vue3";
-import {snakeCase} from 'lodash';
-import {get} from 'country-flag-emoji';
 import {XAU} from "@/Helpers/StringHelpers.js";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import axios from 'axios';
+import StatsIcon from "@/Components/StatsIcon.vue";
 
 const props = defineProps({
     filters: Object,
@@ -182,12 +181,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                      :style="'background: linear-gradient(to right, rgba('+gradientColor+', 1) '+calculatePercentage(item)+'%, rgba('+gradientColor+', 0) '+calculatePercentage(item)+'%);'"
                                 >
                                     <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
-                                        <span v-if="statsTypeIcon(statsGroup, item) === 'favicon'">
-                                            <img v-if="item.type_id == -1" class="w-4 h-4 align-sub inline-block" :src="'/icons/track_referer_default.png'" :alt="item.name">
-                                            <img v-else class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+item.name+'.ico'" :alt="item.name">
-                                        </span>
-                                        <img v-else-if="statsTypeIcon(statsGroup, item) === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ snakeCase(filters.statsType) +'/'+ snakeCase(item.name) +'.svg'" :alt="item.name">
-                                        <span v-else-if="statsTypeIcon(statsGroup, item) === 'country'" class="text-lg align-sub mt-1 inline-block">{{ get((item.name.match(/\((.*?)\)/) || [])[1])?.emoji ?? '🌎' }}</span>
+                                        <StatsIcon :statsName="item.name" :statsType="filters.statsType" :statsIconType="statsTypeIcon(statsGroup, item)" />
                                         <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
                                     </Link>
                                 </div>
