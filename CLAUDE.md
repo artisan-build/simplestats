@@ -1,4 +1,256 @@
 <laravel-boost-guidelines>
+=== .ai/project_guidelines rules ===
+
+# SimpleStats Project Guidelines
+
+## Overview
+
+SimpleStats is a **server-side analytics SaaS** built specifically for Laravel applications. It provides precise insights into user origins, behaviors, and revenue attribution by tracking visitors, registrations, logins, and payments. The platform is **GDPR-compliant** and unaffected by ad blockers since all tracking occurs server-side.
+
+### Why Server-Side Tracking?
+
+- Ad blockers can block **30-50%** of client-side analytics data
+- Server-side tracking ensures more accurate and comprehensive data collection
+- Enhanced data security without relying on third-party cookies
+- Full compliance with data protection regulations (GDPR)
+
+## Architecture
+
+### Two-Part System
+
+1. **SimpleStats App** (this repository): The main Laravel SaaS application hosted at https://simplestats.io
+   - Dashboard for viewing analytics
+   - Team and project management
+   - Data import functionality
+   - API endpoints for receiving tracking data
+
+2. **Laravel Client Package** (`packages/simplestats-io/laravel-client`): Composer package installed by customers
+   - Located at `composer require simplestats-io/laravel-client`
+   - Supports Laravel 8, 9, 10, 11, and 12
+   - Sends tracking data to the SimpleStats API
+
+### Tech Stack
+
+- **Backend**: Laravel 11 (VILT Stack)
+- **Frontend**: Vue 3 / Inertia.js / Tailwind CSS
+- **Database**: PostgreSQL or MySQL 8.0+
+- **Queue**: Laravel Horizon for background job processing
+
+### Database Strategy
+
+- **SaaS**: PostgreSQL with TimescaleDB extension for time-series optimization
+- **Self-hosted**: PostgreSQL (recommended) or MySQL 8.0+
+- **Migrations must work on all three**: MySQL, pure PostgreSQL, and PostgreSQL with TimescaleDB
+
+### Deployment Options
+
+1. **SaaS** (recommended): Hosted at https://simplestats.io with automatic updates and dedicated support
+2. **Self-hosted**: Full control over data and deployment, requires valid license
+   - Setup, maintenance, and troubleshooting are the customer's responsibility
+   - Uses `composer.self-hosted.json` for dependencies
+   - Requires: PHP 8.2+, Laravel 11+, PostgreSQL 14+ (recommended) or MySQL 8.0+, Node.js 21.6+
+
+## Performance is Critical
+
+The app must handle **hundreds of thousands of requests** and store massive amounts of data efficiently.
+
+### Performance Guidelines
+
+- Optimize all database queries - use indexes appropriately
+- Use eager loading to prevent N+1 queries
+- Leverage Laravel's queue system for heavy operations
+- Use database-level aggregations where possible
+- Cache frequently accessed data appropriately
+- ~~Consider read replicas for high-traffic scenarios~~
+
+## Data Model Concepts
+
+### Entities Tracked
+
+1. **Visitors**: Unique visitors identified by a GDPR-compliant hash (IP + User-Agent + daily salt)
+2. **Users**: Registered users (linked to customer's User model)
+3. **Logins**: User authentication events
+4. **Payments**: Financial transactions with gross/net amounts in cents
+
+### Flexible Tracking Configuration
+
+Clients choose their tracking combination during registration. Not all apps need every feature:
+
+| Tracking Type | Description |
+|---------------|-------------|
+| **Visitors** | Track anonymous visitors with UTMs, location, devices, etc. |
+| **Registrations** | Track user signups and logins, including timestamps |
+| **Payments** | Track revenue and link it back to visitors or registrations |
+
+Common combinations:
+- **Visitors only**: Landing pages, content sites
+- **Visitors + Registrations**: Apps without payments
+- **Visitors + Payments**: E-commerce without user accounts (guest checkout)
+- **All three**: Full-featured SaaS apps
+
+This is stored as a bitmask per project (`TRACKING_USAGE_BITS_*`).
+
+### Tracking Codes (UTM Parameters)
+
+The client package tracks these dimensions:
+- `source`: utm_source, ref, referer, referrer
+- `medium`: utm_medium, adGroup, adGroupId
+- `campaign`: utm_campaign
+- `term`: utm_term
+- `content`: utm_content
+
+Payments are **always** associated with the user's registration tracking codes for campaign ROI analysis.
+
+## API Design
+
+### Base URL
+
+`https://simplestats.io/api/v1/`
+
+### Rate Limits
+
+- Default: **120 requests per minute** per API token
+- Consider burst handling for high-volume clients
+
+### Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/stats-visitor` | Track unique visitor |
+| POST | `/stats-user` | Track new registration |
+| POST | `/stats-login` | Track login event |
+| POST | `/stats-payment` | Track payment (amounts in cents) |
+
+### Important API Rules
+
+- All amounts (gross, net) must be in **cents** (e.g.,  = 100)
+- Currency must be **ISO-4217** format (EUR, USD, GBP)
+- Time format: `Y-m-d H:i:s P`
+- IP and User-Agent are used for geo/device detection but **not stored**
+
+## Client Package Architecture
+
+Located in `packages/simplestats-io/laravel-client/`:
+
+### Key Components
+
+- **SimplestatsClientServiceProvider**: Registers middleware, observers, and event listeners
+- **CheckTracking Middleware**: Captures visitor data on first GET request
+- **UserObserver**: Tracks user registrations
+- **PaymentObserver**: Tracks payments
+- **UserLoginListener**: Tracks login events
+- **SendApiRequest Job**: Queued API calls with retry logic
+
+### Contracts for Customer Implementation
+
+- `TrackablePerson`: Basic user tracking
+- `TrackablePersonWithCondition`: Conditional user tracking (e.g., after email verification)
+- `TrackablePayment`: Basic payment tracking
+- `TrackablePaymentWithCondition`: Conditional payment tracking (e.g., after status = completed)
+
+### Visitor Hash
+
+```php
+// Hash = hash(User-Agent + IP + daily_salt)
+// Stored in session: session('simplestats.visitor_hash')
+```
+
+## KPIs Provided
+
+The dashboard displays these key performance indicators:
+
+| KPI | Description |
+|-----|-------------|
+| VISITORS | Unique visitors |
+| REG | New registrations |
+| CR | Conversion rate (visitors to registrations) |
+| NET/GROSS | Revenue metrics |
+| ARPU | Average Revenue Per User |
+| ARPV | Average Revenue Per Visitor |
+| ARPPU | Average Revenue Per Paying User |
+| DAU/WAU/MAU | Active users (daily/weekly/monthly) |
+| DAPU/WAPU/MAPU | Active paying users |
+| REG2PU | Registration to paying user conversion |
+
+## Multi-Tenancy
+
+### Team Structure
+
+- Teams can have multiple projects
+- Each project has its own API token
+- Team members have roles: Administrator, Editor, Viewer
+- Stats can be viewed per-project or aggregated at team level
+
+### Multi-Currency
+
+- Each team selects a default currency
+- Foreign currency transactions are auto-converted using daily exchange rates
+
+## Queue Configuration
+
+The client package uses Laravel's defer helper (Laravel 11+) or queues:
+
+```php
+'queue' => env('SIMPLESTATS_QUEUE', 'default'),
+```
+
+Jobs include automatic retry logic for fault tolerance.
+
+## Security Considerations
+
+- API tokens must be kept secret
+- IPs and User-Agents are processed but **never stored**
+- Visitor hashes are anonymized (daily salt rotation)
+- GDPR-compliant by design
+
+## Development Guidelines
+
+### When Working on the Main App
+
+- Prioritize query performance for high-volume data
+- Test with large datasets
+- Consider database partitioning for time-series data
+- Ensure API responses are fast (async processing via queues)
+
+### When Working on the Client Package
+
+- Maintain backwards compatibility with Laravel 8-12
+- Keep package lightweight (minimal dependencies)
+- Never block customer requests - use defer/queues
+- Graceful degradation when API is unreachable
+
+## Testing
+
+- Use factories for creating test data
+- Test with realistic data volumes
+- Verify queue job handling
+- Test API rate limiting behavior
+- Ensure tracking works across Laravel versions
+
+## Common Tasks
+
+### Adding New KPIs
+
+1. Define the calculation logic
+2. Add to aggregation queries
+3. Update dashboard components
+4. Document in introduction.md
+
+### Modifying API Endpoints
+
+1. Consider backwards compatibility
+2. Version new endpoints if breaking changes
+3. Update api-documentation.md
+4. Update client package if needed
+
+### Client Package Updates
+
+1. Test across all supported Laravel versions
+2. Update composer.json version constraints
+3. Document changes in CHANGELOG
+4. Tag release on GitHub
+
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -8,19 +260,27 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.2.29
+- php - 8.2.30
 - inertiajs/inertia-laravel (INERTIA) - v2
+- laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v11
+- laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
+- laravel/pulse (PULSE) - v1
+- laravel/sanctum (SANCTUM) - v4
+- laravel/socialite (SOCIALITE) - v5
 - livewire/livewire (LIVEWIRE) - v3
 - rector/rector (RECTOR) - v1
 - tightenco/ziggy (ZIGGY) - v1
+- laravel/mcp (MCP) - v0
 - laravel/pint (PINT) - v1
+- laravel/sail (SAIL) - v1
+- laravel/telescope (TELESCOPE) - v5
 - pestphp/pest (PEST) - v3
+- phpunit/phpunit (PHPUNIT) - v11
 - @inertiajs/vue3 (INERTIA) - v1
 - tailwindcss (TAILWINDCSS) - v3
 - vue (VUE) - v3
-
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, naming.
@@ -121,12 +381,21 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - You must not run any commands to make the site available via HTTP(s). It is _always_ available through Laravel Herd.
 
 
+=== tests rules ===
+
+## Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
+
+
 === inertia-laravel/core rules ===
 
 ## Inertia Core
 
 - Inertia.js components should be placed in the `resources/js/Pages` directory unless specified differently in the JS bundler (vite.config.js).
 - Use `Inertia::render()` for server-side routing instead of traditional Blade views.
+- Use `search-docs` for accurate guidance on all things Inertia.
 
 <code-snippet lang="php" name="Inertia::render Example">
 // routes/web.php example
@@ -154,13 +423,16 @@ Route::get('/users', function () {
 ### Deferred Props & Empty States
 - When using deferred props on the frontend, you should add a nice empty state with pulsing / animated skeleton.
 
+### Inertia Form General Guidance
+- Build forms using the `useForm` helper. Use the code examples and `search-docs` tool with a query of `useForm helper` for guidance.
+
 
 === laravel/core rules ===
 
 ## Do Things the Laravel Way
 
 - Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using the `list-artisan-commands` tool.
-- If you're creating a generic PHP class, use `artisan make:class`.
+- If you're creating a generic PHP class, use `php artisan make:class`.
 - Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
 
 ### Database
@@ -195,7 +467,7 @@ Route::get('/users', function () {
 ### Testing
 - When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
 - Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
-- When creating tests, make use of `php artisan make:test [options] <name>` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
 
 ### Vite Error
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
@@ -227,15 +499,15 @@ Route::get('/users', function () {
 ### New Artisan Commands
 - List Artisan commands using Boost's MCP tool, if available. New commands available in Laravel 11:
     - `php artisan make:enum`
-    - `php artisan make:class`
-    - `php artisan make:interface`
+    - `php artisan make:class `
+    - `php artisan make:interface `
 
 
 === livewire/core rules ===
 
 ## Livewire Core
 - Use the `search-docs` tool to find exact version specific documentation for how to write Livewire & Livewire tests.
-- Use the `php artisan make:livewire [Posts\\CreatePost]` artisan command to create new components
+- Use the `php artisan make:livewire [Posts\CreatePost]` artisan command to create new components
 - State should live on the server, with the UI reflecting it.
 - All Livewire requests hit the Laravel backend, they're like regular HTTP requests. Always validate form data, and run authorization checks in Livewire actions.
 
@@ -252,7 +524,7 @@ Route::get('/users', function () {
     @endforeach
     ```
 
-- Prefer lifecycle hooks like `mount()`, `updatedFoo()`) for initialization and reactive side effects:
+- Prefer lifecycle hooks like `mount()`, `updatedFoo()` for initialization and reactive side effects:
 
 <code-snippet name="Lifecycle hook examples" lang="php">
     public function mount(User $user) { $this->user = $user; }
@@ -325,12 +597,11 @@ document.addEventListener('livewire:init', function () {
 === pest/core rules ===
 
 ## Pest
-
 ### Testing
 - If you need to verify a feature is working, write or update a Unit / Feature test.
 
 ### Pest Tests
-- All tests must be written using Pest. Use `php artisan make:test --pest <name>`.
+- All tests must be written using Pest. Use `php artisan make:test --pest {name}`.
 - You must not remove any tests or test files from the tests directory without approval. These are not temporary or helper files - these are core to the application.
 - Tests should test all of the happy paths, failure paths, and weird paths.
 - Tests live in the `tests/Feature` and `tests/Unit` directories.
@@ -383,17 +654,23 @@ it('has emails', function (string $email) {
 - Vue components must have a single root element.
 - Use `router.visit()` or `<Link>` for navigation instead of traditional links.
 
-<code-snippet lang="vue" name="Inertia Client Navigation">
-    import { Link } from '@inertiajs/vue3'
+<code-snippet name="Inertia Client Navigation" lang="vue">
 
+    import { Link } from '@inertiajs/vue3'
     <Link href="/">Home</Link>
+
 </code-snippet>
 
-- For form handling, use `router.post` and related methods. Do not use regular forms.
+
+=== inertia-vue/v1/forms rules ===
+
+## Inertia + Vue Forms
+
+- For form handling in Inertia pages, use `router.post` and related methods. Do not use regular forms.
 
 
 <code-snippet lang="vue" name="Inertia Vue Form Example">
-    <script setup>
+<script setup>
     import { reactive } from 'vue'
     import { router } from '@inertiajs/vue3'
     import { usePage } from '@inertiajs/vue3'
@@ -401,28 +678,28 @@ it('has emails', function (string $email) {
     const page = usePage()
 
     const form = reactive({
-      first_name: null,
-      last_name: null,
-      email: null,
+        first_name: null,
+        last_name: null,
+        email: null,
     })
 
     function submit() {
-      router.post('/users', form)
+        router.post('/users', form)
     }
-    </script>
+</script>
 
-    <template>
-        <h1>Create {{ page.modelName }}</h1>
-        <form @submit.prevent="submit">
-            <label for="first_name">First name:</label>
-            <input id="first_name" v-model="form.first_name" />
-            <label for="last_name">Last name:</label>
-            <input id="last_name" v-model="form.last_name" />
-            <label for="email">Email:</label>
-            <input id="email" v-model="form.email" />
-            <button type="submit">Submit</button>
-        </form>
-    </template>
+<template>
+    <h1>Create {{ page.modelName }}</h1>
+    <form @submit.prevent="submit">
+        <label for="first_name">First name:</label>
+        <input id="first_name" v-model="form.first_name" />
+        <label for="last_name">Last name:</label>
+        <input id="last_name" v-model="form.last_name" />
+        <label for="email">Email:</label>
+        <input id="email" v-model="form.email" />
+        <button type="submit">Submit</button>
+    </form>
+</template>
 </code-snippet>
 
 
@@ -456,12 +733,4 @@ it('has emails', function (string $email) {
 ## Tailwind 3
 
 - Always use Tailwind CSS v3 - verify you're using only classes supported by this version.
-
-
-=== tests rules ===
-
-## Test Enforcement
-
-- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
-- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test` with a specific filename or filter.
 </laravel-boost-guidelines>
