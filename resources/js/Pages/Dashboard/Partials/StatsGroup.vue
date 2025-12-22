@@ -181,7 +181,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                      :style="'background: linear-gradient(to right, rgba('+gradientColor+', 1) '+calculatePercentage(item)+'%, rgba('+gradientColor+', 0) '+calculatePercentage(item)+'%);'"
                                 >
                                     <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 underline': filters[filters.statsType] === item.type_id}" preserve-scroll :href="route('dashboard', {...filters, [filters.statsType]: item.type_id ?? -1})">
-                                        <StatsIcon :statsName="item.name" :statsType="filters.statsType" :statsIconType="statsTypeIcon(statsGroup, item)" />
+                                        <StatsIcon v-if="statsGroupType !== 'page'" :statsName="item.name" :statsType="filters.statsType" :statsIconType="statsTypeIcon(statsGroup, item)" />
                                         <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
                                     </Link>
                                 </div>
