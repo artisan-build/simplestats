@@ -41,7 +41,9 @@ _SimpleStats_ uses standard HTTP response codes to communicate the outcome of **
 
 ## Rate Limit
 
-The rate limits for our API are **120** requests **per minute** by default. If you have special needs for more requests, please contact us to request more capacity.
+Rate limits depend on your subscription plan and are applied per project (API token) per minute. See [Plans and Limits](plans-and-limits.md) for details.
+
+If you exceed your rate limit, the API will return a `429 Too Many Requests` response.
 
 ## Endpoints
 

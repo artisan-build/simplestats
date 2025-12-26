@@ -106,8 +106,14 @@ Payments are **always** associated with the user's registration tracking codes f
 
 ### Rate Limits
 
-- Default: **120 requests per minute** per API token
-- Consider burst handling for high-volume clients
+Rate limits are defined per plan in `config/spark.php` under `ApiRateLimit`:
+
+| Plan       | Rate Limit |
+|------------|------------|
+| Free       | 200/min    |
+| Plus       | 1,000/min  |
+| Business   | 2,500/min  |
+| Enterprise | 5,000/min  |
 
 ### Endpoints
 
@@ -252,3 +258,11 @@ Jobs include automatic retry logic for fault tolerance.
 2. Update composer.json version constraints
 3. Document changes in CHANGELOG
 4. Tag release on GitHub
+
+### Modifying Subscription Plans
+
+When changing plan features or limits in `config/spark.php`:
+
+1. Update the plan configuration in `config/spark.php`
+2. Update `docs/plans-and-limits.md` to reflect the changes
+3. Update this guidelines file if rate limits change

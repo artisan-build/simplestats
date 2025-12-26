@@ -119,6 +119,7 @@ return [
                     'options' => [
                         Project::class => 1,
                         'Events' => 5_000,
+                        'ApiRateLimit' => 200,
                         'MultiCurrency' => false,
                         DataImport::class => false,
                     ],
@@ -139,6 +140,7 @@ return [
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         'Events' => 200_000,
+                        'ApiRateLimit' => 1_000,
                         'MultiCurrency' => true,
                         DataImport::class => true,
                     ],
@@ -159,6 +161,7 @@ return [
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         'Events' => 500_000,
+                        'ApiRateLimit' => 2_500,
                         'MultiCurrency' => true,
                         DataImport::class => true,
                     ],
@@ -180,6 +183,7 @@ return [
                     'options' => [
                         Project::class => SubscriptionService::UNLIMITED_AMOUNT,
                         'Events' => 10_000_000,
+                        'ApiRateLimit' => 5_000,
                         'MultiCurrency' => true,
                         DataImport::class => true,
                     ],

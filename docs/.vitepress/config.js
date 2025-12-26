@@ -59,6 +59,7 @@ export default defineConfig({
                     {text: 'Troubleshooting', link: '/troubleshooting'},
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
+                    {text: 'Plans and Limits', link: '/plans-and-limits'},
                     {text: 'API Documentation', link: '/api-documentation'},
                     {text: 'Contribution', link: '/contribution'},
                 ]

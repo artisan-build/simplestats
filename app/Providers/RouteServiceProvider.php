@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Project;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -19,13 +20,26 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/dashboard';
 
+    private const API_RATE_LIMIT_DEFAULT = 200;
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
+            $limit = self::API_RATE_LIMIT_DEFAULT;
+            $key = $request->ip();
+
+            $project = $request->user();
+
+            if ($project instanceof Project) {
+                $plan = $project->team->owner->sparkPlan();
+                $limit = $plan->options['ApiRateLimit'] ?? self::API_RATE_LIMIT_DEFAULT;
+                $key = 'project:'.$project->id;
+            }
+
+            return Limit::perMinute($limit)->by($key);
         });
 
         $this->routes(function () {
