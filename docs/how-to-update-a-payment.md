@@ -117,4 +117,4 @@ class Transaction extends Model implements TrackablePaymentWithCondition
 }
 ```
 
-This mechanism provides extensive control over the actions triggered by changes in certain states within your model. Utilize this flexibility to implement the required logic according to **your specific needs** — the implementation details are entirely at your discretion!
+This mechanism provides extensive control over the actions triggered by changes in certain states within your model. Utilize this flexibility to implement the required logic according to **your specific needs** - the implementation details are entirely at your discretion!

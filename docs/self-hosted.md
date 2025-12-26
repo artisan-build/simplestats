@@ -4,7 +4,7 @@ _**SimpleStats**_ is also available as a Self-hosted version.
 
 ## SaaS or Self‑hosted?
 
-The **SaaS version** is our recommended solution — no installation required, automatic updates, and dedicated support. It's ideal if you want a seamless experience and quick results.
+The **SaaS version** is our recommended solution - no installation required, automatic updates, and dedicated support. It's ideal if you want a seamless experience and quick results.
 
 The **Self‑hosted version** gives you total control over your data and deployment. It's great for teams with technical expertise, but keep in mind that setup, maintenance, and troubleshooting are your responsibility. It doesn't include dedicated support.
 
