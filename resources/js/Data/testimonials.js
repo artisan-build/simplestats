@@ -20,7 +20,7 @@ export const testimonials = [
         "company": "Mastering Laravel",
         "company_link": "https://masteringlaravel.io/",
         "social_link": "https://x.com/jclermont",
-        "descr": "I definitely think that server side analytic tools like SimpleStats will become more and more popular cause they can't be blocked by ad blockers!"
+        "descr": "FYI, early days but you are counting at least 2x the traffic of what we’re seeing with Fathom Analytics",
     },
     {
         "name": "Aaron Francis",
