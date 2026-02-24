@@ -1,10 +1,10 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 
-const demoUrl = 'https://demo.simplestats.io/dashboard';
+// const demoUrl = 'https://demo.simplestats.io/dashboard';
 const isVisible = ref(false);
 
-const appEnv = import.meta.env.VITE_APP_ENV;
+// const appEnv = import.meta.env.VITE_APP_ENV;
 
 onMounted(() => {
     setTimeout(() => {
@@ -16,6 +16,7 @@ onMounted(() => {
 <template>
     <section class="animationElement mt-20 flex justify-center px-4" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
         <div class="w-full max-w-screen-xl">
+            <!-- Interactive demo (commented out for now)
             <div v-if="appEnv !== 'local'" class="hidden xl:block relative">
                 <div class="absolute z-10 -top-6 right-4 flex -translate-y-full animate-pulse items-center gap-2">
                     <svg class="mt-5 w-10 -rotate-[24deg] opacity-60 fill-gray-600 dark:fill-gray-400" viewBox="0 0 219 41" xmlns="http://www.w3.org/2000/svg">
@@ -49,9 +50,9 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
+            -->
 
-            <!-- Fallback screenshots (mobile + local development) -->
-            <div :class="appEnv !== 'local' ? 'xl:hidden' : ''">
+            <div>
                 <img class="block dark:hidden" width="1280" height="825" src="images/screenshot.png" alt="Web analytics dashboard for Laravel apps">
                 <img class="hidden dark:block" width="1280" height="825" src="images/screenshot_dark.png" alt="Web analytics dashboard for Laravel apps">
             </div>

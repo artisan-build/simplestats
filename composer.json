@@ -14,7 +14,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "hisorange/browser-detect": "^5.0",
         "inertiajs/inertia-laravel": "^2.0",
-        "joelbutcher/socialstream": "^6.1",
+        "joelbutcher/socialstream": "^6.2",
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel/framework": "^11.0",
@@ -40,7 +40,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
-        "laravel/boost": "^1.0",
+        "laravel/boost": "^2.0",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "laravel/telescope": "^5.0",
