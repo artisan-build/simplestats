@@ -39,6 +39,8 @@ class StatsService
 
     const TRACKING_USAGE_BITS_PAYMENTS = 4;
 
+    const TRACKING_USAGE_BITS_EVENTS = 8;
+
     protected static array $statsModels = [
         StatsVisitor::class,
         StatsUser::class,
@@ -215,6 +217,11 @@ class StatsService
                 'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
                 'name' => 'Payments',
                 'descr' => 'Track revenue and link it back to visitors or registrations.',
+            ],
+            'events' => [
+                'bit' => self::TRACKING_USAGE_BITS_EVENTS,
+                'name' => 'Custom Events',
+                'descr' => 'Track custom events like button clicks, plan upgrades, or feature usage.',
             ],
         ]);
     }

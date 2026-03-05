@@ -50,7 +50,7 @@ const action = (props.project.name) ? 'Update Project' : 'Create Project';
                 <div class="w-full">
                     <TrackingUsageSelector v-model="form.usage" :trackingUsages="trackingUsages" :stacked="true" />
                     <div class="text-sm mt-2 text-gray-500 dark:text-gray-400">
-                        In most cases, it's best to select all three...
+                        In most cases, it's best to select all...
                     </div>
                 </div>
                 <InputError :message="form.errors.usage" class="mt-2" />

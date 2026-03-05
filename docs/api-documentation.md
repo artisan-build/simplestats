@@ -245,7 +245,6 @@ _Core parameters:_
 | **name**          | _string_ `required`  | The event name (e.g. "Button Clicked"). Events with the same name are grouped.         |
 | **stats_user_id** | _mixed_ `nullable`   | The user id associated with the event.                                                 |
 | **visitor_hash**  | _string_ `nullable`  | The visitor hash from the session (`simplestats.visitor_hash`).                         |
-| **value**         | _numeric_ `nullable` | An optional numeric value associated with the event.                                   |
 | **time**          | _string_ `required`  | The time when the event happened.<br/>Format: `Y-m-d H:i:s P`, before or equal `now`   |
 
 **Payload**
@@ -255,7 +254,6 @@ _Core parameters:_
     "id": "evt-550e8400-e29b-41d4-a716-446655440000",
     "name": "Plan Upgraded",
     "stats_user_id": "1",
-    "value": 49.99,
     "time": "2024-04-04"
 }
 ```

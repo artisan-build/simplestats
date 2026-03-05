@@ -1,6 +1,6 @@
 # How to track a custom event
 
-Custom events let you track any user action in your application -- button clicks, plan upgrades, feature usage, or anything else that matters to your business. Events appear as a filterable group on the dashboard (like Locations or Devices), and clicking an event name filters all charts to the visitors and users associated with that event.
+Custom events let you track any user action in your application, such as button clicks, plan upgrades, feature usage, or anything else that matters to your business.
 
 ::: info
 Custom event tracking requires **version 3.1+** of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client).
@@ -20,7 +20,6 @@ use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'Button Clicked',
-    value: null,
     user: $user,
 );
 ```
@@ -31,7 +30,6 @@ SimplestatsClient::trackCustomEvent(
 |------------|--------------------|-------------------------------------------------------------------------------------------------|
 | **id**     | _string_           | A unique identifier for this event. Must be unique per project.                                 |
 | **name**   | _string_           | The event name (e.g. "Button Clicked", "Plan Upgraded"). Events with the same name are grouped. |
-| **value**  | _float_ `nullable` | An optional numeric value associated with the event.                                            |
 | **user**   | _TrackablePerson_  | The user or visitor associated with the event.                                                  |
 
 ### With a User
@@ -42,7 +40,6 @@ If the event is triggered by an authenticated user, pass the user model directly
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'Plan Upgraded',
-    value: 49.99,
     user: auth()->user(),
 );
 ```
@@ -57,7 +54,6 @@ use SimpleStatsIo\LaravelClient\Visitor;
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'CTA Clicked',
-    value: null,
     user: new Visitor(session('simplestats.visitor_hash')),
 );
 ```

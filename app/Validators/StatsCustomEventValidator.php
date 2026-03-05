@@ -20,7 +20,6 @@ class StatsCustomEventValidator extends BaseStatsValidator
             'name' => ['required', 'string', 'max:255'],
             'stats_user_id' => ['nullable'],
             'visitor_hash' => ['nullable'],
-            'value' => ['nullable', 'numeric'],
         ]);
     }
 }

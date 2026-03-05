@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('stats_custom_event_name_id')->constrained()->cascadeOnDelete();
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
-            $table->float('value')->nullable();
             $table->timestamp('time');
             $table->timestamp('time_utc');
             $table->integer('counter')->default(1);

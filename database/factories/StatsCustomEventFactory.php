@@ -34,7 +34,6 @@ class StatsCustomEventFactory extends Factory
             'stats_custom_event_name_id' => StatsCustomEventName::inRandomOrder()->first()->id,
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
-            'value' => $this->faker->optional()->randomFloat(2, 0, 1000),
             'time' => $date->format('Y-m-d H:i:s'),
             'time_utc' => $date->format('Y-m-d H:i:s'),
         ];

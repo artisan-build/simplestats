@@ -148,52 +148,19 @@ test('event with visitor_hash resolves to stats_visitor_id', function () {
         ->and($event->stats_visitor_id)->toBe($visitor->id);
 });
 
-test('event with value is stored correctly', function () {
-    $payload = validPayload(['value' => 42.5]);
-
-    $this->postJson(
-        '/api/v1/stats-custom-event',
-        $payload,
-        apiHeaders($this->token),
-    )->assertOk();
-
-    setProjectContext($this->project);
-
-    $event = StatsCustomEvent::where('id', $payload['id'])->first();
-    expect($event)->not->toBeNull()
-        ->and($event->value)->toBe(42.5);
-});
-
-test('event without value stores null', function () {
-    $payload = validPayload();
-
-    $this->postJson(
-        '/api/v1/stats-custom-event',
-        $payload,
-        apiHeaders($this->token),
-    )->assertOk();
-
-    setProjectContext($this->project);
-
-    $event = StatsCustomEvent::where('id', $payload['id'])->first();
-    expect($event)->not->toBeNull()
-        ->and($event->value)->toBeNull();
-});
-
 test('duplicate id performs updateOrCreate update', function () {
     $eventId = fake()->uuid();
 
-    $payload1 = validPayload(['id' => $eventId, 'value' => 10.0]);
+    $payload1 = validPayload(['id' => $eventId, 'name' => 'First Name']);
     $this->postJson('/api/v1/stats-custom-event', $payload1, apiHeaders($this->token))->assertOk();
 
-    $payload2 = validPayload(['id' => $eventId, 'value' => 20.0]);
+    $payload2 = validPayload(['id' => $eventId, 'name' => 'Updated Name']);
     $this->postJson('/api/v1/stats-custom-event', $payload2, apiHeaders($this->token))->assertOk();
 
     setProjectContext($this->project);
 
     $events = StatsCustomEvent::where('id', $eventId)->get();
-    expect($events)->toHaveCount(1)
-        ->and($events->first()->value)->toBe(20.0);
+    expect($events)->toHaveCount(1);
 });
 
 test('counter increments per user', function () {
