@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Builder\Drivers\AggregationBuilderType;
+use App\Builder\StatsAggregationsGroupedEventsSqlBuilder;
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
 use App\Builder\StatsAggregationsSqlBuilder;
 use App\DTOs\StatsFilterDto;
@@ -65,9 +66,15 @@ class StatsAggregationsService
 
         $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
 
-        $sql = (new StatsAggregationsGroupedSqlBuilder(
-            $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, app(AggregationBuilderType::class))
-        )->build();
+        if ($statsType === 'customEventName') {
+            $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
+                $statsSort, app(AggregationBuilderType::class))
+            )->build();
+        } else {
+            $sql = (new StatsAggregationsGroupedSqlBuilder(
+                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, app(AggregationBuilderType::class))
+            )->build();
+        }
 
         $filterConditions = $this->getFilterConditions($filters);
 
@@ -87,7 +94,9 @@ class StatsAggregationsService
         //echo nl2br($sql);die;
 
         $dataArray = array_map(function ($item) {
-            $item['net'] = round($item['net'], 2);
+            if (isset($item['net'])) {
+                $item['net'] = round($item['net'], 2);
+            }
 
             return $item;
         }, $this->getDataArray($sql));
@@ -103,7 +112,8 @@ class StatsAggregationsService
             return (! isset($item['dau']) || $item['dau'] == 0)
                 && (! isset($item['reg']) || $item['reg'] == 0)
                 && (! isset($item['net']) || $item['net'] == 0)
-                && (! isset($item['visitors']) || $item['visitors'] == 0);
+                && (! isset($item['visitors']) || $item['visitors'] == 0)
+                && (! isset($item['total']) || $item['total'] == 0);
         })->take($limit);
     }
 
@@ -223,6 +233,7 @@ class StatsAggregationsService
         }
 
         $conditions['trackingConditions'] = '';
+        $conditions['trackingFilterForEvents'] = '';
         $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.project_id = stats.project_id';
         $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.project_id = stats.project_id';
 
@@ -230,6 +241,25 @@ class StatsAggregationsService
             $conditions['trackingConditions'] = $trackingCondition;
             $conditions['trackingUserJoinConditions'] .= ' '.str_replace('stats.', 'su.', $trackingCondition);
             $conditions['trackingVisitorJoinConditions'] .= ' '.str_replace('stats.', 'sv.', $trackingCondition);
+
+            $visitorCondition = str_replace('stats.', 'sv.', $trackingCondition);
+            $conditions['trackingFilterForEvents'] = " AND stats.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = stats.project_id{$visitorCondition}) ";
+        }
+
+        $conditions['eventFilterEventName'] = '';
+        $conditions['eventFilterUser'] = '';
+        $conditions['eventFilterVisitor'] = '';
+
+        if (! empty($filters->customEventName)) {
+            $eventId = $filters->customEventName;
+
+            $conditions['eventFilterEventName'] = " AND stats.stats_custom_event_name_id = {$eventId} ";
+
+            $conditions['eventFilterUser'] = " AND stats.id IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = stats.project_id AND ce_f.stats_user_id IS NOT NULL) ";
+            $conditions['eventFilterVisitor'] = " AND stats.id IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = stats.project_id AND ce_f.stats_visitor_id IS NOT NULL) ";
+
+            $conditions['trackingUserJoinConditions'] .= " AND su.id IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = su.project_id AND ce_f.stats_user_id IS NOT NULL) ";
+            $conditions['trackingVisitorJoinConditions'] .= " AND sv.id IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = sv.project_id AND ce_f.stats_visitor_id IS NOT NULL) ";
         }
 
         return $conditions;

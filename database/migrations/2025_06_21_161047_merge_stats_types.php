@@ -13,10 +13,13 @@ return new class extends Migration
 
         StatsService::getStatsTypes()->each(function ($types) {
             collect($types)->each(function ($statsType) {
-                Schema::table((new $statsType['model'])->getTable(), function (Blueprint $table) {
-                    $table->dropForeign(['project_id']);
-                    $table->dropColumn('project_id');
-                });
+                $tableName = (new $statsType['model'])->getTable();
+                if (Schema::hasTable($tableName)) {
+                    Schema::table($tableName, function (Blueprint $table) {
+                        $table->dropForeign(['project_id']);
+                        $table->dropColumn('project_id');
+                    });
+                }
             });
         });
     }

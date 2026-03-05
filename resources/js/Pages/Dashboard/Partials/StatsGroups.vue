@@ -14,6 +14,7 @@ const props = defineProps({
     <div class="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <div v-for="(statsGroup, statsGroupType) in statsGroups" :key="statsGroup.id"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
+             :class="{'lg:col-span-2': statsGroupType === 'event'}"
         >
             <StatsGroup
                 :filters="filters"

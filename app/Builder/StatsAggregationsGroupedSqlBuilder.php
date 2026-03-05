@@ -77,7 +77,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return "lt_reg AS (
             SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
             FROM stats_users stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions :eventFilterUser
             GROUP BY type_id
         )";
     }
@@ -90,7 +90,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         return "lt_visitors AS (
             SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(*) as count
             FROM stats_visitors stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions :eventFilterVisitor
             GROUP BY type_id
         )";
     }

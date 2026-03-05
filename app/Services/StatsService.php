@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\StatsFilterDto;
 use App\Enums\ComparisonType;
 use App\Models\Project;
+use App\Models\StatsCustomEventName;
 use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
@@ -66,6 +67,9 @@ class StatsService
             ['model' => StatsDevicePlatform::class, 'type' => 'device_platform', 'title' => 'Platform', 'icon' => 'path'],
             ['model' => StatsDeviceBrowser::class, 'type' => 'device_browser', 'title' => 'Browser', 'icon' => 'path'],
             ['model' => StatsDeviceType::class, 'type' => 'device_type', 'title' => 'Size', 'icon' => 'path'],
+        ],
+        'event' => [
+            ['model' => StatsCustomEventName::class, 'type' => 'custom_event_name', 'title' => 'Events'],
         ],
     ];
 

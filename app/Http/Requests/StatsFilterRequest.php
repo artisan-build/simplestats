@@ -6,6 +6,7 @@ use App\Enums\ComparisonType;
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
 use App\Models\Project;
+use App\Models\StatsCustomEventName;
 use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
@@ -129,6 +130,11 @@ class StatsFilterRequest extends FormRequest
                 'integer',
                 new ValidTeamModel(StatsPageEntry::class),
             ],
+            'customEventName' => [
+                'sometimes',
+                'integer',
+                new ValidTeamModel(StatsCustomEventName::class),
+            ],
             'statsType' => [
                 'sometimes',
                 'string',
@@ -137,7 +143,7 @@ class StatsFilterRequest extends FormRequest
             'statsSort' => [
                 'sometimes',
                 'string',
-                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau']),
+                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total']),
             ],
             'groupType' => [
                 'sometimes',

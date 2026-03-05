@@ -6,18 +6,18 @@ namespace Database\Seeders;
 use App\Actions\Fortify\CreateNewUser;
 use App\Helpers\AppHelper;
 use App\Models\Project;
+use App\Models\StatsCustomEvent;
+use App\Models\StatsCustomEventName;
 use App\Models\StatsLogin;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
-use App\Services\StatsService;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -85,12 +85,19 @@ class DatabaseSeeder extends Seeder
             ->state(new Sequence(...$projects))
             ->for(Team::find($user->current_team_id))
             ->afterCreating(function ($project) {
+                $eventNames = collect(['signup_click', 'purchase_click', 'page_view', 'add_to_cart', 'checkout_start'])
+                    ->map(fn ($name) => StatsCustomEventName::firstOrCreate([
+                        'team_id' => $project->team_id,
+                        'project_id' => $project->id,
+                        'name' => $name,
+                    ]));
+
                 $count = $this->getUserSeedCount();
                 StatsUser::factory(rand($count['from'], $count['to']))->create([
                     'project_id' => $project->id,
-                ])->each(function ($statsUser) use ($project) {
+                ])->each(function ($statsUser) use ($project, $eventNames) {
                     // for each registration we simulate 3 to 6 visitors
-                    StatsVisitor::factory(rand(3, 6))->create([
+                    $visitors = StatsVisitor::factory(rand(3, 6))->create([
                         'project_id' => $project->id,
                         'time' => $statsUser->time,
                     ]);
@@ -116,6 +123,21 @@ class DatabaseSeeder extends Seeder
                                 'currency' => self::DEFAULT_CURRENCY,
                                 // increment a random number of days for the next payment
                                 'time' => $paymentTime->addDays(rand(1, 28)),
+                            ]);
+                        }
+                    }
+
+                    // 40% of users fire 1-3 events
+                    if (rand(0, 4) < 2) {
+                        $visitor = $visitors->random();
+                        for ($i = 0; $i < rand(1, 3); $i++) {
+                            StatsCustomEvent::factory()->create([
+                                'project_id' => $project->id,
+                                'team_id' => $project->team_id,
+                                'stats_user_id' => $statsUser->id,
+                                'stats_visitor_id' => $visitor->id,
+                                'stats_custom_event_name_id' => $eventNames->random()->id,
+                                'time' => Carbon::parse($statsUser->time)->addDays(rand(0, 30)),
                             ]);
                         }
                     }
@@ -262,6 +284,28 @@ class DatabaseSeeder extends Seeder
                         'currency' => self::DEFAULT_CURRENCY,
                         'time' => Carbon::instance(fake()->dateTimeBetween($dayStart, $dayEnd)),
                     ]);
+                }
+
+                // Events from existing users
+                $eventNames = StatsCustomEventName::where('project_id', $project->id)->get();
+                if ($eventNames->isNotEmpty()) {
+                    $eventUsers = StatsUser::query()
+                        ->where('project_id', $project->id)
+                        ->inRandomOrder()
+                        ->limit(rand(3, 8))
+                        ->get();
+
+                    foreach ($eventUsers as $user) {
+                        $visitor = StatsVisitor::where('project_id', $project->id)->inRandomOrder()->first();
+                        StatsCustomEvent::factory()->create([
+                            'project_id' => $project->id,
+                            'team_id' => $project->team_id,
+                            'stats_user_id' => $user->id,
+                            'stats_visitor_id' => $visitor?->id,
+                            'stats_custom_event_name_id' => $eventNames->random()->id,
+                            'time' => Carbon::instance(fake()->dateTimeBetween($dayStart, $dayEnd)),
+                        ]);
+                    }
                 }
             }
         }

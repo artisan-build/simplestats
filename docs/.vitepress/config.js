@@ -49,6 +49,7 @@ export default defineConfig({
                     {text: 'How to track a new user', link: '/how-to-track-a-new-user'},
                     {text: 'How to track a new login', link: '/how-to-track-a-new-login'},
                     {text: 'How to track a new payment', link: '/how-to-track-a-new-payment'},
+                    {text: 'How to track a custom event', link: '/how-to-track-a-custom-event'},
                     {text: 'Tracking Codes', link: '/tracking-codes'},
                 ]
             },

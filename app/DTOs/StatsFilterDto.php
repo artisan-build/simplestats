@@ -34,6 +34,7 @@ class StatsFilterDto
         public int $devicePlatform = 0,
         public int $deviceBrowser = 0,
         public int $pageEntry = 0,
+        public int $customEventName = 0,
     ) {
     }
 
@@ -78,6 +79,7 @@ class StatsFilterDto
             devicePlatform: $request->devicePlatform ?? 0,
             deviceBrowser: $request->deviceBrowser ?? 0,
             pageEntry: $request->pageEntry ?? 0,
+            customEventName: $request->customEventName ?? 0,
         );
     }
 
@@ -100,6 +102,7 @@ class StatsFilterDto
             $this->devicePlatform,
             $this->deviceBrowser,
             $this->pageEntry,
+            $this->customEventName,
         ]));
     }
 
