@@ -42,4 +42,6 @@ interface AggregationBuilderType
      * @return string The grouped order by clause.
      */
     public function getGroupedOrderBy(string $sort, TrackablePerson $trackablePerson): string;
+
+    public function getEventsGroupedOrderBy(string $sort): string;
 }

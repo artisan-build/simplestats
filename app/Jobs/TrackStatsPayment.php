@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\StatsPayment;
-use App\Models\StatsVisitor;
 
 class TrackStatsPayment extends BaseStatsTrack
 {
@@ -14,10 +13,7 @@ class TrackStatsPayment extends BaseStatsTrack
     {
         parent::handle();
 
-        if (isset($this->input['visitor_hash'])) {
-            $this->input['stats_visitor_id'] = StatsVisitor::where('visitor_hash', $this->input['visitor_hash'])->first()?->id ?? null;
-            unset($this->input['visitor_hash']);
-        }
+        $this->resolveVisitorHash();
 
         StatsPayment::updateOrCreate(['id' => $this->input['id']], $this->input);
     }

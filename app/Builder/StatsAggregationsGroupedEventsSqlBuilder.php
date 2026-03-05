@@ -15,8 +15,8 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     public function build(): string
     {
         $this->applySql($this->getCTE());
-        $this->applySql($this->getUniques());
-        $this->applySql($this->getTotal(), false);
+        $this->applySql($this->getEventStats());
+        $this->applySql($this->getNet(), false);
 
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
@@ -33,12 +33,14 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     }
 
     /**
-     * Unique visitors/users who triggered each event at least once.
+     * Unique visitors/users and total fires per event name.
      */
-    protected function getUniques(): string
+    protected function getEventStats(): string
     {
-        return "visitors AS (
-            SELECT stats.stats_custom_event_name_id as type_id, COUNT(DISTINCT COALESCE(stats.stats_user_id, CAST(stats.stats_visitor_id AS varchar))) as count
+        return "event_stats AS (
+            SELECT stats.stats_custom_event_name_id as type_id,
+                COUNT(DISTINCT COALESCE(stats.stats_user_id, CAST(stats.stats_visitor_id AS varchar))) as visitors,
+                COUNT(*) as total
             FROM stats_custom_events stats
             WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventName :trackingFilterForEvents
             GROUP BY type_id
@@ -46,14 +48,25 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     }
 
     /**
-     * Total number of times each event was fired.
+     * Net revenue from users/visitors who triggered each event.
      */
-    protected function getTotal(): string
+    protected function getNet(): string
     {
-        return "total AS (
-            SELECT stats.stats_custom_event_name_id as type_id, COUNT(*) as count
-            FROM stats_custom_events stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventName :trackingFilterForEvents
+        return "event_net AS (
+            SELECT type_id, SUM(count) as count
+            FROM (
+                SELECT ce.stats_custom_event_name_id as type_id, SUM(stats.net) as count
+                FROM stats_payments stats
+                INNER JOIN stats_custom_events ce ON ce.stats_user_id = stats.stats_user_id AND ce.project_id = stats.project_id
+                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventNameCe :trackingFilterForEventsCe
+                GROUP BY type_id
+                UNION ALL
+                SELECT ce.stats_custom_event_name_id as type_id, SUM(stats.net) as count
+                FROM stats_payments stats
+                INNER JOIN stats_custom_events ce ON ce.stats_visitor_id = stats.stats_visitor_id AND ce.project_id = stats.project_id
+                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventNameCe :trackingFilterForEventsCe
+                GROUP BY type_id
+            ) as combined_results
             GROUP BY type_id
         )";
     }
@@ -63,23 +76,24 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
         return 'SELECT
             sg.type_id as type_id,
             sg.name as name,
-            COALESCE(visitors.count, 0) AS visitors,
-            COALESCE(total.count, 0) AS total,
-            ROUND(COALESCE((visitors.count * 100.0 / NULLIF(total.count, 0)), 0), 2) AS cr';
+            COALESCE(es.visitors, 0) AS visitors,
+            COALESCE(es.total, 0) AS total,
+            ROUND(COALESCE((es.visitors * 100.0 / NULLIF(es.total, 0)), 0), 2) AS cr,
+            COALESCE(event_net.count, 0) AS net';
     }
 
     protected function getFROM(): string
     {
         return 'FROM
             stats_groups sg
-            LEFT JOIN visitors ON sg.type_id = visitors.type_id
-            LEFT JOIN total ON sg.type_id = total.type_id';
+            LEFT JOIN event_stats es ON sg.type_id = es.type_id
+            LEFT JOIN event_net ON sg.type_id = event_net.type_id';
     }
 
     protected function getORDER(): string
     {
-        $sort = in_array($this->statsSort, ['visitors', 'total', 'cr', 'name']) ? $this->statsSort : 'visitors';
+        $sort = in_array($this->statsSort, ['visitors', 'total', 'cr', 'net', 'name']) ? $this->statsSort : 'visitors';
 
-        return "ORDER BY {$sort} DESC NULLS LAST, visitors DESC NULLS LAST, total DESC;";
+        return $this->aggregationBuilderType->getEventsGroupedOrderBy($sort);
     }
 }

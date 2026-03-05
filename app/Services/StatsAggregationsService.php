@@ -234,6 +234,7 @@ class StatsAggregationsService
 
         $conditions['trackingConditions'] = '';
         $conditions['trackingFilterForEvents'] = '';
+        $conditions['trackingFilterForEventsCe'] = '';
         $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.project_id = stats.project_id';
         $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.project_id = stats.project_id';
 
@@ -244,9 +245,11 @@ class StatsAggregationsService
 
             $visitorCondition = str_replace('stats.', 'sv.', $trackingCondition);
             $conditions['trackingFilterForEvents'] = " AND stats.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = stats.project_id{$visitorCondition}) ";
+            $conditions['trackingFilterForEventsCe'] = " AND ce.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = ce.project_id{$visitorCondition}) ";
         }
 
         $conditions['eventFilterEventName'] = '';
+        $conditions['eventFilterEventNameCe'] = '';
         $conditions['eventFilterUser'] = '';
         $conditions['eventFilterVisitor'] = '';
 
@@ -254,6 +257,7 @@ class StatsAggregationsService
             $eventId = $filters->customEventName;
 
             $conditions['eventFilterEventName'] = " AND stats.stats_custom_event_name_id = {$eventId} ";
+            $conditions['eventFilterEventNameCe'] = " AND ce.stats_custom_event_name_id = {$eventId} ";
 
             $conditions['eventFilterUser'] = " AND stats.id IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = stats.project_id AND ce_f.stats_user_id IS NOT NULL) ";
             $conditions['eventFilterVisitor'] = " AND stats.id IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = stats.project_id AND ce_f.stats_visitor_id IS NOT NULL) ";

@@ -128,7 +128,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                         <!-- Event-specific columns -->
                         <template v-if="isEventGroup">
                             <tr class="sticky bg-white dark:bg-dark-800 top-0 font-medium text-gray-600 dark:text-dark-300">
-                                <td style="width: 40%;" class="py-1.5">
+                                <td style="width: 34%;" class="py-1.5">
                                     <button class="whitespace-nowrap" :class="filters.statsSort === 'name' ? 'text-indigo-600' : ''" @click="changeSort('name')">
                                         <span>Name</span>
                                         <svg v-if="filters.statsSort === 'name'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
@@ -136,7 +136,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                         </svg>
                                     </button>
                                 </td>
-                                <td style="width: 20%;" class="p-1.5 text-right">
+                                <td style="width: 15%;" class="p-1.5 text-right">
                                     <button class="whitespace-nowrap" :class="filters.statsSort === 'visitors' ? 'text-indigo-600' : ''" @click="changeSort('visitors')">
                                         <span>Visitors</span>
                                         <svg v-if="filters.statsSort === 'visitors'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
@@ -144,7 +144,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                         </svg>
                                     </button>
                                 </td>
-                                <td style="width: 20%;" class="p-1.5 text-right">
+                                <td style="width: 15%;" class="p-1.5 text-right">
                                     <button class="whitespace-nowrap" :class="filters.statsSort === 'total' ? 'text-indigo-600' : ''" @click="changeSort('total')">
                                         <span>Total</span>
                                         <svg v-if="filters.statsSort === 'total'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
@@ -152,11 +152,20 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                         </svg>
                                     </button>
                                 </td>
-                                <td style="width: 20%;" class="p-1.5 text-right">
+                                <td style="width: 18%;" class="p-1.5 text-right">
                                     <button class="whitespace-nowrap" :class="filters.statsSort === 'cr' ? 'text-indigo-600' : ''" @click="changeSort('cr')">
                                         <span class="inline-block @2xl:hidden">CR</span>
                                         <span class="hidden @2xl:inline-block">Conv. Rate</span>
                                         <svg v-if="filters.statsSort === 'cr'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                            <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['payments'])" style="width: 18%;" class="p-1.5 text-right">
+                                    <button class="whitespace-nowrap" :class="filters.statsSort === 'net' ? 'text-indigo-600' : ''" @click="changeSort('net')">
+                                        <span class="inline-block @2xl:hidden">Rev.</span>
+                                        <span class="hidden @2xl:inline-block">Revenue</span>
+                                        <svg v-if="filters.statsSort === 'net'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                             <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                         </svg>
                                     </button>
@@ -175,6 +184,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                 <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
                                 <td class="p-1.5 text-right">{{ formatNumber(Number(item.total)) }}</td>
                                 <td class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                             </tr>
                         </template>
                         <!-- Standard group columns -->

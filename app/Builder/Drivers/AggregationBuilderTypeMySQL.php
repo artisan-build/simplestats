@@ -63,4 +63,9 @@ class AggregationBuilderTypeMySQL implements AggregationBuilderType
 
         return $oder;
     }
+
+    public function getEventsGroupedOrderBy(string $sort): string
+    {
+        return "ORDER BY {$sort} IS NULL, {$sort} DESC, visitors IS NULL, visitors DESC, total DESC;";
+    }
 }

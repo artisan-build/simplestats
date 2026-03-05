@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Models\StatsCustomEvent;
 use App\Models\StatsCustomEventName;
-use App\Models\StatsVisitor;
 
 class TrackStatsCustomEvent extends BaseStatsTrack
 {
@@ -15,10 +14,7 @@ class TrackStatsCustomEvent extends BaseStatsTrack
     {
         parent::handle();
 
-        if (isset($this->input['visitor_hash'])) {
-            $this->input['stats_visitor_id'] = StatsVisitor::where('visitor_hash', $this->input['visitor_hash'])->first()?->id ?? null;
-            unset($this->input['visitor_hash']);
-        }
+        $this->resolveVisitorHash();
 
         $eventName = StatsCustomEventName::firstOrCreate([
             'team_id' => auth()->user()->team_id,

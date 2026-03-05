@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Project;
+use App\Models\StatsVisitor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -47,5 +48,13 @@ abstract class BaseStatsTrack implements ShouldQueue
     public function handle(): void
     {
         auth()->setUser(Project::withoutGlobalScope('team')->findOrFail(Context::get('project_id')));
+    }
+
+    protected function resolveVisitorHash(): void
+    {
+        if (isset($this->input['visitor_hash'])) {
+            $this->input['stats_visitor_id'] = StatsVisitor::where('visitor_hash', $this->input['visitor_hash'])->first()?->id ?? null;
+            unset($this->input['visitor_hash']);
+        }
     }
 }
