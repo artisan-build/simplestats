@@ -1,5 +1,4 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
 
 const appName = import.meta.env.VITE_APP_NAME;
 const appEnv = import.meta.env.VITE_APP_ENV;
@@ -12,10 +11,6 @@ const appEnv = import.meta.env.VITE_APP_ENV;
         A product by
         <a class="hover:underline" href="https://laracraft.tech" target="_blank">Laracraft</a>
         <span class="px-2">&nbsp;|&nbsp;</span>
-        <template v-if="appEnv !== 'demo'">
-            <Link class="hover:underline" :href="route('blog.index')">Blog</Link>
-            &nbsp;·&nbsp;
-        </template>
         <a class="hover:underline" href="/terms-of-service" target="_blank">Terms</a>
         &nbsp;·&nbsp;
         <a class="hover:underline" href="/privacy-policy" target="_blank">Privacy</a>

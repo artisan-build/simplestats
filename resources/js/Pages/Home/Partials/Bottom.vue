@@ -24,7 +24,7 @@ const linkCategories = [
             {"title": "Laravel News", "url": "https://laravel-news.com/partner/simplestats"},
             {"title": "Product Hunt", "url": "https://www.producthunt.com/products/simplestats?utm_source=badge-featured&utm_medium=badge#simplestats"},
             {"title": "Reddit", "url": "https://www.reddit.com/r/laravel/comments/1im7n44/release_simplestats_40_a_lightweight_analytics/"},
-            {"title": "Blog", "url": "https://www.laracraft.tech/blog/why-we-build-simplestats-the-missing-statistics-tool-for-your-laravel-application"},
+            {"title": "Blog", "url": "/blog"},
         ],
     },
     {
