@@ -13,6 +13,7 @@ use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\SetupTeamController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\TimezoneController;
+use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\UserSettingsController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,11 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 Route::resource('timezones', TimezoneController::class)->only(['index']);
+
+// Tracking
+Route::prefix('tracking')->name('tracking.')->group(function () {
+    Route::post('get-started-click', [TrackingController::class, 'getStartedClick'])->name('get-started-click');
+});
 
 Route::middleware([
     'auth:sanctum',

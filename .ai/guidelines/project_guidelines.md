@@ -237,6 +237,11 @@ Jobs include automatic retry logic for fault tolerance.
 
 - Always use `use` imports at the top of the file instead of inline fully-qualified class names (e.g., `use App\Models\User;` instead of `\App\Models\User::query()`).
 
+### Controllers & Business Logic
+
+- Controllers should be thin. Keep business logic out of controllers and move it into dedicated service classes (e.g., `App\Services\TrackingService`).
+- Controllers should only handle HTTP concerns: receiving the request, delegating to a service, and returning a response.
+
 ## Development Guidelines
 
 ### Git Workflow
