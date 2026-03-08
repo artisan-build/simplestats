@@ -29,6 +29,7 @@
         "league/iso3166": "^4.3",
         "maatwebsite/excel": "^3.1",
         "mateusjunges/laravel-trackable-jobs": "^1.6",
+        "openspout/openspout": ">=4.23 <4.29",
         "sentry/sentry-laravel": "^4.7",
         "simplestats-io/laravel-client": "dev-main",
         "spatie/laravel-backup": "^8.6",
