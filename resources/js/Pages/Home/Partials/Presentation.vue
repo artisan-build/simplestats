@@ -8,7 +8,7 @@ const iframeReady = ref(false);
 const appEnv = import.meta.env.VITE_APP_ENV;
 
 const onIframeLoad = () => {
-    setTimeout(() => iframeReady.value = true, 1500);
+    setTimeout(() => iframeReady.value = true, 100);
 };
 
 onMounted(() => {
