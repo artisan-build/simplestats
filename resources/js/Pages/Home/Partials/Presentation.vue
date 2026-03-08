@@ -47,7 +47,7 @@ onMounted(() => {
                             style="zoom:0.75;"
                             title="Interactive demo of SimpleStats dashboard"
                             class="demo-iframe absolute top-0 left-0 w-full h-full border-0"
-                            @load="setTimeout(() => iframeReady = true, 1500)"
+                            @load="window.setTimeout(() => iframeReady = true, 1500)"
                         ></iframe>
                     </div>
                 </div>
