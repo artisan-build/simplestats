@@ -144,10 +144,15 @@ class DatabaseSeeder extends Seeder
                 });
             })->create();
 
-        $this->call([
+        $seeders = [
             DataImportSeeder::class,
-            BlogPostSeeder::class,
-        ]);
+        ];
+
+        if (! app()->environment('demo')) {
+            $seeders[] = BlogPostSeeder::class;
+        }
+
+        $this->call($seeders);
 
         // Add extra data for the next 30 days to show activity
         if (! app()->environment('testing')) {

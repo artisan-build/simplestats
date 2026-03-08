@@ -16,7 +16,6 @@ class CustomEventTrackingService
             SimplestatsClient::trackCustomEvent(
                 id: 'get-started-click-'.Str::uuid(),
                 name: 'Get Started Clicked',
-                value: null,
                 user: new Visitor($visitorHash),
             );
         }

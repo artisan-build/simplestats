@@ -14,10 +14,9 @@ it('tracks a custom event and returns success', function () {
 
     SimplestatsClient::shouldHaveReceived('trackCustomEvent')
         ->once()
-        ->withArgs(function (string $id, string $name, ?float $value, $user) {
+        ->withArgs(function (string $id, string $name, $user) {
             return str_starts_with($id, 'get-started-click-')
                 && $name === 'Get Started Clicked'
-                && $value === null
                 && $user->getKey() === 'abc123';
         });
 });
