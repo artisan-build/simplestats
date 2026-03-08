@@ -28,8 +28,27 @@ enum StatsRangePreset: string
             return [
                 'id' => $preset->value,
                 'name' => $preset->title(),
+                'sortWeight' => $preset->sortWeight(),
             ];
         })->values()->toArray();
+    }
+
+    public function sortWeight(): int
+    {
+        return match ($this) {
+            self::TODAY => 100,
+            self::YESTERDAY => 200,
+            self::LAST_7_DAYS => 700,
+            self::LAST_30_DAYS => 3000,
+            self::LAST_12_WEEKS => 8400,
+            self::LAST_6_MONTHS => 18000,
+            self::THIS_MONTH => 18100,
+            self::LAST_MONTH => 18200,
+            self::THIS_YEAR => 36500,
+            self::LAST_YEAR => 36600,
+            self::ALL_TIME => 99998,
+            self::CUSTOM => 99999,
+        };
     }
 
     public function title(): string

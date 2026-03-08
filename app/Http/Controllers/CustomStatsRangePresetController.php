@@ -6,6 +6,7 @@ use App\Enums\StatsRangePreset;
 use App\Http\Requests\CustomStatsRangePresetRequest;
 use App\Models\CustomStatsRangePreset;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -18,22 +19,22 @@ class CustomStatsRangePresetController extends Controller
         );
     }
 
-    public function store(CustomStatsRangePresetRequest $request): JsonResponse
+    public function store(CustomStatsRangePresetRequest $request): RedirectResponse
     {
         $user = $request->user();
 
         if ($user->customStatsRangePresets()->count() >= 10) {
-            return response()->json([
-                'message' => 'You can have a maximum of 10 custom presets.',
-            ], 422);
+            return back()->withErrors([
+                'name' => 'You can have a maximum of 10 custom presets.',
+            ]);
         }
 
-        $preset = $user->customStatsRangePresets()->create($request->validated());
+        $user->customStatsRangePresets()->create($request->validated());
 
-        return response()->json($preset->toOption(), 201);
+        return back();
     }
 
-    public function update(CustomStatsRangePresetRequest $request, CustomStatsRangePreset $customPreset): JsonResponse
+    public function update(CustomStatsRangePresetRequest $request, CustomStatsRangePreset $customPreset): RedirectResponse
     {
         if ($customPreset->user_id !== $request->user()->id) {
             abort(403);
@@ -41,10 +42,10 @@ class CustomStatsRangePresetController extends Controller
 
         $customPreset->update($request->validated());
 
-        return response()->json($customPreset->toOption());
+        return back();
     }
 
-    public function destroy(Request $request, CustomStatsRangePreset $customPreset): JsonResponse
+    public function destroy(Request $request, CustomStatsRangePreset $customPreset): RedirectResponse
     {
         if ($customPreset->user_id !== $request->user()->id) {
             abort(403);
@@ -52,26 +53,21 @@ class CustomStatsRangePresetController extends Controller
 
         $customPreset->delete();
 
-        return response()->json(null, 204);
+        return back();
     }
 
-    public function toggleBuiltin(Request $request): JsonResponse
+    public function updateBuiltinVisibility(Request $request): RedirectResponse
     {
         $request->validate([
-            'preset' => ['required', 'string', Rule::enum(StatsRangePreset::class)],
+            'visible' => ['present', 'array'],
+            'visible.*' => ['string', Rule::enum(StatsRangePreset::class)],
         ]);
 
-        $user = $request->user();
-        $hiddenPresets = $user->settings['hiddenPresets'] ?? [];
+        $allPresets = array_column(StatsRangePreset::cases(), 'value');
+        $hiddenPresets = array_values(array_diff($allPresets, $request->visible));
 
-        if (in_array($request->preset, $hiddenPresets)) {
-            $hiddenPresets = array_values(array_diff($hiddenPresets, [$request->preset]));
-        } else {
-            $hiddenPresets[] = $request->preset;
-        }
+        $request->user()->updateSettings('hiddenPresets', $hiddenPresets);
 
-        $user->updateSettings('hiddenPresets', $hiddenPresets);
-
-        return response()->json(['hiddenPresets' => $hiddenPresets]);
+        return back();
     }
 }

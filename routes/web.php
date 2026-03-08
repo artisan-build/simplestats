@@ -60,7 +60,7 @@ Route::middleware([
     Route::post('stats/hide-read-docs-warning', [StatsController::class, 'hideReadDocsWarning'])->name('stats.hide-read-docs-warning');
 
     Route::resource('custom-presets', CustomStatsRangePresetController::class)->only(['index', 'store', 'update', 'destroy']);
-    Route::post('custom-presets/toggle-builtin', [CustomStatsRangePresetController::class, 'toggleBuiltin'])->name('custom-presets.toggle-builtin');
+    Route::post('custom-presets/builtin-visibility', [CustomStatsRangePresetController::class, 'updateBuiltinVisibility'])->name('custom-presets.builtin-visibility');
 
     // Data Import
     Route::resource('data-import', DataImportController::class)->only(['index', 'store']);

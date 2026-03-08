@@ -47,6 +47,22 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
    - Uses `composer.self-hosted.json` for dependencies
    - Requires: PHP 8.2+, Laravel 11+, PostgreSQL 14+ (recommended) or MySQL 8.0+, Node.js 21.6+
 
+## Laravel Boost
+
+This project uses **Laravel Boost**, an MCP server that auto-generates `CLAUDE.md` from the files in `.ai/guidelines/`.
+
+- **Never edit `CLAUDE.md` directly** — it is auto-generated and will be overwritten.
+- All project guidelines must be added/edited in `.ai/guidelines/` (e.g., `.ai/guidelines/project_guidelines.md`).
+- Laravel Boost provides MCP tools for database queries, Artisan commands, documentation search, tinker, and more — use them.
+
+## Skills
+
+Domain-specific skills are available in `.claude/skills/` and should be activated when working in their domain:
+
+- **`pest-testing`** — Activate when writing or debugging tests, adding assertions, or working with Pest.
+- **`inertia-vue-development`** — Activate when creating/editing Vue pages, forms, or navigation with Inertia.
+- **`tailwindcss-development`** — Activate when adding or modifying styles, working with Tailwind CSS utilities.
+
 ## Performance is Critical
 
 The app must handle **hundreds of thousands of requests** and store massive amounts of data efficiently.
@@ -211,6 +227,10 @@ Jobs include automatic retry logic for fault tolerance.
 ### Helpers
 
 - Prefer Laravel helpers (`Str::`, `Arr::`, `collect()`, etc.) over native PHP functions where a Laravel equivalent exists.
+
+### Confirmation Dialogs
+
+- Never use the browser's native `confirm()` dialog. Always use the `ConfirmationModal` component (`@/Components/ConfirmationModal.vue`) for delete or destructive action confirmations.
 
 ### Imports
 

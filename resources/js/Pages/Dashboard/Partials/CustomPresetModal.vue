@@ -1,10 +1,11 @@
 <script setup>
 import {ref} from 'vue';
 import {router, useForm} from '@inertiajs/vue3';
+import ConfirmationModal from '@/Components/ConfirmationModal.vue';
+import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import DangerButton from '@/Components/DangerButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -39,9 +40,11 @@ const form = useForm({
 });
 
 const editingPreset = ref(null);
+const editingPresetName = ref(null);
 
 const startEditing = (preset) => {
     editingPreset.value = preset.id;
+    editingPresetName.value = preset.name;
     form.name = preset.name;
     form.range_amount = preset.range_amount.toString();
     form.range_type = preset.range_type;
@@ -74,30 +77,37 @@ const savePreset = () => {
     }
 };
 
-const deletePreset = (presetId) => {
-    if (confirm('Are you sure you want to delete this preset?')) {
-        router.delete(route('custom-presets.destroy', presetId), {
-            preserveScroll: true,
-            onSuccess: () => {
-                router.reload();
-            },
-        });
-    }
+const deletingPreset = ref(null);
+
+const confirmDelete = (preset) => {
+    deletingPreset.value = preset;
 };
 
-const toggleBuiltin = (presetId) => {
-    router.post(route('custom-presets.toggle-builtin'), {
-        preset: presetId,
+const deletePreset = () => {
+    router.delete(route('custom-presets.destroy', deletingPreset.value.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            deletingPreset.value = null;
+            router.reload();
+        },
+    });
+};
+
+const visiblePresets = ref(
+    props.allPresets
+        .filter(preset => !props.hiddenPresets.includes(preset.id))
+        .map(preset => preset.id)
+);
+
+const updateBuiltinVisibility = ({value}) => {
+    router.post(route('custom-presets.builtin-visibility'), {
+        visible: value,
     }, {
         preserveScroll: true,
         onSuccess: () => {
             router.reload();
         },
     });
-};
-
-const isHidden = (presetId) => {
-    return props.hiddenPresets.includes(presetId);
 };
 </script>
 
@@ -106,29 +116,17 @@ const isHidden = (presetId) => {
         <template #title>Manage Presets</template>
 
         <template #content>
-            <div class="space-y-6">
+            <div class="space-y-6 pb-12">
                 <!-- Built-in Presets -->
                 <div>
-                    <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Built-in Presets</h3>
-                    <div class="space-y-1">
-                        <div
-                            v-for="preset in allPresets"
-                            :key="preset.id"
-                            class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-dark-700"
-                        >
-                            <span class="text-sm" :class="{'text-gray-400 dark:text-gray-500 line-through': isHidden(preset.id)}">
-                                {{ preset.name }}
-                            </span>
-                            <button
-                                type="button"
-                                class="text-xs px-2 py-1 rounded"
-                                :class="isHidden(preset.id) ? 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-600'"
-                                @click="toggleBuiltin(preset.id)"
-                            >
-                                {{ isHidden(preset.id) ? 'Show' : 'Hide' }}
-                            </button>
-                        </div>
-                    </div>
+                    <InputLabel value="Visible Built-in Presets" class="text-sm font-semibold" />
+                    <SelectInput
+                        v-model="visiblePresets"
+                        :options="allPresets"
+                        :multiple="true"
+                        class="mt-1 block w-full text-sm"
+                        @change="updateBuiltinVisibility"
+                    />
                 </div>
 
                 <hr class="dark:border-dark-600">
@@ -162,7 +160,7 @@ const isHidden = (presetId) => {
                                 <button
                                     type="button"
                                     class="text-xs px-2 py-1 rounded text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                    @click="deletePreset(preset.id)"
+                                    @click="confirmDelete(preset)"
                                 >
                                     Delete
                                 </button>
@@ -173,7 +171,8 @@ const isHidden = (presetId) => {
                     <!-- Create/Edit Form -->
                     <div v-if="customPresets.length < 10 || editingPreset" class="bg-gray-50 dark:bg-dark-700 rounded-lg p-3">
                         <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
-                            {{ editingPreset ? 'Edit Preset' : 'New Preset' }}
+                            <template v-if="editingPreset">Edit Preset <span class="font-bold">{{ editingPresetName }}</span></template>
+                            <template v-else>Add New Preset</template>
                         </h4>
                         <form @submit.prevent="savePreset" class="space-y-3">
                             <div>
@@ -230,4 +229,15 @@ const isHidden = (presetId) => {
             </SecondaryButton>
         </template>
     </DialogModal>
+
+    <ConfirmationModal :show="deletingPreset !== null" @close="deletingPreset = null">
+        <template #title>Delete Preset</template>
+        <template #content>
+            Are you sure you want to delete the preset <span class="font-bold">{{ deletingPreset?.name }}</span>?
+        </template>
+        <template #footer>
+            <SecondaryButton @click="deletingPreset = null">Cancel</SecondaryButton>
+            <DangerButton class="ms-3" @click="deletePreset">Delete</DangerButton>
+        </template>
+    </ConfirmationModal>
 </template>

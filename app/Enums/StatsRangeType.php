@@ -106,6 +106,17 @@ enum StatsRangeType: string
         };
     }
 
+    public function toSortWeight(int $amount): int
+    {
+        return match ($this) {
+            self::HOUR => max(100, (int) ceil($amount / 24) * 100),
+            self::DAY => $amount * 100,
+            self::WEEK => $amount * 800,
+            self::MONTH => $amount * 3100,
+            self::YEAR => $amount * 36500,
+        };
+    }
+
     public function defaultRangeAmount(): int
     {
         return match ($this) {

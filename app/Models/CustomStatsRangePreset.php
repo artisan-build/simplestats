@@ -34,13 +34,14 @@ class CustomStatsRangePreset extends Model
     }
 
     /**
-     * @return array{id: string, name: string}
+     * @return array{id: string, name: string, sortWeight: int}
      */
     public function toOption(): array
     {
         return [
             'id' => 'custom_'.$this->id,
             'name' => $this->name,
+            'sortWeight' => $this->range_type->toSortWeight($this->range_amount),
         ];
     }
 

@@ -70,13 +70,12 @@ class StatsController extends Controller
         $data = [
             'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
-            'presets' => array_merge(
-                collect(StatsRangePreset::toOptions())
-                    ->reject(fn ($p) => in_array($p['id'], $hiddenPresets))
-                    ->values()
-                    ->toArray(),
-                $user->customStatsRangePresets->map->toOption()->toArray(),
-            ),
+            'presets' => collect(StatsRangePreset::toOptions())
+                ->reject(fn ($p) => in_array($p['id'], $hiddenPresets))
+                ->merge($user->customStatsRangePresets->map->toOption())
+                ->sortBy('sortWeight')
+                ->values()
+                ->toArray(),
             'allPresets' => StatsRangePreset::toOptions(),
             'hiddenPresets' => $hiddenPresets,
             'customPresets' => $user->customStatsRangePresets,

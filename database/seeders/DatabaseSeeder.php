@@ -150,7 +150,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Add extra data for the next 30 days to show activity
-        $this->seedFutureData();
+        if (! app()->environment('testing')) {
+            $this->seedFutureData();
+        }
     }
 
     protected function changeEnv($data = [])
