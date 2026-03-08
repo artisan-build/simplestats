@@ -7,6 +7,10 @@ const iframeReady = ref(false);
 
 const appEnv = import.meta.env.VITE_APP_ENV;
 
+const onIframeLoad = () => {
+    setTimeout(() => iframeReady.value = true, 1500);
+};
+
 onMounted(() => {
     setTimeout(() => {
         isVisible.value = true;
@@ -47,7 +51,7 @@ onMounted(() => {
                             style="zoom:0.75;"
                             title="Interactive demo of SimpleStats dashboard"
                             class="demo-iframe absolute top-0 left-0 w-full h-full border-0"
-                            @load="window.setTimeout(() => iframeReady = true, 1500)"
+                            @load="onIframeLoad"
                         ></iframe>
                     </div>
                 </div>
