@@ -24,7 +24,7 @@ const questions = ref([
     {
         'id': 'custom-events',
         'title': 'Do you support custom events?',
-        'answer': 'Not yet, but it\'s on our roadmap!',
+        'answer': 'Yes! You can track custom events to measure any activity that matters to your application. Check out our <a href="/docs/how-to-track-a-custom-event.html" target="_blank" class="simpleLink">documentation</a> to get started.',
         'active': false,
     },
 ]);
