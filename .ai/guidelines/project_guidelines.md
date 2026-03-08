@@ -127,6 +127,7 @@ Rate limits are defined per plan in `config/spark.php` under `ApiRateLimit`:
 | Plan       | Rate Limit |
 |------------|------------|
 | Free       | 200/min    |
+| Starter    | 500/min    |
 | Plus       | 1,000/min  |
 | Business   | 2,500/min  |
 | Enterprise | 5,000/min  |

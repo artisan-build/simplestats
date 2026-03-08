@@ -126,11 +126,30 @@ return [
                     'archived' => true,
                 ],
                 [
+                    'name' => SubscriptionService::PLAN_STARTER,
+                    'short_description' => 'Perfect for small projects getting off the ground.',
+                    'monthly_id' => env('SPARK_STARTER_MONTHLY_PLAN'),
+                    'yearly_id' => env('SPARK_STARTER_YEARLY_PLAN'),
+                    'features' => [
+                        Project::class => '10 Projects',
+                        'Events' => Number::abbreviate(100_000).' Monthly Events',
+                        'MultiCurrency' => 'Multi Currency Support',
+                        DataImport::class => 'Data Import',
+                    ],
+                    'options' => [
+                        Project::class => 10,
+                        'Events' => 100_000,
+                        'ApiRateLimit' => 500,
+                        'MultiCurrency' => true,
+                        DataImport::class => true,
+                    ],
+                    'archived' => false,
+                ],
+                [
                     'name' => SubscriptionService::PLAN_PLUS,
                     'short_description' => 'For marketers with strong ambitions and growing needs.',
                     'monthly_id' => env('SPARK_PLUS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_PLUS_YEARLY_PLAN'),
-                    'yearly_incentive' => 'Save 13%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
                         'Events' => Number::abbreviate(200_000).' Monthly Events',
@@ -145,13 +164,13 @@ return [
                         DataImport::class => true,
                     ],
                     'archived' => false,
+                    'promoted' => true,
                 ],
                 [
                     'name' => SubscriptionService::PLAN_BUSINESS,
                     'short_description' => 'Scale your tracking and stay on top of growing activity.',
                     'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
-                    'yearly_incentive' => 'Save 15%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
                         'Events' => Number::abbreviate(500_000).' Monthly Events',
@@ -166,14 +185,12 @@ return [
                         DataImport::class => true,
                     ],
                     'archived' => false,
-                    'promoted' => true,
                 ],
                 [
                     'name' => SubscriptionService::PLAN_ENTERPRISE,
                     'short_description' => 'Full-scale analytics without limits for large teams.',
                     'monthly_id' => env('SPARK_ENTERPRISE_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_ENTERPRISE_YEARLY_PLAN'),
-                    'yearly_incentive' => 'Save 16%',
                     'features' => [
                         Project::class => 'Unlimited Projects',
                         'Events' => Number::abbreviate(10_000_000).' Monthly Events',

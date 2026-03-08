@@ -12,6 +12,8 @@ class SubscriptionService
 {
     const PLAN_FREE = 'Free';
 
+    const PLAN_STARTER = 'Starter';
+
     const PLAN_PLUS = 'Plus';
 
     const PLAN_BUSINESS = 'Business';
@@ -39,7 +41,10 @@ class SubscriptionService
                 'price_yearly' => $planPrices[$item['yearly_id']]->totals['subtotal'] ?? 0,
                 'tax_mode_monthly' => $planPrices[$item['monthly_id']]->price['tax_mode'] ?? '',
                 'tax_mode_yearly' => $planPrices[$item['yearly_id']]->price['tax_mode'] ?? '',
-                'yearly_incentive' => $item['yearly_incentive'] ?? 0,
+                'yearly_incentive' => $this->calculateYearlyIncentive(
+                    $planPrices[$item['monthly_id']]->totals['subtotal'] ?? 0,
+                    $planPrices[$item['yearly_id']]->totals['subtotal'] ?? 0,
+                ),
                 // do not show/expose FQN to FE...
                 'features' => collect($item['features'])->mapWithKeys(fn ($item, $key) => [class_basename($key) => $item]),
                 'options' => collect($item['options'])->mapWithKeys(fn ($item, $key) => [class_basename($key) => $item]),
@@ -59,6 +64,18 @@ class SubscriptionService
                 'customer_ip_address' => request()->ip(),
             ])->mapWithKeys(fn ($item) => [$item->price['id'] => $item]);
         });
+    }
+
+    private function calculateYearlyIncentive(int $monthlyPrice, int $yearlyPrice): ?string
+    {
+        if ($monthlyPrice <= 0 || $yearlyPrice <= 0) {
+            return null;
+        }
+
+        $annualFromMonthly = $monthlyPrice * 12;
+        $savings = (int) round(($annualFromMonthly - $yearlyPrice) / $annualFromMonthly * 100);
+
+        return $savings > 0 ? "Save {$savings}%" : null;
     }
 
     public function getPlanAlarm(Team $team): array

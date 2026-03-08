@@ -56,19 +56,18 @@ const getPlanPrice = (amount, discount) => {
                 </div>
             </div>
 
-            <!-- the JIT Compiler from tailwindcss cant recognize things like this "md:grid-cols-'+plans.length/2+'" so we need to put the classes here manually so that the exists --->
-            <div class="hidden md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
-            <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+plans.length/2+' lg:grid-cols-'+plans.length">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-x-8 gap-y-10 lg:gap-y-20 px-6">
                 <div v-for="plan in plans"
-                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-dark-800"
-                     :class="plan.promoted ? 'bg-gray-800 dark:bg-dark-800' : ''"
+                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 dark:hover:bg-dark-800"
+                     :class="plan.promoted ? 'bg-gray-800 hover:bg-gray-800 dark:bg-dark-800' : ''"
                 >
-                    <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
+                    <div class="relative flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ plan.name }}</div>
-                        <div v-if="selectedInterval === 'yearly' && plan.yearly_incentive !== 0">
-                            <div class="text-sm bg-green-400 px-2 py-1 rounded text-gray-800">
-                                {{ plan.yearly_incentive }}
-                            </div>
+                        <div
+                            v-if="selectedInterval === 'yearly' && plan.yearly_incentive !== null"
+                            class="absolute -top-9 text-sm bg-green-400 px-2 py-1 rounded text-gray-800"
+                        >
+                            {{ plan.yearly_incentive }}
                         </div>
                     </div>
 
