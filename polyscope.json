@@ -1,0 +1,9 @@
+{
+    "scripts": {
+        "setup": ["herd link", "herd secure", "npm install && npm run dev"],
+        "archive": ["herd unsecure", "herd unlink", "npm run cleanup"]
+    },
+    "preview": {
+        "url": "https://{{folder}}.test"
+    }
+}
