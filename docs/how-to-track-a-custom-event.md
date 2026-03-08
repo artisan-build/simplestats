@@ -3,7 +3,7 @@
 Custom events let you track any user action in your application, such as button clicks, plan upgrades, feature usage, or anything else that matters to your business.
 
 ::: info
-Custom event tracking requires **version 3.1+** of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client).
+Custom event tracking requires **version 3.3+** of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client).
 :::
 
 ## Enabling Custom Events
