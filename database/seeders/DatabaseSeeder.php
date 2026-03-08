@@ -146,6 +146,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             DataImportSeeder::class,
+            BlogPostSeeder::class,
         ]);
 
         // Add extra data for the next 30 days to show activity

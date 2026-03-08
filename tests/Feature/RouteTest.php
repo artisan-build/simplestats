@@ -7,6 +7,8 @@ use function Spatie\RouteTesting\routeTesting;
 
 $exclude = [
     '_ignition/*',
+    'admin',
+    'admin/*',
     'email/*',
     'impersonate/*',
     'livewire/*',
@@ -18,6 +20,7 @@ $exclude = [
     'spark/*',
     'billing/*',
     'projects/{project}/*', // token-view & token-regenerate routes
+    'blog/{slug}', // requires a real slug, tested separately in BlogTest
 ];
 
 routeTesting('all GET routes')

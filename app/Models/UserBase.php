@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Jobs\QueuedVerifyEmailJob;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +22,7 @@ use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
-abstract class UserBase extends Authenticatable implements MustVerifyEmail
+abstract class UserBase extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     use HasApiTokens;
     use HasConnectedAccounts;
@@ -57,7 +59,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
         'settings' => 'array',
     ];
 
-    const  SESSION_SETTINGS_KEY = 'temp_user_settings_';
+    const SESSION_SETTINGS_KEY = 'temp_user_settings_';
 
     private function useSessionSettings(): bool
     {
@@ -134,6 +136,11 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return $this->is_admin == 1;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdmin();
     }
 
     public function updateSettings($key, $value): void
