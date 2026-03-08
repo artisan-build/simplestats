@@ -36,7 +36,7 @@ class StatsController extends Controller
         if (! $hasFilterRequest && ! empty($userFilterSettings)) {
             $request = new StatsFilterRequest($userFilterSettings);
         } elseif ($request->has('preset') && $request->preset !== StatsRangePreset::CUSTOM->value) {
-            // on preset, we do not save the range
+            // on preset (built-in or custom), we do not save the range
             $user->updateSettings('statsFilters.'.$user->current_team_id, $request->except([
                 'rangeStart',
                 'rangeAmount',
@@ -65,10 +65,21 @@ class StatsController extends Controller
             ));
         }
 
+        $hiddenPresets = $user->settings['hiddenPresets'] ?? [];
+
         $data = [
             'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
-            'presets' => StatsRangePreset::toOptions(),
+            'presets' => array_merge(
+                collect(StatsRangePreset::toOptions())
+                    ->reject(fn ($p) => in_array($p['id'], $hiddenPresets))
+                    ->values()
+                    ->toArray(),
+                $user->customStatsRangePresets->map->toOption()->toArray(),
+            ),
+            'allPresets' => StatsRangePreset::toOptions(),
+            'hiddenPresets' => $hiddenPresets,
+            'customPresets' => $user->customStatsRangePresets,
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesCamel(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),

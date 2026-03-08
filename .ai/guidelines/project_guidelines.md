@@ -206,6 +206,16 @@ Jobs include automatic retry logic for fault tolerance.
 - Visitor hashes are anonymized (daily salt rotation)
 - GDPR-compliant by design
 
+## Coding Conventions
+
+### Helpers
+
+- Prefer Laravel helpers (`Str::`, `Arr::`, `collect()`, etc.) over native PHP functions where a Laravel equivalent exists.
+
+### Imports
+
+- Always use `use` imports at the top of the file instead of inline fully-qualified class names (e.g., `use App\Models\User;` instead of `\App\Models\User::query()`).
+
 ## Development Guidelines
 
 ### Git Workflow

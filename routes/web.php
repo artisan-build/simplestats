@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CurrentTeamController;
+use App\Http\Controllers\CustomStatsRangePresetController;
 use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
@@ -57,6 +58,9 @@ Route::middleware([
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
     Route::post('stats/hide-read-docs-warning', [StatsController::class, 'hideReadDocsWarning'])->name('stats.hide-read-docs-warning');
+
+    Route::resource('custom-presets', CustomStatsRangePresetController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('custom-presets/toggle-builtin', [CustomStatsRangePresetController::class, 'toggleBuiltin'])->name('custom-presets.toggle-builtin');
 
     // Data Import
     Route::resource('data-import', DataImportController::class)->only(['index', 'store']);

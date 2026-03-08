@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ComparisonType;
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
+use App\Models\CustomStatsRangePreset;
 use App\Models\Project;
 use App\Models\StatsCustomEventName;
 use App\Models\StatsDeviceBrowser;
@@ -23,6 +24,7 @@ use App\Models\StatsTrackTerm;
 use App\Rules\ValidTeamModel;
 use App\Services\StatsService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
@@ -161,7 +163,23 @@ class StatsFilterRequest extends FormRequest
             'preset' => [
                 'sometimes',
                 'string',
-                Rule::enum(StatsRangePreset::class),
+                function ($attribute, $value, $fail) {
+                    if (StatsRangePreset::tryFrom($value) !== null) {
+                        return;
+                    }
+
+                    if (Str::startsWith($value, 'custom_')) {
+                        $exists = CustomStatsRangePreset::where('id', (int) Str::after($value, 'custom_'))
+                            ->where('user_id', $this->user()->id)
+                            ->exists();
+
+                        if ($exists) {
+                            return;
+                        }
+                    }
+
+                    $fail('The selected preset is invalid.');
+                },
             ],
         ];
     }

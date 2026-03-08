@@ -5,8 +5,10 @@ namespace App\DTOs;
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
+use App\Models\CustomStatsRangePreset;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Str;
 
 class StatsFilterDto
 {
@@ -21,6 +23,7 @@ class StatsFilterDto
         public CarbonInterface $rangeStart,
         public string $comparison,
         public ?StatsRangePreset $preset = null,
+        public ?int $customPresetId = null,
         public int $trackReferer = 0,
         public int $trackSource = 0,
         public int $trackMedium = 0,
@@ -40,7 +43,13 @@ class StatsFilterDto
 
     public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
     {
-        if ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
+        $customPresetId = null;
+
+        if ($request->preset && Str::startsWith($request->preset, 'custom_')) {
+            $customPresetId = (int) Str::after($request->preset, 'custom_');
+            $customPreset = CustomStatsRangePreset::findOrFail($customPresetId);
+            $request->merge($customPreset->toRange());
+        } elseif ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
             $request->merge(StatsRangePreset::from($request->preset)->range($request->projectId));
         } elseif (empty($_GET)) { // we use $_GET here cause request may be manipulated by request class...
             $request->merge([
@@ -65,7 +74,10 @@ class StatsFilterDto
             rangeType: $rangeType,
             rangeStart: $rangeStart,
             comparison: $request->comparison ?? '0',
-            preset: $request->preset ? StatsRangePreset::from($request->preset) : null,
+            preset: ($request->preset && ! Str::startsWith($request->preset, 'custom_'))
+                ? StatsRangePreset::tryFrom($request->preset)
+                : null,
+            customPresetId: $customPresetId,
             trackReferer: $request->trackReferer ?? 0,
             trackSource: $request->trackSource ?? 0,
             trackMedium: $request->trackMedium ?? 0,

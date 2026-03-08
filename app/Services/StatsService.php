@@ -157,7 +157,11 @@ class StatsService
     {
         $formatted = collect((array) $filters)->merge([
             'rangeStart' => $filters->rangeStart->format('Y-m-d'),
-        ])->filter()->toArray(); //remove 0 values
+        ])->except('customPresetId')->filter()->toArray(); //remove 0 values
+
+        if ($filters->customPresetId) {
+            $formatted['preset'] = 'custom_'.$filters->customPresetId;
+        }
 
         // project must have a default value...
         if (! isset($formatted['projectId'])) {
