@@ -80,8 +80,8 @@ YOUR ANSWER HERE`;
             <div class="hidden md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4"></div>
             <div class="grid gap-x-8  grid gap-y-10 lg:gap-y-20 px-6" :class="'md:grid-cols-'+licenses.length/2+' lg:grid-cols-'+licenses.length">
                 <div v-for="license in licenses"
-                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg dark:hover:bg-dark-800"
-                     :class="license.promoted ? 'bg-gray-800 dark:bg-dark-800' : ''"
+                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 dark:hover:bg-dark-800"
+                     :class="license.promoted ? 'bg-gray-800 hover:bg-gray-800 dark:bg-dark-800' : ''"
                 >
                     <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
                         <div>{{ license.name }}</div>

@@ -107,7 +107,7 @@ return [
                 [
                     //free plan must be the first in the array
                     'name' => SubscriptionService::PLAN_FREE,
-                    'short_description' => 'Get started with simple analytics. No card required.',
+                    'short_description' => 'Simple analytics, no card required.',
                     'monthly_id' => 0,
                     'yearly_id' => 0,
                     'features' => [
@@ -127,7 +127,7 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_STARTER,
-                    'short_description' => 'Perfect for small projects getting off the ground.',
+                    'short_description' => 'Great for smaller projects.',
                     'monthly_id' => env('SPARK_STARTER_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_STARTER_YEARLY_PLAN'),
                     'features' => [
@@ -147,7 +147,7 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_PLUS,
-                    'short_description' => 'For marketers with strong ambitions and growing needs.',
+                    'short_description' => 'For ambitious, growing projects.',
                     'monthly_id' => env('SPARK_PLUS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_PLUS_YEARLY_PLAN'),
                     'features' => [
@@ -168,7 +168,7 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_BUSINESS,
-                    'short_description' => 'Scale your tracking and stay on top of growing activity.',
+                    'short_description' => 'High-volume tracking at scale.',
                     'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
                     'features' => [
@@ -188,7 +188,7 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_ENTERPRISE,
-                    'short_description' => 'Full-scale analytics without limits for large teams.',
+                    'short_description' => 'Analytics without any limits.',
                     'monthly_id' => env('SPARK_ENTERPRISE_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_ENTERPRISE_YEARLY_PLAN'),
                     'features' => [
