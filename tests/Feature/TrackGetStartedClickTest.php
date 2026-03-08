@@ -2,14 +2,15 @@
 
 use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 
-it('tracks a custom event and redirects to register', function () {
+it('tracks a custom event and returns success', function () {
     SimplestatsClient::spy();
 
     $response = $this
         ->withSession(['simplestats.visitor_hash' => 'abc123'])
         ->post(route('tracking.get-started-click'));
 
-    $response->assertRedirectToRoute('register');
+    $response->assertOk()
+        ->assertJson(['tracked' => true]);
 
     SimplestatsClient::shouldHaveReceived('trackCustomEvent')
         ->once()
@@ -21,12 +22,13 @@ it('tracks a custom event and redirects to register', function () {
         });
 });
 
-it('redirects to register without tracking when no visitor hash exists', function () {
+it('returns success without tracking when no visitor hash exists', function () {
     SimplestatsClient::spy();
 
     $response = $this->post(route('tracking.get-started-click'));
 
-    $response->assertRedirectToRoute('register');
+    $response->assertOk()
+        ->assertJson(['tracked' => true]);
 
     SimplestatsClient::shouldNotHaveReceived('trackCustomEvent');
 });
