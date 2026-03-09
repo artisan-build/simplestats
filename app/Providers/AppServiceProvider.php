@@ -13,6 +13,7 @@ use App\PulseUsers;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -30,6 +31,7 @@ use Spatie\Health\Checks\Checks\RedisMemoryUsageCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Spatie\Health\Facades\Health;
+use Spatie\OgImage\Facades\OgImage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -85,6 +87,14 @@ class AppServiceProvider extends ServiceProvider
         );
 
         Vite::usePrefetchStrategy('aggressive');
+
+        OgImage::fallbackUsing(function (Request $request) {
+            return view('og-image.fallback', [
+                'title' => config('app.name'),
+                'tagline' => config('app.tagline', 'The missing analytics tool for Laravel applications'),
+                'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
+            ]);
+        });
 
         Gate::define('viewPulse', function (User $user) {
             return $user->isAdmin();

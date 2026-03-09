@@ -8,7 +8,7 @@ use App\Models\DataImport;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Junges\TrackableJobs\Models\TrackedJob;
+use Junges\TrackableJobs\Enums\TrackedJobStatus;
 
 class DataImportSeeder extends Seeder
 {
@@ -32,7 +32,7 @@ class DataImportSeeder extends Seeder
             'created_at' => now()->subHours(10),
         ])->trackedJob()->create([
             'name' => ProcessDataImportJob::class,
-            'status' => TrackedJob::STATUS_FINISHED,
+            'status' => TrackedJobStatus::Finished->value,
             'started_at' => now()->subHours(10),
             'finished_at' => now()->subHours(8),
         ]);
@@ -48,7 +48,7 @@ class DataImportSeeder extends Seeder
             'created_at' => now()->subHours(7),
         ])->trackedJob()->create([
             'name' => ProcessDataImportJob::class,
-            'status' => TrackedJob::STATUS_FAILED,
+            'status' => TrackedJobStatus::Failed->value,
             'started_at' => now()->subHours(7),
             'finished_at' => now()->subHours(6),
         ]);
@@ -64,7 +64,7 @@ class DataImportSeeder extends Seeder
             'created_at' => now()->subHours(5),
         ])->trackedJob()->create([
             'name' => ProcessDataImportJob::class,
-            'status' => TrackedJob::STATUS_STARTED,
+            'status' => TrackedJobStatus::Started->value,
             'started_at' => now()->subHours(5),
         ]);
     }

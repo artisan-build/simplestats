@@ -241,7 +241,7 @@ const showPresetModal = ref(false);
                 </div>
             </form>
         </div>
-        <div v-if="isStatsGroupSet()" class="w-full bg-indigo-300 dark:bg-indigo-600 dark:text-dark-800 mt-3 p-1.5 rounded-lg">
+        <div v-if="isStatsGroupSet()" class="w-full bg-indigo-300 dark:bg-indigo-600 dark:text-dark-300 mt-3 p-1.5 rounded-lg">
             <div class="flex flex-wrap gap-2 items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />

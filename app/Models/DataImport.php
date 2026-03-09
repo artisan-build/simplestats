@@ -18,6 +18,7 @@ class DataImport extends Model
 
     protected $casts = [
         'type' => DataImportType::class,
+        'rolled_back_at' => 'datetime',
     ];
 
     protected $appends = [

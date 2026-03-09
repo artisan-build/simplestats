@@ -42,7 +42,7 @@ class BlogPostResource extends Resource
                             ->unique(ignoreRecord: true),
                         Forms\Components\Select::make('user_id')
                             ->label('Author')
-                            ->relationship('author', 'name')
+                            ->relationship('author', 'name', fn ($query) => $query->where('is_admin', 1))
                             ->searchable()
                             ->preload()
                             ->required()

@@ -46,7 +46,7 @@ const confirmDataImportCreation = () => {
 };
 
 const currentImportNotFinishedYet = computed(() => {
-    return props.dataImports.total > 0 && props.dataImports.data[0].tracked_job.finished_at === null;
+    return props.dataImports.total > 0 && !props.dataImports.data[0].tracked_job?.finished_at;
 });
 
 </script>

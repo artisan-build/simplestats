@@ -21,12 +21,13 @@ $exclude = [
     'billing/*',
     'projects/{project}/*', // token-view & token-regenerate routes
     'blog/{slug}', // requires a real slug, tested separately in BlogTest
+    'og-image/*', // requires a generated og-image filename
 ];
 
 routeTesting('all GET routes')
     ->exclude($exclude)
     ->setUp(function (string $method, string $uri) {
-        //if ($uri !== 'user/confirm-password') return; // only for tests
+        // if ($uri !== 'user/confirm-password') return; // only for tests
 
         $route = app('router')->getRoutes()->match(request()->create($uri, $method));
 

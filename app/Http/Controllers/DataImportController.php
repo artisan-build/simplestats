@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use Junges\TrackableJobs\Enums\TrackedJobStatus;
 use Junges\TrackableJobs\Models\TrackedJob;
 
 class DataImportController extends Controller
@@ -37,7 +38,7 @@ class DataImportController extends Controller
         if ($items->isNotEmpty() && ! $items->first()->getRelation('trackedJob')) {
             TrackedJob::unguarded(function () use ($items) {
                 $items->first()->setRelation('trackedJob', new TrackedJob([
-                    'status' => 'unknown',
+                    'status' => TrackedJobStatus::Created,
                     'created_at' => $items->first()->created_at,
                 ]));
             });
@@ -96,9 +97,9 @@ class DataImportController extends Controller
 
         Cache::put('cancel_data_import_'.$dataImport->id, true);
 
-        // set rough defaults (the job is actually canceld in the queue)
+        // set rough defaults (the job is actually canceled in the queue)
         $dataImport->trackedJob->update([
-            'status' => TrackedJob::STATUS_FAILED,
+            'status' => TrackedJobStatus::Failed->value,
             'finished_at' => now(),
         ]);
 
@@ -114,9 +115,11 @@ class DataImportController extends Controller
         $model::whereBetween('id', [$dataImport->id_from, $dataImport->id_to])->delete();
 
         $dataImport->trackedJob->update([
-            'status' => 'rolled back',
+            'status' => TrackedJobStatus::Finished->value,
             'finished_at' => now(),
         ]);
+
+        $dataImport->update(['rolled_back_at' => now()]);
 
         return redirect()->route('data-import.index')->banner('Import rolled back');
     }

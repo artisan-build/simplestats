@@ -64,7 +64,8 @@ class StatsAggregationsService
         // for track not but for referer we also want to know the Direct / Unknown
         $typeIdFallback = (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
 
-        $trackablePerson = $this->getTrackablePersonByProject(Project::find($filters->projectId));
+        $project = Project::with('team:id,timezone')->find($filters->projectId);
+        $trackablePerson = $this->getTrackablePersonByProject($project);
 
         if ($statsType === 'customEventName') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
@@ -79,7 +80,8 @@ class StatsAggregationsService
         $filterConditions = $this->getFilterConditions($filters);
 
         if ($trackablePerson === TrackablePerson::USER) {
-            $dauDates = $filters->rangeType->getDAUDates(Carbon::parse($filterConditions['endDateStart']));
+            $tz = $project?->team?->timezone ?? config('app.timezone');
+            $dauDates = $filters->rangeType->getDAUDates(Carbon::parse($filterConditions['endDateStart'], $tz));
 
             if (empty($dauDates)) {
                 $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];
@@ -91,7 +93,7 @@ class StatsAggregationsService
         }
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
-        //echo nl2br($sql);die;
+        // echo nl2br($sql);die;
 
         $dataArray = array_map(function ($item) {
             if (isset($item['net'])) {
@@ -335,7 +337,7 @@ class StatsAggregationsService
         );
 
         $sql = strtr($builder->build(), $this->formatFilter($filterConditions));
-        //echo nl2br($sql);die;
+        // echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
         $this->applyContinuousLTAggregation($dataArray);

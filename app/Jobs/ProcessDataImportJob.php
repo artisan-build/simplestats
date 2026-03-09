@@ -20,15 +20,13 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Junges\TrackableJobs\Concerns\Trackable;
+use Junges\TrackableJobs\TrackableJob;
 use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
-class ProcessDataImportJob implements ShouldQueue
+class ProcessDataImportJob extends TrackableJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable {
-        __construct as __baseConstruct;
-    }
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     // do not retry on failure
     public int $tries = 1;
@@ -37,12 +35,22 @@ class ProcessDataImportJob implements ShouldQueue
 
     public string $filepath;
 
-    public function __construct(DataImport $dataImport, string $filepath)
+    public function __construct(public DataImport $dataImport, string $filepath)
     {
         $this->onQueue('low');
 
-        $this->__baseConstruct($dataImport);
+        parent::__construct();
         $this->filepath = $filepath;
+    }
+
+    public function trackableKey(): ?string
+    {
+        return (string) $this->dataImport->getKey();
+    }
+
+    public function trackableType(): ?string
+    {
+        return $this->dataImport->getMorphClass();
     }
 
     /**
@@ -51,7 +59,7 @@ class ProcessDataImportJob implements ShouldQueue
     public function handle(): void
     {
         // make auth stuff work in this dispatched/context-less job
-        auth()->setUser($this->model->createdBy);
+        auth()->setUser($this->dataImport->createdBy);
 
         // ppl mostly import data without UTC, so to make validation work, we need to apply timezone directly...
         AppHelper::ensureTeamTimezone();
@@ -60,21 +68,21 @@ class ProcessDataImportJob implements ShouldQueue
         // and as we do not retry those, there is no need to also store it in the failed jobs table.
         config()->set('queue.failed.driver', null);
 
-        $importer = $this->model->type->getImporter($this->model);
+        $importer = $this->dataImport->type->getImporter($this->dataImport);
 
         try {
             Excel::import($importer, $this->filepath);
             $this->processPostImport($importer);
-            Mail::to($this->model->createdBy->email)->queue(new DataImportCompleted($this->model));
+            Mail::to($this->dataImport->createdBy->email)->queue(new DataImportCompleted($this->dataImport));
         } catch (Throwable $e) {
             $this->processPostImport($importer);
-            $this->model->trackedJob->output = $e->getMessage();
+            $this->trackedJob->setOutput(['message' => $e->getMessage()]);
 
             // higher exceptions must be listed before Throwable, else it's always true
             match (true) {
-                $e instanceof ImportCanceledException => Mail::to($this->model->createdBy->email)->queue(new DataImportCanceled($this->model)),
-                $e instanceof ValidationException => Mail::to($this->model->createdBy->email)->queue(new DataImportFailed($this->model)),
-                $e instanceof Throwable => Mail::to($this->model->createdBy->email)->queue(new DataImportError($this->model)),
+                $e instanceof ImportCanceledException => Mail::to($this->dataImport->createdBy->email)->queue(new DataImportCanceled($this->dataImport)),
+                $e instanceof ValidationException => Mail::to($this->dataImport->createdBy->email)->queue(new DataImportFailed($this->dataImport)),
+                $e instanceof Throwable => Mail::to($this->dataImport->createdBy->email)->queue(new DataImportError($this->dataImport)),
             };
 
             throw $e;
@@ -89,7 +97,7 @@ class ProcessDataImportJob implements ShouldQueue
     {
         $importer->updateProgress();
 
-        $this->model->trackedJob->finished_at = now();
+        $this->trackedJob->finished_at = now();
     }
 
     private function invalidateStatsAggregations(BaseStatsImport $importer): void
@@ -99,8 +107,8 @@ class ProcessDataImportJob implements ShouldQueue
         $modelClass::unguard();
         // we fake a stats model, cause we need it as the parameter here...
         $stat = new $modelClass([
-            'team_id' => $this->model->team_id,
-            'project_id' => $this->model->project_id,
+            'team_id' => $this->dataImport->team_id,
+            'project_id' => $this->dataImport->project_id,
             'time' => $importer->getLowestImportedDate(),
         ]);
         $modelClass::reguard();

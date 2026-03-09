@@ -20,7 +20,7 @@ const props = defineProps({
 let intervalId = null;
 
 const checkAndReload = () => {
-    if (props.dataImports.total > 0 && !props.dataImports.data[0].tracked_job.finished_at) {
+    if (props.dataImports.total > 0 && !props.dataImports.data[0].tracked_job?.finished_at) {
         if (intervalId === null) { // Stelle sicher, dass der Interval nicht mehrfach gesetzt wird
             intervalId = setInterval(function () {
                 router.reload({ preserveState: true, preserveScroll: true });
@@ -90,14 +90,14 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
                                     <th class="pb-2 pt-3 px-3">To Id</th>
                                     <th class="pb-2 pt-3 px-3">Action</th>
                                 </tr>
-                                <tr v-if="dataImports.data[0].tracked_job.status === 'failed'">
+                                <tr v-if="dataImports.data[0].tracked_job?.status === 'failed'">
                                     <td colspan="8" class="border-t">
                                         <WarningBox>
                                             Something went wrong with your latest Data Import, please check your mails for more details!
                                         </WarningBox>
                                     </td>
                                 </tr>
-                                <tr v-else-if="! dataImports.data[0].tracked_job.finished_at">
+                                <tr v-else-if="! dataImports.data[0].tracked_job?.finished_at">
                                     <td colspan="8" class="border-t">
                                         <div class="h-1 bg-indigo-400 transition-all" :style="`width: ${dataImports.data[0].rows_progress}%;`"></div>
                                     </td>

@@ -1,6 +1,6 @@
 @component('mail::message')
     Your <i>{{ $dataImport->type->value }}</i> data import failed with the following message:<br>
-    <span style="color: #dc2626; font-style: italic; font-weight: 600;">{{ $dataImport->trackedJob->output }}</span><br>
+    <span style="color: #dc2626; font-style: italic; font-weight: 600;">{{ $dataImport->trackedJob->output['message'] ?? '' }}</span><br>
     <br>
     Please fix the issues and start a new import!<br>
     @if ($dataImport->rows_imported > 0)

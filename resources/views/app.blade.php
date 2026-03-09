@@ -13,9 +13,18 @@
 
         <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - The missing analytics tool for Laravel applications">
         <meta property="og:description" content="A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
-        <meta property="og:image" content="{{ asset('/images/screenshot.png') }}">
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
+
+        @if ($page['component'] === 'Blog/Show')
+            <x-og-image view="og-image.blog-post" :data="[
+                'title' => $page['props']['post']['title'],
+                'author' => $page['props']['post']['author']['name'] ?? '',
+                'tags' => $page['props']['post']['tags'] ?? [],
+                'avatarUrl' => $page['props']['post']['author']['profile_photo_url'] ?? '',
+                'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
+            ]" />
+        @endif
 
         {{-- change this also in docs vitepress config.js --}}
         <link rel="canonical" href="https://simplestats.io{{ request()->getPathInfo() }}">

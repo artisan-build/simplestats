@@ -41,11 +41,25 @@ const confirmDataImportAction = (action) => {
 
 const getTrackedJobStatusOptions = (trackedJob) => {
     const statusOptions = {
-        icon: '',
-        text: trackedJob.status,
-        color: '',
+        icon: QuestionMarkCircleIcon,
+        text: 'unknown',
+        color: 'text-gray-600',
         svgClass: '',
     };
+
+    if (!trackedJob) {
+        return statusOptions;
+    }
+
+    statusOptions.text = trackedJob.status;
+
+    // Check rolled_back_at on the dataImport itself
+    if (props.dataImport.rolled_back_at) {
+        statusOptions.icon = ClockIcon;
+        statusOptions.text = 'rolled back';
+        statusOptions.color = 'text-orange-600';
+        return statusOptions;
+    }
 
     switch (trackedJob.status) {
         case 'queued':
@@ -65,14 +79,6 @@ const getTrackedJobStatusOptions = (trackedJob) => {
             statusOptions.icon = XCircleIcon;
             statusOptions.color = 'text-red-600';
             break;
-        case 'rolled back':
-            statusOptions.icon = ClockIcon;
-            statusOptions.color = 'text-orange-600';
-            break;
-        case 'unknown':
-            statusOptions.icon = QuestionMarkCircleIcon;
-            statusOptions.color = 'text-gray-600';
-            break;
     }
 
     return statusOptions;
@@ -89,19 +95,19 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                     class="inline-block h-6 w-6" :is="getTrackedJobStatusOptions(dataImport.tracked_job).icon"
                     v-tooltip="getTrackedJobStatusOptions(dataImport.tracked_job).text"
                 />
-                <span v-if="! dataImport.tracked_job.finished_at" class="block">
+                <span v-if="! dataImport.tracked_job?.finished_at" class="block">
                     {{ dataImport.rows_progress }}%
                 </span>
             </div>
             <div>
                 <div class="text-sm">
-                    <span v-if="dataImport.tracked_job.finished_at">
+                    <span v-if="dataImport.tracked_job?.finished_at">
                         {{ new Date(dataImport.tracked_job.finished_at).toLocaleString() }}
                     </span>
-                    <span v-else-if="dataImport.tracked_job.started_at">
+                    <span v-else-if="dataImport.tracked_job?.started_at">
                         {{ new Date(dataImport.tracked_job.started_at).toLocaleString() }}
                     </span>
-                    <span v-else>
+                    <span v-else-if="dataImport.tracked_job?.created_at">
                         {{ new Date(dataImport.tracked_job.created_at).toLocaleString() }}
                     </span>
                 </div>
@@ -130,10 +136,10 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         {{ dataImport.id_to ?? 0 }}
     </td>
     <td class="border-t px-2 py-1 focus:text-indigo-500">
-        <PrimaryButton v-if="! dataImport.tracked_job.finished_at" v-tooltip="'Cancel'" @click="confirmDataImportAction('cancel')">
+        <PrimaryButton v-if="! dataImport.tracked_job?.finished_at" v-tooltip="'Cancel'" @click="confirmDataImportAction('cancel')">
             <XMarkIcon class="size-4" />
         </PrimaryButton>
-        <DangerButton v-else-if="dataImport.tracked_job.status !== 'rolled back' && dataImport.rows_imported > 0" v-tooltip="'Rollback'" @click="confirmDataImportAction('rollback')">
+        <DangerButton v-else-if="! dataImport.rolled_back_at && dataImport.rows_imported > 0" v-tooltip="'Rollback'" @click="confirmDataImportAction('rollback')">
             <ArrowUturnLeftIcon class="size-4" />
         </DangerButton>
         <span v-else>
