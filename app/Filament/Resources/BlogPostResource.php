@@ -5,10 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BlogPostResource\Pages;
 use App\Models\BlogPost;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -17,13 +18,13 @@ class BlogPostResource extends Resource
 {
     protected static ?string $model = BlogPost::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-document-text';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('title')
                             ->required()
