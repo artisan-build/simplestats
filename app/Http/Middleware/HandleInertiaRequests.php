@@ -43,6 +43,8 @@ class HandleInertiaRequests extends Middleware
         ];
 
         if (auth()->user()) {
+            $merge['isAdmin'] = auth()->user()->isAdmin();
+
             if ($currentTeam = auth()->user()->currentTeam) {
                 $merge['onboardingPassed'] = $currentTeam->projects()->first()?->name;
                 $merge['teamCurrency'] = $currentTeam->currency;
