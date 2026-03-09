@@ -1,30 +1,57 @@
 @component('mail::message')
-    <h1>Update Announcement - {{ now()->format('Y-m-d') }}</h1>
-    <br>
-    Hello {{ $user->name }},<br>
-    <br>
-    Today we released <b>SimpleStats 5.0</b> with a bunch of new features and improvements.<br>
-    <br>
-    <h2>Here's what's new:</h2>
-    <ul>
-        <li><b>Improved performance and scalability</b> - especially noticeable when exploring large time ranges</li>
-        <li><b>Event-based pricing</b> (no more total limit blocks for visitors, registrations, etc.)</li>
-        <li><b>Email reports</b> for projects (configureable under User -> Notifications)</li>
-        <li><b>Instant project alerts</b> on new user or payment (disabled by default - ideal for early-stage or smaller teams)</li>
-        <li><b>Dark mode improvements</b> and toggle in user profile</li>
-        <li><b>Redesigned onboarding</b> and registration flow</li>
-        <li>Dashboard remembers your <b>last selected filters</b> instead of always resetting to “last 7 days”</li>
-        <li>Fixed edge cases in <b>DAU/WAU/MAU</b> calculation</li>
-        <li><b>UI/UX improvements</b> throughout the app</li>
-        <li><b>Mobile & responsive</b> improvements for better navigation on all devices</li>
-        <li><b>Improved ingestion</b> performance on API stats endpoints</li>
-        <li><b>Clickable charts</b> for detail view feature now also supported for week range types</li>
-        <li><b>Many small bug fixes</b> and visual refinements</li>
-        <li>Improved documentation</li>
-    </ul>
-    <br>
-    Happy analysing,<br>
-    The SimpleStats-Team
-<br>
+
+Hey {{ $user->name }},
+
+Quick update on what we've been shipping lately.
+
+**TL;DR:** Custom Events, custom date range presets, a new $9/mo Starter plan, and Laravel 12 support for the client package.
+
+---
+
+## Custom Events are here
+
+This was one of the most requested features, and it's finally live. You're no longer limited to visitors, registrations, and payments. Now you can track anything: button clicks, feature usage, onboarding steps, plan upgrades, whatever matters to your app.
+
+Custom Events work just like everything else in SimpleStats: server-side, no JS snippet, no ad blocker issues.
+
+**How to enable:** Head to your project settings and toggle Custom Events on. Once enabled, you can start sending events through the client package right away.
+
+@component('mail::button', ['url' => 'https://simplestats.io/docs'])
+Check the docs
+@endcomponent
+
+---
+
+## Custom Date Range Presets
+
+You can now create your own date range presets in the dashboard. Track "Last 90 days" or "This quarter" with one click. You can also hide any built-in presets you don't need to keep things clean.
+
+---
+
+## New Starter Plan ($9/mo)
+
+We added a more affordable entry point for smaller projects. If you know someone who's been on the fence, this might be a good time to point them our way.
+
+---
+
+## Laravel 12 Support
+
+The SimpleStats client package now fully supports Laravel 12. If you're upgrading your app, the package works out of the box. No config changes needed.
+
+---
+
+## From the blog
+
+We started writing about analytics topics that actually matter for Laravel developers:
+
+- [5 Best Analytics Dashboards for Laravel in 2026](https://simplestats.io/blog/5-best-analytics-dashboards-for-laravel-in-2026) - An honest comparison of what's out there.
+- [Web KPIs That Actually Matter](https://simplestats.io/blog/web-kpis-for-laravel-that-actually-matter) - Why page views and bounce rate aren't telling you much, and which metrics you should focus on instead.
+
+---
+
+That's it. Short and sweet. If you have any questions or feature requests, just reply to this email.
+
+Happy tracking,<br>
+Zacha
 
 @endcomponent

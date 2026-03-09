@@ -16,8 +16,7 @@ class UpdateAnnouncement extends Mailable
      */
     public function __construct(
         public User $user,
-    ) {
-    }
+    ) {}
 
     /**
      * Build the message.
@@ -26,7 +25,7 @@ class UpdateAnnouncement extends Mailable
      */
     public function build()
     {
-        return $this->subject('Update Announcement - '.now()->format('Y-m-d'))
+        return $this->subject("What's new in SimpleStats")
             ->markdown('emails.update-announcement', ['user' => $this->user]);
     }
 }
