@@ -16,7 +16,7 @@ Custom Events work just like everything else in SimpleStats: server-side, no JS 
 
 **How to enable:** Head to your project settings and toggle Custom Events on. Once enabled, you can start sending events through the client package right away.
 
-@component('mail::button', ['url' => 'https://simplestats.io/docs'])
+@component('mail::button', ['url' => 'https://simplestats.io/docs/how-to-track-a-custom-event.html'])
 Check the docs
 @endcomponent
 
