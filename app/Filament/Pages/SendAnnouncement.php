@@ -44,6 +44,9 @@ class SendAnnouncement extends Page
                 MarkdownEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
+                Toggle::make('admins_only')
+                    ->label('Send to admins only')
+                    ->helperText('Only send to admin users (useful for previewing the announcement).'),
                 Toggle::make('include_deleted_users')
                     ->label('Include deleted users')
                     ->helperText('Also send to former users stored in deleted models.'),
@@ -71,7 +74,9 @@ class SendAnnouncement extends Page
 
         $query = User::whereNotNull('email_verified_at');
 
-        if (app()->environment() !== 'production') {
+        if ($data['admins_only'] ?? false) {
+            $query->where('is_admin', true);
+        } elseif (app()->environment() !== 'production') {
             $query->where('id', auth()->id());
         }
 
@@ -121,7 +126,9 @@ class SendAnnouncement extends Page
                 ->icon('heroicon-o-paper-airplane')
                 ->requiresConfirmation()
                 ->modalHeading('Send announcement')
-                ->modalDescription('Are you sure you want to send this announcement to all verified users?')
+                ->modalDescription(fn () => ($this->data['admins_only'] ?? false)
+                    ? 'This will only send the announcement to admin users.'
+                    : 'Are you sure you want to send this announcement to all verified users?')
                 ->action('send'),
         ];
     }
