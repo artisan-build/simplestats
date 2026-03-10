@@ -63,7 +63,7 @@ class BlogPostResource extends Resource
                         Forms\Components\Toggle::make('is_published')
                             ->label('Published'),
                         Forms\Components\DateTimePicker::make('published_at'),
-                    ])->columns(2),
+                    ])->columnSpanFull()->columns(2),
             ]);
     }
 
