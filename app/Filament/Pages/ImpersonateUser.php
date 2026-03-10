@@ -37,7 +37,7 @@ class ImpersonateUser extends Page
                     ->options(
                         User::query()
                             ->where('id', '!=', auth()->id())
-                            ->orderBy('name')
+                            ->orderBy('id')
                             ->get()
                             ->mapWithKeys(fn (User $user) => [
                                 $user->id => "{$user->name} ({$user->email})",
