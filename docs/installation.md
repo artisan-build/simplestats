@@ -12,6 +12,10 @@ composer require simplestats-io/laravel-client
 At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11 and 12_
 :::
 
+::: tip
+Not using Laravel? We also offer a basic [plain PHP client](https://github.com/simplestats-io/php-client) (`composer require simplestats-io/php-client`) that works with any PHP 8.1+ application.
+:::
+
 ## Configuration
 
 After you registered an **account** and got an API token, you should publish the config and set your `SIMPLESTATS_API_TOKEN` in your `.env` file.
