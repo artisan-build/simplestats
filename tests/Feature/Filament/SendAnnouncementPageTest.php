@@ -100,6 +100,31 @@ test('send announcement skips deleted users whose email matches an active user',
     expect($dispatched->filter(fn ($email) => $email === $activeUser->email)->count())->toBe(1);
 });
 
+test('send announcement with admins_only toggle only dispatches to admin users', function () {
+    Bus::fake();
+
+    $regularUser = User::factory()->create(['email_verified_at' => now(), 'is_admin' => false]);
+
+    Livewire::test(SendAnnouncement::class)
+        ->fillForm([
+            'subject' => 'Admin Preview',
+            'body' => 'Testing admin-only send.',
+            'admins_only' => true,
+        ])
+        ->call('send')
+        ->assertNotified();
+
+    $dispatched = collect();
+    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched) {
+        $dispatched->push($job->recipientEmail);
+
+        return true;
+    });
+
+    expect($dispatched)->toContain($this->admin->email);
+    expect($dispatched)->not->toContain($regularUser->email);
+});
+
 test('non-admin users cannot access the send announcement page', function () {
     $user = User::factory()->create(['is_admin' => false]);
 
