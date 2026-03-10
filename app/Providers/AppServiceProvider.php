@@ -67,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
             CacheCheck::new(),
             RedisCheck::new(),
             RedisMemoryUsageCheck::new(),
-            ScheduleCheck::new()->heartbeatMaxAgeInMinutes(2),
+            ScheduleCheck::new()->heartbeatMaxAgeInMinutes(5),
             UsedDiskSpaceCheck::new(),
             EnvironmentCheck::new(),
             DebugModeCheck::new(),
