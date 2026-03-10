@@ -13,7 +13,7 @@ At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11 a
 :::
 
 ::: tip
-Not using Laravel? We also offer a basic [plain PHP client](https://github.com/simplestats-io/php-client) (`composer require simplestats-io/php-client`) that works with any PHP 8.1+ application.
+Not using Laravel? We also offer a basic [plain PHP client](https://github.com/simplestats-io/php-client) (`composer require simplestats-io/php-client`) that works with any PHP 8.2+ application.
 :::
 
 ## Configuration
