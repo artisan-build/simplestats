@@ -69,6 +69,8 @@ class ImpersonateUser extends Page
 
         $user = User::findOrFail($data['user_id']);
 
+        session()->put('impersonated_from_filament', true);
+
         auth()->user()->impersonate($user);
 
         $this->redirect('/dashboard');

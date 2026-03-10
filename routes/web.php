@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomStatsRangePresetController;
 use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\ImprintController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SetupInstallController;
@@ -52,6 +53,7 @@ Route::middleware([
     });
 
     Route::impersonate();
+    Route::get('/impersonate/leave-custom', [ImpersonateController::class, 'leave'])->name('impersonate.leave.custom');
 
     Route::resource('setup/team', SetupTeamController::class)->only(['index', 'store'])->names('setup.team');
     Route::resource('setup/project', SetupProjectController::class)->only(['index', 'store'])->names('setup.project');
