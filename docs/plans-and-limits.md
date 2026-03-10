@@ -8,7 +8,7 @@ This page provides an overview of all plan features and technical limits.
 
 | Feature              | Free       | Starter    | Plus       | Business   | Enterprise   |
 |----------------------|------------|------------|------------|------------|--------------|
-| Projects             | 1          | 3          | Unlimited  | Unlimited  | Unlimited    |
+| Projects             | 1          | 10         | Unlimited  | Unlimited  | Unlimited    |
 | Monthly Events       | 5,000      | 100,000    | 200,000    | 500,000    | 10,000,000   |
 | API Rate Limit       | 200/min    | 500/min    | 1,000/min  | 2,500/min  | 5,000/min    |
 | Multi-Currency       | -          | Yes        | Yes        | Yes        | Yes          |
