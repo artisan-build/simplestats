@@ -6,7 +6,7 @@ use Carbon\CarbonInterface;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePersonWithCondition;
 
 if (config('app.app_type') === 'saas') {
-    class User extends UserBase implements TrackablePersonWithCondition
+    class User extends UserBase implements \Filament\Models\Contracts\FilamentUser, TrackablePersonWithCondition
     {
         // do not simplify FQN here, cause spark does not exist in self-hosted...
         use \Spark\Billable {

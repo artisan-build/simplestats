@@ -231,7 +231,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\HorizonServiceProvider::class,
         App\Providers\SparkServiceProvider::class,
-        App\Providers\Filament\AdminPanelProvider::class,
+        ...env('APP_TYPE') === 'saas' ? [App\Providers\Filament\AdminPanelProvider::class] : [],
         App\Providers\RouteServiceProvider::class,
         App\Providers\SocialstreamServiceProvider::class,
         //        App\Providers\TelescopeServiceProvider::class,

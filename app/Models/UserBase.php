@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Jobs\QueuedVerifyEmailJob;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +21,7 @@ use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
-abstract class UserBase extends Authenticatable implements FilamentUser, MustVerifyEmail
+abstract class UserBase extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasConnectedAccounts;
@@ -139,7 +137,7 @@ abstract class UserBase extends Authenticatable implements FilamentUser, MustVer
         return $this->is_admin == 1;
     }
 
-    public function canAccessPanel(Panel $panel): bool
+    public function canAccessPanel($panel): bool
     {
         return $this->isAdmin();
     }
