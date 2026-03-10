@@ -43,7 +43,9 @@ class SendAnnouncement extends Page
                     ->placeholder('e.g. What\'s new in SimpleStats'),
                 MarkdownEditor::make('body')
                     ->required()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsDirectory('announcements'),
                 Toggle::make('admins_only')
                     ->label('Send to admins only')
                     ->helperText('Only send to admin users (useful for previewing the announcement).'),
