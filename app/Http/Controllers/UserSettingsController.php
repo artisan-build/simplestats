@@ -21,4 +21,11 @@ class UserSettingsController extends Controller
 
         return redirect()->back();
     }
+
+    public function completeTour(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->user()->updateSettings('tourCompleted', true);
+
+        return response()->json(['status' => 'ok']);
+    }
 }

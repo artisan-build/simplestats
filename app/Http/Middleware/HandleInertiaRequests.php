@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
 
         if (auth()->user()) {
             $merge['isAdmin'] = auth()->user()->isAdmin();
+            $merge['tourCompleted'] = $request->user()->settings['tourCompleted'] ?? false;
 
             if ($currentTeam = auth()->user()->currentTeam) {
                 $merge['onboardingPassed'] = $currentTeam->projects()->first()?->name;

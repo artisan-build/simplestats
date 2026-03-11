@@ -173,7 +173,7 @@ const showPresetModal = ref(false);
                                         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                     </svg>
                                 </div>
-                                <div class="flex items-center gap-1">
+                                <div class="flex items-center gap-1" data-tour="presets">
                                     <div>
                                         <InputLabel class="hidden" for="rangePreset" value="Preset" />
                                         <SelectInput
@@ -211,7 +211,7 @@ const showPresetModal = ref(false);
                                         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                     </svg>
                                 </div>
-                                <div v-if="maxTrackingUsageBits === currentProject.usage">
+                                <div v-if="maxTrackingUsageBits === currentProject.usage" data-tour="advanced-toggle">
                                     <InputLabel class="hidden" for="advanced" value="&nbsp;" />
                                     <ToggleButton class="mt-1" id="advanced" title="Toggle Advanced View" v-model:checked="page.props.auth.user.settings.showAdvanced" @click="$inertia.get(route('user-settings.toggle-advanced'))">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">

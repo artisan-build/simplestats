@@ -83,6 +83,7 @@ Route::middleware([
     // User Settings
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::get('user-settings/toggle-advanced', [UserSettingsController::class, 'toggleAdvanced'])->name('user-settings.toggle-advanced');
+    Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
 
     // User Notification Settings
     Route::resource('user/notifications', UserNotificationController::class)->only(['index', 'update']);

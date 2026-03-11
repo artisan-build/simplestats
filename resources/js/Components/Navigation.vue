@@ -64,7 +64,7 @@ const supportAction = (e) => {
                     Team
                 </NavLink>
             </li>
-            <li class="flex flex-col gap-y-1">
+            <li class="flex flex-col gap-y-1" data-tour="profile-dropdown">
                 <NavLink as="button" :active="route().t.routes[route().current()].uri.includes('user')">
                     <template #icon>
                         <ProfileDropdown direction="up" :triggerText="$page.props.auth.user.name" />

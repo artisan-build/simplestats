@@ -7,6 +7,7 @@ import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
 import {onMounted, onUnmounted, ref} from "vue";
+import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 
 const props = defineProps({
     teamStats: Object,
@@ -26,6 +27,8 @@ const props = defineProps({
     comparisonTypes: Object,
 });
 
+const {startTour} = useOnboardingTour();
+
 const isScrolled = ref(false)
 
 const handleScroll = () => {
@@ -34,6 +37,7 @@ const handleScroll = () => {
 
 onMounted(() => {
     window.addEventListener('scroll', handleScroll)
+    startTour();
 })
 
 onUnmounted(() => {
