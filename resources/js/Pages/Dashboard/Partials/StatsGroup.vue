@@ -73,8 +73,8 @@ const changeSort = (sort) => {
 const isEventGroup = props.statsGroupType === 'event';
 
 const calculatePercentage = (current) => {
-    const defaultSort = 'visitors';
-    const sort = (filters.statsSort === 'name') ? defaultSort : filters.statsSort ;
+    const defaultSort = isEventGroup ? 'triggered' : 'visitors';
+    const sort = (filters.statsSort === 'name' || (isEventGroup && filters.statsSort === 'visitors')) ? defaultSort : filters.statsSort ;
 
     let highest = data.value.reduce((max, item) => item[sort] > max[sort] ? item : max, data.value[0])[sort] ?? 0;
 
@@ -145,9 +145,9 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                     </button>
                                 </td>
                                 <td style="width: 15%;" class="p-1.5 text-right">
-                                    <button class="whitespace-nowrap" :class="filters.statsSort === 'total' ? 'text-indigo-600' : ''" @click="changeSort('total')">
-                                        <span>Total</span>
-                                        <svg v-if="filters.statsSort === 'total'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
+                                    <button class="whitespace-nowrap" :class="filters.statsSort === 'triggered' ? 'text-indigo-600' : ''" @click="changeSort('triggered')">
+                                        <span>Triggered</span>
+                                        <svg v-if="filters.statsSort === 'triggered'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
                                             <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                                         </svg>
                                     </button>
@@ -182,7 +182,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                     </div>
                                 </td>
                                 <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
-                                <td class="p-1.5 text-right">{{ formatNumber(Number(item.total)) }}</td>
+                                <td class="p-1.5 text-right">{{ formatNumber(Number(item.triggered)) }}</td>
                                 <td class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
                                 <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
                             </tr>

@@ -115,7 +115,7 @@ class StatsAggregationsService
                 && (! isset($item['reg']) || $item['reg'] == 0)
                 && (! isset($item['net']) || $item['net'] == 0)
                 && (! isset($item['visitors']) || $item['visitors'] == 0)
-                && (! isset($item['total']) || $item['total'] == 0);
+                && (! isset($item['triggered']) || $item['triggered'] == 0);
         })->take($limit);
     }
 

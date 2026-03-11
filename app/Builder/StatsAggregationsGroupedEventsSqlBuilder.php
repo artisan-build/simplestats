@@ -9,12 +9,12 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     public function __construct(
         protected string $statsSort,
         protected AggregationBuilderType $aggregationBuilderType,
-    ) {
-    }
+    ) {}
 
     public function build(): string
     {
         $this->applySql($this->getCTE());
+        $this->applySql($this->getTotalVisitors());
         $this->applySql($this->getEventStats());
         $this->applySql($this->getNet(), false);
 
@@ -33,14 +33,25 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     }
 
     /**
-     * Unique visitors/users and total fires per event name.
+     * Total unique visitors in the project for the time period.
+     */
+    protected function getTotalVisitors(): string
+    {
+        return "total_visitors AS (
+            SELECT COUNT(*) as count
+            FROM stats_visitors stats
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+        )";
+    }
+
+    /**
+     * Unique visitors/users who triggered each event.
      */
     protected function getEventStats(): string
     {
         return "event_stats AS (
             SELECT stats.stats_custom_event_name_id as type_id,
-                COUNT(DISTINCT COALESCE(stats.stats_user_id, CAST(stats.stats_visitor_id AS varchar))) as visitors,
-                COUNT(*) as total
+                COUNT(DISTINCT COALESCE(stats.stats_user_id, CAST(stats.stats_visitor_id AS varchar))) as triggered
             FROM stats_custom_events stats
             WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventName :trackingFilterForEvents
             GROUP BY type_id
@@ -76,9 +87,9 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
         return 'SELECT
             sg.type_id as type_id,
             sg.name as name,
-            COALESCE(es.visitors, 0) AS visitors,
-            COALESCE(es.total, 0) AS total,
-            ROUND(COALESCE((es.visitors * 100.0 / NULLIF(es.total, 0)), 0), 2) AS cr,
+            COALESCE((SELECT count FROM total_visitors), 0) AS visitors,
+            COALESCE(es.triggered, 0) AS triggered,
+            ROUND(COALESCE((es.triggered * 100.0 / NULLIF((SELECT count FROM total_visitors), 0)), 0), 2) AS cr,
             COALESCE(event_net.count, 0) AS net';
     }
 
@@ -92,7 +103,7 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
 
     protected function getORDER(): string
     {
-        $sort = in_array($this->statsSort, ['visitors', 'total', 'cr', 'net', 'name']) ? $this->statsSort : 'visitors';
+        $sort = in_array($this->statsSort, ['visitors', 'triggered', 'cr', 'net', 'name']) ? $this->statsSort : 'visitors';
 
         return $this->aggregationBuilderType->getEventsGroupedOrderBy($sort);
     }

@@ -66,6 +66,6 @@ class AggregationBuilderTypePgSQL implements AggregationBuilderType
 
     public function getEventsGroupedOrderBy(string $sort): string
     {
-        return "ORDER BY {$sort} DESC NULLS LAST, visitors DESC NULLS LAST, total DESC;";
+        return "ORDER BY {$sort} DESC NULLS LAST, triggered DESC NULLS LAST, visitors DESC;";
     }
 }
