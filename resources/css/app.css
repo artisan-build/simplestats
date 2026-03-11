@@ -39,6 +39,29 @@ strong, b {
 }
 
 /* Onboarding tour (Driver.js) */
+.driver-popover.simplestats-tour .driver-popover-title {
+    font-size: 1.1rem;
+}
+
+.driver-popover.simplestats-tour .driver-popover-description {
+    font-size: 1rem;
+    padding-top: 0.5rem;
+}
+
+.driver-popover.simplestats-tour .driver-popover-footer {
+    padding-top: 0.5rem;
+}
+
+.driver-popover.simplestats-tour .driver-popover-navigation-btns button {
+    font-size: 0.85rem;
+}
+
+.driver-popover.simplestats-tour .driver-popover-close-btn {
+    font-size: 1.25rem;
+    width: 2rem;
+    height: 2rem;
+}
+
 .driver-popover.simplestats-tour .driver-popover-navigation-btns .driver-popover-next-btn {
     background-color: #6366f1;
     color: white;
@@ -67,7 +90,7 @@ strong, b {
 }
 
 .dark .driver-popover.simplestats-tour .driver-popover-navigation-btns .driver-popover-prev-btn {
-    color: #a6a6a6;
+    color: #737373;
 }
 
 .dark .driver-popover.simplestats-tour .driver-popover-close-btn {

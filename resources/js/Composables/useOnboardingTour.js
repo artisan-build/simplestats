@@ -37,7 +37,7 @@ export function useOnboardingTour() {
     async function startTour() {
         if (!shouldShowTour()) return;
 
-        await waitForElement('[data-tour="stats-groups"] button');
+        await waitForElement('[data-tour="stats-groups"]');
 
         const steps = [
             {
@@ -77,7 +77,7 @@ export function useOnboardingTour() {
                 element: '[data-tour="profile-dropdown"]',
                 popover: {
                     title: 'Your Profile',
-                    description: 'Access Notifications, Data Import, and your team settings from here.',
+                    description: 'Access Notification settings, Data Import, and your current subscription details from here.',
                     side: 'right',
                     align: 'end',
                 },
@@ -94,6 +94,7 @@ export function useOnboardingTour() {
             allowClose: true,
             overlayColor: 'black',
             popoverClass: 'simplestats-tour',
+            overlayClickBehavior: () => {},
             onDestroyStarted: () => {
                 completeTour();
                 tourDriver.destroy();

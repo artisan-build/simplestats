@@ -11,11 +11,12 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="grid gap-4 grid-cols-1 lg:grid-cols-2" data-tour="stats-groups">
-        <div v-for="(statsGroup, statsGroupType) in statsGroups" :key="statsGroup.id"
+    <div class="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <div v-for="(statsGroup, statsGroupType, index) in statsGroups" :key="statsGroup.id"
              v-show="statsGroupType !== 'event' || (trackingUsageBits.events & currentProject.usage)"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
              :class="{'lg:col-span-2': statsGroupType === 'event'}"
+             :data-tour="index === 0 ? 'stats-groups' : undefined"
         >
             <StatsGroup
                 :filters="filters"
