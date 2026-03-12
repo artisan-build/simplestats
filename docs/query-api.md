@@ -1,6 +1,6 @@
 # Query API
 
-The Query API allows you to retrieve your analytics data programmatically. You get access to the same data that is displayed on the SimpleStats dashboard, including time-series stats and grouped breakdowns.
+The Query API allows you to retrieve your analytics data programmatically, including time-series stats and grouped breakdowns.
 
 ::: tip
 Looking to send tracking data? Check out the [Ingest API](ingest-api.md).
@@ -24,7 +24,7 @@ Make sure you have the following content type headers set on every request:
 
 ## URI
 
-_SimpleStats_ Query API is hosted on the following base URI:
+_SimpleStats_ API is hosted on the following base URI:
 
 `https://simplestats.io/api/v1/`
 
@@ -36,9 +36,9 @@ If you exceed your rate limit, the API will return a `429 Too Many Requests` res
 
 ## Endpoints
 
-### Get Stats
+### Stats
 
-Returns time-series analytics data for your project. This is the same data that powers the dashboard charts.
+Returns time-series analytics data for your project.
 
 **HTTP Request**
 
@@ -46,13 +46,13 @@ Returns time-series analytics data for your project. This is the same data that 
 
 **Parameters**
 
-| Key            | Type                | Description                                                                 |
-|----------------|---------------------|-----------------------------------------------------------------------------|
-| **preset**     | _string_ `optional` | A predefined date range. See [Available Presets](#available-presets) below.  |
-| **rangeType**  | _string_ `optional` | The granularity of the data: `hours`, `days`, `weeks`, `months`, `years`.   |
-| **rangeAmount**| _integer_ `optional`| Number of periods to include.                                               |
-| **rangeStart** | _date_ `optional`   | The end date of the range (format: `Y-m-d`). Defaults to today.            |
-| **comparison** | _string_ `optional` | Compare with a previous period: `0` (none), `period`, `year`.              |
+| Key            | Type                | Description                                                                                               |
+|----------------|---------------------|-----------------------------------------------------------------------------------------------------------|
+| **preset**     | _string_ `optional` | A predefined date range. See [Available Presets](#available-presets) below.                               |
+| **rangeType**  | _string_ `optional` | The granularity of the data: `hours`, `days`, `weeks`, `months`, `years`.                                 |
+| **rangeAmount**| _integer_ `optional`| Number of periods to include.                                                                             |
+| **rangeStart** | _date_ `optional`   | The starting point from which the range is calculated **backwards** (format: `Y-m-d`). Defaults to today. |
+| **comparison** | _string_ `optional` | Compare with a previous period: `period` or `year`.                                                       |
 
 ::: info
 If no parameters are provided, the API defaults to `last_7_days` with daily granularity.
@@ -60,24 +60,24 @@ If no parameters are provided, the API defaults to `last_7_days` with daily gran
 
 ::: details Filter parameters
 
-You can filter by dimension IDs. These IDs correspond to records in your project's dimension tables. Use `0` for "all" or `-1` for "organic only" (tracking dimensions).
+You can filter results by group `id`s. Use the [Groups](#groups) endpoint to discover available `id`s. Use `0` for "all" or `-1` for "organic only" (tracking groups).
 
 | Key                  | Type                 | Description                        |
 |----------------------|----------------------|------------------------------------|
-| **trackReferer**     | _integer_ `optional` | Filter by referrer ID.             |
-| **trackSource**      | _integer_ `optional` | Filter by source ID.               |
-| **trackMedium**      | _integer_ `optional` | Filter by medium ID.               |
-| **trackCampaign**    | _integer_ `optional` | Filter by campaign ID.             |
-| **trackTerm**        | _integer_ `optional` | Filter by term ID.                 |
-| **trackContent**     | _integer_ `optional` | Filter by content ID.              |
-| **locationCountry**  | _integer_ `optional` | Filter by country ID.              |
-| **locationRegion**   | _integer_ `optional` | Filter by region ID.               |
-| **locationCity**     | _integer_ `optional` | Filter by city ID.                 |
-| **deviceType**       | _integer_ `optional` | Filter by device type ID.          |
-| **devicePlatform**   | _integer_ `optional` | Filter by platform ID.             |
-| **deviceBrowser**    | _integer_ `optional` | Filter by browser ID.              |
-| **pageEntry**        | _integer_ `optional` | Filter by entry page ID.           |
-| **customEventName**  | _integer_ `optional` | Filter by custom event name ID.    |
+| **trackReferer**     | _integer_ `optional` | Filter by referrer `id`.             |
+| **trackSource**      | _integer_ `optional` | Filter by source `id`.               |
+| **trackMedium**      | _integer_ `optional` | Filter by medium `id`.               |
+| **trackCampaign**    | _integer_ `optional` | Filter by campaign `id`.             |
+| **trackTerm**        | _integer_ `optional` | Filter by term `id`.                 |
+| **trackContent**     | _integer_ `optional` | Filter by content `id`.              |
+| **locationCountry**  | _integer_ `optional` | Filter by country `id`.              |
+| **locationRegion**   | _integer_ `optional` | Filter by region `id`.               |
+| **locationCity**     | _integer_ `optional` | Filter by city `id`.                 |
+| **deviceType**       | _integer_ `optional` | Filter by device type `id`.          |
+| **devicePlatform**   | _integer_ `optional` | Filter by platform `id`.             |
+| **deviceBrowser**    | _integer_ `optional` | Filter by browser `id`.              |
+| **pageEntry**        | _integer_ `optional` | Filter by entry page `id`.           |
+| **customEventName**  | _integer_ `optional` | Filter by custom event name `id`.    |
 :::
 
 **Example Request**
@@ -87,6 +87,8 @@ GET /api/v1/stats?preset=last_7_days
 ```
 
 **Response**
+
+Results are returned in **reverse** chronological order (most recent first).
 
 ```json
 {
@@ -110,12 +112,13 @@ GET /api/v1/stats?preset=last_7_days
         }
     ],
     "meta": {
-        "project_id": 42,
-        "range_type": "days",
-        "range_amount": 7,
-        "range_start": "2026-03-11",
+        "projectId": 1,
+        "rangeAmount": 7,
+        "rangeType": "days",
+        "rangeStart": "2026-03-11",
+        "comparison": "0",
         "preset": "last_7_days",
-        "comparison": "0"
+        ...
     }
 }
 ```
@@ -133,116 +136,22 @@ GET /api/v1/stats?preset=last_7_days&comparison=period
     "data": [ ... ],
     "data_previous": [ ... ],
     "meta": {
-        "project_id": 42,
-        "range_type": "days",
-        "range_amount": 7,
-        "range_start": "2026-03-11",
+        "projectId": 1,
+        "rangeAmount": 7,
+        "rangeType": "days",
+        "rangeStart": "2026-03-11",
+        "comparison": "period",
         "preset": "last_7_days",
-        "comparison": "period"
-    }
-}
-```
-
-### Data Fields
-
-Each entry in the `data` array contains these fields:
-
-| Field            | Description                                         |
-|------------------|-----------------------------------------------------|
-| `date`           | The period identifier                               |
-| `date_clear`     | Human-readable date                                 |
-| `pd_visitor`     | Visitors in this period                             |
-| `pd_reg`         | Registrations in this period                        |
-| `pd_cr`          | Conversion rate (visitors to registrations)         |
-| `pd_net`         | Net revenue in this period (in cents)               |
-| `pd_gross`       | Gross revenue in this period (in cents)             |
-| `pd_dau`         | Daily/Weekly/Monthly active users                   |
-| `lt_visitor`     | Lifetime total visitors                             |
-| `lt_reg`         | Lifetime total registrations                        |
-| `lt_net`         | Lifetime total net revenue (in cents)               |
-| `lt_arpu`        | Lifetime average revenue per user (in cents)        |
-| `lt_arppu`       | Lifetime average revenue per paying user (in cents) |
-| `lt_arpv`        | Lifetime average revenue per visitor (in cents)     |
-| `lt_pu`          | Lifetime total paying users                         |
-
-::: info
-All revenue values are in **cents** (e.g., 15000 = $150.00). The currency depends on your team's default currency setting.
-:::
-
----
-
-### Get Grouped Stats
-
-Returns analytics data grouped by a specific dimension (e.g., sources, countries, browsers). This is the same data that powers the dashboard breakdown tables.
-
-**HTTP Request**
-
-`GET /api/v1/stats/grouped`
-
-**Parameters**
-
-| Key            | Type                 | Description                                                                 |
-|----------------|----------------------|-----------------------------------------------------------------------------|
-| **statsType**  | _string_ `required`  | The dimension to group by. See [Available Stats Types](#available-stats-types) below. |
-| **statsSort**  | _string_ `optional`  | Sort results by: `name`, `visitors`, `reg`, `cr`, `dau`, `net`, `total`. Default: `visitors`. |
-| **limit**      | _integer_ `optional` | Maximum number of results (1-100). Default: 10.                             |
-| **preset**     | _string_ `optional`  | A predefined date range. See [Available Presets](#available-presets) below.  |
-| **rangeType**  | _string_ `optional`  | The granularity: `hours`, `days`, `weeks`, `months`, `years`.               |
-| **rangeAmount**| _integer_ `optional` | Number of periods to include.                                               |
-| **rangeStart** | _date_ `optional`    | The end date of the range (format: `Y-m-d`). Defaults to today.            |
-
-::: details Filter parameters
-The same filter parameters as the [Get Stats](#get-stats) endpoint apply here as well.
-:::
-
-**Example Request**
-
-```
-GET /api/v1/stats/grouped?statsType=trackSource&limit=5
-```
-
-**Response**
-
-```json
-{
-    "data": [
-        {
-            "name": "google",
-            "type_id": 3,
-            "visitors": 120,
-            "reg": 15,
-            "cr": 12.5,
-            "dau": 8,
-            "net": 45000,
-            "total": 1
-        },
-        {
-            "name": "twitter",
-            "type_id": 7,
-            "visitors": 85,
-            "reg": 10,
-            "cr": 11.76,
-            "dau": 5,
-            "net": 20000,
-            "total": 1
-        }
-    ],
-    "meta": {
-        "project_id": 42,
-        "range_type": "days",
-        "range_amount": 7,
-        "range_start": "2026-03-11",
-        "preset": "last_7_days",
-        "comparison": "0"
+        ...
     }
 }
 ```
 
 ---
 
-### Get Groups
+### Groups
 
-Returns the available values for a specific stats type. Use this to discover the IDs you need for filtering. For example, to find the ID for a specific referrer, call this endpoint with `statsType=trackReferer`.
+Returns the available values for a specific stats type. Use this to discover the `id`s you need for filtering. For example, to find the `id` for a specific referrer, call this endpoint with `statsType=trackReferer`.
 
 **HTTP Request**
 
@@ -282,7 +191,105 @@ GET /api/v1/stats/groups?statsType=trackSource
 ```
 
 ::: tip
-Use the `id` from this response as the filter value in the [Get Stats](#get-stats) or [Get Grouped Stats](#get-grouped-stats) endpoints. For example, to filter stats by the source "google" (ID 3): `GET /api/v1/stats?trackSource=3`
+Use the `id` from this response as the filter value in the [Stats](#stats) or [Grouped Stats](#grouped-stats) endpoints. For example, to filter stats by the source "google" (`id` 3): `GET /api/v1/stats?trackSource=3`
+:::
+
+---
+
+### Grouped Stats
+
+Returns analytics data grouped by a specific group (e.g., sources, countries, browsers).
+
+**HTTP Request**
+
+`GET /api/v1/stats/grouped`
+
+**Parameters**
+
+| Key            | Type                 | Description                                                                 |
+|----------------|----------------------|-----------------------------------------------------------------------------|
+| **statsType**  | _string_ `required`  | The group to aggregate by. See [Available Stats Types](#available-stats-types) below. |
+| **statsSort**  | _string_ `optional`  | Sort results by: `name`, `visitors`, `reg`, `cr`, `dau`, `net`, `total`. Default: `visitors`. |
+| **limit**      | _integer_ `optional` | Maximum number of results (1-100). Default: 10.                             |
+| **preset**     | _string_ `optional`  | A predefined date range. See [Available Presets](#available-presets) below.  |
+| **rangeType**  | _string_ `optional`  | The granularity: `hours`, `days`, `weeks`, `months`, `years`.               |
+| **rangeAmount**| _integer_ `optional` | Number of periods to include.                                               |
+| **rangeStart** | _date_ `optional`    | The starting point from which the range is calculated backwards (format: `Y-m-d`). Defaults to today. |
+
+::: details Filter parameters
+The same filter parameters as the [Stats](#stats) endpoint apply here as well.
+:::
+
+**Example Request**
+
+```
+GET /api/v1/stats/grouped?statsType=trackSource&limit=5
+```
+
+**Response**
+
+```json
+{
+    "data": [
+        {
+            "name": "google",
+            "type_id": 3,
+            "visitors": 120,
+            "reg": 15,
+            "cr": 12.5,
+            "dau": 8,
+            "net": 45000,
+            "total": 1
+        },
+        {
+            "name": "twitter",
+            "type_id": 7,
+            "visitors": 85,
+            "reg": 10,
+            "cr": 11.76,
+            "dau": 5,
+            "net": 20000,
+            "total": 1
+        }
+    ],
+    "meta": {
+        "projectId": 1,
+        "rangeAmount": 7,
+        "rangeType": "days",
+        "rangeStart": "2026-03-11",
+        "comparison": "0",
+        "preset": "last_7_days",
+        ...
+    }
+}
+```
+
+---
+
+## Data Fields
+
+Each entry in the `data` array contains these fields:
+
+| Field            | Description                                         |
+|------------------|-----------------------------------------------------|
+| `date`           | The period identifier                               |
+| `date_clear`     | Human-readable date                                 |
+| `pd_visitor`     | Visitors in this period                             |
+| `pd_reg`         | Registrations in this period                        |
+| `pd_cr`          | Conversion rate (visitors to registrations)         |
+| `pd_net`         | Net revenue in this period (in cents)               |
+| `pd_gross`       | Gross revenue in this period (in cents)             |
+| `pd_dau`         | Daily/Weekly/Monthly active users                   |
+| `lt_visitor`     | Lifetime total visitors                             |
+| `lt_reg`         | Lifetime total registrations                        |
+| `lt_net`         | Lifetime total net revenue (in cents)               |
+| `lt_arpu`        | Lifetime average revenue per user (in cents)        |
+| `lt_arppu`       | Lifetime average revenue per paying user (in cents) |
+| `lt_arpv`        | Lifetime average revenue per visitor (in cents)     |
+| `lt_pu`          | Lifetime total paying users                         |
+
+::: info
+All revenue values are in **cents** (e.g., 15000 = $150.00). The currency depends on your team's default currency setting.
 :::
 
 ---
@@ -303,45 +310,16 @@ Use the `id` from this response as the filter value in the [Get Stats](#get-stat
 | `last_year`      | Previous year      |
 | `all_time`       | All time           |
 
+---
+
 ## Available Stats Types
 
-Use these values for the `statsType` parameter in the [Get Grouped Stats](#get-grouped-stats) and [Get Groups](#get-groups) endpoints:
+Use these values for the `statsType` parameter in the [Grouped Stats](#grouped-stats) and [Groups](#groups) endpoints:
 
-**Tracking**
-
-| Value              | Description |
-|--------------------|-------------|
-| `trackReferer`     | Referrers   |
-| `trackSource`      | Sources     |
-| `trackMedium`      | Mediums     |
-| `trackCampaign`    | Campaigns   |
-| `trackTerm`        | Terms       |
-| `trackContent`     | Content     |
-
-**Pages**
-
-| Value         | Description  |
-|---------------|-------------|
-| `pageEntry`   | Entry pages |
-
-**Location**
-
-| Value              | Description |
-|--------------------|-------------|
-| `locationCountry`  | Countries   |
-| `locationRegion`   | Regions     |
-| `locationCity`     | Cities      |
-
-**Device**
-
-| Value              | Description |
-|--------------------|-------------|
-| `devicePlatform`   | Platforms   |
-| `deviceBrowser`    | Browsers    |
-| `deviceType`       | Device sizes|
-
-**Events**
-
-| Value              | Description    |
-|--------------------|----------------|
-| `customEventName`  | Custom events  |
+| Category | Values |
+|----------|--------|
+| Tracking | `trackReferer` (Referrers), `trackSource` (Sources), `trackMedium` (Mediums), `trackCampaign` (Campaigns), `trackTerm` (Terms), `trackContent` (Content) |
+| Pages | `pageEntry` (Entry pages) |
+| Location | `locationCountry` (Countries), `locationRegion` (Regions), `locationCity` (Cities) |
+| Device | `devicePlatform` (Platforms), `deviceBrowser` (Browsers), `deviceType` (Device sizes) |
+| Events | `customEventName` (Custom events) |
