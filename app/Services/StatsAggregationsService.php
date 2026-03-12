@@ -17,6 +17,7 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -164,7 +165,7 @@ class StatsAggregationsService
     {
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
-        $teamCondition = ' stats.team_id = '.auth()->user()->current_team_id.' ';
+        $teamCondition = ' stats.team_id = '.Context::get('team_id').' ';
 
         $projectCondition = '';
         if (! empty($filters->projectId)) {

@@ -42,7 +42,7 @@ class StatsFilterRequest extends FormRequest
     {
         $projects = $this->user()->currentTeam->projects();
 
-        //make the tracking filter work and set the projectId manually if only one project exists...
+        // make the tracking filter work and set the projectId manually if only one project exists...
         if ($projects->count() === 1) {
             $project = $projects->first();
             $this->merge([
@@ -59,14 +59,54 @@ class StatsFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
+            ...$this->sharedFilterRules(),
             'projectId' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(Project::class),
             ],
+            'groupType' => [
+                'sometimes',
+                'string',
+                Rule::in(array_keys(StatsService::getStatsTypes()->toArray())),
+            ],
+            'preset' => [
+                'sometimes',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (StatsRangePreset::tryFrom($value) !== null) {
+                        return;
+                    }
+
+                    if (Str::startsWith($value, 'custom_')) {
+                        $exists = CustomStatsRangePreset::where('id', (int) Str::after($value, 'custom_'))
+                            ->where('user_id', $this->user()->id)
+                            ->exists();
+
+                        if ($exists) {
+                            return;
+                        }
+                    }
+
+                    $fail('The selected preset is invalid.');
+                },
+            ],
+        ];
+    }
+
+    /**
+     * Shared validation rules used by both web and API filter requests.
+     */
+    public function sharedFilterRules(): array
+    {
+        return [
             'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'rangeAmount' => ['sometimes', 'integer'],
             'rangeStart' => ['sometimes', 'date'],
+            'comparison' => [
+                'sometimes',
+                new Enum(ComparisonType::class),
+            ],
             'trackReferer' => [
                 'sometimes',
                 'integer',
@@ -147,39 +187,9 @@ class StatsFilterRequest extends FormRequest
                 'string',
                 Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered']),
             ],
-            'groupType' => [
-                'sometimes',
-                'string',
-                Rule::in(array_keys(StatsService::getStatsTypes()->toArray())),
-            ],
             'limit' => [
                 'sometimes',
                 'integer',
-            ],
-            'comparison' => [
-                'sometimes',
-                new Enum(ComparisonType::class),
-            ],
-            'preset' => [
-                'sometimes',
-                'string',
-                function ($attribute, $value, $fail) {
-                    if (StatsRangePreset::tryFrom($value) !== null) {
-                        return;
-                    }
-
-                    if (Str::startsWith($value, 'custom_')) {
-                        $exists = CustomStatsRangePreset::where('id', (int) Str::after($value, 'custom_'))
-                            ->where('user_id', $this->user()->id)
-                            ->exists();
-
-                        if ($exists) {
-                            return;
-                        }
-                    }
-
-                    $fail('The selected preset is invalid.');
-                },
             ],
         ];
     }

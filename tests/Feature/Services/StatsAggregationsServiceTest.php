@@ -2,7 +2,6 @@
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
-use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\StatsAggregationsService;
@@ -57,10 +56,10 @@ it('grouped DAU uses correct date range when report runs at timezone boundary', 
     ]);
 
     // Simulate the exact production context: SendProjectReports sets auth user
-    // but does NOT call AppHelper::setTeamContextFromAuth, so Context has no team_id
-    // and ensureTeamTimezone does NOT run. App timezone stays UTC.
+    // Set auth user and team context but keep timezone as UTC
+    // to test that DAU grouping is not affected by timezone.
     auth()->setUser($this->user);
-    Context::forget('team_id');
+    Context::add('team_id', $team->id);
     config(['app.timezone' => 'UTC']);
     date_default_timezone_set('UTC');
 

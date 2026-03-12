@@ -54,6 +54,13 @@ export default defineConfig({
                 ]
             },
             {
+                text: 'API',
+                items: [
+                    {text: 'Ingest API', link: '/ingest-api'},
+                    {text: 'Query API', link: '/query-api'},
+                ]
+            },
+            {
                 text: 'Advanced',
                 items: [
                     {text: 'Queue', link: '/queue'},
@@ -61,7 +68,6 @@ export default defineConfig({
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
-                    {text: 'API Documentation', link: '/api-documentation'},
                     {text: 'Contribution', link: '/contribution'},
                 ]
             },

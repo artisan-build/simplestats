@@ -4,10 +4,11 @@ namespace App\DTOs;
 
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
-use App\Http\Requests\StatsFilterRequest;
 use App\Models\CustomStatsRangePreset;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use App\Http\Requests\StatsFilterRequest;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 
 class StatsFilterDto
@@ -38,22 +39,22 @@ class StatsFilterDto
         public int $deviceBrowser = 0,
         public int $pageEntry = 0,
         public int $customEventName = 0,
-    ) {
-    }
+    ) {}
 
-    public static function fromRequest(StatsFilterRequest $request): StatsFilterDto
+    public static function fromRequest(StatsFilterRequest $request, ?int $projectId = null): self
     {
         $customPresetId = null;
+        $effectiveProjectId = $projectId ?? $request->projectId ?? 0;
 
         if ($request->preset && Str::startsWith($request->preset, 'custom_')) {
             $customPresetId = (int) Str::after($request->preset, 'custom_');
             $customPreset = CustomStatsRangePreset::findOrFail($customPresetId);
             $request->merge($customPreset->toRange());
         } elseif ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
-            $request->merge(StatsRangePreset::from($request->preset)->range($request->projectId));
-        } elseif (empty($_GET)) { // we use $_GET here cause request may be manipulated by request class...
+            $request->merge(StatsRangePreset::from($request->preset)->range($effectiveProjectId));
+        } elseif (! $request->hasAny(['rangeType', 'rangeAmount', 'rangeStart', 'preset']) && empty($_GET)) {
             $request->merge([
-                ...StatsRangePreset::LAST_7_DAYS->range($request->projectId),
+                ...StatsRangePreset::LAST_7_DAYS->range($effectiveProjectId),
                 'preset' => StatsRangePreset::LAST_7_DAYS->value,
             ]);
         }
@@ -69,7 +70,7 @@ class StatsFilterDto
         }
 
         return new self(
-            projectId: $request->projectId ?? 0,
+            projectId: $effectiveProjectId,
             rangeAmount: $rangeAmount,
             rangeType: $rangeType,
             rangeStart: $rangeStart,
@@ -118,8 +119,8 @@ class StatsFilterDto
         ]));
     }
 
-    public function getTeamId()
+    public function getTeamId(): int
     {
-        return auth()->user()->team->id;
+        return Context::get('team_id');
     }
 }

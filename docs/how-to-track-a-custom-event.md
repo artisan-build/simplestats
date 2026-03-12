@@ -60,4 +60,4 @@ SimplestatsClient::trackCustomEvent(
 
 ## API
 
-If you're not using the Laravel client package, you can track custom events directly via the API. See the [Create Custom Event](api-documentation.md#create-custom-event) endpoint in the API documentation.
+If you're not using the Laravel client package, you can track custom events directly via the API. See the [Create Custom Event](ingest-api.md#create-custom-event) endpoint in the Ingest API documentation.

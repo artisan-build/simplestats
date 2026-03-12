@@ -1,6 +1,10 @@
-# API Documentation
+# Ingest API
 
-Even though the composer client package is dedicated to Laravel, the API basically works with **every client**! So if you'd like to use the tool, even if you're not using Laravel, you may just trigger the API requests manually.
+The Ingest API is used to send tracking data (visitors, users, logins, payments, custom events) to SimpleStats. Even though the composer client package is dedicated to Laravel, the API basically works with **every client**! So if you'd like to use the tool, even if you're not using Laravel, you may just trigger the API requests manually.
+
+::: tip
+Looking to read your analytics data programmatically? Check out the [Query API](query-api.md).
+:::
 
 ## Authentication
 
