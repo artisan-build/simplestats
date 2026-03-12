@@ -34,6 +34,7 @@ if (! filters.statsSort) {
     switch (true) {
         // case currentProjectHasTrackingUsageBits(['payments']): filters.statsSort = 'net'; break;
         // case currentProjectHasTrackingUsageBits(['users']): filters.statsSort = 'reg'; break;
+        case props.statsGroupType === 'event': filters.statsSort = 'triggered'; break;
         default: filters.statsSort = 'visitors';
     }
 }

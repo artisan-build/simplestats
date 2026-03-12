@@ -3,7 +3,7 @@
 To **prevent** the tracking API calls to the _SimpleStats_ server **blocking** your app requests and to ensure fault tolerance and retries, we **strongly** recommend using Laravel's built-in [queue service](https://laravel.com/docs/12.x/queues).
 
 ::: info
-Starting from version [2.0.13](https://github.com/simplestats-io/laravel-client/releases/tag/v2.0.13), the _SimpleStats_ client attempts to use Laravel's [defer](https://laravel.com/docs/12.x/helpers#deferred-functions) helper (supported since Laravel 11) to handle API calls to our server. This reduces the necessity of using a queue, as API calls no longer block your requests. However, for fault tolerance, retries, or high traffic, we still recommend using the queue.
+Starting from version [2.0.13](https://github.com/simplestats-io/laravel-client/releases/tag/v2.0.13), the _SimpleStats_ client attempts to use Laravel's [defer](https://laravel.com/docs/12.x/helpers#deferred-functions) helper (supported since Laravel 11) to handle API calls to our server. This reduces the necessity of using a queue, as API calls no longer block your requests. However, for fault tolerance, retries, or high traffic, we still strongly recommend using the queue.
 :::
 
 ::: warning

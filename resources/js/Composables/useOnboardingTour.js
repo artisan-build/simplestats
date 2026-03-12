@@ -65,6 +65,15 @@ export function useOnboardingTour() {
                 },
             },
             {
+                element: '[data-tour="chart-info"]',
+                popover: {
+                    title: 'Chart Info',
+                    description: 'Hover over this icon to see a description of each value and what it means.',
+                    side: 'left',
+                    align: 'start',
+                },
+            },
+            {
                 element: '[data-tour="stats-groups"]',
                 popover: {
                     title: 'Tracking Groups',
@@ -77,7 +86,7 @@ export function useOnboardingTour() {
                 element: '[data-tour="profile-dropdown"]',
                 popover: {
                     title: 'Your Profile',
-                    description: 'Access Notification settings, Data Import, and your current subscription details from here.',
+                    description: 'Access notification settings, data import and your current subscription details.',
                     side: 'right',
                     align: 'end',
                 },
@@ -94,6 +103,7 @@ export function useOnboardingTour() {
             allowClose: true,
             overlayColor: 'black',
             popoverClass: 'simplestats-tour',
+            disableActiveInteraction: true,
             overlayClickBehavior: () => {},
             onDestroyStarted: () => {
                 completeTour();

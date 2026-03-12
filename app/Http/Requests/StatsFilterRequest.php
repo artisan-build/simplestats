@@ -145,7 +145,7 @@ class StatsFilterRequest extends FormRequest
             'statsSort' => [
                 'sometimes',
                 'string',
-                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total']),
+                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered']),
             ],
             'groupType' => [
                 'sometimes',
