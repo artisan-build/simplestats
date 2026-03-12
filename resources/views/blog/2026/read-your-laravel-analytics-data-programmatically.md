@@ -1,4 +1,4 @@
-# Query API: Read Your Laravel Analytics Data Programmatically
+# Read Your Laravel Analytics Data Programmatically
 
 Dashboards are great for a quick glance at your numbers. But sometimes you need more. Maybe you want to pipe your analytics into a Slack channel every Monday morning. Maybe you're building a custom reporting dashboard for your team. Or maybe you want your CI pipeline to check whether a deploy tanked your conversion rate.
 
