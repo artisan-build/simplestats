@@ -54,13 +54,6 @@ export default defineConfig({
                 ]
             },
             {
-                text: 'API',
-                items: [
-                    {text: 'Ingest API', link: '/ingest-api'},
-                    {text: 'Query API', link: '/query-api'},
-                ]
-            },
-            {
                 text: 'Advanced',
                 items: [
                     {text: 'Queue', link: '/queue'},
@@ -69,6 +62,13 @@ export default defineConfig({
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
                     {text: 'Contribution', link: '/contribution'},
+                ]
+            },
+            {
+                text: 'API',
+                items: [
+                    {text: 'Ingest API', link: '/ingest-api'},
+                    {text: 'Query API', link: '/query-api'},
                 ]
             },
             {

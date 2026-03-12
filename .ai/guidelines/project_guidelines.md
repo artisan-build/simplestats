@@ -276,6 +276,11 @@ Jobs include automatic retry logic for fault tolerance.
 - Test API rate limiting behavior
 - Ensure tracking works across Laravel versions
 
+## Blog
+
+- Blog posts are managed and published via Filament (`app/Filament/Resources/BlogPostResource/`).
+- Although posts are stored in the database, we also keep the Markdown source files in the repository under `resources/views/blog/`, organized by year (e.g., `resources/views/blog/2026/`). This ensures blog content is version-controlled in Git, not only in the DB.
+
 ## Common Tasks
 
 ### Adding New KPIs
