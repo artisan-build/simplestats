@@ -73,60 +73,60 @@ enum StatsRangePreset: string
     {
         return match ($this) {
             self::TODAY => [
-                'rangeStart' => now()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => now()->startOfDay()->diffInHours(now()) + 1,
-                'rangeType' => StatsRangeType::HOUR->value,
+                'range_start' => now()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => now()->startOfDay()->diffInHours(now()) + 1,
+                'range_type' => StatsRangeType::HOUR->value,
             ],
             self::YESTERDAY => [
-                'rangeStart' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => 24,
-                'rangeType' => StatsRangeType::HOUR->value,
+                'range_start' => now()->subDay()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => 24,
+                'range_type' => StatsRangeType::HOUR->value,
             ],
             self::LAST_7_DAYS => [
-                'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => 7,
-                'rangeType' => StatsRangeType::DAY->value,
+                'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => 7,
+                'range_type' => StatsRangeType::DAY->value,
             ],
             self::LAST_30_DAYS => [
-                'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => 30,
-                'rangeType' => StatsRangeType::DAY->value,
+                'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => 30,
+                'range_type' => StatsRangeType::DAY->value,
             ],
             self::LAST_12_WEEKS => [
-                'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => 12,
-                'rangeType' => StatsRangeType::WEEK->value,
+                'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => 12,
+                'range_type' => StatsRangeType::WEEK->value,
             ],
             self::LAST_6_MONTHS => [
-                'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => now()->subMonths(6)->startOfMonth()->diffInMonths(now()),
-                'rangeType' => StatsRangeType::MONTH->value,
+                'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => now()->subMonths(6)->startOfMonth()->diffInMonths(now()),
+                'range_type' => StatsRangeType::MONTH->value,
             ],
             self::THIS_MONTH => [
-                'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => now()->startOfMonth()->diffInDays(now()) + 1,
-                'rangeType' => StatsRangeType::DAY->value,
+                'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => now()->startOfMonth()->diffInDays(now()) + 1,
+                'range_type' => StatsRangeType::DAY->value,
             ],
             self::LAST_MONTH => [
-                'rangeStart' => now()->subMonth()->endOfMonth()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => now()->subMonth()->startOfMonth()->diffInDays(now()->subMonth()->endOfMonth()) + 1,
-                'rangeType' => StatsRangeType::DAY->value,
+                'range_start' => now()->subMonth()->endOfMonth()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => now()->subMonth()->startOfMonth()->diffInDays(now()->subMonth()->endOfMonth()) + 1,
+                'range_type' => StatsRangeType::DAY->value,
             ],
             self::THIS_YEAR => [
-                'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => now()->startOfYear()->diffInMonths(now()) + 1,
-                'rangeType' => StatsRangeType::MONTH->value,
+                'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => now()->startOfYear()->diffInMonths(now()) + 1,
+                'range_type' => StatsRangeType::MONTH->value,
             ],
             self::LAST_YEAR => [
-                'rangeStart' => now()->subYear()->endOfYear()->format(StatsRangeType::DATE_FORMAT),
-                'rangeAmount' => now()->subYear()->startOfYear()->diffInMonths(now()->subYear()->endOfYear()) + 1,
-                'rangeType' => StatsRangeType::MONTH->value,
+                'range_start' => now()->subYear()->endOfYear()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => now()->subYear()->startOfYear()->diffInMonths(now()->subYear()->endOfYear()) + 1,
+                'range_type' => StatsRangeType::MONTH->value,
             ],
             self::ALL_TIME => $this->getAllTimeRange($projectId),
             self::CUSTOM => [
-                'rangeStart' => null,
-                'rangeAmount' => null,
-                'rangeType' => null,
+                'range_start' => null,
+                'range_amount' => null,
+                'range_type' => null,
             ],
         };
     }
@@ -152,9 +152,9 @@ enum StatsRangePreset: string
         }
 
         return [
-            'rangeStart' => $now->format('Y-m-d'),
-            'rangeAmount' => $allTimeRange,
-            'rangeType' => $allTimeType->value,
+            'range_start' => $now->format('Y-m-d'),
+            'range_amount' => $allTimeRange,
+            'range_type' => $allTimeType->value,
         ];
     }
 }

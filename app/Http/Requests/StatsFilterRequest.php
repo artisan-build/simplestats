@@ -46,7 +46,7 @@ class StatsFilterRequest extends FormRequest
         if ($projects->count() === 1) {
             $project = $projects->first();
             $this->merge([
-                'projectId' => $project->id,
+                'project_id' => $project->id,
             ]);
         }
     }
@@ -60,12 +60,12 @@ class StatsFilterRequest extends FormRequest
     {
         return [
             ...$this->sharedFilterRules(),
-            'projectId' => [
+            'project_id' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(Project::class),
             ],
-            'groupType' => [
+            'group_type' => [
                 'sometimes',
                 'string',
                 Rule::in(array_keys(StatsService::getStatsTypes()->toArray())),
@@ -100,89 +100,89 @@ class StatsFilterRequest extends FormRequest
     public function sharedFilterRules(): array
     {
         return [
-            'rangeType' => ['sometimes', Rule::enum(StatsRangeType::class)],
-            'rangeAmount' => ['sometimes', 'integer'],
-            'rangeStart' => ['sometimes', 'date'],
+            'range_type' => ['sometimes', Rule::enum(StatsRangeType::class)],
+            'range_amount' => ['sometimes', 'integer'],
+            'range_start' => ['sometimes', 'date'],
             'comparison' => [
                 'sometimes',
                 new Enum(ComparisonType::class),
             ],
-            'trackReferer' => [
+            'track_referer' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsTrackReferer::class),
             ],
-            'trackSource' => [
+            'track_source' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsTrackSource::class),
             ],
-            'trackMedium' => [
+            'track_medium' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsTrackMedium::class),
             ],
-            'trackCampaign' => [
+            'track_campaign' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsTrackCampaign::class),
             ],
-            'trackTerm' => [
+            'track_term' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsTrackTerm::class),
             ],
-            'trackContent' => [
+            'track_content' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsTrackContent::class),
             ],
-            'locationCountry' => [
+            'location_country' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsLocationCountry::class),
             ],
-            'locationRegion' => [
+            'location_region' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsLocationRegion::class),
             ],
-            'locationCity' => [
+            'location_city' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsLocationCity::class),
             ],
-            'deviceType' => [
+            'device_type' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsDeviceType::class),
             ],
-            'devicePlatform' => [
+            'device_platform' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsDevicePlatform::class),
             ],
-            'deviceBrowser' => [
+            'device_browser' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsDeviceBrowser::class),
             ],
-            'pageEntry' => [
+            'page_entry' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsPageEntry::class),
             ],
-            'customEventName' => [
+            'custom_event_name' => [
                 'sometimes',
                 'integer',
                 new ValidTeamModel(StatsCustomEventName::class),
             ],
-            'statsType' => [
+            'stats_type' => [
                 'sometimes',
                 'string',
-                Rule::in(StatsService::getStatsTypesCamelFlat()->toArray()),
+                Rule::in(StatsService::getStatsTypesFlat()->toArray()),
             ],
-            'statsSort' => [
+            'stats_sort' => [
                 'sometimes',
                 'string',
                 Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered']),

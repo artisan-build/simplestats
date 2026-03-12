@@ -51,49 +51,49 @@ const newFilterForDataPoint = (clickedDate) => {
         preset: 'custom',
     };
 
-    if (props.filters.rangeType === 'years') {
-        newFilter.rangeType = 'months';
+    if (props.filters.range_type === 'years') {
+        newFilter.range_type = 'months';
         let endOfYearDate = endOfYear(clickedDate);
 
         if ((isAfter(endOfYearDate, new Date()))) {
-            newFilter.rangeStart = format(endOfMonth(new Date()), dateFormat);
-            newFilter.rangeAmount = differenceInMonths(new Date(), startOfYear(clickedDate))+1;
+            newFilter.range_start = format(endOfMonth(new Date()), dateFormat);
+            newFilter.range_amount = differenceInMonths(new Date(), startOfYear(clickedDate))+1;
         } else {
-            newFilter.rangeStart = format(endOfYearDate, dateFormat);
-            newFilter.rangeAmount = 12;
+            newFilter.range_start = format(endOfYearDate, dateFormat);
+            newFilter.range_amount = 12;
         }
-    } else if (props.filters.rangeType === 'months') {
-        newFilter.rangeType = 'days';
+    } else if (props.filters.range_type === 'months') {
+        newFilter.range_type = 'days';
         let endOfMonthDate = endOfMonth(clickedDate);
 
         if ((isAfter(endOfMonthDate, new Date()))) {
-            newFilter.rangeStart = format(endOfDay(new Date()), dateFormat);
-            newFilter.rangeAmount = differenceInDays(new Date(), startOfMonth(clickedDate))+1;
+            newFilter.range_start = format(endOfDay(new Date()), dateFormat);
+            newFilter.range_amount = differenceInDays(new Date(), startOfMonth(clickedDate))+1;
         } else {
-            newFilter.rangeStart = format(endOfMonthDate, dateFormat);
-            newFilter.rangeAmount = getDaysInMonth(endOfMonthDate);
+            newFilter.range_start = format(endOfMonthDate, dateFormat);
+            newFilter.range_amount = getDaysInMonth(endOfMonthDate);
         }
-    } else if (props.filters.rangeType === 'weeks') {
-        newFilter.rangeType = 'days';
+    } else if (props.filters.range_type === 'weeks') {
+        newFilter.range_type = 'days';
         let endOfWeekDate = endOfWeek(clickedDate);
 
         if ((isAfter(endOfWeekDate, new Date()))) {
-            newFilter.rangeStart = format(endOfDay(new Date()), dateFormat);
-            newFilter.rangeAmount = differenceInDays(new Date(), startOfWeek(clickedDate)) + 1;
+            newFilter.range_start = format(endOfDay(new Date()), dateFormat);
+            newFilter.range_amount = differenceInDays(new Date(), startOfWeek(clickedDate)) + 1;
         } else {
-            newFilter.rangeStart = format(endOfWeekDate, dateFormat);
-            newFilter.rangeAmount = 7;
+            newFilter.range_start = format(endOfWeekDate, dateFormat);
+            newFilter.range_amount = 7;
         }
-    } else if (props.filters.rangeType === 'days') {
-        newFilter.rangeType = 'hours';
+    } else if (props.filters.range_type === 'days') {
+        newFilter.range_type = 'hours';
         let endOfDayDate = endOfDay(clickedDate);
 
         if ((isAfter(endOfDayDate, new Date()))) {
-            newFilter.rangeStart = format(endOfHour(new Date()), dateFormat);
-            newFilter.rangeAmount = differenceInHours(new Date(), startOfDay(clickedDate))+1;
+            newFilter.range_start = format(endOfHour(new Date()), dateFormat);
+            newFilter.range_amount = differenceInHours(new Date(), startOfDay(clickedDate))+1;
         } else {
-            newFilter.rangeStart = format(endOfDayDate, dateFormat);
-            newFilter.rangeAmount = 24;
+            newFilter.range_start = format(endOfDayDate, dateFormat);
+            newFilter.range_amount = 24;
         }
     }
 
@@ -212,9 +212,9 @@ const chartOptions = ref({
                 // console.log(selectedSeries, options.seriesIndex)
                 if (series.value[0].datesPrev.length && options.seriesIndex === 1) {
                     let prevDate = series.value[0].datesPrev[options.dataPointIndex];
-                    let prevDateFormatted = formatDate(prevDate, props.filters.rangeType);
+                    let prevDateFormatted = formatDate(prevDate, props.filters.range_type);
 
-                    if (props.filters.comparison === 'year' && props.filters.rangeType !== 'months') {
+                    if (props.filters.comparison === 'year' && props.filters.range_type !== 'months') {
                         prevDateFormatted += ', ' + new Date(prevDate).getFullYear();
                     }
 
@@ -238,7 +238,7 @@ if (props.chartLength <= 1) {
 
 const latestPeriod = categories[categories.length - 1];
 const previousPeriod = categories[categories.length - 2];
-const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.rangeType);
+const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.range_type);
 
 let hasCurrentPeriod = latestPeriod === currentPeriod;
 

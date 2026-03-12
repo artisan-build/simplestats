@@ -99,7 +99,7 @@ test('stats index with invalid comparison returns 422', function () {
 test('stats grouped without auth returns 401', function () {
     auth()->forgetGuards();
 
-    $response = $this->getJson('/api/v1/stats/grouped?statsType=trackSource', [
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source', [
         'Authorization' => 'Bearer invalid-token',
         'Accept' => 'application/json',
     ]);
@@ -108,7 +108,7 @@ test('stats grouped without auth returns 401', function () {
 });
 
 test('stats grouped with valid token returns 200 with correct structure', function () {
-    $response = $this->getJson('/api/v1/stats/grouped?statsType=trackSource', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source', statsApiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -128,18 +128,18 @@ test('stats grouped without statsType returns 422', function () {
     $response = $this->getJson('/api/v1/stats/grouped', statsApiHeaders($this->token));
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors('statsType');
+        ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats grouped with invalid statsType returns 422', function () {
-    $response = $this->getJson('/api/v1/stats/grouped?statsType=invalid_type', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=invalid_type', statsApiHeaders($this->token));
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors('statsType');
+        ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats grouped with limit parameter limits results', function () {
-    $response = $this->getJson('/api/v1/stats/grouped?statsType=trackSource&limit=3', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source&limit=3', statsApiHeaders($this->token));
 
     $response->assertOk();
     expect(count($response->json('data')))->toBeLessThanOrEqual(3);
@@ -153,7 +153,7 @@ test('stats index project_id in meta matches authenticated project', function ()
 });
 
 test('stats groups returns data for valid statsType', function () {
-    $response = $this->getJson('/api/v1/stats/groups?statsType=trackSource', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/groups?stats_type=track_source', statsApiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -167,20 +167,20 @@ test('stats groups without statsType returns 422', function () {
     $response = $this->getJson('/api/v1/stats/groups', statsApiHeaders($this->token));
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors('statsType');
+        ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats groups with invalid statsType returns 422', function () {
-    $response = $this->getJson('/api/v1/stats/groups?statsType=invalid', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/groups?stats_type=invalid', statsApiHeaders($this->token));
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors('statsType');
+        ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats groups without auth returns 401', function () {
     auth()->forgetGuards();
 
-    $response = $this->getJson('/api/v1/stats/groups?statsType=trackSource', [
+    $response = $this->getJson('/api/v1/stats/groups?stats_type=track_source', [
         'Authorization' => 'Bearer invalid-token',
         'Accept' => 'application/json',
     ]);

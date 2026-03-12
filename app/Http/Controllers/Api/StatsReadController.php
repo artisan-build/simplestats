@@ -13,6 +13,7 @@ use App\Services\StatsService;
 use Carbon\CarbonInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class StatsReadController extends Controller
@@ -45,7 +46,7 @@ class StatsReadController extends Controller
         StatsAggregationsService $statsAggregationsService,
     ): JsonResponse {
         $request->validate([
-            'statsType' => ['required'],
+            'stats_type' => ['required'],
         ]);
 
         $project = $request->user();
@@ -53,8 +54,8 @@ class StatsReadController extends Controller
 
         $data = $statsAggregationsService->getAggregatedGroupedData(
             $filters,
-            $request->statsType,
-            $request->statsSort ?? 'visitors',
+            $request->stats_type,
+            $request->stats_sort ?? 'visitors',
             $request->limit ?? 10,
         )->values()->toArray();
 
@@ -67,15 +68,15 @@ class StatsReadController extends Controller
     public function groups(Request $request): JsonResponse
     {
         $request->validate([
-            'statsType' => [
+            'stats_type' => [
                 'required',
                 'string',
-                Rule::in(StatsService::getStatsTypesCamelFlat()->toArray()),
+                Rule::in(StatsService::getStatsTypesFlat()->toArray()),
             ],
         ]);
 
-        $statsType = StatsService::getStatsTypesCamelFlatMap()
-            ->firstWhere('type', $request->statsType);
+        $statsType = StatsService::getStatsTypesFlatMap()
+            ->firstWhere('type', $request->stats_type);
 
         $data = $statsType['model']::query()
             ->select('id', 'name')
@@ -91,12 +92,12 @@ class StatsReadController extends Controller
     {
         return collect((array) $filters)
             ->except('customPresetId')
-            ->map(fn ($value) => match (true) {
+            ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => match (true) {
                 $value instanceof StatsRangeType => $value->value,
                 $value instanceof CarbonInterface => $value->format('Y-m-d'),
                 $value instanceof StatsRangePreset => $value->value,
                 default => $value,
-            })
+            }])
             ->toArray();
     }
 }

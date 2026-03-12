@@ -25,8 +25,7 @@ class ProjectAlertPaymentNotification extends Notification
     public function __construct(
         public StatsPayment $statsPayment,
         public UserNotification $notification,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -57,7 +56,7 @@ class ProjectAlertPaymentNotification extends Notification
             ->markdown('emails.project-alert-payment', [
                 'projectName' => $projectName,
                 'statsPerson' => $this->statsPayment->statsVisitor ?? $this->statsPayment->statsUser,
-                'statsTypes' => StatsService::getStatsTypesCamelFlatMap(),
+                'statsTypes' => StatsService::getStatsTypesFlatMap(),
                 'statsPayment' => $this->statsPayment,
             ]);
 

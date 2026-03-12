@@ -49,9 +49,9 @@ Returns time-series analytics data for your project.
 | Key            | Type                | Description                                                                                               |
 |----------------|---------------------|-----------------------------------------------------------------------------------------------------------|
 | **preset**     | _string_ `optional` | A predefined date range. See [Available Presets](#available-presets) below.                               |
-| **rangeType**  | _string_ `optional` | The granularity of the data: `hours`, `days`, `weeks`, `months`, `years`.                                 |
-| **rangeAmount**| _integer_ `optional`| Number of periods to include.                                                                             |
-| **rangeStart** | _date_ `optional`   | The starting point from which the range is calculated **backwards** (format: `Y-m-d`). Defaults to today. |
+| **range_type**  | _string_ `optional` | The granularity of the data: `hours`, `days`, `weeks`, `months`, `years`.                                 |
+| **range_amount**| _integer_ `optional`| Number of periods to include.                                                                             |
+| **range_start** | _date_ `optional`   | The starting point from which the range is calculated **backwards** (format: `Y-m-d`). Defaults to today. |
 | **comparison** | _string_ `optional` | Compare with a previous period: `period` or `year`.                                                       |
 
 ::: info
@@ -64,20 +64,20 @@ You can filter results by group `id`s. Use the [Groups](#groups) endpoint to dis
 
 | Key                  | Type                 | Description                        |
 |----------------------|----------------------|------------------------------------|
-| **trackReferer**     | _integer_ `optional` | Filter by referrer `id`.             |
-| **trackSource**      | _integer_ `optional` | Filter by source `id`.               |
-| **trackMedium**      | _integer_ `optional` | Filter by medium `id`.               |
-| **trackCampaign**    | _integer_ `optional` | Filter by campaign `id`.             |
-| **trackTerm**        | _integer_ `optional` | Filter by term `id`.                 |
-| **trackContent**     | _integer_ `optional` | Filter by content `id`.              |
-| **locationCountry**  | _integer_ `optional` | Filter by country `id`.              |
-| **locationRegion**   | _integer_ `optional` | Filter by region `id`.               |
-| **locationCity**     | _integer_ `optional` | Filter by city `id`.                 |
-| **deviceType**       | _integer_ `optional` | Filter by device type `id`.          |
-| **devicePlatform**   | _integer_ `optional` | Filter by platform `id`.             |
-| **deviceBrowser**    | _integer_ `optional` | Filter by browser `id`.              |
-| **pageEntry**        | _integer_ `optional` | Filter by entry page `id`.           |
-| **customEventName**  | _integer_ `optional` | Filter by custom event name `id`.    |
+| **track_referer**     | _integer_ `optional` | Filter by referrer `id`.             |
+| **track_source**      | _integer_ `optional` | Filter by source `id`.               |
+| **track_medium**      | _integer_ `optional` | Filter by medium `id`.               |
+| **track_campaign**    | _integer_ `optional` | Filter by campaign `id`.             |
+| **track_term**        | _integer_ `optional` | Filter by term `id`.                 |
+| **track_content**     | _integer_ `optional` | Filter by content `id`.              |
+| **location_country**  | _integer_ `optional` | Filter by country `id`.              |
+| **location_region**   | _integer_ `optional` | Filter by region `id`.               |
+| **location_city**     | _integer_ `optional` | Filter by city `id`.                 |
+| **device_type**       | _integer_ `optional` | Filter by device type `id`.          |
+| **device_platform**   | _integer_ `optional` | Filter by platform `id`.             |
+| **device_browser**    | _integer_ `optional` | Filter by browser `id`.              |
+| **page_entry**        | _integer_ `optional` | Filter by entry page `id`.           |
+| **custom_event_name** | _integer_ `optional` | Filter by custom event name `id`.    |
 :::
 
 **Example Request**
@@ -112,10 +112,10 @@ Results are returned in **reverse** chronological order (most recent first).
         }
     ],
     "meta": {
-        "projectId": 1,
-        "rangeAmount": 7,
-        "rangeType": "days",
-        "rangeStart": "2026-03-11",
+        "project_id": 1,
+        "range_amount": 7,
+        "range_type": "days",
+        "range_start": "2026-03-11",
         "comparison": "0",
         "preset": "last_7_days",
         ...
@@ -136,10 +136,10 @@ GET /api/v1/stats?preset=last_7_days&comparison=period
     "data": [ ... ],
     "data_previous": [ ... ],
     "meta": {
-        "projectId": 1,
-        "rangeAmount": 7,
-        "rangeType": "days",
-        "rangeStart": "2026-03-11",
+        "project_id": 1,
+        "range_amount": 7,
+        "range_type": "days",
+        "range_start": "2026-03-11",
         "comparison": "period",
         "preset": "last_7_days",
         ...
@@ -161,12 +161,12 @@ Returns the available values for a specific stats type. Use this to discover the
 
 | Key            | Type                 | Description                                                                 |
 |----------------|----------------------|-----------------------------------------------------------------------------|
-| **statsType**  | _string_ `required`  | The stats type to list values for. See [Available Stats Types](#available-stats-types) below. |
+| **stats_type**  | _string_ `required`  | The stats type to list values for. See [Available Stats Types](#available-stats-types) below. |
 
 **Example Request**
 
 ```
-GET /api/v1/stats/groups?statsType=trackSource
+GET /api/v1/stats/groups?stats_type=track_source
 ```
 
 **Response**
@@ -191,7 +191,7 @@ GET /api/v1/stats/groups?statsType=trackSource
 ```
 
 ::: tip
-Use the `id` from this response as the filter value in the [Stats](#stats) or [Grouped Stats](#grouped-stats) endpoints. For example, to filter stats by the source "google" (`id` 3): `GET /api/v1/stats?trackSource=3`
+Use the `id` from this response as the filter value in the [Stats](#stats) or [Grouped Stats](#grouped-stats) endpoints. For example, to filter stats by the source "google" (`id` 3): `GET /api/v1/stats?track_source=3`
 :::
 
 ---
@@ -208,13 +208,13 @@ Returns analytics data grouped by a specific group (e.g., sources, countries, br
 
 | Key            | Type                 | Description                                                                 |
 |----------------|----------------------|-----------------------------------------------------------------------------|
-| **statsType**  | _string_ `required`  | The group to aggregate by. See [Available Stats Types](#available-stats-types) below. |
-| **statsSort**  | _string_ `optional`  | Sort results by: `name`, `visitors`, `reg`, `cr`, `dau`, `net`, `total`. Default: `visitors`. |
+| **stats_type**  | _string_ `required`  | The group to aggregate by. See [Available Stats Types](#available-stats-types) below. |
+| **stats_sort**  | _string_ `optional`  | Sort results by: `name`, `visitors`, `reg`, `cr`, `dau`, `net`, `total`. Default: `visitors`. |
 | **limit**      | _integer_ `optional` | Maximum number of results (1-100). Default: 10.                             |
 | **preset**     | _string_ `optional`  | A predefined date range. See [Available Presets](#available-presets) below.  |
-| **rangeType**  | _string_ `optional`  | The granularity: `hours`, `days`, `weeks`, `months`, `years`.               |
-| **rangeAmount**| _integer_ `optional` | Number of periods to include.                                               |
-| **rangeStart** | _date_ `optional`    | The starting point from which the range is calculated backwards (format: `Y-m-d`). Defaults to today. |
+| **range_type**  | _string_ `optional`  | The granularity: `hours`, `days`, `weeks`, `months`, `years`.               |
+| **range_amount**| _integer_ `optional` | Number of periods to include.                                               |
+| **range_start** | _date_ `optional`    | The starting point from which the range is calculated backwards (format: `Y-m-d`). Defaults to today. |
 
 ::: details Filter parameters
 The same filter parameters as the [Stats](#stats) endpoint apply here as well.
@@ -223,7 +223,7 @@ The same filter parameters as the [Stats](#stats) endpoint apply here as well.
 **Example Request**
 
 ```
-GET /api/v1/stats/grouped?statsType=trackSource&limit=5
+GET /api/v1/stats/grouped?stats_type=track_source&limit=5
 ```
 
 **Response**
@@ -253,10 +253,10 @@ GET /api/v1/stats/grouped?statsType=trackSource&limit=5
         }
     ],
     "meta": {
-        "projectId": 1,
-        "rangeAmount": 7,
-        "rangeType": "days",
-        "rangeStart": "2026-03-11",
+        "project_id": 1,
+        "range_amount": 7,
+        "range_type": "days",
+        "range_start": "2026-03-11",
         "comparison": "0",
         "preset": "last_7_days",
         ...
@@ -314,12 +314,12 @@ All revenue values are in **cents** (e.g., 15000 = $150.00). The currency depend
 
 ## Available Stats Types
 
-Use these values for the `statsType` parameter in the [Grouped Stats](#grouped-stats) and [Groups](#groups) endpoints:
+Use these values for the `stats_type` parameter in the [Grouped Stats](#grouped-stats) and [Groups](#groups) endpoints:
 
 | Category | Values |
 |----------|--------|
-| Tracking | `trackReferer` (Referrers), `trackSource` (Sources), `trackMedium` (Mediums), `trackCampaign` (Campaigns), `trackTerm` (Terms), `trackContent` (Content) |
-| Pages | `pageEntry` (Entry pages) |
-| Location | `locationCountry` (Countries), `locationRegion` (Regions), `locationCity` (Cities) |
-| Device | `devicePlatform` (Platforms), `deviceBrowser` (Browsers), `deviceType` (Device sizes) |
-| Events | `customEventName` (Custom events) |
+| Tracking | `track_referer` (Referrers), `track_source` (Sources), `track_medium` (Mediums), `track_campaign` (Campaigns), `track_term` (Terms), `track_content` (Content) |
+| Pages | `page_entry` (Entry pages) |
+| Location | `location_country` (Countries), `location_region` (Regions), `location_city` (Cities) |
+| Device | `device_platform` (Platforms), `device_browser` (Browsers), `device_type` (Device sizes) |
+| Events | `custom_event_name` (Custom events) |

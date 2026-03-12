@@ -45,7 +45,7 @@ onUnmounted(() => {
 })
 
 
-const currentProject = props.teamStats.projects[props.filters.projectId];
+const currentProject = props.teamStats.projects[props.filters.project_id];
 </script>
 
 <template>

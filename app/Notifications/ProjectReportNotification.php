@@ -32,8 +32,7 @@ class ProjectReportNotification extends Notification
         public UserNotification $notification,
         public CarbonInterface $time,
         public Team $team,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -137,7 +136,7 @@ class ProjectReportNotification extends Notification
         };
 
         return collect($this->notification->settings['types'])->map(function ($type) use ($filter, $sort) {
-            $typeData = StatsService::getStatsTypesCamelFlatMap()->keyBy('model')[$type];
+            $typeData = StatsService::getStatsTypesFlatMap()->keyBy('model')[$type];
 
             return [
                 'title' => $typeData['title'],

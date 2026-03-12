@@ -63,12 +63,12 @@ class StatsAggregationsService
         $statsTable = 'stats_'.str($statsTypeSnake)->plural()->toString();
 
         // for track not but for referer we also want to know the Direct / Unknown
-        $typeIdFallback = (! str($statsType)->startsWith('track') || $statsType === 'trackReferer') ? '-1' : 'NULL';
+        $typeIdFallback = (! str($statsType)->startsWith('track') || $statsType === 'track_referer') ? '-1' : 'NULL';
 
         $project = Project::with('team:id,timezone')->find($filters->projectId);
         $trackablePerson = $this->getTrackablePersonByProject($project);
 
-        if ($statsType === 'customEventName') {
+        if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
                 $statsSort, app(AggregationBuilderType::class))
             )->build();

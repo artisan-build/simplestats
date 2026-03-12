@@ -43,7 +43,7 @@ const submit = () => {
 
 const filterChanged = (event) => {
     // if a project changes, we need to reset some values, which may no longer relate to the new selected project
-    if (event && event.name === 'projectId') {
+    if (event && event.name === 'project_id') {
         // reset group filters...
         for(let groupKey in props.statsGroups) {
             props.statsGroups[groupKey].forEach(item => {
@@ -53,15 +53,15 @@ const filterChanged = (event) => {
     }
 
     if (form.preset && form.preset !== 'custom') {
-        delete form.rangeStart;
-        delete form.rangeAmount;
-        delete form.rangeType;
+        delete form.range_start;
+        delete form.range_amount;
+        delete form.range_type;
     }
 
     submit();
 };
 
-const periodRange = periodSingular[props.filters.rangeType];
+const periodRange = periodSingular[props.filters.range_type];
 
 const chartDescription = `
     <div class="font-bold text-green-300">Current ${periodRange}</div>
@@ -90,7 +90,7 @@ function isStatsGroupSet() {
     );
 }
 
-const currentProject = props.teamStats.projects[props.filters.projectId];
+const currentProject = props.teamStats.projects[props.filters.project_id];
 
 const showPresetModal = ref(false);
 </script>
@@ -117,10 +117,10 @@ const showPresetModal = ref(false);
                                     />
                                 </div>
                                 <div>
-                                    <InputLabel class="hidden" for="projectId" value="Project" />
+                                    <InputLabel class="hidden" for="project_id" value="Project" />
                                     <SelectInput
-                                        id="projectId"
-                                        v-model="form.projectId"
+                                        id="project_id"
+                                        v-model="form.project_id"
                                         class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="teamStats.projects"
                                         @change="filterChanged"
@@ -134,11 +134,11 @@ const showPresetModal = ref(false);
                                     </span>
                                 </div>
                                 <div v-if="isCustomRange()">
-                                    <InputLabel class="hidden" for="rangeStart" value="Start from" />
+                                    <InputLabel class="hidden" for="range_start" value="Start from" />
                                     <TextInput
                                         type="date"
-                                        id="rangeStart"
-                                        v-model="form.rangeStart"
+                                        id="range_start"
+                                        v-model="form.range_start"
                                         class="mt-1 block w-36 dark:!bg-dark-800"
                                         @change="filterChanged"
                                     />
@@ -149,20 +149,20 @@ const showPresetModal = ref(false);
                                     </span>
                                 </div>
                                 <div v-if="isCustomRange()">
-                                    <InputLabel class="hidden" for="rangeAmount" value="Last" />
+                                    <InputLabel class="hidden" for="range_amount" value="Last" />
                                     <SelectInput
-                                        id="rangeAmount"
-                                        v-model="form.rangeAmount"
+                                        id="range_amount"
+                                        v-model="form.range_amount"
                                         class="mt-1 block w-20 dark:!bg-dark-800"
                                         :options="rangeAmounts"
                                         @change="filterChanged"
                                     />
                                 </div>
                                 <div v-if="isCustomRange()">
-                                    <InputLabel class="hidden" for="rangeType" value="&nbsp;" />
+                                    <InputLabel class="hidden" for="range_type" value="&nbsp;" />
                                     <SelectInput
-                                        id="rangeType"
-                                        v-model="form.rangeType"
+                                        id="range_type"
+                                        v-model="form.range_type"
                                         class="mt-1 block w-28 dark:!bg-dark-800"
                                         :options="rangeTypes"
                                         @change="filterChanged"

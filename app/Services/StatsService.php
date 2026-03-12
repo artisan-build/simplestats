@@ -28,6 +28,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class StatsService
 {
@@ -101,7 +102,7 @@ class StatsService
         return collect(self::$statsTypes);
     }
 
-    public static function getStatsTypesCamel(array $skip = []): Collection
+    public static function getStatsTypesFormatted(array $skip = []): Collection
     {
         return collect(self::$statsTypes)->map(function ($types) use ($skip) {
             return collect($types)->map(function ($item) use ($skip) {
@@ -111,21 +112,19 @@ class StatsService
                     }
                 }
 
-                $item['type'] = str($item['type'])->camel()->toString();
-
                 return $item;
             });
         });
     }
 
-    public static function getStatsTypesCamelFlatMap(array $skip = []): Collection
+    public static function getStatsTypesFlatMap(array $skip = []): Collection
     {
-        return collect(self::getStatsTypesCamel($skip))->flatMap(fn ($group) => $group);
+        return collect(self::getStatsTypesFormatted($skip))->flatMap(fn ($group) => $group);
     }
 
     public static function asOptions(array $skip = []): Collection
     {
-        return collect(self::getStatsTypesCamelFlatMap($skip))->map(function ($type) {
+        return collect(self::getStatsTypesFlatMap($skip))->map(function ($type) {
             return [
                 'id' => $type['model'],
                 'name' => ucfirst($type['title']),
@@ -133,20 +132,21 @@ class StatsService
         })->values();
     }
 
-    public static function getStatsTypesCamelFlat(): Collection
+    public static function getStatsTypesFlat(): Collection
     {
-        return collect(self::getStatsTypesCamel())->flatMap(function ($item) {
+        return collect(self::getStatsTypesFormatted())->flatMap(function ($item) {
             return $item->pluck('type');
         });
     }
 
     public static function getFilterStatsTypeNames(StatsFilterDto $filters): Collection
     {
-        return collect(self::getStatsTypesCamel())->flatMap(function ($item) {
+        return collect(self::getStatsTypesFormatted())->flatMap(function ($item) {
             return collect($item)->pluck('model', 'type');
         })->mapWithKeys(function ($model, $type) use ($filters) {
-            if (! empty($filters->$type)) {
-                return [$type => $model::find($filters->$type)?->name ?? 'Direct / Unknown'];
+            $camelType = Str::camel($type);
+            if (! empty($filters->$camelType)) {
+                return [$type => $model::find($filters->$camelType)?->name ?? 'Direct / Unknown'];
             }
 
             return [];
@@ -155,17 +155,20 @@ class StatsService
 
     public static function formatFilters(StatsFilterDto $filters): array
     {
-        $formatted = collect((array) $filters)->merge([
-            'rangeStart' => $filters->rangeStart->format('Y-m-d'),
-        ])->except('customPresetId')->filter()->toArray(); //remove 0 values
+        $formatted = collect((array) $filters)
+            ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => $value])
+            ->merge(['range_start' => $filters->rangeStart->format('Y-m-d')])
+            ->except('custom_preset_id')
+            ->filter()
+            ->toArray();
 
         if ($filters->customPresetId) {
             $formatted['preset'] = 'custom_'.$filters->customPresetId;
         }
 
         // project must have a default value...
-        if (! isset($formatted['projectId'])) {
-            $formatted['projectId'] = 0;
+        if (! isset($formatted['project_id'])) {
+            $formatted['project_id'] = 0;
         }
         if (! isset($formatted['comparison'])) {
             $formatted['comparison'] = 0;

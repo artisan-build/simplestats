@@ -38,9 +38,9 @@ class StatsController extends Controller
         } elseif ($request->has('preset') && $request->preset !== StatsRangePreset::CUSTOM->value) {
             // on preset (built-in or custom), we do not save the range
             $user->updateSettings('statsFilters.'.$user->current_team_id, $request->except([
-                'rangeStart',
-                'rangeAmount',
-                'rangeType',
+                'range_start',
+                'range_amount',
+                'range_type',
             ]));
         }
 
@@ -80,7 +80,7 @@ class StatsController extends Controller
             'hiddenPresets' => $hiddenPresets,
             'customPresets' => $user->customStatsRangePresets,
             'filters' => StatsService::formatFilters($filters),
-            'statsGroups' => StatsService::getStatsTypesCamel(['model']),
+            'statsGroups' => StatsService::getStatsTypesFormatted(['model']),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
             'topReferers' => $refererService->getTopReferers(),
             'rangeTypes' => $statsDetailsService->getRangeTypes(),
@@ -99,17 +99,17 @@ class StatsController extends Controller
 
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
     {
-        if (isset($request->groupType)) {
-            $request->user()->updateSettings("selectedGroupTypes.$request->projectId.$request->groupType", $request->statsType);
+        if (isset($request->group_type)) {
+            $request->user()->updateSettings("selectedGroupTypes.$request->project_id.$request->group_type", $request->stats_type);
         }
 
         // ->values()->toArray() makes sure the indexes are int-numeric and not string-numeric
         // (which would result in a js object). This happens cause of the reject at the end of "getAggregatedGroupedData"
         return $statsAggregationsService->getAggregatedGroupedData(
             StatsFilterDto::fromRequest($request),
-            $request->statsType,
-            $request->statsSort,
-            $request->limit ?? 5, //must be equal to Load more in StatsOverviewGroup.vue
+            $request->stats_type,
+            $request->stats_sort,
+            $request->limit ?? 5, // must be equal to Load more in StatsOverviewGroup.vue
         )->values()->toArray();
     }
 

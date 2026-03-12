@@ -11,7 +11,7 @@
 |**User ID**|{{ $statsUser->id }}|
 |**Time**|{{ $statsUser->time->format('H:i:s') }}|
 @foreach($statsTypes as $statsType)
-@if($stat = $statsUser->stats['stats'.ucfirst($statsType['type'])] ?? null)
+@if($stat = $statsUser->stats['stats'.ucfirst(Str::camel($statsType['type']))] ?? null)
 |**{{ str($statsType['title'])->singular() }}**|{{ $stat['name'] }}|
 @endif
 @endforeach

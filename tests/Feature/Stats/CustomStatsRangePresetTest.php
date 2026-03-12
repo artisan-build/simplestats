@@ -180,7 +180,7 @@ test('custom preset toRange returns correct format', function () {
 
     $range = $preset->toRange();
 
-    expect($range['rangeAmount'])->toBe(14);
-    expect($range['rangeType'])->toBe('days');
-    expect($range['rangeStart'])->not->toBeNull();
+    expect($range['range_amount'])->toBe(14);
+    expect($range['range_type'])->toBe('days');
+    expect($range['range_start'])->not->toBeNull();
 });

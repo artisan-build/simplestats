@@ -75,7 +75,7 @@ it('grouped DAU uses correct date range when report runs at timezone boundary', 
     $globalDau = $statsAll['pd_dau'];
 
     $groupedStats = app(StatsAggregationsService::class)
-        ->getAggregatedGroupedData($filter, 'trackReferer', 'visitors', 10);
+        ->getAggregatedGroupedData($filter, 'track_referer', 'visitors', 10);
     $groupedDauTotal = $groupedStats->sum('dau');
 
     // Both should count only the 1 user from the target week (Mar 2-8), not the 3 from Feb 23-Mar 1

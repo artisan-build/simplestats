@@ -46,14 +46,14 @@ class CustomStatsRangePreset extends Model
     }
 
     /**
-     * @return array{rangeStart: string, rangeAmount: int, rangeType: string}
+     * @return array{range_start: string, range_amount: int, range_type: string}
      */
     public function toRange(): array
     {
         return [
-            'rangeStart' => now()->format(StatsRangeType::DATE_FORMAT),
-            'rangeAmount' => $this->range_amount,
-            'rangeType' => $this->range_type->value,
+            'range_start' => now()->format(StatsRangeType::DATE_FORMAT),
+            'range_amount' => $this->range_amount,
+            'range_type' => $this->range_type->value,
         ];
     }
 }

@@ -14,7 +14,7 @@ const props = defineProps({
 
 const page = usePage();
 
-const kpiDefs = getKpiDefinitions(props.filters.rangeType);
+const kpiDefs = getKpiDefinitions(props.filters.range_type);
 
 const isDarkMode = ref(document.documentElement.classList.contains('dark'));
 
@@ -53,7 +53,7 @@ const extractStatsData4Chart = (statsGroups) => {
             }
         }
 
-        acc.categories.push(formatDate(item.date, props.filters.rangeType));
+        acc.categories.push(formatDate(item.date, props.filters.range_type));
 
         return acc;
     }, { series: {}, categories: [] });
@@ -95,7 +95,7 @@ const lastStat = (key) => {
     if (statsArray.length > 1) {
         let prevStat = statsArray.at(1);
 
-        if (formatDate(stat.date, props.filters.rangeType) === formatDate(page.props.rangeCurrent, props.filters.rangeType) && stat[key] < prevStat[key]) {
+        if (formatDate(stat.date, props.filters.range_type) === formatDate(page.props.rangeCurrent, props.filters.range_type) && stat[key] < prevStat[key]) {
             stat = prevStat;
         }
     }

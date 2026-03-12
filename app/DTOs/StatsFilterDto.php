@@ -4,10 +4,10 @@ namespace App\DTOs;
 
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
+use App\Http\Requests\StatsFilterRequest;
 use App\Models\CustomStatsRangePreset;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use App\Http\Requests\StatsFilterRequest;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 
@@ -44,7 +44,7 @@ class StatsFilterDto
     public static function fromRequest(StatsFilterRequest $request, ?int $projectId = null): self
     {
         $customPresetId = null;
-        $effectiveProjectId = $projectId ?? $request->projectId ?? 0;
+        $effectiveProjectId = $projectId ?? $request->project_id ?? 0;
 
         if ($request->preset && Str::startsWith($request->preset, 'custom_')) {
             $customPresetId = (int) Str::after($request->preset, 'custom_');
@@ -52,16 +52,16 @@ class StatsFilterDto
             $request->merge($customPreset->toRange());
         } elseif ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
             $request->merge(StatsRangePreset::from($request->preset)->range($effectiveProjectId));
-        } elseif (! $request->hasAny(['rangeType', 'rangeAmount', 'rangeStart', 'preset']) && empty($_GET)) {
+        } elseif (! $request->hasAny(['range_type', 'range_amount', 'range_start', 'preset']) && empty($_GET)) {
             $request->merge([
                 ...StatsRangePreset::LAST_7_DAYS->range($effectiveProjectId),
                 'preset' => StatsRangePreset::LAST_7_DAYS->value,
             ]);
         }
 
-        $rangeType = StatsRangeType::from($request->rangeType ?? StatsRangeType::DAY->value);
-        $rangeAmount = $request->rangeAmount ?? $rangeType->defaultRangeAmount();
-        $rangeStart = CarbonImmutable::parse($request->rangeStart ?? now());
+        $rangeType = StatsRangeType::from($request->range_type ?? StatsRangeType::DAY->value);
+        $rangeAmount = $request->range_amount ?? $rangeType->defaultRangeAmount();
+        $rangeStart = CarbonImmutable::parse($request->range_start ?? now());
 
         if ($rangeStart->isToday()) {
             $rangeStart = now();
@@ -79,20 +79,20 @@ class StatsFilterDto
                 ? StatsRangePreset::tryFrom($request->preset)
                 : null,
             customPresetId: $customPresetId,
-            trackReferer: $request->trackReferer ?? 0,
-            trackSource: $request->trackSource ?? 0,
-            trackMedium: $request->trackMedium ?? 0,
-            trackCampaign: $request->trackCampaign ?? 0,
-            trackTerm: $request->trackTerm ?? 0,
-            trackContent: $request->trackContent ?? 0,
-            locationCountry: $request->locationCountry ?? 0,
-            locationRegion: $request->locationRegion ?? 0,
-            locationCity: $request->locationCity ?? 0,
-            deviceType: $request->deviceType ?? 0,
-            devicePlatform: $request->devicePlatform ?? 0,
-            deviceBrowser: $request->deviceBrowser ?? 0,
-            pageEntry: $request->pageEntry ?? 0,
-            customEventName: $request->customEventName ?? 0,
+            trackReferer: $request->track_referer ?? 0,
+            trackSource: $request->track_source ?? 0,
+            trackMedium: $request->track_medium ?? 0,
+            trackCampaign: $request->track_campaign ?? 0,
+            trackTerm: $request->track_term ?? 0,
+            trackContent: $request->track_content ?? 0,
+            locationCountry: $request->location_country ?? 0,
+            locationRegion: $request->location_region ?? 0,
+            locationCity: $request->location_city ?? 0,
+            deviceType: $request->device_type ?? 0,
+            devicePlatform: $request->device_platform ?? 0,
+            deviceBrowser: $request->device_browser ?? 0,
+            pageEntry: $request->page_entry ?? 0,
+            customEventName: $request->custom_event_name ?? 0,
         );
     }
 

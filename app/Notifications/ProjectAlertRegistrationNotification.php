@@ -23,8 +23,7 @@ class ProjectAlertRegistrationNotification extends Notification
     public function __construct(
         public StatsUser $statsUser,
         public UserNotification $notification,
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -51,7 +50,7 @@ class ProjectAlertRegistrationNotification extends Notification
             ->markdown('emails.project-alert-registration', [
                 'projectName' => $projectName,
                 'statsUser' => $this->statsUser,
-                'statsTypes' => StatsService::getStatsTypesCamelFlatMap(),
+                'statsTypes' => StatsService::getStatsTypesFlatMap(),
             ]);
 
         $this->notification->update(['sent_at' => now()]);
