@@ -278,8 +278,9 @@ Jobs include automatic retry logic for fault tolerance.
 
 ## Blog
 
-- Blog posts are managed and published via Filament (`app/Filament/Resources/BlogPostResource/`).
-- Although posts are stored in the database, we also keep the Markdown source files in the repository under `resources/views/blog/`, organized by year (e.g., `resources/views/blog/2026/`). This ensures blog content is version-controlled in Git, not only in the DB.
+- Blog posts are managed as markdown files with YAML front matter in `resources/markdown/blog/`, using the `jcfrane/laravel-md-blog` package.
+- Posts are version-controlled in Git and require no database. The `MdBlog` facade provides querying (all, find, latest, whereTag, etc.).
+- Author information is stored as `author_id` in the front matter `meta` field and resolved to a User model in the controller.
 
 ## Common Tasks
 

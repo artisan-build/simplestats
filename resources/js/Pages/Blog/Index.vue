@@ -32,7 +32,7 @@ function formatDate(dateString) {
             <div v-if="posts.data.length" class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 <Link
                     v-for="post in posts.data"
-                    :key="post.id"
+                    :key="post.slug"
                     :href="route('blog.show', post.slug)"
                     class="group flex flex-col rounded-2xl bg-white dark:bg-dark-800 shadow-sm border border-gray-200 dark:border-dark-700 overflow-hidden hover:shadow-md transition-shadow"
                 >
@@ -65,7 +65,7 @@ function formatDate(dateString) {
                         />
                         <div class="text-sm">
                             <p class="font-medium text-gray-900 dark:text-white">{{ post.author?.name }}</p>
-                            <p class="text-gray-500 dark:text-dark-500">{{ formatDate(post.published_at) }}</p>
+                            <p class="text-gray-500 dark:text-dark-500">{{ formatDate(post.date) }}</p>
                         </div>
                     </div>
                 </Link>

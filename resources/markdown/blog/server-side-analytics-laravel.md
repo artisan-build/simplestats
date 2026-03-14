@@ -1,4 +1,15 @@
-# We Built Server-Side Analytics for Laravel Because Ad Blockers Were Eating Our Data
+---
+title: "We Built Server-Side Analytics for Laravel Because Ad Blockers Were Eating Our Data"
+slug: "server-side-analytics-laravel"
+date: "2026-02-15"
+excerpt: "30-50% of tracking data gets blocked by ad blockers. Here is why we built server-side analytics for Laravel and what metrics actually matter."
+tags:
+  - Laravel
+  - Analytics
+  - Server-Side
+published: true
+author_id: 1
+---
 
 I've been building Laravel apps for years. Like most developers, I added Google Analytics, later switched to Plausible, and assumed I had decent insight into what was happening with my products.
 
@@ -88,4 +99,3 @@ Building SimpleStats taught us a few things:
 3. **Laravel's architecture is perfect for this.** Middleware, observers, event listeners: these primitives were designed for exactly this kind of cross-cutting concern. Building analytics on top of them feels natural, not forced.
 
 SimpleStats is available as a SaaS and as a self-hosted option, with a free tier including 5K events/month.
-

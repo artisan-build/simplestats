@@ -73,11 +73,11 @@ class DatabaseSeeder extends Seeder
                 })->create();
         }
 
-        //make sure the next project gets created at least 1 sec after the first...
+        // make sure the next project gets created at least 1 sec after the first...
         //        sleep(1);
 
         $projects = [
-            //['name' => 'My cool SaaS'],
+            // ['name' => 'My cool SaaS'],
             ['name' => 'My great App'],
         ];
 
@@ -107,7 +107,7 @@ class DatabaseSeeder extends Seeder
                         StatsLogin::factory()->create([
                             'project_id' => $project->id,
                             'stats_user_id' => $statsUser->id,
-                            //The first login time is the same as registration
+                            // The first login time is the same as registration
                             'time' => $loginTime,
                         ]);
                         // increment a random number of days for the next login
@@ -147,10 +147,6 @@ class DatabaseSeeder extends Seeder
         $seeders = [
             DataImportSeeder::class,
         ];
-
-        if (! app()->environment('demo')) {
-            $seeders[] = BlogPostSeeder::class;
-        }
 
         $this->call($seeders);
 

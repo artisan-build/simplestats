@@ -83,7 +83,7 @@ onMounted(async () => {
                 />
                 <div class="text-sm">
                     <p class="font-medium text-gray-900 dark:text-white">{{ post.author?.name }}</p>
-                    <p class="text-gray-500 dark:text-dark-500">{{ formatDate(post.published_at) }}</p>
+                    <p class="text-gray-500 dark:text-dark-500">{{ formatDate(post.date) }}</p>
                 </div>
             </div>
 

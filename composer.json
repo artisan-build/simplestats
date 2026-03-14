@@ -15,6 +15,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "hisorange/browser-detect": "^5.0",
         "inertiajs/inertia-laravel": "^2.0",
+        "jcfrane/laravel-md-blog": "^1.1",
         "joelbutcher/socialstream": "^6.2",
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.1",
