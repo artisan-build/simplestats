@@ -1,11 +1,8 @@
-<<<<<<<< HEAD:resources/markdown/blog/read-your-laravel-analytics-data-programmatically.md
-# Read Your Laravel Analytics Data Programmatically
-========
 ---
-title: "Query API: Read Your Laravel Analytics Data Programmatically"
-slug: "query-api-read-your-analytics-data-programmatically"
-date: "2026-03-07"
-excerpt: "Dashboards are great for a quick glance. But sometimes you need programmatic access. The Query API gives your Laravel app full access to your analytics data."
+title: "Read Your Laravel Analytics Data Programmatically"
+slug: "read-your-laravel-analytics-data-programmatically"
+date: "2026-03-12"
+excerpt: "Dashboards are great for a quick glance at your numbers. But sometimes you need more. Maybe you want to pipe your analytics into a Slack channel every Monday morning. Maybe you're building a custom reporting dashboard for your team. Or maybe you want your CI pipeline to check whether a deploy tanked your conversion rate - that's why we built the Query API!"
 tags:
   - API
   - Laravel
@@ -13,7 +10,6 @@ tags:
 published: true
 author_id: 1
 ---
->>>>>>>> 0f9588f (Replace Filament blog with jcfrane/laravel-md-blog):resources/markdown/blog/query-api-read-your-analytics-data-programmatically.md
 
 Dashboards are great for a quick glance at your numbers. But sometimes you need more. Maybe you want to pipe your analytics into a Slack channel every Monday morning. Maybe you're building a custom reporting dashboard for your team. Or maybe you want your CI pipeline to check whether a deploy tanked your conversion rate.
 

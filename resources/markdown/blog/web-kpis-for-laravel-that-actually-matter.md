@@ -1,12 +1,12 @@
 ---
 title: "Web KPIs for Laravel That Actually Matter"
 slug: "web-kpis-for-laravel-that-actually-matter"
-date: "2026-02-28"
-excerpt: "Page views, bounce rate, session duration: they look great in reports but rarely help you make better decisions. Here are the KPIs that actually matter."
+date: "2026-03-08"
+excerpt: "Most analytics dashboards greet you with the same trio: page views, bounce rate, session duration. They look impressive in screenshots. They fill reports with big numbers. But here's the uncomfortable truth: they rarely help you make better business decisions."
 tags:
+  - Laravel
   - Analytics
-  - SaaS
-  - Performance
+  - KPI
 published: true
 author_id: 1
 ---
@@ -108,7 +108,7 @@ This is the difference between *reporting* and *deciding*.
 
 ## The Server-Side Advantage
 
-There's another elephant in the room: **ad blockers**. Studies estimate that **30-50% of client-side tracking data** gets blocked. That means half your analytics could be fiction.
+There's another elephant in the room: **ad blockers**. Studies estimate that **30–50% of client-side tracking data** gets blocked. That means half your analytics could be fiction.
 
 Server-side tracking sidesteps this entirely. When tracking happens on your Laravel backend (through model observers, middleware, and event listeners) ad blockers can't interfere. Your data is complete, accurate, and reliable.
 
