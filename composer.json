@@ -40,6 +40,7 @@
         "spatie/laravel-og-image": "^1.2",
         "spatie/laravel-ray": "^1.33",
         "spatie/laravel-validation-rules": "^3.3",
+        "spatie/shiki-php": "^2.3",
         "stevebauman/location": "^7.2",
         "tightenco/ziggy": "^2.0"
     },
