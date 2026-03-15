@@ -61,8 +61,14 @@ onMounted(() => {
             <!-- Screenshot: shown on small screens, local env, or while iframe loads -->
             <!--<div :class="{ 'xl:hidden': iframeReady && appEnv !== 'local' }">-->
             <div>
-                <img class="block dark:hidden" width="1280" height="825" src="images/screenshot.png" alt="Web analytics dashboard for Laravel apps">
-                <img class="hidden dark:block" width="1280" height="825" src="images/screenshot_dark.png" alt="Web analytics dashboard for Laravel apps">
+                <picture class="block dark:hidden">
+                    <source srcset="images/screenshot.webp" type="image/webp">
+                    <img width="1280" height="825" src="images/screenshot.png" alt="Web analytics dashboard for Laravel apps" loading="lazy" fetchpriority="low">
+                </picture>
+                <picture class="hidden dark:block">
+                    <source srcset="images/screenshot_dark.webp" type="image/webp">
+                    <img width="1280" height="825" src="images/screenshot_dark.png" alt="Web analytics dashboard for Laravel apps" loading="lazy" fetchpriority="low">
+                </picture>
             </div>
         </div>
     </section>

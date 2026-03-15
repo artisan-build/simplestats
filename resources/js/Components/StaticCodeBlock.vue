@@ -1,26 +1,19 @@
 <script setup>
-import { createHighlighter } from 'shiki';
-
-const props = defineProps({
-    lang: String,
-    theme: String,
+defineProps({
     title: String,
-    code: String,
-})
-
-const highlighter = await createHighlighter({
-    langs: [props.lang],
-    themes: [props.theme],
-});
-
-const html = highlighter.codeToHtml(props.code, {
-    lang: props.lang,
-    theme: props.theme,
+    html: {
+        type: String,
+        default: null,
+    },
+    code: {
+        type: String,
+        default: null,
+    },
 })
 </script>
 
 <template>
-    <div :style="'background-color:'+highlighter.getTheme(props.theme).bg+';'" class="text-left rounded-2xl p-6 w-full flex flex-col shadow-xl">
+    <div style="background-color:#24292e;" class="text-left rounded-2xl p-6 w-full flex flex-col shadow-xl">
         <div class="flex flew-row items-center gap-2">
             <div class="rounded-full w-3 h-3 bg-[#ed6a5d]"></div>
             <div class="rounded-full w-3 h-3 bg-[#f5c04f]"></div>
@@ -30,7 +23,8 @@ const html = highlighter.codeToHtml(props.code, {
             </p>
         </div>
         <div class="text-sm mt-4">
-            <div class="overflow-auto" v-html="html"></div>
+            <div v-if="html" class="overflow-auto" v-html="html"></div>
+            <pre v-else class="overflow-auto text-[#e1e4e8] font-mono leading-relaxed"><code>{{ code }}</code></pre>
         </div>
     </div>
 </template>

@@ -8,7 +8,7 @@ return [
     'cache' => [
         'enabled' => env('MD_BLOG_CACHE_ENABLED', true),
         'store' => env('MD_BLOG_CACHE_STORE', null),
-        'ttl' => env('MD_BLOG_CACHE_TTL', 3600),
+        'ttl' => env('MD_BLOG_CACHE_TTL', 604800),
     ],
 
     'images' => [

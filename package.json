@@ -36,7 +36,6 @@
         "date-fns": "^3.6.0",
         "driver.js": "^1.4.0",
         "floating-vue": "^5.2.2",
-        "lodash": "^4.17.21",
         "pluralize": "^8.0.0",
         "vue3-apexcharts": "^1.6.0",
         "ziggy-js": "^2.6.2"

@@ -34,9 +34,7 @@ defineProps({
 
         <Brands />
 
-        <Suspense>
-            <Integration />
-        </Suspense>
+        <Integration />
 
         <Features />
 

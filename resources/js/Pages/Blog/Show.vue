@@ -1,6 +1,5 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
 import Header from "@/Pages/Home/Partials/Header.vue";
 import Footer from "@/Components/Footer.vue";
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
@@ -10,8 +9,6 @@ defineProps({
     htmlContent: String,
 });
 
-const contentRef = ref(null);
-
 function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -19,31 +16,6 @@ function formatDate(dateString) {
         day: 'numeric',
     });
 }
-
-onMounted(async () => {
-    if (!contentRef.value) {
-        return;
-    }
-
-    const codeBlocks = contentRef.value.querySelectorAll('pre code');
-    if (codeBlocks.length === 0) {
-        return;
-    }
-
-    const { codeToHtml } = await import('shiki');
-    for (const block of codeBlocks) {
-        const lang = block.className.replace('language-', '') || 'text';
-        try {
-            const highlighted = await codeToHtml(block.textContent, {
-                lang,
-                theme: 'github-dark',
-            });
-            block.parentElement.outerHTML = highlighted;
-        } catch {
-            // If language is not supported, leave the block as-is
-        }
-    }
-});
 </script>
 
 <template>
@@ -88,7 +60,6 @@ onMounted(async () => {
             </div>
 
             <div
-                ref="contentRef"
                 class="mt-8 prose dark:prose-invert max-w-none prose-indigo prose-pre:bg-gray-900 prose-pre:rounded-xl"
                 v-html="htmlContent"
             />

@@ -1,5 +1,5 @@
 <script setup>
-import {snakeCase} from "lodash";
+import {toSnakeCase} from "@/Helpers/StringHelpers.js";
 
 defineProps({
     testimonials: Array,
@@ -14,7 +14,7 @@ defineProps({
             </p>
 
             <div class="flex items-center mt-8 -mx-2">
-                <img class="object-cover mx-2 rounded-full w-14 shrink-0 h-14 ring-4 ring-gray-300 dark:ring-gray-700" :src="'/images/people/'+snakeCase(testimonial.name)+'.jpeg'" :alt="testimonial.name" loading="lazy">
+                <img class="object-cover mx-2 rounded-full w-14 shrink-0 h-14 ring-4 ring-gray-300 dark:ring-gray-700" :src="'/images/people/'+toSnakeCase(testimonial.name)+'.jpeg'" :alt="testimonial.name" loading="lazy">
 
                 <div class="mx-2">
                     <div class="font-semibold text-gray-800 dark:text-white">

@@ -1,15 +1,15 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
-import CodeWrapper from "@/Components/CodeWrapper.vue";
+import StaticCodeBlock from "@/Components/StaticCodeBlock.vue";
 import BigStepBullet from "@/Pages/Home/Partials/Integration/BigStepBullet.vue";
 import BigStepText from "@/Pages/Home/Partials/Integration/BigStepText.vue";
 import SmallStepBullet from "@/Pages/Home/Partials/Integration/SmallStepBullet.vue";
 import SmallStepText from "@/Pages/Home/Partials/Integration/SmallStepText.vue";
 import StepText from "@/Pages/Home/Partials/Integration/StepText.vue";
 import GridPlaceholder from "@/Pages/Home/Partials/Integration/GridPlaceholder.vue";
-import snippetInstallPackage from "@/Pages/Home/Partials/Integration/Snippets/install_package.txt?raw";
-import snippetTrackUser from "@/Pages/Home/Partials/Integration/Snippets/track_user.txt?raw";
-import snippetTrackPayment from "@/Pages/Home/Partials/Integration/Snippets/track_payment.txt?raw";
+import installHtml from "@/Pages/Home/Partials/Integration/Snippets/install_package.txt?shiki";
+import trackUserHtml from "@/Pages/Home/Partials/Integration/Snippets/track_user.txt?shiki";
+import trackPaymentHtml from "@/Pages/Home/Partials/Integration/Snippets/track_payment.txt?shiki";
 
 const appName = import.meta.env.VITE_APP_NAME;
 </script>
@@ -32,29 +32,9 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <SmallStepBullet content="" />
                     <SmallStepText content="Install the client" />
 
-                    <CodeWrapper lang="bash" theme="github-dark" :title="`Install ${appName}`" :code="snippetInstallPackage" />
+                    <StaticCodeBlock :title="`Install ${appName}`" :html="installHtml" />
                     <GridPlaceholder />
                     <StepText :content="`In your Laravel project, you just need to <b>install</b> the ${appName} <b>client</b>. Congrats, the tool is now already tracking your visitors!`" />
-
-<!--                    <GridPlaceholder />-->
-<!--                    <BigStepBullet content="2" />-->
-<!--                    <BigStepText content="Setup" />-->
-
-<!--                    <GridPlaceholder />-->
-<!--                    <SmallStepBullet content="" />-->
-<!--                    <SmallStepText content="Define your payment model" />-->
-
-<!--                    <CodeWrapper lang="php" theme="github-dark" title="Example payment model" :code="snippetSetupConfig" />-->
-<!--                    <GridPlaceholder />-->
-<!--                    <StepText :content="`To track your payments, you have to add the name of your payment/transaction model in the published config.`" />-->
-
-<!--                    <GridPlaceholder />-->
-<!--                    <SmallStepBullet content="" />-->
-<!--                    <SmallStepText content="Add the API key" />-->
-
-<!--                    <CodeWrapper lang="bash" theme="github-dark" title="Add the API key" :code="snippetSetupEnv" />-->
-<!--                    <GridPlaceholder />-->
-<!--                    <StepText :content="`Add the API key you received after registration to your .env file to allow the client to communicate with ${appName}.`" />-->
 
                     <GridPlaceholder />
                     <BigStepBullet content="2" />
@@ -64,7 +44,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <SmallStepBullet content="" />
                     <SmallStepText content="Track your users" />
 
-                    <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePerson contract" :code="snippetTrackUser" />
+                    <StaticCodeBlock title="Example of the TrackablePerson contract" :html="trackUserHtml" />
                     <GridPlaceholder />
                     <StepText :content="`To make the client <b>track</b> your user <b>registrations</b>, you only have to add the <b>TrackablePerson</b> interface and implement the contract.`" />
 
@@ -72,7 +52,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     <SmallStepBullet content="" />
                     <SmallStepText content="Track your sales" />
 
-                    <CodeWrapper lang="php" theme="github-dark" title="Example of the TrackablePayment contract" :code="snippetTrackPayment" />
+                    <StaticCodeBlock title="Example of the TrackablePayment contract" :html="trackPaymentHtml" />
                     <GridPlaceholder />
                     <StepText :content="`To enable the client to <b>track</b> your app's <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
 

@@ -45,3 +45,19 @@ export function ARPXAU(type) {
     return 'ARP' + type.charAt(0).toUpperCase() + 'AU';
 }
 
+export function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function truncate(str, { length = 30 } = {}) {
+    return str.length > length ? str.slice(0, length) + '...' : str;
+}
+
+export function toSnakeCase(str) {
+    return str.toLowerCase().replace(/\s+/g, '_');
+}
+
+export function sample(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+

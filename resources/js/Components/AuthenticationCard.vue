@@ -3,7 +3,7 @@ import Header from "@/Pages/Auth/Header.vue";
 import Footer from "@/Components/Footer.vue";
 import Testimonials from "@/Components/Testimonials.vue";
 import {testimonials} from "@/Data/testimonials.js";
-import {sample} from "lodash";
+import {sample} from "@/Helpers/StringHelpers.js";
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
 import {onMounted, ref} from 'vue';
 

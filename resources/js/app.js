@@ -5,8 +5,6 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
-import {vTooltip} from 'floating-vue';
-
 let appName = import.meta.env.VITE_APP_NAME;
 
 if (import.meta.env.VITE_APP_ENV !== 'production') {
@@ -22,8 +20,11 @@ createInertiaApp({
         app
             .use(plugin)
             .use(ZiggyVue)
-            .directive('tooltip', vTooltip)
             .mount(el);
+
+        import('floating-vue').then(({ vTooltip }) => {
+            app.directive('tooltip', vTooltip);
+        });
 
         if (import.meta.env.VITE_SENTRY_DSN_PUBLIC) {
             import('@sentry/vue').then((Sentry) => {

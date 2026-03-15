@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\CodeHighlightService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 use JCFrane\MdBlog\Facades\MdBlog;
@@ -53,7 +55,7 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show(string $slug): Response
+    public function show(string $slug, CodeHighlightService $highlightService): Response
     {
         $post = MdBlog::find($slug);
 
@@ -71,7 +73,11 @@ class BlogController extends Controller
 
         return Inertia::render('Blog/Show', [
             'post' => $postData,
-            'htmlContent' => $post->html,
+            'htmlContent' => Cache::remember(
+                "blog.highlighted.{$slug}.{$post->lastModified}",
+                config('md-blog.cache.ttl'),
+                fn () => $highlightService->highlightCodeBlocks($post->html)
+            ),
         ]);
     }
 }

@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import shikiTransformPlugin from './vite/shikiTransformPlugin.js';
 
 export default defineConfig({
     plugins: [
+        shikiTransformPlugin(),
         laravel({
             input: 'resources/js/app.js',
             ssr: 'resources/js/ssr.js',
@@ -19,6 +21,6 @@ export default defineConfig({
         }),
     ],
     ssr: {
-        noExternal: ["country-flag-emoji", "lodash", "apexcharts", "vue-apexcharts", "vue3-apexcharts"],
+        noExternal: ["country-flag-emoji", "apexcharts", "vue-apexcharts", "vue3-apexcharts"],
     },
 });

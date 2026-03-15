@@ -5,7 +5,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {truncate} from "lodash";
+import {truncate} from "@/Helpers/StringHelpers.js";
 import {
     ArrowPathIcon,
     ArrowUturnLeftIcon,
