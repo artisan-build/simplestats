@@ -9126,7 +9126,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/simplestats-io/laravel-client",
-                "reference": "c0a5c86f4a4224fe5c4ad1c885dfca90851ea69d"
+                "reference": "2bfc79085089a552d10309ff506e0b3fbffebabf"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
