@@ -7,7 +7,6 @@ use App\Http\Requests\Api\StatsCustomEventRequest;
 use App\Jobs\TrackStatsCustomEvent;
 use App\Models\StatsCustomEvent;
 use Illuminate\Http\JsonResponse;
-
 use function Illuminate\Support\defer;
 
 class StatsCustomEventController extends Controller

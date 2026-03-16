@@ -12,18 +12,27 @@ use App\Services\StatsAggregationsService;
 
 class StatsObserver
 {
+    public static bool $enabled = true;
+
     public function __construct(
         protected StatsAggregationsService $statsAggregationsService
-    ) {
-    }
+    ) {}
 
     public function updated(BaseStat $stat): void
     {
+        if (! static::$enabled) {
+            return;
+        }
+
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);
     }
 
     public function created(BaseStat $stat): void
     {
+        if (! static::$enabled) {
+            return;
+        }
+
         $stat->team->increment('events_count_monthly');
         $stat->team->increment('events_count_overall');
 
@@ -48,16 +57,28 @@ class StatsObserver
 
     public function deleted(BaseStat $stat): void
     {
+        if (! static::$enabled) {
+            return;
+        }
+
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);
     }
 
     public function restored(BaseStat $stat): void
     {
+        if (! static::$enabled) {
+            return;
+        }
+
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);
     }
 
     public function forceDeleted(BaseStat $stat): void
     {
+        if (! static::$enabled) {
+            return;
+        }
+
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);
     }
 }

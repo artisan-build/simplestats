@@ -6,23 +6,15 @@ use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
+use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 
 beforeEach(function () {
-    $this->seed();
+    $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
 });
-
-function paymentApiHeaders(string $token): array
-{
-    return [
-        'Authorization' => 'Bearer '.$token,
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
-    ];
-}
 
 function validPaymentPayload(array $overrides = []): array
 {
@@ -47,7 +39,7 @@ test('store payment with auth and required fields returns 200', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         validPaymentPayload(),
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertOk()
@@ -73,7 +65,7 @@ test('validation fails when id is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         validPaymentPayload(['id' => null]),
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -87,7 +79,7 @@ test('validation fails when gross is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         $payload,
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -101,7 +93,7 @@ test('validation fails when net is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         $payload,
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -115,7 +107,7 @@ test('validation fails when currency is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         $payload,
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -126,7 +118,7 @@ test('validation fails when currency is invalid', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         validPaymentPayload(['currency' => 'INVALID']),
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -140,7 +132,7 @@ test('validation fails when time is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         $payload,
-        paymentApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -153,7 +145,7 @@ test('payment is created with correct amounts', function () {
         'net' => 4200,
     ]);
 
-    $this->postJson('/api/v1/stats-payment', $payload, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
 
     setPaymentProjectContext($this->project);
 
@@ -171,7 +163,7 @@ test('payment with stats_user_id is stored correctly and StatsUser is auto-creat
         'stats_user_time' => now()->subDay()->format('Y-m-d H:i:s P'),
     ]);
 
-    $this->postJson('/api/v1/stats-payment', $payload, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
 
     setPaymentProjectContext($this->project);
 
@@ -186,13 +178,13 @@ test('payment with stats_user_id is stored correctly and StatsUser is auto-creat
 test('payment with visitor_hash resolves to stats_visitor_id', function () {
     setPaymentProjectContext($this->project);
 
-    $visitor = StatsVisitor::first();
+    $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
 
     $payload = validPaymentPayload([
         'visitor_hash' => $visitor->visitor_hash,
     ]);
 
-    $this->postJson('/api/v1/stats-payment', $payload, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
 
     $payment = StatsPayment::where('id', $payload['id'])->first();
     expect($payment)->not->toBeNull()
@@ -203,10 +195,10 @@ test('duplicate id performs updateOrCreate update', function () {
     $paymentId = fake()->uuid();
 
     $payload1 = validPaymentPayload(['id' => $paymentId, 'gross' => 1000, 'net' => 800]);
-    $this->postJson('/api/v1/stats-payment', $payload1, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload1, apiHeaders($this->token))->assertOk();
 
     $payload2 = validPaymentPayload(['id' => $paymentId, 'gross' => 2000, 'net' => 1600]);
-    $this->postJson('/api/v1/stats-payment', $payload2, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload2, apiHeaders($this->token))->assertOk();
 
     setPaymentProjectContext($this->project);
 
@@ -217,7 +209,7 @@ test('duplicate id performs updateOrCreate update', function () {
 test('counter increments per user', function () {
     setPaymentProjectContext($this->project);
 
-    $statsUser = StatsUser::first();
+    $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
 
     $payload1 = validPaymentPayload([
         'id' => 'pay-counter-1',
@@ -225,7 +217,7 @@ test('counter increments per user', function () {
         'stats_user_time' => now()->subDay()->format('Y-m-d H:i:s P'),
     ]);
 
-    $this->postJson('/api/v1/stats-payment', $payload1, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload1, apiHeaders($this->token))->assertOk();
 
     $payment1 = StatsPayment::where('id', 'pay-counter-1')->first();
     expect($payment1->counter)->toBe(1);
@@ -236,7 +228,7 @@ test('counter increments per user', function () {
         'stats_user_time' => now()->subDay()->format('Y-m-d H:i:s P'),
     ]);
 
-    $this->postJson('/api/v1/stats-payment', $payload2, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload2, apiHeaders($this->token))->assertOk();
 
     $payment2 = StatsPayment::where('id', 'pay-counter-2')->first();
     expect($payment2->counter)->toBe(2);
@@ -247,7 +239,7 @@ test('events_count_monthly is incremented on team via StatsObserver', function (
     $initialCount = $team->events_count_monthly;
 
     $payload = validPaymentPayload();
-    $this->postJson('/api/v1/stats-payment', $payload, paymentApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
 
     $team->refresh();
     expect($team->events_count_monthly)->toBeGreaterThan($initialCount);

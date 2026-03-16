@@ -8,11 +8,12 @@ use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
-    $this->seed();
+    $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
 });

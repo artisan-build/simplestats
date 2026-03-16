@@ -7,23 +7,15 @@ use App\Models\StatsCustomEventName;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
+use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 
 beforeEach(function () {
-    $this->seed();
+    $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
 });
-
-function apiHeaders(string $token): array
-{
-    return [
-        'Authorization' => 'Bearer '.$token,
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
-    ];
-}
 
 function validPayload(array $overrides = []): array
 {
@@ -131,7 +123,7 @@ test('event with stats_user_id is stored correctly and StatsUser is auto-created
 test('event with visitor_hash resolves to stats_visitor_id', function () {
     setProjectContext($this->project);
 
-    $visitor = StatsVisitor::first();
+    $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
 
     $payload = validPayload([
         'visitor_hash' => $visitor->visitor_hash,
@@ -164,7 +156,7 @@ test('duplicate id performs updateOrCreate update', function () {
 });
 
 test('counter increments per user', function () {
-    $statsUser = StatsUser::first();
+    $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
 
     $payload1 = validPayload([
         'id' => 'counter-1',

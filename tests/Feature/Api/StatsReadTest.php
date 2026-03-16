@@ -10,14 +10,6 @@ beforeEach(function () {
     $this->token = $this->project->createToken('test-token')->plainTextToken;
 });
 
-function statsApiHeaders(string $token): array
-{
-    return [
-        'Authorization' => 'Bearer '.$token,
-        'Accept' => 'application/json',
-    ];
-}
-
 test('stats index without auth returns 401', function () {
     auth()->forgetGuards();
 
@@ -30,7 +22,7 @@ test('stats index without auth returns 401', function () {
 });
 
 test('stats index with valid token returns 200 with correct structure', function () {
-    $response = $this->getJson('/api/v1/stats', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats', apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -47,7 +39,7 @@ test('stats index with valid token returns 200 with correct structure', function
 });
 
 test('stats index defaults to last 7 days when no parameters given', function () {
-    $response = $this->getJson('/api/v1/stats', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats', apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonPath('meta.preset', 'last_7_days')
@@ -56,7 +48,7 @@ test('stats index defaults to last 7 days when no parameters given', function ()
 });
 
 test('stats index with preset parameter applies preset', function () {
-    $response = $this->getJson('/api/v1/stats?preset=last_30_days', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats?preset=last_30_days', apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonPath('meta.preset', 'last_30_days')
@@ -65,7 +57,7 @@ test('stats index with preset parameter applies preset', function () {
 });
 
 test('stats index with comparison returns data_previous', function () {
-    $response = $this->getJson('/api/v1/stats?preset=last_7_days&comparison=period', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats?preset=last_7_days&comparison=period', apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -76,21 +68,21 @@ test('stats index with comparison returns data_previous', function () {
 });
 
 test('stats index without comparison does not return data_previous', function () {
-    $response = $this->getJson('/api/v1/stats', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats', apiHeaders($this->token));
 
     $response->assertOk();
     expect($response->json())->not->toHaveKey('data_previous');
 });
 
 test('stats index with invalid preset returns 422', function () {
-    $response = $this->getJson('/api/v1/stats?preset=invalid_preset', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats?preset=invalid_preset', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('preset');
 });
 
 test('stats index with invalid comparison returns 422', function () {
-    $response = $this->getJson('/api/v1/stats?comparison=invalid', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats?comparison=invalid', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('comparison');
@@ -108,7 +100,7 @@ test('stats grouped without auth returns 401', function () {
 });
 
 test('stats grouped with valid token returns 200 with correct structure', function () {
-    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source', apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -125,35 +117,35 @@ test('stats grouped with valid token returns 200 with correct structure', functi
 });
 
 test('stats grouped without statsType returns 422', function () {
-    $response = $this->getJson('/api/v1/stats/grouped', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats grouped with invalid statsType returns 422', function () {
-    $response = $this->getJson('/api/v1/stats/grouped?stats_type=invalid_type', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=invalid_type', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats grouped with limit parameter limits results', function () {
-    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source&limit=3', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source&limit=3', apiHeaders($this->token));
 
     $response->assertOk();
     expect(count($response->json('data')))->toBeLessThanOrEqual(3);
 });
 
 test('stats index project_id in meta matches authenticated project', function () {
-    $response = $this->getJson('/api/v1/stats', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats', apiHeaders($this->token));
 
     $response->assertOk();
     expect($response->json('meta.project_id'))->toBeInt();
 });
 
 test('stats groups returns data for valid statsType', function () {
-    $response = $this->getJson('/api/v1/stats/groups?stats_type=track_source', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/groups?stats_type=track_source', apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJsonStructure([
@@ -164,14 +156,14 @@ test('stats groups returns data for valid statsType', function () {
 });
 
 test('stats groups without statsType returns 422', function () {
-    $response = $this->getJson('/api/v1/stats/groups', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/groups', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('stats_type');
 });
 
 test('stats groups with invalid statsType returns 422', function () {
-    $response = $this->getJson('/api/v1/stats/groups?stats_type=invalid', statsApiHeaders($this->token));
+    $response = $this->getJson('/api/v1/stats/groups?stats_type=invalid', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('stats_type');

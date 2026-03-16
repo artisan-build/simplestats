@@ -13,12 +13,16 @@ class StatsPaymentValidator extends BaseStatsValidator
     {
         $input = parent::prepareForValidation($input);
 
+        if (! isset($input['currency'])) {
+            return $input;
+        }
+
         $team = auth()->user()->team;
         // if the currency is not valid, we do not check if we have to convert it...
         // it will fail anyway in the request validation...
         if (Validator::make(
             ['currency' => $input['currency']],
-            ['currency' => new Currency()]
+            ['currency' => new Currency]
         )->fails()) {
             return $input;
         }
@@ -80,10 +84,10 @@ class StatsPaymentValidator extends BaseStatsValidator
             'visitor_hash' => ['nullable'],
             'gross' => ['required', 'numeric'],
             'net' => ['required', 'numeric'],
-            'currency' => ['required', new Currency()],
+            'currency' => ['required', new Currency],
             'orig_gross' => ['sometimes', 'nullable', 'numeric'],
             'orig_net' => ['sometimes', 'nullable', 'numeric'],
-            'orig_currency' => ['sometimes', 'nullable', new Currency()],
+            'orig_currency' => ['sometimes', 'nullable', new Currency],
         ]);
     }
 }

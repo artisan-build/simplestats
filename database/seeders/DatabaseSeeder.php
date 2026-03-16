@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Actions\Fortify\CreateNewUser;
-use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\StatsCustomEvent;
 use App\Models\StatsCustomEventName;
@@ -14,10 +11,9 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Sequence;
+use App\Observers\StatsObserver;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,39 +24,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Cache::clear();
+        $this->call(TestUserSeeder::class);
 
-        $user = User::withoutEvents(function () {
-            $isDemo = app()->environment('demo');
-            $testUser = config('app.test.user');
-            $user = app(CreateNewUser::class)->create([
-                'name' => $testUser['name'],
-                'email' => $testUser['email'],
-                'password' => $testUser['password'],
-                'password_confirmation' => $testUser['password'],
-                'terms' => true,
-                'settings' => [
-                    'showMenu' => ! $isDemo,
-                ],
-            ]);
-
-            if (! $isDemo) {
-                $user->makeAdmin();
-            }
-
-            $user->markEmailAsVerified();
-
-            $user->switchTeam($user->personalTeam());
-            $user->currentTeam->update([
-                'currency' => self::DEFAULT_CURRENCY,
-                'timezone' => 'Europe/Berlin',
-            ]);
-
-            return $user;
-        });
-
-        auth()->setUser($user);
-        AppHelper::setTeamContextFromAuth($user);
+        $user = User::where('email', config('app.test.user')['email'])->firstOrFail();
 
         if (app()->isLocal()) {
             Project::factory()->count(1)->state(['name' => 'SimpleStats'])
@@ -73,82 +39,75 @@ class DatabaseSeeder extends Seeder
                 })->create();
         }
 
-        // make sure the next project gets created at least 1 sec after the first...
-        //        sleep(1);
+        StatsObserver::$enabled = false;
 
-        $projects = [
-            // ['name' => 'My cool SaaS'],
-            ['name' => 'My great App'],
-        ];
-
-        Project::factory()->count(count($projects))
-            ->state(new Sequence(...$projects))
-            ->for(Team::find($user->current_team_id))
-            ->afterCreating(function ($project) {
-                $eventNames = collect(['signup_click', 'purchase_click', 'page_view', 'add_to_cart', 'checkout_start'])
-                    ->map(fn ($name) => StatsCustomEventName::firstOrCreate([
-                        'team_id' => $project->team_id,
-                        'project_id' => $project->id,
-                        'name' => $name,
-                    ]));
-
-                $count = $this->getUserSeedCount();
-                StatsUser::factory(rand($count['from'], $count['to']))->create([
+        Project::all()->each(function ($project) {
+            $eventNames = collect(['signup_click', 'purchase_click', 'page_view', 'add_to_cart', 'checkout_start'])
+                ->map(fn ($name) => StatsCustomEventName::firstOrCreate([
+                    'team_id' => $project->team_id,
                     'project_id' => $project->id,
-                ])->each(function ($statsUser) use ($project, $eventNames) {
-                    // for each registration we simulate 3 to 6 visitors
-                    $visitors = StatsVisitor::factory(rand(3, 6))->create([
-                        'project_id' => $project->id,
-                        'time' => $statsUser->time,
-                    ]);
+                    'name' => $name,
+                ]));
 
-                    $loginTime = Carbon::parse($statsUser->time);
-                    for ($i = 0; $i < rand(0, 20); $i++) {
-                        StatsLogin::factory()->create([
+            $count = $this->getUserSeedCount();
+            StatsUser::factory(rand($count['from'], $count['to']))->create([
+                'project_id' => $project->id,
+            ])->each(function ($statsUser) use ($project, $eventNames) {
+                $visitorCount = app()->environment('testing') ? rand(1, 2) : rand(3, 6);
+                $visitors = StatsVisitor::factory($visitorCount)->create([
+                    'project_id' => $project->id,
+                    'time' => $statsUser->time,
+                ]);
+
+                $loginTime = Carbon::parse($statsUser->time);
+                $loginCount = app()->environment('testing') ? rand(0, 3) : rand(0, 20);
+                for ($i = 0; $i < $loginCount; $i++) {
+                    StatsLogin::factory()->create([
+                        'project_id' => $project->id,
+                        'stats_user_id' => $statsUser->id,
+                        // The first login time is the same as registration
+                        'time' => $loginTime,
+                    ]);
+                    // increment a random number of days for the next login
+                    $loginTime->addDays(rand(1, 28));
+                }
+
+                $paymentTime = Carbon::parse($statsUser->time);
+                if (rand(0, 9) === 0) {
+                    $paymentCount = app()->environment('testing') ? rand(0, 3) : rand(0, 20);
+                    for ($i = 0; $i < $paymentCount; $i++) {
+                        StatsPayment::factory()->create([
                             'project_id' => $project->id,
                             'stats_user_id' => $statsUser->id,
-                            // The first login time is the same as registration
-                            'time' => $loginTime,
+                            'currency' => self::DEFAULT_CURRENCY,
+                            // increment a random number of days for the next payment
+                            'time' => $paymentTime->addDays(rand(1, 28)),
                         ]);
-                        // increment a random number of days for the next login
-                        $loginTime->addDays(rand(1, 28));
                     }
+                }
 
-                    $paymentTime = Carbon::parse($statsUser->time);
-                    if (rand(0, 9) === 0) {
-                        for ($i = 0; $i < rand(0, 20); $i++) {
-                            StatsPayment::factory()->create([
-                                'project_id' => $project->id,
-                                'stats_user_id' => $statsUser->id,
-                                'currency' => self::DEFAULT_CURRENCY,
-                                // increment a random number of days for the next payment
-                                'time' => $paymentTime->addDays(rand(1, 28)),
-                            ]);
-                        }
+                // 40% of users fire 1-3 events
+                if (rand(0, 4) < 2) {
+                    $visitor = $visitors->random();
+                    for ($i = 0; $i < rand(1, 3); $i++) {
+                        StatsCustomEvent::factory()->create([
+                            'project_id' => $project->id,
+                            'team_id' => $project->team_id,
+                            'stats_user_id' => $statsUser->id,
+                            'stats_visitor_id' => $visitor->id,
+                            'stats_custom_event_name_id' => $eventNames->random()->id,
+                            'time' => Carbon::parse($statsUser->time)->addDays(rand(0, 30)),
+                        ]);
                     }
+                }
+            });
+        });
 
-                    // 40% of users fire 1-3 events
-                    if (rand(0, 4) < 2) {
-                        $visitor = $visitors->random();
-                        for ($i = 0; $i < rand(1, 3); $i++) {
-                            StatsCustomEvent::factory()->create([
-                                'project_id' => $project->id,
-                                'team_id' => $project->team_id,
-                                'stats_user_id' => $statsUser->id,
-                                'stats_visitor_id' => $visitor->id,
-                                'stats_custom_event_name_id' => $eventNames->random()->id,
-                                'time' => Carbon::parse($statsUser->time)->addDays(rand(0, 30)),
-                            ]);
-                        }
-                    }
-                });
-            })->create();
+        StatsObserver::$enabled = true;
 
-        $seeders = [
+        $this->call([
             DataImportSeeder::class,
-        ];
-
-        $this->call($seeders);
+        ]);
 
         // Add extra data for the next 30 days to show activity
         if (! app()->environment('testing')) {
@@ -177,12 +136,12 @@ class DatabaseSeeder extends Seeder
         return [
             'from' => match (true) {
                 app()->environment('demo') => 500,
-                app()->environment('testing') => 5,
+                app()->environment('testing') => 2,
                 default => 500,
             },
             'to' => match (true) {
                 app()->environment('demo') => 1000,
-                app()->environment('testing') => 10,
+                app()->environment('testing') => 3,
                 default => 1000,
             },
         ];

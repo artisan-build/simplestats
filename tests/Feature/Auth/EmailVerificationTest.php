@@ -20,11 +20,11 @@ test('email verification screen can be rendered', function () {
 }, 'Email verification not enabled.');
 
 test('email can be verified', function () {
-    Event::fake();
-
-    $user = User::factory()->create([
+    $user = User::factory()->withPersonalTeam()->create([
         'email_verified_at' => null,
     ]);
+
+    Event::fake();
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',

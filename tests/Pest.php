@@ -1,6 +1,6 @@
 <?php
 
-use LaracraftTech\LaravelUsefulAdditions\Traits\RefreshDatabaseFast;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /*
@@ -14,7 +14,14 @@ use Tests\TestCase;
 |
 */
 
-uses(TestCase::class, RefreshDatabaseFast::class)->in('Feature');
+uses(TestCase::class, RefreshDatabase::class)
+    ->beforeEach(function () {
+        // All stats ingest API endpoints use defer() to dispatch jobs after
+        // the HTTP response. Without this, deferred callbacks never run
+        // before test assertions, causing false failures.
+        $this->withoutDefer();
+    })
+    ->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +49,10 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function apiHeaders(string $token): array
 {
-    // ..
+    return [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+    ];
 }

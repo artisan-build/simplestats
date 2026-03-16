@@ -5,23 +5,15 @@ use App\Models\Project;
 use App\Models\StatsLogin;
 use App\Models\StatsUser;
 use App\Models\User;
+use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 
 beforeEach(function () {
-    $this->seed();
+    $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
 });
-
-function userApiHeaders(string $token): array
-{
-    return [
-        'Authorization' => 'Bearer '.$token,
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
-    ];
-}
 
 function validUserPayload(array $overrides = []): array
 {
@@ -45,7 +37,7 @@ test('store user with auth and required fields returns 200', function () {
     $response = $this->postJson(
         '/api/v1/stats-user',
         validUserPayload(),
-        userApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertOk()
@@ -71,7 +63,7 @@ test('validation fails when id is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-user',
         validUserPayload(['id' => null]),
-        userApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -85,7 +77,7 @@ test('validation fails when time is missing', function () {
     $response = $this->postJson(
         '/api/v1/stats-user',
         $payload,
-        userApiHeaders($this->token),
+        apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
@@ -95,7 +87,7 @@ test('validation fails when time is missing', function () {
 test('user is created with correct id', function () {
     $payload = validUserPayload();
 
-    $this->postJson('/api/v1/stats-user', $payload, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
 
     setUserProjectContext($this->project);
 
@@ -107,10 +99,10 @@ test('duplicate id performs updateOrCreate update', function () {
     $userId = (string) fake()->unique()->randomNumber(5);
 
     $payload1 = validUserPayload(['id' => $userId]);
-    $this->postJson('/api/v1/stats-user', $payload1, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload1, apiHeaders($this->token))->assertOk();
 
     $payload2 = validUserPayload(['id' => $userId]);
-    $this->postJson('/api/v1/stats-user', $payload2, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload2, apiHeaders($this->token))->assertOk();
 
     setUserProjectContext($this->project);
 
@@ -121,7 +113,7 @@ test('duplicate id performs updateOrCreate update', function () {
 test('add_login flag creates a login record', function () {
     $payload = validUserPayload(['add_login' => true]);
 
-    $this->postJson('/api/v1/stats-user', $payload, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
 
     setUserProjectContext($this->project);
 
@@ -132,7 +124,7 @@ test('add_login flag creates a login record', function () {
 test('without add_login flag no login record is created', function () {
     $payload = validUserPayload();
 
-    $this->postJson('/api/v1/stats-user', $payload, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
 
     setUserProjectContext($this->project);
 
@@ -145,7 +137,7 @@ test('bot user agents are rejected with 200', function () {
         'user_agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     ]);
 
-    $response = $this->postJson('/api/v1/stats-user', $payload, userApiHeaders($this->token));
+    $response = $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token));
 
     $response->assertOk()
         ->assertJson(['message' => 'Bots are not allowed.']);
@@ -163,7 +155,7 @@ test('tracking fields are accepted', function () {
         'location_country' => 'US',
     ]);
 
-    $this->postJson('/api/v1/stats-user', $payload, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
 
     setUserProjectContext($this->project);
 
@@ -176,7 +168,7 @@ test('events_count_monthly is incremented on team via StatsObserver', function (
     $initialCount = $team->events_count_monthly;
 
     $payload = validUserPayload();
-    $this->postJson('/api/v1/stats-user', $payload, userApiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
 
     $team->refresh();
     expect($team->events_count_monthly)->toBeGreaterThan($initialCount);

@@ -12,7 +12,9 @@ class BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
-        $input['time'] = Carbon::parse($input['time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
+        if (isset($input['time'])) {
+            $input['time'] = Carbon::parse($input['time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
+        }
 
         if (isset($input['stats_user_time'])) {
             $input['stats_user_time'] = Carbon::parse($input['stats_user_time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
