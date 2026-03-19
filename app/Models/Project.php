@@ -22,9 +22,9 @@ use Illuminate\Support\Collection;
 #[ObservedBy(ProjectObserver::class)]
 class Project extends Authenticatable implements NotifiableToUser
 {
+    use HasApiPlainTokens;
     use HasFactory;
     use HasTeamScope;
-    use HasApiPlainTokens;
 
     const TOKEN_NAME = 'API Token';
 
@@ -92,11 +92,10 @@ class Project extends Authenticatable implements NotifiableToUser
                 type: UserNotificationType::PROJECT_ALERT,
                 frequency: null,
                 settings: [
-                    // even if they are enabled bits, they are deactivated by default (visitors are completely disabled)
                     'tracking' => collect([
                         'registrations' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS]),
                         'payments' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS]),
-                    ])->filter()->map(fn () => false)->toArray(),
+                    ])->filter()->toArray(),
                 ]
             ),
         ]);
