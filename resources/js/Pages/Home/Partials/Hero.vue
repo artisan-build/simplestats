@@ -3,6 +3,7 @@ import {router} from "@inertiajs/vue3";
 import {onMounted, ref} from 'vue';
 
 const appEnv = import.meta.env.VITE_APP_ENV;
+const appName = import.meta.env.VITE_APP_NAME;
 const isVisible = ref(false);
 
 onMounted(() => {
@@ -41,8 +42,8 @@ function trackGetStartedClick() {
                 <a v-if="$page.props.canLogin" href="https://demo.simplestats.io/login" :target="(appEnv === 'demo') ? '_self' : '_blank'" class="mb-4 mx-1.5 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 dark:text-white border border-gray-300 rounded-lg bg-white dark:bg-dark-800 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:border-dark-700 dark:hover:bg-dark-700 dark:focus:ring-gray-800">
                     Live demo
                 </a>
-                <a href="/blog/5-best-analytics-dashboards-for-laravel-in-2026" target="_blank" class="mb-4 mx-1.5 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 dark:text-white border border-gray-300 rounded-lg bg-white dark:bg-dark-800 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:border-dark-700 dark:hover:bg-dark-700 dark:focus:ring-gray-800">
-                    Why SimpleStats?
+                <a href="/blog/server-side-analytics-laravel" target="_blank" class="mb-4 mx-1.5 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 dark:text-white border border-gray-300 rounded-lg bg-white dark:bg-dark-800 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:border-dark-700 dark:hover:bg-dark-700 dark:focus:ring-gray-800">
+                    Why {{ appName }}?
                 </a>
             </div>
         </div>
