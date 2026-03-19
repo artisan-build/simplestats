@@ -3,6 +3,9 @@
         "setup": ["herd link", "herd secure"],
         "archive": ["herd unsecure", "herd unlink"]
     },
+    "run": [
+        { "label": "Vite", "command": "npm run dev", "autostart": true }
+    ],
     "preview": {
         "url": "https://{{folder}}.test"
     }
