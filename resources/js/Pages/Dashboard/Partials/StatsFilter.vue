@@ -90,7 +90,7 @@ function isStatsGroupSet() {
     );
 }
 
-const currentProject = props.teamStats.projects[props.filters.project_id];
+const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
 
 const showPresetModal = ref(false);
 </script>

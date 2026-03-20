@@ -57,6 +57,11 @@ class StatsController extends Controller
         $teamStats->setRelation('projects', $teamStats->projects->keyBy('id'));
 
         $filters = StatsFilterDto::fromRequest($request);
+
+        if ($filters->projectId !== StatsFilterDto::TRACK_ALL && ! $teamStats->projects->has($filters->projectId)) {
+            $filters->projectId = StatsFilterDto::TRACK_ALL;
+        }
+
         $teamStats->stats = $statsDetailsService->getStats($filters);
 
         if ($filters->comparison && $filters->rangeType !== StatsRangeType::YEAR) {

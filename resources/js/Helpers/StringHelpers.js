@@ -46,15 +46,20 @@ export function ARPXAU(type) {
 }
 
 export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 export function truncate(str, { length = 30 } = {}) {
-    return str.length > length ? str.slice(0, length) + '...' : str;
+    return str.length > length ? str.slice(0, length - 3) + '...' : str;
 }
 
 export function toSnakeCase(str) {
-    return str.toLowerCase().replace(/\s+/g, '_');
+    return str
+        .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+        .replace(/[^\w]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .toLowerCase();
 }
 
 export function sample(arr) {

@@ -6,6 +6,7 @@ use App\Actions\CreateUserNotification;
 use App\Models\Project;
 use App\Models\UserNotification;
 use App\ValueObjects\UserNotificationTypeObject;
+use Illuminate\Support\Arr;
 
 class ProjectObserver
 {
@@ -51,5 +52,18 @@ class ProjectObserver
     public function deleted(Project $project): void
     {
         $project->userNotifications()->delete();
+
+        $teamId = $project->team_id;
+        $projectId = $project->id;
+
+        $project->team->allUsers()->each(function ($user) use ($teamId, $projectId) {
+            $settings = $user->settings;
+            $savedProjectId = $settings['statsFilters'][$teamId]['project_id'] ?? null;
+
+            if ($savedProjectId !== null && (int) $savedProjectId === $projectId) {
+                Arr::forget($settings, "statsFilters.{$teamId}.project_id");
+                $user->update(['settings' => $settings]);
+            }
+        });
     }
 }
