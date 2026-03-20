@@ -16,7 +16,7 @@ const isUnknown = props.statsName === null || props.statsName === 'Direct / Unkn
 
 <template>
     <img v-if="isUnknown || hasError" class="w-4 h-4 align-sub inline-block dark:invert dark:brightness-90" src="/icons/unknown.svg" alt="Unknown">
-    <img v-else-if="statsIconType === 'favicon'" class="w-4 h-4 align-sub inline-block" :src="'https://icons.duckduckgo.com/ip3/'+statsName+'.ico'" :alt="statsName">
+    <img v-else-if="statsIconType === 'favicon'" class="w-4 h-4 align-sub inline-block" :src="'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://'+statsName+'&size=32'" :alt="statsName">
     <img v-else-if="statsIconType === 'path' && toSnakeCase(statsType) === 'device_platform'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ toSnakeCase(statsType) +'/'+ toSnakeCase(statsName) +'.png'" :alt="statsName" @error="hasError = true">
     <img v-else-if="statsIconType === 'path' && toSnakeCase(statsType) === 'device_type'" class="w-4 h-4 align-sub inline-block dark:invert dark:brightness-90" :src="'/icons/'+ toSnakeCase(statsType) +'/'+ toSnakeCase(statsName) +'.svg'" :alt="statsName" @error="hasError = true">
     <img v-else-if="statsIconType === 'path'" class="w-4 h-4 align-sub inline-block" :src="'/icons/'+ toSnakeCase(statsType) +'/'+ toSnakeCase(statsName) +'.svg'" :alt="statsName" @error="hasError = true">
