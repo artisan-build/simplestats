@@ -18,9 +18,17 @@ class AppHelper
         }
     }
 
+    public static function getTeamId(): ?int
+    {
+        return Context::get('team_id')
+            ?? auth()->user()?->team_id
+            ?? auth()->user()?->current_team_id;
+    }
+
     public static function ensureTeamTimezone(): void
     {
-        $teamTimezone = auth()->user()->team->timezone ?: 'UTC';
+        $user = auth()->user();
+        $teamTimezone = $user?->loadMissing('team')->team?->timezone ?: 'UTC';
 
         if (config('app.timezone') !== $teamTimezone) {
             Config::set('app.timezone', $teamTimezone);

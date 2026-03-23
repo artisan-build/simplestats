@@ -206,6 +206,31 @@ The dashboard displays these key performance indicators:
 - Each team selects a default currency
 - Foreign currency transactions are auto-converted using daily exchange rates
 
+### Team Context Resolution
+
+The app uses `AppHelper::getTeamId()` as the single source of truth for resolving the current team ID. It checks two sources in order:
+
+1. `Context::get('team_id')` (set by `SetTeamContext` middleware via `AppHelper::setTeamContextFromAuth()`)
+2. `auth()->user()?->team_id ?? auth()->user()?->current_team_id` (fallback for CLI/job contexts)
+
+This matters because the app runs in two different contexts:
+
+- **HTTP requests**: The `SetTeamContext` middleware sets `Context::add('team_id', ...)` from the authenticated user. Both Context and auth are available.
+- **CLI / Queued jobs**: No middleware runs. Code that needs auth must call `auth()->setUser(...)` manually. Context is only available if explicitly set.
+
+#### Rules for Team Context
+
+- **Reading team ID**: Always use `AppHelper::getTeamId()`. Never call `Context::get('team_id')` directly.
+- **In jobs/commands that need team-scoped data**: Call `auth()->setUser($user)` before any team-scoped operations. This enables both `AppHelper::getTeamId()` (via auth fallback) and `AppHelper::ensureTeamTimezone()` (which requires `auth()->user()->team->timezone`).
+- **`HasTeamScope` trait**: Uses `AppHelper::getTeamId()` for global scopes and saving hooks. When team ID is null, the scope is skipped (no filtering).
+- **`AppHelper::ensureTeamTimezone()`**: Relies on `auth()->user()->team->timezone`. Only called when a team is resolved, so auth must be set beforehand.
+
+#### Key files
+
+- `App\Helpers\AppHelper` - `getTeamId()`, `setTeamContextFromAuth()`, `ensureTeamTimezone()`
+- `App\Http\Middleware\SetTeamContext` - HTTP middleware that sets Context from auth
+- `App\Concerns\HasTeamScope` - Eloquent trait for automatic team scoping
+
 ## Queue Configuration
 
 The client package uses Laravel's defer helper (Laravel 11+) or queues:

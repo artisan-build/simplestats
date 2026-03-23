@@ -4,11 +4,11 @@ namespace App\DTOs;
 
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
+use App\Helpers\AppHelper;
 use App\Http\Requests\StatsFilterRequest;
 use App\Models\CustomStatsRangePreset;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 
 class StatsFilterDto
@@ -99,7 +99,7 @@ class StatsFilterDto
     public function makeHash(): string
     {
         return md5(json_encode([
-            $this->getTeamId(),
+            AppHelper::getTeamId(),
             $this->projectId,
             $this->rangeType,
             $this->trackReferer,
@@ -117,10 +117,5 @@ class StatsFilterDto
             $this->pageEntry,
             $this->customEventName,
         ]));
-    }
-
-    public function getTeamId(): int
-    {
-        return Context::get('team_id');
     }
 }

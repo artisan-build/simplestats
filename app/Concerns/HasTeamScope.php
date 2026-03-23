@@ -4,7 +4,6 @@ namespace App\Concerns;
 
 use App\Helpers\AppHelper;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Context;
 
 trait HasTeamScope
 {
@@ -15,14 +14,14 @@ trait HasTeamScope
     public static function bootHasTeamScope(): void
     {
         parent::addGlobalScope('team', function (Builder $query) {
-            if ($teamId = Context::get('team_id')) {
+            if ($teamId = AppHelper::getTeamId()) {
                 AppHelper::ensureTeamTimezone();
                 $query->where('team_id', $teamId);
             }
         });
 
         static::saving(function ($model) {
-            if ($teamId = Context::get('team_id')) {
+            if ($teamId = AppHelper::getTeamId()) {
                 AppHelper::ensureTeamTimezone();
                 $model->team_id = $teamId;
             }

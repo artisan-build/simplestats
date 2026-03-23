@@ -9,6 +9,7 @@ use App\Builder\StatsAggregationsSqlBuilder;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Enums\TrackablePerson;
+use App\Helpers\AppHelper;
 use App\Models\BaseStat;
 use App\Models\Project;
 use App\Models\StatsAggregation;
@@ -17,7 +18,6 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -31,7 +31,7 @@ class StatsAggregationsService
 
         $upsertData = $data->map(function ($item) use ($filters) {
             return [
-                'team_id' => $filters->getTeamId(),
+                'team_id' => AppHelper::getTeamId(),
                 'project_id' => $filters->projectId ?: null,
                 'filter_hash' => $filters->makeHash(),
                 'type' => $filters->rangeType,
@@ -165,7 +165,7 @@ class StatsAggregationsService
     {
         $conditions = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
 
-        $teamCondition = ' stats.team_id = '.Context::get('team_id').' ';
+        $teamCondition = ' stats.team_id = '.AppHelper::getTeamId().' ';
 
         $projectCondition = '';
         if (! empty($filters->projectId)) {
