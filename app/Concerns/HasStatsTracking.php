@@ -67,7 +67,7 @@ trait HasStatsTracking
                     ];
                 }
 
-                if (str($value)->startsWith('172.') || str($value)->startsWith('192.') || str($value)->startsWith('169.')) {
+                if (filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
                     return [
                         'location_country' => 'Intranet',
                         'location_region' => 'Network',
