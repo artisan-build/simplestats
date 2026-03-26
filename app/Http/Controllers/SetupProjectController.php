@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateProject;
 use App\Actions\UpdateProject;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
@@ -14,7 +15,7 @@ class SetupProjectController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Setup/Project', [
-            'project' => $request->user()->currentTeam->projects()->first(),
+            'project' => $request->user()->currentTeam->projects()->first() ?? new Project,
             'trackingUsages' => StatsService::getTrackingUsages(),
         ]);
     }
@@ -22,7 +23,12 @@ class SetupProjectController extends Controller
     public function store(ProjectRequest $request)
     {
         $project = $request->user()->currentTeam->projects()->first();
-        app(UpdateProject::class)($request->user(), $project, $request->validated());
+
+        if ($project) {
+            app(UpdateProject::class)($request->user(), $project, $request->validated());
+        } else {
+            app(CreateProject::class)($request->user(), $request->validated());
+        }
 
         return redirect()->route('setup.installation.index');
     }

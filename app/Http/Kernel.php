@@ -9,6 +9,7 @@ use App\Http\Middleware\Api\SetRequestContext;
 use App\Http\Middleware\AutoLoginInDemoEnv;
 use App\Http\Middleware\CheckAppType;
 use App\Http\Middleware\DisableMutateRequestsInDemoEnv;
+use App\Http\Middleware\EnsureValidTeamOwner;
 use App\Http\Middleware\ForwardToOnboarding;
 use App\Http\Middleware\SetTeamContext;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -46,6 +47,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            EnsureValidTeamOwner::class, // Must be listed before HandleInertiaRequests
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             AllowIframeEmbedding::class,

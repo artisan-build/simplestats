@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Team;
 use App\Models\User;
 use App\Notifications\UserDeletedNotification;
 use App\Notifications\UserInactiveNotification;
 use Illuminate\Console\Command;
+use Laravel\Jetstream\Contracts\DeletesUsers;
 
 class CheckInactiveUsers extends Command
 {
@@ -25,21 +25,17 @@ class CheckInactiveUsers extends Command
 
     private function deleteInactiveUsers(): void
     {
+        $deletesUsers = app(DeletesUsers::class);
+
         User::query()
             ->whereDoesntHave('subscriptions', function ($query) {
                 $query->where('status', 'active');
             })
             ->where('inactive_since', '<', now()->subDays(10))
-            ->each(function (User $user) {
+            ->each(function (User $user) use ($deletesUsers) {
                 $user->notify(new UserDeletedNotification($user));
-                $user->delete();
+                $deletesUsers->delete($user);
             });
-
-        Team::with('users', 'owner')->each(function ($team) {
-            if ($team->users->isEmpty() && ! $team->owner) {
-                $team->delete();
-            }
-        });
     }
 
     private function notifyInactiveUsers(): void
