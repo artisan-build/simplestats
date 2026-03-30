@@ -24,5 +24,5 @@ View Dashboard
 
 ---
 
-<small>Don't want to receive these alerts? <a href="{{ route('notifications.index') }}" target="_blank">Change notification settings</a></small>
+<small>Don't want to receive these notifications? <a href="{{ route('notifications.index') }}" target="_blank">Change notification settings</a></small>
 @endcomponent
