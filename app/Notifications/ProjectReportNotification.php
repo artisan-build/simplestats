@@ -12,7 +12,6 @@ use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
@@ -53,7 +52,7 @@ class ProjectReportNotification extends Notification
 
         $projectName = $this->notification->notifiable->name;
 
-        $subject = '📊 '.config('app.name').' '.
+        $subject = '📊 '.
             $this->notification->frequency->title().' '.
             'Report for '.
             $projectName;
