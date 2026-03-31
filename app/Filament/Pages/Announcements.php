@@ -16,15 +16,17 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Spatie\DeletedModels\Models\DeletedModel;
 
-class SendAnnouncement extends Page
+class Announcements extends Page
 {
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-megaphone';
 
-    protected static ?string $navigationLabel = 'Send Announcement';
+    protected static ?string $navigationLabel = 'Announcements';
 
-    protected static ?string $title = 'Send Announcement';
+    protected static ?int $navigationSort = 1;
 
-    protected string $view = 'filament.pages.send-announcement';
+    protected static ?string $title = 'Announcements';
+
+    protected string $view = 'filament.pages.announcements';
 
     public ?array $data = [];
 

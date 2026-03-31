@@ -18,7 +18,7 @@ class ImpersonateController extends Controller
         $manager->leave();
 
         if ($fromFilament) {
-            return redirect('/admin/impersonate-user');
+            return redirect('/admin/users');
         }
 
         $leaveRedirect = $manager->getLeaveRedirectTo();

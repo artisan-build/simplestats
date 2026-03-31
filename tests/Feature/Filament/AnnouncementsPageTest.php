@@ -1,6 +1,6 @@
 <?php
 
-use App\Filament\Pages\SendAnnouncement;
+use App\Filament\Pages\Announcements;
 use App\Jobs\SendAnnouncementToUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
@@ -13,12 +13,12 @@ beforeEach(function () {
 });
 
 test('send announcement page loads for admin users', function () {
-    Livewire::test(SendAnnouncement::class)
+    Livewire::test(Announcements::class)
         ->assertOk();
 });
 
 test('send announcement page requires subject and body', function () {
-    Livewire::test(SendAnnouncement::class)
+    Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => '',
             'body' => '',
@@ -30,7 +30,7 @@ test('send announcement page requires subject and body', function () {
 test('send announcement dispatches jobs for verified users', function () {
     Bus::fake();
 
-    Livewire::test(SendAnnouncement::class)
+    Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => 'Test Announcement',
             'body' => 'This is a test announcement.',
@@ -55,7 +55,7 @@ test('send announcement includes deleted users when toggle is enabled', function
         'values' => ['name' => 'Deleted User', 'email' => 'deleted@example.com'],
     ]);
 
-    Livewire::test(SendAnnouncement::class)
+    Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => 'Test',
             'body' => 'Content',
@@ -81,7 +81,7 @@ test('send announcement skips deleted users whose email matches an active user',
         'values' => ['name' => 'Old Account', 'email' => $activeUser->email],
     ]);
 
-    Livewire::test(SendAnnouncement::class)
+    Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => 'Test',
             'body' => 'Content',
@@ -105,7 +105,7 @@ test('send announcement with admins_only toggle only dispatches to admin users',
 
     $regularUser = User::factory()->create(['email_verified_at' => now(), 'is_admin' => false]);
 
-    Livewire::test(SendAnnouncement::class)
+    Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => 'Admin Preview',
             'body' => 'Testing admin-only send.',
@@ -129,6 +129,6 @@ test('non-admin users cannot access the send announcement page', function () {
     $user = User::factory()->create(['is_admin' => false]);
 
     $this->actingAs($user)
-        ->get('/admin/send-announcement')
+        ->get('/admin/announcements')
         ->assertForbidden();
 });
