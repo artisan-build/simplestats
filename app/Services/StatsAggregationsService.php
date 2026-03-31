@@ -273,61 +273,74 @@ class StatsAggregationsService
     }
 
     /**
-     * We consider every data above a missing date as compromised.
-     * If data changes in retrospective (e.g., when a payment state gets changed or updated),
-     * every data above may not be properly evaluated. So we "getRawData" of all data above the date.
+     * Detect missing aggregation entries (including internal gaps) and fetch raw data for them.
+     * Previously, only boundary dates (before first / after last cached key) were detected,
+     * which missed gaps in the middle of the cached range caused by partial invalidation.
      */
     private function getMissingAggregatedData(Collection $aggregatedData, StatsFilterDto $filters): Collection
     {
         $filterConditions = $this->getFilterConditions($filters);
+        $dateFormatClear = $filters->rangeType->dateFormatClear()['php'];
 
-        $period = array_reverse(CarbonPeriodImmutable::create(
+        $period = CarbonPeriodImmutable::create(
             $filterConditions['startDateStart'],
             '1 '.$filterConditions['intervalType']->value,
             $filterConditions['endDateStart']
-        )->toArray());
+        )->toArray();
 
-        $aggregatedDataSorted = $aggregatedData->sortKeys();
-
-        $startDate = $aggregatedDataSorted->keys()->first();
-        $endDate = $aggregatedDataSorted->keys()->last();
-
-        $missingBeforePeriod = [];
-        $missingAfterPeriod = [];
-
+        $missingDates = [];
         foreach ($period as $date) {
-            $date = CarbonImmutable::parse($date);
-
-            if ($date->lt($startDate)) {
-                $missingAfterPeriod[] = $date;
-            } elseif ($date->gt($endDate)) {
-                $missingBeforePeriod[] = $date;
+            $dateKey = trim(CarbonImmutable::parse($date)->format($dateFormatClear));
+            if (! $aggregatedData->has($dateKey)) {
+                $missingDates[] = CarbonImmutable::parse($date);
             }
         }
 
-        $missingAggregatedData = collect();
-
-        if (! empty($missingBeforePeriod)) {
-            // modify the original filter and adjust range amount and start
-            $filtersBefore = new StatsFilterDto(...array_merge((array) $filters, [
-                'rangeAmount' => count($missingBeforePeriod),
-                'rangeStart' => current($missingBeforePeriod),
-            ]));
-
-            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersBefore), $filtersBefore->projectId));
+        if (empty($missingDates)) {
+            return collect();
         }
 
-        if (! empty($missingAfterPeriod)) {
-            // modify the original filter and adjust range amount and start
-            $filtersAfter = new StatsFilterDto(...array_merge((array) $filters, [
-                'rangeAmount' => count($missingAfterPeriod),
-                'rangeStart' => current($missingAfterPeriod),
+        $missingAggregatedData = collect();
+        $ranges = $this->groupContiguousDates($missingDates, $filterConditions['intervalType']);
+
+        foreach ($ranges as $range) {
+            $rangeFilters = new StatsFilterDto(...array_merge((array) $filters, [
+                'rangeAmount' => count($range),
+                'rangeStart' => end($range),
             ]));
 
-            $missingAggregatedData = $missingAggregatedData->merge($this->getRawData($this->getFilterConditions($filtersAfter), $filtersAfter->projectId));
+            $missingAggregatedData = $missingAggregatedData->merge(
+                $this->getRawData($this->getFilterConditions($rangeFilters), $rangeFilters->projectId)
+            );
         }
 
         return $missingAggregatedData;
+    }
+
+    /**
+     * @param  CarbonImmutable[]  $dates
+     * @return CarbonImmutable[][]
+     */
+    private function groupContiguousDates(array $dates, \Stringable $intervalType): array
+    {
+        usort($dates, fn (CarbonImmutable $a, CarbonImmutable $b) => $a <=> $b);
+
+        $ranges = [];
+        $currentRange = [$dates[0]];
+
+        for ($i = 1; $i < count($dates); $i++) {
+            $expected = $currentRange[count($currentRange) - 1]->add(1, $intervalType->toString());
+
+            if ($dates[$i]->equalTo($expected)) {
+                $currentRange[] = $dates[$i];
+            } else {
+                $ranges[] = $currentRange;
+                $currentRange = [$dates[$i]];
+            }
+        }
+        $ranges[] = $currentRange;
+
+        return $ranges;
     }
 
     public function getRawData(array $filterConditions, ?int $projectId): Collection
