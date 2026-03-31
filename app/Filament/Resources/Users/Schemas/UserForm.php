@@ -21,7 +21,9 @@ class UserForm
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
                 Toggle::make('is_admin')
-                    ->label('Admin'),
+                    ->label('Admin')
+                    ->disabled()
+                    ->dehydrated(false),
             ]);
     }
 }
