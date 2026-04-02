@@ -41,34 +41,7 @@ class SetLocale
             return $next($request);
         }
 
-        if (! $cookieLocale && $request->isMethod('get') && $this->isLocalizablePath($request->getPathInfo())) {
-            $browserLocale = $this->detectBrowserLocale($request, $supported, $default);
-
-            if ($browserLocale) {
-                cookie()->queue('locale', $browserLocale, 60 * 24 * 365);
-                $path = $request->getPathInfo();
-
-                return redirect()->to('/'.$browserLocale.($path === '/' ? '' : $path));
-            }
-        }
-
         return $next($request);
-    }
-
-    private function detectBrowserLocale(Request $request, array $supported, string $default): ?string
-    {
-        $acceptLanguage = $request->header('Accept-Language', '');
-
-        foreach (explode(',', $acceptLanguage) as $part) {
-            $locale = trim(explode(';', $part)[0]);
-            $locale = strtolower(substr($locale, 0, 2));
-
-            if ($locale !== $default && in_array($locale, $supported)) {
-                return $locale;
-            }
-        }
-
-        return null;
     }
 
     private function isLocalizablePath(string $path): bool
