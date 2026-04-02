@@ -21,6 +21,6 @@ export default defineConfig({
         }),
     ],
     ssr: {
-        noExternal: ["country-flag-emoji", "apexcharts", "vue-apexcharts", "vue3-apexcharts"],
+        noExternal: ["country-flag-emoji"],
     },
 });

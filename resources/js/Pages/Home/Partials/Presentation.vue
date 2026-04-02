@@ -1,8 +1,7 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {ref} from 'vue';
 
 const demoUrl = 'https://demo.simplestats.io/dashboard';
-const isVisible = ref(false);
 const iframeReady = ref(false);
 
 const appEnv = import.meta.env.VITE_APP_ENV;
@@ -10,16 +9,10 @@ const appEnv = import.meta.env.VITE_APP_ENV;
 const onIframeLoad = () => {
     setTimeout(() => iframeReady.value = true, 100);
 };
-
-onMounted(() => {
-    setTimeout(() => {
-        isVisible.value = true;
-    }, 100);
-});
 </script>
 
 <template>
-    <section class="animationElement mt-20 flex justify-center px-4" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
+    <section class="animationElement mt-20 flex justify-center px-4">
         <div class="w-full max-w-screen-xl">
             <!-- Interactive demo (xl screens, non-local only) -->
             <!--
@@ -76,6 +69,17 @@ onMounted(() => {
 
 <style scoped>
 .animationElement {
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

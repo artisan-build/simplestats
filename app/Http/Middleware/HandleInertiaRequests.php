@@ -35,6 +35,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if (! $this->shouldEnableSsr($request)) {
+            config(['inertia.ssr.enabled' => false]);
+        }
+
         $merge = [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
@@ -59,6 +63,33 @@ class HandleInertiaRequests extends Middleware
         }
 
         return array_merge(parent::share($request), $merge);
+    }
+
+    /**
+     * Only enable SSR for Home and Auth pages.
+     */
+    private function shouldEnableSsr(Request $request): bool
+    {
+        $publicPaths = config('locales.public_paths', []);
+        $defaultLocale = config('locales.default');
+        $supportedLocales = array_keys(config('locales.supported', []));
+
+        $patterns = collect($publicPaths)
+            ->map(fn (string $path) => ltrim($path, '/'))
+            ->flatMap(function (string $path) use ($defaultLocale, $supportedLocales) {
+                $wildcardPath = $path === '' ? '/' : "$path/*";
+
+                return collect($supportedLocales)
+                    ->reject(fn ($l) => $l === $defaultLocale)
+                    ->flatMap(fn ($l) => $path === ''
+                        ? [$l]
+                        : ["$l/$path", "$l/$path/*"]
+                    )
+                    ->prepend($wildcardPath)
+                    ->prepend($path);
+            })->all();
+
+        return $request->is($patterns);
     }
 
     /**

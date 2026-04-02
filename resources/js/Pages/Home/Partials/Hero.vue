@@ -1,18 +1,10 @@
 <script setup>
 import {router} from "@inertiajs/vue3";
-import {onMounted, ref} from 'vue';
 import {useLocale} from "@/Composables/useLocale.js";
 
 const { localizedPath } = useLocale();
 const appEnv = import.meta.env.VITE_APP_ENV;
 const appName = import.meta.env.VITE_APP_NAME;
-const isVisible = ref(false);
-
-onMounted(() => {
-    setTimeout(() => {
-        isVisible.value = true;
-    }, 100);
-});
 
 function trackGetStartedClick() {
     window.axios.post(route('tracking.get-started-click')).finally(() => {
@@ -22,7 +14,7 @@ function trackGetStartedClick() {
 </script>
 
 <template>
-    <section class="animationElement text-center pt-24" :class="{ 'opacity-0 transform translate-y-8': !isVisible }">
+    <section class="animationElement text-center pt-24">
         <h1 class="m-auto mb-10 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white px-6 sm:px-3 max-w-screen-md">
             {{ $t('The missing analytics tool for your') }}&nbsp;<span class="text-indigo-500">Laravel</span> {{ $t('application.') }}
         </h1>
@@ -53,6 +45,17 @@ function trackGetStartedClick() {
 
 <style scoped>
 .animationElement {
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

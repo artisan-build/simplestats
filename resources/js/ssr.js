@@ -20,7 +20,8 @@ createServer((page) =>
                 );
             }
 
-            throw new Error(`SSR is disabled for this page: ${name}.`);
+            // Fallback: return minimal component, client-side rendering takes over
+            return { default: { render: () => '' } };
         },
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })

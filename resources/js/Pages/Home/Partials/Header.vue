@@ -6,7 +6,6 @@ import {onMounted, onUnmounted, ref} from 'vue';
 
 const { localizedPath } = useLocale();
 
-const isVisible = ref(false);
 const hasScrolled = ref(false);
 
 const handleScroll = () => {
@@ -14,10 +13,6 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
-    setTimeout(() => {
-        isVisible.value = true;
-    }, 50); // Shorter delay for header to appear first
-
     window.addEventListener('scroll', handleScroll);
 });
 
@@ -27,7 +22,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="animationElement z-10 sticky top-0" :class="{ 'opacity-0': !isVisible, 'bg-white/90 dark:bg-dark-900/90 backdrop-blur-sm border-b border-gray-200/90 dark:border-dark-700/90 shadow-sm dark:shadow-dark-800/50': hasScrolled }">
+    <div class="animationElement z-10 sticky top-0" :class="{ 'bg-white/90 dark:bg-dark-900/90 backdrop-blur-sm border-b border-gray-200/90 dark:border-dark-700/90 shadow-sm dark:shadow-dark-800/50': hasScrolled }">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
             <a :href="localizedPath('/')" class="inline-flex items-center">
                 <ApplicationLogo />
@@ -58,6 +53,11 @@ onUnmounted(() => {
 
 <style scoped>
 .animationElement {
-  transition: opacity 0.6s ease;
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 </style>
