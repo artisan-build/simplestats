@@ -1,23 +1,25 @@
 <script setup>
 import {Link} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import LanguageSwitcher from "@/Components/LanguageSwitcher.vue";
+import { trans } from 'laravel-vue-i18n';
 
 let appName = import.meta.env.VITE_APP_NAME;
 
 const linkCategories = [
     {
-        "header": `Why ${appName}?`,
+        "header": () => trans("Why :appName?", { appName }),
         "links": [
-            {"title": "Powerful KPIs", "url": "/docs/introduction.html#kpis"},
-            {"title": "Simple Setup", "url": "/docs/installation.html"},
-            {"title": "Server-side Tracking", "url": "/docs/introduction.html#server-side-vs-client-side-tracking"},
-            {"title": "Data Import", "url": "/docs/how-to-import-existing-data.html"},
-            {"title": "Live Demo", "url": "https://demo.simplestats.io/login"},
-            {"title": "API", "url": "/docs/api-documentation.html"},
+            {"title": () => trans("Powerful KPIs"), "url": "/docs/introduction.html#kpis"},
+            {"title": () => trans("Simple Setup"), "url": "/docs/installation.html"},
+            {"title": () => trans("Server-side Tracking"), "url": "/docs/introduction.html#server-side-vs-client-side-tracking"},
+            {"title": () => trans("Data Import"), "url": "/docs/how-to-import-existing-data.html"},
+            {"title": () => trans("Live demo"), "url": "https://demo.simplestats.io/login"},
+            {"title": () => trans("API"), "url": "/docs/api-documentation.html"},
         ],
     },
     {
-        "header": `Community`,
+        "header": () => trans("Community"),
         "links": [
             {"title": "Twitter", "url": "https://x.com/SimpleStats_io"},
             {"title": "GitHub", "url": "https://github.com/simplestats-io"},
@@ -28,14 +30,14 @@ const linkCategories = [
         ],
     },
     {
-        "header": `Company`,
+        "header": () => trans("Company"),
         "links": [
-            {"title": "Status", "url": "https://status.simplestats.io"},
-            {"title": "Help & Support", "url": "https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g"},
-            {"title": "Documentation", "url": "/docs"},
-            {"title": "Imprint", "url": "/imprint"},
-            {"title": "Privacy", "url": "/privacy-policy"},
-            {"title": "Terms", "url": "/terms-of-service"},
+            {"title": () => trans("Status"), "url": "https://status.simplestats.io"},
+            {"title": () => trans("Help & Support"), "url": "https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g"},
+            {"title": () => trans("Documentation"), "url": "/docs"},
+            {"title": () => trans("Imprint"), "url": "/imprint"},
+            {"title": () => trans("Privacy"), "url": "/privacy-policy"},
+            {"title": () => trans("Terms"), "url": "/terms-of-service"},
         ],
     },
 ];
@@ -52,20 +54,23 @@ const linkCategories = [
                             <ApplicationLogo />
                         </Link>
                         <div class="mt-4 text-base leading-6">
-                            Based and hosted in the EU <span class="text-lg">🇪🇺</span>
+                            {{ $t('Based and hosted in the EU') }} <span class="text-lg">🇪🇺</span>
                         </div>
                         <div class="mt-4">
                             <img class="rounded-xl shadow-md border border-gray-300" src="/images/gdpr.png" loading="lazy" alt="GDPR compliant" width="192" height="66">
+                        </div>
+                        <div class="mt-6">
+                            <LanguageSwitcher />
                         </div>
                     </div>
                     <div class="grid gap-8 grid-cols-1" :class="`md:grid-cols-${linkCategories.length}`">
                         <div v-for="category in linkCategories">
                             <div class="leading-5 font-semibold tracking-wider uppercase">
-                                {{ category.header }}
+                                {{ typeof category.header === 'function' ? category.header() : category.header }}
                             </div>
                             <ul class="mt-4">
                                 <li class="mt-4" v-for="link in category.links">
-                                    <a :href="link.url" target="_blank" rel="noreferrer" class="text-sm leading-6 hover:underline">{{ link.title }}</a>
+                                    <a :href="link.url" target="_blank" rel="noreferrer" class="text-sm leading-6 hover:underline">{{ typeof link.title === 'function' ? link.title() : link.title }}</a>
                                 </li>
                             </ul>
                         </div>

@@ -6,6 +6,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {useLocale} from '@/Composables/useLocale.js';
+
+const { localizedPath } = useLocale();
 
 defineProps({
     status: String,
@@ -21,7 +24,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <Head :title="$t('Forgot Password')" />
 
     <AuthenticationCard>
         <template #logo>
@@ -29,11 +32,11 @@ const submit = () => {
         </template>
 
         <template #title>
-            Reset your password
+            {{ $t('Reset your password') }}
         </template>
 
         <div class="mb-4 text-sm text-gray-600 dark:text-dark-400">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+            {{ $t('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
@@ -50,7 +53,7 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
-                    placeholder="Email"
+                    :placeholder="$t('Email')"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -58,14 +61,14 @@ const submit = () => {
             <div class="mt-4">
                 <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     <div class="w-full py-1 text-base normal-case">
-                        Email password reset link
+                        {{ $t('Email password reset link') }}
                     </div>
                 </PrimaryButton>
             </div>
 
             <div class="mt-4 text-center">
-                <Link :href="route('login')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">
-                    <span class="text-gray-600">Back to sign in</span>
+                <Link :href="localizedPath('/login')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">
+                    <span class="text-gray-600">{{ $t('Back to sign in') }}</span>
                 </Link>
             </div>
         </form>

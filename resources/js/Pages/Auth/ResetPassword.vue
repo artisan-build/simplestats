@@ -27,7 +27,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Reset Password" />
+    <Head :title="$t('Reset Password')" />
 
     <AuthenticationCard>
         <template #logo>
@@ -44,7 +44,7 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="username"
-                    placeholder="Email"
+                    :placeholder="$t('Email')"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -57,7 +57,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
-                    placeholder="Password"
+                    :placeholder="$t('Password')"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
@@ -70,14 +70,14 @@ const submit = () => {
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
-                    placeholder="Confirm Password"
+                    :placeholder="$t('Confirm Password')"
                 />
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
             <div class="flex items-center justify-end mt-4">
                 <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Reset Password
+                    {{ $t('Reset Password') }}
                 </PrimaryButton>
             </div>
         </form>

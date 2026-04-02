@@ -6,6 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import { vTooltip } from 'floating-vue';
+import { i18nVue } from 'laravel-vue-i18n';
 let appName = import.meta.env.VITE_APP_NAME;
 
 if (import.meta.env.VITE_APP_ENV !== 'production') {
@@ -21,6 +22,14 @@ createInertiaApp({
         app
             .use(plugin)
             .use(ZiggyVue)
+            .use(i18nVue, {
+                resolve: async (lang) => {
+                    const langs = import.meta.glob('../../lang/*.json');
+                    return await langs[`../../lang/${lang}.json`]();
+                },
+                lang: props.initialPage.props.locale || 'en',
+                fallbackLang: 'en',
+            })
             .directive('tooltip', vTooltip)
             .mount(el);
 

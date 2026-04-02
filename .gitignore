@@ -28,6 +28,7 @@ docs/.vitepress/cache
 /current
 /releases
 /bootstrap/ssr
+/public/sitemap.xml
 .phpunit.database.checksum
 phpunit.xml
 

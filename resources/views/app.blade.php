@@ -8,11 +8,11 @@
             <meta name="robots" content="noindex, nofollow">
         @endif
 
-        <title inertia>{{ config('app.name', 'Laravel') }} - The missing analytics tool for Laravel applications</title>
-        <meta name="description" content="A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
+        <title inertia>{{ config('app.name', 'Laravel') }} - {{ __('The missing analytics tool for Laravel applications') }}</title>
+        <meta name="description" content="{{ __('A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!') }}">
 
-        <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - The missing analytics tool for Laravel applications">
-        <meta property="og:description" content="A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!">
+        <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - {{ __('The missing analytics tool for Laravel applications') }}">
+        <meta property="og:description" content="{{ __('A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!') }}">
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
 
@@ -26,8 +26,35 @@
             ]" />
         @endif
 
+        @php
+            $supportedLocales = array_keys(config('locales.supported', []));
+            $defaultLocale = config('locales.default', 'en');
+            $publicPaths = config('locales.public_paths', []);
+            $currentPath = request()->getPathInfo();
+            $firstSegment = request()->segment(1);
+            $pathWithoutLocale = $currentPath;
+            if ($firstSegment && $firstSegment !== $defaultLocale && in_array($firstSegment, $supportedLocales)) {
+                $pathWithoutLocale = '/' . ltrim(substr($currentPath, strlen('/' . $firstSegment)), '/');
+            }
+            if ($pathWithoutLocale === '') {
+                $pathWithoutLocale = '/';
+            }
+            $isLocalizablePage = collect($publicPaths)->contains(fn ($p) => $pathWithoutLocale === $p || str_starts_with($pathWithoutLocale, $p . '/'));
+        @endphp
+
+        @if($isLocalizablePage)
+            @foreach($supportedLocales as $loc)
+                @if($loc === $defaultLocale)
+                    <link rel="alternate" hreflang="{{ $loc }}" href="{{ rtrim(config('app.url'), '/') }}{{ $pathWithoutLocale }}">
+                    <link rel="alternate" hreflang="x-default" href="{{ rtrim(config('app.url'), '/') }}{{ $pathWithoutLocale }}">
+                @else
+                    <link rel="alternate" hreflang="{{ $loc }}" href="{{ rtrim(config('app.url'), '/') }}/{{ $loc }}{{ $pathWithoutLocale === '/' ? '' : $pathWithoutLocale }}">
+                @endif
+            @endforeach
+        @endif
+
         {{-- change this also in docs vitepress config.js --}}
-        <link rel="canonical" href="https://simplestats.io{{ request()->getPathInfo() }}">
+        <link rel="canonical" href="{{ rtrim(config('app.url'), '/') }}{{ request()->getPathInfo() }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

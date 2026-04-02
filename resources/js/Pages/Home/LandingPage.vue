@@ -11,7 +11,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="The missing analytics tool for your Laravel application." />
+    <Head :title="$t('The missing analytics tool for Laravel applications')" />
 
     <Welcome :plans="plans" :banners="banners" :discount="discount" />
 

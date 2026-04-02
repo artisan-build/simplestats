@@ -8,6 +8,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Socialstream from '@/Components/Socialstream.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {useLocale} from '@/Composables/useLocale.js';
+
+const { localizedPath } = useLocale();
 
 const props = defineProps({
     params: Object,
@@ -32,7 +35,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
 </script>
 
 <template>
-    <Head title="Sign up" />
+    <Head :title="$t('Sign up')" />
 
     <AuthenticationCard>
         <template #logo>
@@ -40,8 +43,8 @@ const appType = import.meta.env.VITE_APP_TYPE;
         </template>
 
         <template #title>
-            Sign up to {{ appName }}<br>
-            <span class="text-sm text-gray-500" v-if="params.teamName">and join the following team: {{ params.teamName }}</span>
+            {{ $t('Sign up to :appName', { appName }) }}<br>
+            <span class="text-sm text-gray-500" v-if="params.teamName">{{ $t('and join the following team:') }} {{ params.teamName }}</span>
         </template>
 
         <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length"
@@ -58,7 +61,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                     required
                     autofocus
                     autocomplete="name"
-                    placeholder="Name"
+                    :placeholder="$t('Name')"
                 />
                 <InputError class="mt-3 -mb-1 text-left" :message="form.errors.name" />
             </div>
@@ -71,7 +74,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                     class="mt-1 block w-full"
                     required
                     autocomplete="username"
-                    placeholder="Email"
+                    :placeholder="$t('Email')"
                 />
                 <InputError class="mt-3 -mb-1 text-left" :message="form.errors.email" />
             </div>
@@ -84,7 +87,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
-                    placeholder="Password"
+                    :placeholder="$t('Password')"
                 />
                 <InputError class="mt-3 -mb-1 text-left" :message="form.errors.password" />
             </div>
@@ -97,7 +100,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                     class="mt-1 block w-full"
                     required
                     autocomplete="new-password"
-                    placeholder="Confirm Password"
+                    :placeholder="$t('Confirm Password')"
                 />
                 <InputError class="mt-3 -mb-1 text-left" :message="form.errors.password_confirmation" />
             </div>
@@ -105,7 +108,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
             <div class="mt-4">
                 <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     <div class="w-full py-1 text-base normal-case">
-                        Create account
+                        {{ $t('Create account') }}
                     </div>
                 </PrimaryButton>
             </div>
@@ -116,7 +119,7 @@ const appType = import.meta.env.VITE_APP_TYPE;
                         <Checkbox class="hidden" id="terms" v-model:checked="form.terms" name="terms" required />
 
                         <div>
-                            Signing up for a {{ appName }} account means you agree to the <a target="_blank" :href="route('terms.show')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">Privacy Policy</a>.
+                            {{ $t('Signing up for a :appName account means you agree to the', { appName }) }} <a target="_blank" :href="route('terms.show')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">{{ $t('Terms of Service') }}</a> {{ $t('and') }} <a target="_blank" :href="route('policy.show')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">{{ $t('Privacy Policy') }}</a>.
                         </div>
                     </div>
                     <InputError class="mt-3 -mb-1 text-left" :message="form.errors.terms" />
@@ -124,8 +127,8 @@ const appType = import.meta.env.VITE_APP_TYPE;
             </div>
 
             <div class="mt-4 text-center">
-                <Link :href="route('login')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">
-                    <span class="text-gray-600">Already have an account?</span> Sign in
+                <Link :href="localizedPath('/login')" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-100">
+                    <span class="text-gray-600">{{ $t('Already have an account?') }}</span> {{ $t('Sign in') }}
                 </Link>
             </div>
 

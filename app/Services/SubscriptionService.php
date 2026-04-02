@@ -66,7 +66,7 @@ class SubscriptionService
         });
     }
 
-    private function calculateYearlyIncentive(int $monthlyPrice, int $yearlyPrice): ?string
+    private function calculateYearlyIncentive(int $monthlyPrice, int $yearlyPrice): ?int
     {
         if ($monthlyPrice <= 0 || $yearlyPrice <= 0) {
             return null;
@@ -75,7 +75,7 @@ class SubscriptionService
         $annualFromMonthly = $monthlyPrice * 12;
         $savings = (int) round(($annualFromMonthly - $yearlyPrice) / $annualFromMonthly * 100);
 
-        return $savings > 0 ? "Save {$savings}%" : null;
+        return $savings > 0 ? $savings : null;
     }
 
     public function getPlanAlarm(Team $team): array

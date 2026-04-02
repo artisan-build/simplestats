@@ -40,6 +40,11 @@ class HandleInertiaRequests extends Middleware
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
             'branding' => config('app.branding'),
             'ziggy' => (new Ziggy)->toArray(),
+            'locale' => app()->getLocale(),
+            'supportedLocales' => array_keys(config('locales.supported', [])),
+            'localeConfig' => config('locales.supported'),
+            'defaultLocale' => config('locales.default'),
+            'localeUrls' => $this->buildLocaleUrls($request),
         ];
 
         if (auth()->user()) {
@@ -54,5 +59,38 @@ class HandleInertiaRequests extends Middleware
         }
 
         return array_merge(parent::share($request), $merge);
+    }
+
+    /**
+     * Build URLs for the current page in each supported locale.
+     *
+     * @return array<string, string>
+     */
+    private function buildLocaleUrls(Request $request): array
+    {
+        $supported = array_keys(config('locales.supported', []));
+        $default = config('locales.default', 'en');
+        $path = $request->getPathInfo();
+
+        // Strip current locale prefix from path
+        $segment = $request->segment(1);
+        if ($segment && $segment !== $default && in_array($segment, $supported)) {
+            $path = '/'.ltrim(substr($path, strlen('/'.$segment)), '/');
+        }
+
+        if ($path === '') {
+            $path = '/';
+        }
+
+        $urls = [];
+        foreach ($supported as $locale) {
+            if ($locale === $default) {
+                $urls[$locale] = $path.(str_contains($path, '?') ? '&' : '?').'hl='.$default;
+            } else {
+                $urls[$locale] = '/'.$locale.($path === '/' ? '' : $path);
+            }
+        }
+
+        return $urls;
     }
 }

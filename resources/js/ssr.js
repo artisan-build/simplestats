@@ -6,6 +6,7 @@ import createServer from "@inertiajs/vue3/server";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy-js";
 import { createSSRApp, h } from "vue";
+import { i18nVue } from "laravel-vue-i18n";
 
 createServer((page) =>
     createInertiaApp({
@@ -24,7 +25,15 @@ createServer((page) =>
         setup({ App, props, plugin }) {
             return createSSRApp({ render: () => h(App, props) })
                 .use(plugin)
-                .use(ZiggyVue, props.initialPage.props.ziggy);
+                .use(ZiggyVue, props.initialPage.props.ziggy)
+                .use(i18nVue, {
+                    resolve: (lang) => {
+                        const langs = import.meta.glob("../../lang/*.json", { eager: true });
+                        return langs[`../../lang/${lang}.json`];
+                    },
+                    lang: props.initialPage.props.locale || "en",
+                    fallbackLang: "en",
+                });
         },
     })
 );

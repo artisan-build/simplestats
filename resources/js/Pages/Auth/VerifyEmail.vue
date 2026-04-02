@@ -19,7 +19,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 </script>
 
 <template>
-    <Head title="Email Verification" />
+    <Head :title="$t('Email Verification')" />
 
     <AuthenticationCard>
         <template #logo>
@@ -27,33 +27,33 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
         </template>
 
         <template #title>
-            Email verification
+            {{ $t('Email Verification') }}
         </template>
 
         <div class="mb-4 text-sm text-gray-600 dark:text-dark-400">
-            Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
+            {{ $t('Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
         </div>
 
         <div v-if="verificationLinkSent" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            A new verification link has been sent to the email address you provided in your profile settings.
+            {{ $t('A new verification link has been sent to the email address you provided in your profile settings.') }}
         </div>
 
         <form @submit.prevent="submit">
             <div class="mt-4">
                 <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     <div class="w-full py-1 text-base normal-case">
-                        Resend verification email
+                        {{ $t('Resend verification email') }}
                     </div>
                 </PrimaryButton>
             </div>
 
             <div class="flex items-center justify-around mt-4">
                 <Link :href="route('profile.show')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
-                    Profile
+                    {{ $t('Profile') }}
                 </Link>
 
                 <Link as="button" method="post" :href="route('logout')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
-                    Sign out
+                    {{ $t('Sign out') }}
                 </Link>
             </div>
         </form>

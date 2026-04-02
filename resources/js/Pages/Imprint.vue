@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Imprint" />
+    <Head :title="$t('Imprint')" />
 
     <div class="font-sans text-gray-900 dark:text-dark-100 antialiased">
         <div class="pt-4 bg-gray-100 dark:bg-dark-900">

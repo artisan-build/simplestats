@@ -18,7 +18,7 @@ const appName = import.meta.env.VITE_APP_NAME;
     <section class="flex justify-center px-4">
         <div class="w-full max-w-screen-xl">
             <SectionHeader id="integration">
-                Powerful analytics&nbsp;<span class="text-indigo-500">in no time</span>
+                {{ $t('Powerful analytics') }}&nbsp;<span class="text-indigo-500">{{ $t('in no time') }}</span>
             </SectionHeader>
 
             <div class="flex mx-auto max-w-screen-md xl:max-w-screen-xl">
@@ -26,46 +26,46 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <div class="flex-grow grid gap-4 grid-cols-1 xl:grid-cols-[1fr_auto_1fr] items-center relative">
                     <GridPlaceholder />
                     <BigStepBullet content="1" />
-                    <BigStepText :content="`Install`" />
+                    <BigStepText :content="$t('Install')" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Install the client" />
+                    <SmallStepText :content="$t('Install the client')" />
 
-                    <StaticCodeBlock :title="`Install ${appName}`" :html="installHtml" />
+                    <StaticCodeBlock :title="$t('Install :appName', { appName })" :html="installHtml" />
                     <GridPlaceholder />
-                    <StepText :content="`In your Laravel project, you just need to <b>install</b> the ${appName} <b>client</b>. Congrats, the tool is now already tracking your visitors!`" />
+                    <StepText :content="$t('In your Laravel project, you just need to <b>install</b> the :appName <b>client</b>. Congrats, the tool is now already tracking your visitors!', { appName })" />
 
                     <GridPlaceholder />
                     <BigStepBullet content="2" />
-                    <BigStepText content="Track" />
+                    <BigStepText :content="$t('Track')" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Track your users" />
+                    <SmallStepText :content="$t('Track your users')" />
 
-                    <StaticCodeBlock title="Example of the TrackablePerson contract" :html="trackUserHtml" />
+                    <StaticCodeBlock :title="$t('Example of the TrackablePerson contract')" :html="trackUserHtml" />
                     <GridPlaceholder />
-                    <StepText :content="`To make the client <b>track</b> your user <b>registrations</b>, you only have to add the <b>TrackablePerson</b> interface and implement the contract.`" />
+                    <StepText :content="$t('To make the client <b>track</b> your user <b>registrations</b>, you only have to add the <b>TrackablePerson</b> interface and implement the contract.')" />
 
                     <GridPlaceholder />
                     <SmallStepBullet content="" />
-                    <SmallStepText content="Track your sales" />
+                    <SmallStepText :content="$t('Track your sales')" />
 
-                    <StaticCodeBlock title="Example of the TrackablePayment contract" :html="trackPaymentHtml" />
+                    <StaticCodeBlock :title="$t('Example of the TrackablePayment contract')" :html="trackPaymentHtml" />
                     <GridPlaceholder />
-                    <StepText :content="`To enable the client to <b>track</b> your app's <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.`" />
+                    <StepText :content="$t('To enable the client to <b>track</b> your app\'s <b>payments</b>, you need to add the <b>TrackablePayment</b> interface to your payment/transaction model and implement the contract.')" />
 
                     <GridPlaceholder />
                     <BigStepBullet content="3" />
-                    <BigStepText content="Analyze" />
+                    <BigStepText :content="$t('Analyze')" />
 
                     <GridPlaceholder />
                     <GridPlaceholder />
-                    <StepText class="hidden xl:block" :content="`You're all set! <b>${appName}</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what's happening in your app - in real time.`" />
+                    <StepText class="hidden xl:block" :content="$t('You\'re all set! <b>:appName</b> is now tracking your data. Head over to your <b>dashboard</b> and discover what\'s happening in your app - in real time.', { appName })" />
                 </div>
             </div>
-            <div class="mt-10 text-center">Make sure to check out the <a class="simpleLink" href="/docs" target="_blank">documentation</a> for more details.</div>
+            <div class="mt-10 text-center">{{ $t('Make sure to check out the') }} <a class="simpleLink" href="/docs" target="_blank">{{ $t('documentation') }}</a> {{ $t('for more details.') }}</div>
         </div>
     </section>
 </template>

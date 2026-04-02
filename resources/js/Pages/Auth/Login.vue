@@ -7,6 +7,9 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Socialstream from '@/Components/Socialstream.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {useLocale} from '@/Composables/useLocale.js';
+
+const { localizedPath } = useLocale();
 
 const props = defineProps({
     canResetPassword: Boolean,
@@ -38,7 +41,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
 <template>
-    <Head title="Sign in" />
+    <Head :title="$t('Sign in')" />
 
     <AuthenticationCard>
         <template #logo>
@@ -46,7 +49,7 @@ const appName = import.meta.env.VITE_APP_NAME;
         </template>
 
         <template #title>
-            Sign in to {{ appName }}
+            {{ $t('Sign in to :appName', { appName }) }}
         </template>
 
         <div v-if="status" class="text-center mb-4 font-medium text-sm text-green-600 dark:text-green-400">
@@ -67,7 +70,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     required
                     autofocus
                     autocomplete="username"
-                    placeholder="Email"
+                    :placeholder="$t('Email')"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -80,7 +83,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     class="mt-1 block w-full"
                     required
                     autocomplete="current-password"
-                    placeholder="Password"
+                    :placeholder="$t('Password')"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
@@ -88,29 +91,29 @@ const appName = import.meta.env.VITE_APP_NAME;
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-dark-400">Remember me</span>
+                    <span class="ms-2 text-sm text-gray-600 dark:text-dark-400">{{ $t('Remember me') }}</span>
                 </label>
             </div>
 
             <div class="mt-4">
                 <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     <div class="w-full py-1 text-base normal-case">
-                        Sign in
+                        {{ $t('Sign in') }}
                     </div>
                 </PrimaryButton>
             </div>
 
             <div class="flex items-center justify-around mt-4">
-                <Link v-if="appType === 'saas' && $page.props.canRegister" :href="route('register')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
-                    Sign up
+                <Link v-if="appType === 'saas' && $page.props.canRegister" :href="localizedPath('/register')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    {{ $t('Sign up') }}
                 </Link>
 
-                <Link v-if="canResetPassword" :href="route('password.request')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
-                    Forgot your password?
+                <Link v-if="canResetPassword" :href="localizedPath('/forgot-password')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    {{ $t('Forgot your password?') }}
                 </Link>
 
-                <Link v-if="appType === 'saas'" :href="route('home')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
-                    Home
+                <Link v-if="appType === 'saas'" :href="localizedPath('/')" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 dark:hover:text-gray-100">
+                    {{ $t('Home') }}
                 </Link>
             </div>
         </form>

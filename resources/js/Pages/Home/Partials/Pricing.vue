@@ -2,6 +2,9 @@
 import {Link} from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {computed, ref} from "vue";
+import {useLocale} from "@/Composables/useLocale.js";
+
+const { localizedPath } = useLocale();
 
 defineProps({
     plans: Array,
@@ -29,6 +32,8 @@ const priceIntervalString = computed(() => {
     return selectedInterval.value === 'monthly' ? 'month' : 'year';
 });
 
+import { trans } from 'laravel-vue-i18n';
+
 const getPlanPrice = (amount, discount) => {
     amount = amount  / 100;
 
@@ -44,14 +49,14 @@ const getPlanPrice = (amount, discount) => {
     <section class="flex justify-center">
         <div class="max-w-screen-xl">
             <SectionHeader id="pricing">
-                Subscribe at your&nbsp;<span class="text-indigo-500">scale</span>
+                {{ $t('Subscribe at your') }}&nbsp;<span class="text-indigo-500">{{ $t('scale') }}</span>
             </SectionHeader>
 
             <div class="text-center -mt-10 mb-10">
                 <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-dark-700">
                     <div class="sm:-mx-0.5 flex">
-                        <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">monthly</button>
-                        <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">yearly</button>
+                        <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">{{ $t('monthly') }}</button>
+                        <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">{{ $t('yearly') }}</button>
                     </div>
                 </div>
             </div>
@@ -62,12 +67,12 @@ const getPlanPrice = (amount, discount) => {
                      :class="plan.promoted ? 'bg-gray-800 hover:bg-gray-800 dark:bg-dark-800' : ''"
                 >
                     <div class="relative flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
-                        <div>{{ plan.name }}</div>
+                        <div>{{ $t(plan.name) }}</div>
                         <div
                             v-if="selectedInterval === 'yearly' && plan.yearly_incentive !== null"
                             class="absolute -top-9 text-sm bg-green-400 px-2 py-1 rounded text-gray-800"
                         >
-                            {{ plan.yearly_incentive }}
+                            {{ $t('Save :percent%', { percent: plan.yearly_incentive }) }}
                         </div>
                     </div>
 
@@ -82,12 +87,12 @@ const getPlanPrice = (amount, discount) => {
                             {{ getPlanPrice(plan[priceIntervalKey], 0) }}
                         </span>
                         <span class="text-base font-normal dark:text-dark-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
-                            / {{ priceIntervalString }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
+                            / {{ trans(priceIntervalString) }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
                         </span>
                     </div>
 
                     <p class="mt-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
-                        {{ plan.short_description }}
+                        {{ $t(plan.short_description) }}
                     </p>
 
                     <div class="mt-8 space-y-8">
@@ -97,32 +102,32 @@ const getPlanPrice = (amount, discount) => {
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                 </svg>
 
-                                <span class="mx-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ feature }}</span>
+                                <span class="mx-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ $t(feature) }}</span>
                             </div>
                             <div v-else class="flex items-center text-gray-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                 </svg>
 
-                                <span class="mx-4">{{ feature }}</span>
+                                <span class="mx-4">{{ $t(feature) }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <Link v-if="$page.props.canRegister" :href="route('register')" class="block text-center w-full px-4 py-2 mt-10 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
-                        Get started
+                    <Link v-if="$page.props.canRegister" :href="localizedPath('/register')" class="block text-center w-full px-4 py-2 mt-10 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
+                        {{ $t('Get started') }}
                     </Link>
                 </div>
             </div>
             <div v-if="plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length"
                  class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
-                * All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.
+                * {{ $t('All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.') }}
             </div>
             <div class="mt-4 text-base text-center text-gray-600 dark:text-dark-400 px-4 sm:pm-0">
-                If these plans do not fit your needs, feel free to <a class="underline" href="mailto:simplestats@laracraft.tech">contact sales</a>.
+                {{ $t('If these plans do not fit your needs, feel free to') }} <a class="underline" href="mailto:simplestats@laracraft.tech">{{ $t('contact sales') }}</a>.
             </div>
             <div class="mt-4 text-base text-center text-gray-600 dark:text-dark-400 px-4 sm:pm-0">
-                Wonder what an <a class="underline" href="#what-is-an-event">event</a> is?
+                {{ $t('Wonder what an') }} <a class="underline" href="#what-is-an-event">{{ $t('event') }}</a> {{ $t('is?') }}
             </div>
         </div>
     </section>

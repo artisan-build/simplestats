@@ -13,51 +13,53 @@ import {
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
+import { trans } from 'laravel-vue-i18n';
+
 const features = [
     {
         "icon": LightBulbIcon,
-        "title": "Different",
-        "descr": "Traditional client-side analytic tools are only about 70% accurate because of ad blockers and they often only show you data like visits and views. That's where server-side analytics like SimpleStats shines; it gives you superpowers without the integration hustle!"
+        "title": () => trans("Different"),
+        "descr": () => trans("Traditional client-side analytic tools are only about 70% accurate because of ad blockers and they often only show you data like visits and views. That's where server-side analytics like SimpleStats shines; it gives you superpowers without the integration hustle!"),
     },
     {
         "icon": RocketLaunchIcon,
-        "title": "Simple",
-        "descr": "All you need to do to get SimpleStats up and running is: Install a composer package, adjust the config to your needs, create an account, and add the token to your env file. Congrats, you're ready to analyze your campaigns and users!"
+        "title": () => trans("Simple"),
+        "descr": () => trans("All you need to do to get SimpleStats up and running is: Install a composer package, adjust the config to your needs, create an account, and add the token to your env file. Congrats, you're ready to analyze your campaigns and users!"),
     },
     {
         "icon": PresentationChartBarIcon,
-        "title": "Reporting",
-        "descr": "The tool provides you with a powerful reporting system that allows you to create custom reports, filter them by location, device, and UTM parameters. The frequency of the reports can be saved and scheduled individually, so you never miss important updates!"
+        "title": () => trans("Reporting"),
+        "descr": () => trans("The tool provides you with a powerful reporting system that allows you to create custom reports, filter them by location, device, and UTM parameters. The frequency of the reports can be saved and scheduled individually, so you never miss important updates!"),
     },
     {
         "icon": CodeBracketIcon,
-        "title": "API",
-        "descr": "Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually and you'll be able to use the tool for any custom project."
+        "title": () => trans("API"),
+        "descr": () => trans("Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually and you'll be able to use the tool for any custom project."),
     },
     {
         "icon": MapPinIcon,
-        "title": "UTMs and Referrers",
-        "descr": "Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it lets you seamlessly check the ROI of each of your campaigns and allows you to see where you can buy the cheapest users and from which channel users perform best!"
+        "title": () => trans("UTMs and Referrers"),
+        "descr": () => trans("Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it lets you seamlessly check the ROI of each of your campaigns and allows you to see where you can buy the cheapest users and from which channel users perform best!"),
     },
     {
         "icon": ChartBarIcon,
-        "title": "KPIs",
-        "descr": "Here are a few of the KPIs that the tool provides out of the box: Unique Visitors, Registrations, Conversion Rate, Daily Active Users, New Active Paying Users, Average Revenue per User, Revenue and much more! Everything filterable by date, locations, devices and UTMs."
+        "title": () => trans("KPIs"),
+        "descr": () => trans("Here are a few of the KPIs that the tool provides out of the box: Unique Visitors, Registrations, Conversion Rate, Daily Active Users, New Active Paying Users, Average Revenue per User, Revenue and much more! Everything filterable by date, locations, devices and UTMs."),
     },
     {
         "icon": ShieldCheckIcon,
-        "title": "Privacy",
-        "descr": "We are fully committed to GDPR compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."
+        "title": () => trans("Privacy"),
+        "descr": () => trans("We are fully committed to GDPR compliance! No cookies are required or stored, ensuring your data remains confidential. You can rely on SimpleStats to respect your privacy and guarantee that your data will never be shared."),
     },
     {
         "icon": UserGroupIcon,
-        "title": "Collaborate",
-        "descr": "Collaborate by creating a team, inviting your co-workers to your projects, and assigning permissions to them. Each team is separated by tenancy, ensuring highly secure, robust and solid data integration!"
+        "title": () => trans("Collaborate"),
+        "descr": () => trans("Collaborate by creating a team, inviting your co-workers to your projects, and assigning permissions to them. Each team is separated by tenancy, ensuring highly secure, robust and solid data integration!"),
     },
     {
         "icon": GiftIcon,
-        "title": "Free",
-        "descr": "There will always be a free plan! If your business grows, you can support us with by subscribing. We would love to help you analyzing your campaigns. No need to enter credit card information at the registration."
+        "title": () => trans("Free"),
+        "descr": () => trans("There will always be a free plan! If your business grows, you can support us with by subscribing. We would love to help you analyzing your campaigns. No need to enter credit card information at the registration."),
     }
 ];
 </script>
@@ -66,19 +68,19 @@ const features = [
     <section class="flex justify-center">
         <div class="max-w-screen-md lg:max-w-screen-xl">
             <SectionHeader id="features">
-                What makes us&nbsp;<span class="text-indigo-500">unique</span>
+                {{ $t('What makes us') }}&nbsp;<span class="text-indigo-500">{{ $t('unique') }}</span>
             </SectionHeader>
              <div class="grid gap-x-14  grid gap-y-10 lg:gap-y-20 lg:grid-cols-3 px-6">
                 <div v-for="feature in features">
                     <div class="mr-4 flex items-center gap-x-5 lg:mr-0 text-indigo-600">
                         <component class="h-10 w-10" :is="feature.icon" />
                         <div class="text-sm font-semibold text-gray-800 dark:text-dark-300 lg:text-lg xl:text-xl">
-                            {{ feature.title }}
+                            {{ feature.title() }}
                         </div>
                     </div>
                     <div class="lg:mt-5">
                         <p class="mt-2 leading-normal text-gray-600 dark:text-dark-400 text-base">
-                            {{ feature.descr }}
+                            {{ feature.descr() }}
                         </p>
                     </div>
                 </div>

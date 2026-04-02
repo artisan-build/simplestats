@@ -2,6 +2,7 @@
 
 use App\Models\Project;
 use Database\Seeders\TestUserSeeder;
+
 use function Spatie\RouteTesting\routeTesting;
 
 $exclude = [
@@ -24,6 +25,8 @@ $exclude = [
     'og-image/*', // requires a generated og-image filename
     'livewire*',
     'filament/*',
+    '{locale}', // localized routes, tested in LocalizationTest
+    '{locale}/*',
 ];
 
 routeTesting('all GET routes')

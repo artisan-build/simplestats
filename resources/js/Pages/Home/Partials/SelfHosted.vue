@@ -5,6 +5,8 @@ const props = defineProps({
     discount: Number,
 })
 
+import { trans } from 'laravel-vue-i18n';
+
 const appName = import.meta.env.VITE_APP_NAME;
 
 const getPlanPrice = (amount, discount) => {
@@ -19,29 +21,29 @@ const getPlanPrice = (amount, discount) => {
 
 const licenses = [
     {
-        "name": "Single domain",
-        "short_description": "For one domain or subdomain. Powerful analytics with package and API. One year of updates, no subscription.",
+        "name": () => trans("Single domain"),
+        "short_description": () => trans("For one domain or subdomain. Powerful analytics with package and API. One year of updates, no subscription."),
         "price": 24900,
         "promoted": false,
         "features": [
-            "One domain or subdomain",
-            "Package and API included",
-            "Robust analytics features",
-            "Great for running SimpleStats standalone",
-            "1 year of free updates, no subscription",
+            () => trans("One domain or subdomain"),
+            () => trans("Package and API included"),
+            () => trans("Robust analytics features"),
+            () => trans("Great for running SimpleStats standalone"),
+            () => trans("1 year of free updates, no subscription"),
         ]
     },
     {
-        "name": "Unlimited domains",
-        "short_description": "No domain limits. Integrate into products. Full analytics suite. One year of updates, no subscription.",
+        "name": () => trans("Unlimited domains"),
+        "short_description": () => trans("No domain limits. Integrate into products. Full analytics suite. One year of updates, no subscription."),
         "price": 99900,
         "promoted": true,
         "features": [
-            "No domain restrictions",
-            "Package and API included",
-            "Robust analytics features",
-            "May be integrated into products",
-            "1 year of free updates, no subscription",
+            () => trans("No domain restrictions"),
+            () => trans("Package and API included"),
+            () => trans("Robust analytics features"),
+            () => trans("May be integrated into products"),
+            () => trans("1 year of free updates, no subscription"),
         ]
     }
 ];
@@ -73,7 +75,7 @@ YOUR ANSWER HERE`;
     <section class="flex justify-center">
         <div class="max-w-screen-lg px-4 sm:pm-0">
             <SectionHeader id="self-hosted">
-                Take full control with&nbsp;<span class="text-indigo-500">Self-Hosted</span>
+                {{ $t('Take full control with') }}&nbsp;<span class="text-indigo-500">{{ $t('Self-Hosted') }}</span>
             </SectionHeader>
 
             <!-- the JIT Compiler from tailwindcss cant recognize things like this "md:grid-cols-'+licenses.length/2+'" so we need to put the classes here manually so that the exists --->
@@ -84,7 +86,7 @@ YOUR ANSWER HERE`;
                      :class="license.promoted ? 'bg-gray-800 hover:bg-gray-800 dark:bg-dark-800' : ''"
                 >
                     <div class="flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="license.promoted ? 'text-gray-100' : 'text-gray-800'">
-                        <div>{{ license.name }}</div>
+                        <div>{{ license.name() }}</div>
                     </div>
 
                     <div class="mt-2 text-3xl font-semibold" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-200'">
@@ -100,7 +102,7 @@ YOUR ANSWER HERE`;
                     </div>
 
                     <p class="mt-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
-                        {{ license.short_description }}
+                        {{ license.short_description() }}
                     </p>
 
                     <div class="mt-8 space-y-8">
@@ -110,7 +112,7 @@ YOUR ANSWER HERE`;
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                 </svg>
 
-                                <span class="mx-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ feature }}</span>
+                                <span class="mx-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ feature() }}</span>
                             </div>
                         </div>
                     </div>
@@ -126,16 +128,16 @@ YOUR ANSWER HERE`;
                 </p>
 
                 <p class="mt-10 leading-normal text-gray-600 dark:text-dark-300 text-lg">
-                    Start <a class="simpleLink italic" href="/docs/self-hosted.html" target="_blank">{{ appName }} Self-Hosted</a> today and take full control!<br>
+                    {{ $t('Start') }} <a class="simpleLink italic" href="/docs/self-hosted.html" target="_blank">{{ appName }} {{ $t('Self-Hosted') }}</a> {{ $t('today and take full control!') }}<br>
                 </p>
 
                 <div class="md:inline-flex mt-10">
                     <a :href="`mailto:simplestats@laracraft.tech?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`" class="whitespace-nowrap block text-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
-                        Contact Sales
+                        {{ $t('Contact Sales') }}
                     </a>
                     &nbsp;&nbsp;&nbsp;
                     <a v-if="$page.props.canRegister" href="https://calendly.com/simplestats/30min" target="_blank" class="whitespace-nowrap block text-center px-4 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
-                        Book a call
+                        {{ $t('Book a call') }}
                     </a>
                 </div>
             </div>

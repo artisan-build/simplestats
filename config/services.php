@@ -43,4 +43,8 @@ return [
         'redirect' => '/oauth/google/callback',
     ],
 
+    'deepl' => [
+        'auth_key' => env('DEEPL_AUTH_KEY'),
+    ],
+
 ];

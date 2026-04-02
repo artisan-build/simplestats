@@ -18,6 +18,10 @@ use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\UserSettingsController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use Laravel\Fortify\Http\Controllers\NewPasswordController;
+use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 /*
@@ -31,8 +35,38 @@ use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 |
 */
 
+// Localized public routes (registered FIRST, no route names to avoid overwriting English names)
+$locales = collect(array_keys(config('locales.supported')))
+    ->reject(fn ($l) => $l === config('locales.default'))
+    ->implode('|');
+
+$publicRoutes = function () {
+    Route::get('/', HomeController::class);
+    Route::get('/imprint', [ImprintController::class, 'show']);
+};
+
+Route::prefix('{locale}')
+    ->where(['locale' => $locales])
+    ->group(function () use ($publicRoutes) {
+        $publicRoutes();
+    });
+
+// Localized Fortify view routes (GET only, forms POST to English endpoints)
+Route::prefix('{locale}')
+    ->where(['locale' => $locales])
+    ->middleware(['guest:web'])
+    ->group(function () {
+        Route::get('/login', [AuthenticatedSessionController::class, 'create']);
+        Route::get('/register', [RegisteredUserController::class, 'create']);
+        Route::get('/forgot-password', [PasswordResetLinkController::class, 'create']);
+        Route::get('/reset-password/{token}', [NewPasswordController::class, 'create']);
+    });
+
+// English (default) public routes - registered LAST so named routes point to English
 Route::get('/', HomeController::class)->name('home');
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
+
+// Blog (not localized)
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');

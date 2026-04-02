@@ -38,7 +38,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Two-factor Confirmation" />
+    <Head :title="$t('Two-factor Confirmation')" />
 
     <AuthenticationCard>
         <template #logo>
@@ -46,16 +46,16 @@ const submit = () => {
         </template>
 
         <template #title>
-            Account Confirmation
+            {{ $t('Account Confirmation') }}
         </template>
 
         <div class="mb-4 text-sm text-gray-600 dark:text-dark-400">
             <template v-if="! recovery">
-                Please confirm access to your account by entering the authentication code provided by your authenticator application.
+                {{ $t('Please confirm access to your account by entering the authentication code provided by your authenticator application.') }}
             </template>
 
             <template v-else>
-                Please confirm access to your account by entering one of your emergency recovery codes.
+                {{ $t('Please confirm access to your account by entering one of your emergency recovery codes.') }}
             </template>
         </div>
 
@@ -70,7 +70,7 @@ const submit = () => {
                     class="mt-1 block w-full"
                     autofocus
                     autocomplete="one-time-code"
-                    placeholder="Code"
+                    :placeholder="$t('Code')"
                 />
                 <InputError class="mt-2" :message="form.errors.code" />
             </div>
@@ -83,7 +83,7 @@ const submit = () => {
                     type="text"
                     class="mt-1 block w-full"
                     autocomplete="one-time-code"
-                    placeholder="Recovery Code"
+                    :placeholder="$t('Recovery Code')"
                 />
                 <InputError class="mt-2" :message="form.errors.recovery_code" />
             </div>
@@ -91,11 +91,11 @@ const submit = () => {
             <div class="flex items-center justify-end mt-4">
                 <button type="button" class="text-sm text-gray-600 dark:text-dark-400 hover:text-gray-900 underline cursor-pointer" @click.prevent="toggleRecovery">
                     <template v-if="! recovery">
-                        Use a recovery code
+                        {{ $t('Use a recovery code') }}
                     </template>
 
                     <template v-else>
-                        Use an authentication code
+                        {{ $t('Use an authentication code') }}
                     </template>
                 </button>
             </div>
@@ -103,7 +103,7 @@ const submit = () => {
             <div class="mt-4">
                 <PrimaryButton class="w-full my-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     <div class="w-full py-1 text-base normal-case">
-                        Sign in
+                        {{ $t('Sign in') }}
                     </div>
                 </PrimaryButton>
             </div>
