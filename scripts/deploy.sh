@@ -10,9 +10,20 @@
 #     --blog-warm-cache \
 #     --generate-sitemap \
 #     --restart-horizon \
+#     --restart-fpm \
 #     --stop-ssr
 #
-# Domain is derived from the script path: ~/<domain>/current/scripts/deploy.sh
+# Base directory is derived from the script path:
+#   <base>/current/scripts/deploy.sh -> <base>/
+#
+# Expected directory structure:
+#   <base>/
+#     current/        -> symlink to latest release
+#     releases/       -> release directories
+#     shared/
+#       .env
+#       storage/
+#       packages/
 #
 # Required Forge variables: FORGE_SITE_BRANCH, FORGE_PHP, FORGE_COMPOSER
 # =============================================================================
@@ -22,14 +33,15 @@ set -eu
 
 # --- Parse arguments ----------------------------------------------------------
 
-SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)"
-DOMAIN="$(basename "$(dirname "$(dirname "$SCRIPT_PATH")")")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BASE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 PROJECT_REPO="git@github.com:simplestats-io/app.git"
 AMOUNT_KEEP_RELEASES=10
 BUILD_DOCS=false
 BLOG_WARM_CACHE=false
 GENERATE_SITEMAP=false
 RESTART_HORIZON=false
+RESTART_FPM=false
 STOP_SSR=false
 
 for arg in "$@"; do
@@ -39,22 +51,19 @@ for arg in "$@"; do
     --blog-warm-cache) BLOG_WARM_CACHE=true ;;
     --generate-sitemap) GENERATE_SITEMAP=true ;;
     --restart-horizon) RESTART_HORIZON=true ;;
+    --restart-fpm) RESTART_FPM=true ;;
     --stop-ssr) STOP_SSR=true ;;
     *) printf '\nError: Unknown argument %s\n' "$arg" && exit 1 ;;
   esac
 done
 
-if [ -z "$DOMAIN" ]; then
-  printf '\nError: Could not determine domain from script path.\n' && exit 1
-fi
-
 RELEASE_NAME=$(date +%s--%Y_%m_%d--%H_%M_%S)
-RELEASES_DIRECTORY=~/$DOMAIN/releases
-DEPLOYMENT_DIRECTORY=$RELEASES_DIRECTORY/$RELEASE_NAME
+RELEASES_DIRECTORY="$BASE_DIR/releases"
+DEPLOYMENT_DIRECTORY="$RELEASES_DIRECTORY/$RELEASE_NAME"
 
 # --- Pull client package -----------------------------------------------------
 
-cd ~/$DOMAIN/shared/packages/simplestats-io/laravel-client
+cd "$BASE_DIR/shared/packages/simplestats-io/laravel-client"
 git pull
 
 # --- Clone release ------------------------------------------------------------
@@ -72,28 +81,28 @@ git reset --hard FETCH_HEAD
 # --- Link shared resources ----------------------------------------------------
 
 printf '\nℹ️ Link env file\n'
-ENV_FILE=~/"$DOMAIN"/shared/.env
+ENV_FILE="$BASE_DIR/shared/.env"
 if [ -f "$ENV_FILE" ]; then
   rm -rf ./env
-  ln -s -n -f -T $ENV_FILE ./.env
+  ln -s -n -f -T "$ENV_FILE" ./.env
 else
   printf '\nError: env file is missing at %s.' "$ENV_FILE" && exit 1
 fi
 
 printf '\nℹ️ Link storage folder\n'
-STORAGE_DIR=~/"$DOMAIN"/shared/storage
+STORAGE_DIR="$BASE_DIR/shared/storage"
 if [ -d "$STORAGE_DIR" ]; then
   rm -rf ./storage
-  ln -s -n -f -T $STORAGE_DIR ./storage
+  ln -s -n -f -T "$STORAGE_DIR" ./storage
 else
   printf '\nError: storage dir is missing at %s.' "$STORAGE_DIR" && exit 1
 fi
 
 printf '\nℹ️ Link packages folder\n'
-PACKAGES_DIR=~/"$DOMAIN"/shared/packages
+PACKAGES_DIR="$BASE_DIR/shared/packages"
 if [ -d "$PACKAGES_DIR" ]; then
   rm -rf ./packages
-  ln -s -n -f -T $PACKAGES_DIR ./packages
+  ln -s -n -f -T "$PACKAGES_DIR" ./packages
 else
   printf '\nError: packages dir is missing at %s.' "$PACKAGES_DIR" && exit 1
 fi
@@ -145,11 +154,11 @@ fi
 # --- Activate release ---------------------------------------------------------
 
 printf '\nℹ️ !!! Link Deployment Directory !!!\n'
-echo "$RELEASE_NAME" >> $RELEASES_DIRECTORY/.successes
-if [ -d ~/$DOMAIN/current ] && [ ! -L ~/$DOMAIN/current ]; then
-  rm -rf ~/$DOMAIN/current
+echo "$RELEASE_NAME" >> "$RELEASES_DIRECTORY/.successes"
+if [ -d "$BASE_DIR/current" ] && [ ! -L "$BASE_DIR/current" ]; then
+  rm -rf "$BASE_DIR/current"
 fi
-ln -s -n -f -T "$DEPLOYMENT_DIRECTORY" ~/$DOMAIN/current
+ln -s -n -f -T "$DEPLOYMENT_DIRECTORY" "$BASE_DIR/current"
 
 # --- Post-deploy actions (must run after symlink to load new code) ------------
 
@@ -160,13 +169,22 @@ if [ "$RESTART_HORIZON" = "true" ]; then
   $FORGE_PHP artisan horizon:terminate
 fi
 
+# Only needed if your web server does not resolve the "current" symlink to the real path.
+# For Nginx, use $realpath_root instead of $document_root in fastcgi_param SCRIPT_FILENAME.
+# If configured correctly, PHP opcache picks up the new release automatically without a reload.
+if [ "$RESTART_FPM" = "true" ]; then
+  printf '\nℹ️ Restart PHP FPM\n'
+  ( flock -w 10 9 || exit 1
+      echo 'Restarting FPM...'; sudo -S service $FORGE_PHP_FPM reload ) 9>/tmp/fpmlock
+fi
+
 if [ "$STOP_SSR" = "true" ]; then
   $FORGE_PHP artisan inertia:stop-ssr || true
 fi
 
 # --- Clean up old releases ----------------------------------------------------
 
-cd $RELEASES_DIRECTORY
+cd "$RELEASES_DIRECTORY"
 
 printf '\nℹ️ Delete failed releases:\n'
 if grep -qvf .successes <(ls -1)

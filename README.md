@@ -110,6 +110,19 @@ php artisan app:create-new-user {name} {email} {password}
 
 In your application you want to track, make sure to install the SimpleStats [client package](https://simplestats.io/docs/installation.html) and follow the documentation.
 
+## Deployment
+
+The project includes a zero-downtime deploy script at `scripts/deploy.sh`. It handles cloning, linking shared resources (.env, storage, packages), installing dependencies, running migrations, and rotating old releases.
+
+```bash
+bash <base-dir>/current/scripts/deploy.sh \
+  --keep-releases=10 \
+  --restart-horizon \
+  --restart-fpm
+```
+
+All flags are optional. See `scripts/deploy.sh` for details.
+
 ## Contributing
 
 If you have feature ideas or bug fixes, feel free to create a pull request. For larger changes, please discuss them with me first. You can email your idea to zacharias@laracraft.tech or create a new issue describing it in detail.
