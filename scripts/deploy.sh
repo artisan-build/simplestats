@@ -136,9 +136,15 @@ ln -s -n -f -T "$DEPLOYMENT_DIRECTORY" ~/$DOMAIN/current
 
 # --- Post-deploy actions ------------------------------------------------------
 
+cd "$DEPLOYMENT_DIRECTORY"
+
 if [ "${DEPLOY_RESTART_HORIZON:-false}" = "true" ]; then
   printf '\nℹ️ Restart Horizon Queue Workers\n'
   $FORGE_PHP artisan horizon:terminate
+fi
+
+if [ "${DEPLOY_STOP_SSR:-false}" = "true" ]; then
+  $FORGE_PHP artisan inertia:stop-ssr || true
 fi
 
 # --- Clean up old releases ----------------------------------------------------
@@ -171,7 +177,3 @@ printf '\nℹ️ Status - stored releases:\n'
 find . -maxdepth 1 -mindepth 1 -type d -printf '%T@\t%f\n' | sort -nr | cut -f 2-
 
 printf '\n✅ Deployment DONE: %s\n' "$DEPLOYMENT_DIRECTORY"
-
-if [ "${DEPLOY_STOP_SSR:-false}" = "true" ]; then
-  $FORGE_PHP artisan inertia:stop-ssr || true
-fi
