@@ -29,6 +29,7 @@ class TestUserSeeder extends Seeder
                 'terms' => true,
                 'settings' => [
                     'showMenu' => ! $isDemo,
+                    'tourCompleted' => true,
                 ],
             ]);
 

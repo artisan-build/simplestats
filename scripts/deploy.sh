@@ -3,33 +3,50 @@
 # =============================================================================
 # SimpleStats Deploy Script (Zero-Downtime)
 #
-# This script is called from Forge's deploy script, which sets the required
-# environment variables before invoking this script:
+# Usage:
+#   bash ~/simplestats.io/current/scripts/deploy.sh \
+#     --domain=simplestats.io \
+#     --keep-releases=10 \
+#     --build-docs \
+#     --blog-warm-cache \
+#     --generate-sitemap \
+#     --restart-horizon \
+#     --stop-ssr
 #
-#   export DEPLOY_DOMAIN="simplestats.io"
-#   export DEPLOY_KEEP_RELEASES=10
-#   export DEPLOY_BLOG_WARM_CACHE=true
-#   export DEPLOY_GENERATE_SITEMAP=true
-#   export DEPLOY_RESTART_HORIZON=true
-#   export DEPLOY_BUILD_DOCS=true
-#   export DEPLOY_STOP_SSR=true
-#   bash ~/$DEPLOY_DOMAIN/current/scripts/deploy.sh
-#
+# Required: --domain
 # Required Forge variables: FORGE_SITE_BRANCH, FORGE_PHP, FORGE_COMPOSER
 # =============================================================================
 
 # Stop script on error signal (-e) and undefined variables (-u)
 set -eu
 
-# --- Configuration -----------------------------------------------------------
+# --- Parse arguments ----------------------------------------------------------
 
-if [ -z "${DEPLOY_DOMAIN:-}" ]; then
-  printf '\nError: DEPLOY_DOMAIN is not set.\n' && exit 1
-fi
-
-DOMAIN="$DEPLOY_DOMAIN"
+DOMAIN=""
 PROJECT_REPO="git@github.com:simplestats-io/app.git"
-AMOUNT_KEEP_RELEASES="${DEPLOY_KEEP_RELEASES:-10}"
+AMOUNT_KEEP_RELEASES=10
+BUILD_DOCS=false
+BLOG_WARM_CACHE=false
+GENERATE_SITEMAP=false
+RESTART_HORIZON=false
+STOP_SSR=false
+
+for arg in "$@"; do
+  case $arg in
+    --domain=*) DOMAIN="${arg#*=}" ;;
+    --keep-releases=*) AMOUNT_KEEP_RELEASES="${arg#*=}" ;;
+    --build-docs) BUILD_DOCS=true ;;
+    --blog-warm-cache) BLOG_WARM_CACHE=true ;;
+    --generate-sitemap) GENERATE_SITEMAP=true ;;
+    --restart-horizon) RESTART_HORIZON=true ;;
+    --stop-ssr) STOP_SSR=true ;;
+    *) printf '\nError: Unknown argument %s\n' "$arg" && exit 1 ;;
+  esac
+done
+
+if [ -z "$DOMAIN" ]; then
+  printf '\nError: --domain is required.\n' && exit 1
+fi
 
 RELEASE_NAME=$(date +%s--%Y_%m_%d--%H_%M_%S)
 RELEASES_DIRECTORY=~/$DOMAIN/releases
@@ -90,12 +107,12 @@ printf '\nℹ️ Installing NPM dependencies based on "./package-lock.json"\n'
 npm ci
 printf '\nℹ️ Generating JS App files\n'
 npm run build
-if [ "${DEPLOY_BUILD_DOCS:-false}" = "true" ]; then
+if [ "$BUILD_DOCS" = "true" ]; then
   printf '\nℹ️ Building Docs\n'
   npm run docs:build
 fi
 
-# --- Laravel Artisan commands -------------------------------------------------
+# --- Pre-deploy actions -------------------------------------------------------
 
 printf '\nℹ️ Laravel Artisan commands\n'
 if [ -f artisan ]; then
@@ -111,12 +128,12 @@ if [ -f artisan ]; then
   printf '\nℹ️ Cache routes, config, views, events\n'
   $FORGE_PHP artisan optimize
 
-  if [ "${DEPLOY_BLOG_WARM_CACHE:-false}" = "true" ]; then
+  if [ "$BLOG_WARM_CACHE" = "true" ]; then
     printf '\nℹ️ Blog Warm Cache\n'
     $FORGE_PHP artisan blog:warm-cache
   fi
 
-  if [ "${DEPLOY_GENERATE_SITEMAP:-false}" = "true" ]; then
+  if [ "$GENERATE_SITEMAP" = "true" ]; then
     printf '\nℹ️ Generate Sitemap\n'
     $FORGE_PHP artisan app:generate-sitemap
   fi
@@ -134,16 +151,16 @@ if [ -d ~/$DOMAIN/current ] && [ ! -L ~/$DOMAIN/current ]; then
 fi
 ln -s -n -f -T "$DEPLOYMENT_DIRECTORY" ~/$DOMAIN/current
 
-# --- Post-deploy actions ------------------------------------------------------
+# --- Post-deploy actions (must run after symlink to load new code) ------------
 
 cd "$DEPLOYMENT_DIRECTORY"
 
-if [ "${DEPLOY_RESTART_HORIZON:-false}" = "true" ]; then
+if [ "$RESTART_HORIZON" = "true" ]; then
   printf '\nℹ️ Restart Horizon Queue Workers\n'
   $FORGE_PHP artisan horizon:terminate
 fi
 
-if [ "${DEPLOY_STOP_SSR:-false}" = "true" ]; then
+if [ "$STOP_SSR" = "true" ]; then
   $FORGE_PHP artisan inertia:stop-ssr || true
 fi
 
