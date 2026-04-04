@@ -1,12 +1,12 @@
 import './bootstrap';
 import '../css/app.css';
 
-import { createApp, h } from 'vue';
+import { createSSRApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import { vTooltip } from 'floating-vue';
-import { i18nVue } from 'laravel-vue-i18n';
+import { i18nVue, I18n } from 'laravel-vue-i18n';
 let appName = import.meta.env.VITE_APP_NAME;
 
 if (import.meta.env.VITE_APP_ENV !== 'production') {
@@ -17,7 +17,7 @@ createInertiaApp({
     title: (title) => `${appName} - ${title}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        const app = createApp({ render: () => h(App, props) });
+        const app = createSSRApp({ render: () => h(App, props) });
 
         app
             .use(plugin)
@@ -30,8 +30,19 @@ createInertiaApp({
                 lang: props.initialPage.props.locale || 'en',
                 fallbackLang: 'en',
             })
-            .directive('tooltip', vTooltip)
-            .mount(el);
+            .directive('tooltip', vTooltip);
+
+        const translations = props.initialPage.props.translations;
+        if (translations) {
+            const locale = props.initialPage.props.locale || 'en';
+            const i18n = I18n.getSharedInstance();
+            I18n.loaded.push({ lang: locale, messages: translations });
+            for (const [key, value] of Object.entries(translations)) {
+                i18n.activeMessages[key] = value;
+            }
+        }
+
+        app.mount(el);
 
         if (import.meta.env.VITE_SENTRY_DSN_PUBLIC) {
             import('@sentry/vue').then((Sentry) => {

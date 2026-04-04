@@ -28,9 +28,10 @@ createServer((page) =>
                 .use(plugin)
                 .use(ZiggyVue, props.initialPage.props.ziggy)
                 .use(i18nVue, {
+                    shared: false,
                     resolve: (lang) => {
                         const langs = import.meta.glob("../../lang/*.json", { eager: true });
-                        return langs[`../../lang/${lang}.json`];
+                        return langs[`../../lang/${lang}.json`].default;
                     },
                     lang: props.initialPage.props.locale || "en",
                     fallbackLang: "en",

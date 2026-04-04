@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'branding' => config('app.branding'),
             'ziggy' => (new Ziggy)->toArray(),
             'locale' => app()->getLocale(),
+            'translations' => fn () => $this->getTranslations(),
             'supportedLocales' => array_keys(config('locales.supported', [])),
             'localeConfig' => config('locales.supported'),
             'defaultLocale' => config('locales.default'),
@@ -90,6 +91,23 @@ class HandleInertiaRequests extends Middleware
             })->all();
 
         return $request->is($patterns);
+    }
+
+    /**
+     * Load the JSON translations for the active locale.
+     *
+     * @return array<string, string>
+     */
+    private function getTranslations(): array
+    {
+        $locale = app()->getLocale();
+        $path = lang_path("{$locale}.json");
+
+        if (! file_exists($path)) {
+            return [];
+        }
+
+        return json_decode(file_get_contents($path), true);
     }
 
     /**
