@@ -11,6 +11,7 @@
 #   export DEPLOY_BLOG_WARM_CACHE=true
 #   export DEPLOY_GENERATE_SITEMAP=true
 #   export DEPLOY_RESTART_HORIZON=true
+#   export DEPLOY_BUILD_DOCS=true
 #   export DEPLOY_STOP_SSR=true
 #   bash ~/$DEPLOY_DOMAIN/current/scripts/deploy.sh
 #
@@ -89,8 +90,10 @@ printf '\nℹ️ Installing NPM dependencies based on "./package-lock.json"\n'
 npm ci
 printf '\nℹ️ Generating JS App files\n'
 npm run build
-printf '\nℹ️ Building Docs\n'
-npm run docs:build
+if [ "${DEPLOY_BUILD_DOCS:-false}" = "true" ]; then
+  printf '\nℹ️ Building Docs\n'
+  npm run docs:build
+fi
 
 # --- Laravel Artisan commands -------------------------------------------------
 
