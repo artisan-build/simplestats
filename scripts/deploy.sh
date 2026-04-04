@@ -5,7 +5,6 @@
 #
 # Usage:
 #   bash ~/simplestats.io/current/scripts/deploy.sh \
-#     --domain=simplestats.io \
 #     --keep-releases=10 \
 #     --build-docs \
 #     --blog-warm-cache \
@@ -13,7 +12,8 @@
 #     --restart-horizon \
 #     --stop-ssr
 #
-# Required: --domain
+# Domain is derived from the script path: ~/<domain>/current/scripts/deploy.sh
+#
 # Required Forge variables: FORGE_SITE_BRANCH, FORGE_PHP, FORGE_COMPOSER
 # =============================================================================
 
@@ -22,7 +22,8 @@ set -eu
 
 # --- Parse arguments ----------------------------------------------------------
 
-DOMAIN=""
+SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)"
+DOMAIN="$(basename "$(dirname "$(dirname "$SCRIPT_PATH")")")"
 PROJECT_REPO="git@github.com:simplestats-io/app.git"
 AMOUNT_KEEP_RELEASES=10
 BUILD_DOCS=false
@@ -33,7 +34,6 @@ STOP_SSR=false
 
 for arg in "$@"; do
   case $arg in
-    --domain=*) DOMAIN="${arg#*=}" ;;
     --keep-releases=*) AMOUNT_KEEP_RELEASES="${arg#*=}" ;;
     --build-docs) BUILD_DOCS=true ;;
     --blog-warm-cache) BLOG_WARM_CACHE=true ;;
@@ -45,7 +45,7 @@ for arg in "$@"; do
 done
 
 if [ -z "$DOMAIN" ]; then
-  printf '\nError: --domain is required.\n' && exit 1
+  printf '\nError: Could not determine domain from script path.\n' && exit 1
 fi
 
 RELEASE_NAME=$(date +%s--%Y_%m_%d--%H_%M_%S)
