@@ -105,8 +105,10 @@ return [
             // always make sure that the plan structure is compatible with the plan eligibility check in the SparkServiceProvider...
             'plans' => [
                 [
-                    //free plan must be the first in the array
+                    // free plan must be the first in the array
                     'name' => SubscriptionService::PLAN_FREE,
+                    'icon' => 'heroicon-o-gift',
+                    'color' => 'gray',
                     'short_description' => 'Simple analytics, no card required.',
                     'monthly_id' => 0,
                     'yearly_id' => 0,
@@ -127,6 +129,8 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_STARTER,
+                    'icon' => 'heroicon-o-star',
+                    'color' => 'info',
                     'short_description' => 'Great for smaller projects.',
                     'monthly_id' => env('SPARK_STARTER_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_STARTER_YEARLY_PLAN'),
@@ -147,6 +151,8 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_PLUS,
+                    'icon' => 'heroicon-o-bolt',
+                    'color' => 'success',
                     'short_description' => 'For ambitious, growing projects.',
                     'monthly_id' => env('SPARK_PLUS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_PLUS_YEARLY_PLAN'),
@@ -168,6 +174,8 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_BUSINESS,
+                    'icon' => 'heroicon-o-building-office',
+                    'color' => 'warning',
                     'short_description' => 'High-volume tracking at scale.',
                     'monthly_id' => env('SPARK_BUSINESS_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_BUSINESS_YEARLY_PLAN'),
@@ -188,6 +196,8 @@ return [
                 ],
                 [
                     'name' => SubscriptionService::PLAN_ENTERPRISE,
+                    'icon' => 'heroicon-o-rocket-launch',
+                    'color' => 'danger',
                     'short_description' => 'Analytics without any limits.',
                     'monthly_id' => env('SPARK_ENTERPRISE_MONTHLY_PLAN'),
                     'yearly_id' => env('SPARK_ENTERPRISE_YEARLY_PLAN'),
