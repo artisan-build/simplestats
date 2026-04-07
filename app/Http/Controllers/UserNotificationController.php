@@ -53,6 +53,13 @@ class UserNotificationController extends Controller
      */
     public function trigger(Request $request, UserNotification $notification)
     {
+        if ($notification->frequency === UserNotificationFrequency::DISABLED) {
+            return back()->with('flash', [
+                'bannerStyle' => 'danger',
+                'banner' => 'You must choose a frequency to send a report.',
+            ]);
+        }
+
         $notification->load('user', 'notifiable');
 
         defer(fn () => $notification->user->notify(new ProjectReportNotification($notification, now(), auth()->user()->currentTeam)));
