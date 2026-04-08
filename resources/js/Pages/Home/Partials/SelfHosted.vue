@@ -1,11 +1,10 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
+import {trans} from 'laravel-vue-i18n';
 
 const props = defineProps({
     discount: Number,
 })
-
-import { trans } from 'laravel-vue-i18n';
 
 const appName = import.meta.env.VITE_APP_NAME;
 
@@ -75,7 +74,7 @@ YOUR ANSWER HERE`;
     <section class="flex justify-center">
         <div class="max-w-screen-lg px-4 sm:pm-0">
             <SectionHeader id="self-hosted">
-                {{ $t('Take full control with') }}&nbsp;<span class="text-indigo-500">{{ $t('Self-Hosted') }}</span>
+                {{ $t('Take full control with') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('Self-Hosted') }}</span>
             </SectionHeader>
 
             <!-- the JIT Compiler from tailwindcss cant recognize things like this "md:grid-cols-'+licenses.length/2+'" so we need to put the classes here manually so that the exists --->

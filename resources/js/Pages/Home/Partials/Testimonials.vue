@@ -10,7 +10,7 @@ const testimonialsData = testimonials;//.sort(() => Math.random() - 0.5);
     <section class="flex justify-center">
         <div class="max-w-screen-md lg:max-w-screen-xl">
             <SectionHeader id="testimonials">
-                {{ $t('Testimonials of our') }} <span class="text-indigo-500">{{ $t('fans') }}</span>
+                {{ $t('Testimonials of our') }} <span class="text-indigo-500 underline">{{ $t('fans') }}</span>
             </SectionHeader>
 
             <div class="gap-6 columns-1 md:columns-2 xl:columns-3 px-6">

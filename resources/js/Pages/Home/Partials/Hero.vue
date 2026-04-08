@@ -11,7 +11,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
 const heroHeadline = computed(() =>
     trans('Analytics for :laravel', {
-        laravel: '<span class="text-indigo-500">Laravel</span>',
+        laravel: '<span class="text-indigo-500 underline">Laravel</span>',
     })
 );
 

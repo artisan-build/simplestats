@@ -18,7 +18,7 @@ const appName = import.meta.env.VITE_APP_NAME;
     <section class="flex justify-center px-4">
         <div class="w-full max-w-screen-xl">
             <SectionHeader id="integration">
-                {{ $t('Powerful analytics') }}&nbsp;<span class="text-indigo-500">{{ $t('in no time') }}</span>
+                {{ $t('Powerful analytics') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('in no time') }}</span>
             </SectionHeader>
 
             <div class="flex mx-auto max-w-screen-md xl:max-w-screen-xl">

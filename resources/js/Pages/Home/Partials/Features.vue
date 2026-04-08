@@ -13,7 +13,7 @@ import {
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
-import { trans } from 'laravel-vue-i18n';
+import {trans} from 'laravel-vue-i18n';
 
 const features = [
     {
@@ -68,7 +68,7 @@ const features = [
     <section class="flex justify-center">
         <div class="max-w-screen-md lg:max-w-screen-xl">
             <SectionHeader id="features">
-                {{ $t('What makes us') }}&nbsp;<span class="text-indigo-500">{{ $t('unique') }}</span>
+                {{ $t('What makes us') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('unique') }}</span>
             </SectionHeader>
              <div class="grid gap-x-14  grid gap-y-10 lg:gap-y-20 lg:grid-cols-3 px-6">
                 <div v-for="feature in features">

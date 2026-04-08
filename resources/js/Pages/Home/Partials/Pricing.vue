@@ -3,6 +3,7 @@ import {Link} from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {computed, ref} from "vue";
 import {useLocale} from "@/Composables/useLocale.js";
+import {trans} from 'laravel-vue-i18n';
 
 const { localizedPath } = useLocale();
 
@@ -32,8 +33,6 @@ const priceIntervalString = computed(() => {
     return selectedInterval.value === 'monthly' ? 'month' : 'year';
 });
 
-import { trans } from 'laravel-vue-i18n';
-
 const getPlanPrice = (amount, discount) => {
     amount = amount  / 100;
 
@@ -49,7 +48,7 @@ const getPlanPrice = (amount, discount) => {
     <section class="flex justify-center">
         <div class="max-w-screen-xl">
             <SectionHeader id="pricing">
-                {{ $t('Subscribe at your') }}&nbsp;<span class="text-indigo-500">{{ $t('scale') }}</span>
+                {{ $t('Subscribe at your') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('scale') }}</span>
             </SectionHeader>
 
             <div class="text-center -mt-10 mb-10">

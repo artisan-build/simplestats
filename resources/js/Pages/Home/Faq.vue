@@ -1,7 +1,7 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {onMounted, ref} from "vue";
-import { trans } from 'laravel-vue-i18n';
+import {trans} from 'laravel-vue-i18n';
 
 const questions = ref([
     {
@@ -61,7 +61,7 @@ onMounted(() => {
         <div class="container max-w-4xl px-6 py-10 mx-auto">
 
             <SectionHeader id="faq">
-                {{ $t('Frequently asked') }}&nbsp;<span class="text-indigo-500">{{ $t('questions') }}</span>
+                {{ $t('Frequently asked') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('questions') }}</span>
             </SectionHeader>
 
             <div class="space-y-8">
