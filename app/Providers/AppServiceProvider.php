@@ -91,7 +91,7 @@ class AppServiceProvider extends ServiceProvider
             \Spatie\OgImage\Facades\OgImage::fallbackUsing(function (Request $request) {
                 return view('og-image.fallback', [
                     'title' => config('app.name'),
-                    'tagline' => config('app.tagline', 'The missing analytics tool for Laravel applications'),
+                    'tagline' => config('app.tagline', 'Revenue attribution analytics tool for Laravel apps'),
                     'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
                 ]);
             });

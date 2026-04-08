@@ -8,11 +8,11 @@
             <meta name="robots" content="noindex, nofollow">
         @endif
 
-        <title inertia>{{ config('app.name', 'Laravel') }} - {{ __('The missing analytics tool for Laravel applications') }}</title>
-        <meta name="description" content="{{ __('A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!') }}">
+        <title inertia>{{ config('app.name', 'Laravel') }} - {{ __('Revenue attribution analytics tool for Laravel apps') }}</title>
+        <meta name="description" content="{{ __('Discover which campaigns bring your paying customers, not just visitors. Server-side revenue attribution analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
 
-        <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - {{ __('The missing analytics tool for Laravel applications') }}">
-        <meta property="og:description" content="{{ __('A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!') }}">
+        <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - {{ __('Revenue attribution analytics tool for Laravel apps') }}">
+        <meta property="og:description" content="{{ __('Discover which campaigns bring your paying customers, not just visitors. Server-side revenue attribution analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
 

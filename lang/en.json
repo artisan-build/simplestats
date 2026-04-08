@@ -1,6 +1,6 @@
 {
-    "The missing analytics tool for Laravel applications": "The missing analytics tool for Laravel applications",
-    "A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!": "A server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Daily Active Users, Average Revenue Per User, campaign ROI and much more!",
+    "Revenue attribution analytics tool for Laravel apps": "Revenue attribution analytics tool for Laravel apps",
+    "Discover which campaigns bring your paying customers, not just visitors. Server-side revenue attribution analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.": "Discover which campaigns bring your paying customers, not just visitors. Server-side revenue attribution analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.",
 
     "Features": "Features",
     "Pricing": "Pricing",
@@ -10,9 +10,8 @@
     "Sign in": "Sign in",
     "Get started": "Get started",
 
-    "The missing analytics tool for your": "The missing analytics tool for your",
-    "application.": "application.",
-    "Server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Conversion Rate, campaign ROI and much more in just a few": "Server-side, GDPR compliant and 100% accurate analytics tool, that goes beyond simple counts of views and visits. Discover in-depth metrics like Registrations, Conversion Rate, campaign ROI and much more in just a few",
+    "Analytics for :laravel": "Analytics for :laravel",
+    "Track visitors, registrations, and payments. Discover which campaigns actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate. Set up in just a few :minutes.": "Track visitors, registrations, and payments. Discover which campaigns actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate. Set up in just a few :minutes.",
     "minutes": "minutes",
     "Get started for free": "Get started for free",
     "Live demo": "Live demo",
