@@ -3,6 +3,7 @@ import {router} from "@inertiajs/vue3";
 import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
 import {computed} from 'vue';
+import {testimonials} from "@/Data/testimonials.js";
 
 const { localizedPath } = useLocale();
 const appEnv = import.meta.env.VITE_APP_ENV;
@@ -54,6 +55,30 @@ function trackGetStartedClick() {
                     {{ $t('Why :appName?', { appName }) }}
                 </a>
             </div>
+        </div>
+
+        <div class="mt-10 flex flex-col items-center">
+            <div class="flex -space-x-2">
+                <a
+                    v-for="t in testimonials"
+                    :key="t.name"
+                    v-tooltip.bottom="{
+                        content: `<div class='flex flex-col space-y-2 max-w-72 p-2 text-base text-left text-white'><p class='font-bold text-indigo-300'>${t.name}</p><p class='text-sm text-gray-300'>${t.title}${t.company ? ', ' + t.company : ''}</p><p class='text-sm text-gray-100'>${t.descr}</p></div>`,
+                        html: true,
+                    }"
+                    :href="t.social_link || t.company_link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block size-10 shrink-0"
+                >
+                    <img
+                        :src="t.avatar"
+                        :alt="t.name"
+                        class="block size-10 rounded-full object-cover ring-2 ring-white dark:ring-dark-900 transition-all hover:scale-110"
+                    />
+                </a>
+            </div>
+            <p class="mt-3 text-xs text-gray-500 dark:text-dark-400">{{ $t('Loved by the Laravel community') }}</p>
         </div>
     </section>
 </template>

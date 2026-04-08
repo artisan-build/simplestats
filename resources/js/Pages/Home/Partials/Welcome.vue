@@ -38,7 +38,7 @@ defineProps({
 
         <Features />
 
-        <Testimonials />
+        <!-- <Testimonials /> -->
 
         <Pricing :plans="plans" />
 
