@@ -9,10 +9,10 @@
         @endif
 
         <title inertia>{{ config('app.name', 'Laravel') }} - {{ __('Revenue attribution analytics tool for Laravel apps') }}</title>
-        <meta name="description" content="{{ __('Discover which campaigns bring your paying customers, not just visitors. Server-side revenue attribution analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
+        <meta name="description" content="{{ __('Discover which channels actually drive revenue, not just traffic. Server-side analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
 
         <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - {{ __('Revenue attribution analytics tool for Laravel apps') }}">
-        <meta property="og:description" content="{{ __('Discover which campaigns bring your paying customers, not just visitors. Server-side revenue attribution analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
+        <meta property="og:description" content="{{ __('Discover which channels actually drive revenue, not just traffic. Server-side analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
         <meta property="og:url" content="{{ asset('') }}">
         <meta property="og:type" content="website">
 

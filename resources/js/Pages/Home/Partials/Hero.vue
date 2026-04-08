@@ -16,7 +16,7 @@ const heroHeadline = computed(() =>
 );
 
 const heroSubhead = computed(() =>
-    trans('Track visitors, registrations, and payments. Discover which campaigns actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate. Set up in just a few :minutes.', {
+    trans('Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate. Set up in just a few :minutes.', {
         minutes: `<a href="/docs" target="_blank" class="font-bold text-indigo-500">${trans('minutes')}</a>`,
     })
 );
