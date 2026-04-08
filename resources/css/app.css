@@ -39,6 +39,7 @@ strong, b {
 }
 
 /* Onboarding tour (Driver.js) */
+.driver-popover.simplestats-tour {padding: 20px;}
 .dark .driver-popover.simplestats-tour {background-color: #DDD;}
 .dark .driver-popover.simplestats-tour .driver-popover-close-btn {color: #444;}
 .dark .driver-popover.simplestats-tour .driver-popover-navigation-btns button {background-color: #EEE;}
