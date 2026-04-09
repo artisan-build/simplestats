@@ -110,9 +110,18 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
             : $this->getPhotoUrl();
     }
 
+    public function hasVerifiedEmail(): bool
+    {
+        if (app()->isLocal()) {
+            return true;
+        }
+
+        return ! is_null($this->email_verified_at);
+    }
+
     public function sendEmailVerificationNotification(): void
     {
-        //dispactches the job to the queue passing it this User object
+        // dispactches the job to the queue passing it this User object
         QueuedVerifyEmailJob::dispatch($this);
     }
 
