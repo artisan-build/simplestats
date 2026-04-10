@@ -10,20 +10,6 @@ export const competitors = [
 // true = fully supported, 'partial' = limited/manual support, false = not supported
 export const comparisonFeatures = [
     {
-        label: () => trans('Server-side tracking'),
-        simplestats: true,
-        plausible: false,
-        fathom: false,
-        ga: false,
-    },
-    {
-        label: () => trans('No JavaScript required'),
-        simplestats: true,
-        plausible: false,
-        fathom: false,
-        ga: false,
-    },
-    {
         label: () => trans('Revenue Attribution'),
         simplestats: true,
         plausible: 'partial',
@@ -38,14 +24,7 @@ export const comparisonFeatures = [
         ga: 'partial',
     },
     {
-        label: () => trans('No cookie banner required'),
-        simplestats: true,
-        plausible: true,
-        fathom: true,
-        ga: false,
-    },
-    {
-        label: () => trans('Laravel-native'),
+        label: () => trans('Server-side tracking'),
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -59,17 +38,31 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
+        label: () => trans('No JavaScript required'),
+        simplestats: true,
+        plausible: false,
+        fathom: false,
+        ga: false,
+    },
+    {
+        label: () => trans('Laravel-native'),
+        simplestats: true,
+        plausible: false,
+        fathom: false,
+        ga: false,
+    },
+    {
+        label: () => trans('No cookie banner required'),
+        simplestats: true,
+        plausible: true,
+        fathom: true,
+        ga: false,
+    },
+    {
         label: () => trans('Self-hosting option'),
         simplestats: true,
         plausible: true,
         fathom: false,
         ga: false,
-    },
-    {
-        label: () => trans('Open API'),
-        simplestats: true,
-        plausible: false,
-        fathom: false,
-        ga: true,
     },
 ];
