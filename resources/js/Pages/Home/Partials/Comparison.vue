@@ -42,7 +42,7 @@ import {competitors, comparisonFeatures} from "@/Data/comparison.js";
                                 :class="competitor.key === 'simplestats' ? 'bg-indigo-50 dark:bg-indigo-900/10' : ''"
                             >
                                 <CheckCircleIcon v-if="feature[competitor.key] === true" class="w-6 h-6 text-indigo-500 mx-auto" />
-                                <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="w-6 h-6 text-amber-400 mx-auto" />
+                                <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="w-6 h-6 text-indigo-300 dark:text-indigo-500/40 mx-auto" />
                                 <XCircleIcon v-else class="w-6 h-6 text-gray-300 dark:text-dark-600 mx-auto" />
                             </td>
                         </tr>
@@ -72,7 +72,7 @@ import {competitors, comparisonFeatures} from "@/Data/comparison.js";
                             class="flex items-center gap-2"
                         >
                             <CheckCircleIcon v-if="feature[competitor.key] === true" class="w-5 h-5 text-indigo-500 shrink-0" />
-                            <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="w-5 h-5 text-amber-400 shrink-0" />
+                            <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="w-5 h-5 text-indigo-300 dark:text-indigo-500/40 shrink-0" />
                             <XCircleIcon v-else class="w-5 h-5 text-gray-300 dark:text-dark-600 shrink-0" />
                             <span class="text-sm text-gray-700 dark:text-dark-300">{{ feature.label() }}</span>
                         </li>
