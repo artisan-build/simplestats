@@ -7,6 +7,7 @@ import Presentation from "@/Pages/Home/Partials/Presentation.vue";
 import Brands from "@/Pages/Home/Partials/Brands.vue";
 import Integration from "@/Pages/Home/Partials/Integration.vue";
 import Features from "@/Pages/Home/Partials/Features.vue";
+import Comparison from "@/Pages/Home/Partials/Comparison.vue";
 import Testimonials from "@/Pages/Home/Partials/Testimonials.vue";
 import Pricing from "@/Pages/Home/Partials/Pricing.vue";
 import SelfHosted from "@/Pages/Home/Partials/SelfHosted.vue";
@@ -37,6 +38,8 @@ defineProps({
         <Integration />
 
         <Features />
+
+        <Comparison />
 
         <Testimonials />
 

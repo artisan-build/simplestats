@@ -193,5 +193,17 @@
     "500K Monthly Events": "500K Monthly Events",
     "10M Monthly Events": "10M Monthly Events",
     "Multi Currency Support": "Multi Currency Support",
-    "Data Import": "Data Import"
+    "Data Import": "Data Import",
+
+    "How we": "How we",
+    "compare": "compare",
+    "Server-side tracking": "Server-side tracking",
+    "No JavaScript required": "No JavaScript required",
+    "Revenue Attribution": "Revenue Attribution",
+    "User & Payment tracking": "User & Payment tracking",
+    "No cookie banner required": "No cookie banner required",
+    "Laravel-native": "Laravel-native",
+    "Ad-blocker proof": "Ad-blocker proof",
+    "Self-hosting option": "Self-hosting option",
+    "Open API": "Open API"
 }
