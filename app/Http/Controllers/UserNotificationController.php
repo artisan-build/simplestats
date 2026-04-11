@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserNotificationFrequency;
-use App\Enums\UserNotificationType;
+use App\Http\Presenters\UserNotificationIndexPresenter;
 use App\Http\Requests\UpdateUserNotificationRequest;
 use App\Models\UserNotification;
 use App\Notifications\ProjectReportNotification;
-use App\Services\StatsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+
 use function Illuminate\Support\defer;
 
 class UserNotificationController extends Controller
@@ -17,23 +17,9 @@ class UserNotificationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(UserNotificationIndexPresenter $presenter)
     {
-        $notifications = UserNotification::withWhereHas('notifiable',
-            fn ($query) => $query->where('team_id', $request->user()->currentTeam->id)
-        )->where('user_id', $request->user()->id)->get()
-            ->sortBy(fn ($n) => optional($n->notifiable)->created_at)
-            ->groupBy('type')
-            ->sortBy(function ($group, $key) {
-                return array_search($key, UserNotificationType::sorting());
-            });
-
-        return Inertia::render('Notifications/Index', [
-            'notifications' => $notifications,
-            'notificationTypes' => UserNotificationType::toArray(),
-            'notificationStatsTypes' => StatsService::asOptions(),
-            'notificationFrequencies' => UserNotificationFrequency::toOptions(),
-        ]);
+        return Inertia::render('Notifications/Index', $presenter->present());
     }
 
     /**

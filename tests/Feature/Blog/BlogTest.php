@@ -52,6 +52,27 @@ test('blog index page displays published posts', function () {
         );
 });
 
+test('blog index hydrates posts with author data', function () {
+    $author = User::factory()->create();
+    createMarkdownPost($this->blogPath, 'post-with-author', extra: [
+        'author_id' => $author->id,
+        'date' => '2026-03-02',
+    ]);
+    createMarkdownPost($this->blogPath, 'post-without-author', extra: [
+        'date' => '2026-03-01',
+    ]);
+
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Blog/Index')
+            ->has('posts.data', 2)
+            ->where('posts.data.0.author.id', $author->id)
+            ->where('posts.data.0.author.name', $author->name)
+            ->where('posts.data.1.author', null)
+        );
+});
+
 test('blog show page returns successful response for published post', function () {
     $author = User::factory()->create();
     createMarkdownPost($this->blogPath, 'test-published-post', extra: ['author_id' => $author->id]);

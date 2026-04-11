@@ -25,10 +25,8 @@ class ProjectController extends Controller
 
     public function index(Request $request): Response
     {
-        $projects = Project::orderBy('created_at', 'desc')->paginate(10);
-
         return Inertia::render('Projects/Index', [
-            'projects' => $projects,
+            'projects' => Project::orderBy('created_at', 'desc')->paginate(10),
             'trackingUsages' => StatsService::getTrackingUsages(),
             'permissions' => [
                 'canCreateProject' => Gate::check('create', Project::class),

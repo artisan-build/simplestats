@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\DataImportType;
 use App\Helpers\ImportHelper;
+use App\Http\Presenters\DataImportIndexPresenter;
 use App\Http\Requests\DataImportRequest;
 use App\Jobs\ProcessDataImportJob;
 use App\Models\DataImport;
-use App\Models\Project;
 use App\Validators\BaseStatsValidator;
 use Cache;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Junges\TrackableJobs\Enums\TrackedJobStatus;
-use Junges\TrackableJobs\Models\TrackedJob;
 
 class DataImportController extends Controller
 {
@@ -25,44 +21,9 @@ class DataImportController extends Controller
         $this->authorizeResource(DataImport::class, 'data_import');
     }
 
-    public function index(Request $request): Response
+    public function index(DataImportIndexPresenter $presenter): Response
     {
-        $imports = DataImport::with([
-            'project',
-            'createdBy',
-            'trackedJob',
-        ])->orderBy('created_at', 'desc')->paginate(10);
-
-        // if for some reason the import has no tracked job (shouldn't happen) and one, so that FE/Vue parses...
-        $items = collect($imports->items());
-        if ($items->isNotEmpty() && ! $items->first()->getRelation('trackedJob')) {
-            TrackedJob::unguarded(function () use ($items) {
-                $items->first()->setRelation('trackedJob', new TrackedJob([
-                    'status' => TrackedJobStatus::Created,
-                    'created_at' => $items->first()->created_at,
-                ]));
-            });
-
-            $imports->setCollection($items);
-        }
-        unset($items);
-
-        $projects = Project::orderBy('created_at', 'desc')->get()->prepend(['id' => 0, 'name' => 'Please Select']);
-
-        $importTypes = collect(DataImportType::values())->map(fn ($item) => ['id' => $item, 'name' => ucfirst($item)])->prepend(['id' => null, 'name' => 'Please Select']);
-        // csv geht irgendwie nur mit txt, aber das soll im FE nicht angezeigt werden...
-        $mimeTypes = collect(DataImportRequest::MIMETYPES)->filter(fn ($type) => $type !== 'txt');
-
-        return Inertia::render('DataImports/Index', [
-            'dataImports' => $imports,
-            'projects' => $projects,
-            'importTypes' => $importTypes,
-            'mimeTypes' => $mimeTypes,
-            'filters' => $request->all(),
-            'permissions' => [
-                'canCreateDataImport' => Gate::check('create', DataImport::class),
-            ],
-        ]);
+        return Inertia::render('DataImports/Index', $presenter->present());
     }
 
     public function store(DataImportRequest $request): RedirectResponse
