@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ImportHelper;
-use App\Http\Presenters\DataImportIndexPresenter;
+use App\Http\DataProviders\DataImportIndexDataProvider;
 use App\Http\Requests\DataImportRequest;
 use App\Jobs\ProcessDataImportJob;
 use App\Models\DataImport;
@@ -21,9 +21,9 @@ class DataImportController extends Controller
         $this->authorizeResource(DataImport::class, 'data_import');
     }
 
-    public function index(DataImportIndexPresenter $presenter): Response
+    public function index(DataImportIndexDataProvider $dataProvider): Response
     {
-        return Inertia::render('DataImports/Index', $presenter->present());
+        return Inertia::render('DataImports/Index', $dataProvider->toArray());
     }
 
     public function store(DataImportRequest $request): RedirectResponse

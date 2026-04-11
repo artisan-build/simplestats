@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserNotificationFrequency;
-use App\Http\Presenters\UserNotificationIndexPresenter;
+use App\Http\DataProviders\UserNotificationIndexDataProvider;
 use App\Http\Requests\UpdateUserNotificationRequest;
 use App\Models\UserNotification;
 use App\Notifications\ProjectReportNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
 use function Illuminate\Support\defer;
 
 class UserNotificationController extends Controller
@@ -17,9 +16,9 @@ class UserNotificationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(UserNotificationIndexPresenter $presenter)
+    public function index(UserNotificationIndexDataProvider $dataProvider)
     {
-        return Inertia::render('Notifications/Index', $presenter->present());
+        return Inertia::render('Notifications/Index', $dataProvider->toArray());
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
-use App\Http\Presenters\StatsIndexPresenter;
+use App\Http\DataProviders\StatsIndexDataProvider;
 use App\Http\Requests\StatsFilterRequest;
 use App\Services\StatsAggregationsService;
 use Illuminate\Http\Request;
@@ -11,9 +11,9 @@ use Inertia\Inertia;
 
 class StatsController extends Controller
 {
-    public function index(StatsIndexPresenter $presenter)
+    public function index(StatsIndexDataProvider $dataProvider)
     {
-        return Inertia::render('Dashboard/Index', $presenter->present());
+        return Inertia::render('Dashboard/Index', $dataProvider->toArray());
     }
 
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Presenters;
+namespace App\Http\DataProviders;
 
 use App\Enums\DataImportType;
 use App\Http\Requests\DataImportRequest;
@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\Gate;
 use Junges\TrackableJobs\Enums\TrackedJobStatus;
 use Junges\TrackableJobs\Models\TrackedJob;
 
-class DataImportIndexPresenter extends AbstractPresenter
+class DataImportIndexDataProvider extends AbstractDataProvider
 {
     public function __construct(
         private Request $request,
     ) {}
 
-    public function present(): array
+    public function toArray(): array
     {
         return [
             'dataImports' => $this->loadImports(),

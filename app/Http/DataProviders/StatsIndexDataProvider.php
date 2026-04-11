@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Presenters;
+namespace App\Http\DataProviders;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangePreset;
@@ -13,7 +13,7 @@ use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
 
-class StatsIndexPresenter extends AbstractPresenter
+class StatsIndexDataProvider extends AbstractDataProvider
 {
     public function __construct(
         private StatsFilterRequest $request,
@@ -22,7 +22,7 @@ class StatsIndexPresenter extends AbstractPresenter
         private RefererService $refererService,
     ) {}
 
-    public function present(): array
+    public function toArray(): array
     {
         $user = $this->request->user();
         $effective = $this->resolveEffectiveRequest($user);

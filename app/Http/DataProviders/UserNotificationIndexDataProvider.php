@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Presenters;
+namespace App\Http\DataProviders;
 
 use App\Enums\UserNotificationFrequency;
 use App\Enums\UserNotificationType;
@@ -10,13 +10,13 @@ use App\Services\StatsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class UserNotificationIndexPresenter extends AbstractPresenter
+class UserNotificationIndexDataProvider extends AbstractDataProvider
 {
     public function __construct(
         private Request $request,
     ) {}
 
-    public function present(): array
+    public function toArray(): array
     {
         return [
             'notifications' => $this->loadNotifications($this->request->user()),

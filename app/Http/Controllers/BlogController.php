@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Presenters\BlogIndexPresenter;
+use App\Http\DataProviders\BlogIndexDataProvider;
 use App\Models\User;
 use App\Services\BlogService;
 use Inertia\Inertia;
@@ -11,9 +11,9 @@ use JCFrane\MdBlog\Facades\MdBlog;
 
 class BlogController extends Controller
 {
-    public function index(BlogIndexPresenter $presenter): Response
+    public function index(BlogIndexDataProvider $dataProvider): Response
     {
-        return Inertia::render('Blog/Index', $presenter->present());
+        return Inertia::render('Blog/Index', $dataProvider->toArray());
     }
 
     public function show(string $slug, BlogService $blogService): Response

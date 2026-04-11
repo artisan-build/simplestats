@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Presenters;
+namespace App\Http\DataProviders;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use JCFrane\MdBlog\Facades\MdBlog;
 
-class BlogIndexPresenter extends AbstractPresenter
+class BlogIndexDataProvider extends AbstractDataProvider
 {
     private const PER_PAGE = 12;
 
@@ -16,7 +16,7 @@ class BlogIndexPresenter extends AbstractPresenter
         private Request $request,
     ) {}
 
-    public function present(): array
+    public function toArray(): array
     {
         $allPosts = MdBlog::latest();
 
