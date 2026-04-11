@@ -3,103 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\StatsRangePreset;
-use App\Enums\StatsRangeType;
+use App\Http\Presenters\StatsIndexPresenter;
 use App\Http\Requests\StatsFilterRequest;
-use App\Services\RefererService;
 use App\Services\StatsAggregationsService;
-use App\Services\StatsDetailsService;
-use App\Services\StatsService;
-use App\Services\SubscriptionService;
-use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class StatsController extends Controller
 {
-    /**
-     * @throws Exception
-     */
-    public function index(
-        StatsFilterRequest $request,
-        StatsDetailsService $statsDetailsService,
-        SubscriptionService $subscriptionService,
-        RefererService $refererService,
-    ) {
-        $user = $request->user();
-
-        // hack: as project_id may be set within the request class, we need to check $_GET
-        $hasFilterRequest = ! empty($_GET);
-
-        $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
-
-        if (! $hasFilterRequest && ! empty($userFilterSettings)) {
-            $request = new StatsFilterRequest($userFilterSettings);
-        } elseif ($request->has('preset') && $request->preset !== StatsRangePreset::CUSTOM->value) {
-            // on preset (built-in or custom), we do not save the range
-            $user->updateSettings('statsFilters.'.$user->current_team_id, $request->except([
-                'range_start',
-                'range_amount',
-                'range_type',
-            ]));
-        }
-
-        $teamStats = $user->currentTeam()->with('projects')->get()->first();
-
-        // do this before prepend all filters...
-        $teamStats->totalProjectsCount = $teamStats->projects->count(); // here we use the alreay loaded collection
-
-        // we need to do prepend before keyBy('id')
-        $teamStats->projects->prepend($statsDetailsService->getAllFilterFor('Projects'));
-
-        // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
-        // this would not update $teamStats cause of laravel intern relation management...
-        $teamStats->setRelation('projects', $teamStats->projects->keyBy('id'));
-
-        $filters = StatsFilterDto::fromRequest($request);
-
-        if ($filters->projectId !== StatsFilterDto::TRACK_ALL && ! $teamStats->projects->has($filters->projectId)) {
-            $filters->projectId = StatsFilterDto::TRACK_ALL;
-        }
-
-        $teamStats->stats = $statsDetailsService->getStats($filters);
-
-        if ($filters->comparison && $filters->rangeType !== StatsRangeType::YEAR) {
-            $teamStats->statsPrev = array_values($statsDetailsService->getStats(
-                StatsService::createPrevFiltersForComparison($filters),
-            ));
-        }
-
-        $hiddenPresets = $user->settings['hiddenPresets'] ?? [];
-
-        $data = [
-            'teams' => $user->allTeams(),
-            'teamStats' => $teamStats,
-            'presets' => collect(StatsRangePreset::toOptions())
-                ->reject(fn ($p) => in_array($p['id'], $hiddenPresets))
-                ->merge($user->customStatsRangePresets->map->toOption())
-                ->sortBy('sortWeight')
-                ->values()
-                ->toArray(),
-            'allPresets' => StatsRangePreset::toOptions(),
-            'hiddenPresets' => $hiddenPresets,
-            'customPresets' => $user->customStatsRangePresets,
-            'filters' => StatsService::formatFilters($filters),
-            'statsGroups' => StatsService::getStatsTypesFormatted(['model']),
-            'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            'topReferers' => $refererService->getTopReferers(),
-            'rangeTypes' => $statsDetailsService->getRangeTypes(),
-            'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
-            'freePlanWarning' => ['show' => StatsService::showFreePlanWarning($user)],
-            'readDocsWarning' => ['show' => StatsService::showReadDocsWarning($user)],
-            'subscriptionPlanAlarm' => $subscriptionService->getPlanAlarm($user->team),
-            'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
-                return [$key => $item['bit']];
-            }),
-            'comparisonTypes' => StatsService::getComparisonTypes(),
-        ];
-
-        return Inertia::render('Dashboard/Index', $data);
+    public function index(StatsIndexPresenter $presenter)
+    {
+        return Inertia::render('Dashboard/Index', $presenter->present());
     }
 
     public function groups(StatsFilterRequest $request, StatsAggregationsService $statsAggregationsService)
