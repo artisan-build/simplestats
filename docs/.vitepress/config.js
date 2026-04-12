@@ -74,6 +74,7 @@ export default defineConfig({
             {
                 text: 'Integrations',
                 items: [
+                    {text: 'PHP Client', link: '/php-client'},
                     {text: 'Filament', link: '/filament-plugin'},
                 ]
             },
