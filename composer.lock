@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "420e1870f27079f535f366be8042f529",
+    "content-hash": "dd0922aa479d925eb9a3338044acd34a",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -11155,12 +11155,77 @@
             "time": "2026-03-03T14:29:01+00:00"
         },
         {
+            "name": "simplestats-io/filament-plugin",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/simplestats-io/filament-plugin",
+                "reference": "ca7e0797c6725f04734d452ae5497d529ea1f60b"
+            },
+            "require": {
+                "filament/filament": "^5.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^10.0",
+                "pestphp/pest": "^3.7",
+                "pestphp/pest-plugin-laravel": "^3.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SimpleStatsIo\\FilamentPlugin\\SimplestatsPluginServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SimpleStatsIo\\FilamentPlugin\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "SimpleStatsIo\\FilamentPlugin\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/pest"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zacharias Creutznacher",
+                    "email": "zacharias.creutznacher@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament v5 dashboard plugin for SimpleStats analytics. View your visitors, registrations, and revenue directly in your Filament panel.",
+            "homepage": "https://github.com/simplestats-io/filament-plugin",
+            "keywords": [
+                "analytics",
+                "dashboard",
+                "filament",
+                "revenue-attribution",
+                "simplestats-io"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "simplestats-io/laravel-client",
             "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "packages/simplestats-io/laravel-client",
-                "reference": "97ca59d2242b062969bd3f07ca76f20fef67470f"
+                "reference": "59d6b42f3f67b7506020944416ac62ea90a7e36b"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
@@ -11234,10 +11299,15 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Client for SimpleStats!",
+            "description": "Analytics for Laravel. Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, ad-blocker proof.",
             "homepage": "https://github.com/simplestats-io/laravel-client",
             "keywords": [
+                "analytics",
+                "gdpr",
                 "laravel",
+                "marketing-attribution",
+                "revenue-attribution",
+                "server-side-tracking",
                 "simplestats-client",
                 "simplestats-io"
             ],
@@ -20840,6 +20910,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "simplestats-io/filament-plugin": 20,
         "simplestats-io/laravel-client": 20
     },
     "prefer-stable": true,
