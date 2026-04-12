@@ -332,4 +332,4 @@ You can use any logic you want here. Check multiple fields, combine conditions, 
 
 While this guide focuses on Laravel Cashier (Stripe and Paddle), the pattern works with any payment provider. If you use a different gateway, the approach is the same: create or extend a model, implement the contract, register it in the config.
 
-For the full payment tracking documentation, including visitor-based payment tracking for guest checkouts and multi-currency support, check out our [payment tracking guide](https://simplestats.io/docs/how-to-track-a-new-payment.html).
+For the full payment tracking documentation, including visitor-based payment tracking for guest checkouts and multi-currency support, check out our [payment tracking guide](/docs/how-to-track-a-new-payment.html).

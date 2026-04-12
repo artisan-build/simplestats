@@ -72,6 +72,12 @@ export default defineConfig({
                 ]
             },
             {
+                text: 'Integrations',
+                items: [
+                    {text: 'Filament', link: '/filament-plugin'},
+                ]
+            },
+            {
                 text: 'Self-Hosted',
                 items: [
                     {text: 'Overview', link: '/self-hosted'},

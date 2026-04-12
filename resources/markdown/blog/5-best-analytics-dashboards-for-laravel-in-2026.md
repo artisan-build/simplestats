@@ -21,7 +21,7 @@ In this post, we compare the **5 best analytics dashboards for Laravel** in 2026
 
 ## 1. SimpleStats: Built for Laravel, Server-Side by Design
 
-[SimpleStats](https://simplestats.io) is the only analytics platform built **exclusively for Laravel applications**. Unlike every other tool on this list, SimpleStats doesn't use JavaScript snippets or browser-side tracking at all. Everything happens server-side through a native Laravel package, which means:
+[SimpleStats](/) is the only analytics platform built **exclusively for Laravel applications**. Unlike every other tool on this list, SimpleStats doesn't use JavaScript snippets or browser-side tracking at all. Everything happens server-side through a native Laravel package, which means:
 
 - **Zero ad blocker interference**: 100% of your data gets tracked
 - **GDPR compliant by design**: IPs and user agents are processed but never stored, with daily salt rotation for visitor hashes
@@ -170,7 +170,7 @@ SimplestatsClient::trackCustomEvent('plan_upgraded', $user);
 
 ### Pricing
 
-Free plan (5K events/month, 1 project), paid plans starting at Starter level with 100K events/month. [See plans](https://simplestats.io/#pricing).
+Free plan (5K events/month, 1 project), paid plans starting at Starter level with 100K events/month. [See plans](/#pricing).
 
 ---
 
@@ -436,6 +436,6 @@ Each tool on this list has its place:
 - **Pirsch** is a solid choice if you want server-side tracking but only need basic visitor metrics.
 - **PostHog** is the right pick if you need a full product analytics suite with feature flags, experiments, and session replay, and you have the engineering resources to set it up.
 
-But if you're building a Laravel application and want to understand the **complete picture**, from which Google Ad brought a visitor, to when they signed up, to how much revenue they've generated, **[SimpleStats](https://simplestats.io)** is the clear winner. No other tool gives you automatic registration, login, and payment tracking with just a Composer package and a couple of interfaces. The fact that it's 100% server-side means you're getting accurate data that ad blockers can't touch, and the 21+ built-in KPIs give you insights that would require custom engineering with any other platform.
+But if you're building a Laravel application and want to understand the **complete picture**, from which Google Ad brought a visitor, to when they signed up, to how much revenue they've generated, **[SimpleStats](/)** is the clear winner. No other tool gives you automatic registration, login, and payment tracking with just a Composer package and a couple of interfaces. The fact that it's 100% server-side means you're getting accurate data that ad blockers can't touch, and the 21+ built-in KPIs give you insights that would require custom engineering with any other platform.
 
 The setup-to-insight ratio is simply unmatched: `composer require`, implement `TrackablePerson`, and you're tracking your entire user lifecycle with campaign attribution. That's the power of a tool built specifically for Laravel.

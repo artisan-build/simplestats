@@ -146,4 +146,4 @@ These aren't just metrics. They're the answers to the questions that actually dr
 
 ---
 
-*[SimpleStats](https://simplestats.io) is a server-side analytics platform built specifically for Laravel. It tracks visitors, registrations, logins, and payments. All GDPR-compliant, all unaffected by ad blockers, all connected through UTM attribution. Set it up in minutes with a single Composer package.*
+*[SimpleStats](/) is a server-side analytics platform built specifically for Laravel. It tracks visitors, registrations, logins, and payments. All GDPR-compliant, all unaffected by ad blockers, all connected through UTM attribution. Set it up in minutes with a single Composer package.*

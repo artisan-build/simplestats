@@ -165,4 +165,4 @@ This returns 4 weeks of data, calculated backwards from March 1st. Available gra
 
 These examples cover the most common patterns, but the API supports much more: 11 date presets, 15+ filter groups, and flexible custom ranges.
 
-Check out the [full Query API documentation](https://simplestats.io/docs/query-api.html) for the complete reference, including all available presets, stats types, and response fields.
+Check out the [full Query API documentation](/docs/query-api.html) for the complete reference, including all available presets, stats types, and response fields.
