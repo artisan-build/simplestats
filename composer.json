@@ -34,7 +34,6 @@
         "mateusjunges/laravel-trackable-jobs": "^2.0",
         "openspout/openspout": ">=4.23 <4.29",
         "sentry/sentry-laravel": "^4.7",
-        "simplestats-io/filament-plugin": "dev-main",
         "simplestats-io/laravel-client": "dev-main",
         "spatie/browsershot": "^5.2",
         "spatie/laravel-backup": "^9.0",
