@@ -9,11 +9,11 @@ composer require simplestats-io/laravel-client
 ```
 
 ::: info
-At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11 and 12_
+At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11, 12 and 13_
 :::
 
 ::: tip
-Not using Laravel? We also offer a basic [plain PHP client](https://github.com/simplestats-io/php-client) (`composer require simplestats-io/php-client`) that works with any PHP 8.2+ application.
+Not using Laravel? We also offer a basic [plain PHP client](https://github.com/simplestats-io/php-client) that works with any PHP 8.2+ application.
 :::
 
 ## Configuration
