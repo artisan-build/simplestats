@@ -7,6 +7,7 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy-js";
 import { createSSRApp, h } from "vue";
 import { i18nVue } from "laravel-vue-i18n";
+import { vTooltip } from 'floating-vue';
 
 createServer((page) =>
     createInertiaApp({
@@ -27,6 +28,7 @@ createServer((page) =>
             return createSSRApp({ render: () => h(App, props) })
                 .use(plugin)
                 .use(ZiggyVue, props.initialPage.props.ziggy)
+                .directive('tooltip', vTooltip)
                 .use(i18nVue, {
                     shared: false,
                     resolve: (lang) => {
