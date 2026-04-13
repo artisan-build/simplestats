@@ -7,6 +7,7 @@ use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\ApiStatsFilterRequest;
+use App\Models\Project;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
@@ -59,6 +60,13 @@ class StatsReadController extends Controller
             $request->limit ?? 10,
         )->values()->toArray();
 
+        $project = Project::find($filters->projectId);
+        $hiddenKeys = $this->getHiddenKeysForProject($project);
+
+        if (! empty($hiddenKeys)) {
+            $data = array_map(fn (array $item) => array_diff_key($item, array_flip($hiddenKeys)), $data);
+        }
+
         return response()->json([
             'data' => $data,
             'meta' => $this->buildMeta($filters),
@@ -99,5 +107,27 @@ class StatsReadController extends Controller
                 default => $value,
             }])
             ->toArray();
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getHiddenKeysForProject(?Project $project): array
+    {
+        if (! $project) {
+            return [];
+        }
+
+        $hidden = [];
+
+        if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
+            array_push($hidden, 'reg', 'cr', 'dau');
+        }
+
+        if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS])) {
+            $hidden[] = 'net';
+        }
+
+        return $hidden;
     }
 }
