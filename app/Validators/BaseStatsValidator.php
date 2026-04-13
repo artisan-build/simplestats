@@ -12,6 +12,16 @@ class BaseStatsValidator
 {
     public function prepareForValidation(array $input): array
     {
+        if (isset($input['user_id']) && ! isset($input['stats_user_id'])) {
+            $input['stats_user_id'] = $input['user_id'];
+            unset($input['user_id']);
+        }
+
+        if (isset($input['user_time']) && ! isset($input['stats_user_time'])) {
+            $input['stats_user_time'] = $input['user_time'];
+            unset($input['user_time']);
+        }
+
         if (isset($input['time'])) {
             $input['time'] = Carbon::parse($input['time'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
         }
