@@ -19,7 +19,7 @@ For the purposes of these Terms and Conditions:
 - __Affiliate__ means an entity that controls, is controlled by or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.
 - __Account__ means a unique account created for You to access our Service or parts of our Service.
 - __Country__ refers to: Bayern,  Germany
-- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Leto GmbH, Kramerstraße 7,  D-87700 Memmingen.
+- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Laracraft GbR, Brunnengasse 12, D-87629 Füsssen.
 
 - __Device__ means any device that can access the Service such as a computer, a cellphone or a digital tablet.
 - __Feedback__ means feedback, innovations or suggestions sent by You regarding the attributes, performance or features of our Service.

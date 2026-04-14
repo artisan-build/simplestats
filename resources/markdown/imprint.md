@@ -2,19 +2,16 @@
 
 Last updated: July 9, 2025
 
-SimpleStats is a product by Laracraft, a brand of Leto GmbH.
+SimpleStats is a product by Laracraft GbR.
 
 ## Address
 
-Leto GmbH  
-Kramerstraße 7  
-D-87700 Memmingen  
-Telephone: +49 1732159789  
-Email: hello@leto.games
+Laracraft GbR
+Brunnengasse 12  
+D-87629 Füssen
+Email: simplestats@laracraft.tech
 
 ## Business data
 
-Managing Director: Yanick Frehner  
-Register court: Local court Memmingen  
-Registration number: HRB 18795  
-Tax number: 138/131/30240
+Managing Director: Zacharias Creutznacher
+Tax number: 125/167/00147

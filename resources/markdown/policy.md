@@ -21,7 +21,7 @@ For the purposes of this Privacy Policy:
 
 
 
-- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Leto GmbH, Kramerstraße 7,  D-87700 Memmingen.
+- __Company__ (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to Laracraft GbR, Brunnengasse 8,  D-87629 Füssen.
 
 
 
