@@ -254,6 +254,18 @@ Jobs include automatic retry logic for fault tolerance.
 
 - Prefer Laravel helpers (`Str::`, `Arr::`, `collect()`, etc.) over native PHP functions where a Laravel equivalent exists.
 
+### No Magic Strings for App Identity
+
+- Never hardcode "SimpleStats" or similar brand names. Use `config('app.name')` instead so values stay consistent across environments and rebranding is painless.
+
+### Enums for Fixed Value Sets
+
+- When a feature has a fixed set of types/states (e.g., feedback types, import types, notification frequencies), define a PHP `enum` in `app/Enums/` backed by `string`.
+- Use `LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums` trait.
+- Add a `title(): string` method for display labels and a `static toOptions(): array` method returning `[['id' => ..., 'name' => ...], ...]` for frontend select inputs.
+- Use `Rule::enum(MyEnum::class)` (via `Illuminate\Validation\Rule`) in FormRequest validation instead of `new Enum()` or `Rule::in([...])`. This provides a fluent API with `->only()` and `->except()`.
+- See `app/Enums/UserNotificationFrequency.php` as a reference implementation.
+
 ### Confirmation Dialogs
 
 - Never use the browser's native `confirm()` dialog. Always use the `ConfirmationModal` component (`@/Components/ConfirmationModal.vue`) for delete or destructive action confirmations.
@@ -261,6 +273,12 @@ Jobs include automatic retry logic for fault tolerance.
 ### Carbon / Dates
 
 - Always use `CarbonImmutable` instead of mutable `Carbon`. The app registers `Date::use(CarbonImmutable::class)` globally, so `now()` and `Date::parse()` already return immutable instances. When importing Carbon directly, use `use Carbon\CarbonImmutable;` instead of `use Carbon\Carbon;`. Mutable Carbon causes subtle bugs when objects are passed to methods that call mutating operations like `startOfWeek()`, `endOfDay()`, etc.
+
+### Translations (i18n)
+
+- Only public (non-authenticated) pages are translated: Landing Page, Imprint, Auth pages. These use `$t()` in Vue templates and keys in `lang/{locale}.json`.
+- In-app pages (behind auth) are English-only. Do not wrap in-app strings with `$t()` or add them to language files.
+- Translations are managed via `php artisan app:translate` which uses DeepL. See `app/Console/Commands/TranslateLanguageFiles.php`.
 
 ### Imports
 

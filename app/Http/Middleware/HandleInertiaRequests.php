@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\FeedbackType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
@@ -55,6 +56,7 @@ class HandleInertiaRequests extends Middleware
         if (auth()->user()) {
             $merge['isAdmin'] = auth()->user()->isAdmin();
             $merge['tourCompleted'] = $request->user()->settings['tourCompleted'] ?? false;
+            $merge['feedbackTypes'] = FeedbackType::toOptions();
 
             if ($currentTeam = auth()->user()->currentTeam) {
                 $merge['onboardingPassed'] = $currentTeam->projects()->first()?->name;

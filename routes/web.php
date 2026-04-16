@@ -4,6 +4,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\CustomStatsRangePresetController;
 use App\Http\Controllers\DataImportController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImpersonateController;
@@ -118,6 +119,9 @@ Route::middleware([
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::get('user-settings/toggle-advanced', [UserSettingsController::class, 'toggleAdvanced'])->name('user-settings.toggle-advanced');
     Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
+
+    // Feedback
+    Route::post('feedback', FeedbackController::class)->name('feedback.store');
 
     // User Notification Settings
     Route::resource('user/notifications', UserNotificationController::class)->only(['index', 'update']);
