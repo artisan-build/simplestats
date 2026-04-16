@@ -88,7 +88,8 @@ class StatsIndexDataProvider extends AbstractDataProvider
         $teamStats->totalProjectsCount = $teamStats->projects->count();
 
         // we need to do prepend before keyBy('id')
-        $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects'));
+        $mergedUsageBits = $teamStats->projects->reduce(fn ($carry, $project) => $carry | $project['usage'], 0);
+        $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects', $mergedUsageBits));
 
         // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
         // this would not update $teamStats cause of laravel intern relation management...

@@ -58,12 +58,12 @@ class StatsDetailsService
         ]);
     }
 
-    public function getAllFilterFor(string $type): array
+    public function getAllFilterFor(string $type, ?int $usage = null): array
     {
         return [
             'id' => StatsFilterDto::TRACK_ALL,
             'name' => 'All',
-            'usage' => StatsService::getTrackingUsageBitsCount(),
+            'usage' => $usage ?? StatsService::getTrackingUsageBitsCount(),
         ];
     }
 }

@@ -3,6 +3,7 @@
 use App\Enums\StatsRangePreset;
 use App\Models\Project;
 use App\Models\User;
+use App\Services\StatsService;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -36,6 +37,49 @@ test('dashboard renders Dashboard/Index with expected props', function () {
             ->has('subscriptionPlanAlarm')
             ->has('trackingUsageBits')
             ->has('comparisonTypes')
+        );
+});
+
+test('all projects view merges tracking usage bits from individual projects', function () {
+    // Remove default project created in beforeEach and create projects with specific usage bits
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+    ]);
+
+    Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => 0]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('teamStats.projects.0.usage', StatsService::TRACKING_USAGE_BITS_VISITORS)
+        );
+});
+
+test('all projects view includes payment bits when one project has payments', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+    ]);
+
+    Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $expectedUsage = StatsService::TRACKING_USAGE_BITS_VISITORS | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+
+    $this->get(route('dashboard', ['project_id' => 0]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('teamStats.projects.0.usage', $expectedUsage)
         );
 });
 
