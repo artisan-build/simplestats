@@ -38,7 +38,13 @@ class ProjectController extends Controller
     {
         $project = app(CreateProject::class)($request->user(), $request->validated());
 
-        return redirect()->route('projects.show', $project->id)->banner('Project created: '.$project->name);
+        $token = $project->tokens()->first();
+
+        return redirect()->route('projects.show', $project->id)
+            ->banner('Project created: '.$project->name)
+            ->with('flash', [
+                'token' => $token->token_plain_part,
+            ]);
     }
 
     public function show(Request $request, Project $project): Response
