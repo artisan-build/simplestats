@@ -12,7 +12,7 @@ class FeedbackController extends Controller
 {
     public function __invoke(FeedbackRequest $request): RedirectResponse
     {
-        Mail::to(config('mail.from.address'))->send(new FeedbackMail(
+        Mail::to(config('app.admin_mail'))->send(new FeedbackMail(
             user: $request->user(),
             type: FeedbackType::from($request->validated('type')),
             feedbackMessage: $request->validated('message'),
