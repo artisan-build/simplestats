@@ -129,7 +129,7 @@ enum StatsRangeType: string
         };
     }
 
-    public function getPrevStartForComparison(CarbonInterface $rangeStart): CarbonInterface
+    public function getPrevStartForCycle(CarbonInterface $rangeStart): CarbonInterface
     {
         return match ($this) {
             self::HOUR => $rangeStart->subDay(),
@@ -137,6 +137,18 @@ enum StatsRangeType: string
             self::WEEK => $rangeStart->subMonth(),
             self::MONTH => $rangeStart->subYear(),
             //            self::YEAR => $date->startOfYear(),
+            default => throw new \Exception('Unexpected match value'),
+        };
+    }
+
+    public function getPrevStartForPeriod(CarbonInterface $rangeStart, int $rangeAmount): CarbonInterface
+    {
+        return match ($this) {
+            self::HOUR => $rangeStart->copy()->subHours($rangeAmount),
+            self::DAY => $rangeStart->copy()->subDays($rangeAmount),
+            self::WEEK => $rangeStart->copy()->subWeeks($rangeAmount),
+            self::MONTH => $rangeStart->copy()->subMonthsNoOverflow($rangeAmount),
+            self::YEAR => $rangeStart->copy()->subYearsNoOverflow($rangeAmount),
             default => throw new \Exception('Unexpected match value'),
         };
     }

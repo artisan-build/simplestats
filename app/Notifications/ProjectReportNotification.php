@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\ComparisonType;
 use App\Enums\StatsRangeType;
 use App\Enums\UserNotificationFrequency;
 use App\Models\Team;
@@ -51,22 +52,26 @@ class ProjectReportNotification extends Notification
         auth()->setUser($this->notification->user);
 
         $projectName = $this->notification->notifiable->name;
+        $timeRange = $this->getTimeRange();
 
         $subject = '📊 '.
             $this->notification->frequency->title().' '.
             'Report for '.
-            $projectName;
+            $projectName.
+            ($timeRange !== '' ? ' ('.$timeRange.')' : '');
 
         $mail = (new MailMessage)
             ->subject($subject)
             ->markdown('emails.project-report', [
                 'frequency' => $this->notification->frequency,
-                'timeRange' => $this->getTimeRange(),
+                'timeRange' => $timeRange,
                 'projectName' => $projectName,
                 'trackingSettings' => $this->notification->settings['tracking'],
                 'currency' => $this->team->currency,
                 'statsAll' => $this->getStats(),
+                'statsAllPrev' => $this->getStats(previous: true),
                 'statsGroups' => $this->getStatsGroups(),
+                'statsGroupsPrev' => $this->getStatsGroups(previous: true),
             ]);
 
         $this->notification->update(['sent_at' => $this->time]);
@@ -90,43 +95,45 @@ class ProjectReportNotification extends Notification
             UserNotificationFrequency::DAILY => [
                 'amount' => 1,
                 'type' => StatsRangeType::DAY,
-                'start' => StatsRangeType::DAY->rangeStart($this->time->subDay()),
+                'start' => StatsRangeType::DAY->rangeStart($this->time->copy()->subDay()),
             ],
             UserNotificationFrequency::WEEKLY => [
                 'amount' => 1,
                 'type' => StatsRangeType::WEEK,
-                'start' => StatsRangeType::WEEK->rangeStart($this->time->subWeek()),
+                'start' => StatsRangeType::WEEK->rangeStart($this->time->copy()->subWeek()),
             ],
             UserNotificationFrequency::MONTHLY => [
                 'amount' => 1,
                 'type' => StatsRangeType::MONTH,
-                'start' => StatsRangeType::MONTH->rangeStart($this->time->subMonth()),
+                'start' => StatsRangeType::MONTH->rangeStart($this->time->copy()->subMonth()),
             ],
             default => [],
         };
     }
 
-    private function getFilter(): StatsFilterDto
+    private function getFilter(bool $previous = false): StatsFilterDto
     {
         $range = $this->getRange();
 
-        return new StatsFilterDto(
+        $filter = new StatsFilterDto(
             projectId: $this->notification->notifiable_id,
             rangeAmount: $range['amount'],
             rangeType: $range['type'],
             rangeStart: $range['start'],
-            comparison: '0'
+            comparison: ComparisonType::PERIOD->value,
         );
+
+        return $previous ? StatsService::createPrevFiltersForComparison($filter) : $filter;
     }
 
-    private function getStats()
+    private function getStats(bool $previous = false)
     {
-        return current(app(StatsDetailsService::class)->getStats($this->getFilter()));
+        return current(app(StatsDetailsService::class)->getStats($this->getFilter($previous))) ?: [];
     }
 
-    public function getStatsGroups(): Collection
+    public function getStatsGroups(bool $previous = false): Collection
     {
-        $filter = $this->getFilter();
+        $filter = $this->getFilter($previous);
 
         $sort = match (true) {
             $this->notification->settings['tracking']['payments'] ?? false => 'net',

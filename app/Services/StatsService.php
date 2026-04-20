@@ -83,11 +83,12 @@ class StatsService
     {
         $prevFilters = clone $filters;
 
-        if ($filters->comparison === ComparisonType::PERIOD->value) {
-            $prevFilters->rangeStart = $prevFilters->rangeType->getPrevStartForComparison($prevFilters->rangeStart);
-        } else {
-            $prevFilters->rangeStart = $prevFilters->rangeStart->subYear();
-        }
+        $prevFilters->rangeStart = match ($filters->comparison) {
+            ComparisonType::PERIOD->value => $prevFilters->rangeType->getPrevStartForPeriod($prevFilters->rangeStart, $prevFilters->rangeAmount),
+            ComparisonType::CYCLE->value => $prevFilters->rangeType->getPrevStartForCycle($prevFilters->rangeStart),
+            ComparisonType::YEAR->value => $prevFilters->rangeStart->copy()->subYear(),
+            default => $prevFilters->rangeStart,
+        };
 
         return $prevFilters;
     }
