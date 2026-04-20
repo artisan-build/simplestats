@@ -45,6 +45,13 @@ class UserNotificationController extends Controller
             ]);
         }
 
+        if (! array_filter($notification->settings['tracking'] ?? [])) {
+            return back()->with('flash', [
+                'bannerStyle' => 'danger',
+                'banner' => 'You must enable at least one tracking option to send a report.',
+            ]);
+        }
+
         $notification->load('user', 'notifiable');
 
         defer(fn () => $notification->user->notify(new ProjectReportNotification($notification, now(), auth()->user()->currentTeam)));
