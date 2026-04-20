@@ -14,14 +14,18 @@ class CreateUserNotification
     {
         $notifiable->getDefaultUserNotificationTypes()
             ->each(function (UserNotificationTypeObject $notificationType) use ($user, $notifiable) {
-                UserNotification::create([
-                    'user_id' => $user->id,
-                    'notifiable_id' => $notifiable->id,
-                    'notifiable_type' => $notifiable::class,
-                    'frequency' => $notificationType->frequency?->value,
-                    'type' => $notificationType->type,
-                    'settings' => $notificationType->settings,
-                ]);
+                UserNotification::firstOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'notifiable_id' => $notifiable->id,
+                        'notifiable_type' => $notifiable::class,
+                        'type' => $notificationType->type,
+                    ],
+                    [
+                        'frequency' => $notificationType->frequency?->value,
+                        'settings' => $notificationType->settings,
+                    ],
+                );
             });
     }
 }

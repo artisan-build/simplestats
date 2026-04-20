@@ -7,6 +7,7 @@ import {router, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {PaperAirplaneIcon} from '@heroicons/vue/24/solid';
 import {capitalize} from "@/Helpers/StringHelpers.js";
+import {computed} from "vue";
 
 const page = usePage();
 
@@ -16,6 +17,20 @@ const props = defineProps({
     notificationStatsTypes: Array,
     notificationFrequencies: Array,
 })
+
+const hasConfigurableOptions = (notification) =>
+    Object.keys(notification.settings?.tracking ?? {}).length > 0 || !!notification.frequency;
+
+const visibleNotifications = computed(() => {
+    const result = {};
+    for (const [group, list] of Object.entries(props.notifications ?? {})) {
+        const filtered = list.filter(hasConfigurableOptions);
+        if (filtered.length > 0) {
+            result[group] = filtered;
+        }
+    }
+    return result;
+});
 
 const update = (notification) => {
     router.patch(route("notifications.update", notification), notification, {
@@ -39,7 +54,7 @@ const trigger = (notification) => {
             </div>
             <FormSection>
                 <template #form>
-                    <div v-for="(groupNotifications, group) in notifications" class="col-span-6">
+                    <div v-for="(groupNotifications, group) in visibleNotifications" class="col-span-6">
                         <div>
                             <h3>{{ notificationTypes[group]?.title ?? group }}</h3>
                             <p v-if="notificationTypes[group]?.description" class="mt-1 text-sm text-gray-600 dark:text-dark-400 text-justify">

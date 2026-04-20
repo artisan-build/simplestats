@@ -2,6 +2,7 @@
 
 namespace App\Http\DataProviders;
 
+use App\Actions\CreateUserNotification;
 use App\Enums\UserNotificationFrequency;
 use App\Enums\UserNotificationType;
 use App\Models\User;
@@ -28,6 +29,10 @@ class UserNotificationIndexDataProvider extends AbstractDataProvider
 
     private function loadNotifications(User $user): Collection
     {
+        $user->currentTeam->projects->each(function ($project) use ($user) {
+            app(CreateUserNotification::class)($user, $project);
+        });
+
         return UserNotification::withWhereHas(
             'notifiable',
             fn ($query) => $query->where('team_id', $user->currentTeam->id)

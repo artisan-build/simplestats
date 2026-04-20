@@ -2,7 +2,6 @@
 
 namespace App\Actions\Fortify;
 
-use App\Actions\CreateUserNotification;
 use App\Models\Team;
 use App\Models\User;
 use App\Rules\SignedUrl;
@@ -90,10 +89,6 @@ class CreateNewUser implements CreatesNewUsers
     {
         $teamInvitation = app(TeamInvitationController::class);
         $teamInvitation->accept($request, $invitation->id);
-
-        $invitation->team->projects->each(function ($project) use ($user) {
-            app(CreateUserNotification::class)($user, $project);
-        });
     }
 
     /**

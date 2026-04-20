@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\CreateTeamMemberNotifications;
 use App\Listeners\EmailVerificationListener;
 use App\Listeners\SetCurrentTeam;
 use Illuminate\Auth\Events\Login;
@@ -31,6 +32,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         TeamMemberAdded::class => [
             SetCurrentTeam::class,
+            CreateTeamMemberNotifications::class,
         ],
     ];
 
