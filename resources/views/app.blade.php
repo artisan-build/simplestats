@@ -126,5 +126,6 @@
 {{--            <!-- /Brevo Conversations {/literal} -->--}}
         @endif
         <script src="/js/dark_mode.js"></script>
+        <script src="https://ui.sh/ui-picker.js"></script>
     </body>
 </html>
