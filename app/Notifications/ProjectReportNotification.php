@@ -16,6 +16,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Context;
 
 /**
  * currently we can't use ShouldQueue here because the notification is already triggered by a queued job,
@@ -49,6 +50,7 @@ class ProjectReportNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        Context::add('team_id', $this->team->id);
         auth()->setUser($this->notification->user);
 
         $projectName = $this->notification->notifiable->name;

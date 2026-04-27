@@ -222,6 +222,7 @@ This matters because the app runs in two different contexts:
 
 - **Reading team ID**: Always use `AppHelper::getTeamId()`. Never call `Context::get('team_id')` directly.
 - **In jobs/commands that need team-scoped data**: Call `auth()->setUser($user)` before any team-scoped operations. This enables both `AppHelper::getTeamId()` (via auth fallback) and `AppHelper::ensureTeamTimezone()` (which requires `auth()->user()->team->timezone`).
+- **When the target team differs from the user's `current_team_id`**: Always set `Context::add('team_id', $targetTeamId)` BEFORE `auth()->setUser($user)`. Relying on the auth fallback (`current_team_id`) is unsafe whenever a user belongs to multiple teams: the user may have switched their selected team in the frontend, so `current_team_id` is not guaranteed to match the team owning the data being processed (e.g. an invited collaborator on someone else's team). Required in: scheduled reports, queued data imports, alert notifications, and anywhere a user is acting on data of a team they did not create. Without this, `HasTeamScope` filters by the wrong `team_id` and queries silently return empty results. Reference fixes: `ProjectReportNotification::toMail()`, `ProcessDataImportJob::handle()`.
 - **`HasTeamScope` trait**: Uses `AppHelper::getTeamId()` for global scopes and saving hooks. When team ID is null, the scope is skipped (no filtering).
 - **`AppHelper::ensureTeamTimezone()`**: Relies on `auth()->user()->team->timezone`. Only called when a team is resolved, so auth must be set beforehand.
 

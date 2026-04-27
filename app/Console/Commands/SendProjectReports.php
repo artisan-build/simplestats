@@ -15,7 +15,7 @@ class SendProjectReports extends Command
      *
      * @var string
      */
-    protected $signature = 'app:send-project-reports {project? : The ID of the project to send reports for}';
+    protected $signature = 'app:send-project-reports {project? : The ID of the project to send reports for} {--force : Bypass the already-sent check}';
 
     /**
      * The console command description.
@@ -31,16 +31,17 @@ class SendProjectReports extends Command
     {
         // avoid bugs if the command takes longer
         $stickyNow = now()->utc();
+        $force = (bool) $this->option('force');
 
         Project::withWhereHas('userReportNotifications.user')
             ->when($this->argument('project'), fn ($query, $project) => $query->where('id', $project))
             ->with(['team:id,name,timezone,currency', 'userReportNotifications.notifiable'])
-            ->each(function ($project) use ($stickyNow) {
-                $project->userReportNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project) {
+            ->each(function ($project) use ($stickyNow, $force) {
+                $project->userReportNotifications->each(function (UserNotification $userNotification) use ($stickyNow, $project, $force) {
                     $lastSent = $userNotification->sent_at;
                     $tzNow = $stickyNow->copy()->setTimezone($project->team->timezone ?? config('app.timezone'));
 
-                    $alreadySent = match ($userNotification->frequency) {
+                    $alreadySent = ! $force && match ($userNotification->frequency) {
                         UserNotificationFrequency::DAILY => $lastSent?->isSameDay($tzNow),
                         UserNotificationFrequency::WEEKLY => $lastSent?->isSameWeek($tzNow),
                         UserNotificationFrequency::MONTHLY => $lastSent?->format('Y-m') === $tzNow->format('Y-m'),

@@ -17,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -59,6 +60,9 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
     public function handle(): void
     {
         // make auth stuff work in this dispatched/context-less job
+        // bind team scope to the import's team, not the user's current_team_id
+        // (the user may belong to multiple teams and have switched in the frontend)
+        Context::add('team_id', $this->dataImport->team_id);
         auth()->setUser($this->dataImport->createdBy);
 
         // ppl mostly import data without UTC, so to make validation work, we need to apply timezone directly...
