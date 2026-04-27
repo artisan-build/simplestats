@@ -65,9 +65,9 @@ const f = {
 </script>
 
 <template>
-    <section id="features" class="flex justify-center">
+    <section class="flex justify-center">
         <div class="w-full max-w-screen-xl px-6">
-            <SectionHeader>
+            <SectionHeader id="features" :eyebrow="$t('Features')">
                 {{ $t('What makes us') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('unique') }}</span>
             </SectionHeader>
             <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">

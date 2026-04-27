@@ -73,7 +73,7 @@ YOUR ANSWER HERE`;
 <template>
     <section class="flex justify-center">
         <div class="max-w-screen-lg px-4 sm:pm-0">
-            <SectionHeader id="self-hosted">
+            <SectionHeader id="self-hosted" :eyebrow="$t('Self-hosted')">
                 {{ $t('Take full control with') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('Self-Hosted') }}</span>
             </SectionHeader>
 

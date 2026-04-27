@@ -60,7 +60,7 @@ onMounted(() => {
     <section class="pb-32">
         <div class="container max-w-4xl px-6 py-10 mx-auto">
 
-            <SectionHeader id="faq">
+            <SectionHeader id="faq" :eyebrow="$t('FAQ')">
                 {{ $t('Frequently asked') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('questions') }}</span>
             </SectionHeader>
 

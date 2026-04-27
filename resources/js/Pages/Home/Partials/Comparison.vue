@@ -7,7 +7,7 @@ import {competitors, comparisonFeatures} from "@/Data/comparison.js";
 <template>
     <section class="flex justify-center">
         <div class="max-w-screen-md lg:max-w-screen-xl w-full">
-            <SectionHeader id="comparison">
+            <SectionHeader id="comparison" :eyebrow="$t('Why us')">
                 {{ $t('How we') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('compare') }}</span>
             </SectionHeader>
 

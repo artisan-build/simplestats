@@ -4,11 +4,18 @@ import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
 import {computed} from 'vue';
 import {testimonials} from "@/Data/testimonials.js";
-import {NoSymbolIcon} from "@heroicons/vue/24/outline/index.js";
+import {HandRaisedIcon} from "@heroicons/vue/24/outline/index.js";
 
 const { localizedPath } = useLocale();
 const appEnv = import.meta.env.VITE_APP_ENV;
 const appName = import.meta.env.VITE_APP_NAME;
+
+const stats = [
+    { term: 'Revenue', description: 'Attribution' },
+    { term: '100%', description: 'accurate' },
+    { term: 'GDPR', description: 'compliant' },
+    { term: '5 min', description: 'setup' },
+];
 
 const heroHeadline = computed(() =>
     trans('Analytics for :laravel', {
@@ -40,7 +47,7 @@ function trackGetStartedClick() {
             <a href="/docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:flex absolute right-0 top-0 -mr-64 -mt-10 rotate-[18deg] hover:rotate-[12deg] transition-transform">
                 <div class="rounded-2xl bg-white dark:bg-dark-800 ring-1 ring-gray-950/10 dark:ring-white/10 shadow-xl shadow-indigo-600/10 px-4 py-3 flex items-center gap-3">
                     <div class="flex items-center justify-center size-9 rounded-xl bg-indigo-600 text-white">
-                        <NoSymbolIcon class="size-5" />
+                        <HandRaisedIcon class="size-5" />
                     </div>
                     <div class="text-left">
                         <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $t("Can't be blocked") }}</div>
@@ -51,21 +58,14 @@ function trackGetStartedClick() {
         </div>
 
         <dl class="mb-10 mx-auto max-w-3xl px-6 grid grid-cols-2 sm:grid-cols-4 gap-y-3 tabular-nums">
-            <div class="flex flex-col items-center sm:px-6">
-                <dt class="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">{{ $t('Server') }}</dt>
-                <dd class="mt-1 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-dark-400">{{ $t('-side tracking') }}</dd>
-            </div>
-            <div class="flex flex-col items-center sm:px-6 sm:border-l border-gray-950/10 dark:border-white/10">
-                <dt class="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">100%</dt>
-                <dd class="mt-1 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-dark-400">{{ $t('accurate') }}</dd>
-            </div>
-            <div class="flex flex-col items-center sm:px-6 sm:border-l border-gray-950/10 dark:border-white/10">
-                <dt class="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">GDPR</dt>
-                <dd class="mt-1 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-dark-400">{{ $t('compliant') }}</dd>
-            </div>
-            <div class="flex flex-col items-center sm:px-6 sm:border-l border-gray-950/10 dark:border-white/10">
-                <dt class="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">5 min</dt>
-                <dd class="mt-1 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-dark-400">{{ $t('setup') }}</dd>
+            <div
+                v-for="(stat, index) in stats"
+                :key="stat.term"
+                class="flex flex-col items-center sm:px-6 border-gray-950/10 dark:border-white/10"
+                :class="{ 'sm:border-l': index > 0 }"
+            >
+                <dt class="text-2xl md:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">{{ $t(stat.term) }}</dt>
+                <dd class="mt-1 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-dark-400">{{ $t(stat.description) }}</dd>
             </div>
         </dl>
 

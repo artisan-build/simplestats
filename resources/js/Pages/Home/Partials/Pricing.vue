@@ -47,7 +47,7 @@ const getPlanPrice = (amount, discount) => {
 <template>
     <section class="flex justify-center">
         <div class="max-w-screen-xl">
-            <SectionHeader id="pricing">
+            <SectionHeader id="pricing" :eyebrow="$t('Plans')">
                 {{ $t('Subscribe at your') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('scale') }}</span>
             </SectionHeader>
 

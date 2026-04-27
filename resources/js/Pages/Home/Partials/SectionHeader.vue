@@ -1,10 +1,19 @@
 <script setup>
 defineProps({
     id: String,
+    eyebrow: String,
 });
 </script>
 <template>
-    <h2 :id="id" class="pt-32 text-center pb-20 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl dark:text-white">
-        <slot />
-    </h2>
+    <div :id="id" class="pt-32 pb-20 text-center">
+        <p v-if="eyebrow" class="mb-4">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-200 dark:ring-indigo-500/20">
+                <span class="size-1.5 rounded-full bg-indigo-500"></span>
+                {{ eyebrow }}
+            </span>
+        </p>
+        <h2 class="text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl dark:text-white">
+            <slot />
+        </h2>
+    </div>
 </template>
