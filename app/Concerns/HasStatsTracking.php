@@ -120,8 +120,6 @@ trait HasStatsTracking
             return ['track_referer' => null];
         }
 
-        $value = Str::replace('www.', '', $value);
-
         $value = app(RefererService::class)->getTopReferer($value);
 
         return ['track_referer' => $value];
