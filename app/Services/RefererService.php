@@ -10,9 +10,14 @@ class RefererService
 
     /**
      * Top referers whose subdomains should fold back to the canonical domain.
-     * E.g. m.facebook.com, l.facebook.com, lm.facebook.com → facebook.com.
-     * Explicitly NOT included: google.com, bing.com (subdomains carry meaning,
-     * e.g. mail.google.com vs drive.google.com vs accounts.google.com).
+     * Covers both named subdomains (m.facebook.com, l.facebook.com) and country
+     * variants (nl.indeed.com, at.search.yahoo.com). Add a domain here when its
+     * subdomains carry no meaningful distinction for our analytics.
+     *
+     * Explicitly NOT included: google.com, bing.com, wikipedia.org, kaspersky.com,
+     * algolia.com (subdomains carry meaning, e.g. mail.google.com vs drive.google.com,
+     * en.wikipedia.org vs de.wikipedia.org as different content corpora,
+     * hn.algolia.com is Hacker News not Honduras-Algolia).
      *
      * @var array<int, string>
      */
@@ -37,6 +42,8 @@ class RefererService
         'ecosia.org',
         'startpage.com',
         'yandex.ru',
+        'indeed.com',
+        'trustpilot.com',
     ];
 
     /**
@@ -50,6 +57,7 @@ class RefererService
         'youtu.be' => 'youtube.com',
         't.co' => 'x.com',
         'twitter.com' => 'x.com',
+        'lnkd.in' => 'linkedin.com',
         'threads.net' => 'threads.com',
         'l.threads.net' => 'threads.com',
         'vkontakte.ru' => 'vk.com',
@@ -70,7 +78,8 @@ class RefererService
             'instagram.com' => 'Instagram',
             'threads.com' => 'Threads',
             'bing.com' => 'Bing',
-            'search.yahoo.com' => 'Yahoo',
+            'yahoo.com' => 'Yahoo',
+            'search.yahoo.com' => 'Yahoo Search',
             'search.brave.com' => 'Brave',
             'twitter.com' => 'Twitter',
             'x.com' => 'X',
@@ -101,6 +110,8 @@ class RefererService
             'qwant.com' => 'Qwant',
             'startpage.com' => 'Startpage',
             'pinterest.com' => 'Pinterest',
+            'indeed.com' => 'Indeed',
+            'trustpilot.com' => 'Trustpilot',
         ]);
     }
 

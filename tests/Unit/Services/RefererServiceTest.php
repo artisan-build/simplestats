@@ -61,6 +61,20 @@ test('folds instagram and youtube and baidu subdomains', function () {
         ->and($this->service->getTopReferer('m.baidu.com'))->toBe('baidu.com');
 });
 
+test('maps yahoo TLD variants to yahoo.com', function () {
+    expect($this->service->getTopReferer('yahoo.com'))->toBe('yahoo.com')
+        ->and($this->service->getTopReferer('yahoo.de'))->toBe('yahoo.com')
+        ->and($this->service->getTopReferer('yahoo.nl'))->toBe('yahoo.com')
+        ->and($this->service->getTopReferer('yahoo.io'))->toBe('yahoo.com')
+        ->and($this->service->getTopReferer('yahoo.work'))->toBe('yahoo.com');
+});
+
+test('keeps yahoo portal and yahoo search separate', function () {
+    expect($this->service->getTopReferer('yahoo.com'))->toBe('yahoo.com')
+        ->and($this->service->getTopReferer('search.yahoo.com'))->toBe('search.yahoo.com')
+        ->and($this->service->getTopReferer('de.search.yahoo.com'))->toBe('search.yahoo.com');
+});
+
 test('folds regional yahoo search subdomains', function () {
     expect($this->service->getTopReferer('de.search.yahoo.com'))->toBe('search.yahoo.com')
         ->and($this->service->getTopReferer('uk.search.yahoo.com'))->toBe('search.yahoo.com')
@@ -80,6 +94,26 @@ test('does not fold google application subdomains', function () {
 test('does not fold bing subdomains', function () {
     expect($this->service->getTopReferer('cn.bing.com'))->toBe('cn.bing.com')
         ->and($this->service->getTopReferer('edgeservices.bing.com'))->toBe('edgeservices.bing.com');
+});
+
+test('folds explicitly listed indeed and trustpilot subdomains', function () {
+    expect($this->service->getTopReferer('nl.indeed.com'))->toBe('indeed.com')
+        ->and($this->service->getTopReferer('de.indeed.com'))->toBe('indeed.com')
+        ->and($this->service->getTopReferer('nl.trustpilot.com'))->toBe('trustpilot.com');
+});
+
+test('keeps wikipedia language subdomains separate', function () {
+    expect($this->service->getTopReferer('en.wikipedia.org'))->toBe('en.wikipedia.org')
+        ->and($this->service->getTopReferer('it.wikipedia.org'))->toBe('it.wikipedia.org')
+        ->and($this->service->getTopReferer('de.wikipedia.org'))->toBe('de.wikipedia.org');
+});
+
+test('keeps domain subdomains where the prefix is meaningful', function () {
+    // hn.algolia.com is Hacker News, not Honduras
+    // my.kaspersky.com is the user account portal, not Malaysia
+    expect($this->service->getTopReferer('hn.algolia.com'))->toBe('hn.algolia.com')
+        ->and($this->service->getTopReferer('my.kaspersky.com'))->toBe('my.kaspersky.com')
+        ->and($this->service->getTopReferer('eu.myconnectwise.net'))->toBe('eu.myconnectwise.net');
 });
 
 test('aliases youtu.be to youtube.com', function () {
@@ -134,4 +168,9 @@ test('folds duckduckgo and search engine subdomains', function () {
 
 test('folds linkedin country subdomains', function () {
     expect($this->service->getTopReferer('nl.linkedin.com'))->toBe('linkedin.com');
+});
+
+test('aliases lnkd.in shortlinks to linkedin.com', function () {
+    expect($this->service->getTopReferer('lnkd.in'))->toBe('linkedin.com')
+        ->and($this->service->getTopReferer('https://lnkd.in/abc123'))->toBe('linkedin.com');
 });
