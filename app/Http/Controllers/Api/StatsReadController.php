@@ -67,10 +67,27 @@ class StatsReadController extends Controller
             $data = array_map(fn (array $item) => array_diff_key($item, array_flip($hiddenKeys)), $data);
         }
 
-        return response()->json([
+        $response = [
             'data' => $data,
             'meta' => $this->buildMeta($filters),
-        ]);
+        ];
+
+        if ($filters->comparison && $filters->comparison !== '0' && $filters->rangeType !== StatsRangeType::YEAR) {
+            $previousData = $statsAggregationsService->getAggregatedGroupedData(
+                StatsService::createPrevFiltersForComparison($filters),
+                $request->stats_type,
+                $request->stats_sort ?? 'visitors',
+                $request->limit ?? 10,
+            )->values()->toArray();
+
+            if (! empty($hiddenKeys)) {
+                $previousData = array_map(fn (array $item) => array_diff_key($item, array_flip($hiddenKeys)), $previousData);
+            }
+
+            $response['data_previous'] = $previousData;
+        }
+
+        return response()->json($response);
     }
 
     public function groups(Request $request): JsonResponse

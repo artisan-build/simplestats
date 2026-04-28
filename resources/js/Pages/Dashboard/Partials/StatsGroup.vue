@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
 import {Link, usePage} from "@inertiajs/vue3";
 import {XAU} from "@/Helpers/StringHelpers.js";
@@ -20,6 +20,7 @@ const props = defineProps({
 const page = usePage();
 
 const data = ref([]);
+const dataPrevious = ref([]);
 const loading = ref(true);
 
 const filters = Object.assign({}, props.filters);
@@ -42,12 +43,80 @@ if (! filters.stats_sort) {
 const fetchData = async () => {
     try {
         const response = await axios(route('stats.grouped', filters));
-        data.value = await response.data;
+        const payload = response.data;
+
+        // backwards-compatible: API may return either {data, data_previous} or a plain array
+        if (Array.isArray(payload)) {
+            data.value = payload;
+            dataPrevious.value = [];
+        } else {
+            data.value = payload.data ?? [];
+            dataPrevious.value = payload.data_previous ?? [];
+        }
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
         loading.value = false;
     }
+};
+
+const previousByTypeId = computed(() => {
+    const map = {};
+    for (const item of dataPrevious.value) {
+        if (item.type_id !== undefined && item.type_id !== null) {
+            map[item.type_id] = item;
+        }
+    }
+    return map;
+});
+
+const getPrevious = (item) => {
+    if (item.type_id === undefined || item.type_id === null) {
+        return null;
+    }
+    return previousByTypeId.value[item.type_id] ?? null;
+};
+
+const comparisonChange = (item, field) => {
+    const previous = getPrevious(item);
+    if (! previous) {
+        return null;
+    }
+
+    const current = Number(item[field] ?? 0);
+    const prev = Number(previous[field] ?? 0);
+
+    if (prev === 0 && current === 0) {
+        return null;
+    }
+    if (prev === 0) {
+        return 100;
+    }
+
+    return ((current - prev) / prev) * 100;
+};
+
+const comparisonClass = (change) => {
+    if (change === null) {
+        return '';
+    }
+    if (change > 0) {
+        return 'text-green-600 dark:text-green-400';
+    }
+    if (change < 0) {
+        return 'text-red-600 dark:text-red-400';
+    }
+    return 'text-gray-400';
+};
+
+const formatComparison = (change) => {
+    if (change === null) {
+        return '';
+    }
+    const decimals = Math.abs(change) >= 10 ? 0 : 1;
+    const rounded = Number(change.toFixed(decimals));
+    const prefix = rounded > 0 ? '+' : '';
+    return `${prefix}${rounded}%`;
 };
 
 const group2Name = {
@@ -182,10 +251,22 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                         </Link>
                                     </div>
                                 </td>
-                                <td class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
-                                <td class="p-1.5 text-right">{{ formatNumber(Number(item.triggered)) }}</td>
-                                <td class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
-                                <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+                                <td class="p-1.5 text-right">
+                                    <span>{{ formatNumber(Number(item.visitors)) }}</span>
+                                    <span v-if="comparisonChange(item, 'visitors') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'visitors'))">{{ formatComparison(comparisonChange(item, 'visitors')) }}</span>
+                                </td>
+                                <td class="p-1.5 text-right">
+                                    <span>{{ formatNumber(Number(item.triggered)) }}</span>
+                                    <span v-if="comparisonChange(item, 'triggered') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'triggered'))">{{ formatComparison(comparisonChange(item, 'triggered')) }}</span>
+                                </td>
+                                <td class="p-1.5 text-right">
+                                    <span>{{ formatPercent(Number(item.cr)) }}</span>
+                                    <span v-if="comparisonChange(item, 'cr') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'cr'))">{{ formatComparison(comparisonChange(item, 'cr')) }}</span>
+                                </td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">
+                                    <span>{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</span>
+                                    <span v-if="comparisonChange(item, 'net') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'net'))">{{ formatComparison(comparisonChange(item, 'net')) }}</span>
+                                </td>
                             </tr>
                         </template>
                         <!-- Standard group columns -->
@@ -255,11 +336,26 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                         </Link>
                                     </div>
                                 </td>
-                                <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" class="p-1.5 text-right">{{ formatNumber(Number(item.visitors)) }}</td>
-                                <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.reg)) }}</td>
-                                <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" class="p-1.5 text-right">{{ formatPercent(Number(item.cr)) }}</td>
-                                <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">{{ formatNumber(Number(item.dau)) }}</td>
-                                <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['visitors'])" class="p-1.5 text-right">
+                                    <span>{{ formatNumber(Number(item.visitors)) }}</span>
+                                    <span v-if="comparisonChange(item, 'visitors') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'visitors'))">{{ formatComparison(comparisonChange(item, 'visitors')) }}</span>
+                                </td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">
+                                    <span>{{ formatNumber(Number(item.reg)) }}</span>
+                                    <span v-if="comparisonChange(item, 'reg') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'reg'))">{{ formatComparison(comparisonChange(item, 'reg')) }}</span>
+                                </td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['users', 'visitors'])" class="p-1.5 text-right">
+                                    <span>{{ formatPercent(Number(item.cr)) }}</span>
+                                    <span v-if="comparisonChange(item, 'cr') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'cr'))">{{ formatComparison(comparisonChange(item, 'cr')) }}</span>
+                                </td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['users'])" class="p-1.5 text-right">
+                                    <span>{{ formatNumber(Number(item.dau)) }}</span>
+                                    <span v-if="comparisonChange(item, 'dau') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'dau'))">{{ formatComparison(comparisonChange(item, 'dau')) }}</span>
+                                </td>
+                                <td v-if="currentProjectHasTrackingUsageBits(['payments'])" class="p-1.5 text-right">
+                                    <span>{{ formatCurrency(item.net, {}, $page.props.teamCurrency) }}</span>
+                                    <span v-if="comparisonChange(item, 'net') !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, 'net'))">{{ formatComparison(comparisonChange(item, 'net')) }}</span>
+                                </td>
                             </tr>
                         </template>
                     </tbody>

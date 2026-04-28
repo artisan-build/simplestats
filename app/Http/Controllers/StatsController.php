@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\StatsRangeType;
 use App\Http\DataProviders\StatsIndexDataProvider;
 use App\Http\Requests\StatsFilterRequest;
 use App\Services\StatsAggregationsService;
+use App\Services\StatsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,14 +24,32 @@ class StatsController extends Controller
             $request->user()->updateSettings("selectedGroupTypes.$request->project_id.$request->group_type", $request->stats_type);
         }
 
+        $filters = StatsFilterDto::fromRequest($request);
+        $limit = $request->limit ?? 5; // must be equal to Load more in StatsOverviewGroup.vue
+
         // ->values()->toArray() makes sure the indexes are int-numeric and not string-numeric
         // (which would result in a js object). This happens cause of the reject at the end of "getAggregatedGroupedData"
-        return $statsAggregationsService->getAggregatedGroupedData(
-            StatsFilterDto::fromRequest($request),
+        $data = $statsAggregationsService->getAggregatedGroupedData(
+            $filters,
             $request->stats_type,
             $request->stats_sort,
-            $request->limit ?? 5, // must be equal to Load more in StatsOverviewGroup.vue
+            $limit,
         )->values()->toArray();
+
+        $response = [
+            'data' => $data,
+        ];
+
+        if ($filters->comparison && $filters->comparison !== '0' && $filters->rangeType !== StatsRangeType::YEAR) {
+            $response['data_previous'] = $statsAggregationsService->getAggregatedGroupedData(
+                StatsService::createPrevFiltersForComparison($filters),
+                $request->stats_type,
+                $request->stats_sort,
+                $limit,
+            )->values()->toArray();
+        }
+
+        return $response;
     }
 
     public function setSeries(Request $request)
