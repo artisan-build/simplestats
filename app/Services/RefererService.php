@@ -47,13 +47,15 @@ class RefererService
     ];
 
     /**
-     * Hard aliases applied after the main lookup. Handles short links
-     * (youtu.be, t.co), legacy domains (vkontakte.ru → vk.com),
-     * Android app package identifiers, and threads.net consolidation.
+     * Hard aliases applied after the main lookup. Handles short links,
+     * legacy domains, threads.net consolidation, and Android app package
+     * identifiers (the bulk of the package list is sourced from
+     * snowplow-referer-parser/referers.yml).
      *
      * @var array<string, string>
      */
     private array $aliases = [
+        // Short links and legacy domains
         'youtu.be' => 'youtube.com',
         't.co' => 'x.com',
         'twitter.com' => 'x.com',
@@ -61,12 +63,47 @@ class RefererService
         'threads.net' => 'threads.com',
         'l.threads.net' => 'threads.com',
         'vkontakte.ru' => 'vk.com',
+
+        // Slack web app
+        'app.slack.com' => 'slack.com',
+
+        // Android: Google apps
         'com.google.android.googlequicksearchbox' => 'google.com',
         'com.google.android.youtube' => 'youtube.com',
+        'com.google.android.gm' => 'mail.google.com',
+        'com.google.android.apps.maps' => 'maps.google.com',
+
+        // Android: Social
+        'com.facebook.katana' => 'facebook.com',
+        'com.twitter.android' => 'x.com',
+        'com.instagram.android' => 'instagram.com',
+        'com.instagram.barcelona' => 'threads.com',
         'com.linkedin.android' => 'linkedin.com',
+        'com.snapchat.android' => 'snapchat.com',
+        'com.pinterest' => 'pinterest.com',
+        'com.whatsapp' => 'whatsapp.com',
         'com.reddit.frontpage' => 'reddit.com',
         'com.laurencedawson.reddit_sync' => 'reddit.com',
+        'com.laurencedawson.reddit_sync.pro' => 'reddit.com',
+        'io.syncapps.lemmy_sync' => 'reddit.com',
+        'com.talklittle.android.tildes' => 'tildes.net',
+        'io.github.hidroh.materialistic' => 'news.ycombinator.com',
+
+        // Android: Messaging (Telegram clients and forks)
+        'org.telegram.messenger' => 'telegram.org',
         'org.telegram.messenger.web' => 'telegram.org',
+        'org.aka.messenger' => 'telegram.org',
+        'org.telegram.biftogram' => 'telegram.org',
+        'org.telegram.plus' => 'telegram.org',
+
+        // Android: Email
+        'com.aol.mobile.aolapp' => 'mail.aol.com',
+        'com.mailchimp.mailchimp' => 'mailchimp.com',
+        'com.microsoft.office.outlook' => 'outlook.com',
+        'com.yahoo.mobile.client.android.mail' => 'mail.yahoo.com',
+
+        // Android: Slack
+        'com.slack' => 'slack.com',
     ];
 
     public function __construct()

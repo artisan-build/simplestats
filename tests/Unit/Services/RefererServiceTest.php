@@ -146,18 +146,61 @@ test('aliases vkontakte.ru to vk.com and folds vk subdomains', function () {
         ->and($this->service->getTopReferer('m.vk.com'))->toBe('vk.com');
 });
 
-test('aliases android app package identifiers', function () {
+test('aliases google android app packages', function () {
+    expect($this->service->getTopReferer('com.google.android.googlequicksearchbox'))->toBe('google.com')
+        ->and($this->service->getTopReferer('com.google.android.youtube'))->toBe('youtube.com')
+        ->and($this->service->getTopReferer('com.google.android.gm'))->toBe('mail.google.com')
+        ->and($this->service->getTopReferer('com.google.android.apps.maps'))->toBe('maps.google.com');
+});
+
+test('aliases social android app packages', function () {
+    expect($this->service->getTopReferer('com.facebook.katana'))->toBe('facebook.com')
+        ->and($this->service->getTopReferer('com.twitter.android'))->toBe('x.com')
+        ->and($this->service->getTopReferer('com.instagram.android'))->toBe('instagram.com')
+        ->and($this->service->getTopReferer('com.instagram.barcelona'))->toBe('threads.com')
+        ->and($this->service->getTopReferer('com.linkedin.android'))->toBe('linkedin.com')
+        ->and($this->service->getTopReferer('com.snapchat.android'))->toBe('snapchat.com')
+        ->and($this->service->getTopReferer('com.pinterest'))->toBe('pinterest.com')
+        ->and($this->service->getTopReferer('com.whatsapp'))->toBe('whatsapp.com');
+});
+
+test('aliases reddit android clients including third party', function () {
     expect($this->service->getTopReferer('com.reddit.frontpage'))->toBe('reddit.com')
         ->and($this->service->getTopReferer('com.laurencedawson.reddit_sync'))->toBe('reddit.com')
-        ->and($this->service->getTopReferer('com.linkedin.android'))->toBe('linkedin.com')
-        ->and($this->service->getTopReferer('com.google.android.googlequicksearchbox'))->toBe('google.com')
-        ->and($this->service->getTopReferer('com.google.android.youtube'))->toBe('youtube.com')
-        ->and($this->service->getTopReferer('org.telegram.messenger.web'))->toBe('telegram.org');
+        ->and($this->service->getTopReferer('com.laurencedawson.reddit_sync.pro'))->toBe('reddit.com')
+        ->and($this->service->getTopReferer('io.syncapps.lemmy_sync'))->toBe('reddit.com');
+});
+
+test('aliases telegram messenger forks', function () {
+    expect($this->service->getTopReferer('org.telegram.messenger'))->toBe('telegram.org')
+        ->and($this->service->getTopReferer('org.telegram.messenger.web'))->toBe('telegram.org')
+        ->and($this->service->getTopReferer('org.aka.messenger'))->toBe('telegram.org')
+        ->and($this->service->getTopReferer('org.telegram.biftogram'))->toBe('telegram.org')
+        ->and($this->service->getTopReferer('org.telegram.plus'))->toBe('telegram.org');
+});
+
+test('aliases email android app packages', function () {
+    expect($this->service->getTopReferer('com.aol.mobile.aolapp'))->toBe('mail.aol.com')
+        ->and($this->service->getTopReferer('com.mailchimp.mailchimp'))->toBe('mailchimp.com')
+        ->and($this->service->getTopReferer('com.microsoft.office.outlook'))->toBe('outlook.com')
+        ->and($this->service->getTopReferer('com.yahoo.mobile.client.android.mail'))->toBe('mail.yahoo.com');
+});
+
+test('aliases slack android app and web app', function () {
+    expect($this->service->getTopReferer('com.slack'))->toBe('slack.com')
+        ->and($this->service->getTopReferer('app.slack.com'))->toBe('slack.com');
+});
+
+test('aliases niche reading clients', function () {
+    expect($this->service->getTopReferer('com.talklittle.android.tildes'))->toBe('tildes.net')
+        ->and($this->service->getTopReferer('io.github.hidroh.materialistic'))->toBe('news.ycombinator.com');
 });
 
 test('does not alias unrelated com.x.y identifiers', function () {
     expect($this->service->getTopReferer('com.king.candycrushsaga'))->toBe('com.king.candycrushsaga')
-        ->and($this->service->getTopReferer('com.slack'))->toBe('com.slack');
+        ->and($this->service->getTopReferer('com.king.candycrushsodasaga'))->toBe('com.king.candycrushsodasaga')
+        ->and($this->service->getTopReferer('com.all-url.info'))->toBe('com.all-url.info')
+        ->and($this->service->getTopReferer('org.joinmastodon.android'))->toBe('org.joinmastodon.android');
 });
 
 test('folds duckduckgo and search engine subdomains', function () {
