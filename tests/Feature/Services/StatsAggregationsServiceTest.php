@@ -429,3 +429,47 @@ it('grouped DAU uses correct date range when report runs at timezone boundary', 
         ->and($groupedDauTotal)->toBe(1)
         ->and($globalDau)->toBe($groupedDauTotal);
 });
+
+it('grouped custom events do not leak across projects in the same team', function () {
+    $otherProject = Project::factory()->create(['team_id' => $this->team->id]);
+
+    insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 3]);
+
+    $ownEventNameId = DB::table('stats_custom_event_names')->insertGetId([
+        'team_id' => $this->team->id,
+        'project_id' => $this->pid,
+        'name' => 'Event A (own project)',
+        'created_at' => '2026-03-30 12:00:00',
+        'updated_at' => '2026-03-30 12:00:00',
+    ]);
+
+    DB::table('stats_custom_event_names')->insert([
+        'team_id' => $this->team->id,
+        'project_id' => $otherProject->id,
+        'name' => 'Event B (other project)',
+        'created_at' => '2026-03-30 12:00:00',
+        'updated_at' => '2026-03-30 12:00:00',
+    ]);
+
+    DB::table('stats_custom_events')->insert([
+        'id' => Str::uuid()->toString(),
+        'team_id' => $this->team->id,
+        'project_id' => $this->pid,
+        'stats_custom_event_name_id' => $ownEventNameId,
+        'time' => '2026-03-30 12:00:00',
+        'time_utc' => '2026-03-30 12:00:00',
+    ]);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+
+    $grouped = app(StatsAggregationsService::class)
+        ->getAggregatedGroupedData($filter, 'custom_event_name', 'name', 10);
+
+    $names = $grouped->pluck('name')->all();
+
+    expect($names)->toContain('Event A (own project)')
+        ->and($names)->not->toContain('Event B (other project)');
+});

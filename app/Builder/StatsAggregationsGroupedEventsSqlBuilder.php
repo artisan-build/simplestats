@@ -28,7 +28,7 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     protected function getCTE(): string
     {
         return 'WITH stats_groups AS (
-            SELECT id as type_id, name FROM stats_custom_event_names stats WHERE :teamCondition
+            SELECT id as type_id, name FROM stats_custom_event_names stats WHERE :projectCondition
         )';
     }
 
