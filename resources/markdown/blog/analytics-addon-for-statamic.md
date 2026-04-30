@@ -14,6 +14,8 @@ author_id: 1
 
 If you run a Statamic site, you spend a lot of time in the Control Panel. You edit collections, manage entries, tweak globals. But the moment you want to know how a campaign is performing or where today's traffic came from, you switch tabs and open a different tool.
 
+![SimpleStats analytics dashboard inside the Statamic Control Panel](/images/screenshot_statamic.jpg)
+
 We did exactly that for months. Open the Control Panel, ship a content update, then jump to SimpleStats in another tab to check the numbers. Multiple times a day, every day.
 
 So we built an addon that puts the analytics directly into Statamic.

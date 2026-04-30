@@ -14,6 +14,8 @@ author_id: 1
 
 If you're running a Laravel app with Filament, you already have a great admin panel. You manage users, content, orders, whatever your app needs. But when you want to check how your traffic is doing or which campaign is actually driving revenue, you switch tabs, open a different tool, and context-switch out of your workflow.
 
+![SimpleStats analytics dashboard inside the Filament admin panel](/images/screenshot_filament.jpg)
+
 We kept doing this ourselves. Open Filament, manage the app, then open SimpleStats in another tab to check the numbers. Multiple times a day.
 
 So we built a plugin that puts everything in one place.
