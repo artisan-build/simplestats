@@ -12,16 +12,19 @@ use App\Events\ProjectDeleted;
 use App\Observers\ProjectObserver;
 use App\Services\StatsService;
 use App\ValueObjects\UserNotificationTypeObject;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 
 #[ObservedBy(ProjectObserver::class)]
-class Project extends Authenticatable implements NotifiableToUser
+class Project extends Model implements AuthenticatableContract, NotifiableToUser
 {
+    use Authenticatable;
     use HasApiPlainTokens;
     use HasFactory;
     use HasTeamScope;
