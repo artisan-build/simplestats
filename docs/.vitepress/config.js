@@ -61,6 +61,7 @@ export default defineConfig({
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
+                    {text: 'Bot Detection', link: '/bot-detection'},
                     {text: 'Contribution', link: '/contribution'},
                 ]
             },
