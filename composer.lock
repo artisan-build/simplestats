@@ -10981,7 +10981,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/simplestats-io/laravel-client",
-                "reference": "e4446c2f2a24de04826452390be101b9abd56e22"
+                "reference": "4ae5331166c086874d5afc110ab500fcebb4931c"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
