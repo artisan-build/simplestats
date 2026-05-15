@@ -6,7 +6,9 @@ use App\Helpers\FileHelper;
 use App\Models\BaseStat;
 use App\Services\RefererService;
 use App\Services\StatsService;
-use hisorange\BrowserDetect\Facade as Browser;
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Client\Browser;
+use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Str;
 use Stevebauman\Location\Facades\Location;
@@ -130,22 +132,45 @@ trait HasStatsTracking
         return Attribute::make(
             // if the user agent is set, we set the device data corresponding to it
             set: function (?string $value) {
-                if ($browser = Browser::parse(urldecode($value))) {
-                    return [
-                        'device_type' => $browser->deviceType(),
-                        'device_platform' => $browser->platformFamily(),
-                        'device_browser' => match (true) {
-                            $browser->isChrome() => 'Chrome',
-                            $browser->isFirefox() => 'Firefox',
-                            $browser->isOpera() => 'Opera',
-                            $browser->isSafari() => 'Safari',
-                            $browser->isEdge() => 'Microsoft Edge',
-                            default => null,
-                        },
-                    ];
+                if (! is_string($value) || $value === '') {
+                    return [];
                 }
 
-                return [];
+                $detector = new DeviceDetector(urldecode($value));
+                $detector->discardBotInformation();
+                $detector->parse();
+
+                // matomo returns the magic string 'UNK' for unparseable OS/client names
+                // instead of null, so normalise both to null up front.
+                $osName = $detector->getOs('name');
+                $osName = ($osName && $osName !== 'UNK') ? $osName : null;
+
+                $clientName = $detector->getClient('name');
+                $clientName = ($clientName && $clientName !== 'UNK') ? $clientName : null;
+
+                // matomo groups Microsoft Edge inside the "Internet Explorer" family for
+                // historical reasons, so we identify it by name. Everything else falls
+                // back to the browser family lookup.
+                $browserFamily = $clientName ? Browser::getBrowserFamily((string) $clientName) : null;
+
+                return [
+                    // Map matomo's granular device types to the three buckets previously
+                    // produced by hisorange so the stats_device_types lookup table stays consistent.
+                    'device_type' => match ($detector->getDevice()) {
+                        AbstractDeviceParser::DEVICE_TYPE_DESKTOP => 'Desktop',
+                        AbstractDeviceParser::DEVICE_TYPE_SMARTPHONE,
+                        AbstractDeviceParser::DEVICE_TYPE_FEATURE_PHONE,
+                        AbstractDeviceParser::DEVICE_TYPE_PHABLET => 'Mobile',
+                        AbstractDeviceParser::DEVICE_TYPE_TABLET => 'Tablet',
+                        default => null,
+                    },
+                    'device_platform' => $osName,
+                    'device_browser' => match (true) {
+                        $clientName === 'Microsoft Edge' => 'Microsoft Edge',
+                        in_array($browserFamily, ['Chrome', 'Firefox', 'Opera', 'Safari'], true) => $browserFamily,
+                        default => null,
+                    },
+                ];
             },
         );
     }

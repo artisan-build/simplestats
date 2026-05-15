@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsUserRequest;
 use App\Jobs\TrackStatsUser;
 use App\Models\StatsUser;
-use hisorange\BrowserDetect\Facade as Browser;
+use App\Services\BotDetectionService;
 use Illuminate\Http\JsonResponse;
+
 use function Illuminate\Support\defer;
 
 class StatsUserController extends Controller
@@ -19,7 +20,7 @@ class StatsUserController extends Controller
 
     public function store(StatsUserRequest $request): JsonResponse
     {
-        if (Browser::parse(urldecode($request->user_agent))->isBot()) {
+        if (BotDetectionService::isBot(urldecode($request->user_agent))) {
             // we respond, cause else the client would retry these requests again and again if they use queues...
             return response()->json(['message' => 'Bots are not allowed.']);
         }
