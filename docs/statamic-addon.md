@@ -2,6 +2,8 @@
 
 The SimpleStats Statamic addon adds a full analytics dashboard directly inside your Statamic Control Panel. Instead of switching between your site and the SimpleStats dashboard, you get visitor trends, revenue charts, conversion rates, and traffic sources right where you already work.
 
+![screenshot](https://simplestats.io/images/screenshot_statamic.jpg)
+
 ## Requirements
 
 - PHP 8.2+

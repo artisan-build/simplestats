@@ -2,6 +2,8 @@
 
 The SimpleStats Filament plugin adds a full analytics dashboard directly inside your Filament admin panel. Instead of switching between your app and the SimpleStats dashboard, you get visitor trends, revenue charts, conversion rates, and traffic sources right where you already work.
 
+![screenshot](https://simplestats.io/images/screenshot_filament.jpg)
+
 ## Requirements
 
 - PHP 8.2+
