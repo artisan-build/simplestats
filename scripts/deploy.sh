@@ -64,7 +64,15 @@ DEPLOYMENT_DIRECTORY="$RELEASES_DIRECTORY/$RELEASE_NAME"
 # --- Pull client package -----------------------------------------------------
 
 cd "$BASE_DIR/shared/packages/simplestats-io/laravel-client"
+PACKAGE_SHA_BEFORE=$(git rev-parse HEAD)
 git pull
+PACKAGE_SHA_AFTER=$(git rev-parse HEAD)
+
+if [ "$PACKAGE_SHA_BEFORE" != "$PACKAGE_SHA_AFTER" ]; then
+  printf '\nℹ️ Package updated (%s -> %s): auto-enabling FPM reload to refresh opcache for symlinked path\n' \
+    "${PACKAGE_SHA_BEFORE:0:7}" "${PACKAGE_SHA_AFTER:0:7}"
+  RESTART_FPM=true
+fi
 
 # --- Clone release ------------------------------------------------------------
 
