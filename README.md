@@ -29,8 +29,6 @@ SimpleStats is a regular Laravel application; it's build on top of Laravel 11 an
 ### Repository
 
 ```bash
-mkdir simplestats
-
 git clone git@github.com:simplestats-io/app.git ./simplestats
 
 cd simplestats
