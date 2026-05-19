@@ -79,6 +79,10 @@ php artisan migrate
 Link the storage to the public folder:
 
 ```bash
+mkdir -p storage/app/public
+```
+
+```bash
 php artisan storage:link
 ```
 
