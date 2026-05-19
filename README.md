@@ -29,8 +29,6 @@ SimpleStats is a regular Laravel application; it's build on top of Laravel 11 an
 ### Repository
 
 ```bash
-mkdir simplestats
-
 git clone git@github.com:simplestats-io/app.git ./simplestats
 
 cd simplestats
@@ -46,7 +44,9 @@ Next, install the dependencies for the self-hosted version using [Composer](http
 
 ```bash
 COMPOSER=composer.self-hosted.json composer install
+```
 
+```bash
 npm install
 ```
 
@@ -60,7 +60,9 @@ Here, you can customize the branding, including the name, logo, and background, 
 
 ```bash
 cp .env.example .env
+```
 
+```bash
 php artisan key:generate
 ```
 
