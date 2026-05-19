@@ -31,6 +31,10 @@ class TeamPolicy
      */
     public function create(User $user): bool
     {
+        if (config('app.app_type') !== 'saas') {
+            return false;
+        }
+
         return $user->allTeams()->count() < 1;
     }
 

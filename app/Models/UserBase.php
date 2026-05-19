@@ -134,7 +134,10 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     public function team(): BelongsTo
     {
         if (is_null($this->current_team_id) && $this->id) {
-            $this->switchTeam($this->personalTeam());
+            $fallback = $this->personalTeam() ?? $this->allTeams()->first();
+            if ($fallback) {
+                $this->switchTeam($fallback);
+            }
         }
 
         return $this->belongsTo(Jetstream::teamModel(), 'current_team_id');

@@ -13,7 +13,10 @@ class EnsureValidTeamOwner
         $user = $request->user();
 
         if ($user && $user->currentTeam && ! $user->currentTeam->owner) {
-            $user->switchTeam($user->personalTeam());
+            $fallback = $user->personalTeam() ?? $user->allTeams()->first(fn ($team) => $team->owner);
+            if ($fallback) {
+                $user->switchTeam($fallback);
+            }
         }
 
         return $next($request);
