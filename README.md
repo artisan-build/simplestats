@@ -44,7 +44,9 @@ Next, install the dependencies for the self-hosted version using [Composer](http
 
 ```bash
 COMPOSER=composer.self-hosted.json composer install
+```
 
+```bash
 npm install
 ```
 
