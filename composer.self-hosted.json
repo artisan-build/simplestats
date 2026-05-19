@@ -25,6 +25,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/iso3166": "^4.3",
         "maatwebsite/excel": "^3.1",
+        "matomo/device-detector": "^6.0",
         "mateusjunges/laravel-trackable-jobs": "^2.0",
         "sentry/sentry-laravel": "^4.7",
         "spatie/laravel-backup": "^9.0",
