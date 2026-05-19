@@ -94,7 +94,11 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
 
     protected function getPlanConfig()
     {
-        $plans = config('spark.billables.user.plans');
+        $plans = config('spark.billables.user.plans', []);
+
+        if (empty($plans)) {
+            return [];
+        }
 
         // local every user gets the highest plan by default :D
         return (! app()->isProduction() || in_array($this->id, config('app.plan_auto_max_users'))) ? $plans[count($plans) - 1] : $plans[0];

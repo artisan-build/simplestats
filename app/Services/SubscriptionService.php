@@ -26,7 +26,7 @@ class SubscriptionService
 
     public function getFrontendPlans(string $billableType = 'user'): Collection
     {
-        $plans = collect(config("spark.billables.$billableType")['plans']);
+        $plans = collect(config("spark.billables.$billableType.plans", []));
         $planIds = $plans->flatMap(fn ($item) => [$item['monthly_id'], $item['yearly_id']])->filter();
         $planPrices = $this->getPlanIdToPrices($planIds);
 

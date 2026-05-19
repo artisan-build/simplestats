@@ -16,14 +16,8 @@
         <meta property="og:url" content="{{ rtrim(config('app.url'), '/') }}{{ request()->getPathInfo() }}">
         <meta property="og:type" content="website">
 
-        @if ($page['component'] === 'Blog/Show')
-            <x-og-image view="og-image.blog-post" :data="[
-                'title' => $page['props']['post']['title'],
-                'author' => $page['props']['post']['author']['name'] ?? '',
-                'tags' => $page['props']['post']['tags'] ?? [],
-                'avatarUrl' => $page['props']['post']['author']['profile_photo_url'] ?? '',
-                'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
-            ]" />
+        @if ($page['component'] === 'Blog/Show' && config('app.app_type') === 'saas')
+            @include('partials.og-image-blog-post')
         @endif
 
         @php
