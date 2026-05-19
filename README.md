@@ -60,7 +60,9 @@ Here, you can customize the branding, including the name, logo, and background, 
 
 ```bash
 cp .env.example .env
+```
 
+```bash
 php artisan key:generate
 ```
 
