@@ -9,7 +9,9 @@ composer require simplestats-io/laravel-client
 ```
 
 ::: info
-At the moment, the following Laravel **versions** are supported: _8, 9, 10, 11, 12 and 13_
+At the moment, the following Laravel **versions** are supported: _11, 12 and 13_.
+
+For Laravel _8, 9 and 10_ please use the client package up to and including **version 3**.
 :::
 
 ::: tip
@@ -47,21 +49,20 @@ return [
      | SimpleStats Settings
      |--------------------------------------------------------------------------
      |
-     | SimpleStats is enabled by default. Be aware that if you turn disable it,
-     | you may lose important tracking data. In most cases, leave it enabled!
+     | SimpleStats is enabled by default. Disabling it will stop tracking your stats.
      |
      | You can provide an array of URI's that must be ignored (eg. 'api/*')
      */
 
     'enabled' => env('SIMPLESTATS_ENABLED', true),
-    
+
     'except' => [
         'telescope*',
         'horizon*',
+        'pulse*',
         'admin*',
-        'api*',
     ],
-    
+
     /*
      |--------------------------------------------------------------------------
      | SimpleStats Blocked IPs
@@ -99,12 +100,64 @@ return [
      |--------------------------------------------------------------------------
      |
      | To avoid the tracking API calls block the whole request and for fault tolerance,
-     | we highly recommend to use Laravel's built-in queue-system. Here you can define
+     | we highly recommend using Laravel's built-in queue-system. Here you can define
      | to which queue the tracking API calls should be dispatched and handled by.
      |
      */
 
     'queue' => env('SIMPLESTATS_QUEUE', 'default'),
+
+    /*
+     |--------------------------------------------------------------------------
+     | SimpleStats Log Errors
+     |--------------------------------------------------------------------------
+     |
+     | When enabled, the client will log API error responses (4xx, 5xx) to your
+     | application log on every failed attempt. Transient errors like connection
+     | timeouts are only logged on the final retry attempt.
+     |
+     */
+
+    'log_errors' => env('SIMPLESTATS_LOG_ERRORS', false),
+
+    /*
+     |--------------------------------------------------------------------------
+     | SimpleStats Middleware Groups
+     |--------------------------------------------------------------------------
+     |
+     | Which middleware group(s) the CheckTracking middleware is appended to.
+     | Pick what matches your setup:
+     |
+     | - ['web']         : classic server-rendered apps (Blade, Inertia, Livewire)
+     | - ['api']         : headless / SPA frontends that only ever hit your API
+     | - ['web', 'api']  : hybrid setups (e.g. Blade marketing + SPA dashboard)
+     |
+     */
+
+    'middleware_groups' => ['web'],
+
+    /*
+     |--------------------------------------------------------------------------
+     | SimpleStats Tracking Storage
+     |--------------------------------------------------------------------------
+     |
+     | Where to persist a visitor's attribution (UTMs, referer, entry page) so
+     | it survives across requests in the same day.
+     |
+     | - 'session' (default): stores the data in the user's session. Requires a
+     |   session cookie and works only in classic, session-bound Laravel apps.
+     |   Survives mobile IP changes because the cookie identifies the user.
+     |
+     | - 'cache': stores the data in Laravel's cache keyed by a daily hash of
+     |   IP + User-Agent. Works in stateless / headless setups (JWT, SPA on a
+     |   separate domain) where no session cookie is available. Loses precision
+     |   when the visitor's IP changes (mobile network switches), which is the
+     |   same trade-off privacy-first tools like Plausible and Fathom make to
+     |   stay cookie- and consent-free.
+     |
+     */
+
+    'tracking_storage' => 'session',
 
     /*
      |--------------------------------------------------------------------------
@@ -147,7 +200,7 @@ return [
         ],
 
         // Make sure this model implements the TrackablePerson or
-        // the TrackablePersonWithCondition contract
+        // the TrackablePersonWithCondition Contract
         'user' => [
             'model' => User::class,
         ],

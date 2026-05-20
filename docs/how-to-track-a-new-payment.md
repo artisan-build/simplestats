@@ -102,7 +102,7 @@ You can safely [skip](#with-condition) this section if that's never the case for
 
 #### Adding a Visitor Hash to Your Payment Model
 
-When a new visitor visits your site, our package creates a [Visitor Hash](how-to-track-a-new-visitor.md#the-visitor-hash) and stores it in `session('simplestats.visitor_hash')`, you can use it to associate a payment with a visitor, which allows us to calculate the [ROI](https://en.wikipedia.org/wiki/Return_on_investment) of your marketing campaigns.
+When a new visitor visits your site, our package creates a [Visitor Hash](how-to-track-a-new-visitor.md#the-visitor-hash) and exposes it via `SimplestatsClient::getVisitorHash()`. You can use it to associate a payment with a visitor, which allows us to calculate the [ROI](https://en.wikipedia.org/wiki/Return_on_investment) of your marketing campaigns.
 
 We recommend adding a `visitor_hash` column to your payment model. You can do that by publishing the following migration:
 
@@ -111,13 +111,15 @@ php artisan vendor:publish --tag=simplestats-client-migrations
 php artisan migrate
 ```
 
-Now make sure to add the hash when creating a new payment: 
+Now make sure to add the hash when creating a new payment:
 
 ```php
-Transation::create([
+use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
+
+Transaction::create([
     ...
     // add the visitor_hash to the models fillable array
-    'visitor_hash' => session('simplestats.visitor_hash')
+    'visitor_hash' => SimplestatsClient::getVisitorHash(),
 ]);
 ```
 

@@ -10,7 +10,7 @@ class CustomEventTrackingService
 {
     public function trackGetStartedClick(): void
     {
-        $visitorHash = session('simplestats.visitor_hash');
+        $visitorHash = SimplestatsClient::getVisitorHash();
 
         if ($visitorHash) {
             SimplestatsClient::trackCustomEvent(

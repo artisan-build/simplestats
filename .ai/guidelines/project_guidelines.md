@@ -23,7 +23,7 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 
 2. **Laravel Client Package** (`packages/simplestats-io/laravel-client`): Composer package installed by customers
    - Located at `composer require simplestats-io/laravel-client`
-   - Supports Laravel 8, 9, 10, 11, and 12
+   - Supports Laravel 11, 12, and 13
    - Sends tracking data to the SimpleStats API
 
 ### Tech Stack

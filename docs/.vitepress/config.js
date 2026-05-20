@@ -57,11 +57,12 @@ export default defineConfig({
                 text: 'Advanced',
                 items: [
                     {text: 'Queue', link: '/queue'},
-                    {text: 'Troubleshooting', link: '/troubleshooting'},
+                    {text: 'Headless, SPA & Stateless', link: '/headless-stateless-spa'},
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
                     {text: 'Bot Detection', link: '/bot-detection'},
+                    {text: 'Troubleshooting', link: '/troubleshooting'},
                     {text: 'Contribution', link: '/contribution'},
                 ]
             },
