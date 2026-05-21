@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Helpers\AppHelper;
 use App\Validators\StatsVisitorValidator;
 use Illuminate\Foundation\Http\FormRequest;
-use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 
 class StatsVisitorRequest extends FormRequest
 {
@@ -18,10 +18,11 @@ class StatsVisitorRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge((new StatsVisitorValidator())->prepareForValidation($this->all()));
+        $this->merge((new StatsVisitorValidator)->prepareForValidation($this->all()));
 
         if (! $this->has('visitor_hash')) {
-            $this->merge(['visitor_hash' => SimplestatsClient::createVisitorHash($this->time, $this->ip ?? '', $this->user_agent ?? ''),
+            $this->merge([
+                'visitor_hash' => AppHelper::createVisitorHash($this->time, $this->ip ?? '', $this->user_agent ?? ''),
             ]);
         }
     }
@@ -31,6 +32,6 @@ class StatsVisitorRequest extends FormRequest
      */
     public function rules(): array
     {
-        return (new StatsVisitorValidator())->rules();
+        return (new StatsVisitorValidator)->rules();
     }
 }

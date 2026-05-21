@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
@@ -41,5 +41,19 @@ class AppHelper
         $connectionName = config('database.default');
 
         return config("database.connections.$connectionName.driver");
+    }
+
+    /**
+     * A unique hash that identifies a visit on a given day.
+     *
+     * Must stay identical to SimpleStatsIo\LaravelClient\SimplestatsClient::createVisitorHash
+     * so v2 clients (server-side fallback) and v3+ clients (payload) produce the same hash.
+     */
+    public static function createVisitorHash(?string $time, ?string $ip, ?string $userAgent): string
+    {
+        $time = CarbonImmutable::parse($time);
+        $visitorHash = hash('sha256', $ip.$userAgent.$time->format('Y-m-d').config('app.key'));
+
+        return substr($visitorHash, 0, 32);
     }
 }
