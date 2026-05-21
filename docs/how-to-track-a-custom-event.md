@@ -46,7 +46,7 @@ SimplestatsClient::trackCustomEvent(
 
 ### With a Visitor
 
-If no user is available (e.g. a visitor clicking a CTA before signing up), you can pass a `Visitor` object using the visitor hash stored in the session:
+If no user is available (e.g. a visitor clicking a CTA before signing up), you can pass a `Visitor` object using the current visitor hash:
 
 ```php
 use SimpleStatsIo\LaravelClient\Visitor;
@@ -54,7 +54,7 @@ use SimpleStatsIo\LaravelClient\Visitor;
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'CTA Clicked',
-    user: new Visitor(session('simplestats.visitor_hash')),
+    user: new Visitor(SimplestatsClient::getVisitorHash()),
 );
 ```
 

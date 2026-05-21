@@ -208,7 +208,7 @@ _Core parameters:_
 |-------------------|----------------------|----------------------------------------------------------------------------------------|
 | **id**            | _mixed_ `required`   | The payment id.                                                                        |
 | **stats_user_id** | _integer_ `required` | The user id associated with the payment.                                               |
-| **visitor_hash**  | _string_ `nullable`  | The visitor hash from the session (`simplestats.visitor_hash`).                         |
+| **visitor_hash**  | _string_ `nullable`  | The visitor hash.                                                                       |
 | **time**          | _string_ `required`  | The time when the payment happened.<br/>Format: `Y-m-d H:i:s P`, before or equal `now` |
 | **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                    |
 | **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                     |
@@ -248,7 +248,7 @@ _Core parameters:_
 | **id**            | _mixed_ `required`   | A unique identifier for this event.                                                    |
 | **name**          | _string_ `required`  | The event name (e.g. "Button Clicked"). Events with the same name are grouped.         |
 | **stats_user_id** | _mixed_ `nullable`   | The user id associated with the event.                                                 |
-| **visitor_hash**  | _string_ `nullable`  | The visitor hash from the session (`simplestats.visitor_hash`).                         |
+| **visitor_hash**  | _string_ `nullable`  | The visitor hash.                                                                       |
 | **time**          | _string_ `required`  | The time when the event happened.<br/>Format: `Y-m-d H:i:s P`, before or equal `now`   |
 
 **Payload**

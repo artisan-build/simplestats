@@ -16,11 +16,12 @@ After updating the **API token** in your `.env` file, refresh your configuration
 If you're using OPCache, changes to PHP files may require restarting PHP-FPM:  
 `sudo service php-fpm reload`
 
-## Delete Your Session
+## Re-trigger a Visit
 
-_SimpleStats_ tracks you as a new [Unique Visitor](how-to-track-a-new-visitor.html) only if you don't have an existing session. To test this, clear your session cookies:
-- Open **Browser Console** > **Application** > **Cookies**.
-- Remove the session cookies, then revisit your site to trigger a new visit.
+_SimpleStats_ tracks you as a new [Unique Visitor](how-to-track-a-new-visitor.html) only once per day. How to force a fresh visit depends on your configured `tracking_storage` (see [installation](installation.html#configuration)):
+
+- **`session`** (default): clear your session cookies via **Browser Console** > **Application** > **Cookies**, then revisit your site.
+- **`cache`** (headless / SPA setups, see [Headless, SPA & Stateless](headless-stateless-spa.html)): the visit is identified by a daily hash of IP + User-Agent, so a new tab or incognito window won't trigger a new visit. Either drop the entry for your visitor hash from the cache, run `php artisan cache:clear`, or wait for the next day.
 
 ## Fix Your Queue
 
