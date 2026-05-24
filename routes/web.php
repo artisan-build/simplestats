@@ -4,8 +4,8 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\CustomStatsRangePresetController;
 use App\Http\Controllers\DataImportController;
-use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\DocsController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\ImprintController;
@@ -17,6 +17,7 @@ use App\Http\Controllers\StatsController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserNotificationController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UserSettingsController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -76,6 +77,13 @@ Route::resource('timezones', TimezoneController::class)->only(['index']);
 // Tracking
 Route::prefix('tracking')->name('tracking.')->group(function () {
     Route::post('get-started-click', [TrackingController::class, 'getStartedClick'])->name('get-started-click');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+])->group(function () {
+    Route::get('/user/profile', [UserProfileController::class, 'show'])->name('profile.show');
 });
 
 Route::middleware([
