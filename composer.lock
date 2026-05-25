@@ -4031,16 +4031,16 @@
         },
         {
             "name": "laravel-lang/actions",
-            "version": "1.12.2",
+            "version": "1.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/actions.git",
-                "reference": "ef8847493e1c6a15e87667d64430e5312527b5e7"
+                "reference": "a260c73d9fb8e21d0a03d1363a322750e7e6584b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/actions/zipball/ef8847493e1c6a15e87667d64430e5312527b5e7",
-                "reference": "ef8847493e1c6a15e87667d64430e5312527b5e7",
+                "url": "https://api.github.com/repos/Laravel-Lang/actions/zipball/a260c73d9fb8e21d0a03d1363a322750e7e6584b",
+                "reference": "a260c73d9fb8e21d0a03d1363a322750e7e6584b",
                 "shasum": ""
             },
             "require": {
@@ -4092,7 +4092,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/actions/issues",
-                "source": "https://github.com/Laravel-Lang/actions/tree/1.12.2"
+                "source": "https://github.com/Laravel-Lang/actions/tree/1.13.1"
             },
             "funding": [
                 {
@@ -4104,20 +4104,20 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-04-05T13:52:03+00:00"
+            "time": "2026-04-05T13:52:53+00:00"
         },
         {
             "name": "laravel-lang/attributes",
-            "version": "2.15.6",
+            "version": "2.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/attributes.git",
-                "reference": "5e1806802af893b9ede26210be1ff90efd0697f1"
+                "reference": "82482c9a89448be60c4f4e66343c6fbdf2c11c50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/attributes/zipball/5e1806802af893b9ede26210be1ff90efd0697f1",
-                "reference": "5e1806802af893b9ede26210be1ff90efd0697f1",
+                "url": "https://api.github.com/repos/Laravel-Lang/attributes/zipball/82482c9a89448be60c4f4e66343c6fbdf2c11c50",
+                "reference": "82482c9a89448be60c4f4e66343c6fbdf2c11c50",
                 "shasum": ""
             },
             "require": {
@@ -4171,7 +4171,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/attributes/issues",
-                "source": "https://github.com/Laravel-Lang/attributes/tree/2.15.6"
+                "source": "https://github.com/Laravel-Lang/attributes/tree/2.16.1"
             },
             "funding": [
                 {
@@ -4183,7 +4183,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-05-09T16:34:18+00:00"
+            "time": "2026-05-09T16:35:13+00:00"
         },
         {
             "name": "laravel-lang/common",
@@ -4359,16 +4359,16 @@
         },
         {
             "name": "laravel-lang/http-statuses",
-            "version": "3.12.1",
+            "version": "3.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/http-statuses.git",
-                "reference": "4f1cfeb3df179bdcd1c40bb57cc5c7f2a11278b4"
+                "reference": "6b563bfb5aa634494597ae559856650f9b68d027"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/http-statuses/zipball/4f1cfeb3df179bdcd1c40bb57cc5c7f2a11278b4",
-                "reference": "4f1cfeb3df179bdcd1c40bb57cc5c7f2a11278b4",
+                "url": "https://api.github.com/repos/Laravel-Lang/http-statuses/zipball/6b563bfb5aa634494597ae559856650f9b68d027",
+                "reference": "6b563bfb5aa634494597ae559856650f9b68d027",
                 "shasum": ""
             },
             "require": {
@@ -4420,7 +4420,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/http-statuses/issues",
-                "source": "https://github.com/Laravel-Lang/http-statuses/tree/3.12.1"
+                "source": "https://github.com/Laravel-Lang/http-statuses/tree/3.13.1"
             },
             "funding": [
                 {
@@ -4432,7 +4432,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-02-05T13:53:17+00:00"
+            "time": "2026-05-23T20:17:47+00:00"
         },
         {
             "name": "laravel-lang/json-fallback",
@@ -4497,16 +4497,16 @@
         },
         {
             "name": "laravel-lang/lang",
-            "version": "15.29.5",
+            "version": "15.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/lang.git",
-                "reference": "9a1d194c9a72b8ee70a3515d8415e9645fe531fe"
+                "reference": "477f7e950a24eaf072aacf90a59e70250a96aa91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/9a1d194c9a72b8ee70a3515d8415e9645fe531fe",
-                "reference": "9a1d194c9a72b8ee70a3515d8415e9645fe531fe",
+                "url": "https://api.github.com/repos/Laravel-Lang/lang/zipball/477f7e950a24eaf072aacf90a59e70250a96aa91",
+                "reference": "477f7e950a24eaf072aacf90a59e70250a96aa91",
                 "shasum": ""
             },
             "require": {
@@ -4567,7 +4567,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-05-09T16:34:39+00:00"
+            "time": "2026-05-21T17:09:48+00:00"
         },
         {
             "name": "laravel-lang/locale-list",
@@ -4805,7 +4805,7 @@
         },
         {
             "name": "laravel-lang/moonshine",
-            "version": "1.9.0",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/moonshine.git",
@@ -4867,7 +4867,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/moonshine/issues",
-                "source": "https://github.com/Laravel-Lang/moonshine/tree/1.9.0"
+                "source": "https://github.com/Laravel-Lang/moonshine/tree/1.9.1"
             },
             "funding": [
                 {
@@ -5316,16 +5316,16 @@
         },
         {
             "name": "laravel-lang/starter-kits",
-            "version": "1.13.3",
+            "version": "1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Laravel-Lang/starter-kits.git",
-                "reference": "feb23f94cca310734372eb09eab4cf96baf2ef0f"
+                "reference": "f1a6183f633b31f69f2e678b54fe258d724e660a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Laravel-Lang/starter-kits/zipball/feb23f94cca310734372eb09eab4cf96baf2ef0f",
-                "reference": "feb23f94cca310734372eb09eab4cf96baf2ef0f",
+                "url": "https://api.github.com/repos/Laravel-Lang/starter-kits/zipball/f1a6183f633b31f69f2e678b54fe258d724e660a",
+                "reference": "f1a6183f633b31f69f2e678b54fe258d724e660a",
                 "shasum": ""
             },
             "require": {
@@ -5377,7 +5377,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Laravel-Lang/starter-kits/issues",
-                "source": "https://github.com/Laravel-Lang/starter-kits/tree/1.13.3"
+                "source": "https://github.com/Laravel-Lang/starter-kits/tree/1.14.0"
             },
             "funding": [
                 {
@@ -5389,7 +5389,7 @@
                     "type": "yoomoney"
                 }
             ],
-            "time": "2026-05-18T13:39:52+00:00"
+            "time": "2026-05-24T19:22:58+00:00"
         },
         {
             "name": "laravel/cashier-paddle",
@@ -11133,23 +11133,23 @@
             "dist": {
                 "type": "path",
                 "url": "packages/simplestats-io/laravel-client",
-                "reference": "366c1dd3fbc8ad0b8e0dc6e262065b1c08714070"
+                "reference": "fca9a1c2320f040c4cbfdd4de0e832c125211d03"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
-                "illuminate/contracts": "^8.70 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
-                "illuminate/database": "^8.70 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
-                "illuminate/http": "^8.70 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
-                "illuminate/support": "^8.70 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/contracts": "^11.0 || ^12.0 || ^13.0",
+                "illuminate/database": "^11.0 || ^12.0 || ^13.0",
+                "illuminate/http": "^11.0 || ^12.0 || ^13.0",
+                "illuminate/support": "^11.0 || ^12.0 || ^13.0",
                 "matomo/device-detector": "^6.0",
-                "php": "^8.0 || ^7.4",
+                "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.12.0 || ^1.13.0"
             },
             "require-dev": {
-                "nunomaduro/larastan": "^1.0 || ^2.0.1 || ^3.1",
-                "orchestra/testbench": "^6.27 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
-                "pestphp/pest": "^1.22 || ^2.0 || ^3.7 || ^4.4",
-                "pestphp/pest-plugin-laravel": "^1.22 || ^2.0 || ^3.1 || ^4.0",
+                "nunomaduro/larastan": "^2.0.1 || ^3.1",
+                "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+                "pestphp/pest": "^3.7 || ^4.4",
+                "pestphp/pest-plugin-laravel": "^3.1 || ^4.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^1.0 || ^2.0",
                 "phpstan/phpstan-phpunit": "^1.0 || ^2.0",
