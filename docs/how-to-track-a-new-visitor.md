@@ -15,3 +15,11 @@ keeping their data **safe** and **private**.
 The `visitor_hash` enables seamless visitor identification across different sessions and provides insights into how your **marketing campaigns** and UTM parameters drive traffic.
 
 With this, you gain a clear picture of which marketing efforts contribute most **effectively** to your site's growth, all while respecting _user privacy_.
+
+::: tip
+This privacy-first hashing approach is similar to what other analytics tools like **Plausible** and **Fathom Analytics** use. The key difference is that SimpleStats tracks entirely server-side, making it invisible to ad blockers.
+:::
+
+::: info
+Want to understand how visitor data flows into registrations and revenue? Check out [From Visitor to User to Revenue](from-visitor-to-user-to-revenue.md).
+:::
