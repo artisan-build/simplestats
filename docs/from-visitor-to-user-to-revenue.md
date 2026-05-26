@@ -26,6 +26,10 @@ When the user later makes a [payment](how-to-track-a-new-payment.md), the revenu
 
 This means: _"The Google spring-sale campaign generated $49 in revenue from User #42."_
 
+### Payments Without Registration
+
+Not every app requires user accounts. For e-commerce sites with guest checkout, you can skip the registration step entirely and [associate payments directly with a visitor](how-to-track-a-new-payment.md#payment-tracking-for-visitors). SimpleStats will attribute the revenue to the visitor's original tracking codes, giving you campaign ROI even without user registrations.
+
 ## Full-Funnel Example
 
 | Step | What happens | What SimpleStats records |
