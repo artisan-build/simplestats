@@ -17,7 +17,6 @@ const switchToTeam = (team) => {
     router.visit(route('current-team.update'), {
         method: 'put',
         data: {team_id: team.id},
-        preserveState: true,
         onFinish: () => emit('switched-team', team),
     });
 };
