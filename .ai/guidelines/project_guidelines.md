@@ -201,6 +201,15 @@ The dashboard displays these key performance indicators:
 - Team members have roles: Administrator, Editor, Viewer
 - Stats can be viewed per-project or aggregated at team level
 
+### Team Switching Redirect
+
+`CurrentTeamController::update()` handles the redirect after a team switch. URLs with team-scoped IDs must not redirect back to the same path, because the ID belongs to the old team. Current rules:
+
+- `/teams/{id}...` redirects to `/teams/{newId}...`
+- `/setup/...` redirects to `RouteServiceProvider::HOME`
+- `/{entity}/{id}...` (default) strips the ID and redirects to `/{entity}`
+- All other paths redirect back unchanged (safe, since `HasTeamScope` re-filters automatically)
+
 ### Multi-Currency
 
 - Each team selects a default currency

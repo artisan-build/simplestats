@@ -28,6 +28,8 @@ class CurrentTeamController extends Controller
             $path = '/teams/'.$team->id.$matches[1];
         } elseif (str_starts_with($path, '/setup')) {
             $path = RouteServiceProvider::HOME;
+        } elseif (preg_match('#^(/[^/]+)/\d+#', $path, $matches)) {
+            $path = $matches[1];
         }
 
         return redirect($path)->banner('The team has been switched.');
