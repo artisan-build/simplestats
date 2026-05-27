@@ -45,6 +45,8 @@ class ResetEventsCounter extends Command
                     'events_count_monthly' => 0,
                     'events_reset_at' => $tzNow,
                 ]);
+
+                $team->projects()->update(['events_count_monthly' => 0]);
             }
         });
     }

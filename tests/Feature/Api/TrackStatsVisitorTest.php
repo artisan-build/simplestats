@@ -141,3 +141,14 @@ test('events_count_monthly is incremented on team via StatsObserver', function (
     $team->refresh();
     expect($team->events_count_monthly)->toBeGreaterThan($initialCount);
 });
+
+test('events_count_monthly is incremented on project via StatsObserver', function () {
+    $project = $this->project;
+    $initialCount = $project->events_count_monthly;
+
+    $payload = validVisitorPayload();
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    $project->refresh();
+    expect($project->events_count_monthly)->toBeGreaterThan($initialCount);
+});

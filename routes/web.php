@@ -14,6 +14,7 @@ use App\Http\Controllers\SetupInstallController;
 use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\SetupTeamController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserNotificationController;
@@ -103,6 +104,7 @@ Route::middleware([
     Route::resource('setup/installation', SetupInstallController::class)->only(['index'])->names('setup.installation');
 
     Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
+    Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');

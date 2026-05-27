@@ -35,6 +35,7 @@ class StatsObserver
 
         $stat->team->increment('events_count_monthly');
         $stat->team->increment('events_count_overall');
+        $stat->project->increment('events_count_monthly');
 
         if ($stat instanceof StatsUser) {
             $stat->project->userAlertNotifications()->with('user')
