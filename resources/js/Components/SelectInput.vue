@@ -87,7 +87,9 @@ watch(open, (val) => {
                     {{ selected.length ? selected.map(o => o[labelBy]).join(', ') : 'Select...' }}
                   </template>
                   <template v-else>
-                    {{ selected?.[labelBy] ?? 'Select...' }}
+                    <slot name="selected" :option="selected">
+                      {{ selected?.[labelBy] ?? 'Select...' }}
+                    </slot>
                   </template>
                 </span>
                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -105,7 +107,9 @@ watch(open, (val) => {
                 >
                     <li :class="[active ? 'bg-indigo-500 text-white' : 'text-gray-900 dark:text-dark-200', 'relative cursor-default select-none py-2 pl-3 pr-9']">
                         <span :class="[isSelected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                          {{ option[labelBy] }}
+                          <slot name="option" :option="option">
+                            {{ option[labelBy] }}
+                          </slot>
                         </span>
                         <span v-if="isSelected && multiple" :class="[active ? 'text-white' : 'text-indigo-500', 'absolute inset-y-0 right-0 flex items-center pr-4']">
                           <CheckIcon class="h-5 w-5" aria-hidden="true" />

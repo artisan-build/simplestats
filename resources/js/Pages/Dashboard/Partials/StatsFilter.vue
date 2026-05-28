@@ -10,6 +10,7 @@ import MenuToggler from "@/Components/MenuToggler.vue";
 import TextInput from "@/Components/TextInput.vue";
 import ToggleButton from "@/Components/ToggleButton.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
+import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -124,7 +125,20 @@ const showPresetModal = ref(false);
                                         class="mt-1 block w-40 dark:!bg-dark-800"
                                         :options="teamStats.projects"
                                         @change="filterChanged"
-                                    />
+                                    >
+                                        <template #selected="{ option }">
+                                            <span class="flex items-center gap-2">
+                                                <ProjectFavicon :domain="option?.domain" />
+                                                <span class="truncate">{{ option?.name ?? 'Select...' }}</span>
+                                            </span>
+                                        </template>
+                                        <template #option="{ option }">
+                                            <span class="flex items-center gap-2">
+                                                <ProjectFavicon :domain="option.domain" />
+                                                <span class="truncate">{{ option.name }}</span>
+                                            </span>
+                                        </template>
+                                    </SelectInput>
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-x-2 items-center">
