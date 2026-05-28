@@ -6,6 +6,10 @@ const props = defineProps({
         type: String,
         default: null,
     },
+    size: {
+        type: String,
+        default: 'size-5',
+    },
 });
 
 const hasError = ref(false);
@@ -18,14 +22,14 @@ const faviconSrc = computed(() => {
 <template>
     <img
         v-if="!hasError"
-        class="w-4 h-4 inline-block shrink-0"
+        :class="[size, 'inline-block shrink-0']"
         :src="faviconSrc"
         :alt="domain"
         @error="hasError = true"
     >
     <img
         v-else
-        class="w-4 h-4 inline-block shrink-0 dark:invert dark:brightness-90"
+        :class="[size, 'inline-block shrink-0 dark:invert dark:brightness-90']"
         src="/icons/unknown.svg"
         alt="Unknown"
     >

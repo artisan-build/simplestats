@@ -66,7 +66,7 @@ const regenerateApiToken = () => {
     <AppLayout title="Project">
         <template #header>
             <span class="inline-flex items-center gap-2">
-                <ProjectFavicon :domain="project.domain" />
+                <ProjectFavicon :domain="project.domain" size="size-7" />
                 {{ project.name }}
             </span>
         </template>

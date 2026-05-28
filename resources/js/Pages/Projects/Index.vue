@@ -121,7 +121,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                                 <tr class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300" v-for="project in projects.data" :key="project.id">
                                     <td class="border-t">
                                         <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('projects.show', project.id)">
-                                            <ProjectFavicon :domain="project.domain" class="mr-2" />
+                                            <ProjectFavicon :domain="project.domain" size="size-7" class="mr-2" />
                                             {{ project.name }}
                                         </Link>
                                     </td>
