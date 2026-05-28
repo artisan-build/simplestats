@@ -10,6 +10,7 @@ import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import {Link, useForm} from "@inertiajs/vue3";
 import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
+import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 
 defineProps({
     projects: Object,
@@ -19,6 +20,7 @@ defineProps({
 
 const createProjectForm = useForm({
     name: '',
+    domain: '',
     usage: 0,
 });
 
@@ -53,7 +55,7 @@ const appName = import.meta.env.VITE_APP_NAME;
 
                     <template #form>
                         <div class="col-span-6 sm:col-span-4">
-                            <InputLabel for="name" value="Project name" />
+                            <InputLabel for="name" value="Name" />
                             <TextInput
                                 id="name"
                                 v-model="createProjectForm.name"
@@ -63,6 +65,18 @@ const appName = import.meta.env.VITE_APP_NAME;
                                 :disabled="! permissions.canCreateProject"
                             />
                             <InputError :message="createProjectForm.errors.name" class="mt-2" />
+                        </div>
+                        <div class="col-span-6 sm:col-span-4">
+                            <InputLabel for="domain" value="Domain" />
+                            <TextInput
+                                id="domain"
+                                v-model="createProjectForm.domain"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="example.com"
+                                :disabled="! permissions.canCreateProject"
+                            />
+                            <InputError :message="createProjectForm.errors.domain" class="mt-2" />
                         </div>
                         <div class="col-span-6">
                             <InputLabel for="usage" :value="`What would you like to track?`" />
@@ -107,6 +121,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                                 <tr class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300" v-for="project in projects.data" :key="project.id">
                                     <td class="border-t">
                                         <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('projects.show', project.id)">
+                                            <ProjectFavicon :domain="project.domain" class="mr-2" />
                                             {{ project.name }}
                                         </Link>
                                     </td>

@@ -6,6 +6,7 @@ import DangerButton from "@/Components/DangerButton.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {truncate} from "@/Helpers/StringHelpers.js";
+import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 import {
     ArrowPathIcon,
     ArrowUturnLeftIcon,
@@ -118,7 +119,10 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         </div>
     </td>
     <td class="border-t px-2 py-1 focus:text-indigo-500">
-        {{ truncate(dataImport.project.name, { length: 15 }) }}
+        <span class="inline-flex items-center gap-1">
+            <ProjectFavicon :domain="dataImport.project.domain" />
+            {{ truncate(dataImport.project.name, { length: 15 }) }}
+        </span>
     </td>
 <!--    <td class="border-t px-2 py-1 focus:text-indigo-500">-->
 <!--        {{ dataImport.type }}-->

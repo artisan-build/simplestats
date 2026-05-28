@@ -16,6 +16,7 @@ const props = defineProps({
 
 const form = useForm({
     name: props.project.name,
+    domain: props.project.domain,
     usage: props.project.usage,
 });
 
@@ -42,7 +43,7 @@ const appName = import.meta.env.VITE_APP_NAME;
         <template #form>
             <!-- Project Name -->
             <div class="col-span-6 sm:col-span-4">
-                <InputLabel for="name" value="Project name" />
+                <InputLabel for="name" value="Name" />
 
                 <TextInput
                     id="name"
@@ -53,6 +54,21 @@ const appName = import.meta.env.VITE_APP_NAME;
                 />
 
                 <InputError :message="form.errors.name" class="mt-2" />
+            </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="domain" value="Domain" />
+
+                <TextInput
+                    id="domain"
+                    v-model="form.domain"
+                    type="text"
+                    class="mt-1 block w-full"
+                    placeholder="example.com"
+                    :disabled="! permissions.canUpdateProject"
+                />
+
+                <InputError :message="form.errors.domain" class="mt-2" />
             </div>
 
             <div class="col-span-6">

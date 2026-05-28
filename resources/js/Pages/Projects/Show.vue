@@ -13,6 +13,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import {ref, watchEffect} from "vue";
 import {useForm, usePage} from "@inertiajs/vue3";
+import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 
 defineProps({
     project: Object,
@@ -64,7 +65,10 @@ const regenerateApiToken = () => {
 <template>
     <AppLayout title="Project">
         <template #header>
-            {{ project.name }}
+            <span class="inline-flex items-center gap-2">
+                <ProjectFavicon :domain="project.domain" />
+                {{ project.name }}
+            </span>
         </template>
 
         <div>

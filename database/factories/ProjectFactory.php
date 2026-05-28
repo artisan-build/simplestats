@@ -22,6 +22,7 @@ class ProjectFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
+            'domain' => $this->faker->domainName(),
             'team_id' => Team::inRandomOrder()->first()->id,
         ];
     }

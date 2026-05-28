@@ -13,6 +13,7 @@ const props = defineProps({
 
 const form = useForm({
     name: props.project.name || '',
+    domain: props.project.domain || '',
     usage: props.project.usage || 0,
 });
 
@@ -38,6 +39,20 @@ const action = (props.project.name) ? 'Update Project' : 'Create Project';
                     placeholder="My great SaaS"
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
+            </div>
+
+            <div class="mb-6">
+                <label for="domain" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Domain
+                </label>
+                <TextInput
+                    id="domain"
+                    v-model="form.domain"
+                    type="text"
+                    class="block w-full dark:bg-dark-950"
+                    placeholder="example.com"
+                />
+                <InputError :message="form.errors.domain" class="mt-2" />
             </div>
 
             <div class="mb-6">

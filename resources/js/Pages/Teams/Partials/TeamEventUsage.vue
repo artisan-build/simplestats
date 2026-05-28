@@ -3,6 +3,7 @@ import ActionSection from '@/Components/ActionSection.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import {usePage} from "@inertiajs/vue3";
 import {format} from 'date-fns';
+import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 
 const props = defineProps({
     team: Object,
@@ -65,7 +66,10 @@ const getProjectPercentage = (projectCount) => {
                             <div class="space-y-3">
                                 <div v-for="project in projects" :key="project.id">
                                     <div class="flex justify-between text-sm">
-                                        <div>{{ project.name }}</div>
+                                        <div class="flex items-center gap-1.5">
+                                            <ProjectFavicon :domain="project.domain" />
+                                            {{ project.name }}
+                                        </div>
                                         <div>
                                             {{ project.events_count_monthly.toLocaleString() }} events
                                             <span class="text-gray-500 dark:text-dark-500">({{ getProjectPercentage(project.events_count_monthly) }}%)</span>

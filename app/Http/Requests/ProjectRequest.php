@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Services\StatsService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class ProjectRequest extends FormRequest
 {
@@ -16,12 +17,29 @@ class ProjectRequest extends FormRequest
     }
 
     /**
+     * Normalize the domain to a bare host (strip scheme, path, query).
+     */
+    protected function prepareForValidation(): void
+    {
+        if (! $this->filled('domain')) {
+            return;
+        }
+
+        $input = trim($this->input('domain'));
+        $candidate = Str::contains($input, '://') ? $input : 'https://'.$input;
+        $host = parse_url($candidate, PHP_URL_HOST);
+
+        $this->merge(['domain' => $host ?: $input]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'min:1', 'max:30'],
+            'domain' => ['required', 'string', 'max:255', 'regex:/^(localhost|([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,})$/i'],
             'usage' => ['required', 'integer', 'min:1', 'max:'.StatsService::getTrackingUsageBitsCount()],
         ];
     }

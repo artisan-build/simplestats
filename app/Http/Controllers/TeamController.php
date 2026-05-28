@@ -28,7 +28,7 @@ class TeamController extends Controller
                 'canUpdateTeamMembers' => Gate::check('updateTeamMember', $team),
             ],
             'projectsEventUsage' => $team->projects()
-                ->select('id', 'name', 'events_count_monthly')
+                ->select('id', 'name', 'domain', 'events_count_monthly')
                 ->orderByDesc('events_count_monthly')
                 ->get(),
         ]);
