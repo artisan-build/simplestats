@@ -5,6 +5,9 @@
  *
  * @see https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/
  */
+
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
+
 return [
 
     // @see https://docs.sentry.io/product/sentry-basics/dsn-explainer/
@@ -36,7 +39,12 @@ return [
     'send_default_pii' => env('SENTRY_SEND_DEFAULT_PII', false),
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore-exceptions
-    // 'ignore_exceptions' => [],
+    'ignore_exceptions' => [
+        // Tampering attempts against Livewire/Filament locked properties (e.g. probing the
+        // admin login's 2FA flow). The locked-property guard already rejects these, so the
+        // exception is the protection working as intended, not a bug we need to report.
+        CannotUpdateLockedPropertyException::class,
+    ],
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore-transactions
     'ignore_transactions' => [

@@ -50,6 +50,15 @@ createInertiaApp({
                     app,
                     dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
                     environment: import.meta.env.VITE_APP_ENV,
+                    // Drop noise from the third-party Tawk.to chat widget. These errors
+                    // originate in its bundled scripts (twk-chunk-*), not in our code, and
+                    // can never be fixed on our side, so they should not consume quota.
+                    ignoreErrors: [
+                        'BufferLoader: XHR error for undefined',
+                        /\$_Tawk/i,
+                        'i18next is not a function',
+                    ],
+                    denyUrls: [/tawk\.to/i, /twk-chunk/i],
                 });
             });
         }
