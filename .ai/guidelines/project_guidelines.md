@@ -106,11 +106,13 @@ This is stored as a bitmask per project (`TRACKING_USAGE_BITS_*`).
 ### Tracking Codes (UTM Parameters)
 
 The client package tracks these dimensions:
-- `source`: utm_source, ref, referer, referrer
+- `source`: utm_source, ref
 - `medium`: utm_medium, adGroup, adGroupId
 - `campaign`: utm_campaign
 - `term`: utm_term
 - `content`: utm_content
+
+The `tracking_codes` config is the source of truth for the `utm_*`/source params only. The `referer` is the real document referrer and is handled separately by `CheckTracking::getReferer()`: it comes from the HTTP `Referer` header (or an explicitly forwarded `document.referrer` via the `document_referer` param / `X-Document-Referer` header for headless/SPA setups). URL query params like `?referer=`/`?referrer=` are not tracked at all. `ref` stays a `source` alias because it is often a campaign tag (e.g. `?ref=newsletter`); the app backend still maps a domain-like `source` (one containing a dot) to a referer for backwards compatibility with older clients. Neither the client nor the backend ever records the app's own domain as a source or referer.
 
 Payments are **always** associated with the user's registration tracking codes for campaign ROI analysis.
 

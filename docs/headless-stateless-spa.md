@@ -69,6 +69,11 @@ Place this at the top of your SPA's root component, so it runs on the very first
 ```js
 const params = new URLSearchParams(location.search)
 
+const referrer = document.referrer;
+
+// this check drops your own frontend as a referrer on in-app navigation, reloads, or expired sessions, only an external referrer is forwarded.
+const documentReferer = referrer && new URL(referrer).hostname !== location.hostname ? referrer : '' ;
+
 fetch('https://api.your-app.com/track-init', {
   method: 'GET',
   credentials: 'include',
@@ -78,7 +83,7 @@ fetch('https://api.your-app.com/track-init', {
     'X-Utm-Campaign': params.get('utm_campaign') ?? '',
     'X-Utm-Term': params.get('utm_term') ?? '',
     'X-Utm-Content': params.get('utm_content') ?? '',
-    'X-Document-Referer': document.referrer,
+    'X-Document-Referer': documentReferer,
     'X-Page': location.pathname,
   },
 })

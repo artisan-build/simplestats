@@ -10,7 +10,7 @@ We already set some classical defaults for you, but you're free to completely ch
 //config/simplestats-client.php
 
     'tracking_codes' => [
-        'source' => ['utm_source', 'ref', 'referer', 'referrer'],
+        'source' => ['utm_source', 'ref'],
         'medium' => ['utm_medium', 'adGroup', 'adGroupId'],
         'campaign' => ['utm_campaign'],
         'term' => ['utm_term'],

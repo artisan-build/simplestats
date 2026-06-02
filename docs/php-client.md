@@ -71,8 +71,8 @@ $trackingData = TrackingData::fromGlobals(appUrl: 'https://yourapp.com');
 
 This automatically extracts:
 - UTM parameters (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`)
-- Alternative source params (`ref`, `referer`, `referrer`)
-- HTTP Referer header (excluding self-referrals)
+- Alternative source param (`ref`)
+- HTTP Referer header (excluding exact-host self-referrals)
 - Client IP (with Cloudflare/proxy header support)
 - Entry page path
 

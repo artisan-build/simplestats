@@ -4,12 +4,14 @@ namespace App\Concerns;
 
 use App\Helpers\FileHelper;
 use App\Models\BaseStat;
+use App\Models\Project;
 use App\Services\RefererService;
 use App\Services\StatsService;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 use Stevebauman\Location\Facades\Location;
 
@@ -103,14 +105,19 @@ trait HasStatsTracking
     {
         return Attribute::make(
             set: function (?string $value) {
-                // if source contains a dot, we assume it's a referrer.
-                // compatibility where referers where sent via source
-                if (str($value)->contains('.')) {
-                    // this is not working: $this->track_referer = $value;
-                    return $this->setReferer($value);
-                } else {
-                    return ['track_source' => $value];
+                // never record the project's own domain as a source (compatibility to
+                // older client versions that don't strip it yet).
+                if ($this->isOwnProjectDomain($value)) {
+                    return ['track_source' => null];
                 }
+
+                // if source contains a dot, we assume it's a referer (older clients
+                // sent referers via the source field).
+                if (str($value)->contains('.')) {
+                    return $this->setReferer($value);
+                }
+
+                return ['track_source' => $value];
             },
         );
     }
@@ -124,7 +131,74 @@ trait HasStatsTracking
 
         $value = app(RefererService::class)->getTopReferer($value);
 
+        // never record the project's own domain as a referer either (e.g. an older
+        // client that did not yet strip in-app navigation from the document referrer).
+        if ($this->isOwnProjectDomain($value)) {
+            return ['track_referer' => null];
+        }
+
         return ['track_referer' => $value];
+    }
+
+    /**
+     * Whether the given source/referer value points at the project's own domain.
+     * Both sides are reduced to a bare host and compared exactly, so a subdomain
+     * (asdf.my-app.com) stays a legitimate referer and is kept.
+     */
+    protected function isOwnProjectDomain(?string $value): bool
+    {
+        if ($host = $this->normalizeHost($value)) {
+            // An empty own host can never equal the (non-empty) value host, so the
+            // exact comparison also covers the "no project domain" case.
+            return $host === $this->normalizeHost($this->resolveProjectDomain());
+        }
+
+        return false;
+    }
+
+    /**
+     * Reduce a url/host/source value to its bare, lowercased host without a leading
+     * "www.". Returns an empty string when no host can be derived.
+     *
+     * Kept in sync with the client-side CheckTracking::extractHost() (laravel-client)
+     * and TrackingData::extractHost() (php-client); update all three together.
+     */
+    protected function normalizeHost(?string $value): string
+    {
+        if (empty($value)) {
+            return '';
+        }
+
+        $host = parse_url($value, PHP_URL_HOST)
+            ?? parse_url('https://'.$value, PHP_URL_HOST)
+            ?? '';
+
+        return (string) str($host)->lower()->replaceFirst('www.', '');
+    }
+
+    /**
+     * Resolve the current project's configured domain. During HTTP ingest the
+     * authenticated "user" is the Project itself, so we read its domain without a
+     * query. Other contexts (seeders, ad-hoc creates) fall back to a lookup by the
+     * stat's project_id.
+     */
+    protected function resolveProjectDomain(): ?string
+    {
+        $user = auth()->user();
+
+        if ($user instanceof Project) {
+            return $user->domain;
+        }
+
+        $projectId = $this->project_id ?? Context::get('project_id');
+
+        if (! $projectId) {
+            return null;
+        }
+
+        return Project::withoutGlobalScope('team')
+            ->whereKey($projectId)
+            ->value('domain');
     }
 
     public function userAgent(): Attribute
