@@ -8,6 +8,7 @@ use Laravel\Fortify\Features as FortifyFeatures;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User;
 use Mockery;
+use SimpleStatsIo\LaravelClient\SimplestatsClient as SimplestatsClientClass;
 
 use function Pest\Laravel\get;
 
@@ -37,6 +38,50 @@ test('users get redirected correctly', function (string $provider) {
     [Providers::twitterOAuth2()],
 ]);
 
+test('registering via socialite tracks the registration without double counting the login', function () {
+    if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
+        $this->markTestSkipped('Registration support is not enabled.');
+    }
+
+    $socialiteProvider = Providers::google();
+
+    if (! Providers::enabled($socialiteProvider)) {
+        $this->markTestSkipped("Registration support with the $socialiteProvider provider is not enabled.");
+    }
+
+    // SSO users are created already-verified, which lets the package's UserObserver track the
+    // registration automatically. Since the user is not signed in yet when the condition is met,
+    // the observer must NOT add a login (the subsequent Login event records it) so #250 stays fixed.
+    $this->partialMock(SimplestatsClientClass::class)
+        ->shouldReceive('trackUser')
+        ->once()
+        ->withArgs(fn ($user, $addLogin = null) => $user->email === 'janedoe@example.com' && $addLogin === false);
+
+    $user = (new User)
+        ->map([
+            'id' => 'abcdefgh',
+            'nickname' => 'Jane',
+            'name' => 'Jane Doe',
+            'email' => 'janedoe@example.com',
+            'avatar' => null,
+            'avatar_original' => null,
+        ])
+        ->setToken('user-token')
+        ->setRefreshToken('refresh-token')
+        ->setExpiresIn(3600);
+
+    $provider = Mockery::mock('Laravel\\Socialite\\Two\\'.$socialiteProvider.'Provider');
+    $provider->shouldReceive('user')->once()->andReturn($user);
+
+    Socialite::shouldReceive('driver')->once()->with($socialiteProvider)->andReturn($provider);
+
+    Session::put('socialstream.previous_url', route('register'));
+
+    get("/oauth/$socialiteProvider/callback");
+
+    $this->assertAuthenticated();
+});
+
 test('users can register using socialite providers', function (string $socialiteProvider) {
     if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
         $this->markTestSkipped('Registration support is not enabled.');
@@ -46,7 +91,7 @@ test('users can register using socialite providers', function (string $socialite
         $this->markTestSkipped("Registration support with the $socialiteProvider provider is not enabled.");
     }
 
-    $user = (new User())
+    $user = (new User)
         ->map([
             'id' => 'abcdefgh',
             'nickname' => 'Jane',

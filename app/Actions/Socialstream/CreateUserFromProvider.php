@@ -36,12 +36,14 @@ class CreateUserFromProvider implements CreatesUserFromProvider
             'sso' => true,
         ]);
 
-        // here we do not want to trigger SimpleStatsIo\LaravelClient\Observers\UserObserver
-        User::withoutEvents(function () use ($user) {
-            if ($user->markEmailAsVerified()) {
-                event(new Verified($user));
-            }
-        });
+        // Marking the email as verified here lets the package's UserObserver::updated track the
+        // registration automatically, within this OAuth callback request, so it carries the full
+        // tracking payload (IP, page, UTMs) from the live visitor session. The observer recognises
+        // that the user is not signed in yet and does not add a login, so the following Login event
+        // remains the single source for the login (avoids the double login from #250).
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
 
         if (Socialstream::hasProviderAvatarsFeature() && $providerUser->getAvatar()) {
             $user->setProfilePhotoFromUrl($providerUser->getAvatar());
