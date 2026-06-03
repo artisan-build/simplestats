@@ -7,6 +7,8 @@
  */
 
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
+use Sentry\Event;
+use Sentry\EventHint;
 
 return [
 
@@ -45,6 +47,23 @@ return [
         // exception is the protection working as intended, not a bug we need to report.
         CannotUpdateLockedPropertyException::class,
     ],
+
+    // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#before-send
+    'before_send' => function (Event $event, ?EventHint $hint): ?Event {
+        $exception = $hint?->exception;
+
+        // Malformed/tampered Livewire payloads against the Filament notifications component send
+        // the hydrated collection items as ints instead of arrays, which makes Filament's
+        // Notifications\Collection::fromLivewire() throw a TypeError. This is the same class of
+        // probing as CannotUpdateLockedPropertyException (handled, no users affected), so we drop
+        // it rather than report it. The validation gap is in Filament vendor code we don't control.
+        if ($exception instanceof TypeError
+            && str_contains($exception->getMessage(), 'Filament\Notifications\Collection')) {
+            return null;
+        }
+
+        return $event;
+    },
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore-transactions
     'ignore_transactions' => [
