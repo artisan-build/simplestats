@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\StatsCustomEventController;
+use App\Http\Controllers\Api\StatsCustomPropertyController;
 use App\Http\Controllers\Api\StatsLoginController;
 use App\Http\Controllers\Api\StatsPaymentController;
 use App\Http\Controllers\Api\StatsReadController;
@@ -14,6 +15,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::apiResource('stats-user', StatsUserController::class)->only(['store']);
     Route::apiResource('stats-payment', StatsPaymentController::class)->only(['store']);
     Route::apiResource('stats-custom-event', StatsCustomEventController::class)->only(['store']);
+    Route::apiResource('stats-custom-properties', StatsCustomPropertyController::class)->only(['store']);
 
     Route::get('stats', [StatsReadController::class, 'index']);
     Route::get('stats/grouped', [StatsReadController::class, 'grouped']);

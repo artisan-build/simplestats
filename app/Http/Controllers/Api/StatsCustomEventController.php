@@ -7,6 +7,7 @@ use App\Http\Requests\Api\StatsCustomEventRequest;
 use App\Jobs\TrackStatsCustomEvent;
 use App\Models\StatsCustomEvent;
 use Illuminate\Http\JsonResponse;
+
 use function Illuminate\Support\defer;
 
 class StatsCustomEventController extends Controller
@@ -22,6 +23,9 @@ class StatsCustomEventController extends Controller
             input: $request->validated(),
         ));
 
-        return response()->json(['message' => 'Stats Custom Event Request accepted.']);
+        return response()->json([
+            'message' => 'Stats Custom Event Request accepted.',
+            'id' => $request->validated('id'),
+        ]);
     }
 }

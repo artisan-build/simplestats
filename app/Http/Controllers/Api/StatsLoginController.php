@@ -7,6 +7,7 @@ use App\Http\Requests\Api\StatsLoginRequest;
 use App\Jobs\TrackStatsLogin;
 use App\Models\StatsLogin;
 use Illuminate\Http\JsonResponse;
+
 use function Illuminate\Support\defer;
 
 class StatsLoginController extends Controller
@@ -22,6 +23,9 @@ class StatsLoginController extends Controller
             input: $request->validated(),
         ));
 
-        return response()->json(['message' => 'Stats Login Request accepted.']);
+        return response()->json([
+            'message' => 'Stats Login Request accepted.',
+            'id' => $request->validated('stats_user_id'),
+        ]);
     }
 }

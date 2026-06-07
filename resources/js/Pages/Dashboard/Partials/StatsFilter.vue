@@ -51,6 +51,7 @@ const filterChanged = (event) => {
                 form[item.type] = 0;
             });
         }
+        form.property_value = 0;
     }
 
     if (form.preset && form.preset !== 'custom') {
@@ -86,7 +87,7 @@ const isCustomRange = () => {
 };
 
 function isStatsGroupSet() {
-    return Object.values(props.statsGroups).some(statsGroup =>
+    return Boolean(props.filters.property_value) || Object.values(props.statsGroups).some(statsGroup =>
         statsGroup.some(group => props.filters[group.type])
     );
 }
@@ -122,7 +123,7 @@ const showPresetModal = ref(false);
                                     <SelectInput
                                         id="project_id"
                                         v-model="form.project_id"
-                                        class="mt-1 block w-40 dark:!bg-dark-800"
+                                        class="mt-1 block w-48 dark:!bg-dark-800"
                                         :options="teamStats.projects"
                                         @change="filterChanged"
                                     >
@@ -272,6 +273,14 @@ const showPresetModal = ref(false);
                         </div>
                     </template>
                 </template>
+                <div v-if="filters.property_value" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
+                    {{ statsGroupNames.property_value_title ?? 'Property' }} is <strong>{{ statsGroupNames.property_value }}</strong>
+                    <button class="ml-1 hover:text-red-700" @click="(e) => { form.property_value = 0; filterChanged(e); }">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
         <CustomPresetModal

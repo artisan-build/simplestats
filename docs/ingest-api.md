@@ -88,6 +88,7 @@ _Core parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+| **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"subscription": "pro"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
 :::
 
 **Payload**
@@ -105,9 +106,14 @@ _Core parameters:_
 
 ```json
 {
-    "message": "Request accepted."
+    "message": "Stats Visitor Request accepted.",
+    "visitor_hash": "9a7c4f2e8b1d6a3c5e0f7b2d4a8c1e6f"
 }
 ```
+
+::: tip
+If no `visitor_hash` is given, it gets generated from `time`, `ip` and `user_agent`. The returned `visitor_hash` can be used to reference this visitor in other endpoints (payments, custom events, custom properties).
+:::
 
 ### Create User
 
@@ -144,6 +150,7 @@ _Core parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+| **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"subscription": "pro"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
 :::
 
 **Payload**
@@ -160,7 +167,8 @@ _Core parameters:_
 
 ```json
 {
-    "message": "Request accepted."
+    "message": "Stats User Request accepted.",
+    "id": 1
 }
 ```
 
@@ -190,7 +198,8 @@ _Core parameters:_
 
 ```json
 {
-    "message": "Request accepted."
+    "message": "Stats Login Request accepted.",
+    "id": 1
 }
 ```
 
@@ -231,7 +240,8 @@ _Core parameters:_
 
 ```json
 {
-    "message": "Request accepted."
+    "message": "Stats Payment Request accepted.",
+    "id": "1"
 }
 ```
 
@@ -258,7 +268,7 @@ _Core parameters:_
     "id": "evt-550e8400-e29b-41d4-a716-446655440000",
     "name": "Plan Upgraded",
     "stats_user_id": "1",
-    "time": "2024-04-04"
+    "time": "2025-04-04"
 }
 ```
 
@@ -266,6 +276,43 @@ _Core parameters:_
 
 ```json
 {
-    "message": "Stats Custom Event Request accepted."
+    "message": "Stats Custom Event Request accepted.",
+    "id": "evt-550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+### Create Custom Property
+
+**HTTP Request**
+
+`POST /api/v1/stats-custom-properties`
+
+**Parameters**
+
+| Key               | Type                 | Description                                                                                                                  |
+|-------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------|
+| **properties**    | _object_ `required`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"subscription": "pro"}`). Values must be scalar. Max 50 names per request. |
+| **stats_user_id** | _mixed_ `nullable`   | The user id to attach the properties to. Required without `visitor_hash`.                                                    |
+| **visitor_hash**  | _string_ `nullable`  | The visitor hash to attach the properties to. Required without `stats_user_id`.                                              |
+| **time**          | _string_ `required`  | The time the properties were current.<br/>Format: `Y-m-d H:i:s P`, before or equal `now`                                     |
+
+**Payload**
+
+```json
+{
+    "stats_user_id": "1",
+    "properties": {
+        "subscription": "pro"
+    },
+    "time": "2026-04-04"
+}
+```
+
+**Response**
+
+```json
+{
+    "message": "Stats Custom Property Request accepted.",
+    "id": "1"
 }
 ```

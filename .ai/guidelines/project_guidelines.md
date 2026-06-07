@@ -163,12 +163,27 @@ Located in `packages/simplestats-io/laravel-client/`:
 - **UserLoginListener**: Tracks login events
 - **SendApiRequest Job**: Queued API calls with retry logic
 
+### SimplestatsClient Stays Orchestrator-Only
+
+`SimplestatsClient` must remain a thin orchestrator: it builds payloads, fires events, and dispatches the queued API calls. Any non-trivial logic (e.g. invoking the customer's custom properties resolvers) belongs in small dedicated service classes under `src/Services/` (see `CustomPropertiesResolver`).
+
+### Keep Client Config in Sync (Three Places)
+
+Whenever the client package config changes (a new key, a changed default, an updated comment block), the same change must be applied in **all three** of these places, they are not generated from one another:
+
+1. `packages/simplestats-io/laravel-client/config/simplestats-client.php` (the actual published config)
+2. `packages/simplestats-io/laravel-client/README.md` (the config block in the README)
+3. `docs/installation.md` (the full config listing under "Configuration")
+
+Keep the comment blocks and defaults identical across all three so customers see the same thing wherever they look.
+
 ### Contracts for Customer Implementation
 
 - `TrackablePerson`: Basic user tracking
 - `TrackablePersonWithCondition`: Conditional user tracking (e.g., after email verification)
 - `TrackablePayment`: Basic payment tracking
 - `TrackablePaymentWithCondition`: Conditional payment tracking (e.g., after status = completed)
+- `ResolvesUserCustomProperties` / `ResolvesVisitorCustomProperties`: Custom properties resolvers, registered in the `custom_properties_resolvers` config. Resolver failures must never break the host app (report + skip), a misconfigured resolver class (missing contract) is treated the same way.
 
 ### Visitor Hash
 
@@ -236,6 +251,17 @@ This matters because the app runs in two different contexts:
 - **When the target team differs from the user's `current_team_id`**: Always set `Context::add('team_id', $targetTeamId)` BEFORE `auth()->setUser($user)`. Relying on the auth fallback (`current_team_id`) is unsafe whenever a user belongs to multiple teams: the user may have switched their selected team in the frontend, so `current_team_id` is not guaranteed to match the team owning the data being processed (e.g. an invited collaborator on someone else's team). Required in: scheduled reports, queued data imports, alert notifications, and anywhere a user is acting on data of a team they did not create. Without this, `HasTeamScope` filters by the wrong `team_id` and queries silently return empty results. Reference fixes: `ProjectReportNotification::toMail()`, `ProcessDataImportJob::handle()`.
 - **`HasTeamScope` trait**: Uses `AppHelper::getTeamId()` for global scopes and saving hooks. When team ID is null, the scope is skipped (no filtering).
 - **`AppHelper::ensureTeamTimezone()`**: Relies on `auth()->user()->team->timezone`. Only called when a team is resolved, so auth must be set beforehand.
+
+#### Team Timezone (`ensureTeamTimezone`)
+
+Dashboards aggregate in the team's local timezone, so `AppHelper::ensureTeamTimezone()` switches the timezone **globally** for the running process (`Config::set('app.timezone', ...)` plus `date_default_timezone_set(...)`). It is triggered from `HasTeamScope` (global scope and saving hooks), which means touching almost any team-scoped model can flip the default timezone mid-request, and in queue workers the switched timezone persists into everything that runs afterwards.
+
+Consequences when working with datetimes:
+
+- `now()` and parsing of timezone-naive datetime strings are context-dependent. Never assume the default timezone is UTC.
+- The stats `time` columns are stored timezone-naive. When a stored time must be compared or written independently of team context (e.g. the out-of-order guard in `HasCustomProperties::recordCustomProperties()`), store and compare explicitly in UTC: write via `$time->utc()->format('Y-m-d H:i:s')`, read via `CarbonImmutable::parse($value, 'UTC')`.
+- Do **not** add Eloquent `datetime` casts to these naive time columns. The cast re-parses the stored string in the *currently active* default timezone, so the same row reads as a different instant depending on which team context ran last (this caused an exactly-one-timezone-offset bug in the custom properties time guard).
+- Incoming API `time` values are normalised to UTC by `BaseStatsValidator::prepareForValidation()` before they reach jobs.
 
 #### Key files
 

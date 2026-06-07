@@ -15,6 +15,10 @@ beforeEach(function () {
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
+
+    // TestUserSeeder leaves the test user on the web guard; forget it so the
+    // Bearer token (the project) wins over Sanctum's stateful session check.
+    auth()->forgetGuards();
 });
 
 function validPayload(array $overrides = []): array
@@ -35,14 +39,19 @@ function setProjectContext($project): void
 }
 
 test('store custom event with auth and required fields returns 200', function () {
+    $payload = validPayload();
+
     $response = $this->postJson(
         '/api/v1/stats-custom-event',
-        validPayload(),
+        $payload,
         apiHeaders($this->token),
     );
 
     $response->assertOk()
-        ->assertJson(['message' => 'Stats Custom Event Request accepted.']);
+        ->assertJson([
+            'message' => 'Stats Custom Event Request accepted.',
+            'id' => $payload['id'],
+        ]);
 });
 
 test('store custom event without auth returns 401', function () {
@@ -156,6 +165,9 @@ test('duplicate id performs updateOrCreate update', function () {
 });
 
 test('counter increments per user', function () {
+    // the StatsUser factory needs the auth/team context (BaseStat time mutator)
+    setProjectContext($this->project);
+
     $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
 
     $payload1 = validPayload([

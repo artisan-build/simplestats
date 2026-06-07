@@ -8,6 +8,8 @@ use App\Enums\StatsRangeType;
 use App\Models\CustomStatsRangePreset;
 use App\Models\Project;
 use App\Models\StatsCustomEventName;
+use App\Models\StatsCustomPropertyName;
+use App\Models\StatsCustomPropertyValue;
 use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
@@ -23,6 +25,7 @@ use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
 use App\Rules\ValidTeamModel;
 use App\Services\StatsService;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -54,12 +57,19 @@ class StatsFilterRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             ...$this->sharedFilterRules(),
+            // grouping by a custom property ("property" + property_name_id)
+            // exists only on the dashboard, the public API keeps the static types
+            'stats_type' => [
+                'sometimes',
+                'string',
+                Rule::in([...StatsService::getStatsTypesFlat()->toArray(), 'property']),
+            ],
             'project_id' => [
                 'sometimes',
                 'bail',
@@ -69,7 +79,7 @@ class StatsFilterRequest extends FormRequest
             'group_type' => [
                 'sometimes',
                 'string',
-                Rule::in(array_keys(StatsService::getStatsTypes()->toArray())),
+                Rule::in([...array_keys(StatsService::getStatsTypes()->toArray()), 'property']),
             ],
             'preset' => [
                 'sometimes',
@@ -191,6 +201,18 @@ class StatsFilterRequest extends FormRequest
                 'bail',
                 'integer',
                 new ValidTeamModel(StatsCustomEventName::class),
+            ],
+            'property_name_id' => [
+                'sometimes',
+                'bail',
+                'integer',
+                new ValidTeamModel(StatsCustomPropertyName::class),
+            ],
+            'property_value' => [
+                'sometimes',
+                'bail',
+                'integer',
+                new ValidTeamModel(StatsCustomPropertyValue::class),
             ],
             'stats_type' => [
                 'sometimes',

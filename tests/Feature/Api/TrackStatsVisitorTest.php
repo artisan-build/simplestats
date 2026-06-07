@@ -12,6 +12,10 @@ beforeEach(function () {
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
+
+    // TestUserSeeder leaves the test user on the web guard; forget it so the
+    // Bearer token (the project) wins over Sanctum's stateful session check.
+    auth()->forgetGuards();
 });
 
 function validVisitorPayload(array $overrides = []): array
@@ -39,7 +43,8 @@ test('store visitor with auth and required fields returns 200', function () {
     );
 
     $response->assertOk()
-        ->assertJson(['message' => 'Stats Visitor Request accepted.']);
+        ->assertJson(['message' => 'Stats Visitor Request accepted.'])
+        ->assertJsonPath('visitor_hash', fn (mixed $hash) => is_string($hash) && $hash !== '');
 });
 
 test('store visitor without auth returns 401', function () {
@@ -76,7 +81,9 @@ test('visitor is created via firstOrCreate using visitor_hash', function () {
         'visitor_hash' => 'test-hash-'.fake()->uuid(),
     ]);
 
-    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))
+        ->assertOk()
+        ->assertJson(['visitor_hash' => $payload['visitor_hash']]);
 
     setVisitorProjectContext($this->project);
 

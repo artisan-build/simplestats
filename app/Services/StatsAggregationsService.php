@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Builder\Drivers\AggregationBuilderType;
 use App\Builder\StatsAggregationsGroupedEventsSqlBuilder;
+use App\Builder\StatsAggregationsGroupedPropertiesSqlBuilder;
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
 use App\Builder\StatsAggregationsSqlBuilder;
 use App\DTOs\StatsFilterDto;
@@ -13,6 +14,8 @@ use App\Helpers\AppHelper;
 use App\Models\BaseStat;
 use App\Models\Project;
 use App\Models\StatsAggregation;
+use App\Models\StatsCustomPropertyName;
+use App\Models\StatsCustomPropertyValue;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
@@ -96,13 +99,7 @@ class StatsAggregationsService
         $sql = strtr($sql, $this->formatFilter($filterConditions));
         // echo nl2br($sql);die;
 
-        $dataArray = array_map(function ($item) {
-            if (isset($item['net'])) {
-                $item['net'] = round($item['net'], 2);
-            }
-
-            return $item;
-        }, $this->getDataArray($sql));
+        $dataArray = $this->roundNetValues($this->getDataArray($sql));
 
         // hack to fix rtl stats grouped page names
         foreach ($dataArray as &$item) {
@@ -118,6 +115,61 @@ class StatsAggregationsService
                 && (! isset($item['visitors']) || $item['visitors'] == 0)
                 && (! isset($item['triggered']) || $item['triggered'] == 0);
         })->take($limit);
+    }
+
+    /**
+     * Group stats by the values of a single custom property (e.g. "subscription"
+     * bucketed into free / pro / enterprise). Runs as a standalone path next to
+     * the static tracking dimensions because the grouping key is dynamic and the
+     * data lives in the polymorphic stats_custom_properties pivot.
+     *
+     * Property lookups are project-scoped: a project view uses only that
+     * project's name id, the "All projects" view includes every same-named id
+     * of the team and merges the buckets by value string.
+     */
+    public function getAggregatedPropertyData(StatsFilterDto $filters, int $propertyNameId, string $statsSort = 'reg', int $limit = 9): Collection
+    {
+        $referenceName = StatsCustomPropertyName::find($propertyNameId);
+
+        if ($referenceName === null) {
+            return collect();
+        }
+
+        $nameIds = StatsCustomPropertyService::equivalentNameIds($referenceName, $filters->projectId);
+
+        if ($nameIds->isEmpty()) {
+            return collect();
+        }
+
+        $sql = (new StatsAggregationsGroupedPropertiesSqlBuilder(
+            $statsSort, app(AggregationBuilderType::class)
+        ))->build();
+
+        $filterConditions = $this->getFilterConditions($filters);
+        $filterConditions['propertyNameIds'] = $nameIds->implode(',');
+
+        $sql = strtr($sql, $this->formatFilter($filterConditions));
+
+        $dataArray = $this->roundNetValues($this->getDataArray($sql));
+
+        return collect($dataArray)->reject(function ($item) {
+            return $item['reg'] == 0 && $item['visitors'] == 0 && $item['net'] == 0;
+        })->take($limit);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function roundNetValues(array $rows): array
+    {
+        return array_map(function ($item) {
+            if (isset($item['net'])) {
+                $item['net'] = round($item['net'], 2);
+            }
+
+            return $item;
+        }, $rows);
     }
 
     private function formatAggregatedData(Collection $aggregatedData): Collection
@@ -235,39 +287,86 @@ class StatsAggregationsService
             $trackingCondition .= " AND stats.stats_page_entry_id $pageEntryCondition ";
         }
 
-        $conditions['trackingConditions'] = '';
-        $conditions['trackingFilterForEvents'] = '';
-        $conditions['trackingFilterForEventsCe'] = '';
-        $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.project_id = stats.project_id';
-        $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.project_id = stats.project_id';
+        $conditions['trackingCondition'] = '';
+        $conditions['trackingConditionForEvents'] = '';
+        $conditions['trackingConditionForEventsCe'] = '';
+
+        // Conditions on the user/visitor entity tables (aliased su/sv). They are
+        // appended to the RIGHT JOINs of the standard grouped queries and used
+        // standalone by the grouped properties query.
+        $userEntityConditions = '';
+        $visitorEntityConditions = '';
 
         if (! empty($trackingCondition)) {
-            $conditions['trackingConditions'] = $trackingCondition;
-            $conditions['trackingUserJoinConditions'] .= ' '.str_replace('stats.', 'su.', $trackingCondition);
-            $conditions['trackingVisitorJoinConditions'] .= ' '.str_replace('stats.', 'sv.', $trackingCondition);
+            $conditions['trackingCondition'] = $trackingCondition;
+            $userEntityConditions .= ' '.str_replace('stats.', 'su.', $trackingCondition);
+            $visitorEntityConditions .= ' '.str_replace('stats.', 'sv.', $trackingCondition);
 
             $visitorCondition = str_replace('stats.', 'sv.', $trackingCondition);
-            $conditions['trackingFilterForEvents'] = " AND stats.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = stats.project_id{$visitorCondition}) ";
-            $conditions['trackingFilterForEventsCe'] = " AND ce.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = ce.project_id{$visitorCondition}) ";
+            $conditions['trackingConditionForEvents'] = " AND stats.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = stats.project_id{$visitorCondition}) ";
+            $conditions['trackingConditionForEventsCe'] = " AND ce.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = ce.project_id{$visitorCondition}) ";
         }
 
-        $conditions['eventFilterEventName'] = '';
-        $conditions['eventFilterEventNameCe'] = '';
-        $conditions['eventFilterUser'] = '';
-        $conditions['eventFilterVisitor'] = '';
+        $conditions['eventConditionEventName'] = '';
+        $conditions['eventConditionEventNameCe'] = '';
+        $conditions['eventConditionGroup'] = '';
+        $conditions['eventConditionUser'] = '';
+        $conditions['eventConditionVisitor'] = '';
+        $conditions['propertyConditionUser'] = '';
+        $conditions['propertyConditionVisitor'] = '';
+        $conditions['propertyConditionForEvents'] = '';
+        $conditions['propertyConditionForEventsCe'] = '';
+        $conditions['propertyConditionForVisitors'] = '';
+
+        // Custom property filter: narrow users/visitors to the entities bound to
+        // the selected property value. Lookups are project-scoped, so the chosen
+        // value id is expanded to every equivalent (same property name + value
+        // string) id of the team, which makes the filter work on the "All
+        // projects" view too.
+        if (! empty($filters->propertyValue)) {
+            $referenceValue = StatsCustomPropertyValue::with('name')->find($filters->propertyValue);
+
+            if ($referenceValue !== null) {
+                $propertyValueIds = StatsCustomPropertyService::equivalentValueIds($referenceValue)->implode(',');
+
+                $userPropertyCondition = fn (string $id, string $table) => "{$id} IN (SELECT sp.propertyable_id FROM stats_custom_properties sp WHERE sp.propertyable_type = 'stats_user' AND sp.stats_custom_property_value_id IN ({$propertyValueIds}) AND sp.project_id = {$table}.project_id)";
+                $visitorPropertyCondition = fn (string $id, string $table) => "CAST({$id} AS varchar) IN (SELECT sp.propertyable_id FROM stats_custom_properties sp WHERE sp.propertyable_type = 'stats_visitor' AND sp.stats_custom_property_value_id IN ({$propertyValueIds}) AND sp.project_id = {$table}.project_id)";
+
+                $conditions['propertyConditionUser'] = ' AND '.$userPropertyCondition('stats.id', 'stats').' ';
+                $conditions['propertyConditionVisitor'] = ' AND '.$visitorPropertyCondition('stats.id', 'stats').' ';
+
+                $userEntityConditions .= ' AND '.$userPropertyCondition('su.id', 'su').' ';
+                $visitorEntityConditions .= ' AND '.$visitorPropertyCondition('sv.id', 'sv').' ';
+
+                // events grouped query: only events triggered by an entity bound to the value
+                $conditions['propertyConditionForEvents'] = ' AND ('.$userPropertyCondition('stats.stats_user_id', 'stats').' OR '.$visitorPropertyCondition('stats.stats_visitor_id', 'stats').') ';
+                $conditions['propertyConditionForEventsCe'] = str_replace('stats.', 'ce.', $conditions['propertyConditionForEvents']);
+                $conditions['propertyConditionForVisitors'] = ' AND '.$visitorPropertyCondition('stats.id', 'stats').' ';
+            }
+        }
 
         if (! empty($filters->customEventName)) {
             $eventId = $filters->customEventName;
 
-            $conditions['eventFilterEventName'] = " AND stats.stats_custom_event_name_id = {$eventId} ";
-            $conditions['eventFilterEventNameCe'] = " AND ce.stats_custom_event_name_id = {$eventId} ";
+            $conditions['eventConditionEventName'] = " AND stats.stats_custom_event_name_id = {$eventId} ";
+            $conditions['eventConditionEventNameCe'] = " AND ce.stats_custom_event_name_id = {$eventId} ";
+            // events grouped query: narrow the buckets to the selected event itself
+            $conditions['eventConditionGroup'] = " AND stats.id = {$eventId} ";
 
-            $conditions['eventFilterUser'] = " AND stats.id IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = stats.project_id AND ce_f.stats_user_id IS NOT NULL) ";
-            $conditions['eventFilterVisitor'] = " AND stats.id IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = stats.project_id AND ce_f.stats_visitor_id IS NOT NULL) ";
+            $userEventCondition = fn (string $id, string $table) => "{$id} IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = {$table}.project_id AND ce_f.stats_user_id IS NOT NULL)";
+            $visitorEventCondition = fn (string $id, string $table) => "{$id} IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = {$table}.project_id AND ce_f.stats_visitor_id IS NOT NULL)";
 
-            $conditions['trackingUserJoinConditions'] .= " AND su.id IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = su.project_id AND ce_f.stats_user_id IS NOT NULL) ";
-            $conditions['trackingVisitorJoinConditions'] .= " AND sv.id IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = sv.project_id AND ce_f.stats_visitor_id IS NOT NULL) ";
+            $conditions['eventConditionUser'] = ' AND '.$userEventCondition('stats.id', 'stats').' ';
+            $conditions['eventConditionVisitor'] = ' AND '.$visitorEventCondition('stats.id', 'stats').' ';
+
+            $userEntityConditions .= ' AND '.$userEventCondition('su.id', 'su').' ';
+            $visitorEntityConditions .= ' AND '.$visitorEventCondition('sv.id', 'sv').' ';
         }
+
+        $conditions['userEntityConditions'] = $userEntityConditions;
+        $conditions['visitorEntityConditions'] = $visitorEntityConditions;
+        $conditions['trackingUserJoinConditions'] = 'RIGHT JOIN stats_users su ON su.id = stats.stats_user_id AND su.project_id = stats.project_id'.$userEntityConditions;
+        $conditions['trackingVisitorJoinConditions'] = 'RIGHT JOIN stats_visitors sv ON sv.id = stats.stats_visitor_id AND sv.project_id = stats.project_id'.$visitorEntityConditions;
 
         return $conditions;
     }

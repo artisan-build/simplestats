@@ -8,7 +8,6 @@ use App\Jobs\TrackStatsVisitor;
 use App\Models\StatsVisitor;
 use App\Services\BotDetectionService;
 use Illuminate\Http\JsonResponse;
-
 use function Illuminate\Support\defer;
 
 class StatsVisitorController extends Controller
@@ -33,6 +32,9 @@ class StatsVisitorController extends Controller
             input: $request->validated(),
         ));
 
-        return response()->json(['message' => 'Stats Visitor Request accepted.'], 200);
+        return response()->json([
+            'message' => 'Stats Visitor Request accepted.',
+            'visitor_hash' => $request->validated('visitor_hash'),
+        ]);
     }
 }

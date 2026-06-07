@@ -13,6 +13,10 @@ beforeEach(function () {
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
+
+    // TestUserSeeder leaves the test user on the web guard; forget it so the
+    // Bearer token (the project) wins over Sanctum's stateful session check.
+    auth()->forgetGuards();
 });
 
 function validLoginPayload(array $overrides = []): array
@@ -35,14 +39,19 @@ function setLoginProjectContext($project): void
 }
 
 test('store login with auth and required fields returns 200', function () {
+    $payload = validLoginPayload();
+
     $response = $this->postJson(
         '/api/v1/stats-login',
-        validLoginPayload(),
+        $payload,
         apiHeaders($this->token),
     );
 
     $response->assertOk()
-        ->assertJson(['message' => 'Stats Login Request accepted.']);
+        ->assertJson([
+            'message' => 'Stats Login Request accepted.',
+            'id' => $payload['stats_user_id'],
+        ]);
 });
 
 test('store login without auth returns 401', function () {

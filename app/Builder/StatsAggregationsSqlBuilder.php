@@ -91,7 +91,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return 'pd_reg_cte AS (
             SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_users stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionUser :propertyConditionUser
             GROUP BY date
         )";
     }
@@ -217,7 +217,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT COUNT(*)
                     FROM stats_users stats
-                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingConditions
+                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingCondition :eventConditionUser :propertyConditionUser
                 ) AS count
             FROM date_sequence ds
         )";
@@ -264,7 +264,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return 'pd_visitors_cte AS (
             SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_visitors stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionVisitor :propertyConditionVisitor
             GROUP BY date
         )";
     }
@@ -319,7 +319,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT COUNT(*)
                     FROM stats_visitors stats
-                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingConditions
+                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingCondition :eventConditionVisitor :propertyConditionVisitor
                 ) AS count
             FROM date_sequence ds
         )";

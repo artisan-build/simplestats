@@ -36,9 +36,11 @@ class StatsPaymentFactory extends Factory
 
         return [
             'id' => self::$id++,
-            'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
-            'team_id' => Team::inRandomOrder()->first()->id,
-            'project_id' => Project::inRandomOrder()->first()->id,
+            // Lazy closures so the queries are skipped whenever the seeder/test
+            // overrides the key. Direct expressions would run on every create().
+            'stats_user_id' => fn () => StatsUser::inRandomOrder()->first()->id,
+            'team_id' => fn () => Team::inRandomOrder()->first()->id,
+            'project_id' => fn () => Project::inRandomOrder()->first()->id,
             'gross' => $gross,
             'net' => $gross * 0.8,
             'currency' => 'EUR',

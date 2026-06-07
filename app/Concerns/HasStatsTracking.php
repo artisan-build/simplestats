@@ -17,6 +17,28 @@ use Stevebauman\Location\Facades\Location;
 
 trait HasStatsTracking
 {
+    /**
+     * When enabled, resolved lookup ids (track sources, locations, devices, ...)
+     * are memoised per (model, team, name) for the lifetime of the process. This
+     * collapses the ~13 firstOrCreate() lookups every stat would otherwise run
+     * into a single query per distinct value, which makes bulk seeding/imports
+     * dramatically faster. Off by default so request/job lifecycles and tests
+     * (where the underlying rows may be rolled back) are never affected.
+     */
+    public static bool $cacheTrackingLookups = false;
+
+    /** @var array<string, int> */
+    protected static array $trackingLookupCache = [];
+
+    /**
+     * Reset the lookup cache. Call this when the lookup tables may have been
+     * truncated/rolled back underneath a long-running process.
+     */
+    public static function flushTrackingLookupCache(): void
+    {
+        static::$trackingLookupCache = [];
+    }
+
     public static function bootHasStatsTracking(): void
     {
         static::creating(function (BaseStat $statsModel) {
@@ -46,12 +68,30 @@ trait HasStatsTracking
                     ];
 
                     $statsProperty = "stats_{$property}_id";
-                    $item['model']::unguard();
-                    $statsModel->$statsProperty = $item['model']::firstOrCreate($track)->id;
+                    $statsModel->$statsProperty = static::resolveTrackingLookupId($item['model'], $track);
                 }
                 unset($statsModel->$property);
             }
         }
+    }
+
+    /**
+     * Resolve the lookup id for a track value, optionally memoised.
+     *
+     * @param  class-string  $model
+     * @param  array{team_id: int, name: string}  $track
+     */
+    private static function resolveTrackingLookupId(string $model, array $track): int
+    {
+        $model::unguard();
+
+        if (! static::$cacheTrackingLookups) {
+            return $model::firstOrCreate($track)->id;
+        }
+
+        $key = $model.'|'.$track['team_id'].'|'.$track['name'];
+
+        return static::$trackingLookupCache[$key] ??= $model::firstOrCreate($track)->id;
     }
 
     public function ip(): Attribute

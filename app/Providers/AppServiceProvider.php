@@ -7,12 +7,15 @@ use App\Builder\Drivers\AggregationBuilderTypeMySQL;
 use App\Builder\Drivers\AggregationBuilderTypePgSQL;
 use App\Helpers\AppHelper;
 use App\Models\PersonalAccessToken;
+use App\Models\StatsUser;
+use App\Models\StatsVisitor;
 use App\Models\User;
 use App\Observers\UserObserver;
 use App\PulseUsers;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +34,7 @@ use Spatie\Health\Checks\Checks\RedisMemoryUsageCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Spatie\Health\Facades\Health;
+use Spatie\OgImage\Facades\OgImage;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -76,6 +80,14 @@ class AppServiceProvider extends ServiceProvider
 
         Sanctum::$personalAccessTokenModel = PersonalAccessToken::class;
 
+        // Stable, short aliases for polymorphic stats_custom_properties.propertyable_type,
+        // so the column stores 'stats_user' / 'stats_visitor' instead of full class
+        // names (shorter index values, decoupled from class renames).
+        Relation::morphMap([
+            'stats_user' => StatsUser::class,
+            'stats_visitor' => StatsVisitor::class,
+        ]);
+
         Date::use(CarbonImmutable::class);
         Model::preventLazyLoading(! app()->isProduction());
         Model::shouldBeStrict(! app()->isProduction());
@@ -87,8 +99,11 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::usePrefetchStrategy('aggressive');
 
+        // spatie/laravel-og-image is not installed in the self-hosted build
+        // (composer.self-hosted.json), so OgImage must never be called outside
+        // this guard. The import above is harmless (use statements don't autoload).
         if (config('app.app_type') === 'saas') {
-            \Spatie\OgImage\Facades\OgImage::fallbackUsing(function (Request $request) {
+            OgImage::fallbackUsing(function (Request $request) {
                 return view('og-image.fallback', [
                     'title' => config('app.name'),
                     'tagline' => config('app.tagline', 'Revenue attribution analytics tool for Laravel apps'),

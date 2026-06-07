@@ -4,6 +4,7 @@ import {formatDate} from "@/Helpers/NumberHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
 import {ref} from "vue";
+import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
 
 const props = defineProps({
     filters: Object,
@@ -106,9 +107,7 @@ function safeDevision(numerator, denominator) {
     return denominator == 0 ? 0 : numerator / denominator;
 }
 
-function currentProjectHasTrackingUsageBits(bits) {
-    return bits.every(bit => (props.trackingUsageBits[bit] & props.currentProject.usage));
-}
+const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProject, props.trackingUsageBits);
 
 const charts = [];
 

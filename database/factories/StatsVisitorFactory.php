@@ -25,8 +25,10 @@ class StatsVisitorFactory extends Factory
         $date = $this->faker->dateTimeBetween(now()->subYears(2), 'now')->format('Y-m-d H:i:s');
 
         $data = [
-            'team_id' => Team::inRandomOrder()->first()->id,
-            'project_id' => Project::inRandomOrder()->first()->id,
+            // Lazy closures so the queries are skipped whenever the seeder/test
+            // overrides the key. Direct expressions would run on every create().
+            'team_id' => fn () => Team::inRandomOrder()->first()->id,
+            'project_id' => fn () => Project::inRandomOrder()->first()->id,
             'location_country' => $this->faker->randomElement([null, 'Germany (DE)', 'China (CN)', 'United States (US)', 'Brazil (BR)', 'Nigeria (NG)', 'Australia (AU)']),
             'location_region' => $this->faker->randomElement([null, 'Bavaria (DE)', 'Beijing (CN)', 'New York (US)', 'São Paulo (BR)', 'Rivers (NG)', 'New South Wales (AU)']),
             'location_city' => $this->faker->randomElement([null, 'Berlin (DE)', 'Shanghai (CN)', 'Albany (US)', 'Rio de Janeiro (BR)', 'Port Harcourt (NG)', 'Sydney (AU)']),

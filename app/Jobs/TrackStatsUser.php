@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\StatsUser;
 use App\Validators\StatsLoginValidator;
+use Carbon\CarbonImmutable;
 
 class TrackStatsUser extends BaseStatsTrack
 {
@@ -17,7 +18,12 @@ class TrackStatsUser extends BaseStatsTrack
         $addLogin = $this->input['add_login'] ?? false;
         unset($this->input['add_login']);
 
-        StatsUser::updateOrCreate(['id' => $this->input['id']], $this->input);
+        $properties = $this->input['properties'] ?? [];
+        unset($this->input['properties']);
+
+        $statsUser = StatsUser::updateOrCreate(['id' => $this->input['id']], $this->input);
+
+        $statsUser->recordCustomProperties($properties, CarbonImmutable::parse($this->input['time']));
 
         if ($addLogin) {
             TrackStatsLogin::dispatch(app(StatsLoginValidator::class)->validate([

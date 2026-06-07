@@ -28,7 +28,7 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     protected function getCTE(): string
     {
         return 'WITH stats_groups AS (
-            SELECT id as type_id, name FROM stats_custom_event_names stats WHERE :projectCondition
+            SELECT id as type_id, name FROM stats_custom_event_names stats WHERE :projectCondition :eventConditionGroup
         )';
     }
 
@@ -40,7 +40,7 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
         return "total_visitors AS (
             SELECT COUNT(*) as count
             FROM stats_visitors stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingConditions
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :propertyConditionForVisitors
         )";
     }
 
@@ -53,7 +53,7 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
             SELECT stats.stats_custom_event_name_id as type_id,
                 COUNT(DISTINCT COALESCE(stats.stats_user_id, CAST(stats.stats_visitor_id AS varchar))) as triggered
             FROM stats_custom_events stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventName :trackingFilterForEvents
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventConditionEventName :trackingConditionForEvents :propertyConditionForEvents
             GROUP BY type_id
         )";
     }
@@ -69,13 +69,13 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
                 SELECT ce.stats_custom_event_name_id as type_id, SUM(stats.net) as count
                 FROM stats_payments stats
                 INNER JOIN stats_custom_events ce ON ce.stats_user_id = stats.stats_user_id AND ce.project_id = stats.project_id
-                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventNameCe :trackingFilterForEventsCe
+                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventConditionEventNameCe :trackingConditionForEventsCe :propertyConditionForEventsCe
                 GROUP BY type_id
                 UNION ALL
                 SELECT ce.stats_custom_event_name_id as type_id, SUM(stats.net) as count
                 FROM stats_payments stats
                 INNER JOIN stats_custom_events ce ON ce.stats_visitor_id = stats.stats_visitor_id AND ce.project_id = stats.project_id
-                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventFilterEventNameCe :trackingFilterForEventsCe
+                WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :eventConditionEventNameCe :trackingConditionForEventsCe :propertyConditionForEventsCe
                 GROUP BY type_id
             ) as combined_results
             GROUP BY type_id

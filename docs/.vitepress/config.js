@@ -37,6 +37,7 @@ export default defineConfig({
         sidebar: [
             {
                 text: 'Getting Started',
+                collapsed: false,
                 items: [
                     {text: 'Introduction', link: '/introduction'},
                     {text: 'Installation', link: '/installation'},
@@ -44,38 +45,38 @@ export default defineConfig({
             },
             {
                 text: 'Tracking',
+                collapsed: false,
                 items: [
                     {text: 'How to track a new visitor', link: '/how-to-track-a-new-visitor'},
                     {text: 'How to track a new user', link: '/how-to-track-a-new-user'},
                     {text: 'How to track a new login', link: '/how-to-track-a-new-login'},
                     {text: 'How to track a new payment', link: '/how-to-track-a-new-payment'},
-                    {text: 'How to track a custom event', link: '/how-to-track-a-custom-event'},
-                    {text: 'Tracking Codes', link: '/tracking-codes'},
                     {text: 'From Visitor to User to Revenue', link: '/from-visitor-to-user-to-revenue'},
+                    {text: 'Tracking Codes', link: '/tracking-codes'},
                 ]
             },
             {
-                text: 'Advanced',
+                text: 'Advanced Tracking',
+                collapsed: true,
                 items: [
-                    {text: 'Queue', link: '/queue'},
-                    {text: 'Headless, SPA & Stateless', link: '/headless-stateless-spa'},
+                    {text: 'How to track a custom event', link: '/how-to-track-a-custom-event'},
+                    {text: 'How to track a custom prop', link: '/how-to-track-custom-properties'},
                     {text: 'How to update a payment', link: '/how-to-update-a-payment'},
                     {text: 'How to import existing data', link: '/how-to-import-existing-data'},
-                    {text: 'Plans and Limits', link: '/plans-and-limits'},
-                    {text: 'Bot Detection', link: '/bot-detection'},
-                    {text: 'Troubleshooting', link: '/troubleshooting'},
-                    {text: 'Contribution', link: '/contribution'},
                 ]
             },
             {
-                text: 'API',
+                text: 'Configuration',
+                collapsed: true,
                 items: [
-                    {text: 'Ingest API', link: '/ingest-api'},
-                    {text: 'Query API', link: '/query-api'},
+                    {text: 'Queue', link: '/queue'},
+                    {text: 'Bot Detection', link: '/bot-detection'},
+                    {text: 'Headless, SPA & Stateless', link: '/headless-stateless-spa'},
                 ]
             },
             {
                 text: 'Integrations',
+                collapsed: true,
                 items: [
                     {text: 'Filament', link: '/filament-plugin'},
                     {text: 'Statamic', link: '/statamic-addon'},
@@ -84,8 +85,26 @@ export default defineConfig({
             },
             {
                 text: 'Self-Hosted',
+                collapsed: true,
                 items: [
                     {text: 'Overview', link: '/self-hosted'},
+                ]
+            },
+            {
+                text: 'Resources',
+                collapsed: true,
+                items: [
+                    {text: 'Plans and Limits', link: '/plans-and-limits'},
+                    {text: 'Troubleshooting', link: '/troubleshooting'},
+                    {text: 'Contribution', link: '/contribution'},
+                ]
+            },
+            {
+                text: 'API',
+                collapsed: true,
+                items: [
+                    {text: 'Ingest API', link: '/ingest-api'},
+                    {text: 'Query API', link: '/query-api'},
                 ]
             },
         ],

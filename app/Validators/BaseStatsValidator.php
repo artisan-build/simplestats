@@ -51,6 +51,21 @@ class BaseStatsValidator
         ];
     }
 
+    /**
+     * Validation for the custom properties bag shared by all trackers that
+     * accept properties. Entries are normalised later (HasCustomProperties),
+     * so any nullable value passes here.
+     *
+     * @return array<string, array<int, string>>
+     */
+    protected function propertyRules(bool $required = false): array
+    {
+        return [
+            'properties' => [$required ? 'required' : 'nullable', 'array', 'max:50'],
+            'properties.*' => ['nullable'],
+        ];
+    }
+
     public function validate($input)
     {
         return Validator::make(

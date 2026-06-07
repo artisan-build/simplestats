@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
-import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups.vue";
+import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
@@ -17,6 +17,7 @@ const props = defineProps({
     customPresets: Array,
     filters: Object,
     statsGroups: Object,
+    propertyDimensions: Array,
     statsGroupNames: Object,
     topReferers: Object,
     rangeTypes: Array,
@@ -91,6 +92,7 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                     <StatsGroups
                         :filters="filters"
                         :statsGroups="statsGroups"
+                        :propertyDimensions="propertyDimensions"
                         :topReferers="topReferers"
                         :currentProject="currentProject"
                         :trackingUsageBits="trackingUsageBits"

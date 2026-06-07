@@ -14,6 +14,10 @@ beforeEach(function () {
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
+
+    // TestUserSeeder leaves the test user on the web guard; forget it so the
+    // Bearer token (the project) wins over Sanctum's stateful session check.
+    auth()->forgetGuards();
 });
 
 function validPaymentPayload(array $overrides = []): array
@@ -36,14 +40,19 @@ function setPaymentProjectContext($project): void
 }
 
 test('store payment with auth and required fields returns 200', function () {
+    $payload = validPaymentPayload();
+
     $response = $this->postJson(
         '/api/v1/stats-payment',
-        validPaymentPayload(),
+        $payload,
         apiHeaders($this->token),
     );
 
     $response->assertOk()
-        ->assertJson(['message' => 'Stats Payment Request accepted.']);
+        ->assertJson([
+            'message' => 'Stats Payment Request accepted.',
+            'id' => $payload['id'],
+        ]);
 });
 
 test('store payment without auth returns 401', function () {

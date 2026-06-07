@@ -6,6 +6,7 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\ComparisonType;
 use App\Models\Project;
 use App\Models\StatsCustomEventName;
+use App\Models\StatsCustomPropertyValue;
 use App\Models\StatsDeviceBrowser;
 use App\Models\StatsDevicePlatform;
 use App\Models\StatsDeviceType;
@@ -142,7 +143,7 @@ class StatsService
 
     public static function getFilterStatsTypeNames(StatsFilterDto $filters): Collection
     {
-        return collect(self::getStatsTypesFormatted())->flatMap(function ($item) {
+        $names = collect(self::getStatsTypesFormatted())->flatMap(function ($item) {
             return collect($item)->pluck('model', 'type');
         })->mapWithKeys(function ($model, $type) use ($filters) {
             $camelType = Str::camel($type);
@@ -152,6 +153,20 @@ class StatsService
 
             return [];
         });
+
+        // Custom property filter chip: value plus its (humanised) property name.
+        if (! empty($filters->propertyValue)) {
+            $propertyValue = StatsCustomPropertyValue::with('name')->find($filters->propertyValue);
+
+            if ($propertyValue !== null) {
+                $names = $names->merge([
+                    'property_value' => $propertyValue->value,
+                    'property_value_title' => Str::title(str_replace('_', ' ', $propertyValue->name->name)),
+                ]);
+            }
+        }
+
+        return $names;
     }
 
     public static function formatFilters(StatsFilterDto $filters): array

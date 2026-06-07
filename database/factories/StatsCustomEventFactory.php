@@ -29,11 +29,13 @@ class StatsCustomEventFactory extends Factory
 
         return [
             'id' => self::$id++,
-            'stats_user_id' => StatsUser::inRandomOrder()->first()->id,
-            'stats_visitor_id' => StatsVisitor::inRandomOrder()->first()?->id,
-            'stats_custom_event_name_id' => StatsCustomEventName::inRandomOrder()->first()->id,
-            'team_id' => Team::inRandomOrder()->first()->id,
-            'project_id' => Project::inRandomOrder()->first()->id,
+            // Lazy closures so the queries are skipped whenever the seeder/test
+            // overrides the key. Direct expressions would run on every create().
+            'stats_user_id' => fn () => StatsUser::inRandomOrder()->first()->id,
+            'stats_visitor_id' => fn () => StatsVisitor::inRandomOrder()->first()?->id,
+            'stats_custom_event_name_id' => fn () => StatsCustomEventName::inRandomOrder()->first()->id,
+            'team_id' => fn () => Team::inRandomOrder()->first()->id,
+            'project_id' => fn () => Project::inRandomOrder()->first()->id,
             'time' => $date->format('Y-m-d H:i:s'),
             'time_utc' => $date->format('Y-m-d H:i:s'),
         ];

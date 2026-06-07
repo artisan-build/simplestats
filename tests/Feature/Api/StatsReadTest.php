@@ -8,6 +8,10 @@ beforeEach(function () {
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
     $this->token = $this->project->createToken('test-token')->plainTextToken;
+
+    // TestUserSeeder leaves the test user on the web guard; forget it so the
+    // Bearer token (the project) wins over Sanctum's stateful session check.
+    auth()->forgetGuards();
 });
 
 test('stats index without auth returns 401', function () {
@@ -125,6 +129,15 @@ test('stats grouped without statsType returns 422', function () {
 
 test('stats grouped with invalid statsType returns 422', function () {
     $response = $this->getJson('/api/v1/stats/grouped?stats_type=invalid_type', apiHeaders($this->token));
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors('stats_type');
+});
+
+test('stats grouped rejects the dashboard-only property type', function () {
+    // "property" is a dashboard-only stats_type (see StatsFilterRequest),
+    // the public API whitelist must not accept it
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=property', apiHeaders($this->token));
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors('stats_type');

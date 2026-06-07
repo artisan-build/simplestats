@@ -39,6 +39,7 @@ class StatsFilterDto
         public int $deviceBrowser = 0,
         public int $pageEntry = 0,
         public int $customEventName = 0,
+        public int $propertyValue = 0,
     ) {}
 
     public static function fromRequest(StatsFilterRequest $request, ?int $projectId = null): self
@@ -93,7 +94,17 @@ class StatsFilterDto
             deviceBrowser: $request->device_browser ?? 0,
             pageEntry: $request->page_entry ?? 0,
             customEventName: $request->custom_event_name ?? 0,
+            propertyValue: $request->property_value ?? 0,
         );
+    }
+
+    /**
+     * Whether a comparison period was requested and is supported for the
+     * selected range type (year ranges have no comparable previous period).
+     */
+    public function shouldCompare(): bool
+    {
+        return $this->comparison && $this->comparison !== '0' && $this->rangeType !== StatsRangeType::YEAR;
     }
 
     public function makeHash(): string
@@ -116,6 +127,7 @@ class StatsFilterDto
             $this->deviceBrowser,
             $this->pageEntry,
             $this->customEventName,
+            $this->propertyValue,
         ]));
     }
 }

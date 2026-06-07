@@ -33,7 +33,7 @@ class StatsReadController extends Controller
             'meta' => $this->buildMeta($filters),
         ];
 
-        if ($filters->comparison && $filters->comparison !== '0' && $filters->rangeType !== StatsRangeType::YEAR) {
+        if ($filters->shouldCompare()) {
             $response['data_previous'] = array_values($statsDetailsService->getStats(
                 StatsService::createPrevFiltersForComparison($filters),
             ));
@@ -72,7 +72,7 @@ class StatsReadController extends Controller
             'meta' => $this->buildMeta($filters),
         ];
 
-        if ($filters->comparison && $filters->comparison !== '0' && $filters->rangeType !== StatsRangeType::YEAR) {
+        if ($filters->shouldCompare()) {
             $previousData = $statsAggregationsService->getAggregatedGroupedData(
                 StatsService::createPrevFiltersForComparison($filters),
                 $request->stats_type,

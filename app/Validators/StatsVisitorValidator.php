@@ -10,7 +10,7 @@ class StatsVisitorValidator extends BaseStatsValidator
 
     public function rules(): array
     {
-        return array_merge(parent::rules(), $this->trackingValidation, [
+        return array_merge(parent::rules(), $this->trackingValidation, $this->propertyRules(), [
             'visitor_hash' => ['nullable', 'string'],
         ]);
     }

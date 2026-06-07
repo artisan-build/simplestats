@@ -20,7 +20,7 @@ use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'Button Clicked',
-    user: $user,
+    person: $user,
 );
 ```
 
@@ -40,7 +40,7 @@ If the event is triggered by an authenticated user, pass the user model directly
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'Plan Upgraded',
-    user: auth()->user(),
+    person: auth()->user(),
 );
 ```
 
@@ -54,10 +54,10 @@ use SimpleStatsIo\LaravelClient\Visitor;
 SimplestatsClient::trackCustomEvent(
     id: 'evt-' . Str::uuid(),
     name: 'CTA Clicked',
-    user: new Visitor(SimplestatsClient::getVisitorHash()),
+    person: new Visitor(SimplestatsClient::getVisitorHash()),
 );
 ```
 
-## API
-
-If you're not using the Laravel client package, you can track custom events directly via the API. See the [Create Custom Event](ingest-api.md#create-custom-event) endpoint in the Ingest API documentation.
+::: info
+The visitor must already be tracked, which happens automatically on their first page view. Events for a visitor that was never tracked (e.g. a bot, a blocked IP, or an excluded route) are skipped, since they could never be attributed.
+:::

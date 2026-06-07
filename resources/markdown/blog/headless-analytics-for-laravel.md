@@ -7,8 +7,6 @@ tags:
   - Laravel
   - Analytics
   - Headless
-  - SPA
-  - Stateless API
 published: true
 author_id: 1
 ---

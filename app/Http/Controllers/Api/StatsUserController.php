@@ -29,6 +29,9 @@ class StatsUserController extends Controller
             input: $request->validated(),
         ));
 
-        return response()->json(['message' => 'Stats User Request accepted.']);
+        return response()->json([
+            'message' => 'Stats User Request accepted.',
+            'id' => $request->validated('id'),
+        ]);
     }
 }

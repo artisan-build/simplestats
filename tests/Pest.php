@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Context;
 use Tests\TestCase;
 
 /*
@@ -20,6 +21,13 @@ uses(TestCase::class, RefreshDatabase::class)
         // the HTTP response. Without this, deferred callbacks never run
         // before test assertions, causing false failures.
         $this->withoutDefer();
+
+        // Authenticated guards and Context leak across test boundaries within
+        // the same process: an actingAs() from a previous test bleeds into the
+        // next test's API requests, where SetProjectContext then records the
+        // USER id as project_id and BaseStatsTrack's findOrFail 404s. Reset both.
+        auth()->forgetGuards();
+        Context::flush();
     })
     ->in('Feature');
 

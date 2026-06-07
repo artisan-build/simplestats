@@ -430,6 +430,42 @@ it('grouped DAU uses correct date range when report runs at timezone boundary', 
         ->and($globalDau)->toBe($groupedDauTotal);
 });
 
+it('narrows the events group to the selected event when a custom event filter is active', function () {
+    insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 2]);
+
+    $eventIds = [];
+    foreach (['Event A', 'Event B'] as $name) {
+        $eventIds[$name] = DB::table('stats_custom_event_names')->insertGetId([
+            'team_id' => $this->team->id,
+            'project_id' => $this->pid,
+            'name' => $name,
+            'created_at' => '2026-03-30 12:00:00',
+            'updated_at' => '2026-03-30 12:00:00',
+        ]);
+
+        DB::table('stats_custom_events')->insert([
+            'id' => Str::uuid()->toString(),
+            'team_id' => $this->team->id,
+            'project_id' => $this->pid,
+            'stats_custom_event_name_id' => $eventIds[$name],
+            'time' => '2026-03-30 12:00:00',
+            'time_utc' => '2026-03-30 12:00:00',
+        ]);
+    }
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+        customEventName: $eventIds['Event A'],
+    );
+
+    $grouped = app(StatsAggregationsService::class)
+        ->getAggregatedGroupedData($filter, 'custom_event_name', 'name', 10);
+
+    // like the standard groups: filtering by an event leaves only that event in its own group
+    expect($grouped->pluck('name')->all())->toBe(['Event A']);
+});
+
 it('grouped custom events do not leak across projects in the same team', function () {
     $otherProject = Project::factory()->create(['team_id' => $this->team->id]);
 
