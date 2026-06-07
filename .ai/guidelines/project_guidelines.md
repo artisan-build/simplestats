@@ -318,6 +318,12 @@ Jobs include automatic retry logic for fault tolerance.
 - In-app pages (behind auth) are English-only. Do not wrap in-app strings with `$t()` or add them to language files.
 - Translations are managed via `php artisan app:translate` which uses DeepL. See `app/Console/Commands/TranslateLanguageFiles.php`.
 
+### Config Files Must Be Serializable
+
+- Never put closures (or object instances) into files under `config/`. Production deploys run `php artisan config:cache` (via `optimize`), which serializes the whole config with `var_export()`. Closures fail with `Call to undefined method Closure::__set_state()` and break the deployment, while it works fine locally where the config is not cached.
+- When a config value needs callable behavior (e.g. Sentry's `before_send`), reference a static method as an array callable instead: `'before_send' => [\App\Sentry\BeforeSend::class, 'handle']`. An array of strings is serializable and Sentry accepts it via `is_callable()`. See `App\Sentry\BeforeSend`.
+- After changing config that holds dynamic values, verify with `php artisan config:cache` (then `php artisan config:clear`) before considering the change done.
+
 ### Imports
 
 - Always use `use` imports at the top of the file instead of inline fully-qualified class names (e.g., `use App\Models\User;` instead of `\App\Models\User::query()`).
