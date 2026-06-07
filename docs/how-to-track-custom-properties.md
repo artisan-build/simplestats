@@ -8,6 +8,8 @@ Custom property tracking requires **version 4.1+** of the _SimpleStats_ [client 
 
 Each property is a **name** (the grouping dimension, e.g. `subscription`) with a **value** (e.g. `pro`), and your metrics (visitors, registrations, conversion rate, revenue) are broken down by these values.
 
+![SimpleStats dashboard grouping metrics by a custom property, with one tab per property name and one row per value](https://simplestats.io/images/blog/screenshot_custom_properties.png)
+
 ::: info
 A property keeps exactly **one current value** per entity. Re-tracking a user with a new value overwrites the old one, so revenue and activity always follow the latest value (e.g. a user who upgrades from `free` to `pro` counts under `pro`).
 :::

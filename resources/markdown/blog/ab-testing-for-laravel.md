@@ -70,6 +70,8 @@ So the full funnel, with zero manual calls after the resolver:
 
 Custom properties show up as a new grouping table next to the existing ones (tracking codes, locations, devices, pages). Each property name becomes a tab, each value becomes a row with visitors, registrations, conversion rate and revenue. For an A/B test that is two rows, `A` and `B`, with revenue on each.
 
+![SimpleStats dashboard comparing A/B test variants by visitors, registrations, conversion rate and revenue](/images/blog/screenshot_custom_properties.png)
+
 Clicking a value pivots the **entire dashboard** to that segment: every KPI, every chart, every other grouping table is then filtered to e.g. `ab_test is B`, the same way the existing filters work. Click `B`, and the whole dashboard becomes "everything that happened to the B cohort", including which campaigns those users originally came from.
 
 ## Beyond A/B tests: any segment
