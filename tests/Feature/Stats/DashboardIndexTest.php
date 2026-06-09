@@ -28,6 +28,7 @@ test('dashboard renders Dashboard/Index with expected props', function () {
             ->has('customPresets')
             ->has('filters')
             ->has('statsGroups')
+            ->has('hasCustomEvents')
             ->has('statsGroupNames')
             ->has('topReferers')
             ->has('rangeTypes')

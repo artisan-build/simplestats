@@ -131,6 +131,7 @@ onMounted(fetchData);
         name-label="Name"
         :name-width="isEventGroup ? '34%' : '44%'"
         :percentage="calculatePercentage"
+        :empty-text="isEventGroup ? 'No custom events in the selected period.' : undefined"
         :can-load-more="data.length >= 5 && ! filters.limit"
         @sort="changeSort"
         @load-more="loadMore"

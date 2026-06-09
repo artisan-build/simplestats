@@ -9,6 +9,7 @@ use App\Http\Requests\StatsFilterRequest;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\RefererService;
+use App\Services\StatsCustomEventService;
 use App\Services\StatsCustomPropertyService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
@@ -45,6 +46,7 @@ class StatsIndexDataProvider extends AbstractDataProvider
             'filters' => StatsService::formatFilters($filters),
             'statsGroups' => StatsService::getStatsTypesFormatted(['model']),
             'propertyDimensions' => StatsCustomPropertyService::getPropertyDimensions($filters),
+            'hasCustomEvents' => StatsCustomEventService::hasCustomEvents($filters),
             'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
             'topReferers' => $this->refererService->getTopReferers(),
             'rangeTypes' => $this->statsDetailsService->getRangeTypes(),

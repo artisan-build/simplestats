@@ -106,6 +106,7 @@ class StatsCustomPropertySeeder extends Seeder
             'propertyable_id' => $propertyableId,
             'stats_custom_property_name_id' => $lookups[$name]['id'],
             'stats_custom_property_value_id' => $lookups[$name]['values'][$value],
+            'time' => $now,
             'created_at' => $now,
             'updated_at' => $now,
         ];

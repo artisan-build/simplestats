@@ -69,8 +69,8 @@ test('a property keeps exactly one current value per entity and name', function 
     ];
 
     // First the entity is on "free", then it upgrades to "pro".
-    StatsCustomProperty::updateOrCreate($owner, ['stats_custom_property_value_id' => $free->id]);
-    StatsCustomProperty::updateOrCreate($owner, ['stats_custom_property_value_id' => $pro->id]);
+    StatsCustomProperty::updateOrCreate($owner, ['stats_custom_property_value_id' => $free->id, 'time' => now()]);
+    StatsCustomProperty::updateOrCreate($owner, ['stats_custom_property_value_id' => $pro->id, 'time' => now()]);
 
     $properties = StatsCustomProperty::where($owner)->get();
 
@@ -91,9 +91,9 @@ test('the unique constraint blocks a duplicate entity-name row', function () {
         'stats_custom_property_name_id' => $name->id,
     ];
 
-    StatsCustomProperty::create([...$owner, 'stats_custom_property_value_id' => $free->id]);
+    StatsCustomProperty::create([...$owner, 'stats_custom_property_value_id' => $free->id, 'time' => now()]);
 
-    expect(fn () => StatsCustomProperty::create([...$owner, 'stats_custom_property_value_id' => $pro->id]))
+    expect(fn () => StatsCustomProperty::create([...$owner, 'stats_custom_property_value_id' => $pro->id, 'time' => now()]))
         ->toThrow(QueryException::class);
 });
 
@@ -110,6 +110,7 @@ test('the same property name can hold one value per user and per visitor indepen
         'propertyable_id' => $user->id,
         'stats_custom_property_name_id' => $name->id,
         'stats_custom_property_value_id' => $variantA->id,
+        'time' => now(),
     ]);
 
     // Same project + name, but a different entity type -> allowed.
@@ -119,6 +120,7 @@ test('the same property name can hold one value per user and per visitor indepen
         'propertyable_id' => $visitor->id,
         'stats_custom_property_name_id' => $name->id,
         'stats_custom_property_value_id' => $variantB->id,
+        'time' => now(),
     ]);
 
     expect(StatsCustomProperty::where('stats_custom_property_name_id', $name->id)->count())->toBe(2);
@@ -135,6 +137,7 @@ test('the morph relation resolves the owning entity', function () {
         'propertyable_id' => $user->id,
         'stats_custom_property_name_id' => $name->id,
         'stats_custom_property_value_id' => $value->id,
+        'time' => now(),
     ]);
 
     expect($property->propertyable_type)->toBe('stats_user')

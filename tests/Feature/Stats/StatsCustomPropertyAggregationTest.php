@@ -165,7 +165,7 @@ test('property dimensions are deduplicated across projects and scoped per projec
     expect($data->pluck('name')->sort()->values()->all())->toBe(['free', 'pro']);
 });
 
-test('property dimensions hide names without data in the selected period', function () {
+test('property dimensions stay visible regardless of the selected period', function () {
 
     // "legacy" is only bound to a user registered 60 days ago
     $oldUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
@@ -175,28 +175,24 @@ test('property dimensions hide names without data in the selected period', funct
     $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $visitor->recordCustomProperties(['ab_test' => 'B']);
 
-    // 30-day range: only the visitor-bound property has data
-    expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project))->pluck('name')->all())->toBe(['Ab Test']);
+    // Even a short 30-day range keeps both tabs: a dimension does not vanish
+    // just because its only data point falls outside the current period.
+    expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project))->pluck('name')->all())->toBe(['Ab Test', 'Legacy']);
 
-    // 90-day range: the old registration falls into range again
+    // A wider range shows the same set.
     expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project, 90))->pluck('name')->all())->toBe(['Ab Test', 'Legacy']);
 });
 
-test('property dimensions stay visible when a property-bound user pays in the period', function () {
+test('property dimensions exclude names that were never recorded', function () {
 
-    // user registered long ago, but with revenue in the selected period
-    $oldUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
-    $oldUser->recordCustomProperties(['subscription' => 'pro']);
-
-    StatsPayment::factory()->create([
+    // A name lookup row with no pivot entries (e.g. created, then all its
+    // entities deleted) must not produce a tab.
+    StatsCustomPropertyName::create([
         'project_id' => $this->project->id,
-        'stats_user_id' => $oldUser->id,
-        'net' => 100,
-        'currency' => 'EUR',
-        'time' => now()->subDay(),
+        'name' => 'orphan',
     ]);
 
-    expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project))->pluck('name')->all())->toBe(['Subscription']);
+    expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project))->pluck('name')->all())->toBe([]);
 });
 
 test('the property value filter narrows grouped stats to matching entities', function () {

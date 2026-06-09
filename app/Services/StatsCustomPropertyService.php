@@ -3,13 +3,10 @@
 namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\StatsRangeType;
 use App\Models\StatsCustomPropertyName;
 use App\Models\StatsCustomPropertyValue;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StatsCustomPropertyService
@@ -48,28 +45,18 @@ class StatsCustomPropertyService
      * single dimension (MIN(id) as a stable representative). Dynamic, unlike
      * StatsService::$statsTypes.
      *
-     * Only names with data in the selected period are returned, mirroring what
-     * the grouped table can show: a visitor or registration tracked in range,
-     * or revenue paid in range by a property-bound user. Names without any of
-     * these (e.g. one-off test properties) produce no tab.
+     * A name is returned as soon as it has ever been recorded (any pivot row),
+     * regardless of the selected period. This keeps the dimension tabs stable
+     * across range changes instead of appearing and disappearing as the period
+     * shifts; the grouped table itself still scopes its counts to the range.
      *
      * @return Collection<int, array{id: int, name: string}>
      */
     public static function getPropertyDimensions(StatsFilterDto $filters): Collection
     {
-        [
-            'startDateStart' => $startDate,
-            'endDateEnd' => $endDate,
-        ] = StatsRangeType::conditions($filters->rangeStart, $filters->rangeAmount)[$filters->rangeType->value];
-
         return StatsCustomPropertyName::query()
             ->when($filters->projectId, fn ($query) => $query->where('project_id', $filters->projectId))
-            ->where(function ($query) use ($startDate, $endDate) {
-                $query
-                    ->whereExists(fn ($exists) => self::propertyVisitorsInRange($exists, $startDate, $endDate))
-                    ->orWhereExists(fn ($exists) => self::propertyUsersInRange($exists, $startDate, $endDate))
-                    ->orWhereExists(fn ($exists) => self::propertyPaymentsInRange($exists, $startDate, $endDate));
-            })
+            ->whereExists(fn ($exists) => self::propertyPivotExists($exists))
             ->selectRaw('MIN(id) as id, name')
             ->groupBy('name')
             ->orderBy('name')
@@ -82,55 +69,11 @@ class StatsCustomPropertyService
     }
 
     /**
-     * EXISTS: a visitor tracked in range carries the property. The project_id
+     * EXISTS: the name has at least one recorded value. The project_id
      * correlation is redundant (names are project-scoped) but lets the pivot's
      * (project_id, name_id, value_id) index drive the lookup.
      */
-    private static function propertyVisitorsInRange(QueryBuilder $exists, string $startDate, string $endDate): QueryBuilder
-    {
-        return self::propertyPivotInRange($exists)
-            ->join('stats_visitors as sv', function (JoinClause $join) {
-                $join->on(DB::raw('CAST(sv.id AS varchar)'), '=', 'scp.propertyable_id')
-                    ->on('sv.project_id', '=', 'scp.project_id');
-            })
-            ->where('scp.propertyable_type', 'stats_visitor')
-            ->whereBetween('sv.time', [$startDate, $endDate]);
-    }
-
-    /**
-     * EXISTS: a user registered in range carries the property.
-     */
-    private static function propertyUsersInRange(QueryBuilder $exists, string $startDate, string $endDate): QueryBuilder
-    {
-        return self::propertyPivotInRange($exists)
-            ->join('stats_users as su', function (JoinClause $join) {
-                $join->on('su.id', '=', 'scp.propertyable_id')
-                    ->on('su.project_id', '=', 'scp.project_id');
-            })
-            ->where('scp.propertyable_type', 'stats_user')
-            ->whereBetween('su.time', [$startDate, $endDate]);
-    }
-
-    /**
-     * EXISTS: a property-bound user (whenever registered) paid in range, so the
-     * grouped table would show revenue for this property.
-     */
-    private static function propertyPaymentsInRange(QueryBuilder $exists, string $startDate, string $endDate): QueryBuilder
-    {
-        return self::propertyPivotInRange($exists)
-            ->join('stats_users as su', function (JoinClause $join) {
-                $join->on('su.id', '=', 'scp.propertyable_id')
-                    ->on('su.project_id', '=', 'scp.project_id');
-            })
-            ->join('stats_payments as pay', function (JoinClause $join) {
-                $join->on('pay.stats_user_id', '=', 'su.id')
-                    ->on('pay.project_id', '=', 'su.project_id');
-            })
-            ->where('scp.propertyable_type', 'stats_user')
-            ->whereBetween('pay.time', [$startDate, $endDate]);
-    }
-
-    private static function propertyPivotInRange(QueryBuilder $exists): QueryBuilder
+    private static function propertyPivotExists(QueryBuilder $exists): QueryBuilder
     {
         return $exists->selectRaw('1')
             ->from('stats_custom_properties as scp')

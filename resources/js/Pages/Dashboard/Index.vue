@@ -18,6 +18,7 @@ const props = defineProps({
     filters: Object,
     statsGroups: Object,
     propertyDimensions: Array,
+    hasCustomEvents: Boolean,
     statsGroupNames: Object,
     topReferers: Object,
     rangeTypes: Array,
@@ -93,6 +94,7 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :filters="filters"
                         :statsGroups="statsGroups"
                         :propertyDimensions="propertyDimensions"
+                        :hasCustomEvents="hasCustomEvents"
                         :topReferers="topReferers"
                         :currentProject="currentProject"
                         :trackingUsageBits="trackingUsageBits"

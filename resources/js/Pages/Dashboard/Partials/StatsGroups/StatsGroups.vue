@@ -6,6 +6,7 @@ const props = defineProps({
     filters: Object,
     statsGroups: Object,
     propertyDimensions: Array,
+    hasCustomEvents: Boolean,
     topReferers: Object,
     currentProject: Object,
     trackingUsageBits: Object,
@@ -15,7 +16,7 @@ const props = defineProps({
 <template>
     <div class="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <div v-for="(statsGroup, statsGroupType, index) in statsGroups" :key="statsGroup.id"
-             v-show="statsGroupType !== 'event' || (trackingUsageBits.events & currentProject.usage)"
+             v-show="statsGroupType !== 'event' || hasCustomEvents"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
              :class="{'lg:col-span-2': statsGroupType === 'event' && ! propertyDimensions?.length}"
              :data-tour="index === 0 ? 'stats-groups' : undefined"
@@ -34,7 +35,7 @@ const props = defineProps({
         <!-- Custom properties: dynamic dimensions (e.g. subscription, company) -->
         <div v-if="propertyDimensions && propertyDimensions.length"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
-             :class="{'lg:col-span-2': ! (trackingUsageBits.events & currentProject.usage)}"
+             :class="{'lg:col-span-2': ! hasCustomEvents}"
         >
             <StatsCustomPropertyGroup
                 :filters="filters"
