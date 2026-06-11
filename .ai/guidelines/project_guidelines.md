@@ -39,6 +39,10 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 - **Self-hosted**: PostgreSQL
 - **Migrations must work on both**: PostgreSQL (production/self-hosted) and SQLite (tests)
 
+### Migrations: No `down()` / No Rollbacks
+
+- **We do not use `down()` methods.** Migrations are forward-only. Never add a `down()` method to a migration; rolling back is not part of our workflow (`migrate:rollback` is unused).
+
 ### Deployment Options
 
 1. **SaaS** (recommended): Hosted at https://simplestats.io with automatic updates and dedicated support
