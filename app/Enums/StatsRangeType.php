@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-use App\Builder\Drivers\AggregationBuilderType;
 use Carbon\CarbonInterface;
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
@@ -68,28 +67,24 @@ enum StatsRangeType: string
 
     public function dateFormat(): array
     {
-        $dbDateFormats = app(AggregationBuilderType::class)->getDateFormats();
-
         return match ($this) {
-            self::HOUR => ['db' => $dbDateFormats[self::HOUR->value], 'php' => 'Y-m-d H:00'],
-            self::DAY => ['db' => $dbDateFormats[self::DAY->value], 'php' => 'Y-m-d'],
-            self::WEEK => ['db' => $dbDateFormats[self::WEEK->value], 'php' => 'o-W'],
-            self::MONTH => ['db' => $dbDateFormats[self::MONTH->value], 'php' => 'Y-m'],
-            self::YEAR => ['db' => $dbDateFormats[self::YEAR->value], 'php' => 'Y'],
+            self::HOUR => ['db' => 'HH24:00', 'php' => 'Y-m-d H:00'],
+            self::DAY => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d'],
+            self::WEEK => ['db' => 'IYYY-IW', 'php' => 'o-W'],
+            self::MONTH => ['db' => 'YYYY-MM', 'php' => 'Y-m'],
+            self::YEAR => ['db' => 'YYYY', 'php' => 'Y'],
             default => throw new \Exception('Unexpected match value'),
         };
     }
 
     public function dateFormatClear(): array
     {
-        $dbDateFormatsClear = app(AggregationBuilderType::class)->getDateFormatsClear();
-
         return match ($this) {
-            self::HOUR => ['db' => $dbDateFormatsClear[self::HOUR->value], 'php' => 'Y-m-d H:00'],
-            self::DAY => ['db' => $dbDateFormatsClear[self::DAY->value], 'php' => 'Y-m-d'],
-            self::WEEK => ['db' => $dbDateFormatsClear[self::WEEK->value], 'php' => 'Y-m-d '],
-            self::MONTH => ['db' => $dbDateFormatsClear[self::MONTH->value], 'php' => 'Y-m-d '],
-            self::YEAR => ['db' => $dbDateFormatsClear[self::YEAR->value], 'php' => 'Y-m-d '],
+            self::HOUR => ['db' => 'YYYY-MM-DD HH24:00', 'php' => 'Y-m-d H:00'],
+            self::DAY => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d'],
+            self::WEEK => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d '],
+            self::MONTH => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d '],
+            self::YEAR => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d '],
             default => throw new \Exception('Unexpected match value'),
         };
     }

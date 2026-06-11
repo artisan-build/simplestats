@@ -2,7 +2,6 @@
 
 namespace App\Builder;
 
-use App\Builder\Drivers\AggregationBuilderType;
 use App\Enums\TrackablePerson;
 
 /**
@@ -23,7 +22,6 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
 {
     public function __construct(
         protected string $statsSort,
-        protected AggregationBuilderType $aggregationBuilderType,
     ) {}
 
     public function build(): string
@@ -77,7 +75,7 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
     protected function getReg(): string
     {
         return 'lt_reg AS (
-            SELECT spv.value as value_name, COUNT(DISTINCT '.$this->aggregationBuilderType->getDistinctFields(['su.id', 'su.project_id']).") as count
+            SELECT spv.value as value_name, COUNT(DISTINCT '.$this->getDistinctFields(['su.id', 'su.project_id']).") as count
             FROM stats_custom_properties stats
             INNER JOIN stats_custom_property_values spv ON spv.id = stats.stats_custom_property_value_id
             INNER JOIN stats_users su ON su.id = stats.propertyable_id AND su.project_id = stats.project_id
@@ -130,6 +128,6 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
     {
         $sort = in_array($this->statsSort, ['visitors', 'reg', 'cr', 'net', 'name']) ? $this->statsSort : 'reg';
 
-        return $this->aggregationBuilderType->getGroupedOrderBy($sort, TrackablePerson::USER);
+        return $this->getGroupedOrderBy($sort, TrackablePerson::USER);
     }
 }

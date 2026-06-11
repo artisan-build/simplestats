@@ -2,7 +2,6 @@
 
 namespace App\Builder;
 
-use App\Builder\Drivers\AggregationBuilderType;
 use App\Enums\TrackablePerson;
 use App\Services\StatsService;
 
@@ -12,7 +11,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     public function __construct(
         protected TrackablePerson $trackablePerson,
-        protected AggregationBuilderType $aggregationBuilderType,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -49,27 +47,6 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         $this->applySql($this->getORDER(), false);
 
         return $this->sql;
-    }
-
-    // shorties
-    protected function getDateSelect(): string
-    {
-        return $this->aggregationBuilderType->getDateSelect();
-    }
-
-    protected function getDateInterval(string $calc, string $date, int $amount, string $interval): string
-    {
-        return $this->aggregationBuilderType->getDateInterval(...func_get_args());
-    }
-
-    protected function getDistinctFields(array $fields): string
-    {
-        return $this->aggregationBuilderType->getDistinctFields(...func_get_args());
-    }
-
-    protected function getDateFormat(string $date, string $format): string
-    {
-        return $this->aggregationBuilderType->getDateFormat(...func_get_args());
     }
 
     protected function getCTE(): string

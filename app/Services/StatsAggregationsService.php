@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Builder\Drivers\AggregationBuilderType;
 use App\Builder\StatsAggregationsGroupedEventsSqlBuilder;
 use App\Builder\StatsAggregationsGroupedPropertiesSqlBuilder;
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
@@ -73,11 +72,11 @@ class StatsAggregationsService
 
         if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
-                $statsSort, app(AggregationBuilderType::class))
+                $statsSort)
             )->build();
         } else {
             $sql = (new StatsAggregationsGroupedSqlBuilder(
-                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, app(AggregationBuilderType::class))
+                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson)
             )->build();
         }
 
@@ -142,7 +141,7 @@ class StatsAggregationsService
         }
 
         $sql = (new StatsAggregationsGroupedPropertiesSqlBuilder(
-            $statsSort, app(AggregationBuilderType::class)
+            $statsSort
         ))->build();
 
         $filterConditions = $this->getFilterConditions($filters);
@@ -446,7 +445,6 @@ class StatsAggregationsService
     {
         $builder = new StatsAggregationsSqlBuilder(
             $this->getTrackablePersonByProject(Project::find($projectId)),
-            app(AggregationBuilderType::class),
         );
 
         $sql = strtr($builder->build(), $this->formatFilter($filterConditions));

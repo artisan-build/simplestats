@@ -38,7 +38,6 @@ return new class extends Migration
 
             // Guarantees exactly one current value per entity + property name. All
             // columns are NOT NULL, so this works identically on MySQL, PostgreSQL
-            // and TimescaleDB (no partial-index / multiple-NULL pitfalls).
             $table->unique(
                 ['project_id', 'propertyable_type', 'propertyable_id', 'stats_custom_property_name_id'],
                 'stats_custom_properties_owner_name_unique',
