@@ -15,12 +15,10 @@ Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 - **PHP:** 8.2 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip
 - **Laravel:** 11 or higher
-- **Database:** MySQL 8.0 or higher | PostgreSQL 14 or higher
+- **Database:** PostgreSQL 14 or higher
 - **Node.js** 21.6 (lower versions might work)
 
 Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
-
-**Note:** We recommend using **PostgreSQL**, as it handles complex aggregations and large datasets more efficiently than MySQL.
 
 ## Installation
 

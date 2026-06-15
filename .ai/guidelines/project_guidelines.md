@@ -28,16 +28,19 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 
 ### Tech Stack
 
-- **Backend**: Laravel 11 (VILT Stack)
+- **Backend**: Laravel 12 (VILT Stack)
 - **Frontend**: Vue 3 / Inertia.js / Tailwind CSS
-- **Database**: PostgreSQL or MySQL 8.0+
+- **Database**: PostgreSQL 14+
 - **Queue**: Laravel Horizon for background job processing
 
 ### Database Strategy
 
-- **SaaS**: PostgreSQL with TimescaleDB extension for time-series optimization
-- **Self-hosted**: PostgreSQL (recommended) or MySQL 8.0+
-- **Migrations must work on all three**: MySQL, pure PostgreSQL, and PostgreSQL with TimescaleDB
+- **SaaS**: PostgreSQL
+- **Self-hosted**: PostgreSQL
+
+### Migrations: No `down()` / No Rollbacks
+
+- **We do not use `down()` methods.** Migrations are forward-only. Never add a `down()` method to a migration; rolling back is not part of our workflow (`migrate:rollback` is unused).
 
 ### Deployment Options
 
@@ -45,7 +48,7 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 2. **Self-hosted**: Full control over data and deployment, requires valid license
    - Setup, maintenance, and troubleshooting are the customer's responsibility
    - Uses `composer.self-hosted.json` for dependencies
-   - Requires: PHP 8.2+, Laravel 11+, PostgreSQL 14+ (recommended) or MySQL 8.0+, Node.js 21.6+
+   - Requires: PHP 8.2+, Laravel 12+, PostgreSQL 14+, Node.js 21.6+
 
 ## Laravel Boost
 

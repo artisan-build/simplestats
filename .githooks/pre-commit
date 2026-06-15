@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Regenerate CLAUDE.md via Laravel Boost whenever the guidelines change.
+# CLAUDE.md is auto-generated from .ai/guidelines/ and must never be edited directly.
+
+if git diff --cached --name-only | grep -q '^\.ai/guidelines/'; then
+    echo "Guidelines changed, running 'php artisan boost:update'..."
+
+    if ! php artisan boost:update; then
+        echo "boost:update failed, aborting commit." >&2
+        exit 1
+    fi
+fi
+
+exit 0

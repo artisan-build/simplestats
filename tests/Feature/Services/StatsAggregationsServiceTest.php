@@ -4,7 +4,9 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Models\Project;
 use App\Models\StatsAggregation;
+use App\Models\StatsVisitor;
 use App\Models\User;
+use App\Observers\StatsObserver;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsDetailsService;
 use Carbon\Carbon;
@@ -31,6 +33,11 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
     config(['app.stats_aggregation_enabled' => true]);
+});
+
+afterEach(function () {
+    StatsObserver::$enabled = true;
+    Carbon::setTestNow();
 });
 
 function insertVisitors(int $teamId, int $projectId, array $visitorCounts): void
@@ -508,4 +515,251 @@ it('grouped custom events do not leak across projects in the same team', functio
 
     expect($names)->toContain('Event A (own project)')
         ->and($names)->not->toContain('Event B (other project)');
+});
+
+it('carries the lifetime baseline forward from the cached predecessor bucket instead of rescanning history', function () {
+    insertVisitors($this->team->id, $this->pid, [
+        '2026-03-27' => 5,
+        '2026-03-28' => 10,
+        '2026-03-29' => 20,
+    ]);
+
+    $service = app(StatsAggregationsService::class);
+
+    // Cache the three days up to and including the predecessor (2026-03-29).
+    $predecessorFilters = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 3, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-29'), comparison: '0',
+    );
+    $cached = $service->getAggregatedData($predecessorFilters);
+
+    // Predecessor row holds the accumulated lifetime total (5 + 10 + 20).
+    expect($cached['2026-03-29']['lt_visitor'])->toBe(35);
+
+    // Drop the raw history: a fresh scan would now find nothing before 03-30.
+    // The carry-forward must instead seed the baseline from the cached 03-29 row.
+    DB::table('stats_visitors')->delete();
+    insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 1]);
+
+    $rolloverFilters = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+    $data = $service->getAggregatedData($rolloverFilters);
+
+    // pd is the single fresh visitor, lt is the carried-forward 35 plus that 1.
+    // A history rescan would yield lt_visitor = 1, which proves the carry-forward.
+    expect($data['2026-03-30']['pd_visitor'])->toBe(1)
+        ->and($data['2026-03-30']['lt_visitor'])->toBe(36);
+});
+
+it('falls back to a full history scan when the predecessor bucket is not cached', function () {
+    insertVisitors($this->team->id, $this->pid, [
+        '2026-03-27' => 5,
+        '2026-03-28' => 10,
+        '2026-03-30' => 3,
+    ]);
+
+    $service = app(StatsAggregationsService::class);
+
+    // Query the 03-30 bucket cold, without ever caching its predecessor (03-29).
+    $filters = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+    $data = $service->getAggregatedData($filters);
+
+    // No cached predecessor -> the lt_* CTEs scan the full history (5 + 10) and
+    // add the bucket's own 3.
+    expect($data['2026-03-30']['pd_visitor'])->toBe(3)
+        ->and($data['2026-03-30']['lt_visitor'])->toBe(18);
+});
+
+it('uses a zero baseline for the very first bucket of history (no predecessor)', function () {
+    insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 7]);
+
+    $service = app(StatsAggregationsService::class);
+
+    $filters = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+    $data = $service->getAggregatedData($filters);
+
+    // Nothing before the bucket and no cached predecessor: lt equals pd.
+    expect($data['2026-03-30']['pd_visitor'])->toBe(7)
+        ->and($data['2026-03-30']['lt_visitor'])->toBe(7);
+});
+
+it('invalidates the carried-forward baseline when a late event lands in a past bucket', function () {
+    Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
+
+    insertVisitors($this->team->id, $this->pid, [
+        '2026-03-28' => 10,
+        '2026-03-29' => 20,
+        '2026-03-30' => 4,
+    ]);
+
+    $service = app(StatsAggregationsService::class);
+
+    // Cache 03-28/03-29, then roll over into 03-30 via carry-forward.
+    $service->getAggregatedData(new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 2, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-29'), comparison: '0',
+    ));
+
+    $rolloverFilters = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+    $rolled = $service->getAggregatedData($rolloverFilters);
+    expect($rolled['2026-03-30']['lt_visitor'])->toBe(34); // 30 carried + 4
+
+    // A late visitor lands in the already-closed 03-28 bucket. The observer's
+    // forward-delete must drop 03-28 and everything after it (incl. the cached
+    // 03-29 predecessor and 03-30), so the carry-forward cannot reuse a stale row.
+    StatsObserver::$enabled = true;
+    StatsVisitor::factory()->create([
+        'team_id' => $this->team->id,
+        'project_id' => $this->pid,
+        'time' => '2026-03-28 09:00:00',
+        'time_utc' => '2026-03-28 09:00:00',
+    ]);
+
+    $data = $service->getAggregatedData($rolloverFilters);
+
+    // Recomputed from scratch: history before 03-30 is now 11 + 20 = 31, plus 4.
+    expect($data['2026-03-30']['lt_visitor'])->toBe(35);
+});
+
+it('carries the baseline forward on the team aggregation (project_id null) chain', function () {
+    insertVisitors($this->team->id, $this->pid, [
+        '2026-03-28' => 10,
+        '2026-03-29' => 20,
+    ]);
+
+    $service = app(StatsAggregationsService::class);
+
+    // projectId 0 -> team-wide aggregation, stored with project_id = null.
+    $predecessorFilters = new StatsFilterDto(
+        projectId: 0, rangeAmount: 2, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-29'), comparison: '0',
+    );
+    $cached = $service->getAggregatedData($predecessorFilters);
+    expect($cached['2026-03-29']['lt_visitor'])->toBe(30);
+
+    expect(StatsAggregation::where('filter_hash', $predecessorFilters->makeHash())
+        ->whereNull('project_id')->count())->toBe(2);
+
+    DB::table('stats_visitors')->delete();
+    insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 1]);
+
+    $data = $service->getAggregatedData(new StatsFilterDto(
+        projectId: 0, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    ));
+
+    expect($data['2026-03-30']['pd_visitor'])->toBe(1)
+        ->and($data['2026-03-30']['lt_visitor'])->toBe(31);
+});
+
+it('carries the baseline forward on a filtered (dimension) hash', function () {
+    $sourceId = DB::table('stats_track_sources')->insertGetId([
+        'team_id' => $this->team->id,
+        'name' => 'newsletter',
+        'created_at' => '2026-03-28 12:00:00',
+        'updated_at' => '2026-03-28 12:00:00',
+    ]);
+
+    $insert = function (string $date, int $count, ?int $srcId) {
+        for ($i = 0; $i < $count; $i++) {
+            DB::table('stats_visitors')->insert([
+                'team_id' => $this->team->id,
+                'project_id' => $this->pid,
+                'visitor_hash' => Str::uuid()->toString(),
+                'stats_track_source_id' => $srcId,
+                'time' => $date.' 12:00:00',
+                'time_utc' => $date.' 12:00:00',
+            ]);
+        }
+    };
+
+    // History: visitors matching the filter (source = newsletter) plus noise
+    // without it, so the filtered hash actually discriminates.
+    $insert('2026-03-28', 4, $sourceId);
+    $insert('2026-03-28', 6, null);
+    $insert('2026-03-29', 8, $sourceId);
+    $insert('2026-03-29', 2, null);
+
+    $service = app(StatsAggregationsService::class);
+
+    // Cache the FILTERED range up to the predecessor (03-29). The filtered
+    // lifetime total counts only newsletter visitors: 4 + 8 = 12.
+    $predecessorFilters = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 2, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-29'), comparison: '0',
+        trackSource: $sourceId,
+    );
+    $cached = $service->getAggregatedData($predecessorFilters);
+    expect($cached['2026-03-29']['pd_visitor'])->toBe(8)
+        ->and($cached['2026-03-29']['lt_visitor'])->toBe(12);
+
+    // Drop the raw history: a filtered rescan would now find nothing before 03-30.
+    DB::table('stats_visitors')->delete();
+
+    // Rollover-day visitors: 1 matching the filter + noise that must NOT count.
+    $insert('2026-03-30', 1, $sourceId);
+    $insert('2026-03-30', 5, null);
+
+    $data = $service->getAggregatedData(new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+        trackSource: $sourceId,
+    ));
+
+    // pd counts only the single newsletter visitor (noise excluded by the filter),
+    // lt is the carried-forward 12 plus that 1. A history rescan would yield
+    // lt_visitor = 1, which proves the carry-forward works on the filtered hash.
+    expect($data['2026-03-30']['pd_visitor'])->toBe(1)
+        ->and($data['2026-03-30']['lt_visitor'])->toBe(13);
+});
+
+it('reconstructs a multi-bucket gap in one shot, seeding from the last cached bucket', function () {
+    // Last time the dashboard was opened: a single cached day holding the whole
+    // history up to that point (lt_visitor = 15).
+    insertVisitors($this->team->id, $this->pid, ['2026-03-07' => 15]);
+
+    $service = app(StatsAggregationsService::class);
+
+    $service->getAggregatedData(new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-07'), comparison: '0',
+    ));
+
+    // Drop the raw history so a scan over "before the gap" would find nothing;
+    // only the cached 03-07 bucket (lt = 15) survives as the seed.
+    DB::table('stats_visitors')->delete();
+
+    // A full week passes uncached, each day collecting raw visitors.
+    insertVisitors($this->team->id, $this->pid, [
+        '2026-03-08' => 1, '2026-03-09' => 2, '2026-03-10' => 3, '2026-03-11' => 4,
+        '2026-03-12' => 5, '2026-03-13' => 6, '2026-03-14' => 7,
+    ]);
+
+    // Coming back a week later and opening the 7-day window (all uncached).
+    $data = $service->getAggregatedData(new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 7, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-14'), comparison: '0',
+    ));
+
+    // The whole week is built in one call: pd from the raw 7-day window, lt rolled
+    // forward from the seeded 15. A history rescan would start lt at 0 (history
+    // deleted), so lt_visitor(03-08) = 16 and lt_visitor(03-14) = 43 prove the
+    // carry-forward seeded the gap once and propagated across all 7 buckets.
+    expect($data)->toHaveCount(7)
+        ->and($data->sum('pd_visitor'))->toBe(28)
+        ->and($data['2026-03-08']['pd_visitor'])->toBe(1)
+        ->and($data['2026-03-08']['lt_visitor'])->toBe(16)
+        ->and($data['2026-03-14']['pd_visitor'])->toBe(7)
+        ->and($data['2026-03-14']['lt_visitor'])->toBe(43);
 });

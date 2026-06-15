@@ -9,6 +9,7 @@ use App\Models\DataImport;
 use App\Validators\BaseStatsValidator;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -54,7 +55,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return Model|null
      */
     public function getModelClass(): string
     {
@@ -62,7 +63,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return Model|null
      *
      * @throws ImportCanceledException
      */
@@ -70,7 +71,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
     {
         if (Cache::get('cancel_data_import_'.$this->dataImport->id)) {
             Cache::forget('cancel_data_import_'.$this->dataImport->id);
-            throw new ImportCanceledException();
+            throw new ImportCanceledException;
         }
 
         // TODO this may be an performance issue? on 100k data import we would do 100k queries.
@@ -104,7 +105,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
             $this->updateProgress();
         }
 
-        $modelConcerns = class_uses(new $this->modelClass());
+        $modelConcerns = class_uses(new $this->modelClass);
 
         // team and project id are normally set dynamically
         // this is safe, as we've validated the rows/cols before...

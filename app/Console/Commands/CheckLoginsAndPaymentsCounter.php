@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\AppHelper;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -33,28 +32,15 @@ class CheckLoginsAndPaymentsCounter extends Command
     public function handle(): void
     {
         foreach ($this->tables as $table) {
-            if (AppHelper::getDBDriver() === 'pgsql') {
-                DB::statement("
-                    UPDATE $table
-                    SET counter = ranked.rn
-                    FROM (
-                        SELECT id, ROW_NUMBER() OVER (PARTITION BY project_id, stats_user_id ORDER BY time) AS rn
-                        FROM $table
-                    ) AS ranked
-                    WHERE $table.id = ranked.id;
-                ");
-            } else {
-                DB::statement("
-                UPDATE $table AS s
-                JOIN (
-                    SELECT id,
-                           ROW_NUMBER() OVER (PARTITION BY project_id, stats_user_id ORDER BY time) AS rn
+            DB::statement("
+                UPDATE $table
+                SET counter = ranked.rn
+                FROM (
+                    SELECT id, ROW_NUMBER() OVER (PARTITION BY project_id, stats_user_id ORDER BY time) AS rn
                     FROM $table
                 ) AS ranked
-                ON s.id = ranked.id
-                SET s.counter = ranked.rn;
+                WHERE $table.id = ranked.id;
             ");
-            }
         }
     }
 }

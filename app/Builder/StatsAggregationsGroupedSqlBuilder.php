@@ -2,7 +2,6 @@
 
 namespace App\Builder;
 
-use App\Builder\Drivers\AggregationBuilderType;
 use App\Enums\TrackablePerson;
 use App\Services\StatsService;
 
@@ -16,7 +15,6 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected string $statsSort,
         protected string $typeIdFallback,
         protected TrackablePerson $trackablePerson,
-        protected AggregationBuilderType $aggregationBuilderType,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -38,12 +36,6 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         $this->applySql($this->getORDER(), false);
 
         return $this->sql;
-    }
-
-    // shorties
-    protected function getDistinctFields(array $fields): string
-    {
-        return $this->aggregationBuilderType->getDistinctFields(...func_get_args());
     }
 
     protected function getCTE(): string
@@ -159,6 +151,6 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
     protected function getORDER(): string
     {
-        return $this->aggregationBuilderType->getGroupedOrderBy($this->statsSort, $this->trackablePerson);
+        return $this->getGroupedOrderBy($this->statsSort, $this->trackablePerson);
     }
 }

@@ -17,6 +17,28 @@ class StatsFilterDto
 
     const TRACK_ORGANIC = -1;
 
+    // array item order is part of hash, must be stable
+    public const FILTER_DIMENSION_COLUMNS = [
+        'trackReferer' => 'stats_track_referer_id',
+        'trackSource' => 'stats_track_source_id',
+        'trackMedium' => 'stats_track_medium_id',
+        'trackCampaign' => 'stats_track_campaign_id',
+        'trackTerm' => 'stats_track_term_id',
+        'trackContent' => 'stats_track_content_id',
+        'locationCountry' => 'stats_location_country_id',
+        'locationRegion' => 'stats_location_region_id',
+        'locationCity' => 'stats_location_city_id',
+        'deviceType' => 'stats_device_type_id',
+        'devicePlatform' => 'stats_device_platform_id',
+        'deviceBrowser' => 'stats_device_browser_id',
+        'pageEntry' => 'stats_page_entry_id',
+    ];
+
+    public const FILTER_SPECIAL_KEYS = [
+        'customEventName' => 'custom_event_name',
+        'propertyValue' => 'property_value',
+    ];
+
     public function __construct(
         public int $projectId,
         public int $rangeAmount,
@@ -109,25 +131,29 @@ class StatsFilterDto
 
     public function makeHash(): string
     {
+        $dimensions = [...array_keys(self::FILTER_DIMENSION_COLUMNS), ...array_keys(self::FILTER_SPECIAL_KEYS)];
+
         return md5(json_encode([
             AppHelper::getTeamId(),
             $this->projectId,
             $this->rangeType,
-            $this->trackReferer,
-            $this->trackSource,
-            $this->trackMedium,
-            $this->trackCampaign,
-            $this->trackTerm,
-            $this->trackContent,
-            $this->locationCountry,
-            $this->locationRegion,
-            $this->locationCity,
-            $this->deviceType,
-            $this->devicePlatform,
-            $this->deviceBrowser,
-            $this->pageEntry,
-            $this->customEventName,
-            $this->propertyValue,
+            ...array_map(fn (string $property) => $this->$property, $dimensions),
         ]));
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function toFilterArray(): array
+    {
+        $filter = [];
+
+        foreach ([...self::FILTER_DIMENSION_COLUMNS, ...self::FILTER_SPECIAL_KEYS] as $property => $key) {
+            if ($this->$property !== self::TRACK_ALL) {
+                $filter[$key] = $this->$property;
+            }
+        }
+
+        return $filter;
     }
 }

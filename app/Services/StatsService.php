@@ -35,6 +35,12 @@ class StatsService
 {
     const NAU_LOGIN_COUNTER = 2;
 
+    // trailing window (in days) for the "active paying user" metrics (pd_daapu):
+    // a user counts as actively paying on a login day if a payment falls within
+    // the preceding DAAPU_WINDOW_DAYS. Referenced by both the aggregation SQL and
+    // the incremental aggregation guard in StatsIncrementService.
+    const DAAPU_WINDOW_DAYS = 20;
+
     const TRACKING_USAGE_BITS_VISITORS = 1;
 
     const TRACKING_USAGE_BITS_USERS = 2;

@@ -2,13 +2,10 @@
 
 namespace App\Builder;
 
-use App\Builder\Drivers\AggregationBuilderType;
-
 class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
 {
     public function __construct(
         protected string $statsSort,
-        protected AggregationBuilderType $aggregationBuilderType,
     ) {}
 
     public function build(): string
@@ -105,6 +102,6 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
     {
         $sort = in_array($this->statsSort, ['visitors', 'triggered', 'cr', 'net', 'name']) ? $this->statsSort : 'visitors';
 
-        return $this->aggregationBuilderType->getEventsGroupedOrderBy($sort);
+        return $this->getEventsGroupedOrderBy($sort);
     }
 }

@@ -2,10 +2,6 @@
 
 namespace App\Providers;
 
-use App\Builder\Drivers\AggregationBuilderType;
-use App\Builder\Drivers\AggregationBuilderTypeMySQL;
-use App\Builder\Drivers\AggregationBuilderTypePgSQL;
-use App\Helpers\AppHelper;
 use App\Models\PersonalAccessToken;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
@@ -13,7 +9,6 @@ use App\Models\User;
 use App\Observers\UserObserver;
 use App\PulseUsers;
 use Carbon\CarbonImmutable;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -49,14 +44,6 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ResolvesUsers::class, PulseUsers::class);
-
-        $this->app->singleton(AggregationBuilderType::class, function ($app) {
-            return match (AppHelper::getDBDriver()) {
-                'mysql' => new AggregationBuilderTypeMySQL,
-                'pgsql' => new AggregationBuilderTypePgSQL,
-                default => throw new Exception('DB driver not supported'),
-            };
-        });
     }
 
     /**
