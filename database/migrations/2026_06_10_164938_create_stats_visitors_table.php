@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -36,6 +36,17 @@ return new class extends Migration
             $table->index(['team_id', 'project_id', 'time']);
             $table->index(['team_id', 'time']);
             $table->unique(['team_id', 'project_id', 'visitor_hash']);
+
+            // Postgres does not auto-create an index for FK columns (unlike MySQL).
+            // project_id needs its own index for the ON DELETE CASCADE on project removal;
+            // the composites above only cover it as a non-leading column.
+            $table->index('project_id');
+
+            // The lookup-dimension FKs (stats_track_*, stats_location_*, stats_device_*,
+            // stats_page_entry_id) are intentionally left unindexed: they are ON DELETE SET NULL
+            // on append-only lookup tables (cascade never fires) and are only ever secondary
+            // WHERE refinements on top of the (team_id, project_id, time) scan, whose results are
+            // cached in stats_aggregations. Indexing all of them would be pure insert overhead.
 
             $table->foreign('project_id')
                 ->references('id')
@@ -112,5 +123,9 @@ return new class extends Migration
                 ->on('teams')
                 ->onDelete('cascade');
         });
+
+        // BRIN index on the append-only, time-ordered table: tiny on disk and very cheap on
+        // insert, effective for the time range filters. Additive to the B-tree composites above.
+        DB::statement('CREATE INDEX stats_visitors_time_brin_index ON stats_visitors USING brin (time)');
     }
 };
