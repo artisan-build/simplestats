@@ -24,8 +24,6 @@ return new class extends Migration
 
             $table->unique(['filter_hash', 'time']);
 
-            // Postgres does not auto-create an index for FK columns (unlike MySQL).
-            // Both back the ON DELETE CASCADE for project / team removal.
             $table->index('project_id');
             $table->index('team_id');
 

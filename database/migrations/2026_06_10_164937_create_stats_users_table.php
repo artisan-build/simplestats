@@ -37,16 +37,7 @@ return new class extends Migration
             $table->index(['team_id', 'project_id', 'time']);
             $table->index(['team_id', 'time']);
 
-            // Postgres does not auto-create an index for FK columns (unlike MySQL).
-            // project_id needs its own index for the ON DELETE CASCADE on project removal;
-            // the composites above only cover it as a non-leading column.
             $table->index('project_id');
-
-            // The lookup-dimension FKs (stats_track_*, stats_location_*, stats_device_*,
-            // stats_page_entry_id) are intentionally left unindexed: they are ON DELETE SET NULL
-            // on append-only lookup tables (cascade never fires) and are only ever secondary
-            // WHERE refinements on top of the (team_id, project_id, time) scan, whose results are
-            // cached in stats_aggregations. Indexing all of them would be pure insert overhead.
 
             $table->foreign('project_id')
                 ->references('id')

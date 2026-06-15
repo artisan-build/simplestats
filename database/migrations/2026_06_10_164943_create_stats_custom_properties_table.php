@@ -26,9 +26,6 @@ return new class extends Migration
             $table->index(['propertyable_type', 'propertyable_id']);
             $table->unique(['project_id', 'propertyable_type', 'propertyable_id', 'stats_custom_property_name_id'], 'stats_custom_properties_owner_name_unique');
 
-            // Postgres does not auto-create an index for FK columns (unlike MySQL). These back the
-            // ON DELETE CASCADE for team / property-name / property-value removal. project_id is
-            // already covered as the leading column of stats_custom_properties_group_index.
             $table->index('team_id');
             $table->index('stats_custom_property_name_id');
             $table->index('stats_custom_property_value_id');

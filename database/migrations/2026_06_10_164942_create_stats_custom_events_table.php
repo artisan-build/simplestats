@@ -31,11 +31,6 @@ return new class extends Migration
             $table->index(['team_id', 'project_id', 'time']);
             $table->index(['team_id', 'time']);
 
-            // Postgres does not auto-create an index for FK columns (unlike MySQL).
-            // project_id needs its own index for the ON DELETE CASCADE on project removal;
-            // the other FKs are already covered as leading columns: stats_custom_event_name_id
-            // by the sce_* composites, stats_visitor_id by sce_visitor_idx, the composite
-            // [stats_user_id, project_id] by the stats_user_id index.
             $table->index('project_id');
 
             $table->foreign('project_id')

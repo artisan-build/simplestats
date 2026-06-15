@@ -25,10 +25,6 @@ return new class extends Migration
             $table->index(['team_id', 'project_id', 'time']);
             $table->index(['team_id', 'time']);
 
-            // Postgres does not auto-create an index for FK columns (unlike MySQL).
-            // project_id needs its own index for the ON DELETE CASCADE on project removal.
-            // The composite [stats_user_id, project_id] FK is already served by the
-            // stats_user_id index above via its leading column.
             $table->index('project_id');
 
             $table->foreign('project_id')
@@ -47,8 +43,6 @@ return new class extends Migration
                 ->onDelete('cascade');
         });
 
-        // BRIN index on the append-only, time-ordered table: tiny on disk and very cheap on
-        // insert, effective for the time range filters. Additive to the B-tree composites above.
         DB::statement('CREATE INDEX stats_logins_time_brin_index ON stats_logins USING brin (time)');
     }
 };
