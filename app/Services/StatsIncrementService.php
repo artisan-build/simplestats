@@ -67,8 +67,10 @@ class StatsIncrementService
             $stat instanceof StatsVisitor, $stat instanceof StatsUser => true,
             // a login by a paying user can change pd_dapu/pd_daapu
             $stat instanceof StatsLogin => ! $this->userHasPayment($stat),
-            // the first payment retroactively changes pd_dapu/pd_pu/pd_napu
-            $stat instanceof StatsPayment => (int) $stat->counter > 1,
+            // the first payment retroactively changes pd_dapu/pd_pu/pd_napu; a repeat
+            // payment that reopens the daapu window (no prior payment within it) moves
+            // the user back into pd_daapu, which is not an incrementable metric either.
+            $stat instanceof StatsPayment => (int) $stat->counter > 1 && $this->paymentStaysWithinDaapuWindow($stat),
             default => false,
         };
     }
@@ -283,16 +285,37 @@ class StatsIncrementService
             ->where('time', '<', $this->bucketEnd($case, $bucketStart)->format('Y-m-d H:i:s'));
     }
 
-    // team_id/project_id are applied by the HasTeamScope/HasProjectScope global scopes
+    // stats_user_id is only unique per project (stats_users PK is [id, project_id]),
+    // so every entity lookup must pin project_id explicitly. The global HasTeamScope/
+    // HasProjectScope only narrow this further when their (queue-propagated) context
+    // is present, which is not guaranteed for every code path that creates a stat.
     private function userHasPayment(StatsLogin $stat): bool
     {
-        return StatsPayment::where('stats_user_id', $stat->stats_user_id)->exists();
+        return StatsPayment::where('stats_user_id', $stat->stats_user_id)
+            ->where('project_id', $stat->project_id)
+            ->exists();
+    }
+
+    /**
+     * Whether the user already had a payment within the daapu window directly
+     * before this one. If so, they were already an "active paying user" and this
+     * repeat payment does not change pd_daapu, so the open bucket may be incremented.
+     */
+    private function paymentStaysWithinDaapuWindow(StatsPayment $stat): bool
+    {
+        return StatsPayment::where('stats_user_id', $stat->stats_user_id)
+            ->where('project_id', $stat->project_id)
+            ->where('id', '!=', $stat->id)
+            ->where('time', '>=', $stat->time->subDays(StatsService::DAAPU_WINDOW_DAYS)->format('Y-m-d H:i:s'))
+            ->where('time', '<=', $stat->time->format('Y-m-d H:i:s'))
+            ->exists();
     }
 
     private function isFirstActiveLoginInBucket(StatsLogin $stat, StatsRangeType $case, CarbonInterface $bucketStart): bool
     {
         return $this->withinBucket(
             StatsLogin::where('stats_user_id', $stat->stats_user_id)
+                ->where('project_id', $stat->project_id)
                 ->where('counter', '>=', StatsService::NAU_LOGIN_COUNTER),
             $case,
             $bucketStart,

@@ -9,10 +9,13 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 {
     protected int $nauLoginCounter;
 
+    protected int $daapuWindowDays;
+
     public function __construct(
         protected TrackablePerson $trackablePerson,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
+        $this->daapuWindowDays = StatsService::DAAPU_WINDOW_DAYS;
     }
 
     public function build(): string
@@ -176,7 +179,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 FROM stats_payments sp
                 WHERE stats.stats_user_id = sp.stats_user_id
                     AND stats.project_id = sp.project_id
-                    AND sp.time >= ".$this->getDateInterval('sub', 'stats.time', 20, 'day').'
+                    AND sp.time >= ".$this->getDateInterval('sub', 'stats.time', $this->daapuWindowDays, 'day').'
                     AND sp.time <= stats.time
             )
             GROUP BY date

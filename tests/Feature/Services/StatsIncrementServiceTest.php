@@ -280,6 +280,42 @@ it('increments revenue for a repeat payment and matches a full recompute', funct
         ->and((float) freshlyRecomputed($this->service, $chromeFilter)['2026-06-14']['pd_net'])->toBe(120.0);
 });
 
+it('invalidates instead of incrementing a repeat payment that reopens the daapu window', function () {
+    // The user logged in today, but their only prior payment is 25 days ago, outside
+    // the 20-day daapu window, so today's pd_daapu starts at 0. A second payment today
+    // moves the user back into the window, so pd_daapu must become 1. The increment
+    // path cannot bump pd_daapu, so the open bucket has to be invalidated + recomputed.
+    StatsObserver::$enabled = false;
+    $user = StatsUser::factory()->create(array_merge(nullDims(), [
+        'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]));
+    StatsLogin::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]);
+    StatsPayment::factory()->create([
+        'id' => 'old-pay', 'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'time' => CarbonImmutable::parse($this->now)->subDays(25)->format('Y-m-d H:i:s'),
+        'counter' => 1, 'gross' => 100, 'net' => 80,
+    ]);
+    StatsObserver::$enabled = true;
+
+    $filter = ($this->dayFilter)();
+    expect((int) $this->service->getAggregatedData($filter)['2026-06-14']['pd_daapu'])->toBe(0);
+
+    // repeat payment today (counter auto = 2) reopens the 20-day daapu window
+    StatsPayment::factory()->create([
+        'id' => 'new-pay', 'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'time' => $this->now, 'counter' => 2, 'gross' => 50, 'net' => 40,
+    ]);
+
+    $row = $this->service->getAggregatedData($filter)['2026-06-14'];
+    expect((int) $row['pd_daapu'])->toBe(1)
+        ->and((int) $row['pd_daapu'])->toBe((int) freshlyRecomputed($this->service, $filter)['2026-06-14']['pd_daapu'])
+        // revenue is still correct after the invalidation + recompute (the 25-day-old
+        // payment is outside today's bucket, so only today's net counts)
+        ->and((float) $row['pd_net'])->toBe(40.0);
+});
+
 it('counts a payment via both the user and the visitor path (cross-entity double path)', function () {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
