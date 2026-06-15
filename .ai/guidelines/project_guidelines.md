@@ -331,6 +331,13 @@ Jobs include automatic retry logic for fault tolerance.
 
 - Always use `use` imports at the top of the file instead of inline fully-qualified class names (e.g., `use App\Models\User;` instead of `\App\Models\User::query()`).
 
+### Comments
+
+- Only write comments that add real value. A comment must explain a non-obvious **why**, a gotcha, or critical context that the code itself cannot convey.
+- Never write comments that merely restate what the code does (e.g. `// loop over users` above a `foreach`). Delete them on sight, including in code you are editing.
+- Do not add PHPDoc blocks just to describe a method/property whose name and signature already say everything. Skip boilerplate `@param`/`@return` that only repeats the type hints. PHPDoc is still expected where it carries extra information (array shapes, generics, thrown exceptions).
+- When in doubt, leave the comment out. The bar is "would a competent reader be confused or surprised without it?"
+
 ### Controllers & Business Logic
 
 - Controllers should be thin. Keep business logic out of controllers and move it into dedicated service classes (e.g., `App\Services\TrackingService`).
