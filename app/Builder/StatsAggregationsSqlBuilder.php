@@ -11,8 +11,14 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected int $daapuWindowDays;
 
+    /**
+     * When true, the lifetime (lt_*) CTEs emit a constant 0 instead of scanning the whole
+     * history before the range start. The caller then seeds the baseline from the cached
+     * predecessor bucket (lazy carry-forward).
+     */
     public function __construct(
         protected TrackablePerson $trackablePerson,
+        protected bool $seedLtBaseline = false,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
         $this->daapuWindowDays = StatsService::DAAPU_WINDOW_DAYS;
@@ -187,10 +193,27 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     }
 
     /**
+     * Zero baseline for a lifetime CTE: keeps the same shape (one row per date in
+     * the sequence) but skips the historical scan, so the caller can carry the
+     * baseline forward from the cached predecessor bucket instead.
+     */
+    protected function getLT_ZERO(string $cteName): string
+    {
+        return $cteName.' AS (
+            SELECT '.$this->getDateFormat('ds.date_seq', ':dateFormat').' AS date, 0 AS count
+            FROM date_sequence ds
+        )';
+    }
+
+    /**
      * lifetime regs
      */
     protected function getLT_REG(): string
     {
+        if ($this->seedLtBaseline) {
+            return $this->getLT_ZERO('lt_reg_cte');
+        }
+
         return 'lt_reg_cte AS (
             SELECT
                 '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
@@ -208,6 +231,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getLT_TAU(): string
     {
+        if ($this->seedLtBaseline) {
+            return $this->getLT_ZERO('lt_tau_cte');
+        }
+
         return 'lt_tau_cte AS (
             SELECT
                 '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
@@ -226,6 +253,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
      */
     protected function getLT_PU(): string
     {
+        if ($this->seedLtBaseline) {
+            return $this->getLT_ZERO('lt_pu_cte');
+        }
+
         return 'lt_pu_cte AS (
             SELECT
                 '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
@@ -293,6 +324,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getLT_VISITORS(): string
     {
+        if ($this->seedLtBaseline) {
+            return $this->getLT_ZERO('lt_visitor_cte');
+        }
+
         return 'lt_visitor_cte AS (
             SELECT
                 '.$this->getDateFormat('ds.date_seq', ':dateFormat')." AS date,
@@ -307,6 +342,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
 
     protected function getLT_NET(): string
     {
+        if ($this->seedLtBaseline) {
+            return $this->getLT_ZERO('lt_net_cte');
+        }
+
         return 'lt_net_cte AS (
             SELECT date, SUM(count) AS count
             FROM (

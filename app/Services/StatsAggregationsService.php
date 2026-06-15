@@ -207,7 +207,7 @@ class StatsAggregationsService
         }
 
         if ($aggregatedData->isEmpty()) {
-            $aggregatedData = $this->getRawData($filterConditions, $filters->projectId);
+            $aggregatedData = $this->getRawData($filterConditions, $filters->projectId, $filters);
             $this->storeAggregatedData($aggregatedData, $filters);
         } else {
             $missingAggregatedData = $this->getMissingAggregatedData($aggregatedData, $filters);
@@ -417,7 +417,7 @@ class StatsAggregationsService
             ]));
 
             $missingAggregatedData = $missingAggregatedData->merge(
-                $this->getRawData($this->getFilterConditions($rangeFilters), $rangeFilters->projectId)
+                $this->getRawData($this->getFilterConditions($rangeFilters), $rangeFilters->projectId, $rangeFilters)
             );
         }
 
@@ -450,24 +450,92 @@ class StatsAggregationsService
         return $ranges;
     }
 
-    public function getRawData(array $filterConditions, ?int $projectId): Collection
+    public function getRawData(array $filterConditions, ?int $projectId, ?StatsFilterDto $filters = null): Collection
     {
+        // Lazy carry-forward: instead of rescanning the whole history for the
+        // lt_* baseline, reuse the accumulated lt_* of the cached bucket directly
+        // before the range start (if present). Only the lt_* CTEs are affected;
+        // the per-bucket pd_* values are still computed raw.
+        $baselineSeed = $filters !== null ? $this->getCarryForwardBaseline($filters, $filterConditions) : null;
+
         $builder = new StatsAggregationsSqlBuilder(
             $this->getTrackablePersonByProject(Project::find($projectId)),
+            seedLtBaseline: $baselineSeed !== null,
         );
 
         $sql = strtr($builder->build(), $this->formatFilter($filterConditions));
         // echo nl2br($sql);die;
 
         $dataArray = $this->getDataArray($sql);
-        $this->applyContinuousLTAggregation($dataArray);
+        $this->applyContinuousLTAggregation($dataArray, $baselineSeed ?? []);
 
         return $this->formatAggregatedData(collect($dataArray));
     }
 
-    private function applyContinuousLTAggregation(array &$dataArray): void
+    /**
+     * Resolve the lt_* baseline for a cold range from the cached predecessor
+     * bucket instead of rescanning history. The bucket directly before the range
+     * start already stores its accumulated lt_* (lifetime total up to and
+     * including that bucket), which equals the sum of everything before the range
+     * start, exactly what the lt_* CTEs would otherwise scan for. Returns null
+     * (fall back to the full scan) when no such cached predecessor exists.
+     *
+     * @return array<string, int|float>|null
+     */
+    private function getCarryForwardBaseline(StatsFilterDto $filters, array $filterConditions): ?array
+    {
+        if (! config('app.stats_aggregation_enabled')) {
+            return null;
+        }
+
+        $dateFormatClear = $filters->rangeType->dateFormatClear()['php'];
+
+        $predecessorKey = trim(
+            CarbonImmutable::parse($filterConditions['startDateStart'])
+                ->sub(1, $filterConditions['intervalType']->toString())
+                ->format($dateFormatClear)
+        );
+
+        $predecessor = StatsAggregation::query()
+            ->where('filter_hash', $filters->makeHash())
+            ->where('type', $filters->rangeType->value)
+            ->where('time', $predecessorKey)
+            ->first(['id', 'data']);
+
+        if ($predecessor === null) {
+            return null;
+        }
+
+        $seed = [];
+        foreach ($predecessor->data as $key => $value) {
+            if (Str::startsWith($key, 'lt_')) {
+                $seed[$key] = $value;
+            }
+        }
+
+        return $seed ?: null;
+    }
+
+    /**
+     * Accumulated lt_* carried forward from the cached predecessor bucket.
+     *
+     * @param  array<string, int|float>  $baselineSeed
+     */
+    private function applyContinuousLTAggregation(array &$dataArray, array $baselineSeed = []): void
     {
         $dataArray = array_reverse($dataArray);
+
+        // Seed the oldest bucket's lt_* with the carried-forward baseline. The
+        // forward propagation below then rolls it through the whole range. Only
+        // the oldest row matters, every later row's lt_* gets overwritten by the
+        // propagation step before it is read.
+        if (! empty($baselineSeed) && ! empty($dataArray)) {
+            foreach ($baselineSeed as $ltKey => $seedValue) {
+                if (array_key_exists($ltKey, $dataArray[0])) {
+                    $dataArray[0][$ltKey] += $seedValue;
+                }
+            }
+        }
 
         $i = 0;
         foreach ($dataArray as $item) {
