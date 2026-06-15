@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\Announcements;
 use App\Jobs\SendAnnouncementToUser;
+use App\Mail\AnnouncementMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
@@ -123,6 +124,55 @@ test('send announcement with admins_only toggle only dispatches to admin users',
 
     expect($dispatched)->toContain($this->admin->email);
     expect($dispatched)->not->toContain($regularUser->email);
+});
+
+test('send announcement dispatches only to custom emails when provided', function () {
+    Bus::fake();
+
+    $regularUser = User::factory()->create(['email_verified_at' => now(), 'is_admin' => false]);
+
+    Livewire::test(Announcements::class)
+        ->fillForm([
+            'subject' => 'Custom Blast',
+            'body' => 'Hello there.',
+            'custom_emails' => ['first@example.com', 'Second@Example.com', 'first@example.com'],
+        ])
+        ->call('send')
+        ->assertNotified();
+
+    $dispatched = collect();
+    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched) {
+        $dispatched->push($job->recipientEmail);
+
+        return true;
+    });
+
+    expect($dispatched->sort()->values()->all())->toBe(['first@example.com', 'second@example.com']);
+    expect($dispatched)->not->toContain($this->admin->email);
+    expect($dispatched)->not->toContain($regularUser->email);
+});
+
+test('send announcement validates custom email addresses', function () {
+    Livewire::test(Announcements::class)
+        ->fillForm([
+            'subject' => 'Test',
+            'body' => 'Content',
+            'custom_emails' => ['not-an-email'],
+        ])
+        ->call('send')
+        ->assertHasFormErrors(['custom_emails.0']);
+});
+
+test('announcement email greets with there when recipient name is empty', function () {
+    $rendered = (new AnnouncementMail('', 'Subject', 'Body'))->render();
+
+    expect($rendered)->toContain('Hey there,');
+});
+
+test('announcement email greets with the recipient name when present', function () {
+    $rendered = (new AnnouncementMail('Jane', 'Subject', 'Body'))->render();
+
+    expect($rendered)->toContain('Hey Jane,');
 });
 
 test('non-admin users cannot access the send announcement page', function () {

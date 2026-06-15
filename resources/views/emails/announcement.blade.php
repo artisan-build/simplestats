@@ -1,6 +1,6 @@
 @component('mail::message')
 
-Hey {{ $recipientName }},
+Hey {{ filled($recipientName) ? $recipientName : 'there' }},
 
 {!! str($markdownContent)->markdown()->sanitizeHtml() !!}
 
