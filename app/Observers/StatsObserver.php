@@ -9,13 +9,15 @@ use App\Models\UserNotification;
 use App\Notifications\ProjectAlertPaymentNotification;
 use App\Notifications\ProjectAlertRegistrationNotification;
 use App\Services\StatsAggregationsService;
+use App\Services\StatsIncrementService;
 
 class StatsObserver
 {
     public static bool $enabled = true;
 
     public function __construct(
-        protected StatsAggregationsService $statsAggregationsService
+        protected StatsAggregationsService $statsAggregationsService,
+        protected StatsIncrementService $statsIncrementService,
     ) {}
 
     public function updated(BaseStat $stat): void
@@ -53,7 +55,7 @@ class StatsObserver
                 });
         }
 
-        $this->statsAggregationsService->invalidateByStatsUpdate($stat);
+        $this->statsIncrementService->handleCreated($stat);
     }
 
     public function deleted(BaseStat $stat): void

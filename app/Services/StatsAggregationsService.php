@@ -31,11 +31,16 @@ class StatsAggregationsService
             return;
         }
 
-        $upsertData = $data->map(function ($item) use ($filters) {
+        $teamId = AppHelper::getTeamId();
+        $filterHash = $filters->makeHash();
+        $filterJson = json_encode($filters->toFilterArray());
+
+        $upsertData = $data->map(function ($item) use ($filters, $teamId, $filterHash, $filterJson) {
             return [
-                'team_id' => AppHelper::getTeamId(),
+                'team_id' => $teamId,
                 'project_id' => $filters->projectId ?: null,
-                'filter_hash' => $filters->makeHash(),
+                'filter_hash' => $filterHash,
+                'filter' => $filterJson,
                 'type' => $filters->rangeType,
                 'time' => $item['date_clear'],
                 'data' => json_encode($item),
@@ -43,7 +48,7 @@ class StatsAggregationsService
             ];
         });
 
-        StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time'], update: ['data']);
+        StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time'], update: ['data', 'filter']);
     }
 
     /**
@@ -489,27 +494,32 @@ class StatsAggregationsService
     public function invalidateByStatsUpdate(BaseStat $stat): void
     {
         foreach (StatsRangeType::cases() as $case) {
-            // it's important to convert the time to the corresponding range types (days, weeks, months)
-            // for instance: if the update time is 2024-05-15, you'll also want to delete form its corresponding week,
-            // which starts at 2024-05-13 (same counts for months)
-            $start = $case->rangeStart($stat->time)->format($case->dateFormatClear()['php']);
-
-            StatsAggregation::where([
-                ['time', '>=', $start],
-                ['type', '=', $case->value],
-            ])->where(function ($query) use ($stat) {
-                // stats must be re-aggregated on a team basis
-                $query->where(function ($query) use ($stat) {
-                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null);
-                })
-                // stats must be re-aggregated on project basis
-                    ->orWhere(function ($query) use ($stat) {
-                        $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id);
-                    });
-            })->delete();
-            // other projects aggregations will remain,
-            // but unfortunately, we have to re-aggregate the whole team
+            $this->invalidateCaseByStatsUpdate($stat, $case);
         }
+    }
+
+    /*
+     * it's important to convert the time to the corresponding range types (days, weeks, months)
+     * for instance: if the update time is 2024-05-15, you'll also want to delete form its corresponding week,
+     * which starts at 2024-05-13 (same counts for months)
+     */
+    public function invalidateCaseByStatsUpdate(BaseStat $stat, StatsRangeType $case): void
+    {
+        $start = $case->rangeStart($stat->time)->format($case->dateFormatClear()['php']);
+
+        StatsAggregation::where([
+            ['time', '>=', $start],
+            ['type', '=', $case->value],
+        ])->where(function ($query) use ($stat) {
+            // stats must be re-aggregated on a team basis
+            $query->where(function ($query) use ($stat) {
+                $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null);
+            })
+            // stats must be re-aggregated on project basis
+                ->orWhere(function ($query) use ($stat) {
+                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id);
+                });
+        })->delete();
     }
 
     public function clearByProject(Project $project): void

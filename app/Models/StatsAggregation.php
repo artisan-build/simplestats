@@ -16,6 +16,7 @@ class StatsAggregation extends Model
         'time' => 'date',
         'type' => StatsRangeType::class,
         'data' => 'json',
+        'filter' => 'array',
         'selected_at' => 'datetime',
     ];
 }
