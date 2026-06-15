@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('project_id')->nullable();
             $table->string('filter_hash', 32);
-            $table->json('filter')->nullable();
             $table->timestamp('time');
             $table->string('type');
             $table->json('data');
