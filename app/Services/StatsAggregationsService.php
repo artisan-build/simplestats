@@ -196,8 +196,12 @@ class StatsAggregationsService
                 ->orderBy('time', 'desc')
                 ->pluck('data', 'id');
 
-            // we need to update this information, so that we can delete aggregations which are older than x days...
-            StatsAggregation::whereIn('id', $aggregatedDataKeyedById->keys())->update(['selected_at' => now()]);
+            // Refresh selected_at so the GC (ClearOldStatsAggregations) keeps hot
+            // rows. Throttled to avoid a write on every single read: the GC window
+            // is 400 days, so an hours-stale selected_at is irrelevant.
+            StatsAggregation::whereIn('id', $aggregatedDataKeyedById->keys())
+                ->where('selected_at', '<', now()->subHours(6))
+                ->update(['selected_at' => now()]);
 
             $aggregatedData = $this->formatAggregatedData($aggregatedDataKeyedById);
         }

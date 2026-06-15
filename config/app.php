@@ -1,7 +1,19 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\AuthServiceProvider;
+use App\Providers\DbServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\HorizonServiceProvider;
+use App\Providers\JetstreamServiceProvider;
+use App\Providers\RouteServiceProvider;
+use App\Providers\SocialstreamServiceProvider;
+use App\Providers\SparkServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
+use Lab404\Impersonate\ImpersonateServiceProvider;
 
 return [
 
@@ -225,20 +237,20 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\DbServiceProvider::class,
+        AppServiceProvider::class,
+        AuthServiceProvider::class,
+        DbServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\HorizonServiceProvider::class,
-        App\Providers\SparkServiceProvider::class,
-        ...env('APP_TYPE') === 'saas' ? [App\Providers\Filament\AdminPanelProvider::class] : [],
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\SocialstreamServiceProvider::class,
+        EventServiceProvider::class,
+        HorizonServiceProvider::class,
+        SparkServiceProvider::class,
+        ...env('APP_TYPE') === 'saas' ? [AdminPanelProvider::class] : [],
+        RouteServiceProvider::class,
+        SocialstreamServiceProvider::class,
         //        App\Providers\TelescopeServiceProvider::class,
-        App\Providers\FortifyServiceProvider::class,
-        App\Providers\JetstreamServiceProvider::class,
-        Lab404\Impersonate\ImpersonateServiceProvider::class,
+        FortifyServiceProvider::class,
+        JetstreamServiceProvider::class,
+        ImpersonateServiceProvider::class,
     ])->toArray(),
 
     /*
