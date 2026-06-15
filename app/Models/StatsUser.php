@@ -6,6 +6,7 @@ use App\Concerns\HasCustomProperties;
 use App\Concerns\HasStatsRelations;
 use App\Concerns\HasStatsTracking;
 use App\Contracts\Propertyable;
+use App\Notifications\ProjectAlertRegistrationNotification;
 use App\Observers\StatsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,5 +28,14 @@ class StatsUser extends BaseStat implements Propertyable
     public function statsPayments(): HasMany
     {
         return $this->hasMany(StatsPayment::class);
+    }
+
+    public function sendRegistrationAlerts(): void
+    {
+        $this->project->userAlertNotifications()->with('user')
+            ->where('settings->tracking->registrations', true)
+            ->each(function (UserNotification $notification) {
+                $notification->user->notify(new ProjectAlertRegistrationNotification($this, $notification));
+            });
     }
 }

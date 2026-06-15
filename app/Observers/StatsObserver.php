@@ -3,11 +3,6 @@
 namespace App\Observers;
 
 use App\Models\BaseStat;
-use App\Models\StatsPayment;
-use App\Models\StatsUser;
-use App\Models\UserNotification;
-use App\Notifications\ProjectAlertPaymentNotification;
-use App\Notifications\ProjectAlertRegistrationNotification;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsIncrementService;
 
@@ -39,21 +34,9 @@ class StatsObserver
         $stat->team->increment('events_count_overall');
         $stat->project->increment('events_count_monthly');
 
-        if ($stat instanceof StatsUser) {
-            $stat->project->userAlertNotifications()->with('user')
-                ->where('settings->tracking->registrations', true)
-                ->each(function (UserNotification $notification) use ($stat) {
-                    $notification->user->notify(new ProjectAlertRegistrationNotification($stat, $notification));
-                });
-        }
-
-        if ($stat instanceof StatsPayment) {
-            $stat->project->userAlertNotifications()->with('user')
-                ->where('settings->tracking->payments', true)
-                ->each(function (UserNotification $notification) use ($stat) {
-                    $notification->user->notify(new ProjectAlertPaymentNotification($stat, $notification));
-                });
-        }
+        // Alerts fire from the ingest jobs (TrackStatsUser / TrackStatsPayment), not here: a
+        // StatsUser row can be created as an empty placeholder by a login/payment/event that beats
+        // the registration ingest, which would send the alert with empty tracking data.
 
         $this->statsIncrementService->handleCreated($stat);
     }

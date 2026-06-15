@@ -15,6 +15,11 @@ class TrackStatsPayment extends BaseStatsTrack
 
         $this->resolveVisitorHash();
 
-        StatsPayment::updateOrCreate(['id' => $this->input['id']], $this->input);
+        $statsPayment = StatsPayment::updateOrCreate(['id' => $this->input['id']], $this->input);
+
+        // a payment is never a placeholder shell (unlike StatsUser), so a fresh create is the alert signal.
+        if ($statsPayment->wasRecentlyCreated) {
+            $statsPayment->sendPaymentAlerts();
+        }
     }
 }

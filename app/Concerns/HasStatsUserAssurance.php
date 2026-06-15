@@ -38,6 +38,9 @@ trait HasStatsUserAssurance
         ], array_merge($uniqueProject, [
             'id' => $this->stats_user_id,
             'time' => $this->stats_user_time ?? now(),
+            // placeholder for a login/payment/event before we saw the registration; TrackStatsUser
+            // flips this to true once the real registration ingest lands.
+            'registered' => false,
             // hack to set ip and user_agent when the user not yet exists on our side, but the user is doing a login,
             // then an account gets created, and we want to store ip and user_agent
             'ip' => $this->ip ?? null,

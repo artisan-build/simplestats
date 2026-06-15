@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasStatsUserAssurance;
+use App\Notifications\ProjectAlertPaymentNotification;
 use App\Observers\StatsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,5 +33,14 @@ class StatsPayment extends BaseStat
     public function statsVisitor(): BelongsTo
     {
         return $this->belongsTo(StatsVisitor::class);
+    }
+
+    public function sendPaymentAlerts(): void
+    {
+        $this->project->userAlertNotifications()->with('user')
+            ->where('settings->tracking->payments', true)
+            ->each(function (UserNotification $notification) {
+                $notification->user->notify(new ProjectAlertPaymentNotification($this, $notification));
+            });
     }
 }

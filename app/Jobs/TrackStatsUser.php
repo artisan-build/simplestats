@@ -21,9 +21,21 @@ class TrackStatsUser extends BaseStatsTrack
         $properties = $this->input['properties'] ?? [];
         unset($this->input['properties']);
 
-        $statsUser = StatsUser::updateOrCreate(['id' => $this->input['id']], $this->input);
+        $statsUser = StatsUser::firstOrNew(['id' => $this->input['id']]);
+
+        // a pre-existing registered row was already alerted; a new row or a placeholder shell
+        // (registered = false) is the first real registration.
+        $isFirstRegistration = ! ($statsUser->exists && $statsUser->registered);
+
+        $statsUser->fill($this->input);
+        $statsUser->registered = true;
+        $statsUser->save();
 
         $statsUser->recordCustomProperties($properties, CarbonImmutable::parse($this->input['time']));
+
+        if ($isFirstRegistration) {
+            $statsUser->sendRegistrationAlerts();
+        }
 
         if ($addLogin) {
             TrackStatsLogin::dispatch(app(StatsLoginValidator::class)->validate([
