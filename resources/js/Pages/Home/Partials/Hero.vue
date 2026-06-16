@@ -57,7 +57,7 @@ function trackGetStartedClick() {
             </a>
         </div>
 
-        <dl class="mb-10 mx-auto max-w-3xl px-6 grid grid-cols-2 sm:grid-cols-4 gap-y-3 tabular-nums">
+        <dl class="mb-10 mx-auto max-w-3xl px-6 hidden sm:grid sm:grid-cols-4 gap-y-3 tabular-nums">
             <div
                 v-for="(stat, index) in stats"
                 :key="stat.term"
