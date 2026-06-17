@@ -11,7 +11,7 @@ Each property is a **name** (the grouping dimension, e.g. `subscription`) with a
 ![SimpleStats dashboard grouping metrics by a custom property, with one tab per property name and one row per value](https://simplestats.io/images/blog/screenshot_custom_properties.png)
 
 ::: info
-A property keeps exactly **one current value** per entity. Re-tracking a user with a new value overwrites the old one, so revenue and activity always follow the latest value (e.g. a user who upgrades from `free` to `pro` counts under `pro`).
+A property keeps exactly **one current value** per entity. Re-tracking a user with a new value overwrites the old one, so revenue and activity always follow the latest value (e.g. a user who upgrades from `free` to `pro` counts under `pro`). The same applies on the way down: a user who cancels and returns to `free` carries their past revenue to `free`. If you want to keep that apart, report a dedicated value such as `churned` for former subscribers.
 :::
 
 ## Tracking user properties
@@ -40,6 +40,30 @@ class UserCustomPropertiesResolver implements ResolvesUserCustomProperties
             'subscription' => $user->plan->name, // e.g. "free", "pro", "enterprise"
             'company' => $user->company_name,
         ];
+    }
+}
+```
+
+The resolver runs on every track, so it is also the place to derive values. Because revenue follows the latest value, a variant of the resolver above could tell a former subscriber apart from someone who never paid, so a cancelled customer's past revenue does not land under `free`:
+
+```php
+namespace App\Analytics;
+
+use SimpleStatsIo\LaravelClient\Contracts\ResolvesUserCustomProperties;
+use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
+
+class UserCustomPropertiesResolver implements ResolvesUserCustomProperties
+{
+    public function resolve(TrackablePerson $user): array
+    {
+        $plan = $user->plan->name;
+
+        // a former subscriber back on the free plan is churned, not organic free
+        if ($plan === 'free' && $user->subscriptions()->exists()) {
+            return ['subscription' => 'churned'];
+        }
+
+        return ['subscription' => $plan];
     }
 }
 ```

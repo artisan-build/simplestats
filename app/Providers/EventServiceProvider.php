@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Listeners\CreateTeamMemberNotifications;
 use App\Listeners\EmailVerificationListener;
 use App\Listeners\SetCurrentTeam;
+use App\Listeners\SyncSubscriptionCustomProperty;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Laravel\Jetstream\Events\TeamMemberAdded;
+use Laravel\Paddle\Events\SubscriptionCanceled;
+use Laravel\Paddle\Events\SubscriptionCreated;
+use Laravel\Paddle\Events\SubscriptionUpdated;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -33,6 +37,15 @@ class EventServiceProvider extends ServiceProvider
         TeamMemberAdded::class => [
             SetCurrentTeam::class,
             CreateTeamMemberNotifications::class,
+        ],
+        SubscriptionCreated::class => [
+            SyncSubscriptionCustomProperty::class,
+        ],
+        SubscriptionUpdated::class => [
+            SyncSubscriptionCustomProperty::class,
+        ],
+        SubscriptionCanceled::class => [
+            SyncSubscriptionCustomProperty::class,
         ],
     ];
 
