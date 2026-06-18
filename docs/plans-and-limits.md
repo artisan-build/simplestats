@@ -1,3 +1,7 @@
+---
+aside: false
+---
+
 # Plans and Limits
 
 This page provides an overview of all plan features and technical limits.
@@ -39,6 +43,8 @@ An event is any tracked action sent to the SimpleStats API. This includes:
 - **User registration** - Each new user registration counts as one event
 - **Login tracking** - Each tracked login counts as one event
 - **Payment tracking** - Each tracked payment counts as one event
+- **Custom events** - Each tracked custom action (e.g. a button click or plan upgrade) counts as one event
+- **Custom properties** - Each tracked property update counts as one event
 
 ## API Rate Limits
 
