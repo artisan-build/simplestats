@@ -5,6 +5,7 @@ import RangeSlider from "@/Components/RangeSlider.vue";
 import {computed, ref} from "vue";
 import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
+import {CreditCardIcon} from '@heroicons/vue/24/solid';
 
 const { localizedPath } = useLocale();
 
@@ -98,6 +99,18 @@ const getPlanPrice = (amount, discount) => {
 const hasExternalTax = computed(() => {
     return props.plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length > 0;
 });
+
+const yearlySavings = computed(() => {
+    const plan = selectedPlan.value;
+
+    if (! plan || plan.price_monthly <= 0 || plan.price_yearly <= 0) {
+        return null;
+    }
+
+    const saved = (plan.price_monthly * 12 - plan.price_yearly) / 100;
+
+    return saved > 0 ? '$' + Math.round(saved) : null;
+});
 </script>
 
 <template>
@@ -108,10 +121,21 @@ const hasExternalTax = computed(() => {
             </SectionHeader>
 
             <div class="text-center -mt-10 mb-10">
-                <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-dark-700">
-                    <div class="sm:-mx-0.5 flex">
-                        <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">{{ $t('monthly') }}</button>
-                        <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">{{ $t('yearly') }}</button>
+                <div class="relative inline-block">
+                    <div class="inline-block mx-auto text-sm overflow-hidden p-0.5 border rounded-lg dark:border-dark-700">
+                        <div class="sm:-mx-0.5 flex">
+                            <button @click="selectedInterval = 'monthly'" :class="getIntervalClass('monthly')">{{ $t('monthly') }}</button>
+                            <button @click="selectedInterval = 'yearly'" :class="getIntervalClass('yearly')">{{ $t('yearly') }}</button>
+                        </div>
+                    </div>
+
+                    <div class="hidden sm:flex absolute top-1/2 left-full -translate-y-1/2 ml-1 -mt-4 items-center gap-1 text-indigo-600 dark:text-indigo-400">
+                        <svg viewBox="0 0 70 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="w-11 h-auto shrink-0">
+                            <path d="M64 12C46 4 18 8 9 34" />
+                            <path d="M9 34L20 31" />
+                            <path d="M9 34L13 23" />
+                        </svg>
+                        <span class="italic font-medium whitespace-nowrap -rotate-3 -mt-6">{{ $t('2 months free') }}</span>
                     </div>
                 </div>
             </div>
@@ -153,10 +177,10 @@ const hasExternalTax = computed(() => {
                                 / {{ trans(priceIntervalString) }}<span v-if="selectedPlan[taxIntervalKey] === 'external'">*</span>
                             </div>
                             <div
-                                v-if="selectedInterval === 'yearly' && selectedPlan.yearly_incentive !== null"
+                                v-if="selectedInterval === 'yearly' && yearlySavings"
                                 class="mt-1 inline-block text-sm bg-green-400 px-2 py-1 rounded text-gray-800"
                             >
-                                {{ $t('Save :percent%', { percent: selectedPlan.yearly_incentive }) }}
+                                {{ $t('Save :amount', { amount: yearlySavings }) }}
                             </div>
                         </div>
                     </div>
@@ -198,6 +222,7 @@ const hasExternalTax = computed(() => {
                             {{ $t('Get started') }}
                         </Link>
                         <p class="mt-3 text-center text-sm text-gray-500 dark:text-dark-400">
+                            <credit-card-icon class="size-4 inline-block" />
                             {{ $t('No credit card required') }}
                         </p>
                     </template>
