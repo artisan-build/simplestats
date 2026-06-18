@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import { vTooltip } from 'floating-vue';
 import { i18nVue, I18n } from 'laravel-vue-i18n';
+import { initTawk } from './tawk';
 let appName = import.meta.env.VITE_APP_NAME;
 
 if (import.meta.env.VITE_APP_ENV !== 'production') {
@@ -43,6 +44,8 @@ createInertiaApp({
         }
 
         app.mount(el);
+
+        initTawk(props.initialPage.component);
 
         if (import.meta.env.VITE_SENTRY_DSN_PUBLIC) {
             import('@sentry/vue').then((Sentry) => {
