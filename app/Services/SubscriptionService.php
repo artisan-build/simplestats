@@ -18,6 +18,12 @@ class SubscriptionService
 
     const PLAN_BUSINESS = 'Business';
 
+    const PLAN_SCALE = 'Scale';
+
+    const PLAN_PREMIUM = 'Premium';
+
+    const PLAN_ULTIMATE = 'Ultimate';
+
     const PLAN_ENTERPRISE = 'Enterprise';
 
     const UNLIMITED_AMOUNT = -1;

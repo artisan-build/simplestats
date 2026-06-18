@@ -1,13 +1,14 @@
 <script setup>
 import {Link} from '@inertiajs/vue3';
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
+import RangeSlider from "@/Components/RangeSlider.vue";
 import {computed, ref} from "vue";
 import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
 
 const { localizedPath } = useLocale();
 
-defineProps({
+const props = defineProps({
     plans: Array,
 });
 
@@ -33,20 +34,75 @@ const priceIntervalString = computed(() => {
     return selectedInterval.value === 'monthly' ? 'month' : 'year';
 });
 
+const eventsOf = (plan) => Number(plan.options?.Events ?? 0);
+
+// A plan is offered on the slider when it is free (the floor) or has a configured
+// price for the active interval. This auto-hides tiers whose Paddle price isn't set up yet.
+const availablePlans = computed(() => {
+    return [...props.plans]
+        .filter((plan) => plan.name === 'Free' || plan[priceIntervalKey.value] > 0)
+        .sort((a, b) => eventsOf(a) - eventsOf(b));
+});
+
+const initialIndex = (() => {
+    const list = [...props.plans]
+        .filter((plan) => plan.name === 'Free' || plan.price_monthly > 0)
+        .sort((a, b) => eventsOf(a) - eventsOf(b));
+    const promoted = list.findIndex((plan) => plan.promoted);
+
+    return promoted >= 0 ? promoted : Math.floor(list.length / 2);
+})();
+
+const sliderIndex = ref(initialIndex);
+
+const selectedPlan = computed(() => {
+    const list = availablePlans.value;
+    const index = Math.min(sliderIndex.value, list.length - 1);
+
+    return list[index] ?? null;
+});
+
+const formatEvents = (amount) => {
+    return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(amount);
+};
+
+const sliderMinLabel = computed(() => {
+    const first = availablePlans.value[0];
+
+    if (! first) {
+        return '';
+    }
+
+    const label = formatEvents(eventsOf(first));
+    const isFree = first.name === 'Free' || first.price_monthly === 0;
+
+    return isFree ? `${label} (${trans('free')})` : label;
+});
+
+const sliderMaxLabel = computed(() => {
+    const last = availablePlans.value[availablePlans.value.length - 1];
+
+    return last ? formatEvents(eventsOf(last)) : '';
+});
+
 const getPlanPrice = (amount, discount) => {
-    amount = amount  / 100;
+    amount = amount / 100;
 
     if (discount) {
         amount = Math.floor(amount * (discount / 100));
     }
 
     return '$' + amount;
-}
+};
+
+const hasExternalTax = computed(() => {
+    return props.plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length > 0;
+});
 </script>
 
 <template>
     <section class="flex justify-center">
-        <div class="max-w-screen-xl">
+        <div class="max-w-screen-xl w-full">
             <SectionHeader id="pricing" :eyebrow="$t('Plans')">
                 {{ $t('Subscribe at your') }}&nbsp;<span class="text-indigo-500 underline">{{ $t('scale') }}</span>
             </SectionHeader>
@@ -60,48 +116,72 @@ const getPlanPrice = (amount, discount) => {
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-x-8 gap-y-10 lg:gap-y-20 px-6">
-                <div v-for="plan in plans"
-                     class="px-6 py-6 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 dark:hover:bg-dark-800"
-                     :class="plan.promoted ? 'bg-gray-800 hover:bg-gray-800 dark:bg-dark-800' : ''"
-                >
-                    <div class="relative flex justify-between flex-wrap text-2xl font-medium dark:text-dark-100" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800'">
-                        <div>{{ $t(plan.name) }}</div>
-                        <div
-                            v-if="selectedInterval === 'yearly' && plan.yearly_incentive !== null"
-                            class="absolute -top-9 text-sm bg-green-400 px-2 py-1 rounded text-gray-800"
-                        >
-                            {{ $t('Save :percent%', { percent: plan.yearly_incentive }) }}
+            <div v-if="selectedPlan" class="px-6">
+                <div class="max-w-2xl mx-auto px-6 py-8 sm:px-10 sm:py-10 border border-gray-200 dark:border-dark-700 rounded-2xl">
+                    <div class="flex items-start justify-between flex-wrap gap-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-medium uppercase tracking-wide text-indigo-500">
+                                    {{ $t(selectedPlan.name) }}
+                                </span>
+                                <span
+                                    v-if="selectedPlan.promoted"
+                                    class="text-[11px] font-medium uppercase tracking-wide text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full"
+                                >
+                                    {{ $t('Recommended') }}
+                                </span>
+                            </div>
+                            <div class="mt-1 text-4xl font-semibold text-gray-800 dark:text-dark-100">
+                                {{ formatEvents(eventsOf(selectedPlan)) }}
+                            </div>
+                            <div class="text-gray-600 dark:text-dark-400">{{ $t('monthly events') }}</div>
+                        </div>
+
+                        <div class="text-right">
+                            <div class="text-3xl font-semibold text-gray-800 dark:text-dark-100">
+                                <span v-if="selectedPlan.discount && selectedPlan[priceIntervalKey] > 0">
+                                    <span class="line-through text-base text-gray-500">
+                                        {{ getPlanPrice(selectedPlan[priceIntervalKey], 0) }}
+                                    </span>
+                                    {{ getPlanPrice(selectedPlan[priceIntervalKey], selectedPlan.discount) }}
+                                </span>
+                                <span v-else>
+                                    {{ getPlanPrice(selectedPlan[priceIntervalKey], 0) }}
+                                </span>
+                            </div>
+                            <div class="text-base font-normal text-gray-600 dark:text-dark-400">
+                                / {{ trans(priceIntervalString) }}<span v-if="selectedPlan[taxIntervalKey] === 'external'">*</span>
+                            </div>
+                            <div
+                                v-if="selectedInterval === 'yearly' && selectedPlan.yearly_incentive !== null"
+                                class="mt-1 inline-block text-sm bg-green-400 px-2 py-1 rounded text-gray-800"
+                            >
+                                {{ $t('Save :percent%', { percent: selectedPlan.yearly_incentive }) }}
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-2 text-3xl font-semibold" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-100'">
-                        <span v-if="plan.discount && plan[priceIntervalKey] > 0">
-                            <span class="line-through text-base">
-                                {{ getPlanPrice(plan[priceIntervalKey], 0) }}
-                            </span>
-                            {{ getPlanPrice(plan[priceIntervalKey], plan.discount) }}
-                        </span>
-                        <span v-else>
-                            {{ getPlanPrice(plan[priceIntervalKey], 0) }}
-                        </span>
-                        <span class="text-base font-normal dark:text-dark-400" :class="plan.promoted ? 'text-gray-400' : 'text-gray-600'">
-                            / {{ trans(priceIntervalString) }}<span v-if="plan[taxIntervalKey] === 'external'">*</span>
-                        </span>
-                    </div>
+                    <RangeSlider
+                        v-model="sliderIndex"
+                        :max="availablePlans.length - 1"
+                        :min-label="sliderMinLabel"
+                        :max-label="sliderMaxLabel"
+                        :aria-label="$t('Monthly events')"
+                        class="mt-8"
+                    />
 
-                    <p class="mt-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
-                        {{ $t(plan.short_description) }}
+                    <p class="mt-6 text-gray-800 dark:text-dark-400">
+                        {{ $t(selectedPlan.short_description) }}
                     </p>
 
-                    <div class="mt-8 space-y-8">
-                        <div v-for="(feature, option) in plan.features">
-                            <div v-if="plan.options[option]" class="flex items-center" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
+                    <div class="mt-8 space-y-5">
+                        <div v-for="(feature, option) in selectedPlan.features" :key="option">
+                            <div v-if="selectedPlan.options[option]" class="flex items-center text-gray-800 dark:text-dark-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-indigo-500">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                 </svg>
 
-                                <span class="mx-4" :class="plan.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ $t(feature) }}</span>
+                                <span class="mx-4">{{ $t(feature) }}</span>
                             </div>
                             <div v-else class="flex items-center text-gray-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -113,13 +193,18 @@ const getPlanPrice = (amount, discount) => {
                         </div>
                     </div>
 
-                    <Link v-if="$page.props.canRegister" :href="localizedPath('/register')" class="block text-center w-full px-4 py-2 mt-10 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
-                        {{ $t('Get started') }}
-                    </Link>
+                    <template v-if="$page.props.canRegister">
+                        <Link :href="localizedPath('/register')" class="block text-center w-full px-4 py-2 mt-10 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">
+                            {{ $t('Get started') }}
+                        </Link>
+                        <p class="mt-3 text-center text-sm text-gray-500 dark:text-dark-400">
+                            {{ $t('No credit card required') }}
+                        </p>
+                    </template>
                 </div>
             </div>
-            <div v-if="plans.filter((plan) => plan.tax_mode_monthly === 'external' || plan.tax_mode_yearly === 'external').length"
-                 class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
+
+            <div v-if="hasExternalTax" class="mt-10 text-center text-gray-400 px-4 sm:pm-0">
                 * {{ $t('All prices are net prices. Local taxes and VAT may be added in the checkout. You can remove VAT by adding your VAT id.') }}
             </div>
             <div class="mt-4 text-base text-center text-gray-600 dark:text-dark-400 px-4 sm:pm-0">
