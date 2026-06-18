@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserSettingsController extends Controller
@@ -22,9 +23,24 @@ class UserSettingsController extends Controller
         return redirect()->back();
     }
 
-    public function completeTour(Request $request): \Illuminate\Http\JsonResponse
+    public function completeTour(Request $request): JsonResponse
     {
         $request->user()->updateSettings('tourCompleted', true);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function setPropertyLifetime(Request $request): JsonResponse
+    {
+        $request->validate([
+            'project_id' => ['nullable', 'integer'],
+            'lifetime' => ['required', 'boolean'],
+        ]);
+
+        $request->user()->updateSettings(
+            "propertyLifetime.{$request->project_id}",
+            $request->boolean('lifetime'),
+        );
 
         return response()->json(['status' => 'ok']);
     }

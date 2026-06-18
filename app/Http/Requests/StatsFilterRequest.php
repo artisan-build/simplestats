@@ -81,6 +81,10 @@ class StatsFilterRequest extends FormRequest
                 'string',
                 Rule::in([...array_keys(StatsService::getStatsTypes()->toArray()), 'property']),
             ],
+            'lifetime' => [
+                'sometimes',
+                'boolean',
+            ],
             'preset' => [
                 'sometimes',
                 'string',

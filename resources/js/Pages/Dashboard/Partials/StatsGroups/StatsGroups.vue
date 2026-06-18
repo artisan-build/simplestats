@@ -41,6 +41,7 @@ const props = defineProps({
                 :filters="filters"
                 :propertyDimensions="propertyDimensions"
                 :propertyNameSelected="$page.props.auth.user.settings?.selectedGroupTypes?.[filters.project_id]?.property"
+                :lifetimeSelected="$page.props.auth.user.settings?.propertyLifetime?.[filters.project_id] ?? false"
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
             />

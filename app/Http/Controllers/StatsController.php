@@ -65,6 +65,7 @@ class StatsController extends Controller
                 (int) $request->property_name_id,
                 $request->stats_sort ?? 'reg',
                 $limit,
+                $request->boolean('lifetime'),
             )->values()->toArray();
         }
 

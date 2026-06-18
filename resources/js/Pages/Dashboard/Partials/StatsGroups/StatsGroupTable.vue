@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, toRef} from 'vue';
+import {computed, ref, toRef, useSlots} from 'vue';
 import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -30,8 +30,11 @@ const props = defineProps({
 const emit = defineEmits(['sort', 'load-more']);
 
 const page = usePage();
+const slots = useSlots();
 
 const {comparisonChange, comparisonClass, formatComparison} = useStatsComparison(toRef(props, 'dataPrevious'));
+
+const showFooter = computed(() => props.canLoadMore || !! slots['footer-left'] || !! slots['footer-right']);
 
 const visibleColumns = computed(() => props.columns.filter((column) => column.visible !== false));
 
@@ -48,7 +51,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
 </script>
 
 <template>
-    <div class="@container flex-grow min-h-96 overflow-x-auto">
+    <div class="@container flex flex-col flex-grow min-h-96 overflow-x-auto">
         <div v-if="loading" class="flex items-center justify-center h-96">
             <div>
                 <svg class="text-gray-300 animate-spin -ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -57,7 +60,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                 </svg>
             </div>
         </div>
-        <div v-else class="p-4 text-sm @md:text-base">
+        <div v-else class="flex flex-col flex-grow p-4 text-sm @md:text-base">
             <div class="flex flex-col @lg:flex-row justify-between mb-4">
                 <div class="font-bold text-center mb-3 @lg:mb-0">
                     {{ title }}
@@ -99,10 +102,18 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                     </tbody>
                 </table>
             </div>
-            <div v-if="canLoadMore" class="flex justify-center mt-2">
-                <SecondaryButton @click="emit('load-more')">
-                    Load more
-                </SecondaryButton>
+            <div v-if="showFooter" class="flex items-center mt-auto pt-2">
+                <div class="flex-1 flex justify-start">
+                    <slot name="footer-left" />
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <SecondaryButton v-if="canLoadMore" @click="emit('load-more')">
+                        Load more
+                    </SecondaryButton>
+                </div>
+                <div class="flex-1 flex justify-end">
+                    <slot name="footer-right" />
+                </div>
             </div>
         </div>
     </div>

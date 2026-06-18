@@ -9,6 +9,7 @@ use App\Models\StatsCustomEventName;
 use App\Models\StatsCustomPropertyName;
 use App\Models\StatsCustomPropertyValue;
 use App\Models\StatsPayment;
+use App\Models\StatsTrackSource;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
@@ -334,6 +335,110 @@ test('an active property value filter narrows the chart aggregations', function 
     // only the "pro" visitor and the "pro" registration survive in the charts
     expect((int) $data->sum('pd_visitor'))->toBe(1)
         ->and((int) $data->sum('pd_reg'))->toBe(1);
+});
+
+test('the lifetime toggle persists per project in the user settings', function () {
+
+    $this->postJson(route('user-settings.property-lifetime'), [
+        'project_id' => $this->project->id,
+        'lifetime' => true,
+    ])->assertOk();
+
+    expect($this->user->refresh()->settings['propertyLifetime'][$this->project->id])->toBeTrue();
+
+    $this->postJson(route('user-settings.property-lifetime'), [
+        'project_id' => $this->project->id,
+        'lifetime' => false,
+    ])->assertOk();
+
+    expect($this->user->refresh()->settings['propertyLifetime'][$this->project->id])->toBeFalse();
+});
+
+test('lifetime mode ignores the date range while time-range mode respects it', function () {
+
+    // "pro" user registered long before the selected window, "free" inside it
+    $oldUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
+    $recentUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
+
+    $oldUser->recordCustomProperties(['subscription' => 'pro']);
+    $recentUser->recordCustomProperties(['subscription' => 'free']);
+
+    $nameId = StatsCustomPropertyName::where('name', 'subscription')->value('id');
+    $aggregationsService = app(StatsAggregationsService::class);
+
+    // 7-day range: time-range mode only sees the recent "free" user
+    $timeRange = $aggregationsService
+        ->getAggregatedPropertyData(propertyFilters($this->project, 7), $nameId, 'reg', 10, false);
+
+    expect($timeRange->pluck('name')->all())->toBe(['free']);
+
+    // lifetime mode shows every entity grouped by its current value, regardless of date
+    $lifetime = $aggregationsService
+        ->getAggregatedPropertyData(propertyFilters($this->project, 7), $nameId, 'reg', 10, true)
+        ->keyBy('name');
+
+    expect($lifetime->keys()->sort()->values()->all())->toBe(['free', 'pro'])
+        ->and((int) $lifetime['pro']['reg'])->toBe(1)
+        ->and((int) $lifetime['free']['reg'])->toBe(1);
+});
+
+test('lifetime mode sums revenue across all time', function () {
+
+    $proUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
+    $proUser->recordCustomProperties(['subscription' => 'pro']);
+
+    StatsPayment::factory()->create([
+        'project_id' => $this->project->id,
+        'stats_user_id' => $proUser->id,
+        'net' => 100,
+        'currency' => 'EUR',
+        'time' => now()->subDays(60),
+    ]);
+
+    $nameId = StatsCustomPropertyName::where('name', 'subscription')->value('id');
+    $aggregationsService = app(StatsAggregationsService::class);
+
+    // payment is out of the 7-day window: time-range mode rejects the empty bucket
+    expect($aggregationsService->getAggregatedPropertyData(propertyFilters($this->project, 7), $nameId, 'reg', 10, false)->all())->toBe([]);
+
+    $lifetime = $aggregationsService
+        ->getAggregatedPropertyData(propertyFilters($this->project, 7), $nameId, 'reg', 10, true)
+        ->keyBy('name');
+
+    expect((float) $lifetime['pro']['net'])->toBe(100.0);
+});
+
+test('cross-filters still narrow the lifetime result', function () {
+
+    // all registered outside the 7-day window so only lifetime mode returns them
+    $newsletterPro = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60), 'track_source' => 'newsletter']);
+    $newsletterFree = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60), 'track_source' => 'newsletter']);
+    $otherPro = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60), 'track_source' => 'twitter']);
+
+    $newsletterPro->recordCustomProperties(['subscription' => 'pro']);
+    $newsletterFree->recordCustomProperties(['subscription' => 'free']);
+    $otherPro->recordCustomProperties(['subscription' => 'pro']);
+
+    $nameId = StatsCustomPropertyName::where('name', 'subscription')->value('id');
+    $newsletterSourceId = StatsTrackSource::where('name', 'newsletter')->value('id');
+
+    $filters = new StatsFilterDto(
+        projectId: $this->project->id,
+        rangeAmount: 7,
+        rangeType: StatsRangeType::DAY,
+        rangeStart: now(),
+        comparison: '0',
+        trackSource: $newsletterSourceId,
+    );
+
+    $lifetime = app(StatsAggregationsService::class)
+        ->getAggregatedPropertyData($filters, $nameId, 'reg', 10, true)
+        ->keyBy('name');
+
+    // only the two newsletter users survive: pro=1 (newsletter), free=1, twitter "pro" excluded
+    expect($lifetime->keys()->sort()->values()->all())->toBe(['free', 'pro'])
+        ->and((int) $lifetime['pro']['reg'])->toBe(1)
+        ->and((int) $lifetime['free']['reg'])->toBe(1);
 });
 
 test('values with no activity in the period are rejected', function () {

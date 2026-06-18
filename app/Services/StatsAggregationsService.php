@@ -131,7 +131,7 @@ class StatsAggregationsService
      * project's name id, the "All projects" view includes every same-named id
      * of the team and merges the buckets by value string.
      */
-    public function getAggregatedPropertyData(StatsFilterDto $filters, int $propertyNameId, string $statsSort = 'reg', int $limit = 9): Collection
+    public function getAggregatedPropertyData(StatsFilterDto $filters, int $propertyNameId, string $statsSort = 'reg', int $limit = 9, bool $lifetime = false): Collection
     {
         $referenceName = StatsCustomPropertyName::find($propertyNameId);
 
@@ -146,7 +146,7 @@ class StatsAggregationsService
         }
 
         $sql = (new StatsAggregationsGroupedPropertiesSqlBuilder(
-            $statsSort
+            $statsSort, $lifetime
         ))->build();
 
         $filterConditions = $this->getFilterConditions($filters);

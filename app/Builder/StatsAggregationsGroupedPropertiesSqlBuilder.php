@@ -22,6 +22,7 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
 {
     public function __construct(
         protected string $statsSort,
+        protected bool $lifetime = false,
     ) {}
 
     public function build(): string
@@ -63,7 +64,7 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
             INNER JOIN stats_custom_property_values spv ON spv.id = stats.stats_custom_property_value_id
             INNER JOIN stats_visitors sv ON CAST(sv.id AS varchar) = stats.propertyable_id AND sv.project_id = stats.project_id
             WHERE :projectCondition AND stats.propertyable_type = 'stats_visitor' AND stats.stats_custom_property_name_id IN (:propertyNameIds)
-                AND sv.time >= ':startDateStart' AND sv.time <= ':endDateEnd' :visitorEntityConditions
+                {$this->timeWindow('sv')} :visitorEntityConditions
             GROUP BY spv.value
         )";
     }
@@ -80,7 +81,7 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
             INNER JOIN stats_custom_property_values spv ON spv.id = stats.stats_custom_property_value_id
             INNER JOIN stats_users su ON su.id = stats.propertyable_id AND su.project_id = stats.project_id
             WHERE :projectCondition AND stats.propertyable_type = 'stats_user' AND stats.stats_custom_property_name_id IN (:propertyNameIds)
-                AND su.time >= ':startDateStart' AND su.time <= ':endDateEnd' :userEntityConditions
+                {$this->timeWindow('su')} :userEntityConditions
             GROUP BY spv.value
         )";
     }
@@ -99,9 +100,23 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
             INNER JOIN stats_users su ON su.id = stats.propertyable_id AND su.project_id = stats.project_id
             INNER JOIN stats_payments pay ON pay.stats_user_id = su.id AND pay.project_id = su.project_id
             WHERE :projectCondition AND stats.propertyable_type = 'stats_user' AND stats.stats_custom_property_name_id IN (:propertyNameIds)
-                AND pay.time >= ':startDateStart' AND pay.time <= ':endDateEnd' :userEntityConditions
+                {$this->timeWindow('pay')} :userEntityConditions
             GROUP BY spv.value
         )";
+    }
+
+    /**
+     * The date-range restriction shared by every CTE. In "Lifetime" mode the
+     * dimension is range-independent (current state, lifetime revenue), so the
+     * time window is dropped while the entity/cross-filter conditions stay.
+     */
+    protected function timeWindow(string $alias): string
+    {
+        if ($this->lifetime) {
+            return '';
+        }
+
+        return "AND {$alias}.time >= ':startDateStart' AND {$alias}.time <= ':endDateEnd'";
     }
 
     protected function getSELECT(): string

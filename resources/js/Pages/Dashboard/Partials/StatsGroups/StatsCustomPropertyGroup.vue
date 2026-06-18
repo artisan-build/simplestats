@@ -3,12 +3,21 @@ import {computed, onMounted, ref} from 'vue';
 import {Link} from "@inertiajs/vue3";
 import axios from 'axios';
 import StatsGroupTable from "./StatsGroupTable.vue";
+import SegmentedToggle from "@/Components/SegmentedToggle.vue";
 import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+
+const lifetimeOptions = [
+    {value: false, label: 'Time range'},
+    {value: true, label: 'Lifetime'},
+];
+
+const lifetimeHint = '<strong>Time range</strong> counts entities active in the selected period. <strong>Lifetime</strong> ignores the date range and shows the current value of every entity plus its all-time revenue. Active filters apply to both.';
 
 const props = defineProps({
     filters: Object,
     propertyDimensions: Array,
     propertyNameSelected: [Number, String],
+    lifetimeSelected: Boolean,
     currentProject: Object,
     trackingUsageBits: Object,
 });
@@ -16,6 +25,7 @@ const props = defineProps({
 const data = ref([]);
 const dataPrevious = ref([]);
 const loading = ref(true);
+const lifetime = ref(props.lifetimeSelected);
 
 const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProject, props.trackingUsageBits);
 
@@ -27,6 +37,7 @@ const selectedNameId = ref(preselectedDimension?.id ?? props.propertyDimensions[
 // grouped endpoint, the dimension itself travels via property_name_id
 filters.stats_type = 'property';
 filters.property_name_id = selectedNameId.value;
+filters.lifetime = lifetime.value ? 1 : undefined;
 if (! filters.stats_sort) {
     filters.stats_sort = 'reg';
 }
@@ -73,6 +84,23 @@ const changeSort = (sort) => {
     fetchData();
 };
 
+const setLifetime = (value) => {
+    if (lifetime.value === value) {
+        return;
+    }
+
+    lifetime.value = value;
+    filters.lifetime = value ? 1 : undefined;
+    filters.limit = undefined;
+    loading.value = true;
+    fetchData();
+
+    axios.post(route('user-settings.property-lifetime'), {
+        project_id: filters.project_id,
+        lifetime: value,
+    });
+};
+
 const loadMore = () => {
     filters.limit = (filters.limit ?? 0) + 100;
     fetchData();
@@ -113,7 +141,7 @@ onMounted(fetchData);
         name-label="Value"
         name-width="46%"
         :percentage="calculatePercentage"
-        empty-text="No data for this property in the selected period."
+        :empty-text="lifetime ? 'No data for this property yet.' : 'No data for this property in the selected period.'"
         :can-load-more="data.length >= 5 && ! filters.limit"
         @sort="changeSort"
         @load-more="loadMore"
@@ -127,6 +155,16 @@ onMounted(fetchData);
                 >
                     {{ dimension.name }}
                 </button>
+            </div>
+        </template>
+        <template #footer-right>
+            <div class="flex items-center gap-1.5">
+                <div v-tooltip.left="{ content: `<div class='max-w-64 p-2 text-sm'>${lifetimeHint}</div>`, html: true }" class="text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                    </svg>
+                </div>
+                <SegmentedToggle :model-value="lifetime" :options="lifetimeOptions" @update:model-value="setLifetime" />
             </div>
         </template>
         <template #name-cell="{item}">
