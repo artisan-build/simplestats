@@ -24,7 +24,7 @@ const f = {
     simple: {
         icon: RocketLaunchIcon,
         title: () => trans("Simple"),
-        descr: () => trans("All you need to do to get SimpleStats up and running is: Install a composer package, adjust the config to your needs, create an account, and add the token to your env file. Congrats, you're ready to analyze your campaigns and users!"),
+        descr: () => trans("Install the Composer package, add your token to the .env file, and you're ready to analyze your campaigns and users."),
     },
     reporting: {
         icon: PresentationChartBarIcon,
@@ -34,17 +34,17 @@ const f = {
     api: {
         icon: CodeBracketIcon,
         title: () => trans("API"),
-        descr: () => trans("Even though the composer client package is dedicated to Laravel, the API basically works with every client! So if you'd like to use the tool, even if you're not using Laravel, just trigger the API requests manually and you'll be able to use the tool for any custom project."),
+        descr: () => trans("The REST API works with any stack, not just Laravel. Trigger the requests manually and track any custom project."),
     },
     utms: {
         icon: MapPinIcon,
         title: () => trans("UTMs and Referrers"),
-        descr: () => trans("Since the tool by default collects UTMs and Referrers for you and connects it with your users and their payments, it lets you seamlessly check the ROI of each of your campaigns and allows you to see where you can buy the cheapest users and from which channel users perform best!"),
+        descr: () => trans("UTMs and Referrers are collected automatically and linked to your users and payments, so you see the real ROI and best-performing channel of every campaign."),
     },
     kpis: {
         icon: ChartBarIcon,
         title: () => trans("KPIs"),
-        descr: () => trans("Here are a few of the KPIs that the tool provides out of the box: Unique Visitors, Registrations, Conversion Rate, Daily Active Users, New Active Paying Users, Average Revenue per User, Revenue and much more! Everything filterable by date, locations, devices and UTMs."),
+        descr: () => trans("Unique Visitors, Conversion Rate, Daily Active Users, ARPU, Revenue and many more KPIs out of the box, all filterable by date, location, device and UTM."),
     },
     privacy: {
         icon: ShieldCheckIcon,
@@ -54,12 +54,12 @@ const f = {
     teams: {
         icon: UserGroupIcon,
         title: () => trans("Collaborate"),
-        descr: () => trans("Collaborate by creating a team, inviting your co-workers to your projects, and assigning permissions to them. Each team is separated by tenancy, ensuring highly secure, robust and solid data integration!"),
+        descr: () => trans("Create a team, invite co-workers to your projects, and assign permissions. Each team is fully separated by tenancy."),
     },
     free: {
         icon: GiftIcon,
         title: () => trans("Free"),
-        descr: () => trans("There will always be a free plan! If your business grows, you can support us with by subscribing. We would love to help you analyzing your campaigns. No need to enter credit card information at the registration."),
+        descr: () => trans("There will always be a free plan, with no credit card required to sign up. Subscribe to support us as your business grows."),
     },
 };
 </script>
@@ -124,7 +124,7 @@ const f = {
                         <component :is="f.utms.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.utms.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400 line-clamp-3">{{ f.utms.descr() }}</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.utms.descr() }}</p>
                 </li>
 
                 <!-- Bottom row: 5 small cards -->
@@ -133,35 +133,35 @@ const f = {
                         <component :is="f.kpis.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.kpis.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400 line-clamp-3">{{ f.kpis.descr() }}</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.kpis.descr() }}</p>
                 </li>
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                         <component :is="f.simple.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.simple.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400 line-clamp-3">{{ f.simple.descr() }}</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.simple.descr() }}</p>
                 </li>
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                         <component :is="f.api.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.api.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400 line-clamp-3">{{ f.api.descr() }}</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.api.descr() }}</p>
                 </li>
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                         <component :is="f.teams.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.teams.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400 line-clamp-3">{{ f.teams.descr() }}</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.teams.descr() }}</p>
                 </li>
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                         <component :is="f.free.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.free.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400 line-clamp-3">{{ f.free.descr() }}</p>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.free.descr() }}</p>
                 </li>
             </ul>
         </div>
