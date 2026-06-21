@@ -1,5 +1,5 @@
 <script setup>
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, onMounted, onBeforeUnmount} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
 import {router, usePage} from "@inertiajs/vue3";
@@ -35,6 +35,48 @@ const props = defineProps({
 const page = usePage();
 
 const chartInstance = ref(null);
+
+// Auf Touch-Geräten feuert ApexCharts' click-Event auch beim Scrollen. Wir merken
+// uns, ob der Finger sich zwischen touchstart und touchend nennenswert bewegt hat,
+// und werten das dann im click-Handler als Scroll (kein Klick auf den Datenpunkt).
+let touchMoved = false;
+let touchStartX = 0;
+let touchStartY = 0;
+const TOUCH_MOVE_THRESHOLD = 10;
+
+const onTouchStart = (event) => {
+    touchMoved = false;
+    const touch = event.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+};
+
+const onTouchMove = (event) => {
+    const touch = event.touches[0];
+
+    if (Math.abs(touch.clientX - touchStartX) > TOUCH_MOVE_THRESHOLD || Math.abs(touch.clientY - touchStartY) > TOUCH_MOVE_THRESHOLD) {
+        touchMoved = true;
+    }
+};
+
+onMounted(() => {
+    const el = chartInstance.value?.$el;
+
+    if (el) {
+        el.addEventListener('touchstart', onTouchStart, {passive: true});
+        el.addEventListener('touchmove', onTouchMove, {passive: true});
+    }
+});
+
+onBeforeUnmount(() => {
+    const el = chartInstance.value?.$el;
+
+    if (el) {
+        el.removeEventListener('touchstart', onTouchStart);
+        el.removeEventListener('touchmove', onTouchMove);
+    }
+});
+
 const series = ref(props.chart.data.series);
 const categories = props.chart.data.categories;
 
@@ -106,6 +148,10 @@ const chartOptions = ref({
     chart: {
         events: {
             click: function(event, chartContext, opts) {
+                if (touchMoved) {
+                    return;
+                }
+
                 let clickedDate = series.value[selectedSerieIndex.value].dates[opts.dataPointIndex];
 
                 if (clickedDate) {
