@@ -235,8 +235,11 @@ class StatsAggregationsService
     {
         $filterConditions = $this->getFilterConditions($filters);
 
-        $current = $this->computeMrrAtDate($filters, $filterConditions, $filterConditions['endDateEnd']);
-        $previous = $this->computeMrrAtDate($filters, $filterConditions, $filterConditions['startDateStart']);
+        $rangeEnd = $filterConditions['endDateEnd'];
+        $rangeStart = $filterConditions['startDateStart'];
+
+        $current = $this->computeMrrAtDate($filterConditions, $rangeEnd);
+        $previous = $this->computeMrrAtDate($filterConditions, $rangeStart);
 
         return [
             'mrr' => $current,
@@ -245,7 +248,7 @@ class StatsAggregationsService
         ];
     }
 
-    private function computeMrrAtDate(StatsFilterDto $filters, array $filterConditions, string $asOfDate): float
+    private function computeMrrAtDate(array $filterConditions, string $asOfDate): float
     {
         $asOf = CarbonImmutable::parse($asOfDate);
         $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;

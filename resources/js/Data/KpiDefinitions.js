@@ -11,6 +11,16 @@ const periodMap = {
 export function getKpiDefinitions(rangeType) {
     let periodName = periodMap[rangeType];
     return {
+        mrr: {
+            short: 'MRR',
+            long: 'Monthly Recurring Revenue',
+            description: 'Active recurring revenue as of the end of the selected period, normalized to a monthly amount (yearly plans counted as net / 12).',
+        },
+        arr: {
+            short: 'ARR',
+            long: 'Annual Recurring Revenue',
+            description: 'Annualized recurring revenue (MRR × 12).',
+        },
         pd_net: {
             small: 'Rev',
             short: 'Revenue',

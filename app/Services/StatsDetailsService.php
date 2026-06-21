@@ -35,9 +35,6 @@ class StatsDetailsService
     }
 
     /**
-     * Fetch one period of grouped rows. "property" groups by the values of
-     * the selected custom property, everything else by a static dimension.
-     *
      * ->values()->toArray() makes sure the indexes are int-numeric and not
      * string-numeric (which would result in a js object). This happens cause
      * of the reject at the end of the aggregation methods.

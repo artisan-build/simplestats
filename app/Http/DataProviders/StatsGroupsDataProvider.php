@@ -39,8 +39,6 @@ class StatsGroupsDataProvider extends AbstractDataProvider
             return;
         }
 
-        // the "property" group remembers the selected dimension (a property
-        // name id), all other groups the selected stats type
         $this->request->user()->updateSettings(
             "selectedGroupTypes.{$this->request->project_id}.{$this->request->group_type}",
             $this->request->stats_type === 'property' ? (int) $this->request->property_name_id : $this->request->stats_type,
