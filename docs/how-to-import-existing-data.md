@@ -114,6 +114,7 @@ The following fields are allowed:
 | **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                  |
 | **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                   |
 | **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)         |
+| **recurring_interval** | _string_ `nullable` | The billing interval for recurring payments: `month` or `year`. Omit or `null` for one-time payments. |
 
 Assuming the table is called `transactions`, here is an **example** of how such an SQL query may look like:
 

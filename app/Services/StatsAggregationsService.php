@@ -122,8 +122,8 @@ class StatsAggregationsService
     }
 
     /**
-     * Group stats by the values of a single custom property (e.g. "subscription"
-     * bucketed into free / pro / enterprise). Runs as a standalone path next to
+     * Group stats by the values of a single custom property (e.g. "ab_test"
+     * bucketed into A / B). Runs as a standalone path next to
      * the static tracking dimensions because the grouping key is dynamic and the
      * data lives in the polymorphic stats_custom_properties pivot.
      *

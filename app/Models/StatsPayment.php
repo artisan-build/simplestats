@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasStatsUserAssurance;
+use App\Enums\PaymentInterval;
 use App\Notifications\ProjectAlertPaymentNotification;
 use App\Observers\StatsObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -23,6 +24,7 @@ class StatsPayment extends BaseStat
         'net' => 'float',
         'orig_gross' => 'float',
         'orig_net' => 'float',
+        'recurring_interval' => PaymentInterval::class,
     ];
 
     public function statsUser(): BelongsTo

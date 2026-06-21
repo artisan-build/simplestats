@@ -50,16 +50,16 @@ test('property tables have the expected schema', function () {
 });
 
 test('team_id is set automatically via HasTeamScope on save', function () {
-    $name = makeName($this->project, 'subscription');
+    $name = makeName($this->project, 'ab_test');
 
     expect($name->team_id)->toBe($this->project->team_id);
 });
 
 test('a property keeps exactly one current value per entity and name', function () {
     $user = StatsUser::factory()->create(['project_id' => $this->project->id]);
-    $name = makeName($this->project, 'subscription');
-    $free = makeValue($name, 'free');
-    $pro = makeValue($name, 'pro');
+    $name = makeName($this->project, 'ab_test');
+    $free = makeValue($name, 'A');
+    $pro = makeValue($name, 'B');
 
     $owner = [
         'project_id' => $this->project->id,
@@ -80,9 +80,9 @@ test('a property keeps exactly one current value per entity and name', function 
 
 test('the unique constraint blocks a duplicate entity-name row', function () {
     $user = StatsUser::factory()->create(['project_id' => $this->project->id]);
-    $name = makeName($this->project, 'subscription');
-    $free = makeValue($name, 'free');
-    $pro = makeValue($name, 'pro');
+    $name = makeName($this->project, 'ab_test');
+    $free = makeValue($name, 'A');
+    $pro = makeValue($name, 'B');
 
     $owner = [
         'project_id' => $this->project->id,

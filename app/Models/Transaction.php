@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Services\SubscriptionService;
 use Carbon\CarbonInterface;
 use Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
+use SimpleStatsIo\LaravelClient\Enums\PaymentInterval;
 
 class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
 {
@@ -42,5 +44,26 @@ class Transaction extends PaddleTransaction implements TrackablePaymentWithCondi
     public function getTrackingCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function getTrackingRecurringInterval(): ?PaymentInterval
+    {
+        $subscription = $this->subscription;
+
+        if (! $subscription) {
+            return null;
+        }
+
+        $subscriptionService = app(SubscriptionService::class);
+
+        foreach ($subscription->items as $item) {
+            $interval = $subscriptionService->intervalForPriceId($item->price_id);
+
+            if ($interval) {
+                return PaymentInterval::from($interval->value);
+            }
+        }
+
+        return null;
     }
 }

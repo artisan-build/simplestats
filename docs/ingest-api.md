@@ -88,7 +88,7 @@ _Core parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
-| **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"subscription": "pro"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
+| **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"ab_test": "B"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
 :::
 
 **Payload**
@@ -150,7 +150,7 @@ _Core parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
-| **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"subscription": "pro"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
+| **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"ab_test": "B"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
 :::
 
 **Payload**
@@ -222,6 +222,7 @@ _Core parameters:_
 | **gross**         | _numeric_ `required` | The gross amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent)                    |
 | **net**           | _numeric_ `required` | The net amount of the payment in cents.<br/>(e.g.: $1 = 100 Cent).                     |
 | **currency**      | _string_ `required`  | The **ISO-4217** currency code of the payment.<br/>(e.g.: EUR, USD, GBP ...)           |
+| **recurring_interval** | _string_ `nullable` | The billing interval for recurring payments: `month` or `year`. Omit or `null` for one-time payments. |
 
 **Payload**
 
@@ -232,6 +233,7 @@ _Core parameters:_
     "gross": 2000,
     "net": 1800,
     "currency": "EUR",
+    "recurring_interval": "month",
     "time": "2024-04-04"
 }
 ```
@@ -291,7 +293,7 @@ _Core parameters:_
 
 | Key               | Type                 | Description                                                                                                                  |
 |-------------------|----------------------|------------------------------------------------------------------------------------------------------------------------------|
-| **properties**    | _object_ `required`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"subscription": "pro"}`). Values must be scalar. Max 50 names per request. |
+| **properties**    | _object_ `required`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"ab_test": "B"}`). Values must be scalar. Max 50 names per request. |
 | **stats_user_id** | _mixed_ `nullable`   | The user id to attach the properties to. Required without `visitor_hash`.                                                    |
 | **visitor_hash**  | _string_ `nullable`  | The visitor hash to attach the properties to. Required without `stats_user_id`.                                              |
 | **time**          | _string_ `required`  | The time the properties were current.<br/>Format: `Y-m-d H:i:s P`, before or equal `now`                                     |
@@ -302,7 +304,7 @@ _Core parameters:_
 {
     "stats_user_id": "1",
     "properties": {
-        "subscription": "pro"
+        "ab_test": "B"
     },
     "time": "2026-04-04"
 }

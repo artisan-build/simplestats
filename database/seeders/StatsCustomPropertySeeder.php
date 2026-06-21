@@ -15,8 +15,8 @@ use Illuminate\Support\Arr;
 class StatsCustomPropertySeeder extends Seeder
 {
     /**
-     * Seed custom properties as demo data: user-bound `subscription` + `company`,
-     * and visitor-bound `ab_test`. This exercises both the user and the visitor
+     * Seed custom properties as demo data: user-bound `company` and
+     * visitor-bound `ab_test`. This exercises both the user and the visitor
      * side of the polymorphic stats_custom_properties pivot.
      *
      * Runs last so it covers future data too.
@@ -24,8 +24,6 @@ class StatsCustomPropertySeeder extends Seeder
     public function run(): void
     {
         $userSchema = [
-            // weighted so "free" dominates, like a real funnel
-            'subscription' => ['free', 'free', 'free', 'free', 'pro', 'pro', 'enterprise'],
             'company' => ['Acme Inc', 'Globex', 'Initech', 'Umbrella Corp', 'Hooli', 'Stark Industries'],
         ];
         $visitorSchema = [
@@ -36,12 +34,9 @@ class StatsCustomPropertySeeder extends Seeder
             $now = now();
             $lookups = $this->seedPropertyLookups($project, [...$userSchema, ...$visitorSchema]);
 
-            // Every user gets a subscription; ~50% also get a company.
             $rows = [];
             StatsUser::where('project_id', $project->id)->pluck('id')
                 ->each(function ($entityId) use (&$rows, $project, $userSchema, $lookups, $now) {
-                    $rows[] = $this->propertyRow($project, 'stats_user', $entityId, 'subscription', Arr::random($userSchema['subscription']), $lookups, $now);
-
                     if (rand(0, 1) === 1) {
                         $rows[] = $this->propertyRow($project, 'stats_user', $entityId, 'company', Arr::random($userSchema['company']), $lookups, $now);
                     }

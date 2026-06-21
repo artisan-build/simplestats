@@ -89,24 +89,24 @@ class UserCustomPropertiesResolver implements ResolvesUserCustomProperties
     public function resolve(TrackablePerson $user): array
     {
         return [
-            'subscription' => $user->plan->name, // "free", "pro", "enterprise"
             'company' => $user->company_name,
+            'role' => $user->role, // e.g. "owner", "member"
         ];
     }
 }
 ```
 
-Whenever the package tracks the user, these travel along with the same API request. No extra call, no extra queue job. Now you can ask "which plan converts best?" or "which industry pays the most?" the same way you compared variants.
+Whenever the package tracks the user, these travel along with the same API request. No extra call, no extra queue job. Now you can ask "which role converts best?" or "which industry pays the most?" the same way you compared variants.
 
-For property changes that do not coincide with a track the package does on its own (a mid-session plan upgrade, a variant decided before signup), there is an explicit call:
+For property changes that do not coincide with a track the package does on its own (a variant decided before signup, an attribute that changes mid-session), there is an explicit call:
 
 ```php
 use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 use SimpleStatsIo\LaravelClient\Visitor;
 
-// on a plan change
+// when a user's attribute changes
 SimplestatsClient::trackCustomProperties(
-    properties: ['subscription' => 'pro'],
+    properties: ['role' => 'owner'],
     person: auth()->user(),
 );
 
@@ -121,9 +121,9 @@ The usual guard rails apply: properties for a visitor that was never tracked (a 
 
 ## One current value per property
 
-A design decision worth spelling out: a user or visitor can carry as many properties as you like (`ab_test`, `subscription` and `company` all at once), but each property holds exactly **one current value** per user or visitor. Re-tracking `subscription` with a new value overwrites the old one.
+A design decision worth spelling out: a user or visitor can carry as many properties as you like (`ab_test`, `company` and `role` all at once), but each property holds exactly **one current value** per user or visitor. Re-tracking `ab_test` with a new value overwrites the old one.
 
-That sounds like a limitation, but it is the behavior you want for segmentation. When a user upgrades from `free` to `pro`, their revenue and activity should count under `pro`, not stay frozen under the plan they happened to have at signup. The grouping always reflects the latest known state, the same way your own database does.
+That sounds like a limitation, but it is the behavior you want for segmentation. When a user is moved from variant `A` to `B`, their revenue and activity should count under `B`, not stay frozen under the variant they happened to have at signup. The grouping always reflects the latest known state, the same way your own database does.
 
 If you need the history of an action instead ("how often was the upgrade button clicked?"), that is what [custom events](/docs/how-to-track-a-custom-event.html) are for. Properties are dimensions, events are facts.
 

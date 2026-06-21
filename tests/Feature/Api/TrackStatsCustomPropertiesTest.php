@@ -41,7 +41,7 @@ function userPayload(array $overrides = []): array
 
 test('tracking a user with properties stores normalised name, value and pivot', function () {
     $this->postJson('/api/v1/stats-user', userPayload([
-        'properties' => ['subscription' => 'pro', 'company' => 'Acme Inc'],
+        'properties' => ['ab_test' => 'B', 'company' => 'Acme Inc'],
     ]), apiHeaders($this->token))->assertOk();
 
     ctx($this->project);
@@ -56,16 +56,16 @@ test('tracking a user with properties stores normalised name, value and pivot', 
 
     expect($properties)->toHaveCount(2);
     expect($properties->pluck('value.value', 'name.name')->all())
-        ->toBe(['subscription' => 'pro', 'company' => 'Acme Inc']);
+        ->toBe(['ab_test' => 'B', 'company' => 'Acme Inc']);
 });
 
 test('re-tracking a user overwrites the property value (current-value semantics)', function () {
     $this->postJson('/api/v1/stats-user', userPayload([
-        'properties' => ['subscription' => 'free'],
+        'properties' => ['ab_test' => 'A'],
     ]), apiHeaders($this->token))->assertOk();
 
     $this->postJson('/api/v1/stats-user', userPayload([
-        'properties' => ['subscription' => 'pro'],
+        'properties' => ['ab_test' => 'B'],
     ]), apiHeaders($this->token))->assertOk();
 
     ctx($this->project);
@@ -77,7 +77,7 @@ test('re-tracking a user overwrites the property value (current-value semantics)
         ->get();
 
     expect($properties)->toHaveCount(1)
-        ->and($properties->first()->value->value)->toBe('pro');
+        ->and($properties->first()->value->value)->toBe('B');
 });
 
 test('tracking a visitor with properties stores a visitor-bound pivot row', function () {
@@ -112,7 +112,7 @@ test('the property endpoint records properties for an existing user', function (
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
         'time' => now()->format('Y-m-d H:i:s P'),
-        'properties' => ['subscription' => 'pro'],
+        'properties' => ['ab_test' => 'B'],
     ], apiHeaders($this->token))
         ->assertOk()
         ->assertJson(['id' => '4242'])
@@ -127,8 +127,8 @@ test('the property endpoint records properties for an existing user', function (
         ->first();
 
     expect($property)->not->toBeNull()
-        ->and($property->name->name)->toBe('subscription')
-        ->and($property->value->value)->toBe('pro');
+        ->and($property->name->name)->toBe('ab_test')
+        ->and($property->value->value)->toBe('B');
 });
 
 test('the property endpoint records properties for an existing visitor', function () {
@@ -186,7 +186,7 @@ test('the property endpoint requires a user id or a visitor hash', function () {
 test('the property endpoint requires time', function () {
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
-        'properties' => ['subscription' => 'pro'],
+        'properties' => ['ab_test' => 'B'],
     ], apiHeaders($this->token))
         ->assertStatus(422)
         ->assertJsonValidationErrors('time');
@@ -198,14 +198,14 @@ test('an out-of-order update with an older time does not overwrite a newer value
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
         'time' => now()->format('Y-m-d H:i:s P'),
-        'properties' => ['subscription' => 'max'],
+        'properties' => ['ab_test' => 'C'],
     ], apiHeaders($this->token))->assertOk();
 
     // a stale update, e.g. a retried job that was dispatched before the one above
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
         'time' => now()->subHour()->format('Y-m-d H:i:s P'),
-        'properties' => ['subscription' => 'pro'],
+        'properties' => ['ab_test' => 'B'],
     ], apiHeaders($this->token))->assertOk();
 
     ctx($this->project);
@@ -217,7 +217,7 @@ test('an out-of-order update with an older time does not overwrite a newer value
         ->get();
 
     expect($properties)->toHaveCount(1)
-        ->and($properties->first()->value->value)->toBe('max');
+        ->and($properties->first()->value->value)->toBe('C');
 });
 
 test('an update with a newer time overwrites an older value', function () {
@@ -226,13 +226,13 @@ test('an update with a newer time overwrites an older value', function () {
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
         'time' => now()->subHour()->format('Y-m-d H:i:s P'),
-        'properties' => ['subscription' => 'free'],
+        'properties' => ['ab_test' => 'A'],
     ], apiHeaders($this->token))->assertOk();
 
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
         'time' => now()->format('Y-m-d H:i:s P'),
-        'properties' => ['subscription' => 'pro'],
+        'properties' => ['ab_test' => 'B'],
     ], apiHeaders($this->token))->assertOk();
 
     ctx($this->project);
@@ -244,7 +244,7 @@ test('an update with a newer time overwrites an older value', function () {
         ->get();
 
     expect($properties)->toHaveCount(1)
-        ->and($properties->first()->value->value)->toBe('pro');
+        ->and($properties->first()->value->value)->toBe('B');
 });
 
 test('distinct property names are not capped per project', function () {

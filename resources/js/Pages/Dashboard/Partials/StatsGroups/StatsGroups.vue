@@ -32,7 +32,7 @@ const props = defineProps({
             />
         </div>
 
-        <!-- Custom properties: dynamic dimensions (e.g. subscription, company) -->
+        <!-- Custom properties: dynamic dimensions (e.g. ab_test, company) -->
         <div v-if="propertyDimensions && propertyDimensions.length"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
              :class="{'lg:col-span-2': ! hasCustomEvents}"

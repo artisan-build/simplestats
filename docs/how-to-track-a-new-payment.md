@@ -77,6 +77,15 @@ class Transaction extends Model implements TrackablePayment
     {
         return $this->currency;
     }
+
+    /**
+     * The billing interval for recurring payments, or null for one-time payments.
+     * See "Recurring payments" below.
+     */
+    public function getTrackingRecurringInterval(): ?PaymentInterval
+    {
+        return null;
+    }
     
     //..
 }
@@ -91,6 +100,30 @@ You may tweak the defined methods to your needs and apply any logic you need the
 ::: danger
 Remember that **Gross** and **Net** must return cents!
 :::
+
+### Recurring payments
+
+`getTrackingRecurringInterval()` tells _SimpleStats_ whether a payment is part of a recurring subscription and how often it renews. Return a `PaymentInterval` for recurring payments, or `null` for one-time payments. This is what lets us compute recurring revenue metrics (MRR/ARR) down the line.
+
+```php
+use SimpleStatsIo\LaravelClient\Enums\PaymentInterval;
+
+class Transaction extends Model implements TrackablePayment
+{
+    //..
+
+    public function getTrackingRecurringInterval(): ?PaymentInterval
+    {
+        return match ($this->billing_cycle) {
+            'monthly' => PaymentInterval::Month,
+            'yearly' => PaymentInterval::Year,
+            default => null, // one-time payment
+        };
+    }
+}
+```
+
+The available intervals are `PaymentInterval::Month` and `PaymentInterval::Year`.
 
 ### Payment Tracking for Visitors
 

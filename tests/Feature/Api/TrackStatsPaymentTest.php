@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentInterval;
 use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\StatsPayment;
@@ -162,6 +163,41 @@ test('payment is created with correct amounts', function () {
     expect($payment)->not->toBeNull()
         ->and($payment->gross)->toBe(5000.0)
         ->and($payment->net)->toBe(4200.0);
+});
+
+test('recurring_interval is stored when provided', function () {
+    $payload = validPaymentPayload(['recurring_interval' => 'month']);
+
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
+
+    setPaymentProjectContext($this->project);
+
+    $payment = StatsPayment::where('id', $payload['id'])->first();
+    expect($payment)->not->toBeNull()
+        ->and($payment->recurring_interval)->toBe(PaymentInterval::MONTH);
+});
+
+test('recurring_interval defaults to null for one-time payments', function () {
+    $payload = validPaymentPayload();
+
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
+
+    setPaymentProjectContext($this->project);
+
+    $payment = StatsPayment::where('id', $payload['id'])->first();
+    expect($payment)->not->toBeNull()
+        ->and($payment->recurring_interval)->toBeNull();
+});
+
+test('validation fails when recurring_interval is invalid', function () {
+    $response = $this->postJson(
+        '/api/v1/stats-payment',
+        validPaymentPayload(['recurring_interval' => 'weekly']),
+        apiHeaders($this->token),
+    );
+
+    $response->assertUnprocessable()
+        ->assertJsonValidationErrors('recurring_interval');
 });
 
 test('payment with stats_user_id is stored correctly and StatsUser is auto-created', function () {

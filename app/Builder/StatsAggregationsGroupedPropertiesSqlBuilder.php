@@ -5,8 +5,8 @@ namespace App\Builder;
 use App\Enums\TrackablePerson;
 
 /**
- * Groups stats by the values of a single custom property (e.g. "subscription"
- * bucketed into free / pro / enterprise).
+ * Groups stats by the values of a single custom property (e.g. "ab_test"
+ * bucketed into A / B).
  *
  * Property lookups are project-scoped, so the same property may exist once per
  * project. The :propertyNameIds placeholder carries every name id that belongs

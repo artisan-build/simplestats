@@ -1,17 +1,23 @@
 # How to track custom properties
 
-Custom properties let you attach your own attributes to users and visitors so you can **group your analytics** by them, for example by `subscription`, `company`, `plan`, or an A/B test variant.
+Custom properties let you attach your own attributes to users and visitors so you can **group your analytics** by them. A property can be any dimension that matters to your business, for example:
+
+- `company` — the organisation a user belongs to, so you can see which accounts drive the most registrations and revenue.
+- `ab_test` — the variant a visitor was shown, to compare conversion rate and revenue between `A` and `B`.
+- `account_type`, `industry`, `signup_source`, ... — really anything you can put a label on.
+
+This is your own data, so the names and values are entirely up to you. _SimpleStats_ just breaks your metrics down by whatever you send.
 
 ::: info
 Custom property tracking requires **version 4.1+** of the _SimpleStats_ [client package](https://github.com/simplestats-io/laravel-client).
 :::
 
-Each property is a **name** (the grouping dimension, e.g. `subscription`) with a **value** (e.g. `pro`), and your metrics (visitors, registrations, conversion rate, revenue) are broken down by these values.
+Each property is a **name** (the grouping dimension, e.g. `ab_test`) with a **value** (e.g. `B`), and your metrics (visitors, registrations, conversion rate, revenue) are broken down by these values.
 
 ![SimpleStats dashboard grouping metrics by a custom property, with one tab per property name and one row per value](https://simplestats.io/images/blog/screenshot_custom_properties.png)
 
 ::: info
-A property keeps exactly **one current value** per entity. Re-tracking a user with a new value overwrites the old one, so revenue and activity always follow the latest value (e.g. a user who upgrades from `free` to `pro` counts under `pro`). The same applies on the way down: a user who cancels and returns to `free` carries their past revenue to `free`. If you want to keep that apart, report a dedicated value such as `churned` for former subscribers.
+A property keeps exactly **one current value** per entity. Re-tracking a user with a new value overwrites the old one, so revenue and activity always follow the latest value (e.g. a user re-assigned from variant `A` to `B` counts under `B`, including their past revenue). If you need to keep the history apart, report a dedicated value instead of reusing an old one.
 :::
 
 ## Tracking user properties
@@ -37,36 +43,14 @@ class UserCustomPropertiesResolver implements ResolvesUserCustomProperties
     public function resolve(TrackablePerson $user): array
     {
         return [
-            'subscription' => $user->plan->name, // e.g. "free", "pro", "enterprise"
+            'ab_test' => $user->experiment_variant, // e.g. "A" or "B"
             'company' => $user->company_name,
         ];
     }
 }
 ```
 
-The resolver runs on every track, so it is also the place to derive values. Because revenue follows the latest value, a variant of the resolver above could tell a former subscriber apart from someone who never paid, so a cancelled customer's past revenue does not land under `free`:
-
-```php
-namespace App\Analytics;
-
-use SimpleStatsIo\LaravelClient\Contracts\ResolvesUserCustomProperties;
-use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
-
-class UserCustomPropertiesResolver implements ResolvesUserCustomProperties
-{
-    public function resolve(TrackablePerson $user): array
-    {
-        $plan = $user->plan->name;
-
-        // a former subscriber back on the free plan is churned, not organic free
-        if ($plan === 'free' && $user->subscriptions()->exists()) {
-            return ['subscription' => 'churned'];
-        }
-
-        return ['subscription' => $plan];
-    }
-}
-```
+The resolver runs on every track, so it is also the place to **derive** values, not just read them off a column.
 
 **Value rules and limits:**
 
@@ -119,9 +103,9 @@ SimplestatsClient::trackCustomProperties(
     person: new Visitor(SimplestatsClient::getVisitorHash()),
 );
 
-// for a user (e.g. on a plan change)
+// for a logged-in user
 SimplestatsClient::trackCustomProperties(
-    properties: ['subscription' => 'pro'],
+    properties: ['ab_test' => 'B'],
     person: auth()->user(),
 );
 ```
