@@ -39,6 +39,7 @@ class StatsIndexDataProvider extends AbstractDataProvider
         return [
             'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
+            'mrr' => $this->buildMrrSnapshot($teamStats, $filters),
             'presets' => $this->buildPresets($user, $hiddenPresets),
             'allPresets' => StatsRangePreset::toOptions(),
             'hiddenPresets' => $hiddenPresets,
@@ -117,6 +118,20 @@ class StatsIndexDataProvider extends AbstractDataProvider
         }
 
         return $teamStats;
+    }
+
+    /**
+     * @return array{mrr: float, arr: float, mrr_prev: float}|null
+     */
+    private function buildMrrSnapshot(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        $project = $teamStats->projects[$filters->projectId] ?? null;
+
+        if ($project === null || ! ($project['usage'] & StatsService::TRACKING_USAGE_BITS_PAYMENTS)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getMrrSnapshot($filters);
     }
 
     private function buildPresets(User $user, array $hiddenPresets): array

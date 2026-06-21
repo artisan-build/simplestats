@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Builder\MrrSnapshotSqlBuilder;
 use App\Builder\StatsAggregationsGroupedEventsSqlBuilder;
 use App\Builder\StatsAggregationsGroupedPropertiesSqlBuilder;
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
@@ -219,6 +220,48 @@ class StatsAggregationsService
         }
 
         return $aggregatedData->sortKeysDesc();
+    }
+
+    /**
+     * Active recurring revenue as a point-in-time snapshot, not a period sum.
+     * MRR is taken at the range end (current) and the range start (comparison),
+     * so the headline tile can show growth across the visible range. ARR = MRR
+     * x 12. Reuses the same filter conditions as the bucket aggregation, so
+     * channel/property filters narrow MRR too.
+     *
+     * @return array{mrr: float, arr: float, mrr_prev: float}
+     */
+    public function getMrrSnapshot(StatsFilterDto $filters): array
+    {
+        $filterConditions = $this->getFilterConditions($filters);
+
+        $current = $this->computeMrrAtDate($filters, $filterConditions, $filterConditions['endDateEnd']);
+        $previous = $this->computeMrrAtDate($filters, $filterConditions, $filterConditions['startDateStart']);
+
+        return [
+            'mrr' => $current,
+            'arr' => round($current * 12, 2),
+            'mrr_prev' => $previous,
+        ];
+    }
+
+    private function computeMrrAtDate(StatsFilterDto $filters, array $filterConditions, string $asOfDate): float
+    {
+        $asOf = CarbonImmutable::parse($asOfDate);
+        $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;
+
+        $conditions = array_merge($filterConditions, [
+            'asOfDate' => $asOfDate,
+            'monthWindowStart' => $asOf->subMonth()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
+            'yearWindowStart' => $asOf->subYear()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
+        ]);
+
+        $builder = new MrrSnapshotSqlBuilder;
+        $sql = strtr($builder->build(), $this->formatFilter($conditions));
+
+        $result = $this->getDataArray($sql);
+
+        return round((float) ($result[0]['mrr'] ?? 0), 2);
     }
 
     private function getFilterConditions(StatsFilterDto $filters): array

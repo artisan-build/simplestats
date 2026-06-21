@@ -41,6 +41,11 @@ class StatsService
     // the incremental aggregation guard in StatsIncrementService.
     const DAAPU_WINDOW_DAYS = 20;
 
+    // grace window (in days) added to a subscription's interval before it counts
+    // as churned in the MRR snapshot, so a renewal that lands a few days late is
+    // not briefly dropped from MRR. Referenced by StatsAggregationsService::getMrrSnapshot().
+    const MRR_ACTIVE_GRACE_DAYS = 3;
+
     const TRACKING_USAGE_BITS_VISITORS = 1;
 
     const TRACKING_USAGE_BITS_USERS = 2;

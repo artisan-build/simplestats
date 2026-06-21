@@ -345,6 +345,7 @@ Jobs include automatic retry logic for fault tolerance.
 
 - Controllers should be thin. Keep business logic out of controllers and move it into dedicated service classes (e.g., `App\Services\TrackingService`).
 - Controllers should only handle HTTP concerns: receiving the request, delegating to a service, and returning a response.
+- **Controllers must not contain private helper methods.** A private method on a controller is a sign that business logic leaked in. Controller methods should be public route actions only. Extract the helper into a service (for domain/query logic) or a `DataProvider` (for response assembly, see `App\Http\DataProviders\StatsIndexDataProvider`). Same rule for non-action `protected` helpers.
 
 ## Development Guidelines
 

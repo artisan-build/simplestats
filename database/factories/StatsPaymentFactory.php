@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\PaymentInterval;
 use App\Models\Project;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
@@ -47,5 +48,15 @@ class StatsPaymentFactory extends Factory
             'time' => $date->format('Y-m-d H:i:s'),
             'time_utc' => $date->format('Y-m-d H:i:s'),
         ];
+    }
+
+    public function recurringMonthly(): static
+    {
+        return $this->state(fn () => ['recurring_interval' => PaymentInterval::MONTH]);
+    }
+
+    public function recurringYearly(): static
+    {
+        return $this->state(fn () => ['recurring_interval' => PaymentInterval::YEAR]);
     }
 }
