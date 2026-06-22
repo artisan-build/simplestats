@@ -3,27 +3,12 @@
 namespace App\Http\DataProviders;
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
-use App\Http\Requests\StatsFilterRequest;
 use App\Models\Team;
-use App\Models\User;
-use App\Services\RefererService;
-use App\Services\StatsCustomEventService;
-use App\Services\StatsCustomPropertyService;
-use App\Services\StatsDetailsService;
 use App\Services\StatsService;
-use App\Services\SubscriptionService;
 
-class StatsIndexDataProvider extends AbstractDataProvider
+class StatsIndexDataProvider extends AbstractStatsDataProvider
 {
-    public function __construct(
-        private StatsFilterRequest $request,
-        private StatsDetailsService $statsDetailsService,
-        private SubscriptionService $subscriptionService,
-        private RefererService $refererService,
-    ) {}
-
     public function toArray(): array
     {
         $user = $this->request->user();
@@ -34,77 +19,10 @@ class StatsIndexDataProvider extends AbstractDataProvider
         $teamStats = $this->loadTeamStats($user, $filters);
         $teamStats = $this->buildStats($teamStats, $filters);
 
-        $hiddenPresets = $user->settings['hiddenPresets'] ?? [];
-
-        return [
-            'teams' => $user->allTeams(),
-            'teamStats' => $teamStats,
+        return array_merge($this->commonProps($user, $filters, $teamStats), [
             'mrr' => $this->buildMrrSnapshot($teamStats, $filters),
-            'presets' => $this->buildPresets($user, $hiddenPresets),
-            'allPresets' => StatsRangePreset::toOptions(),
-            'hiddenPresets' => $hiddenPresets,
-            'customPresets' => $user->customStatsRangePresets,
-            'filters' => StatsService::formatFilters($filters),
-            'statsGroups' => StatsService::getStatsTypesFormatted(['model']),
-            'propertyDimensions' => StatsCustomPropertyService::getPropertyDimensions($filters),
-            'hasCustomEvents' => StatsCustomEventService::hasCustomEvents($filters),
-            'statsGroupNames' => StatsService::getFilterStatsTypeNames($filters),
-            'topReferers' => $this->refererService->getTopReferers(),
-            'rangeTypes' => $this->statsDetailsService->getRangeTypes(),
-            'rangeCurrent' => now()->format($filters->rangeType->dateFormat()['php']),
-            'freePlanWarning' => ['show' => StatsService::showFreePlanWarning($user)],
-            'readDocsWarning' => ['show' => StatsService::showReadDocsWarning($user)],
-            'subscriptionPlanAlarm' => $this->subscriptionService->getPlanAlarm($user->team),
-            'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
-                return [$key => $item['bit']];
-            }),
-            'comparisonTypes' => StatsService::getComparisonTypes(),
-        ];
-    }
-
-    private function resolveEffectiveRequest(User $user): StatsFilterRequest
-    {
-        // hack: as project_id may be set within the request class, we need to check $_GET
-        $hasFilterRequest = ! empty($_GET);
-
-        $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
-
-        if (! $hasFilterRequest && ! empty($userFilterSettings)) {
-            return new StatsFilterRequest($userFilterSettings);
-        }
-
-        if ($this->request->has('preset') && $this->request->preset !== StatsRangePreset::CUSTOM->value) {
-            // on preset (built-in or custom), we do not save the range
-            $user->updateSettings('statsFilters.'.$user->current_team_id, $this->request->except([
-                'range_start',
-                'range_amount',
-                'range_type',
-            ]));
-        }
-
-        return $this->request;
-    }
-
-    private function loadTeamStats(User $user, StatsFilterDto $filters): Team
-    {
-        $teamStats = $user->currentTeam()->with('projects')->get()->first();
-
-        // do this before prepend all filters...
-        $teamStats->totalProjectsCount = $teamStats->projects->count();
-
-        // we need to do prepend before keyBy('id')
-        $mergedUsageBits = $teamStats->projects->reduce(fn ($carry, $project) => $carry | $project['usage'], 0);
-        $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects', $mergedUsageBits));
-
-        // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
-        // this would not update $teamStats cause of laravel intern relation management...
-        $teamStats->setRelation('projects', $teamStats->projects->keyBy('id'));
-
-        if ($filters->projectId !== StatsFilterDto::TRACK_ALL && ! $teamStats->projects->has($filters->projectId)) {
-            $filters->projectId = StatsFilterDto::TRACK_ALL;
-        }
-
-        return $teamStats;
+            'mrr_series' => $this->buildMrrTimeSeries($teamStats, $filters),
+        ]);
     }
 
     private function buildStats(Team $teamStats, StatsFilterDto $filters): Team
@@ -118,29 +36,5 @@ class StatsIndexDataProvider extends AbstractDataProvider
         }
 
         return $teamStats;
-    }
-
-    /**
-     * @return array{mrr: float, arr: float, mrr_prev: float}|null
-     */
-    private function buildMrrSnapshot(Team $teamStats, StatsFilterDto $filters): ?array
-    {
-        $project = $teamStats->projects[$filters->projectId] ?? null;
-
-        if ($project === null || ! ($project['usage'] & StatsService::TRACKING_USAGE_BITS_PAYMENTS)) {
-            return null;
-        }
-
-        return $this->statsDetailsService->getMrrSnapshot($filters);
-    }
-
-    private function buildPresets(User $user, array $hiddenPresets): array
-    {
-        return collect(StatsRangePreset::toOptions())
-            ->reject(fn ($p) => in_array($p['id'], $hiddenPresets))
-            ->merge($user->customStatsRangePresets->map->toOption())
-            ->sortBy('sortWeight')
-            ->values()
-            ->toArray();
     }
 }

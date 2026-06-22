@@ -107,6 +107,7 @@ Route::middleware([
     Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
+    Route::get('recurring-revenue', [StatsController::class, 'recurringRevenue'])->name('recurring-revenue');
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');

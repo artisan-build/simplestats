@@ -11,6 +11,7 @@ class StatsDetailsService
     public function __construct(
         private StatsService $statsService,
         private StatsAggregationsService $statsAggregationsService,
+        private MrrAggregationService $mrrAggregationService,
     ) {}
 
     public function getStats(StatsFilterDto $filters): array
@@ -31,7 +32,31 @@ class StatsDetailsService
      */
     public function getMrrSnapshot(StatsFilterDto $filters): array
     {
-        return $this->statsAggregationsService->getMrrSnapshot($filters);
+        return $this->mrrAggregationService->getMrrSnapshot($filters);
+    }
+
+    /**
+     * @return array<int, array{date: string, date_clear: string, mrr: float}>
+     */
+    public function getMrrTimeSeries(StatsFilterDto $filters): array
+    {
+        return $this->mrrAggregationService->getMrrTimeSeries($filters);
+    }
+
+    /**
+     * @return array<int, array{date: string, date_clear: string, starting_mrr: float, new: float, reactivation: float, expansion: float, contraction: float, churn: float, ending_mrr: float, net_change: float}>
+     */
+    public function getMrrMovements(StatsFilterDto $filters): array
+    {
+        return $this->mrrAggregationService->getMrrMovements($filters);
+    }
+
+    /**
+     * @return array{nrr: float|null, grr: float|null, quick_ratio: float|null, starting_mrr: float, ending_mrr: float, new: float, reactivation: float, expansion: float, contraction: float, churn: float}
+     */
+    public function getMrrRetention(StatsFilterDto $filters): array
+    {
+        return $this->mrrAggregationService->getMrrRetention($filters);
     }
 
     /**

@@ -120,6 +120,44 @@ test('dashboard mrr prop is null when the project has no payments tracking', fun
         );
 });
 
+test('dashboard exposes the mrr_series prop when the project tracks payments', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('mrr_series', fn ($series) => $series
+                ->each(fn ($item) => $item
+                    ->has('date')
+                    ->has('date_clear')
+                    ->has('mrr')
+                )
+            )
+        );
+});
+
+test('dashboard mrr_series prop is null when the project has no payments tracking', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('mrr_series', null)
+        );
+});
+
 test('dashboard persists preset selection in user settings', function () {
     $this->get(route('dashboard', ['preset' => StatsRangePreset::LAST_7_DAYS->value]))
         ->assertStatus(200);

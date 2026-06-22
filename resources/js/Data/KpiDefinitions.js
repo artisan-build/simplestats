@@ -21,6 +21,21 @@ export function getKpiDefinitions(rangeType) {
             long: 'Annual Recurring Revenue',
             description: 'Annualized recurring revenue (MRR × 12).',
         },
+        nrr: {
+            short: 'NRR',
+            long: 'Net Revenue Retention',
+            description: 'Recurring revenue retained from the customers active at the start of the selected period, including expansion: (start + expansion − contraction − churn) / start.',
+        },
+        grr: {
+            short: 'GRR',
+            long: 'Gross Revenue Retention',
+            description: 'Recurring revenue retained from the customers active at the start of the selected period, excluding expansion: (start − contraction − churn) / start.',
+        },
+        quick_ratio: {
+            short: 'Quick Ratio',
+            long: 'MRR Quick Ratio',
+            description: 'Growth efficiency over the selected period: (new + expansion) / (contraction + churn). Above 1 means recurring revenue gained outpaces revenue lost.',
+        },
         pd_net: {
             small: 'Rev',
             short: 'Revenue',

@@ -29,6 +29,7 @@ const props = defineProps({
     trackingUsageBits: Object,
     comparisonTypes: Object,
     mrr: {type: Object, default: null},
+    mrr_series: {type: Array, default: null},
 });
 
 const {startTour} = useOnboardingTour();
@@ -92,6 +93,7 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :teamStats="teamStats"
                         :currentProject="currentProject"
                         :trackingUsageBits="trackingUsageBits"
+                        :mrrSeries="mrr_series"
                     />
                 </div>
                 <div>

@@ -11,6 +11,7 @@ const props = defineProps({
     teamStats: Object,
     currentProject: Object,
     trackingUsageBits: Object,
+    mrrSeries: {type: Array, default: null},
 });
 
 const page = usePage();
@@ -70,6 +71,51 @@ const extractStatsData4Chart = (statsGroups) => {
     data.categories.reverse();
 
     return data;
+};
+
+// MRR is a point-in-time snapshot per bucket (its own series, not part of the
+// period-summed teamStats.stats), so it gets a dedicated chart block. The
+// indicator shows the latest snapshot (newest bucket), not a sum, and there is
+// no previous-period comparison series. A single-bucket range draws a flat line
+// (the value duplicated) instead of the 0 -> value ramp the period charts use,
+// because MRR is a stock and never starts at 0.
+const buildMrrChart = (mrrSeries) => {
+    const ordered = [...mrrSeries].reverse();
+
+    const serie = {
+        data: ordered.map(item => item.mrr),
+        dataPrev: [],
+        dates: ordered.map(item => item.date_clear),
+        datesPrev: [],
+        name: kpiDefs.mrr.short,
+        nameSmall: kpiDefs.mrr.short,
+        color: isDarkMode.value ? '#00A3E0' : '#93c5fd',
+        key: 'mrr',
+        formatter: 'currency',
+        indicator: mrrSeries[0].mrr,
+    };
+
+    const categories = ordered.map(item => formatDate(item.date, props.filters.range_type));
+
+    if (categories.length === 1) {
+        categories[1] = categories[0];
+        serie.data[1] = serie.data[0];
+        serie.dates[1] = serie.dates[0];
+    }
+
+    const kpiDef = kpiDefs.mrr;
+    const info = `<div>
+                    <div class="font-bold text-green-300">${kpiDef.long} (${kpiDef.short})</div>
+                    <div>${kpiDef.description}</div>
+                 </div>`;
+
+    return {
+        name: 'Recurring Revenue',
+        class: 'order-2 3xl:order-2',
+        group: [{key: 'mrr', formatter: 'currency', title: kpiDef.short}],
+        info,
+        data: {series: [serie], categories},
+    };
 };
 
 let statsArray = Object.values(props.teamStats.stats);
@@ -253,6 +299,12 @@ charts.forEach(function(chartGroup) {
         });
     }
 });
+
+// Pushed after the loop above so its pre-built snapshot data is not overwritten
+// by extractStatsData4Chart (which reads the period-summed teamStats.stats).
+if (currentProjectHasTrackingUsageBits(['payments']) && props.mrrSeries?.length) {
+    charts.push(buildMrrChart(props.mrrSeries));
+}
 
 const chartLenght = charts.length;
 </script>
