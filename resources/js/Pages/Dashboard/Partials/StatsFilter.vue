@@ -8,7 +8,7 @@ import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
 import MenuToggler from "@/Components/MenuToggler.vue";
 import TextInput from "@/Components/TextInput.vue";
-import ToggleButton from "@/Components/ToggleButton.vue";
+import DashboardPresetSwitcher from "@/Pages/Dashboard/Partials/DashboardPresetSwitcher.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 
@@ -27,8 +27,6 @@ const props = defineProps({
     comparisonTypes: Object,
     submitRoute: {type: String, default: 'dashboard'},
 });
-
-const maxTrackingUsageBits = Object.values(props.trackingUsageBits).reduce((a, b) => a + b);
 
 const page = usePage();
 
@@ -227,14 +225,7 @@ const showPresetModal = ref(false);
                                         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                     </svg>
                                 </div>
-                                <div v-if="maxTrackingUsageBits === currentProject.usage" data-tour="advanced-toggle">
-                                    <InputLabel class="hidden" for="advanced" value="&nbsp;" />
-                                    <ToggleButton class="mt-1" id="advanced" title="Toggle Advanced View" v-model:checked="page.props.auth.user.settings.showAdvanced" @click="$inertia.get(route('user-settings.toggle-advanced'))">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v2.25A2.25 2.25 0 0 0 6 10.5Zm0 9.75h2.25A2.25 2.25 0 0 0 10.5 18v-2.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25V18A2.25 2.25 0 0 0 6 20.25Zm9.75-9.75H18a2.25 2.25 0 0 0 2.25-2.25V6A2.25 2.25 0 0 0 18 3.75h-2.25A2.25 2.25 0 0 0 13.5 6v2.25a2.25 2.25 0 0 0 2.25 2.25Z" />
-                                        </svg>
-                                    </ToggleButton>
-                                </div>
+                                <DashboardPresetSwitcher :currentProject="currentProject" :trackingUsageBits="trackingUsageBits" />
                                 <div class="hidden">
                                     <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">

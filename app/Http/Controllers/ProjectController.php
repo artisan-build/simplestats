@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\CheckPasswordConfirmation;
 use App\Actions\CreateProject;
 use App\Actions\UpdateProject;
+use App\Enums\DashboardPreset;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Services\StatsAggregationsService;
@@ -71,7 +72,7 @@ class ProjectController extends Controller
 
         if ($validated['usage'] != $project->usage) {
             app(StatsAggregationsService::class)->clearByProject($project);
-            $request->user()->updateSettings('showAdvanced', false);
+            $request->user()->updateSettings('dashboardPreset', DashboardPreset::ADVANCED->value);
         }
 
         app(UpdateProject::class)($request->user(), $project, $validated);

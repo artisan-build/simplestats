@@ -260,11 +260,13 @@ const chartOptions = ref({
                 }
 
                 // console.log(selectedSeries, options.seriesIndex)
-                if (series.value[0].datesPrev.length && options.seriesIndex === 1) {
-                    let prevDate = series.value[0].datesPrev[options.dataPointIndex];
+                if (series.value[selectedSerieIndex.value].datesPrev.length && options.seriesIndex === 1) {
+                    let prevDate = series.value[selectedSerieIndex.value].datesPrev[options.dataPointIndex];
                     let prevDateFormatted = formatDate(prevDate, props.filters.range_type);
 
-                    if (props.filters.comparison === 'year' && props.filters.range_type !== 'months') {
+                    // Only the day format omits the year and is safely Date-parseable; week/month/year
+                    // labels already carry the year (and aren't valid Date strings, so getFullYear is NaN).
+                    if (props.filters.comparison === 'year' && props.filters.range_type === 'days') {
                         prevDateFormatted += ', ' + new Date(prevDate).getFullYear();
                     }
 

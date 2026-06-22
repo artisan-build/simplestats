@@ -128,7 +128,7 @@ Route::middleware([
 
     // User Settings
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
-    Route::get('user-settings/toggle-advanced', [UserSettingsController::class, 'toggleAdvanced'])->name('user-settings.toggle-advanced');
+    Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');
     Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
     Route::post('user-settings/property-lifetime', [UserSettingsController::class, 'setPropertyLifetime'])->name('user-settings.property-lifetime');
 

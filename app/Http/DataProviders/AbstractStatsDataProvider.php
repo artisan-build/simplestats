@@ -4,6 +4,7 @@ namespace App\Http\DataProviders;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangePreset;
+use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use App\Models\Team;
 use App\Models\User;
@@ -142,6 +143,18 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
         }
 
         return $this->statsDetailsService->getMrrTimeSeries($filters);
+    }
+
+    /**
+     * @return array<int, array{date: string, date_clear: string, mrr: float, subscribers: int}>|null
+     */
+    protected function buildMrrTimeSeriesComparison(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $filters->comparison || $filters->rangeType === StatsRangeType::YEAR) {
+            return null;
+        }
+
+        return $this->buildMrrTimeSeries($teamStats, StatsService::createPrevFiltersForComparison($filters));
     }
 
     /**

@@ -12,6 +12,7 @@ const props = defineProps({
     currentProject: Object,
     trackingUsageBits: Object,
     mrrSeries: {type: Array, default: null},
+    mrrSeriesPrev: {type: Array, default: null},
 });
 
 const page = usePage();
@@ -19,6 +20,11 @@ const page = usePage();
 const kpiDefs = getKpiDefinitions(props.filters.range_type);
 
 const isDarkMode = ref(document.documentElement.classList.contains('dark'));
+
+const PRESET_RANK = {simple: 0, advanced: 1, expert: 2};
+const dashboardPreset = page.props.auth.user.settings.dashboardPreset ?? 'advanced';
+const presetRank = PRESET_RANK[dashboardPreset] ?? 0;
+const isExpertLayout = dashboardPreset === 'expert';
 
 const extractStatsData4Chart = (statsGroups) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
@@ -89,38 +95,81 @@ const extractStatsData4Chart = (statsGroups) => {
     return data;
 };
 
-// MRR is a point-in-time snapshot per bucket (its own series, not part of the
-// period-summed teamStats.stats), so it gets a dedicated chart block. The
-// indicator shows the latest snapshot (newest bucket), not a sum, and there is
-// no previous-period comparison series. A single-bucket range draws a flat line
-// (the value duplicated) instead of the 0 -> value ramp the period charts use,
+// MRR/Subscribers are point-in-time snapshots per bucket (their own series, not
+// part of the period-summed teamStats.stats), so they get a dedicated chart block
+// whose indicator is the latest snapshot, not a sum. When a comparison is active they
+// get a previous-period line from mrrSeriesPrev (the prior range's snapshots); Net
+// carries its comparison from teamStats.statsPrev. A single-bucket range draws a flat
+// line (value duplicated) instead of the 0 -> value ramp the period charts use,
 // because MRR is a stock and never starts at 0.
 const buildMrrChart = (mrrSeries) => {
     const ordered = [...mrrSeries].reverse();
+    const orderedPrev = props.mrrSeriesPrev?.length ? [...props.mrrSeriesPrev].reverse() : null;
     const latest = mrrSeries[0];
     const color = isDarkMode.value ? '#00A3E0' : '#93c5fd';
     const dates = ordered.map(item => item.date_clear);
 
-    const arps = (item) => item.subscribers > 0 ? item.mrr / item.subscribers : 0;
+    const snapshotPrev = (key) => orderedPrev ? ordered.map((item, i) => orderedPrev[i]?.[key] ?? 0) : [];
+    const snapshotDatesPrev = () => orderedPrev ? ordered.map((item, i) => orderedPrev[i]?.date) : [];
+
+    const prevList = props.teamStats.statsPrev ? Object.values(props.teamStats.statsPrev) : null;
+    const netByDate = {};
+    const netPrevByDate = {};
+    const prevDateByDate = {};
+    Object.values(props.teamStats.stats).forEach((item, i) => {
+        netByDate[item.date_clear] = item.pd_net;
+        if (prevList) {
+            netPrevByDate[item.date_clear] = prevList[i]?.pd_net ?? 0;
+            prevDateByDate[item.date_clear] = prevList[i]?.date;
+        }
+    });
 
     const seriesDefs = [
-        {key: 'mrr', formatter: 'currency', data: ordered.map(item => item.mrr), indicator: latest.mrr},
-        {key: 'subscribers', formatter: 'number', data: ordered.map(item => item.subscribers), indicator: latest.subscribers},
-        {key: 'arps', formatter: 'currency', data: ordered.map(arps), indicator: arps(latest)},
-    ];
+        {
+            key: 'mrr', tier: 'simple', formatter: 'currency',
+            data: ordered.map(item => item.mrr),
+            dataPrev: snapshotPrev('mrr'),
+            datesPrev: snapshotDatesPrev(),
+            indicator: latest.mrr,
+        },
+        {
+            key: 'subscribers', tier: 'simple', formatter: 'number',
+            data: ordered.map(item => item.subscribers),
+            dataPrev: snapshotPrev('subscribers'),
+            datesPrev: snapshotDatesPrev(),
+            indicator: latest.subscribers,
+        },
+        // Net is a period flow (from teamStats.stats) aligned onto the MRR snapshot buckets so the headline revenue sits with MRR.
+        {
+            key: 'pd_net', tier: 'simple', formatter: 'currency',
+            data: ordered.map(item => netByDate[item.date_clear] ?? 0),
+            dataPrev: prevList ? ordered.map(item => netPrevByDate[item.date_clear] ?? 0) : [],
+            datesPrev: prevList ? ordered.map(item => prevDateByDate[item.date_clear]) : [],
+            indicator: statsSum.pd_net,
+        },
+    ].filter(def => PRESET_RANK[def.tier] <= presetRank);
 
-    const series = seriesDefs.map(def => ({
-        data: [...def.data],
-        dataPrev: [],
-        dates: [...dates],
-        datesPrev: [],
-        name: kpiDefs[def.key].short,
-        nameSmall: kpiDefs[def.key].short,
-        color,
-        key: def.key,
-        formatter: def.formatter,
-        indicator: def.indicator,
-    }));
+    const series = seriesDefs.map(def => {
+        const hasPrev = !! def.dataPrev?.length;
+        const name = kpiDefs[def.key].short;
+        const namePrev = hasPrev ? 'Previous ' + name : undefined;
+
+        return {
+            data: [...def.data],
+            dataPrev: hasPrev ? [...def.dataPrev] : [],
+            dates: [...dates],
+            datesPrev: hasPrev ? [...def.datesPrev] : [],
+            name,
+            nameSmall: name,
+            namePrev,
+            nameSmallPrev: namePrev,
+            color,
+            colorPrev: hasPrev ? '#a3b8d3' : undefined,
+            key: def.key,
+            formatter: def.formatter,
+            indicator: def.indicator,
+        };
+    });
 
     const categories = ordered.map(item => formatDate(item.date, props.filters.range_type));
 
@@ -129,6 +178,11 @@ const buildMrrChart = (mrrSeries) => {
         series.forEach(serie => {
             serie.data[1] = serie.data[0];
             serie.dates[1] = serie.dates[0];
+
+            if (serie.dataPrev.length) {
+                serie.dataPrev[1] = serie.dataPrev[0];
+                serie.datesPrev[1] = serie.datesPrev[0];
+            }
         });
     }
 
@@ -142,7 +196,7 @@ const buildMrrChart = (mrrSeries) => {
     }).join('');
 
     return {
-        name: 'Recurring Revenue',
+        name: 'Revenue',
         order: 2,
         group: seriesDefs.map(def => ({key: def.key, formatter: def.formatter, title: kpiDefs[def.key].short})),
         info,
@@ -163,6 +217,21 @@ statsArray.forEach(item => {
         statsSumLength[key] = (statsSumLength[key] ?? 0) + 1;
     });
 });
+
+// ARPS is derived from the MRR snapshot series; inject it per bucket (current and
+// comparison) so it can live in the period-based Average Revenue chart alongside ARPU/ARPV.
+const injectArps = (series, buckets) => {
+    if (! series?.length || ! buckets?.length) {
+        return;
+    }
+
+    const arpsByDate = {};
+    series.forEach(item => { arpsByDate[item.date_clear] = item.subscribers > 0 ? item.mrr / item.subscribers : 0; });
+    buckets.forEach(item => { item.arps = arpsByDate[item.date_clear] ?? 0; });
+};
+
+injectArps(props.mrrSeries, statsArray);
+injectArps(props.mrrSeriesPrev, props.teamStats.statsPrev ? Object.values(props.teamStats.statsPrev) : null);
 
 const lastStat = (key) => {
     if (! statsArray.length) {
@@ -187,111 +256,80 @@ function safeDevision(numerator, denominator) {
 
 const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProject, props.trackingUsageBits);
 
-const charts = [];
+const recurringShown = currentProjectHasTrackingUsageBits(['payments', 'users']) && !! props.mrrSeries?.length;
 
-// !! ACQUISITION
-const acquisitionChart = {
-    name: 'Acquisition',
-    order: 1,
-    group: [],
-};
+// A KPI shows when its tier is within the active preset AND the project tracks
+// the required bits. exceptBits excludes a KPI when an additional bit is present
+// (e.g. NAU only as the Activity fallback for projects without payments).
+// hideWhenRecurring drops the fallback Net in the average-revenue chart when the
+// recurring revenue chart already carries Net.
+const kpiVisible = (kpi) =>
+    PRESET_RANK[kpi.tier] <= presetRank
+    && (! kpi.bits || currentProjectHasTrackingUsageBits(kpi.bits))
+    && (! kpi.exceptBits || ! currentProjectHasTrackingUsageBits(kpi.exceptBits))
+    && (! kpi.requiresRecurring || recurringShown)
+    && ! (kpi.hideWhenRecurring && recurringShown);
 
-if (currentProjectHasTrackingUsageBits(['visitors'])) {
-    acquisitionChart.group.push({key: 'pd_visitor', formatter: 'number', indicatorCallback: () => {return statsSum.pd_visitor}});
-}
-
-if (currentProjectHasTrackingUsageBits(['users'])) {
-    acquisitionChart.group.push({key: 'pd_reg', formatter: 'number', indicatorCallback: () => {return statsSum.pd_reg}});
-
-    if (currentProjectHasTrackingUsageBits(['visitors'])) {
-        acquisitionChart.group.push({key: 'pd_cr', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100}});
-    }
-}
-
-if (acquisitionChart.group.length > 0) charts.push(acquisitionChart);
-
-// !! REVENUE
-if (currentProjectHasTrackingUsageBits(['payments'])) {
-    const revenueChart = {
-        name: 'Revenue',
-        order: 4,
-        group: [],
-    };
-
-    revenueChart.group.push({
-        key: 'pd_net',
-        formatter: 'currency',
-        indicatorCallback: () => {return statsSum.pd_net},
-        tooltipExtra: [
-            {key: 'pd_gross', label: 'Gross'},
-            {key: 'pd_fee', label: 'Fee'},
+const chartDefs = [
+    {
+        name: 'Acquisition',
+        order: 1,
+        group: [
+            {key: 'pd_visitor', formatter: 'number', tier: 'simple', bits: ['visitors'], indicatorCallback: () => statsSum.pd_visitor},
+            {key: 'pd_reg', formatter: 'number', tier: 'simple', bits: ['users'], indicatorCallback: () => statsSum.pd_reg},
+            {key: 'pd_cr', formatter: 'percent', tier: 'simple', bits: ['users', 'visitors'], indicatorCallback: () => safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100},
         ],
-    });
-
-    if (currentProjectHasTrackingUsageBits(['users'])) {
-        revenueChart.group.push({key: 'lt_arpu', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_arpu')}});
-    }
-
-    if (currentProjectHasTrackingUsageBits(['visitors'])) {
-        // Revenue per visitor is tiny, so 2 decimals lose all granularity; show 3.
-        revenueChart.group.push({key: 'lt_arpv', formatter: 'currency', decimals: 3, indicatorCallback: () => {return lastStat('lt_arpv')}});
-    }
-
-    if (revenueChart.group.length > 0) charts.push(revenueChart);
-}
-
-// !! ACTIVITY
-if (currentProjectHasTrackingUsageBits(['users'])) {
-    const activityChart = {
+    },
+    {
+        // When recurring revenue exists, Net lives in the Revenue chart and this one is the pure ARP* family; otherwise it carries Net and is the project's revenue chart.
+        name: recurringShown ? 'Average Revenue' : 'Revenue',
+        order: 4,
+        group: [
+            {key: 'pd_net', formatter: 'currency', tier: 'simple', bits: ['payments'], hideWhenRecurring: true, tooltipExtra: [{key: 'pd_gross', label: 'Gross'}, {key: 'pd_fee', label: 'Fee'}], indicatorCallback: () => statsSum.pd_net},
+            {key: 'lt_arpu', formatter: 'currency', tier: 'advanced', bits: ['payments', 'users'], indicatorCallback: () => lastStat('lt_arpu')},
+            // Revenue per visitor is tiny, so 2 decimals lose all granularity; show 3.
+            // Simple-tier for payment projects without users (they have no MRR chart to anchor revenue).
+            {key: 'lt_arpv', formatter: 'currency', decimals: 3, tier: 'simple', bits: ['payments', 'visitors'], exceptBits: ['users'], indicatorCallback: () => lastStat('lt_arpv')},
+            {key: 'lt_arpv', formatter: 'currency', decimals: 3, tier: 'advanced', bits: ['payments', 'visitors', 'users'], indicatorCallback: () => lastStat('lt_arpv')},
+            {key: 'arps', formatter: 'currency', tier: 'advanced', bits: ['payments', 'users'], requiresRecurring: true, indicatorCallback: () => lastStat('arps')},
+        ],
+    },
+    {
         name: 'Activity',
         order: 3,
-        group: [],
-    };
-
-    activityChart.group.push({key: 'pd_dau', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dau')}});
-
-    if (currentProjectHasTrackingUsageBits(['payments'])) {
-        activityChart.group.push({key: 'pd_dapu', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dapu')}});
-        activityChart.group.push({key: 'lt_pu', formatter: 'number', indicatorCallback: function () {return lastStat('lt_pu')}});
-    } else {
-        activityChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
-    }
-
-    if (activityChart.group.length > 0) charts.push(activityChart);
-}
-
-// !! GROWTH (advanced)
-if (page.props.auth.user.settings.showAdvanced && currentProjectHasTrackingUsageBits(['users', 'payments'])) {
-    const growthChart = {
+        group: [
+            // Projects without payments have no revenue chart, so Activity becomes their simple-tier second chart.
+            {key: 'pd_dau', formatter: 'number', tier: 'simple', bits: ['users'], exceptBits: ['payments'], indicatorCallback: () => lastStat('pd_dau')},
+            {key: 'pd_nau', formatter: 'number', tier: 'simple', bits: ['users'], exceptBits: ['payments'], indicatorCallback: () => statsSum.pd_nau},
+            {key: 'lt_reg2dau', formatter: 'percent', tier: 'simple', bits: ['users'], exceptBits: ['payments'], indicatorCallback: () => lastStat('lt_reg2dau')},
+            {key: 'pd_dau', formatter: 'number', tier: 'advanced', bits: ['users', 'payments'], indicatorCallback: () => lastStat('pd_dau')},
+            {key: 'pd_dapu', formatter: 'number', tier: 'advanced', bits: ['users', 'payments'], indicatorCallback: () => lastStat('pd_dapu')},
+            {key: 'lt_pu', formatter: 'number', tier: 'advanced', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_pu')},
+        ],
+    },
+    {
         name: 'Growth',
         order: 5,
-        group: [],
-    };
-
-    growthChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
-    growthChart.group.push({key: 'pd_napu', formatter: 'number', indicatorCallback: () => {return statsSum.pd_napu}});
-    growthChart.group.push({key: 'pd_arpdau', formatter: 'currency', indicatorCallback: () => {return lastStat('pd_arpdau')}});
-
-    if (growthChart.group.length > 0) charts.push(growthChart);
-}
-
-// !! FUNNEL & DEPTH (advanced)
-if (page.props.auth.user.settings.showAdvanced && currentProjectHasTrackingUsageBits(['users'])) {
-    const funnelChart = {
+        group: [
+            {key: 'pd_nau', formatter: 'number', tier: 'expert', bits: ['users', 'payments'], indicatorCallback: () => statsSum.pd_nau},
+            {key: 'pd_napu', formatter: 'number', tier: 'expert', bits: ['users', 'payments'], indicatorCallback: () => statsSum.pd_napu},
+            {key: 'pd_arpdau', formatter: 'currency', tier: 'expert', bits: ['users', 'payments'], indicatorCallback: () => lastStat('pd_arpdau')},
+        ],
+    },
+    {
         name: 'Funnel & Depth',
         order: 6,
-        group: [],
-    };
+        group: [
+            {key: 'lt_reg2dau', formatter: 'percent', tier: 'expert', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_reg2dau')},
+            {key: 'lt_reg2pu', formatter: 'percent', tier: 'expert', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_reg2pu')},
+            {key: 'lt_arppu', formatter: 'currency', tier: 'expert', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_arppu')},
+        ],
+    },
+];
 
-    funnelChart.group.push({key: 'lt_reg2dau', formatter: 'percent', indicatorCallback: function () {return lastStat('lt_reg2dau')}});
-
-    if (currentProjectHasTrackingUsageBits(['payments'])) {
-        funnelChart.group.push({key: 'lt_reg2pu', formatter: 'percent', indicatorCallback: function () {return lastStat('lt_reg2pu')}});
-        funnelChart.group.push({key: 'lt_arppu', formatter: 'currency', indicatorCallback: function () {return lastStat('lt_arppu')}});
-    }
-
-    if (funnelChart.group.length > 0) charts.push(funnelChart);
-}
+const charts = chartDefs
+    .map(def => ({...def, group: def.group.filter(kpiVisible)}))
+    .filter(chart => chart.group.length > 0);
 
 charts.forEach(function(chartGroup) {
     let info = ``;
@@ -345,10 +383,10 @@ const chartLenght = charts.length;
 // The last chart stretches to fill whatever cells stay empty in its final grid
 // row, so any count lands flush. This depends only on count and column count, not
 // on which charts the tracking bits produced. Computed per breakpoint (md = 2
-// columns; the wide breakpoint is 3 in advanced mode, 4 otherwise).
+// columns; the wide breakpoint is 3 in the dense expert layout, 4 otherwise).
 if (chartLenght > 1) {
     const fillSpan = (columns) => columns - ((chartLenght - 1) % columns);
-    const wide = page.props.auth.user.settings.showAdvanced ? {bp: '3xl', columns: 3} : {bp: '5xl', columns: 4};
+    const wide = isExpertLayout ? {bp: '3xl', columns: 3} : {bp: '5xl', columns: 4};
     const wideSpan = chartLenght > 2 ? fillSpan(wide.columns) : 1;
 
     charts[chartLenght - 1].class = `md:col-span-${fillSpan(2)} ${wide.bp}:col-span-${wideSpan}`;
@@ -359,8 +397,8 @@ if (chartLenght > 1) {
     <div class="grid gap-4" :class="{
         'md:grid-cols-1': chartLenght === 1,
         'md:grid-cols-2': chartLenght >= 2,
-        '3xl:grid-cols-3': page.props.auth.user.settings.showAdvanced && chartLenght > 2,
-        '5xl:grid-cols-4': !page.props.auth.user.settings.showAdvanced && chartLenght > 2
+        '3xl:grid-cols-3': isExpertLayout && chartLenght > 2,
+        '5xl:grid-cols-4': !isExpertLayout && chartLenght > 2
     }">
         <div class="hidden md:col-span-1 md:col-span-2 3xl:col-span-1 3xl:col-span-2 3xl:col-span-3 5xl:col-span-1 5xl:col-span-2 5xl:col-span-3 5xl:col-span-4"></div>
         <StatsChart v-for="(chart, chartIndex) in charts"

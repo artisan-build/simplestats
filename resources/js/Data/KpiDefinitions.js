@@ -107,7 +107,7 @@ export function getKpiDefinitions(rangeType) {
         lt_arpu: {
             short: 'ARPU',
             long: 'Average Revenue Per User',
-            description: 'The average revenue per User over lifetime.',
+            description: 'The average revenue per User/Registration over lifetime.',
         },
         lt_arppu: {
             short: 'ARPPU',

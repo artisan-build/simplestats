@@ -58,8 +58,8 @@ export function useOnboardingTour() {
             {
                 element: '[data-tour="advanced-toggle"]',
                 popover: {
-                    title: 'Advanced View',
-                    description: 'Toggle between a simple overview and a detailed breakdown with additional KPIs like ARPU, ARPV, and conversion rates.',
+                    title: 'Detail level',
+                    description: 'Switch between Simple, Advanced, and Business to show more or fewer KPIs, from a focused overview to the full breakdown.',
                     side: 'bottom',
                     align: 'start',
                 },

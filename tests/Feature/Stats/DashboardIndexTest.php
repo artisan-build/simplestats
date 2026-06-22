@@ -121,6 +121,69 @@ test('dashboard exposes the mrr_series prop when the project has recurring payme
         );
 });
 
+test('dashboard exposes mrr_series_prev when a comparison is active', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $statsUser = StatsUser::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+    ]);
+
+    StatsPayment::factory()->recurringMonthly()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+        'stats_user_id' => $statsUser->id,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id, 'comparison' => 'period']))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('mrr_series_prev', fn ($series) => $series
+                ->each(fn ($item) => $item
+                    ->has('date')
+                    ->has('date_clear')
+                    ->has('mrr')
+                    ->has('subscribers')
+                )
+            )
+        );
+});
+
+test('dashboard mrr_series_prev is null without a comparison', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $statsUser = StatsUser::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+    ]);
+
+    StatsPayment::factory()->recurringMonthly()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+        'stats_user_id' => $statsUser->id,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('mrr_series_prev', null)
+        );
+});
+
 test('dashboard mrr_series prop is null when the project tracks payments but has no recurring payment', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 

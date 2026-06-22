@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DashboardPreset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserSettingsController extends Controller
 {
@@ -15,10 +17,13 @@ class UserSettingsController extends Controller
         return redirect()->back();
     }
 
-    public function toggleAdvanced(Request $request)
+    public function setDashboardPreset(Request $request)
     {
-        $showAdvanced = $request->user()->settings['showAdvanced'] ?? false;
-        $request->user()->updateSettings('showAdvanced', ! $showAdvanced);
+        $request->validate([
+            'preset' => ['required', Rule::enum(DashboardPreset::class)],
+        ]);
+
+        $request->user()->updateSettings('dashboardPreset', $request->preset);
 
         return redirect()->back();
     }
