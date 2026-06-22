@@ -91,3 +91,21 @@ test('recurring revenue mrr props are null when the project has no payments trac
             ->where('mrr_retention', null)
         );
 });
+
+test('recurring revenue mrr props are null when the project tracks payments but not users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $this->get(route('recurring-revenue', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('RecurringRevenue/Index')
+            ->where('mrr', null)
+            ->where('mrr_movements', null)
+            ->where('mrr_retention', null)
+        );
+});

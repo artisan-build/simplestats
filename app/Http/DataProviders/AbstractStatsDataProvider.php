@@ -125,7 +125,7 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
      */
     protected function buildMrrSnapshot(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksPayments($teamStats, $filters)) {
+        if (! $this->projectTracksRecurring($teamStats, $filters)) {
             return null;
         }
 
@@ -133,11 +133,11 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
     }
 
     /**
-     * @return array<int, array{date: string, date_clear: string, mrr: float}>|null
+     * @return array<int, array{date: string, date_clear: string, mrr: float, subscribers: int}>|null
      */
     protected function buildMrrTimeSeries(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksPayments($teamStats, $filters)) {
+        if (! $this->projectTracksRecurring($teamStats, $filters) || ! $this->statsDetailsService->hasRecurringPayments($filters)) {
             return null;
         }
 
@@ -149,7 +149,7 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
      */
     protected function buildMrrMovements(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksPayments($teamStats, $filters)) {
+        if (! $this->projectTracksRecurring($teamStats, $filters)) {
             return null;
         }
 
@@ -161,17 +161,27 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
      */
     protected function buildMrrRetention(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksPayments($teamStats, $filters)) {
+        if (! $this->projectTracksRecurring($teamStats, $filters)) {
             return null;
         }
 
         return $this->statsDetailsService->getMrrRetention($filters);
     }
 
-    protected function projectTracksPayments(Team $teamStats, StatsFilterDto $filters): bool
+    /**
+     * MRR is user-bound (the snapshot requires a stats_user_id), so recurring
+     * revenue is only meaningful when the project tracks both users and payments.
+     * Guest checkout (payments without users) is one-time only, never recurring.
+     */
+    protected function projectTracksRecurring(Team $teamStats, StatsFilterDto $filters): bool
     {
         $project = $teamStats->projects[$filters->projectId] ?? null;
 
-        return $project !== null && (bool) ($project['usage'] & StatsService::TRACKING_USAGE_BITS_PAYMENTS);
+        if ($project === null) {
+            return false;
+        }
+
+        return (bool) ($project['usage'] & StatsService::TRACKING_USAGE_BITS_USERS)
+            && (bool) ($project['usage'] & StatsService::TRACKING_USAGE_BITS_PAYMENTS);
     }
 }

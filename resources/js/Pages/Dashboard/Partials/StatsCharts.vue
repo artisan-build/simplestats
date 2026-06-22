@@ -36,6 +36,7 @@ const extractStatsData4Chart = (statsGroups) => {
                     // extras...
                     key: group.key,
                     formatter: group.formatter,
+                    decimals: group.decimals,
                     indicator: group.indicatorCallback(),
                 };
 
@@ -44,10 +45,22 @@ const extractStatsData4Chart = (statsGroups) => {
                     acc.series[group.key].nameSmallPrev = 'Previous ' + acc.series[group.key].nameSmall;
                     acc.series[group.key].colorPrev = '#a3b8d3';
                 }
+
+                if (group.tooltipExtra) {
+                    acc.series[group.key].tooltipExtra = group.tooltipExtra.map(t => ({
+                        label: t.label,
+                        formatter: t.formatter ?? 'currency',
+                        data: [],
+                    }));
+                }
             }
 
             acc.series[group.key].data.push(item[group.key]);
             acc.series[group.key].dates.push(item.date_clear);
+
+            if (acc.series[group.key].tooltipExtra) {
+                group.tooltipExtra.forEach((t, i) => acc.series[group.key].tooltipExtra[i].data.push(item[t.key]));
+            }
 
             if (props.teamStats.statsPrev) {
                 acc.series[group.key].dataPrev.push(props.teamStats.statsPrev[key][group.key]);
@@ -65,7 +78,10 @@ const extractStatsData4Chart = (statsGroups) => {
         data: item.data.reverse(),
         dates: item.dates.reverse(),
         dataPrev: item.dataPrev.reverse(),
-        datesPrev: item.datesPrev.reverse()
+        datesPrev: item.datesPrev.reverse(),
+        tooltipExtra: item.tooltipExtra
+            ? item.tooltipExtra.map(t => ({...t, data: [...t.data].reverse()}))
+            : undefined,
     }));
 
     data.categories.reverse();
@@ -81,40 +97,56 @@ const extractStatsData4Chart = (statsGroups) => {
 // because MRR is a stock and never starts at 0.
 const buildMrrChart = (mrrSeries) => {
     const ordered = [...mrrSeries].reverse();
+    const latest = mrrSeries[0];
+    const color = isDarkMode.value ? '#00A3E0' : '#93c5fd';
+    const dates = ordered.map(item => item.date_clear);
 
-    const serie = {
-        data: ordered.map(item => item.mrr),
+    const arps = (item) => item.subscribers > 0 ? item.mrr / item.subscribers : 0;
+
+    const seriesDefs = [
+        {key: 'mrr', formatter: 'currency', data: ordered.map(item => item.mrr), indicator: latest.mrr},
+        {key: 'subscribers', formatter: 'number', data: ordered.map(item => item.subscribers), indicator: latest.subscribers},
+        {key: 'arps', formatter: 'currency', data: ordered.map(arps), indicator: arps(latest)},
+    ];
+
+    const series = seriesDefs.map(def => ({
+        data: [...def.data],
         dataPrev: [],
-        dates: ordered.map(item => item.date_clear),
+        dates: [...dates],
         datesPrev: [],
-        name: kpiDefs.mrr.short,
-        nameSmall: kpiDefs.mrr.short,
-        color: isDarkMode.value ? '#00A3E0' : '#93c5fd',
-        key: 'mrr',
-        formatter: 'currency',
-        indicator: mrrSeries[0].mrr,
-    };
+        name: kpiDefs[def.key].short,
+        nameSmall: kpiDefs[def.key].short,
+        color,
+        key: def.key,
+        formatter: def.formatter,
+        indicator: def.indicator,
+    }));
 
     const categories = ordered.map(item => formatDate(item.date, props.filters.range_type));
 
     if (categories.length === 1) {
         categories[1] = categories[0];
-        serie.data[1] = serie.data[0];
-        serie.dates[1] = serie.dates[0];
+        series.forEach(serie => {
+            serie.data[1] = serie.data[0];
+            serie.dates[1] = serie.dates[0];
+        });
     }
 
-    const kpiDef = kpiDefs.mrr;
-    const info = `<div>
+    const info = seriesDefs.map(def => {
+        const kpiDef = kpiDefs[def.key];
+
+        return `<div>
                     <div class="font-bold text-green-300">${kpiDef.long} (${kpiDef.short})</div>
                     <div>${kpiDef.description}</div>
                  </div>`;
+    }).join('');
 
     return {
         name: 'Recurring Revenue',
-        class: 'order-2 3xl:order-2',
-        group: [{key: 'mrr', formatter: 'currency', title: kpiDef.short}],
+        order: 2,
+        group: seriesDefs.map(def => ({key: def.key, formatter: def.formatter, title: kpiDefs[def.key].short})),
         info,
-        data: {series: [serie], categories},
+        data: {series, categories},
     };
 };
 
@@ -157,114 +189,108 @@ const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProje
 
 const charts = [];
 
-// !! CONVERSION
-const conversionChart = {
-    name: 'Conversion',
-    class: 'order-1 3xl:order-1',
+// !! ACQUISITION
+const acquisitionChart = {
+    name: 'Acquisition',
+    order: 1,
     group: [],
 };
 
 if (currentProjectHasTrackingUsageBits(['visitors'])) {
-    conversionChart.group.push({key: 'pd_visitor', formatter: 'number', indicatorCallback: () => {return statsSum.pd_visitor}});
+    acquisitionChart.group.push({key: 'pd_visitor', formatter: 'number', indicatorCallback: () => {return statsSum.pd_visitor}});
 }
 
 if (currentProjectHasTrackingUsageBits(['users'])) {
-    conversionChart.group.push({key: 'pd_reg', formatter: 'number', indicatorCallback: () => {return statsSum.pd_reg}});
+    acquisitionChart.group.push({key: 'pd_reg', formatter: 'number', indicatorCallback: () => {return statsSum.pd_reg}});
 
     if (currentProjectHasTrackingUsageBits(['visitors'])) {
-        conversionChart.group.push({key: 'pd_cr', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100}});
+        acquisitionChart.group.push({key: 'pd_cr', formatter: 'percent', indicatorCallback: () => {return safeDevision(statsSum.pd_reg, statsSum.pd_visitor) * 100}});
     }
 }
 
-if (conversionChart.group.length > 0) charts.push(conversionChart);
+if (acquisitionChart.group.length > 0) charts.push(acquisitionChart);
 
 // !! REVENUE
 if (currentProjectHasTrackingUsageBits(['payments'])) {
     const revenueChart = {
         name: 'Revenue',
-        class: 'order-2 3xl:order-2',
+        order: 4,
         group: [],
     };
 
-    revenueChart.group.push({key: 'pd_net', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_net}});
-    revenueChart.group.push({key: 'pd_gross', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_gross}});
+    revenueChart.group.push({
+        key: 'pd_net',
+        formatter: 'currency',
+        indicatorCallback: () => {return statsSum.pd_net},
+        tooltipExtra: [
+            {key: 'pd_gross', label: 'Gross'},
+            {key: 'pd_fee', label: 'Fee'},
+        ],
+    });
 
-    if (! currentProjectHasTrackingUsageBits(['visitors'])) {
-        revenueChart.group.push({key: 'pd_fee', formatter: 'currency', indicatorCallback: () => {return statsSum.pd_fee}});
-    } else {
-        revenueChart.group.push({key: 'lt_arpv', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_arpv')}});
+    if (currentProjectHasTrackingUsageBits(['users'])) {
+        revenueChart.group.push({key: 'lt_arpu', formatter: 'currency', indicatorCallback: () => {return lastStat('lt_arpu')}});
+    }
+
+    if (currentProjectHasTrackingUsageBits(['visitors'])) {
+        // Revenue per visitor is tiny, so 2 decimals lose all granularity; show 3.
+        revenueChart.group.push({key: 'lt_arpv', formatter: 'currency', decimals: 3, indicatorCallback: () => {return lastStat('lt_arpv')}});
     }
 
     if (revenueChart.group.length > 0) charts.push(revenueChart);
 }
 
-// !! ACTIVE USERS
+// !! ACTIVITY
 if (currentProjectHasTrackingUsageBits(['users'])) {
-    const activeUsersChart = {
-        name: 'Active Users',
-        class: 'order-3 3xl:order-5',
+    const activityChart = {
+        name: 'Activity',
+        order: 3,
         group: [],
     };
 
-    activeUsersChart.group.push({key: 'pd_dau', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dau')}});
+    activityChart.group.push({key: 'pd_dau', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dau')}});
 
     if (currentProjectHasTrackingUsageBits(['payments'])) {
-        activeUsersChart.group.push({key: 'pd_dapu', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dapu')}});
-        activeUsersChart.group.push({key: 'pd_daapu', formatter: 'number', indicatorCallback: function () {return lastStat('pd_daapu')}});
+        activityChart.group.push({key: 'pd_dapu', formatter: 'number', indicatorCallback: function () {return lastStat('pd_dapu')}});
+        activityChart.group.push({key: 'lt_pu', formatter: 'number', indicatorCallback: function () {return lastStat('lt_pu')}});
     } else {
-        activeUsersChart.group.push({key: 'lt_reg2dau', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
-        activeUsersChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
+        activityChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
     }
 
-    if (activeUsersChart.group.length > 0) charts.push(activeUsersChart);
+    if (activityChart.group.length > 0) charts.push(activityChart);
 }
 
-// !! AVERAGE REVENUE
-if (currentProjectHasTrackingUsageBits(['payments', 'users'])) {
-    const avgRevChart = {
-        name: 'Average Revenue',
-        class: 'order-4 3xl:order-3',
-        group: [],
-    };
-
-    avgRevChart.group.push({key: 'lt_arpu', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arpu')}});
-    avgRevChart.group.push({key: 'lt_arppu', formatter: 'currency',  indicatorCallback: () => {return lastStat('lt_arppu')}});
-    avgRevChart.group.push({key: 'pd_arpdau', formatter: 'currency',  indicatorCallback: () => {return lastStat('pd_arpdau')}});
-
-    if (avgRevChart.group.length > 0) charts.push(avgRevChart);
-}
-
-// !! GROWTH
-if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users', 'payments'])) {
+// !! GROWTH (advanced)
+if (page.props.auth.user.settings.showAdvanced && currentProjectHasTrackingUsageBits(['users', 'payments'])) {
     const growthChart = {
         name: 'Growth',
-        class: 'order-5 3xl:order-5',
+        order: 5,
         group: [],
     };
 
     growthChart.group.push({key: 'pd_nau', formatter: 'number', indicatorCallback: () => {return statsSum.pd_nau}});
     growthChart.group.push({key: 'pd_napu', formatter: 'number', indicatorCallback: () => {return statsSum.pd_napu}});
-    growthChart.group.push({key: 'lt_pu', formatter: 'number', indicatorCallback: () => {return lastStat('lt_pu')}});
+    growthChart.group.push({key: 'pd_arpdau', formatter: 'currency', indicatorCallback: () => {return lastStat('pd_arpdau')}});
 
     if (growthChart.group.length > 0) charts.push(growthChart);
 }
 
-// !! ENGAGEMENT
-if ((charts.length <= 1 || page.props.auth.user.settings.showAdvanced) && currentProjectHasTrackingUsageBits(['users'])) {
-    const engagementChart = {
-        name: 'Engagement',
-        class: 'order-6 3xl:order-6',
+// !! FUNNEL & DEPTH (advanced)
+if (page.props.auth.user.settings.showAdvanced && currentProjectHasTrackingUsageBits(['users'])) {
+    const funnelChart = {
+        name: 'Funnel & Depth',
+        order: 6,
         group: [],
     };
 
+    funnelChart.group.push({key: 'lt_reg2dau', formatter: 'percent', indicatorCallback: function () {return lastStat('lt_reg2dau')}});
+
     if (currentProjectHasTrackingUsageBits(['payments'])) {
-        engagementChart.group.push({key: 'lt_reg2pu', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2pu')}});
+        funnelChart.group.push({key: 'lt_reg2pu', formatter: 'percent', indicatorCallback: function () {return lastStat('lt_reg2pu')}});
+        funnelChart.group.push({key: 'lt_arppu', formatter: 'currency', indicatorCallback: function () {return lastStat('lt_arppu')}});
     }
 
-    engagementChart.group.push({key: 'lt_reg2dau', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2dau')}});
-    engagementChart.group.push({key: 'lt_reg2tau', formatter: 'percent',  indicatorCallback: function () {return lastStat('lt_reg2tau')}});
-
-    if (engagementChart.group.length > 0) charts.push(engagementChart);
+    if (funnelChart.group.length > 0) charts.push(funnelChart);
 }
 
 charts.forEach(function(chartGroup) {
@@ -292,21 +318,41 @@ charts.forEach(function(chartGroup) {
     if (chartGroup.data.categories.length === 1) {
         chartGroup.data.categories[1] = chartGroup.data.categories[0];
 
-        chartGroup.data.series.forEach(function(serie, index) {
+        chartGroup.data.series.forEach(function(serie) {
             let value = serie.data[0];
             serie.data[0] = 0;
             serie.data[1] = value;
+
+            if (serie.tooltipExtra) {
+                serie.tooltipExtra.forEach(t => { t.data[1] = t.data[0]; });
+            }
         });
     }
 });
 
 // Pushed after the loop above so its pre-built snapshot data is not overwritten
 // by extractStatsData4Chart (which reads the period-summed teamStats.stats).
-if (currentProjectHasTrackingUsageBits(['payments']) && props.mrrSeries?.length) {
+// Recurring revenue is user-bound (MRR/Subscribers need a stats_user_id), so it
+// requires users + payments, not just payments (guest checkout = one-time only).
+if (currentProjectHasTrackingUsageBits(['payments', 'users']) && props.mrrSeries?.length) {
     charts.push(buildMrrChart(props.mrrSeries));
 }
 
+charts.sort((a, b) => a.order - b.order);
+
 const chartLenght = charts.length;
+
+// The last chart stretches to fill whatever cells stay empty in its final grid
+// row, so any count lands flush. This depends only on count and column count, not
+// on which charts the tracking bits produced. Computed per breakpoint (md = 2
+// columns; the wide breakpoint is 3 in advanced mode, 4 otherwise).
+if (chartLenght > 1) {
+    const fillSpan = (columns) => columns - ((chartLenght - 1) % columns);
+    const wide = page.props.auth.user.settings.showAdvanced ? {bp: '3xl', columns: 3} : {bp: '5xl', columns: 4};
+    const wideSpan = chartLenght > 2 ? fillSpan(wide.columns) : 1;
+
+    charts[chartLenght - 1].class = `md:col-span-${fillSpan(2)} ${wide.bp}:col-span-${wideSpan}`;
+}
 </script>
 
 <template>
@@ -316,6 +362,7 @@ const chartLenght = charts.length;
         '3xl:grid-cols-3': page.props.auth.user.settings.showAdvanced && chartLenght > 2,
         '5xl:grid-cols-4': !page.props.auth.user.settings.showAdvanced && chartLenght > 2
     }">
+        <div class="hidden md:col-span-1 md:col-span-2 3xl:col-span-1 3xl:col-span-2 3xl:col-span-3 5xl:col-span-1 5xl:col-span-2 5xl:col-span-3 5xl:col-span-4"></div>
         <StatsChart v-for="(chart, chartIndex) in charts"
             :chart="chart"
             :chartLength="chartLenght"

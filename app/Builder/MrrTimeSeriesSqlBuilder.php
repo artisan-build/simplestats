@@ -44,12 +44,15 @@ class MrrTimeSeriesSqlBuilder extends BaseSqlBuilder
             SELECT
                 ".$this->getDateFormat('ds.date_seq', ':dateFormat').' AS date,
                 '.$this->getDateFormat('ds.date_seq', ':dateFormatClear')." AS date_clear,
-                COALESCE(snapshot.mrr, 0) AS mrr
+                COALESCE(snapshot.mrr, 0) AS mrr,
+                COALESCE(snapshot.subscribers, 0) AS subscribers
             FROM date_sequence ds
             LEFT JOIN LATERAL (
-                SELECT COALESCE(SUM(
-                    CASE WHEN lr.recurring_interval = '$year' THEN lr.net / 12.0 ELSE lr.net END
-                ), 0) AS mrr
+                SELECT
+                    COALESCE(SUM(
+                        CASE WHEN lr.recurring_interval = '$year' THEN lr.net / 12.0 ELSE lr.net END
+                    ), 0) AS mrr,
+                    COUNT(*) AS subscribers
                 FROM (
                     SELECT DISTINCT ON (stats.stats_user_id)
                         stats.stats_user_id,

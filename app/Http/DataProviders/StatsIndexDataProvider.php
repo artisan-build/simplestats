@@ -20,7 +20,6 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
         $teamStats = $this->buildStats($teamStats, $filters);
 
         return array_merge($this->commonProps($user, $filters, $teamStats), [
-            'mrr' => $this->buildMrrSnapshot($teamStats, $filters),
             'mrr_series' => $this->buildMrrTimeSeries($teamStats, $filters),
         ]);
     }

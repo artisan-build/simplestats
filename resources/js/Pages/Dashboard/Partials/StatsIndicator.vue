@@ -57,6 +57,14 @@ function isSerieVisible() {
     return props.serieIndex === props.selectedSerieIndex;
 }
 
+function currencyDigits(value, override) {
+    if (override != null) {
+        return override;
+    }
+
+    return (value < 10000 || value >= 100000) ? 2 : 0;
+}
+
 </script>
 
 <template>
@@ -86,8 +94,8 @@ function isSerieVisible() {
                 <span v-else-if="serie.formatter === 'currency'">
                     {{
                         formatMap[serie.formatter](serie.indicator, {
-                            minimumFractionDigits: (serie.indicator < 10000 || serie.indicator >= 100000) ? 2 : 0,
-                            maximumFractionDigits: (serie.indicator < 10000 || serie.indicator >= 100000) ? 2 : 0,
+                            minimumFractionDigits: currencyDigits(serie.indicator, serie.decimals),
+                            maximumFractionDigits: currencyDigits(serie.indicator, serie.decimals),
                         }, $page.props.teamCurrency)
                     }}
                 </span>

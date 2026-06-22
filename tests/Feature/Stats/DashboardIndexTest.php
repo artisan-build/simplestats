@@ -2,12 +2,14 @@
 
 use App\Enums\StatsRangePreset;
 use App\Models\Project;
+use App\Models\StatsPayment;
+use App\Models\StatsUser;
 use App\Models\User;
 use App\Services\StatsService;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
-    $this->user->currentTeam->update(['currency' => 'USD']);
+    $this->user->currentTeam->update(['currency' => 'USD', 'timezone' => 'UTC']);
     Project::factory()->create(['team_id' => $this->user->currentTeam->id]);
     $this->actingAs($this->user);
 });
@@ -84,7 +86,7 @@ test('all projects view includes payment bits when one project has payments', fu
         );
 });
 
-test('dashboard exposes the mrr snapshot prop when the project tracks payments', function () {
+test('dashboard exposes the mrr_series prop when the project has recurring payments', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -94,40 +96,15 @@ test('dashboard exposes the mrr snapshot prop when the project tracks payments',
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
     ]);
 
-    $this->get(route('dashboard', ['project_id' => $project->id]))
-        ->assertInertia(fn ($page) => $page
-            ->component('Dashboard/Index')
-            ->has('mrr', fn ($mrr) => $mrr
-                ->has('mrr')
-                ->has('arr')
-                ->has('mrr_prev')
-            )
-        );
-});
-
-test('dashboard mrr prop is null when the project has no payments tracking', function () {
-    Project::where('team_id', $this->user->currentTeam->id)->delete();
-
-    $project = Project::factory()->create([
+    $statsUser = StatsUser::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'project_id' => $project->id,
     ]);
 
-    $this->get(route('dashboard', ['project_id' => $project->id]))
-        ->assertInertia(fn ($page) => $page
-            ->component('Dashboard/Index')
-            ->where('mrr', null)
-        );
-});
-
-test('dashboard exposes the mrr_series prop when the project tracks payments', function () {
-    Project::where('team_id', $this->user->currentTeam->id)->delete();
-
-    $project = Project::factory()->create([
+    StatsPayment::factory()->recurringMonthly()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+        'project_id' => $project->id,
+        'stats_user_id' => $statsUser->id,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -138,8 +115,53 @@ test('dashboard exposes the mrr_series prop when the project tracks payments', f
                     ->has('date')
                     ->has('date_clear')
                     ->has('mrr')
+                    ->has('subscribers')
                 )
             )
+        );
+});
+
+test('dashboard mrr_series prop is null when the project tracks payments but has no recurring payment', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('mrr_series', null)
+        );
+});
+
+test('dashboard mrr_series prop is null when the project tracks payments but not users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+    ]);
+
+    $statsUser = StatsUser::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+    ]);
+
+    StatsPayment::factory()->recurringMonthly()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+        'stats_user_id' => $statsUser->id,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('mrr_series', null)
         );
 });
 

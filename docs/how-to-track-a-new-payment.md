@@ -80,7 +80,6 @@ class Transaction extends Model implements TrackablePayment
 
     /**
      * The billing interval for recurring payments, or null for one-time payments.
-     * See "Recurring payments" below.
      */
     public function getTrackingRecurringInterval(): ?PaymentInterval
     {

@@ -223,9 +223,11 @@ const chartOptions = ref({
                         maximumFractionDigits: 1,
                     }, page.props.teamCurrency);
                 } else if (formatter() === 'currency') {
+                    let dec = props.chart.group[selectedSerieIndex.value]?.decimals;
+
                     format = formatMap[formatter()](value, {
-                        minimumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
-                        maximumFractionDigits: (cent2Currency(value) >= 1000) ? 1 : 0,
+                        minimumFractionDigits: dec ?? ((cent2Currency(value) >= 1000) ? 1 : 0),
+                        maximumFractionDigits: dec ?? ((cent2Currency(value) >= 1000) ? 1 : 0),
                     }, page.props.teamCurrency);
                 } else {
                     format = formatMap[formatter()](value, {
@@ -249,9 +251,11 @@ const chartOptions = ref({
                         maximumFractionDigits: (value >= 1000) ? 2 : 0,
                     }, page.props.teamCurrency);
                 } else {
+                    let dec = props.chart.group[selectedSerieIndex.value]?.decimals ?? 2;
+
                     format = formatMap[formatter()](value, {
-                        minimumFractionDigits: (value === 0) ? 0 : 2,
-                        maximumFractionDigits: (value === 0) ? 0 :2,
+                        minimumFractionDigits: (value === 0) ? 0 : dec,
+                        maximumFractionDigits: (value === 0) ? 0 : dec,
                     }, page.props.teamCurrency);
                 }
 
@@ -265,6 +269,26 @@ const chartOptions = ref({
                     }
 
                     format += ` (${prevDateFormatted})`;
+                }
+
+                if (options.seriesIndex === 0) {
+                    let selected = series.value[selectedSerieIndex.value];
+
+                    if (selected?.tooltipExtra) {
+                        let parts = selected.tooltipExtra.map(function (extra) {
+                            let value = extra.data[options.dataPointIndex];
+
+                            if (value === undefined || value === null) {
+                                return null;
+                            }
+
+                            return `${extra.label} ${formatMap[extra.formatter](value, {minimumFractionDigits: 0, maximumFractionDigits: 0}, page.props.teamCurrency)}`;
+                        }).filter(Boolean);
+
+                        if (parts.length) {
+                            format += ` (${parts.join(' · ')})`;
+                        }
+                    }
                 }
 
                 return format;

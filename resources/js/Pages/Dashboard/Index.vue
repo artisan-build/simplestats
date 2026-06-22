@@ -2,7 +2,6 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
-import HeadlineKpiBar from "@/Pages/Dashboard/Partials/HeadlineKpiBar.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
@@ -28,7 +27,6 @@ const props = defineProps({
     subscriptionPlanAlarm: Array,
     trackingUsageBits: Object,
     comparisonTypes: Object,
-    mrr: {type: Object, default: null},
     mrr_series: {type: Array, default: null},
 });
 
@@ -84,9 +82,6 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                 />
             </div>
             <div class="grid gap-4">
-                <div v-if="mrr">
-                    <HeadlineKpiBar :mrr="mrr" :filters="filters" />
-                </div>
                 <div>
                     <StatsCharts
                         :filters="filters"

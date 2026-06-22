@@ -258,6 +258,41 @@ it('matches the headline snapshot on the latest bucket', function () {
     expect(collect($series)->first()['mrr'])->toBe($snapshot['mrr']);
 });
 
+it('counts active subscribers per bucket and drops them on churn', function () {
+    insertStatsUser('u-1', $this->team->id, $this->pid);
+    insertStatsUser('u-2', $this->team->id, $this->pid);
+    // u-1 active in June, u-2 only paid in March -> churned by June, active in March.
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-2', 'u-2', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-03-10 10:00:00');
+
+    $series = $this->service->getMrrTimeSeries(monthFilter($this->pid, '2026-06-21', 6));
+
+    // Buckets ordered newest first: 06, 05, 04, 03, 02, 01.
+    expect(collect($series)->pluck('subscribers')->all())->toBe([1, 0, 0, 1, 0, 0]);
+});
+
+it('reports a zero subscriber count when there are no recurring payments', function () {
+    $series = $this->service->getMrrTimeSeries(dayFilter($this->pid, '2026-06-21'));
+
+    expect(collect($series)->pluck('subscribers')->all())->toBe([0]);
+});
+
+it('detects whether the project has any recurring payment', function () {
+    insertStatsUser('u-1', $this->team->id, $this->pid);
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 500, null, '2026-06-20 10:00:00');
+
+    // Only a one-time payment so far.
+    expect($this->service->hasRecurringPayments(dayFilter($this->pid, '2026-06-21')))->toBeFalse();
+
+    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+
+    expect($this->service->hasRecurringPayments(dayFilter($this->pid, '2026-06-21')))->toBeTrue();
+});
+
+it('reports no recurring payments for an empty project', function () {
+    expect($this->service->hasRecurringPayments(dayFilter($this->pid, '2026-06-21')))->toBeFalse();
+});
+
 it('classifies a new subscription and its later churn as movements', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-03-10 10:00:00');

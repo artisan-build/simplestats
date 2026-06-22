@@ -36,11 +36,16 @@ class StatsDetailsService
     }
 
     /**
-     * @return array<int, array{date: string, date_clear: string, mrr: float}>
+     * @return array<int, array{date: string, date_clear: string, mrr: float, subscribers: int}>
      */
     public function getMrrTimeSeries(StatsFilterDto $filters): array
     {
         return $this->mrrAggregationService->getMrrTimeSeries($filters);
+    }
+
+    public function hasRecurringPayments(StatsFilterDto $filters): bool
+    {
+        return $this->mrrAggregationService->hasRecurringPayments($filters);
     }
 
     /**

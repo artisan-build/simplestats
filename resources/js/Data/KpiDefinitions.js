@@ -21,6 +21,16 @@ export function getKpiDefinitions(rangeType) {
             long: 'Annual Recurring Revenue',
             description: 'Annualized recurring revenue (MRR × 12).',
         },
+        subscribers: {
+            short: 'Subscribers',
+            long: 'Active Subscribers',
+            description: 'Number of users with an active recurring payment within its interval window as of the end of the selected period.',
+        },
+        arps: {
+            short: 'ARPS',
+            long: 'Average Revenue Per Subscriber',
+            description: 'Average monthly recurring revenue per active subscriber (MRR ÷ Subscribers).',
+        },
         nrr: {
             short: 'NRR',
             long: 'Net Revenue Retention',

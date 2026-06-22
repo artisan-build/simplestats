@@ -61,7 +61,7 @@ class MrrAggregationService
      * lateral snapshot per bucket); the per-bucket shape does fit the
      * StatsAggregation bucket cache, which is the planned follow-up.
      *
-     * @return array<int, array{date: string, date_clear: string, mrr: float}>
+     * @return array<int, array{date: string, date_clear: string, mrr: float, subscribers: int}>
      */
     public function getMrrTimeSeries(StatsFilterDto $filters): array
     {
@@ -72,9 +72,31 @@ class MrrAggregationService
 
         return array_map(function (array $row): array {
             $row['mrr'] = round((float) $row['mrr'], 2);
+            $row['subscribers'] = (int) $row['subscribers'];
 
             return $row;
         }, $this->getDataArray($sql));
+    }
+
+    /**
+     * Whether the project has any recurring payment at all (independent of the
+     * selected range and channel filters). Gates the dashboard recurring-revenue
+     * chart: it is only shown once a project actually has subscriptions.
+     */
+    public function hasRecurringPayments(StatsFilterDto $filters): bool
+    {
+        $filterConditions = $this->filterConditionsBuilder->build($filters);
+
+        $sql = strtr('
+            SELECT EXISTS (
+                SELECT 1
+                FROM stats_payments stats
+                WHERE :projectCondition
+                    AND stats.recurring_interval IS NOT NULL
+            ) AS has_recurring
+        ', $this->formatFilter($filterConditions));
+
+        return (bool) ($this->getDataArray($sql)[0]['has_recurring'] ?? false);
     }
 
     /**
