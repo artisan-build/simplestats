@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdSpendController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\CustomStatsRangePresetController;
@@ -108,6 +109,8 @@ Route::middleware([
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('recurring-revenue', [StatsController::class, 'recurringRevenue'])->name('recurring-revenue');
+    Route::get('campaigns', [StatsController::class, 'campaigns'])->name('campaigns');
+    Route::resource('ad-spends', AdSpendController::class)->only(['store', 'update', 'destroy']);
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');

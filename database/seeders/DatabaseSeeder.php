@@ -62,6 +62,9 @@ class DatabaseSeeder extends Seeder
         // stats users and visitors (runs last so it covers future data too).
         $this->call(StatsCustomPropertySeeder::class);
 
+        // Ad spend needs the campaigns the historical stats just created.
+        $this->call(AdSpendSeeder::class);
+
         StatsUser::$cacheTrackingLookups = false;
         StatsUser::flushTrackingLookupCache();
         StatsVisitor::$cacheTrackingLookups = false;

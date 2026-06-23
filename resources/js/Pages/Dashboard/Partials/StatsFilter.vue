@@ -26,6 +26,7 @@ const props = defineProps({
     trackingUsageBits: Object,
     comparisonTypes: Object,
     submitRoute: {type: String, default: 'dashboard'},
+    submitRouteParams: {type: Object, default: () => ({})},
 });
 
 const page = usePage();
@@ -38,7 +39,7 @@ const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
 }));
 
 const submit = () => {
-    form.get(route(props.submitRoute), {preserveScroll: true});
+    form.get(route(props.submitRoute, props.submitRouteParams), {preserveScroll: true});
 };
 
 const filterChanged = (event) => {

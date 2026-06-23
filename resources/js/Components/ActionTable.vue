@@ -16,6 +16,9 @@ const props = defineProps({
             <template #description>
                 <slot name="description" />
             </template>
+            <template #aside>
+                <slot name="aside" />
+            </template>
         </SectionTitle>
 
         <div class="mt-5 md:mt-0 md:col-span-2">

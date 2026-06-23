@@ -76,6 +76,17 @@ It's easier to understand it when you see it in action on the dashboard.
 | **REG2MAU**  | Reg. to MAU                        | Percentage of registered users who become MAUs                                                                                                       |
 | **REG2PU**   | Reg. to Pay                        | Percentage of registered users who become paying user.                                                                                               |
 
+### Campaign Profitability
+
+On the **Campaigns** page you enter how much you spent on ads per campaign (e.g. "Google Ads = 500 € from June 1 to June 30"). SimpleStats already knows the revenue each campaign brought in, so it turns your spend into profit metrics per campaign. These are not on the main dashboard, they sit directly on each campaign, because spend and return are always per channel.
+
+| Key            | Short                    | Description                                                                                                                                                  |
+|----------------|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **SPEND**      | Ad Spend                 | What you paid for ads on this campaign during the selected period. Entered manually; days outside the period are prorated.                                    |
+| **NET PROFIT** | Net Profit               | Net revenue from the campaign minus its ad spend. Positive means the campaign earned more than it cost, negative means it cost more than it earned.           |
+| **ROAS**       | Return On Ad Spend       | Revenue divided by spend. `2.00×` means you earned 2 € back for every 1 € spent. Above `1.00×` is profitable, below it the campaign loses money.              |
+| **CAC**        | Customer Acquisition Cost | Ad spend divided by new registrations from the campaign. The average cost of acquiring one new sign-up.                                                       |
+
 ## Help
 
 Do you have a question? Feel free to reach out to us if you need some [help](https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g) or check out our [troubleshooting](troubleshooting.md) page.
