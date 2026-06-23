@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Services;
+
+use App\Helpers\AppHelper;
+use App\Models\Campaign;
+use App\Models\StatsTrackCampaign;
+use Illuminate\Validation\ValidationException;
+
+class CampaignService
+{
+    public function create(int $projectId, string $name): Campaign
+    {
+        return Campaign::firstOrCreate([
+            'project_id' => $projectId,
+            'name' => $name,
+        ]);
+    }
+
+    /**
+     * Attach a tracked utm_campaign dimension to a campaign. The name is resolved
+     * via firstOrCreate, identical to what the tracking pipeline does on the first
+     * matching hit, so a dimension linked up front merges with later real traffic.
+     *
+     * @throws ValidationException when the dimension already belongs to another campaign
+     */
+    public function linkTrackCampaign(Campaign $campaign, string $name): StatsTrackCampaign
+    {
+        $trackCampaign = StatsTrackCampaign::firstOrCreate([
+            'team_id' => AppHelper::getTeamId(),
+            'name' => $name,
+        ]);
+
+        if ($trackCampaign->campaign_id !== null && $trackCampaign->campaign_id !== $campaign->id) {
+            throw ValidationException::withMessages([
+                'name' => "\"{$name}\" is already linked to another campaign.",
+            ]);
+        }
+
+        $trackCampaign->update(['campaign_id' => $campaign->id]);
+
+        return $trackCampaign;
+    }
+
+    public function unlinkTrackCampaign(Campaign $campaign, StatsTrackCampaign $trackCampaign): void
+    {
+        if ($trackCampaign->campaign_id !== $campaign->id) {
+            return;
+        }
+
+        $trackCampaign->update(['campaign_id' => null]);
+    }
+}

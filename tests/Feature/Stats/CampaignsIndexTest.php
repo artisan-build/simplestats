@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\AdSpend;
+use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\User;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
@@ -24,7 +24,7 @@ test('campaigns route returns 200', function () {
     $this->get(route('campaigns'))->assertStatus(200);
 });
 
-test('campaigns renders Campaigns/Index with the shared filter and ad-spend props', function () {
+test('campaigns renders Campaigns/Index with the shared filter and profitability props', function () {
     $this->get(route('campaigns'))
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Index')
@@ -34,22 +34,22 @@ test('campaigns renders Campaigns/Index with the shared filter and ad-spend prop
             ->has('rangeTypes')
             ->has('trackingUsageBits')
             ->has('campaigns')
-            ->has('adSpends')
-            ->has('availableCampaigns')
+            ->has('projects')
+            ->missing('adSpends')
+            ->missing('availableCampaigns')
         );
 });
 
-test('campaigns surfaces an ad spend as a profitability row and in the management list', function () {
-    $campaignId = DB::table('stats_track_campaigns')->insertGetId([
+test('campaigns lists a campaign with its spend as a profitability row', function () {
+    $campaign = Campaign::factory()->create([
         'team_id' => $this->team->id,
+        'project_id' => $this->project->id,
         'name' => 'Google Ads',
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 
     AdSpend::factory()->create([
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $campaignId,
+        'team_id' => $this->team->id,
+        'campaign_id' => $campaign->id,
         'amount' => 5000,
         'starts_on' => '2026-06-17',
         'ends_on' => '2026-06-21',
@@ -59,18 +59,29 @@ test('campaigns surfaces an ad spend as a profitability row and in the managemen
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Index')
             ->has('campaigns', 1, fn ($row) => $row
-                ->where('campaign_id', $campaignId)
+                ->where('campaign_id', $campaign->id)
                 ->where('name', 'Google Ads')
                 ->where('spend', 5000)
                 ->where('net', 0)
                 ->where('net_profit', -5000)
                 ->etc()
             )
-            ->has('adSpends', 1, fn ($spend) => $spend
-                ->where('campaign_name', 'Google Ads')
-                ->where('amount', 5000)
+        );
+});
+
+test('campaigns lists a freshly created campaign even without spend', function () {
+    Campaign::factory()->create([
+        'team_id' => $this->team->id,
+        'project_id' => $this->project->id,
+        'name' => 'Pre-launch',
+    ]);
+
+    $this->get(route('campaigns'))
+        ->assertInertia(fn ($page) => $page
+            ->has('campaigns', 1, fn ($row) => $row
+                ->where('name', 'Pre-launch')
+                ->where('spend', 0)
                 ->etc()
             )
-            ->has('availableCampaigns', 1)
         );
 });

@@ -5,8 +5,10 @@ namespace App\Services;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Models\AdSpend;
+use App\Models\Campaign;
 use App\Models\StatsTrackCampaign;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class AdSpendService
@@ -18,126 +20,137 @@ class AdSpendService
     ) {}
 
     /**
-     * Per-campaign profitability for the selected range: range-scoped revenue
-     * (reused from the grouped track_campaign aggregation) merged with the
-     * overlap-allocated ad spend. Sorted by net profit, newest losses first.
+     * Per-campaign profitability for the selected range. Each user-managed campaign
+     * bundles one or more tracked utm_campaign dimensions; its revenue is the sum of
+     * those dimensions' range-scoped revenue, its spend the overlap-allocated budget.
+     * All campaigns are listed (even at zero), so a freshly created one is visible.
      *
-     * @return array<int, array{campaign_id: int, name: string, visitors: int, reg: int, net: int, spend: int, net_profit: int, roas: float|null, cac: int|null}>
+     * @return array<int, array<string, mixed>>
      */
     public function getCampaignProfitability(StatsFilterDto $filters): array
     {
         [$windowStart, $windowEnd] = $this->resolveWindow($filters);
 
-        $spendByCampaign = $this->spendByCampaign($filters, $windowStart, $windowEnd);
+        $revenueByUtm = $this->revenueByUtm($filters);
 
-        $rows = collect($this->statsDetailsService->getGroupedData($filters, 'track_campaign', self::CAMPAIGN_LIMIT, 'net'))
-            ->map(function (array $row) use (&$spendByCampaign) {
-                $campaignId = (int) ($row['type_id'] ?? 0);
-                $spend = (int) $spendByCampaign->pull($campaignId, 0);
-
-                return $this->withMetrics($campaignId, $row['name'], $row, $spend);
-            });
-
-        return $rows->concat($this->spendOnlyRows($spendByCampaign))
+        return $this->campaignsForFilter($filters)
+            ->map(fn (Campaign $campaign) => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd))
             ->sortByDesc('net_profit')
             ->values()
             ->toArray();
     }
 
     /**
-     * Spend entries for the management table, scoped to the selected project
-     * (or all of the team's when no specific project is filtered).
-     *
-     * @return array<int, array<string, mixed>>
+     * @return array<string, mixed>
      */
-    public function listForFilter(StatsFilterDto $filters): array
+    public function campaignSummary(StatsFilterDto $filters, Campaign $campaign): array
+    {
+        [$windowStart, $windowEnd] = $this->resolveWindow($filters);
+
+        $campaign->loadMissing(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name']);
+
+        return $this->buildRow($campaign, $this->revenueByUtm($filters), $windowStart, $windowEnd);
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, array<string, mixed>>
+     */
+    public function paginatedForCampaign(Campaign $campaign, int $perPage = 10): LengthAwarePaginator
     {
         return AdSpend::query()
-            ->with('statsTrackCampaign:id,name')
-            ->when(
-                $filters->projectId !== StatsFilterDto::TRACK_ALL,
-                fn ($query) => $query->where('project_id', $filters->projectId),
-            )
+            ->where('campaign_id', $campaign->id)
             ->orderByDesc('starts_on')
-            ->get()
-            ->map(fn (AdSpend $spend) => [
+            ->paginate($perPage)
+            ->through(fn (AdSpend $spend) => [
                 'id' => $spend->id,
-                'project_id' => $spend->project_id,
-                'stats_track_campaign_id' => $spend->stats_track_campaign_id,
-                'campaign_name' => $spend->statsTrackCampaign?->name ?? 'Unknown',
                 'amount' => $spend->amount,
                 'currency' => $spend->currency,
                 'starts_on' => $spend->starts_on->toDateString(),
                 'ends_on' => $spend->ends_on->toDateString(),
-            ])
+            ]);
+    }
+
+    /**
+     * @return array<int, array{id: int, name: string}>
+     */
+    public function linkedTrackCampaigns(Campaign $campaign): array
+    {
+        return StatsTrackCampaign::query()
+            ->where('campaign_id', $campaign->id)
+            ->orderBy('name')
+            ->get(['id', 'name'])
             ->toArray();
     }
 
     /**
      * @return array<int, array{id: int, name: string}>
      */
-    public function availableCampaigns(): array
+    public function linkableTrackCampaigns(): array
     {
-        return StatsTrackCampaign::orderBy('name')
+        return StatsTrackCampaign::query()
+            ->whereNull('campaign_id')
+            ->orderBy('name')
             ->get(['id', 'name'])
-            ->map(fn (StatsTrackCampaign $campaign) => [
-                'id' => $campaign->id,
-                'name' => $campaign->name,
-            ])
             ->toArray();
     }
 
     /**
-     * @return Collection<int, int> campaign id => allocated cents
+     * @return Collection<int, Campaign>
      */
-    private function spendByCampaign(StatsFilterDto $filters, CarbonImmutable $windowStart, CarbonImmutable $windowEnd): Collection
+    private function campaignsForFilter(StatsFilterDto $filters): Collection
     {
-        return AdSpend::query()
-            ->where('ends_on', '>=', $windowStart->toDateString())
-            ->where('starts_on', '<=', $windowEnd->toDateString())
+        return Campaign::query()
+            ->with(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name'])
             ->when(
                 $filters->projectId !== StatsFilterDto::TRACK_ALL,
                 fn ($query) => $query->where('project_id', $filters->projectId),
             )
-            ->get()
-            ->groupBy('stats_track_campaign_id')
-            ->map(fn (Collection $entries) => (int) $entries->sum(fn (AdSpend $spend) => $spend->allocatedFor($windowStart, $windowEnd)));
+            ->orderBy('name')
+            ->get();
     }
 
     /**
-     * Campaigns with spend but zero revenue/regs in the range are dropped by the
-     * grouped query's all-zero reject, yet a pure loss is exactly what this page
-     * must surface, so re-add them here.
+     * Range-scoped revenue per tracked utm_campaign dimension, reused from the
+     * grouped track_campaign aggregation (already project- and range-filtered).
      *
-     * @param  Collection<int, int>  $spendByCampaign
-     * @return Collection<int, array<string, mixed>>
+     * @return Collection<int, array<string, mixed>> utm id => {net, reg, visitors}
      */
-    private function spendOnlyRows(Collection $spendByCampaign): Collection
+    private function revenueByUtm(StatsFilterDto $filters): Collection
     {
-        if ($spendByCampaign->isEmpty()) {
-            return collect();
-        }
-
-        $names = StatsTrackCampaign::whereIn('id', $spendByCampaign->keys())->pluck('name', 'id');
-
-        return $spendByCampaign->map(function (int $spend, int $campaignId) use ($names) {
-            return $this->withMetrics($campaignId, $names[$campaignId] ?? 'Unknown', [], $spend);
-        })->values();
+        return collect($this->statsDetailsService->getGroupedData($filters, 'track_campaign', self::CAMPAIGN_LIMIT, 'net'))
+            ->keyBy(fn (array $row) => (int) ($row['type_id'] ?? 0));
     }
 
     /**
-     * @param  array<string, mixed>  $row
+     * @param  Collection<int, array<string, mixed>>  $revenueByUtm
      * @return array<string, mixed>
      */
-    private function withMetrics(int $campaignId, string $name, array $row, int $spend): array
+    private function buildRow(Campaign $campaign, Collection $revenueByUtm, CarbonImmutable $windowStart, CarbonImmutable $windowEnd): array
     {
-        $net = (int) round($row['net'] ?? 0);
-        $reg = (int) ($row['reg'] ?? 0);
+        $net = 0;
+        $reg = 0;
+        $visitors = 0;
+
+        foreach ($campaign->statsTrackCampaigns as $utm) {
+            $revenue = $revenueByUtm->get($utm->id);
+
+            if ($revenue === null) {
+                continue;
+            }
+
+            $net += (int) round($revenue['net'] ?? 0);
+            $reg += (int) ($revenue['reg'] ?? 0);
+            $visitors += (int) ($revenue['visitors'] ?? 0);
+        }
+
+        $spend = (int) $campaign->adSpends->sum(fn (AdSpend $adSpend) => $adSpend->allocatedFor($windowStart, $windowEnd));
 
         return [
-            'campaign_id' => $campaignId,
-            'name' => $name,
-            'visitors' => (int) ($row['visitors'] ?? 0),
+            'campaign_id' => $campaign->id,
+            'name' => $campaign->name,
+            'project_id' => $campaign->project_id,
+            'project_name' => $campaign->project?->name ?? '–',
+            'visitors' => $visitors,
             'reg' => $reg,
             'net' => $net,
             'spend' => $spend,

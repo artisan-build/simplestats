@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdSpendController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\CustomStatsRangePresetController;
 use App\Http\Controllers\DataImportController;
@@ -110,6 +111,10 @@ Route::middleware([
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('recurring-revenue', [StatsController::class, 'recurringRevenue'])->name('recurring-revenue');
     Route::get('campaigns', [StatsController::class, 'campaigns'])->name('campaigns');
+    Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
+    Route::get('campaigns/{campaign}', [StatsController::class, 'campaignShow'])->name('campaigns.show');
+    Route::post('campaigns/{campaign}/track-campaigns', [CampaignController::class, 'linkTrackCampaign'])->name('campaigns.track-campaigns.link');
+    Route::delete('campaigns/{campaign}/track-campaigns/{trackCampaign}', [CampaignController::class, 'unlinkTrackCampaign'])->name('campaigns.track-campaigns.unlink');
     Route::resource('ad-spends', AdSpendController::class)->only(['store', 'update', 'destroy']);
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
     Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');

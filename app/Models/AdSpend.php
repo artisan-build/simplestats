@@ -15,8 +15,7 @@ class AdSpend extends Model
 
     protected $fillable = [
         'team_id',
-        'project_id',
-        'stats_track_campaign_id',
+        'campaign_id',
         'amount',
         'currency',
         'starts_on',
@@ -32,14 +31,9 @@ class AdSpend extends Model
         ];
     }
 
-    public function statsTrackCampaign(): BelongsTo
+    public function campaign(): BelongsTo
     {
-        return $this->belongsTo(StatsTrackCampaign::class);
-    }
-
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Campaign::class);
     }
 
     /**

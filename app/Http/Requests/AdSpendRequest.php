@@ -31,8 +31,7 @@ class AdSpendRequest extends FormRequest
         $teamId = AppHelper::getTeamId();
 
         return [
-            'project_id' => ['required', 'integer', Rule::exists('projects', 'id')->where('team_id', $teamId)],
-            'stats_track_campaign_id' => ['required', 'integer', Rule::exists('stats_track_campaigns', 'id')->where('team_id', $teamId)],
+            'campaign_id' => ['required', 'integer', Rule::exists('campaigns', 'id')->where('team_id', $teamId)],
             'amount' => ['required', 'integer', 'min:0'],
             'currency' => ['required', 'string', 'size:3'],
             'starts_on' => ['required', 'date'],

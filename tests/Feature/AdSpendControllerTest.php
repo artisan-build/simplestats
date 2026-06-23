@@ -1,17 +1,17 @@
 <?php
 
 use App\Models\AdSpend;
+use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-function campaignFor(int $teamId, string $name = 'Google Ads'): int
+function campaignFor(Project $project, string $name = 'Summer Sale'): Campaign
 {
-    return DB::table('stats_track_campaigns')->insertGetId([
-        'team_id' => $teamId,
+    return Campaign::factory()->create([
+        'team_id' => $project->team_id,
+        'project_id' => $project->id,
         'name' => $name,
-        'created_at' => now(),
-        'updated_at' => now(),
     ]);
 }
 
@@ -23,11 +23,10 @@ beforeEach(function () {
 });
 
 test('store creates an ad spend and converts the amount to cents', function () {
-    $campaignId = campaignFor($this->team->id);
+    $campaign = campaignFor($this->project);
 
     $this->post(route('ad-spends.store'), [
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $campaignId,
+        'campaign_id' => $campaign->id,
         'amount' => '12.50',
         'currency' => 'EUR',
         'starts_on' => '2026-06-01',
@@ -36,8 +35,7 @@ test('store creates an ad spend and converts the amount to cents', function () {
 
     $this->assertDatabaseHas('ad_spends', [
         'team_id' => $this->team->id,
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $campaignId,
+        'campaign_id' => $campaign->id,
         'amount' => 1250,
         'currency' => 'EUR',
     ]);
@@ -45,15 +43,14 @@ test('store creates an ad spend and converts the amount to cents', function () {
 
 test('store validates required fields', function () {
     $this->post(route('ad-spends.store'), [])
-        ->assertSessionHasErrors(['project_id', 'stats_track_campaign_id', 'amount', 'currency', 'starts_on', 'ends_on']);
+        ->assertSessionHasErrors(['campaign_id', 'amount', 'currency', 'starts_on', 'ends_on']);
 });
 
 test('store rejects an end date before the start date', function () {
-    $campaignId = campaignFor($this->team->id);
+    $campaign = campaignFor($this->project);
 
     $this->post(route('ad-spends.store'), [
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $campaignId,
+        'campaign_id' => $campaign->id,
         'amount' => '100',
         'currency' => 'EUR',
         'starts_on' => '2026-06-30',
@@ -63,30 +60,33 @@ test('store rejects an end date before the start date', function () {
 
 test('store rejects a campaign from another team', function () {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
-    $foreignCampaign = campaignFor($otherTeam->id, 'Foreign');
+    $foreignCampaignId = DB::table('campaigns')->insertGetId([
+        'team_id' => $otherTeam->id,
+        'project_id' => $this->project->id,
+        'name' => 'Foreign',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
     $this->post(route('ad-spends.store'), [
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $foreignCampaign,
+        'campaign_id' => $foreignCampaignId,
         'amount' => '100',
         'currency' => 'EUR',
         'starts_on' => '2026-06-01',
         'ends_on' => '2026-06-30',
-    ])->assertSessionHasErrors('stats_track_campaign_id');
+    ])->assertSessionHasErrors('campaign_id');
 });
 
 test('update changes an ad spend', function () {
-    $campaignId = campaignFor($this->team->id);
+    $campaign = campaignFor($this->project);
     $spend = AdSpend::factory()->create([
         'team_id' => $this->team->id,
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $campaignId,
+        'campaign_id' => $campaign->id,
         'amount' => 5000,
     ]);
 
     $this->put(route('ad-spends.update', $spend), [
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => $campaignId,
+        'campaign_id' => $campaign->id,
         'amount' => '99',
         'currency' => 'EUR',
         'starts_on' => '2026-06-01',
@@ -99,8 +99,7 @@ test('update changes an ad spend', function () {
 test('destroy deletes an ad spend', function () {
     $spend = AdSpend::factory()->create([
         'team_id' => $this->team->id,
-        'project_id' => $this->project->id,
-        'stats_track_campaign_id' => campaignFor($this->team->id),
+        'campaign_id' => campaignFor($this->project)->id,
     ]);
 
     $this->delete(route('ad-spends.destroy', $spend))->assertRedirect();
@@ -110,12 +109,17 @@ test('destroy deletes an ad spend', function () {
 
 test('cannot delete an ad spend of another team', function () {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
-    $otherProject = Project::factory()->create(['team_id' => $otherTeam->id]);
+    $foreignCampaignId = DB::table('campaigns')->insertGetId([
+        'team_id' => $otherTeam->id,
+        'project_id' => $this->project->id,
+        'name' => 'Foreign',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
     $foreignId = DB::table('ad_spends')->insertGetId([
         'team_id' => $otherTeam->id,
-        'project_id' => $otherProject->id,
-        'stats_track_campaign_id' => campaignFor($otherTeam->id, 'Foreign'),
+        'campaign_id' => $foreignCampaignId,
         'amount' => 5000,
         'currency' => 'EUR',
         'starts_on' => '2026-06-01',

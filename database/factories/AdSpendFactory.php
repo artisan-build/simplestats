@@ -3,10 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\AdSpend;
-use App\Models\Project;
-use App\Models\StatsTrackCampaign;
-use App\Models\Team;
+use App\Models\Campaign;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use RuntimeException;
 
 /**
  * @extends Factory<AdSpend>
@@ -21,9 +20,8 @@ class AdSpendFactory extends Factory
     public function definition(): array
     {
         return [
-            'team_id' => fn () => Team::inRandomOrder()->first()?->id ?? Team::factory(),
-            'project_id' => fn () => Project::inRandomOrder()->first()?->id ?? Project::factory(),
-            'stats_track_campaign_id' => fn () => StatsTrackCampaign::inRandomOrder()->first()?->id,
+            'campaign_id' => fn () => Campaign::factory(),
+            'team_id' => fn (array $attributes) => Campaign::find($attributes['campaign_id'])?->team_id ?? throw new RuntimeException('AdSpend needs a campaign'),
             'amount' => $this->faker->numberBetween(1000, 500000),
             'currency' => 'EUR',
             'starts_on' => now()->subDays(30)->format('Y-m-d'),

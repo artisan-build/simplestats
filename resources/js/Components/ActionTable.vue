@@ -4,11 +4,12 @@ import Pagination from "@/Components/Pagination.vue";
 
 const props = defineProps({
     links: Array,
+    maxWidth: {type: String, default: 'max-w-3xl'},
 });
 </script>
 
 <template>
-    <div class="max-w-3xl mx-auto">
+    <div :class="maxWidth" class="mx-auto">
         <SectionTitle>
             <template #title>
                 <slot name="title" />

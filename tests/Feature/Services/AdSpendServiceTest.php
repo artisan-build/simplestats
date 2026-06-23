@@ -22,8 +22,9 @@ beforeEach(function () {
 
     DB::table('stats_payments')->delete();
     DB::table('stats_users')->delete();
-    DB::table('stats_track_campaigns')->delete();
     DB::table('ad_spends')->delete();
+    DB::table('stats_track_campaigns')->delete();
+    DB::table('campaigns')->delete();
 
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
@@ -35,23 +36,35 @@ afterEach(function () {
     CarbonImmutable::setTestNow();
 });
 
-function makeCampaign(int $teamId, string $name): int
+function makeCampaign(int $teamId, int $projectId, string $name): int
 {
-    return DB::table('stats_track_campaigns')->insertGetId([
+    return DB::table('campaigns')->insertGetId([
         'team_id' => $teamId,
+        'project_id' => $projectId,
         'name' => $name,
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 }
 
-function makeCampaignUser(string $id, int $teamId, int $projectId, int $campaignId, string $time): void
+function makeTrackCampaign(int $teamId, string $name, ?int $campaignId = null): int
+{
+    return DB::table('stats_track_campaigns')->insertGetId([
+        'team_id' => $teamId,
+        'name' => $name,
+        'campaign_id' => $campaignId,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+}
+
+function makeCampaignUser(string $id, int $teamId, int $projectId, int $trackCampaignId, string $time): void
 {
     DB::table('stats_users')->insert([
         'id' => $id,
         'team_id' => $teamId,
         'project_id' => $projectId,
-        'stats_track_campaign_id' => $campaignId,
+        'stats_track_campaign_id' => $trackCampaignId,
         'time' => $time,
         'time_utc' => $time,
     ]);
@@ -93,13 +106,14 @@ it('allocates a spend entry proportionally by day overlap', function () {
 });
 
 it('computes roas, cac and net profit per campaign for the range', function () {
-    $c1 = makeCampaign($this->team->id, 'Google Ads');
-    makeCampaignUser('u1', $this->team->id, $this->pid, $c1, '2026-06-15 10:00:00');
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Google Ads');
+    $utm = makeTrackCampaign($this->team->id, 'google_ads', $campaign);
+    makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
     makeCampaignPayment('p1', 'u1', $this->team->id, $this->pid, 10000, '2026-06-15 10:00:00');
 
     AdSpend::factory()->create([
-        'project_id' => $this->pid,
-        'stats_track_campaign_id' => $c1,
+        'team_id' => $this->team->id,
+        'campaign_id' => $campaign,
         'amount' => 5000,
         'starts_on' => '2026-06-01',
         'ends_on' => '2026-06-20',
@@ -109,7 +123,7 @@ it('computes roas, cac and net profit per campaign for the range', function () {
 
     expect($rows)->toHaveCount(1);
     expect($rows[0])->toMatchArray([
-        'campaign_id' => $c1,
+        'campaign_id' => $campaign,
         'net' => 10000,
         'spend' => 5000,
         'reg' => 1,
@@ -119,12 +133,12 @@ it('computes roas, cac and net profit per campaign for the range', function () {
     ]);
 });
 
-it('surfaces a campaign with spend but no revenue as a pure loss', function () {
-    $c1 = makeCampaign($this->team->id, 'Wasted Budget');
+it('lists a campaign with spend but no revenue as a pure loss', function () {
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Wasted Budget');
 
     AdSpend::factory()->create([
-        'project_id' => $this->pid,
-        'stats_track_campaign_id' => $c1,
+        'team_id' => $this->team->id,
+        'campaign_id' => $campaign,
         'amount' => 3000,
         'starts_on' => '2026-06-01',
         'ends_on' => '2026-06-20',
@@ -134,7 +148,7 @@ it('surfaces a campaign with spend but no revenue as a pure loss', function () {
 
     expect($rows)->toHaveCount(1);
     expect($rows[0])->toMatchArray([
-        'campaign_id' => $c1,
+        'campaign_id' => $campaign,
         'net' => 0,
         'spend' => 3000,
         'net_profit' => -3000,
@@ -143,9 +157,26 @@ it('surfaces a campaign with spend but no revenue as a pure loss', function () {
     ]);
 });
 
+it('lists a freshly created campaign even without spend or revenue', function () {
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Pre-launch');
+
+    $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'));
+
+    expect($rows)->toHaveCount(1);
+    expect($rows[0])->toMatchArray([
+        'campaign_id' => $campaign,
+        'net' => 0,
+        'spend' => 0,
+        'net_profit' => 0,
+        'roas' => null,
+        'cac' => null,
+    ]);
+});
+
 it('leaves roas null for revenue without recorded spend', function () {
-    $c1 = makeCampaign($this->team->id, 'Organic-ish');
-    makeCampaignUser('u1', $this->team->id, $this->pid, $c1, '2026-06-15 10:00:00');
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Organic-ish');
+    $utm = makeTrackCampaign($this->team->id, 'organic_ish', $campaign);
+    makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
     makeCampaignPayment('p1', 'u1', $this->team->id, $this->pid, 8000, '2026-06-15 10:00:00');
 
     $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'));
@@ -154,22 +185,27 @@ it('leaves roas null for revenue without recorded spend', function () {
         ->and($rows[0]['net_profit'])->toBe(8000);
 });
 
-it('sums multiple spend entries for the same campaign', function () {
-    $c1 = makeCampaign($this->team->id, 'Meta Ads');
-    makeCampaignUser('u1', $this->team->id, $this->pid, $c1, '2026-06-15 10:00:00');
-    makeCampaignPayment('p1', 'u1', $this->team->id, $this->pid, 20000, '2026-06-15 10:00:00');
+it('bundles revenue from multiple linked utm campaigns and sums spend entries', function () {
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Meta Ads');
+    $utmA = makeTrackCampaign($this->team->id, 'meta_ads_a', $campaign);
+    $utmB = makeTrackCampaign($this->team->id, 'meta_ads_b', $campaign);
+    makeCampaignUser('u1', $this->team->id, $this->pid, $utmA, '2026-06-15 10:00:00');
+    makeCampaignPayment('p1', 'u1', $this->team->id, $this->pid, 12000, '2026-06-15 10:00:00');
+    makeCampaignUser('u2', $this->team->id, $this->pid, $utmB, '2026-06-16 10:00:00');
+    makeCampaignPayment('p2', 'u2', $this->team->id, $this->pid, 8000, '2026-06-16 10:00:00');
 
     AdSpend::factory()->create([
-        'project_id' => $this->pid, 'stats_track_campaign_id' => $c1,
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
         'amount' => 4000, 'starts_on' => '2026-06-01', 'ends_on' => '2026-06-10',
     ]);
     AdSpend::factory()->create([
-        'project_id' => $this->pid, 'stats_track_campaign_id' => $c1,
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
         'amount' => 6000, 'starts_on' => '2026-06-11', 'ends_on' => '2026-06-20',
     ]);
 
     $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'));
 
-    expect($rows[0]['spend'])->toBe(10000)
+    expect($rows[0]['net'])->toBe(20000)
+        ->and($rows[0]['spend'])->toBe(10000)
         ->and($rows[0]['roas'])->toBe(2.0);
 });
