@@ -93,7 +93,8 @@ test('dashboard exposes the mrr_series prop when the project has recurring payme
         'team_id' => $this->user->currentTeam->id,
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -128,7 +129,8 @@ test('dashboard exposes mrr_series_prev when a comparison is active', function (
         'team_id' => $this->user->currentTeam->id,
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -163,7 +165,8 @@ test('dashboard mrr_series_prev is null without a comparison', function () {
         'team_id' => $this->user->currentTeam->id,
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -184,7 +187,7 @@ test('dashboard mrr_series_prev is null without a comparison', function () {
         );
 });
 
-test('dashboard mrr_series prop is null when the project tracks payments but has no recurring payment', function () {
+test('dashboard mrr_series prop is null when the project does not track recurring revenue', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -198,6 +201,31 @@ test('dashboard mrr_series prop is null when the project tracks payments but has
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard/Index')
             ->where('mrr_series', null)
+        );
+});
+
+test('dashboard exposes a zeroed mrr_series when the project tracks recurring but has no payment yet', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('mrr_series', fn ($series) => $series
+                ->each(fn ($item) => $item
+                    ->has('date')
+                    ->has('date_clear')
+                    ->where('mrr', 0)
+                    ->where('subscribers', 0)
+                )
+            )
         );
 });
 

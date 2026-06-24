@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Services\StatsService;
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 
@@ -40,7 +41,19 @@ class ProjectRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:1', 'max:30'],
             'domain' => ['required', 'string', 'max:255', 'regex:/^(localhost|([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,})$/i'],
-            'usage' => ['required', 'integer', 'min:1', 'max:'.StatsService::getTrackingUsageBitsCount()],
+            'usage' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:'.StatsService::getTrackingUsageBitsCount(),
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    $required = StatsService::TRACKING_USAGE_BITS_USERS | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+
+                    if (($value & StatsService::TRACKING_USAGE_BITS_RECURRING) && (($value & $required) !== $required)) {
+                        $fail('Recurring revenue tracking requires both Registrations and Payments.');
+                    }
+                },
+            ],
         ];
     }
 }

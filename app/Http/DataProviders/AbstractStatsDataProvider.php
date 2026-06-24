@@ -138,7 +138,7 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
      */
     protected function buildMrrTimeSeries(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksRecurring($teamStats, $filters) || ! $this->statsDetailsService->hasRecurringPayments($filters)) {
+        if (! $this->projectTracksRecurring($teamStats, $filters)) {
             return null;
         }
 
@@ -182,9 +182,9 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
     }
 
     /**
-     * MRR is user-bound (the snapshot requires a stats_user_id), so recurring
-     * revenue is only meaningful when the project tracks both users and payments.
-     * Guest checkout (payments without users) is one-time only, never recurring.
+     * Gated on the explicit RECURRING intent bit (not on whether a subscription
+     * payment already arrived) so a fresh subscription project shows an empty MRR
+     * line from day one instead of the chart appearing only after its first payment.
      */
     protected function projectTracksRecurring(Team $teamStats, StatsFilterDto $filters): bool
     {
@@ -194,7 +194,6 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
             return false;
         }
 
-        return (bool) ($project['usage'] & StatsService::TRACKING_USAGE_BITS_USERS)
-            && (bool) ($project['usage'] & StatsService::TRACKING_USAGE_BITS_PAYMENTS);
+        return (bool) ($project['usage'] & StatsService::TRACKING_USAGE_BITS_RECURRING);
     }
 }

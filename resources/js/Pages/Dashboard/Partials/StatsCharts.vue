@@ -374,9 +374,7 @@ charts.forEach(function(chartGroup) {
 
 // Pushed after the loop above so its pre-built snapshot data is not overwritten
 // by extractStatsData4Chart (which reads the period-summed teamStats.stats).
-// Recurring revenue is user-bound (MRR/Subscribers need a stats_user_id), so it
-// requires users + payments, not just payments (guest checkout = one-time only).
-if (currentProjectHasTrackingUsageBits(['payments', 'users']) && props.mrrSeries?.length) {
+if (currentProjectHasTrackingUsageBits(['recurring']) && props.mrrSeries?.length) {
     charts.push(buildMrrChart(props.mrrSeries));
 }
 

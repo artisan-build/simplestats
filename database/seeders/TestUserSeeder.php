@@ -28,7 +28,6 @@ class TestUserSeeder extends Seeder
                 'password_confirmation' => $testUser['password'],
                 'terms' => true,
                 'settings' => [
-                    'showMenu' => ! $isDemo,
                     'tourCompleted' => true,
                 ],
             ]);

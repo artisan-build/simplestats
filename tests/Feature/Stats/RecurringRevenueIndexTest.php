@@ -28,14 +28,15 @@ test('recurring revenue renders RecurringRevenue/Index with the shared filter pr
         );
 });
 
-test('recurring revenue exposes mrr, movements and retention when the project tracks payments', function () {
+test('recurring revenue exposes mrr, movements and retention when the project tracks recurring', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
     ]);
 
     $this->get(route('recurring-revenue', ['project_id' => $project->id]))

@@ -79,27 +79,6 @@ class MrrAggregationService
     }
 
     /**
-     * Whether the project has any recurring payment at all (independent of the
-     * selected range and channel filters). Gates the dashboard recurring-revenue
-     * chart: it is only shown once a project actually has subscriptions.
-     */
-    public function hasRecurringPayments(StatsFilterDto $filters): bool
-    {
-        $filterConditions = $this->filterConditionsBuilder->build($filters);
-
-        $sql = strtr('
-            SELECT EXISTS (
-                SELECT 1
-                FROM stats_payments stats
-                WHERE :projectCondition
-                    AND stats.recurring_interval IS NOT NULL
-            ) AS has_recurring
-        ', $this->formatFilter($filterConditions));
-
-        return (bool) ($this->getDataArray($sql)[0]['has_recurring'] ?? false);
-    }
-
-    /**
      * Per-bucket MRR movement breakdown (New / Reactivation / Expansion /
      * Contraction / Churn) plus starting/ending MRR, derived from the per-user
      * MRR matrix by classifying each user's change between consecutive buckets.

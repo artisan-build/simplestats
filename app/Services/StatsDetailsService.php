@@ -43,11 +43,6 @@ class StatsDetailsService
         return $this->mrrAggregationService->getMrrTimeSeries($filters);
     }
 
-    public function hasRecurringPayments(StatsFilterDto $filters): bool
-    {
-        return $this->mrrAggregationService->hasRecurringPayments($filters);
-    }
-
     /**
      * @return array<int, array{date: string, date_clear: string, starting_mrr: float, new: float, reactivation: float, expansion: float, contraction: float, churn: float, ending_mrr: float, net_change: float}>
      */

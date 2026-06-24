@@ -97,14 +97,18 @@ Clients choose their tracking combination during registration. Not all apps need
 | **Visitors** | Track anonymous visitors with UTMs, location, devices, etc. |
 | **Registrations** | Track user signups and logins, including timestamps |
 | **Payments** | Track revenue and link it back to visitors or registrations |
+| **Subscriptions** | Track subscriptions (MRR/ARR). Requires Registrations + Payments. |
 
 Common combinations:
 - **Visitors only**: Landing pages, content sites
 - **Visitors + Registrations**: Apps without payments
 - **Visitors + Payments**: E-commerce without user accounts (guest checkout)
-- **All three**: Full-featured SaaS apps
+- **Visitors + Registrations + Payments**: SaaS with one-time payments / lifetime deals
+- **All four (+ Subscriptions)**: Subscription SaaS
 
 This is stored as a bitmask per project (`TRACKING_USAGE_BITS_*`).
+
+The **Subscriptions** bit (`TRACKING_USAGE_BITS_RECURRING`) is an explicit per-project *intent*, not inferred from whether a subscription payment already arrived. It gates all MRR/ARR surfaces (dashboard MRR chart, the Subscriptions area at route `recurring-revenue`, the nav link via `Team::tracksRecurring()` / shared `teamTracksRecurring` prop) so a subscription project shows an empty MRR line from day one instead of the chart silently appearing only after the first recurring payment. It implies Registrations + Payments (enforced in `ProjectRequest`), so checking the single bit is sufficient. The bit reuses value `8` from the retired "events" bit, which the `2026_06_11` migration cleared from all rows.
 
 ### Tracking Codes (UTM Parameters)
 

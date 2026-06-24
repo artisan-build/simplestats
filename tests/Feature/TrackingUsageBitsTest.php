@@ -6,9 +6,9 @@ use App\Services\StatsService;
 
 test('custom events are no longer a tracking usage bit', function () {
     expect(StatsService::getTrackingUsages()->keys()->all())
-        ->toBe(['visitors', 'users', 'payments']);
+        ->toBe(['visitors', 'users', 'payments', 'recurring']);
 
-    expect(StatsService::getTrackingUsageBitsCount())->toBe(7);
+    expect(StatsService::getTrackingUsageBitsCount())->toBe(15);
 });
 
 test('migration clears the retired events bit from project usage', function () {
@@ -19,7 +19,7 @@ test('migration clears the retired events bit from project usage', function () {
     $onlyEvents = Project::factory()->create(['team_id' => $team->id, 'usage' => 8]);
     $noEvents = Project::factory()->create(['team_id' => $team->id, 'usage' => 7]);
 
-    $migration = require database_path('migrations/2026_06_09_142845_remove_events_bit_from_projects_usage.php');
+    $migration = require database_path('migrations/2026_06_11_142845_remove_events_bit_from_projects_usage.php');
     $migration->up();
 
     expect((int) $all->fresh()->usage)->toBe(7);

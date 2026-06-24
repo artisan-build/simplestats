@@ -47,6 +47,13 @@ class Team extends JetstreamTeam
             ->exists();
     }
 
+    public function tracksRecurring(): bool
+    {
+        return $this->projects()
+            ->whereRaw('(usage & ?) > 0', [StatsService::TRACKING_USAGE_BITS_RECURRING])
+            ->exists();
+    }
+
     public function statsUsers(): HasMany
     {
         return $this->hasMany(StatsUser::class);

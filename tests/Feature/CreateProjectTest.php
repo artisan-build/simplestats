@@ -2,6 +2,7 @@
 
 use App\Models\Project;
 use App\Models\User;
+use App\Services\StatsService;
 
 use function Pest\Laravel\actingAs;
 
@@ -53,4 +54,24 @@ test('localhost is accepted as a domain', function () {
     ])->assertSessionHasNoErrors();
 
     expect(Project::where('name', 'Local Project')->value('domain'))->toBe('localhost');
+});
+
+test('recurring tracking requires registrations and payments', function () {
+    $this->post(route('projects.store'), [
+        'name' => 'Recurring Only',
+        'domain' => 'example.com',
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+    ])->assertSessionHasErrors('usage');
+});
+
+test('recurring tracking is accepted together with registrations and payments', function () {
+    $this->post(route('projects.store'), [
+        'name' => 'Full Recurring',
+        'domain' => 'example.com',
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+    ])->assertSessionHasNoErrors();
 });

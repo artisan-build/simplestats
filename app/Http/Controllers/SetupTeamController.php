@@ -27,7 +27,9 @@ class SetupTeamController extends Controller
         if ($team->projects()->count() <= 0) {
             $team->projects()->create([
                 'name' => '',
-                'usage' => StatsService::getTrackingUsageBitsCount(),
+                'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+                    | StatsService::TRACKING_USAGE_BITS_USERS
+                    | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
             ]);
         }
 

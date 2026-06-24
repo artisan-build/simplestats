@@ -37,7 +37,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 </script>
 
 <template>
-    <AppLayout title="Recurring Revenue" :fullscreen="true">
+    <AppLayout title="Subscriptions" :fullscreen="true">
         <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
@@ -65,7 +65,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
                 <MrrMovementsChart :movements="mrr_movements" :filters="filters" />
             </div>
             <div v-else class="bg-white dark:bg-dark-800 border rounded-md p-8 text-center text-gray-500 dark:text-dark-400">
-                This project does not track payments, so there is no recurring revenue to show.
+                This project does not track subscriptions, so there is nothing to show here.
             </div>
         </div>
     </AppLayout>

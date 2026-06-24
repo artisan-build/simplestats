@@ -277,22 +277,6 @@ it('reports a zero subscriber count when there are no recurring payments', funct
     expect(collect($series)->pluck('subscribers')->all())->toBe([0]);
 });
 
-it('detects whether the project has any recurring payment', function () {
-    insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 500, null, '2026-06-20 10:00:00');
-
-    // Only a one-time payment so far.
-    expect($this->service->hasRecurringPayments(dayFilter($this->pid, '2026-06-21')))->toBeFalse();
-
-    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
-
-    expect($this->service->hasRecurringPayments(dayFilter($this->pid, '2026-06-21')))->toBeTrue();
-});
-
-it('reports no recurring payments for an empty project', function () {
-    expect($this->service->hasRecurringPayments(dayFilter($this->pid, '2026-06-21')))->toBeFalse();
-});
-
 it('classifies a new subscription and its later churn as movements', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-03-10 10:00:00');

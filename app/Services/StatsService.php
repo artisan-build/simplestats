@@ -53,6 +53,10 @@ class StatsService
 
     const TRACKING_USAGE_BITS_PAYMENTS = 4;
 
+    // Bit value 8 was previously the retired "events" bit, cleared from all rows by
+    // the 2026_06_11 migration, so reusing it for recurring is safe.
+    const TRACKING_USAGE_BITS_RECURRING = 8;
+
     protected static array $statsModels = [
         StatsVisitor::class,
         StatsUser::class,
@@ -258,6 +262,11 @@ class StatsService
                 'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
                 'name' => 'Payments',
                 'descr' => 'Track revenue and link it back to visitors or registrations.',
+            ],
+            'recurring' => [
+                'bit' => self::TRACKING_USAGE_BITS_RECURRING,
+                'name' => 'Subscriptions',
+                'descr' => 'Track subscriptions (MRR/ARR). Requires Registrations and Payments.',
             ],
         ]);
     }
