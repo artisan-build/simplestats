@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\StatsService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Jetstream\Events\TeamCreated;
@@ -37,6 +38,13 @@ class Team extends JetstreamTeam
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function tracksPayments(): bool
+    {
+        return $this->projects()
+            ->whereRaw('(usage & ?) > 0', [StatsService::TRACKING_USAGE_BITS_PAYMENTS])
+            ->exists();
     }
 
     public function statsUsers(): HasMany

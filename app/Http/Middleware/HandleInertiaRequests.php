@@ -62,6 +62,8 @@ class HandleInertiaRequests extends Middleware
                 $merge['onboardingPassed'] = $currentTeam->projects()->first()?->name;
                 $merge['teamCurrency'] = $currentTeam->currency;
                 $merge['currentPlanOptions'] = $currentTeam->owner->sparkPlan()->options;
+                $merge['teamTracksPayments'] = $currentTeam->tracksPayments();
+                $merge['campaignsTourCompleted'] = $request->user()->settings['campaignsTourCompleted'] ?? false;
             }
         }
 

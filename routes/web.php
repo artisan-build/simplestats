@@ -110,9 +110,9 @@ Route::middleware([
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('recurring-revenue', [StatsController::class, 'recurringRevenue'])->name('recurring-revenue');
-    Route::get('campaigns', [StatsController::class, 'campaigns'])->name('campaigns');
+    Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns');
     Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
-    Route::get('campaigns/{campaign}', [StatsController::class, 'campaignShow'])->name('campaigns.show');
+    Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
     Route::post('campaigns/{campaign}/track-campaigns', [CampaignController::class, 'linkTrackCampaign'])->name('campaigns.track-campaigns.link');
     Route::delete('campaigns/{campaign}/track-campaigns/{trackCampaign}', [CampaignController::class, 'unlinkTrackCampaign'])->name('campaigns.track-campaigns.unlink');
     Route::resource('ad-spends', AdSpendController::class)->only(['store', 'update', 'destroy']);
@@ -138,6 +138,7 @@ Route::middleware([
     Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');
     Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
+    Route::post('user-settings/complete-campaigns-tour', [UserSettingsController::class, 'completeCampaignsTour'])->name('user-settings.complete-campaigns-tour');
     Route::post('user-settings/property-lifetime', [UserSettingsController::class, 'setPropertyLifetime'])->name('user-settings.property-lifetime');
 
     // Feedback

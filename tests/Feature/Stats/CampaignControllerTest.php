@@ -4,7 +4,10 @@ use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\StatsTrackCampaign;
 use App\Models\User;
+use App\Services\StatsService;
 use Illuminate\Support\Facades\DB;
+
+const USAGE_WITHOUT_PAYMENTS = StatsService::TRACKING_USAGE_BITS_VISITORS | StatsService::TRACKING_USAGE_BITS_USERS;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -112,6 +115,28 @@ test('linking a utm value already owned by another campaign is rejected', functi
         ->assertSessionHasErrors('name');
 
     expect(StatsTrackCampaign::where('name', 'taken_utm')->first()->campaign_id)->toBe($other->id);
+});
+
+test('campaigns index is forbidden when no project tracks payments', function () {
+    $this->team->projects()->update(['usage' => USAGE_WITHOUT_PAYMENTS]);
+
+    $this->get(route('campaigns'))->assertForbidden();
+});
+
+test('storing a campaign is forbidden when no project tracks payments', function () {
+    $this->team->projects()->update(['usage' => USAGE_WITHOUT_PAYMENTS]);
+
+    $this->post(route('campaigns.store'), [
+        'project_id' => $this->project->id,
+        'name' => 'No payments',
+    ])->assertForbidden();
+});
+
+test('viewing a campaign is forbidden when its project tracks no payments', function () {
+    $this->project->update(['usage' => USAGE_WITHOUT_PAYMENTS]);
+    $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
+
+    $this->get(route('campaigns.show', $campaign))->assertForbidden();
 });
 
 test('unlinking detaches the tracked dimension', function () {

@@ -40,7 +40,7 @@ const save = () => {
 
 <template>
     <DialogModal :show="show" @close="emit('close')">
-        <template #title>Add campaign</template>
+        <template #title>Track a campaign</template>
 
         <template #content>
             <p class="text-sm text-gray-500 dark:text-dark-400">

@@ -54,7 +54,7 @@ const showFeedbackModal = ref(false);
                     Recurring<br/>Revenue
                 </NavLink>
             </li>
-            <li class="flex flex-col gap-y-1">
+            <li v-if="$page.props.teamTracksPayments" class="flex flex-col gap-y-1">
                 <NavLink :href="route('campaigns')" :active="route().current().startsWith('campaigns')">
                     <template #icon>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

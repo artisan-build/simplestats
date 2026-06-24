@@ -19,6 +19,13 @@ test('set dashboard preset persists a valid preset', function () {
     expect($this->user->fresh()->settings['dashboardPreset'])->toBe('expert');
 });
 
+test('completing the campaigns tour persists the flag', function () {
+    $this->post(route('user-settings.complete-campaigns-tour'))
+        ->assertOk();
+
+    expect($this->user->fresh()->settings['campaignsTourCompleted'])->toBeTrue();
+});
+
 test('set dashboard preset rejects an unknown preset', function () {
     $this->from(route('dashboard'))
         ->post(route('user-settings.set-dashboard-preset'), ['preset' => 'ultra'])

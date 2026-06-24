@@ -90,7 +90,7 @@ const unlink = (trackCampaign) => {
         <div class="max-w-5xl mx-auto space-y-8">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                    <span class="text-gray-400 dark:text-dark-400 font-semibold">Campaign:</span> {{ campaign.name }}
+                    Campaign: <span class="italic">{{ campaign.name }}</span>
                 </h1>
                 <CampaignFilter
                     :teamStats="teamStats"
@@ -103,19 +103,19 @@ const unlink = (trackCampaign) => {
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                <div class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
+                <div class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         Spend <InfoTooltip :title="metricInfo.spend.title" :text="metricInfo.spend.text" />
                     </div>
                     <div class="mt-1 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ currency(summary.spend) }}</div>
                 </div>
-                <div v-if="showsRevenue" class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
+                <div v-if="showsRevenue" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         Revenue <InfoTooltip :title="metricInfo.revenue.title" :text="metricInfo.revenue.text" />
                     </div>
                     <div class="mt-1 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ currency(summary.net) }}</div>
                 </div>
-                <div v-if="showsRevenue" class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
+                <div v-if="showsRevenue" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         Net profit <InfoTooltip :title="metricInfo.netProfit.title" :text="metricInfo.netProfit.text" />
                     </div>
@@ -123,13 +123,13 @@ const unlink = (trackCampaign) => {
                         {{ currency(summary.net_profit) }}
                     </div>
                 </div>
-                <div v-if="showsRevenue" class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
+                <div v-if="showsRevenue" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         ROAS <InfoTooltip :title="metricInfo.roas.title" :text="metricInfo.roas.text" />
                     </div>
                     <div class="mt-1 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ roas(summary.roas) }}</div>
                 </div>
-                <div v-if="showsRegistrations" class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
+                <div v-if="showsRegistrations" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         CAC <InfoTooltip :title="metricInfo.cac.title" :text="metricInfo.cac.text" />
                     </div>
@@ -140,7 +140,9 @@ const unlink = (trackCampaign) => {
             <div class="bg-white dark:bg-dark-800 border dark:border-dark-700 rounded-md">
                 <div class="px-4 py-3 border-b dark:border-dark-700">
                     <h2 class="font-semibold">Linked utm_campaign values</h2>
-                    <p class="text-sm text-gray-500 dark:text-dark-400">Traffic and revenue tracked under these <span class="font-mono">utm_campaign</span> values counts toward this campaign. Link one before launch and it attaches automatically once the first visitor arrives.</p>
+                    <p class="text-sm text-gray-500 dark:text-dark-400">
+                        Traffic and revenue tracked under these <span class="font-mono">utm_campaign</span> values counts toward this campaign.<br>Link one before launch and it attaches automatically once the first visitor arrives.
+                    </p>
                 </div>
 
                 <div class="p-4 space-y-3">
@@ -162,7 +164,7 @@ const unlink = (trackCampaign) => {
                         No utm_campaign values linked yet. Revenue stays at zero until you link at least one.
                     </p>
 
-                    <form @submit.prevent="link" class="flex items-start gap-2">
+                    <form @submit.prevent="link" class="flex items-center gap-2">
                         <div class="flex-1 max-w-sm">
                             <TextInput
                                 v-model="linkForm.name"
@@ -174,9 +176,13 @@ const unlink = (trackCampaign) => {
                             <datalist id="linkable-utms">
                                 <option v-for="utm in linkableTrackCampaigns" :key="utm.id" :value="utm.name" />
                             </datalist>
+                        </div>
+                        <SecondaryButton type="submit" :class="{ 'opacity-25': linkForm.processing }" :disabled="linkForm.processing">
+                            Link
+                        </SecondaryButton>
+                        <div>
                             <InputError :message="linkForm.errors.name" class="mt-1" />
                         </div>
-                        <SecondaryButton type="submit" :class="{ 'opacity-25': linkForm.processing }" :disabled="linkForm.processing">Link</SecondaryButton>
                     </form>
                 </div>
             </div>
@@ -190,7 +196,7 @@ const unlink = (trackCampaign) => {
 
                 <template #content>
                     <tr class="text-left font-bold text-gray-700 dark:text-dark-300">
-                        <th class="pb-4 pt-6 px-6 text-right">Amount</th>
+                        <th class="pb-4 pt-6 px-6">Amount</th>
                         <th class="pb-4 pt-6 px-6">Period</th>
                         <th class="pb-4 pt-6 px-6"></th>
                     </tr>
@@ -200,7 +206,7 @@ const unlink = (trackCampaign) => {
                         class="cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
                         @click="openEdit(spend)"
                     >
-                        <td class="border-t px-6 py-4 text-right tabular-nums">{{ currency(spend.amount, spend.currency) }}</td>
+                        <td class="border-t px-6 py-4 tabular-nums">{{ currency(spend.amount, spend.currency) }}</td>
                         <td class="border-t px-6 py-4 text-gray-500 dark:text-dark-400">{{ spend.starts_on }} → {{ spend.ends_on }}</td>
                         <td class="w-px border-t px-6 py-4">
                             <button

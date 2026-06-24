@@ -6,9 +6,10 @@ import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAl
 import ActionTable from "@/Components/ActionTable.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {router, usePage} from "@inertiajs/vue3";
 import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
 
@@ -43,6 +44,10 @@ const showCampaignModal = ref(false);
 const openCampaign = (row) => {
     router.get(route('campaigns.show', {campaign: row.campaign_id, ...props.filters}));
 };
+
+const {startCampaignsTour} = useOnboardingTour();
+
+onMounted(() => startCampaignsTour());
 </script>
 
 <template>
@@ -52,26 +57,34 @@ const openCampaign = (row) => {
         </div>
 
         <div class="max-w-5xl mx-auto space-y-6">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Campaigns</h1>
-                <CampaignFilter
-                    :teamStats="teamStats"
-                    :filters="filters"
-                    :presets="presets"
-                    :rangeTypes="rangeTypes"
-                    submitRoute="campaigns"
-                />
+            <div class="space-y-3" data-tour="campaigns-intro">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Campaigns</h1>
+                    <CampaignFilter
+                        :teamStats="teamStats"
+                        :filters="filters"
+                        :presets="presets"
+                        :rangeTypes="rangeTypes"
+                        submitRoute="campaigns"
+                    />
+                </div>
+                <h2 class="text-base text-gray-500 dark:text-dark-400">
+                    Use your favorite ad portal for targeting, SimpleStats for analysing!
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-dark-400">
+                    No tracking pixel, GDPR compliant and immune to ad blockers: enter what you spent on Meta, Google &amp; co. and see each campaign's real, server-side measured revenue, ROAS, CAC and net profit, the numbers your ad dashboards can't show you.
+                </p>
             </div>
 
             <ActionTable :links="[]" maxWidth="max-w-5xl">
                 <template #title>Campaign profitability</template>
-                <template #description>What each campaign earned against what you spent on it, for the selected range. Click a campaign to manage its ad spend.</template>
+                <template #description>Spend versus the revenue it generated, for the selected range. Click a campaign to manage its ad spend.</template>
                 <template #aside>
-                    <PrimaryButton @click="showCampaignModal = true">Add campaign</PrimaryButton>
+                    <PrimaryButton data-tour="add-campaign" class="shrink-0 whitespace-nowrap" @click="showCampaignModal = true">Track a campaign</PrimaryButton>
                 </template>
 
                 <template #content>
-                    <tr class="text-left font-bold text-gray-700 dark:text-dark-300">
+                    <tr class="text-left font-bold text-gray-700 dark:text-dark-300" data-tour="campaign-metrics">
                         <th class="pb-4 pt-6 px-6">Campaign</th>
                         <th v-if="showProjectColumn" class="pb-4 pt-6 px-6">Project</th>
                         <th class="pb-4 pt-6 px-6 text-right">
@@ -118,7 +131,7 @@ const openCampaign = (row) => {
                     </tr>
                     <tr v-if="!campaigns.length">
                         <td class="border-t px-6 py-8 text-center text-gray-500 dark:text-dark-400" :colspan="columnCount + 1">
-                            No campaigns yet. Add a campaign to enter its ad spend and start tracking ROAS, CAC and net profit.
+                            No campaigns yet. Track a campaign to enter its ad spend and start measuring ROAS, CAC and net profit.
                         </td>
                     </tr>
                 </template>

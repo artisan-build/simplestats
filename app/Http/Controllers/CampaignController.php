@@ -2,18 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\DataProviders\CampaignsDataProvider;
+use App\Http\DataProviders\CampaignShowDataProvider;
 use App\Http\Requests\CampaignLinkRequest;
 use App\Http\Requests\CampaignRequest;
 use App\Models\Campaign;
 use App\Models\StatsTrackCampaign;
 use App\Services\CampaignService;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CampaignController extends Controller
 {
     public function __construct(
         private CampaignService $campaignService,
-    ) {}
+    ) {
+        $this->authorizeResource(Campaign::class, 'campaign');
+    }
+
+    public function index(CampaignsDataProvider $dataProvider): Response
+    {
+        return Inertia::render('Campaigns/Index', $dataProvider->toArray());
+    }
+
+    public function show(Campaign $campaign, CampaignShowDataProvider $dataProvider): Response
+    {
+        return Inertia::render('Campaigns/Show', $dataProvider->toArray($campaign));
+    }
 
     public function store(CampaignRequest $request): RedirectResponse
     {
@@ -27,6 +43,8 @@ class CampaignController extends Controller
 
     public function linkTrackCampaign(CampaignLinkRequest $request, Campaign $campaign): RedirectResponse
     {
+        $this->authorize('update', $campaign);
+
         $this->campaignService->linkTrackCampaign($campaign, $request->validated('name'));
 
         return redirect()->back();
@@ -34,6 +52,8 @@ class CampaignController extends Controller
 
     public function unlinkTrackCampaign(Campaign $campaign, StatsTrackCampaign $trackCampaign): RedirectResponse
     {
+        $this->authorize('update', $campaign);
+
         $this->campaignService->unlinkTrackCampaign($campaign, $trackCampaign);
 
         return redirect()->back();
