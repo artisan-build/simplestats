@@ -52,6 +52,7 @@ const filterChanged = (event) => {
             });
         }
         form.property_value = 0;
+        form.campaign = 0;
     }
 
     if (form.preset && form.preset !== 'custom') {
@@ -86,8 +87,16 @@ const isCustomRange = () => {
     return form.preset === 'custom';
 };
 
+const utmGroupTypes = ['track_source', 'track_medium', 'track_campaign', 'track_term', 'track_content'];
+
+function groupLabel(group) {
+    const base = pluralize.singular(group.title);
+
+    return utmGroupTypes.includes(group.type) ? `UTM ${base}` : base;
+}
+
 function isStatsGroupSet() {
-    return Boolean(props.filters.property_value) || Object.values(props.statsGroups).some(statsGroup =>
+    return Boolean(props.filters.property_value) || Boolean(props.filters.campaign) || Object.values(props.statsGroups).some(statsGroup =>
         statsGroup.some(group => props.filters[group.type])
     );
 }
@@ -257,7 +266,7 @@ const showPresetModal = ref(false);
                 <template v-for="statsGroup in statsGroups">
                     <template v-for="group in statsGroup">
                         <div v-if="filters[group.type]" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
-                            {{ pluralize.singular(group.title) }} is <strong>{{ topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type] }}</strong>
+                            {{ groupLabel(group) }} is <strong>{{ topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type] }}</strong>
                             <button class="ml-1 hover:text-red-700" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -269,6 +278,14 @@ const showPresetModal = ref(false);
                 <div v-if="filters.property_value" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
                     {{ statsGroupNames.property_value_title ?? 'Property' }} is <strong>{{ statsGroupNames.property_value }}</strong>
                     <button class="ml-1 hover:text-red-700" @click="(e) => { form.property_value = 0; filterChanged(e); }">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div v-if="filters.campaign" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
+                    Campaign is <strong>{{ statsGroupNames.campaign }}</strong>
+                    <button class="ml-1 hover:text-red-700" @click="(e) => { form.campaign = 0; filterChanged(e); }">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>

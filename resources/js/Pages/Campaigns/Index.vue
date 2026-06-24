@@ -11,6 +11,7 @@ import {router, usePage} from "@inertiajs/vue3";
 import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
 import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
+import {formatRoas as roas, profitClass, roasClass} from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
 
 const props = defineProps({
@@ -37,12 +38,15 @@ const defaultProjectId = props.projects.find(project => project.id === props.fil
 const columnCount = 2 + (showProjectColumn ? 1 : 0) + (showsRevenue ? 3 : 0) + (showsRegistrations ? 1 : 0);
 
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);
-const roas = (value) => value === null ? '–' : `${value.toFixed(2)}×`;
 
 const showCampaignModal = ref(false);
 
-const openCampaign = (row) => {
+const manageCampaign = (row) => {
     router.get(route('campaigns.show', {campaign: row.campaign_id, ...props.filters}));
+};
+
+const analyzeCampaign = (row) => {
+    router.get(route('dashboard', {...props.filters, project_id: row.project_id, campaign: row.campaign_id}));
 };
 
 const {startCampaignsTour} = useOnboardingTour();
@@ -69,7 +73,7 @@ onMounted(() => startCampaignsTour());
                     />
                 </div>
                 <h2 class="text-base text-gray-500 dark:text-dark-400">
-                    Use your favorite ad portal for targeting, SimpleStats for analysing!
+                    Use your favorite ad portal for <span class="italic font-semibold">targeting</span>, SimpleStats for <span class="italic font-semibold">analysing</span>!
                 </h2>
                 <p class="text-sm text-gray-500 dark:text-dark-400">
                     No tracking pixel, GDPR compliant and immune to ad blockers: enter what you spent on Meta, Google &amp; co. and see each campaign's real, server-side measured revenue, ROAS, CAC and net profit, the numbers your ad dashboards can't show you.
@@ -107,26 +111,33 @@ onMounted(() => startCampaignsTour());
                     <tr
                         v-for="row in campaigns"
                         :key="row.campaign_id + '-' + row.name"
-                        class="cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
-                        @click="openCampaign(row)"
+                        class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
                     >
-                        <td class="border-t px-6 py-4 font-medium">{{ row.name }}</td>
+                        <td class="border-t px-6 py-4 font-medium">
+                            <button type="button" class="text-left text-indigo-600 dark:text-indigo-400 hover:underline" title="Manage ad spend" @click="manageCampaign(row)">
+                                {{ row.name }}
+                            </button>
+                        </td>
                         <td v-if="showProjectColumn" class="border-t px-6 py-4 text-gray-500 dark:text-dark-400">{{ row.project_name }}</td>
                         <td class="border-t px-6 py-4 text-right tabular-nums">{{ currency(row.spend) }}</td>
                         <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums">{{ currency(row.net) }}</td>
                         <td
                             v-if="showsRevenue"
                             class="border-t px-6 py-4 text-right tabular-nums font-medium"
-                            :class="row.net_profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
+                            :class="profitClass(row.net_profit)"
                         >
                             {{ currency(row.net_profit) }}
                         </td>
-                        <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums">{{ roas(row.roas) }}</td>
+                        <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums font-medium" :class="roasClass(row.roas)">{{ roas(row.roas) }}</td>
                         <td v-if="showsRegistrations" class="border-t px-6 py-4 text-right tabular-nums">{{ row.cac === null ? '–' : currency(row.cac) }}</td>
-                        <td class="w-px border-t px-6 py-4 text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
+                        <td class="w-px border-t px-6 py-4">
+                            <div class="flex items-center justify-end">
+                                <button type="button" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" title="Analyze in dashboard" @click="analyzeCampaign(row)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                                    </svg>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="!campaigns.length">

@@ -5,6 +5,7 @@ namespace App\Builder;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Helpers\AppHelper;
+use App\Models\Campaign;
 use App\Models\StatsCustomPropertyValue;
 use App\Services\StatsCustomPropertyService;
 
@@ -94,6 +95,17 @@ class StatsFilterConditionsBuilder
         if (! empty($filters->pageEntry)) {
             $pageEntryCondition = ($filters->pageEntry === StatsFilterDto::TRACK_ORGANIC) ? ' IS NULL ' : " = {$filters->pageEntry} ";
             $trackingCondition .= " AND stats.stats_page_entry_id $pageEntryCondition ";
+        }
+
+        if (! empty($filters->campaign)) {
+            $campaignTrackIds = Campaign::find($filters->campaign)?->statsTrackCampaigns()->pluck('id');
+
+            if ($campaignTrackIds?->isNotEmpty()) {
+                $trackingCondition .= ' AND stats.stats_track_campaign_id IN ('.$campaignTrackIds->implode(',').') ';
+            } else {
+                // A campaign with no linked utm dimensions must match nothing.
+                $trackingCondition .= ' AND 1 = 0 ';
+            }
         }
 
         $conditions['trackingCondition'] = '';

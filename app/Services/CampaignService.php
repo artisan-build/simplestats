@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helpers\AppHelper;
 use App\Models\Campaign;
+use App\Models\StatsAggregation;
 use App\Models\StatsTrackCampaign;
 use Illuminate\Validation\ValidationException;
 
@@ -39,6 +40,8 @@ class CampaignService
 
         $trackCampaign->update(['campaign_id' => $campaign->id]);
 
+        $this->invalidateAggregations($campaign);
+
         return $trackCampaign;
     }
 
@@ -49,5 +52,16 @@ class CampaignService
         }
 
         $trackCampaign->update(['campaign_id' => null]);
+
+        $this->invalidateAggregations($campaign);
+    }
+
+    // Cached aggregations hash on the campaign id, not its mutable set of linked utm
+    // dimensions, so changing the membership would otherwise leave them stale.
+    private function invalidateAggregations(Campaign $campaign): void
+    {
+        StatsAggregation::where('team_id', $campaign->team_id)
+            ->whereRaw("(filter::jsonb ->> 'campaign')::int = ?", [$campaign->id])
+            ->delete();
     }
 }

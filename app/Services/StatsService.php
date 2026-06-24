@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\ComparisonType;
+use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\StatsCustomEventName;
 use App\Models\StatsCustomPropertyValue;
@@ -172,6 +173,14 @@ class StatsService
                     'property_value' => $propertyValue->value,
                     'property_value_title' => Str::title(str_replace('_', ' ', $propertyValue->name->name)),
                 ]);
+            }
+        }
+
+        if (! empty($filters->campaign)) {
+            $campaign = Campaign::find($filters->campaign);
+
+            if ($campaign !== null) {
+                $names = $names->merge(['campaign' => $campaign->name]);
             }
         }
 

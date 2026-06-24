@@ -1,5 +1,6 @@
 <script setup>
 import StatsChart from "@/Pages/Dashboard/Partials/StatsChart.vue";
+import CampaignKpiBar from "@/Pages/Campaigns/Partials/CampaignKpiBar.vue";
 import {formatDate} from "@/Helpers/NumberHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
@@ -13,6 +14,7 @@ const props = defineProps({
     trackingUsageBits: Object,
     mrrSeries: {type: Array, default: null},
     mrrSeriesPrev: {type: Array, default: null},
+    campaignSummary: {type: Object, default: null},
 });
 
 const page = usePage();
@@ -256,6 +258,8 @@ function safeDevision(numerator, denominator) {
 
 const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProject, props.trackingUsageBits);
 
+const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
+
 const recurringShown = currentProjectHasTrackingUsageBits(['payments', 'users']) && !! props.mrrSeries?.length;
 
 // A KPI shows when its tier is within the active preset AND the project tracks
@@ -394,18 +398,24 @@ if (chartLenght > 1) {
 </script>
 
 <template>
-    <div class="grid gap-4" :class="{
-        'md:grid-cols-1': chartLenght === 1,
-        'md:grid-cols-2': chartLenght >= 2,
-        '3xl:grid-cols-3': isExpertLayout && chartLenght > 2,
-        '5xl:grid-cols-4': !isExpertLayout && chartLenght > 2
-    }">
-        <div class="hidden md:col-span-1 md:col-span-2 3xl:col-span-1 3xl:col-span-2 3xl:col-span-3 5xl:col-span-1 5xl:col-span-2 5xl:col-span-3 5xl:col-span-4"></div>
-        <StatsChart v-for="(chart, chartIndex) in charts"
-            :chart="chart"
-            :chartLength="chartLenght"
-            :chartIndex="chartIndex"
-            :filters="filters"
-        />
+    <div class="space-y-4">
+        <CampaignKpiBar v-if="campaignSummary" :summary="campaignSummary" :showsRegistrations="showsRegistrations" />
+        <p v-else-if="filters.campaign" class="text-sm text-gray-500 dark:text-dark-400">
+            Spend-based campaign KPIs (ROAS, CAC, net profit) only apply to the full campaign. Clear the other active filters to see them.
+        </p>
+        <div class="grid gap-4" :class="{
+            'md:grid-cols-1': chartLenght === 1,
+            'md:grid-cols-2': chartLenght >= 2,
+            '3xl:grid-cols-3': isExpertLayout && chartLenght > 2,
+            '5xl:grid-cols-4': !isExpertLayout && chartLenght > 2
+        }">
+            <div class="hidden md:col-span-1 md:col-span-2 3xl:col-span-1 3xl:col-span-2 3xl:col-span-3 5xl:col-span-1 5xl:col-span-2 5xl:col-span-3 5xl:col-span-4"></div>
+            <StatsChart v-for="(chart, chartIndex) in charts"
+                :chart="chart"
+                :chartLength="chartLenght"
+                :chartIndex="chartIndex"
+                :filters="filters"
+            />
+        </div>
     </div>
 </template>

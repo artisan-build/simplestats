@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ComparisonType;
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
+use App\Models\Campaign;
 use App\Models\CustomStatsRangePreset;
 use App\Models\Project;
 use App\Models\StatsCustomEventName;
@@ -217,6 +218,12 @@ class StatsFilterRequest extends FormRequest
                 'bail',
                 'integer',
                 new ValidTeamModel(StatsCustomPropertyValue::class),
+            ],
+            'campaign' => [
+                'sometimes',
+                'bail',
+                'integer',
+                new ValidTeamModel(Campaign::class),
             ],
             'stats_type' => [
                 'sometimes',

@@ -11,10 +11,11 @@ import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
-import {router, useForm, usePage} from "@inertiajs/vue3";
+import {Link, router, useForm, usePage} from "@inertiajs/vue3";
 import {ref} from "vue";
 import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
+import {formatRoas, profitClass as profitClassBase, roasClass as roasClassBase} from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
 
 const props = defineProps({
@@ -39,8 +40,11 @@ const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, pr
 const showsRevenue = currentProjectHasTrackingUsageBits(['payments']);
 const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
 
+const neutral = 'text-gray-950 dark:text-white';
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);
-const roas = (value) => value === null ? '–' : `${value.toFixed(2)}×`;
+const roas = formatRoas;
+const roasClass = (value) => roasClassBase(value, neutral);
+const profitClass = (value) => profitClassBase(value, neutral);
 
 const showModal = ref(false);
 const editSpend = ref(null);
@@ -88,10 +92,21 @@ const unlink = (trackCampaign) => {
         </div>
 
         <div class="max-w-5xl mx-auto space-y-8">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                    Campaign: <span class="italic">{{ campaign.name }}</span>
-                </h1>
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div class="space-y-1">
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                        Campaign: <span class="italic">{{ campaign.name }}</span>
+                    </h1>
+                    <Link
+                        :href="route('dashboard', {...filters, project_id: campaign.project_id, campaign: campaign.id})"
+                        class="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                    >
+                        Analyse this campaign in the dashboard
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75" />
+                        </svg>
+                    </Link>
+                </div>
                 <CampaignFilter
                     :teamStats="teamStats"
                     :filters="filters"
@@ -119,7 +134,7 @@ const unlink = (trackCampaign) => {
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         Net profit <InfoTooltip :title="metricInfo.netProfit.title" :text="metricInfo.netProfit.text" />
                     </div>
-                    <div class="mt-1 text-xl font-semibold tracking-tight" :class="summary.net_profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                    <div class="mt-1 text-xl font-semibold tracking-tight" :class="profitClass(summary.net_profit)">
                         {{ currency(summary.net_profit) }}
                     </div>
                 </div>
@@ -127,7 +142,7 @@ const unlink = (trackCampaign) => {
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         ROAS <InfoTooltip :title="metricInfo.roas.title" :text="metricInfo.roas.text" />
                     </div>
-                    <div class="mt-1 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ roas(summary.roas) }}</div>
+                    <div class="mt-1 text-xl font-semibold tracking-tight" :class="roasClass(summary.roas)">{{ roas(summary.roas) }}</div>
                 </div>
                 <div v-if="showsRegistrations" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
@@ -147,18 +162,20 @@ const unlink = (trackCampaign) => {
 
                 <div class="p-4 space-y-3">
                     <div v-if="linkedTrackCampaigns.length" class="flex flex-wrap gap-2">
-                        <span
+                        <Link
                             v-for="utm in linkedTrackCampaigns"
                             :key="utm.id"
-                            class="inline-flex items-center gap-1 bg-gray-100 dark:bg-dark-700 rounded-md px-2 py-1 text-sm font-mono"
+                            :href="route('dashboard', {...filters, project_id: campaign.project_id, track_campaign: utm.id})"
+                            class="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-500 dark:text-dark-100 hover:bg-indigo-200 dark:hover:bg-indigo-400 border rounded-md px-2 py-1 text-sm font-mono"
+                            title="Analyse this utm_campaign in the dashboard"
                         >
                             {{ utm.name }}
-                            <button type="button" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400" title="Unlink" @click="unlink(utm)">
+                            <button type="button" class="text-indigo-400 hover:text-red-700 dark:text-indigo-100 dark:hover:text-red-300" title="Unlink" @click.stop.prevent="unlink(utm)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>
-                        </span>
+                        </Link>
                     </div>
                     <p v-else class="text-sm text-gray-500 dark:text-dark-400">
                         No utm_campaign values linked yet. Revenue stays at zero until you link at least one.

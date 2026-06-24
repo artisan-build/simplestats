@@ -37,6 +37,7 @@ class StatsFilterDto
     public const FILTER_SPECIAL_KEYS = [
         'customEventName' => 'custom_event_name',
         'propertyValue' => 'property_value',
+        'campaign' => 'campaign',
     ];
 
     public function __construct(
@@ -62,6 +63,7 @@ class StatsFilterDto
         public int $pageEntry = 0,
         public int $customEventName = 0,
         public int $propertyValue = 0,
+        public int $campaign = 0,
     ) {}
 
     public static function fromRequest(StatsFilterRequest $request, ?int $projectId = null): self
@@ -117,6 +119,8 @@ class StatsFilterDto
             pageEntry: $request->page_entry ?? 0,
             customEventName: $request->custom_event_name ?? 0,
             propertyValue: $request->property_value ?? 0,
+            // Query bag, not $request->campaign: the campaigns/{campaign} route binds it to a model.
+            campaign: (int) ($request->query('campaign') ?? 0),
         );
     }
 

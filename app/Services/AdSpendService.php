@@ -35,7 +35,6 @@ class AdSpendService
 
         return $this->campaignsForFilter($filters)
             ->map(fn (Campaign $campaign) => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd))
-            ->sortByDesc('net_profit')
             ->values()
             ->toArray();
     }
@@ -105,7 +104,7 @@ class AdSpendService
                 $filters->projectId !== StatsFilterDto::TRACK_ALL,
                 fn ($query) => $query->where('project_id', $filters->projectId),
             )
-            ->orderBy('name')
+            ->orderByDesc('created_at')
             ->get();
     }
 
