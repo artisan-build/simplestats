@@ -2,6 +2,7 @@
 
 namespace App\Http\DataProviders;
 
+use App\Concerns\BuildsMrrProps;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
@@ -15,6 +16,8 @@ use App\Services\SubscriptionService;
 
 class StatsIndexDataProvider extends AbstractStatsDataProvider
 {
+    use BuildsMrrProps;
+
     public function __construct(
         StatsFilterRequest $request,
         StatsDetailsService $statsDetailsService,
@@ -35,10 +38,14 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
         $teamStats = $this->loadTeamStats($user, $filters);
         $teamStats = $this->buildStats($teamStats, $filters);
 
+        $showRetention = $this->request->routeIs('retention');
+
         return array_merge($this->commonProps($user, $filters, $teamStats), [
             'mrr_series' => $this->buildMrrTimeSeries($teamStats, $filters),
             'mrr_series_prev' => $this->buildMrrTimeSeriesComparison($teamStats, $filters),
             'campaign_summary' => $this->campaignSummary($filters),
+            'showRetention' => $showRetention,
+            'retention_cohorts' => $showRetention ? $this->buildRetentionCohorts($teamStats, $filters) : null,
         ]);
     }
 
@@ -70,5 +77,26 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
         }
 
         return $teamStats;
+    }
+
+    /**
+     * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, retention: array<int, float|null>}>}|null
+     */
+    private function buildRetentionCohorts(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->projectTracksUsers($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getRetentionCohorts($filters);
+    }
+
+    /**
+     * Retention is login-based, so it is gated on the USERS bit (registrations
+     * and logins). The "All projects" view passes when any project tracks users.
+     */
+    private function projectTracksUsers(Team $teamStats, StatsFilterDto $filters): bool
+    {
+        return $this->projectTracksBit($teamStats, $filters, StatsService::TRACKING_USAGE_BITS_USERS);
     }
 }

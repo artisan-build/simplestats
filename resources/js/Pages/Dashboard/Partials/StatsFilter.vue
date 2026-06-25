@@ -235,7 +235,7 @@ const showPresetModal = ref(false);
                                         <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                                     </svg>
                                 </div>
-                                <DashboardPresetSwitcher :currentProject="currentProject" :trackingUsageBits="trackingUsageBits" />
+                                <DashboardPresetSwitcher v-if="submitRoute !== 'retention'" :currentProject="currentProject" :trackingUsageBits="trackingUsageBits" />
                                 <div class="hidden">
                                     <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">

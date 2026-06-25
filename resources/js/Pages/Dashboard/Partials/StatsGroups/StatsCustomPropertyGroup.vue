@@ -20,6 +20,7 @@ const props = defineProps({
     lifetimeSelected: Boolean,
     currentProject: Object,
     trackingUsageBits: Object,
+    baseRoute: {type: String, default: 'dashboard'},
 });
 
 const data = ref([]);
@@ -124,7 +125,7 @@ const calculatePercentage = (current) => {
 const dashboardLink = (item) => {
     const {stats_type, property_name_id, ...linkFilters} = filters;
 
-    return route('dashboard', {...linkFilters, property_value: item.type_id});
+    return route(props.baseRoute, {...linkFilters, property_value: item.type_id});
 };
 
 onMounted(fetchData);

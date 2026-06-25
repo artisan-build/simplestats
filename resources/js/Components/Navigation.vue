@@ -5,6 +5,16 @@ import {Link} from "@inertiajs/vue3";
 import ApplicationIcon from "@/Components/ApplicationIcon.vue";
 import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import FeedbackModal from "@/Components/FeedbackModal.vue";
+import {
+    ArrowTrendingUpIcon,
+    ChartPieIcon,
+    FolderIcon,
+    LightBulbIcon,
+    PresentationChartLineIcon,
+    QuestionMarkCircleIcon,
+    RectangleGroupIcon,
+    UserGroupIcon,
+} from "@heroicons/vue/24/outline";
 
 const supportAction = (e) => {
     e.preventDefault();
@@ -27,29 +37,23 @@ const showFeedbackModal = ref(false);
             <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('dashboard')" :active="route().current().startsWith('dashboard')">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
-                        </svg>
+                        <PresentationChartLineIcon class="size-6" />
                     </template>
                     Dashboard
                 </NavLink>
             </li>
-            <li class="flex flex-col gap-y-1">
-                <NavLink :href="route('projects.index')" :active="route().current().startsWith('projects')">
+            <li v-if="$page.props.teamTracksUsers" class="flex flex-col gap-y-1">
+                <NavLink :href="route('retention')" :active="route().current().startsWith('retention')">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
-                        </svg>
+                        <RectangleGroupIcon class="size-6" />
                     </template>
-                    Projects
+                    Retention
                 </NavLink>
             </li>
             <li v-if="$page.props.teamTracksRecurring" class="flex flex-col gap-y-1">
                 <NavLink :href="route('recurring-revenue')" :active="route().current().startsWith('recurring-revenue')">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.307a11.95 11.95 0 0 1 5.814-5.519l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                        </svg>
+                        <ArrowTrendingUpIcon class="size-6" />
                     </template>
                     Subscriptions
                 </NavLink>
@@ -57,12 +61,17 @@ const showFeedbackModal = ref(false);
             <li v-if="$page.props.teamTracksPayments" class="flex flex-col gap-y-1">
                 <NavLink :href="route('campaigns')" :active="route().current().startsWith('campaigns')">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
-                        </svg>
+                        <ChartPieIcon class="size-6" />
                     </template>
                     Campaigns
+                </NavLink>
+            </li>
+            <li class="flex flex-col gap-y-1">
+                <NavLink :href="route('projects.index')" :active="route().current().startsWith('projects')">
+                    <template #icon>
+                        <FolderIcon class="size-6" />
+                    </template>
+                    Projects
                 </NavLink>
             </li>
         </ul>
@@ -72,9 +81,7 @@ const showFeedbackModal = ref(false);
             <li class="flex flex-col gap-y-1">
                 <NavLink as="button" @click="showFeedbackModal = true">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
-                        </svg>
+                        <LightBulbIcon class="size-6" />
                     </template>
                     Feedback
                 </NavLink>
@@ -82,9 +89,7 @@ const showFeedbackModal = ref(false);
             <li class="flex flex-col gap-y-1">
                 <NavLink @click="supportAction">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-                        </svg>
+                        <QuestionMarkCircleIcon class="size-6" />
                     </template>
                     Support
                 </NavLink>
@@ -92,9 +97,7 @@ const showFeedbackModal = ref(false);
             <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('teams.show', $page.props.auth.user.current_team)" :active="route().current().startsWith('teams')">
                     <template #icon>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
+                        <UserGroupIcon class="size-6" />
                     </template>
                     Team
                 </NavLink>

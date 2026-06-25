@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\FeedbackType;
+use App\Services\StatsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
@@ -62,8 +63,9 @@ class HandleInertiaRequests extends Middleware
                 $merge['onboardingPassed'] = $currentTeam->projects()->first()?->name;
                 $merge['teamCurrency'] = $currentTeam->currency;
                 $merge['currentPlanOptions'] = $currentTeam->owner->sparkPlan()->options;
-                $merge['teamTracksPayments'] = $currentTeam->tracksPayments();
-                $merge['teamTracksRecurring'] = $currentTeam->tracksRecurring();
+                $merge['teamTracksUsers'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_USERS);
+                $merge['teamTracksPayments'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_PAYMENTS);
+                $merge['teamTracksRecurring'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_RECURRING);
                 $merge['campaignsTourCompleted'] = $request->user()->settings['campaignsTourCompleted'] ?? false;
             }
         }

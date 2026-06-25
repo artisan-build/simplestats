@@ -12,6 +12,7 @@ class StatsDetailsService
         private StatsService $statsService,
         private StatsAggregationsService $statsAggregationsService,
         private MrrAggregationService $mrrAggregationService,
+        private RetentionAggregationService $retentionAggregationService,
     ) {}
 
     public function getStats(StatsFilterDto $filters): array
@@ -57,6 +58,14 @@ class StatsDetailsService
     public function getMrrRetention(StatsFilterDto $filters): array
     {
         return $this->mrrAggregationService->getMrrRetention($filters);
+    }
+
+    /**
+     * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, retention: array<int, float|null>}>}
+     */
+    public function getRetentionCohorts(StatsFilterDto $filters): array
+    {
+        return $this->retentionAggregationService->getRetentionCohorts($filters);
     }
 
     /**

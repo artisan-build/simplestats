@@ -10,6 +10,7 @@ const props = defineProps({
     topReferers: Object,
     currentProject: Object,
     trackingUsageBits: Object,
+    baseRoute: {type: String, default: 'dashboard'},
 });
 </script>
 
@@ -29,6 +30,7 @@ const props = defineProps({
                 :topReferers="topReferers"
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
+                :baseRoute="baseRoute"
             />
         </div>
 
@@ -44,6 +46,7 @@ const props = defineProps({
                 :lifetimeSelected="$page.props.auth.user.settings?.propertyLifetime?.[filters.project_id] ?? false"
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
+                :baseRoute="baseRoute"
             />
         </div>
     </div>

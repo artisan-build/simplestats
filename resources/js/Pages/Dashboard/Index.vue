@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
+import CohortRetentionTable from "@/Pages/Dashboard/Partials/CohortRetentionTable.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
@@ -30,6 +31,8 @@ const props = defineProps({
     mrr_series: {type: Array, default: null},
     mrr_series_prev: {type: Array, default: null},
     campaign_summary: {type: Object, default: null},
+    showRetention: {type: Boolean, default: false},
+    retention_cohorts: {type: Object, default: null},
 });
 
 const {startTour} = useOnboardingTour();
@@ -42,8 +45,14 @@ const handleScroll = () => {
 
 onMounted(() => {
     window.addEventListener('scroll', handleScroll)
-    startTour();
+    if (! props.showRetention) {
+        startTour();
+    }
 })
+
+// Filtering and drill-down links must stay on the current route (dashboard or
+// retention), so everything navigation-related is keyed off this base route.
+const baseRoute = props.showRetention ? 'retention' : 'dashboard';
 
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
@@ -81,11 +90,18 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                     :topReferers="topReferers"
                     :trackingUsageBits="trackingUsageBits"
                     :comparisonTypes="comparisonTypes"
+                    :submitRoute="baseRoute"
                 />
             </div>
-            <div class="grid gap-4">
-                <div>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="min-w-0">
+                    <CohortRetentionTable
+                        v-if="showRetention && retention_cohorts"
+                        :cohorts="retention_cohorts"
+                        :filters="filters"
+                    />
                     <StatsCharts
+                        v-else
                         :filters="filters"
                         :teamStats="teamStats"
                         :currentProject="currentProject"
@@ -104,6 +120,7 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :topReferers="topReferers"
                         :currentProject="currentProject"
                         :trackingUsageBits="trackingUsageBits"
+                        :baseRoute="baseRoute"
                     />
                 </div>
             </div>

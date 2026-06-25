@@ -6,11 +6,11 @@ use App\Builder\MrrPerUserBucketSqlBuilder;
 use App\Builder\MrrSnapshotSqlBuilder;
 use App\Builder\MrrTimeSeriesSqlBuilder;
 use App\Builder\StatsFilterConditionsBuilder;
+use App\Concerns\RunsFilteredStatsQueries;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Recurring-revenue aggregation: MRR/ARR snapshots (and, in later phases, the
@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\DB;
  */
 class MrrAggregationService
 {
+    use RunsFilteredStatsQueries;
+
     public function __construct(
         private StatsFilterConditionsBuilder $filterConditionsBuilder,
     ) {}
@@ -252,24 +254,5 @@ class MrrAggregationService
         $result = $this->getDataArray($sql);
 
         return round((float) ($result[0]['mrr'] ?? 0), 2);
-    }
-
-    /**
-     * @param  array<string, mixed>  $filterConditions
-     * @return array<string, mixed>
-     */
-    private function formatFilter(array $filterConditions): array
-    {
-        return collect($filterConditions)->mapWithKeys(function ($value, $key) {
-            return [':'.$key => $value];
-        })->toArray();
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    private function getDataArray(string $sql): array
-    {
-        return json_decode(json_encode(DB::select($sql)), true);
     }
 }

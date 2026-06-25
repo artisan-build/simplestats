@@ -318,6 +318,12 @@ Jobs include automatic retry logic for fault tolerance.
 
 - Never use the browser's native `confirm()` dialog. Always use the `ConfirmationModal` component (`@/Components/ConfirmationModal.vue`) for delete or destructive action confirmations.
 
+### Icons
+
+- Always use Heroicons via the installed `@heroicons/vue` package. Import the component (e.g. `import { ChartPieIcon } from '@heroicons/vue/24/outline';`) and render it (`<ChartPieIcon class="size-6" />`). Never hand-write an inline `<svg>` path for a UI icon, and do not build custom/own icon SVGs when a Heroicon fits.
+- Pick the variant by context: `24/outline` for nav and standard UI, `24/solid` / `20/solid` / `16/solid` for filled/small accents. Match whatever sibling components already use.
+- Only the brand/app mark (`ApplicationIcon`) and genuinely bespoke illustrations that have no Heroicon equivalent may stay as custom SVG.
+
 ### Carbon / Dates
 
 - Always use `CarbonImmutable` instead of mutable `Carbon`. The app registers `Date::use(CarbonImmutable::class)` globally, so `now()` and `Date::parse()` already return immutable instances. When importing Carbon directly, use `use Carbon\CarbonImmutable;` instead of `use Carbon\Carbon;`. Mutable Carbon causes subtle bugs when objects are passed to methods that call mutating operations like `startOfWeek()`, `endOfDay()`, etc.

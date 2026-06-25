@@ -271,6 +271,57 @@ test('dashboard mrr_series prop is null when the project has no payments trackin
         );
 });
 
+test('retention route renders Dashboard/Index in retention mode with cohorts when the project tracks users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('retention', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('showRetention', true)
+            ->has('retention_cohorts.period_count')
+            ->has('retention_cohorts.cohorts')
+        );
+});
+
+test('dashboard route renders with retention off and no cohorts', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('showRetention', false)
+            ->where('retention_cohorts', null)
+        );
+});
+
+test('retention route exposes no cohorts when the project does not track users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+    ]);
+
+    $this->get(route('retention', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('showRetention', true)
+            ->where('retention_cohorts', null)
+        );
+});
+
 test('dashboard persists preset selection in user settings', function () {
     $this->get(route('dashboard', ['preset' => StatsRangePreset::LAST_7_DAYS->value]))
         ->assertStatus(200);

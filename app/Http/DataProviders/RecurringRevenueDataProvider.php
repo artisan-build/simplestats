@@ -2,10 +2,13 @@
 
 namespace App\Http\DataProviders;
 
+use App\Concerns\BuildsMrrProps;
 use App\DTOs\StatsFilterDto;
 
 class RecurringRevenueDataProvider extends AbstractStatsDataProvider
 {
+    use BuildsMrrProps;
+
     public function toArray(): array
     {
         $user = $this->request->user();

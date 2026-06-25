@@ -7,6 +7,7 @@ use App\Builder\StatsAggregationsGroupedPropertiesSqlBuilder;
 use App\Builder\StatsAggregationsGroupedSqlBuilder;
 use App\Builder\StatsAggregationsSqlBuilder;
 use App\Builder\StatsFilterConditionsBuilder;
+use App\Concerns\RunsFilteredStatsQueries;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Enums\TrackablePerson;
@@ -20,11 +21,12 @@ use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class StatsAggregationsService
 {
+    use RunsFilteredStatsQueries;
+
     public function __construct(
         private StatsFilterConditionsBuilder $filterConditionsBuilder,
     ) {}
@@ -53,14 +55,6 @@ class StatsAggregationsService
         });
 
         StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time'], update: ['data', 'filter']);
-    }
-
-    /**
-     * convert the objects to arrays for consistency
-     */
-    protected function getDataArray(string $sql): array
-    {
-        return json_decode(json_encode(DB::select($sql)), true);
     }
 
     /**
@@ -457,13 +451,6 @@ class StatsAggregationsService
                     $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id);
                 });
         })->delete();
-    }
-
-    private function formatFilter(array $filterConditions): array
-    {
-        return collect($filterConditions)->mapWithKeys(function ($value, $key) {
-            return [':'.$key => $value];
-        })->toArray();
     }
 
     private function getTrackablePersonByProject(?Project $project): TrackablePerson

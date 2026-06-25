@@ -110,6 +110,7 @@ Route::middleware([
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('recurring-revenue', [StatsController::class, 'recurringRevenue'])->name('recurring-revenue');
+    Route::get('retention', [StatsController::class, 'index'])->name('retention');
     Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns');
     Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
