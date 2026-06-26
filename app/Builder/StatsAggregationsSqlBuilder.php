@@ -139,7 +139,10 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
     }
 
     /**
-     * dau: Number of unique accounts who logged in on this day (without 1st login = registration)
+     * dau: Number of unique accounts who logged in or registered on this day. Uses
+     * counter >= 1 (any login, including the registration login) to match the
+     * standard DAU definition used by Amplitude/Mixpanel/GA4 and the dapu/daapu
+     * siblings below; only nau (the "first return" event) keeps counter = 2.
      */
     protected function getPD_DAU(): string
     {
@@ -147,7 +150,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
             SELECT '.$this->getDateFormat('stats.time', ':dateFormat').' AS date, COUNT(DISTINCT '.$this->getDistinctFields(['stats.stats_user_id', 'stats.project_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter >= $this->nauLoginCounter
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter >= 1
             GROUP BY date
         )";
     }

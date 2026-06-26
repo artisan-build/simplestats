@@ -110,8 +110,9 @@ class StatsIncrementService
             $increments['lt_tau'] = 1;
         }
 
-        // dau is distinct: only the user's first qualifying login in the bucket counts
-        if ((int) $stat->counter >= $nau && $this->isFirstActiveLoginInBucket($stat, $case, $bucketStart)) {
+        // dau counts any login (counter >= 1, including the registration login), distinct
+        // per user: only the user's first login in the bucket increments it.
+        if ($this->isFirstActiveLoginInBucket($stat, $case, $bucketStart)) {
             $increments['pd_dau'] = 1;
         }
 
@@ -315,8 +316,7 @@ class StatsIncrementService
     {
         return $this->withinBucket(
             StatsLogin::where('stats_user_id', $stat->stats_user_id)
-                ->where('project_id', $stat->project_id)
-                ->where('counter', '>=', StatsService::NAU_LOGIN_COUNTER),
+                ->where('project_id', $stat->project_id),
             $case,
             $bucketStart,
         )->count() === 1;

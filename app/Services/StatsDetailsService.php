@@ -13,6 +13,7 @@ class StatsDetailsService
         private StatsAggregationsService $statsAggregationsService,
         private MrrAggregationService $mrrAggregationService,
         private RetentionAggregationService $retentionAggregationService,
+        private EngagementAggregationService $engagementAggregationService,
     ) {}
 
     public function getStats(StatsFilterDto $filters): array
@@ -66,6 +67,14 @@ class StatsDetailsService
     public function getRetentionCohorts(StatsFilterDto $filters): array
     {
         return $this->retentionAggregationService->getRetentionCohorts($filters);
+    }
+
+    /**
+     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>
+     */
+    public function getEngagementTimeSeries(StatsFilterDto $filters): array
+    {
+        return $this->engagementAggregationService->getEngagementTimeSeries($filters);
     }
 
     /**

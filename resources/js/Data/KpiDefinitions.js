@@ -87,7 +87,7 @@ export function getKpiDefinitions(rangeType) {
         pd_dau: {
             short: XAU(rangeType),
             long: XAU(rangeType, true),
-            description: 'Number of unique users who logged in at this '+periodName+' (without 1st login = registration).',
+            description: 'Number of unique users who logged in or registered at this '+periodName+'.',
         },
         pd_dapu: {
             short: XAPU(rangeType),

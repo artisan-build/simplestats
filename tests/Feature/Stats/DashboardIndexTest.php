@@ -333,3 +333,50 @@ test('dashboard persists preset selection in user settings', function () {
     expect($this->user->settings['statsFilters'][$teamId]['preset'] ?? null)
         ->toBe(StatsRangePreset::LAST_7_DAYS->value);
 });
+
+test('retention route exposes engagement_series when the project tracks users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('retention', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->has('engagement_series')
+        );
+});
+
+test('retention engagement_series is null when the project does not track users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+    ]);
+
+    $this->get(route('retention', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('engagement_series', null)
+        );
+});
+
+test('dashboard route does not build engagement_series', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('engagement_series', null)
+        );
+});

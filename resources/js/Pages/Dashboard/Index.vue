@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import CohortRetentionTable from "@/Pages/Dashboard/Partials/CohortRetentionTable.vue";
+import EngagementChart from "@/Pages/Dashboard/Partials/EngagementChart.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
@@ -31,6 +32,7 @@ const props = defineProps({
     mrr_series: {type: Array, default: null},
     mrr_series_prev: {type: Array, default: null},
     campaign_summary: {type: Object, default: null},
+    engagement_series: {type: Array, default: null},
     showRetention: {type: Boolean, default: false},
     retention_cohorts: {type: Object, default: null},
 });
@@ -95,11 +97,17 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
             </div>
             <div class="grid grid-cols-1 gap-4">
                 <div class="min-w-0">
-                    <CohortRetentionTable
-                        v-if="showRetention && retention_cohorts"
-                        :cohorts="retention_cohorts"
-                        :filters="filters"
-                    />
+                    <div v-if="showRetention && retention_cohorts" class="space-y-4">
+                        <EngagementChart
+                            v-if="engagement_series && engagement_series.length"
+                            :series="engagement_series"
+                            :filters="filters"
+                        />
+                        <CohortRetentionTable
+                            :cohorts="retention_cohorts"
+                            :filters="filters"
+                        />
+                    </div>
                     <StatsCharts
                         v-else
                         :filters="filters"

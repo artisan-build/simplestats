@@ -44,6 +44,7 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
             'mrr_series' => $this->buildMrrTimeSeries($teamStats, $filters),
             'mrr_series_prev' => $this->buildMrrTimeSeriesComparison($teamStats, $filters),
             'campaign_summary' => $this->campaignSummary($filters),
+            'engagement_series' => $showRetention ? $this->engagementSeries($teamStats, $filters) : null,
             'showRetention' => $showRetention,
             'retention_cohorts' => $showRetention ? $this->buildRetentionCohorts($teamStats, $filters) : null,
         ]);
@@ -64,6 +65,21 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
         $campaign = Campaign::find($filters->campaign);
 
         return $campaign === null ? null : $this->adSpendService->campaignSummary($filters, $campaign);
+    }
+
+    /**
+     * Unlike the campaign summary, engagement is fully dimensionable (channel
+     * attribution is free), so it has no toFilterArray gate and follows any filter.
+     *
+     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>|null
+     */
+    private function engagementSeries(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->projectTracksUsers($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getEngagementTimeSeries($filters);
     }
 
     private function buildStats(Team $teamStats, StatsFilterDto $filters): Team
