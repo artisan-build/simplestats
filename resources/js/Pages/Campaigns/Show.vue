@@ -39,6 +39,7 @@ const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, pr
 
 const showsRevenue = currentProjectHasTrackingUsageBits(['payments']);
 const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
+const showsRecurring = currentProjectHasTrackingUsageBits(['recurring']);
 
 const neutral = 'text-gray-950 dark:text-white';
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);
@@ -97,15 +98,27 @@ const unlink = (trackCampaign) => {
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
                         Campaign: <span class="italic">{{ campaign.name }}</span>
                     </h1>
-                    <Link
-                        :href="route('dashboard', {...filters, project_id: campaign.project_id, campaign: campaign.id})"
-                        class="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-                    >
-                        Analyse this campaign in the dashboard
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75" />
-                        </svg>
-                    </Link>
+                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                        <Link
+                            :href="route('dashboard', {...filters, project_id: campaign.project_id, campaign: campaign.id})"
+                            class="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                        >
+                            Analyse this campaign in the dashboard
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75" />
+                            </svg>
+                        </Link>
+                        <Link
+                            v-if="showsRecurring"
+                            :href="route('recurring-revenue', {...filters, project_id: campaign.project_id, campaign: campaign.id})"
+                            class="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                        >
+                            Analyse its recurring revenue
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75" />
+                            </svg>
+                        </Link>
+                    </div>
                 </div>
                 <CampaignFilter
                     :teamStats="teamStats"

@@ -7,6 +7,7 @@ use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\StatsService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 
@@ -50,9 +51,19 @@ class TestUserSeeder extends Seeder
         auth()->setUser($user);
         AppHelper::setTeamContextFromAuth($user);
 
+        // Outside the test suite the demo project also tracks subscriptions so the
+        // Subscriptions area has data; tests keep the default bitmask (no recurring).
+        $usage = StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+
+        if (! app()->environment('testing')) {
+            $usage |= StatsService::TRACKING_USAGE_BITS_RECURRING;
+        }
+
         Project::factory()
             ->count(1)
-            ->state(['name' => 'My great App'])
+            ->state(['name' => 'My great App', 'usage' => $usage])
             ->for(Team::find($user->current_team_id))
             ->create();
     }

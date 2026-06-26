@@ -9,6 +9,7 @@ use App\Models\StatsLogin;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
+use App\Services\StatsService;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -36,6 +37,8 @@ class HistoricalStatsSeeder extends Seeder
                     'name' => $name,
                 ]));
 
+            $tracksRecurring = (bool) ($project->usage & StatsService::TRACKING_USAGE_BITS_RECURRING);
+
             $count = $this->getUserSeedCount();
 
             // Logins have no lookup columns and their counter is just the loop
@@ -47,7 +50,7 @@ class HistoricalStatsSeeder extends Seeder
             StatsUser::factory(rand($count['from'], $count['to']))->create([
                 'team_id' => $project->team_id,
                 'project_id' => $project->id,
-            ])->each(function ($statsUser) use ($project, $eventNames, $timezone, &$loginRows) {
+            ])->each(function ($statsUser) use ($project, $eventNames, $timezone, $tracksRecurring, &$loginRows) {
                 $visitorCount = app()->environment('testing') ? rand(1, 2) : rand(3, 6);
                 $visitors = StatsVisitor::factory($visitorCount)->create([
                     'team_id' => $project->team_id,
@@ -70,8 +73,10 @@ class HistoricalStatsSeeder extends Seeder
                     $loginTime->addDays(rand(1, 28));
                 }
 
-                $paymentTime = Carbon::parse($statsUser->time);
-                if (rand(0, 9) === 0) {
+                if ($tracksRecurring && rand(1, 100) <= 12) {
+                    $this->seedSubscription($project, $statsUser);
+                } elseif (rand(0, 9) === 0) {
+                    $paymentTime = Carbon::parse($statsUser->time);
                     $paymentCount = app()->environment('testing') ? rand(0, 3) : rand(0, 20);
                     for ($i = 0; $i < $paymentCount; $i++) {
                         StatsPayment::factory()->create([
@@ -103,6 +108,50 @@ class HistoricalStatsSeeder extends Seeder
 
             collect($loginRows)->chunk(1000)->each(fn ($chunk) => StatsLogin::insert($chunk->all()));
         }));
+    }
+
+    /**
+     * Seed a recurring subscription as a chain of renewal payments at the chosen
+     * interval, starting from the user's first-seen time until now (some chains
+     * stop early, which the MRR aggregation reads as churn). The price stays
+     * stable across renewals apart from the occasional plan change, so the MRR
+     * line is clean while still producing realistic expansion/contraction.
+     */
+    protected function seedSubscription(Project $project, StatsUser $statsUser): void
+    {
+        $yearly = rand(1, 5) === 1;
+        $now = now();
+        $time = Carbon::parse($statsUser->time);
+
+        $amount = $yearly ? rand(8000, 120000) / 100 : rand(900, 9900) / 100;
+
+        $maxRenewals = $yearly ? 3 : 24;
+        $renewals = app()->environment('testing') ? rand(1, 3) : rand(1, $maxRenewals);
+
+        for ($i = 0; $i < $renewals && $time->lessThanOrEqualTo($now); $i++) {
+            if ($i > 0 && rand(1, 100) <= 12) {
+                $amount = round($amount * (rand(0, 1) === 1 ? rand(110, 150) : rand(60, 90)) / 100, 2);
+            }
+
+            $factory = $yearly
+                ? StatsPayment::factory()->recurringYearly()
+                : StatsPayment::factory()->recurringMonthly();
+
+            $factory->create([
+                'team_id' => $project->team_id,
+                'project_id' => $project->id,
+                'stats_user_id' => $statsUser->id,
+                'currency' => self::DEFAULT_CURRENCY,
+                'gross' => $amount,
+                'net' => round($amount * 0.8, 2),
+                'time' => $time->copy(),
+            ]);
+
+            // Jitter keeps renewals within the MRR grace window of the interval.
+            $time = $yearly
+                ? $time->copy()->addYear()->addDays(rand(-2, 2))
+                : $time->copy()->addMonth()->addDays(rand(-2, 2));
+        }
     }
 
     /**

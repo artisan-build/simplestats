@@ -2,6 +2,7 @@
 import {formatMap} from "@/Helpers/NumberHelpers.js";
 import {ArrowTrendingDownIcon, ArrowTrendingUpIcon} from "@heroicons/vue/20/solid/index.js";
 import {computed} from "vue";
+import InfoTooltip from "@/Components/InfoTooltip.vue";
 
 const props = defineProps({
     label: String,
@@ -10,6 +11,9 @@ const props = defineProps({
     formatter: String,
     // intra-period change in percent, or null when no meaningful comparison exists
     delta: {type: Number, default: null},
+    // optional spelled-out name + explanation, shown via an info icon next to the label
+    infoTitle: {type: String, default: null},
+    infoText: {type: String, default: null},
 });
 
 const hasDelta = computed(() => props.delta !== null && props.delta !== 0);
@@ -39,7 +43,10 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
     <div class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3" :title="description">
         <div class="flex justify-between items-center text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
             <span>{{ label }}</span>
-            <component v-if="deltaIcon" :is="deltaIcon" class="inline-block size-5" :class="deltaClass" />
+            <span class="inline-flex items-center gap-1">
+                <component v-if="deltaIcon" :is="deltaIcon" class="inline-block size-5" :class="deltaClass" />
+                <InfoTooltip v-if="infoText" :title="infoTitle" :text="infoText" iconClass="size-6" />
+            </span>
         </div>
         <div class="flex justify-between items-end gap-2 mt-1">
             <div class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">

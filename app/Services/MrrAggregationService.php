@@ -194,6 +194,33 @@ class MrrAggregationService
     }
 
     /**
+     * Per-bucket Gross / Net revenue churn rate, derived from the movement
+     * breakdown (single source of truth, no extra query). Gross churn is the share
+     * of the bucket's starting MRR lost to churn and contraction; Net churn offsets
+     * it with expansion and reactivation and can go negative (net expansion). Rates
+     * are null when the starting MRR is zero. The mrr field carries the bucket's
+     * ending MRR as context for the chart bars.
+     *
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null}>
+     */
+    public function getRevenueChurn(StatsFilterDto $filters): array
+    {
+        return array_map(function (array $bucket): array {
+            $starting = $bucket['starting_mrr'];
+            $grossLost = $bucket['churn'] + $bucket['contraction'];
+            $netLost = $grossLost - $bucket['expansion'] - $bucket['reactivation'];
+
+            return [
+                'date' => $bucket['date'],
+                'date_clear' => $bucket['date_clear'],
+                'mrr' => $bucket['ending_mrr'],
+                'gross_churn_rate' => $starting > 0 ? round($grossLost / $starting * 100, 1) : null,
+                'net_churn_rate' => $starting > 0 ? round($netLost / $starting * 100, 1) : null,
+            ];
+        }, $this->getMrrMovements($filters));
+    }
+
+    /**
      * @param  array<int, array{date: string, date_clear: string, stats_user_id: ?string, mrr: ?float}>  $rows
      * @return array{0: array<int, array{date: string, date_clear: string}>, 1: array<int, array<string, float>>}
      */

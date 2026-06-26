@@ -70,6 +70,18 @@ trait BuildsMrrProps
     }
 
     /**
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null}>|null
+     */
+    protected function buildRevenueChurn(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->projectTracksRecurring($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getRevenueChurn($filters);
+    }
+
+    /**
      * Gated on the explicit RECURRING intent bit (not on whether a subscription
      * payment already arrived) so a fresh subscription project shows an empty MRR
      * line from day one instead of the chart appearing only after its first payment.

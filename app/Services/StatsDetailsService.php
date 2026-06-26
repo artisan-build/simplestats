@@ -62,6 +62,14 @@ class StatsDetailsService
     }
 
     /**
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null}>
+     */
+    public function getRevenueChurn(StatsFilterDto $filters): array
+    {
+        return $this->mrrAggregationService->getRevenueChurn($filters);
+    }
+
+    /**
      * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, retention: array<int, float|null>}>}
      */
     public function getRetentionCohorts(StatsFilterDto $filters): array

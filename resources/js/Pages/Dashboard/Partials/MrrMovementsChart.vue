@@ -3,6 +3,7 @@ import {defineComponent, ref} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatCurrency, formatDate} from "@/Helpers/NumberHelpers.js";
 import {usePage} from "@inertiajs/vue3";
+import InfoTooltip from "@/Components/InfoTooltip.vue";
 
 const ApexChart = defineComponent(VueApexCharts);
 
@@ -10,6 +11,29 @@ const props = defineProps({
     movements: Array,
     filters: Object,
 });
+
+const infoHtml = `
+    <div>
+        <div class="font-bold text-green-300">New</div>
+        <div>Recurring revenue from subscribers paying for the first time.</div>
+    </div>
+    <div>
+        <div class="font-bold text-green-300">Reactivation</div>
+        <div>Recurring revenue from subscribers who had churned earlier and came back.</div>
+    </div>
+    <div>
+        <div class="font-bold text-green-300">Expansion</div>
+        <div>Added recurring revenue from existing subscribers upgrading to a higher amount.</div>
+    </div>
+    <div>
+        <div class="font-bold text-green-300">Contraction</div>
+        <div>Lost recurring revenue from existing subscribers downgrading to a lower amount.</div>
+    </div>
+    <div>
+        <div class="font-bold text-green-300">Churn</div>
+        <div>Lost recurring revenue from subscribers who cancelled entirely.</div>
+    </div>
+`;
 
 const page = usePage();
 const isDarkMode = ref(document.documentElement.classList.contains('dark'));
@@ -43,23 +67,12 @@ const chartOptions = ref({
         background: isDarkMode.value ? '#262626' : '#FFFFFF',
     },
     colors: ['#22c55e', '#14b8a6', '#3b82f6', '#f97316', '#ef4444'],
-    title: {
-        text: 'MRR Movements',
-        align: 'left',
-        offsetY: 12,
-        style: {
-            fontSize: '17px',
-            fontWeight: '600',
-            fontFamily: 'Figtree, ui-sans-serif',
-            color: isDarkMode.value ? '#AAAAAA' : '#374151',
-        },
-    },
     theme: {mode: isDarkMode.value ? 'dark' : 'light'},
     plotOptions: {
         bar: {columnWidth: '70%'},
     },
     dataLabels: {enabled: false},
-    legend: {show: true, position: 'top', horizontalAlign: 'right'},
+    legend: {show: true, position: 'top', horizontalAlign: 'left'},
     xaxis: {
         type: 'string',
         categories: categories,
@@ -86,8 +99,18 @@ const chartOptions = ref({
 </script>
 
 <template>
-    <div class="bg-white dark:bg-dark-800 border rounded-md">
-        <div class="pl-2 pr-0.5 relative">
+    <div class="bg-white dark:bg-dark-800 border dark:border-dark-700 rounded-md overflow-hidden">
+        <div class="px-4 py-3 border-b dark:border-dark-700 flex items-start justify-between gap-2">
+            <div>
+                <h3 class="font-medium text-gray-900 dark:text-dark-100">MRR movements</h3>
+                <p class="text-sm text-gray-500 dark:text-dark-400">
+                    How recurring revenue changed each period: gains from new, reactivated and expanding subscribers stack above the line, losses from contraction and churn below it.
+                </p>
+            </div>
+            <InfoTooltip :html="infoHtml" placement="left" iconClass="size-6 shrink-0" />
+        </div>
+
+        <div class="p-3 pl-2 pr-0.5">
             <ApexChart
                 type="bar"
                 :height="chartOptions.chart.height"

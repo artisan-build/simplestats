@@ -73,6 +73,15 @@ test('recurring revenue exposes mrr, movements and retention when the project tr
                 ->has('contraction')
                 ->has('churn')
             )
+            ->has('revenue_churn', fn ($churn) => $churn
+                ->each(fn ($item) => $item
+                    ->has('date')
+                    ->has('date_clear')
+                    ->has('mrr')
+                    ->has('gross_churn_rate')
+                    ->has('net_churn_rate')
+                )
+            )
         );
 });
 
@@ -90,6 +99,7 @@ test('recurring revenue mrr props are null when the project has no payments trac
             ->where('mrr', null)
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
+            ->where('revenue_churn', null)
         );
 });
 
@@ -108,5 +118,6 @@ test('recurring revenue mrr props are null when the project tracks payments but 
             ->where('mrr', null)
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
+            ->where('revenue_churn', null)
         );
 });
