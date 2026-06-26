@@ -1,8 +1,8 @@
 <script setup>
 import {computed, ref, watch} from 'vue'
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/vue'
-import {ChevronUpDownIcon} from '@heroicons/vue/16/solid'
-import {CheckIcon} from '@heroicons/vue/20/solid'
+import ChevronUpDownIcon from 'bootstrap-icons/icons/chevron-expand.svg?component'
+import CheckIcon from 'bootstrap-icons/icons/check2.svg?component'
 
 const props = defineProps({
     modelValue: [Array, Object, String, Number, null],

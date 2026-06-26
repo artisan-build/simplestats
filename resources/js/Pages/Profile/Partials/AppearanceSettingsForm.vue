@@ -3,7 +3,9 @@ import {onMounted} from 'vue';
 import {useForm} from '@inertiajs/vue3';
 import FormSection from '@/Components/FormSection.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import {ComputerDesktopIcon, MoonIcon, SunIcon} from '@heroicons/vue/24/outline';
+import ComputerDesktopIcon from 'bootstrap-icons/icons/display.svg?component';
+import MoonIcon from 'bootstrap-icons/icons/moon.svg?component';
+import SunIcon from 'bootstrap-icons/icons/sun.svg?component';
 
 // Define the available theme options
 const themeOptions = [

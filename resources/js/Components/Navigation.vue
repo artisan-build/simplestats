@@ -5,16 +5,14 @@ import {Link} from "@inertiajs/vue3";
 import ApplicationIcon from "@/Components/ApplicationIcon.vue";
 import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import FeedbackModal from "@/Components/FeedbackModal.vue";
-import {
-    ArrowTrendingUpIcon,
-    ChartPieIcon,
-    FolderIcon,
-    LightBulbIcon,
-    PresentationChartLineIcon,
-    QuestionMarkCircleIcon,
-    RectangleGroupIcon,
-    UserGroupIcon,
-} from "@heroicons/vue/24/outline";
+import FolderIcon from "bootstrap-icons/icons/folder.svg?component";
+import LightBulbIcon from "bootstrap-icons/icons/lightbulb.svg?component";
+import QuestionMarkCircleIcon from "bootstrap-icons/icons/question-circle.svg?component";
+import RetentionIcon from "bootstrap-icons/icons/activity.svg?component";
+import UserGroupIcon from "bootstrap-icons/icons/people.svg?component";
+import DashboardIcon from "bootstrap-icons/icons/grid.svg?component";
+import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
+import BroadcastPinIcon from "bootstrap-icons/icons/broadcast-pin.svg?component";
 
 const supportAction = (e) => {
     e.preventDefault();
@@ -37,31 +35,31 @@ const showFeedbackModal = ref(false);
             <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('dashboard')" :active="route().current().startsWith('dashboard')">
                     <template #icon>
-                        <PresentationChartLineIcon class="size-6" />
+                        <DashboardIcon class="size-6" />
                     </template>
                     Dashboard
+                </NavLink>
+            </li>
+            <li v-if="$page.props.teamTracksRecurring" class="flex flex-col gap-y-1">
+                <NavLink :href="route('revenue')" :active="route().current().startsWith('revenue')">
+                    <template #icon>
+                        <Wallet2Icon class="size-6" />
+                    </template>
+                    Revenue
                 </NavLink>
             </li>
             <li v-if="$page.props.teamTracksUsers" class="flex flex-col gap-y-1">
                 <NavLink :href="route('retention')" :active="route().current().startsWith('retention')">
                     <template #icon>
-                        <RectangleGroupIcon class="size-6" />
+                        <RetentionIcon class="size-6" />
                     </template>
                     Retention
-                </NavLink>
-            </li>
-            <li v-if="$page.props.teamTracksRecurring" class="flex flex-col gap-y-1">
-                <NavLink :href="route('recurring-revenue')" :active="route().current().startsWith('recurring-revenue')">
-                    <template #icon>
-                        <ArrowTrendingUpIcon class="size-6" />
-                    </template>
-                    Subscriptions
                 </NavLink>
             </li>
             <li v-if="$page.props.teamTracksPayments" class="flex flex-col gap-y-1">
                 <NavLink :href="route('campaigns')" :active="route().current().startsWith('campaigns')">
                     <template #icon>
-                        <ChartPieIcon class="size-6" />
+                        <BroadcastPinIcon class="size-6" />
                     </template>
                     Campaigns
                 </NavLink>

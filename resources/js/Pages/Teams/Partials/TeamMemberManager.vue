@@ -13,7 +13,10 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import TextInput from '@/Components/TextInput.vue';
-import {EyeIcon, KeyIcon, PencilIcon} from "@heroicons/vue/16/solid/index.js";
+import EyeIcon from "bootstrap-icons/icons/eye-fill.svg?component";
+import KeyIcon from "bootstrap-icons/icons/key-fill.svg?component";
+import PencilIcon from "bootstrap-icons/icons/pencil-fill.svg?component";
+import CheckCircleIcon from "bootstrap-icons/icons/check-circle.svg?component";
 
 const props = defineProps({
     team: Object,
@@ -155,9 +158,7 @@ const displayableRole = (role) => {
                                             {{ role.name }}
                                         </div>
 
-                                        <svg v-if="addTeamMemberForm.role == role.key" class="ms-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
+                                        <CheckCircleIcon v-if="addTeamMemberForm.role == role.key" class="ms-2 size-5 text-green-400" />
                                     </div>
 
                                     <!-- Role Description -->
@@ -305,9 +306,7 @@ const displayableRole = (role) => {
                                         {{ role.name }}
                                     </div>
 
-                                    <svg v-if="updateRoleForm.role == role.key" class="ms-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <CheckCircleIcon v-if="updateRoleForm.role == role.key" class="ms-2 size-5 text-green-400" />
                                 </div>
 
                                 <!-- Role Description -->

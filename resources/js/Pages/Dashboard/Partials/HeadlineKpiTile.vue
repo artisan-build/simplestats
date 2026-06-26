@@ -1,6 +1,7 @@
 <script setup>
 import {formatMap} from "@/Helpers/NumberHelpers.js";
-import {ArrowTrendingDownIcon, ArrowTrendingUpIcon} from "@heroicons/vue/20/solid/index.js";
+import ArrowTrendingDownIcon from "bootstrap-icons/icons/arrow-down-right.svg?component";
+import ArrowTrendingUpIcon from "bootstrap-icons/icons/arrow-up-right.svg?component";
 import {computed} from "vue";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
 
@@ -44,8 +45,7 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
         <div class="flex justify-between items-center text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
             <span>{{ label }}</span>
             <span class="inline-flex items-center gap-1">
-                <component v-if="deltaIcon" :is="deltaIcon" class="inline-block size-5" :class="deltaClass" />
-                <InfoTooltip v-if="infoText" :title="infoTitle" :text="infoText" iconClass="size-6" />
+                <InfoTooltip v-if="infoText" :title="infoTitle" :text="infoText" iconClass="size-5" />
             </span>
         </div>
         <div class="flex justify-between items-end gap-2 mt-1">
@@ -63,6 +63,7 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
                     minimumFractionDigits: deltaFractionDigits,
                     maximumFractionDigits: deltaFractionDigits,
                 }) }}
+                <component v-if="deltaIcon" :is="deltaIcon" class="inline-block" :class="deltaClass" />
             </div>
         </div>
     </div>

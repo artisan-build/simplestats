@@ -1,6 +1,7 @@
 <script setup>
 import {formatMap, formatNumber, formatPercent} from "@/Helpers/NumberHelpers.js";
-import {ArrowTrendingDownIcon, ArrowTrendingUpIcon} from "@heroicons/vue/20/solid/index.js";
+import ArrowTrendingDownIcon from "bootstrap-icons/icons/arrow-down-right.svg?component";
+import ArrowTrendingUpIcon from "bootstrap-icons/icons/arrow-up-right.svg?component";
 
 const props = defineProps({
     serie: Object,

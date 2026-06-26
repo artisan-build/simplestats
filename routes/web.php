@@ -109,7 +109,7 @@ Route::middleware([
     Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
-    Route::get('recurring-revenue', [StatsController::class, 'recurringRevenue'])->name('recurring-revenue');
+    Route::get('revenue', [StatsController::class, 'revenue'])->name('revenue');
     Route::get('retention', [StatsController::class, 'index'])->name('retention');
     Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns');
     Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');

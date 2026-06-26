@@ -2,7 +2,7 @@
 import {computed, defineComponent, ref} from "vue";
 import VueApexCharts from 'vue3-apexcharts';
 import {formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
-import {XAU, periodSingular} from "@/Helpers/StringHelpers.js";
+import {periodSingular, XAU} from "@/Helpers/StringHelpers.js";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
 
 const ApexChart = defineComponent(VueApexCharts);
@@ -111,7 +111,7 @@ const chartOptions = computed(() => ({
                     The bars show active users per {{ periodNoun }} across the selected range; a higher stickiness line means stickier engagement, a lower churn line means fewer users dropping off.
                 </p>
             </div>
-            <InfoTooltip :html="infoHtml" placement="left" iconClass="size-6 shrink-0" />
+            <InfoTooltip :html="infoHtml" placement="left" iconClass="shrink-0 size-5" />
         </div>
 
         <div class="p-3">

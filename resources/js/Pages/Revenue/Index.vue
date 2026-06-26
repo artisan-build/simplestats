@@ -69,7 +69,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
                     :topReferers="topReferers"
                     :trackingUsageBits="trackingUsageBits"
                     :comparisonTypes="comparisonTypes"
-                    submitRoute="recurring-revenue"
+                    submitRoute="revenue"
                 />
             </div>
             <div v-if="mrr_movements?.length" class="grid gap-4">
@@ -84,7 +84,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
                     :topReferers="topReferers"
                     :currentProject="currentProject"
                     :trackingUsageBits="trackingUsageBits"
-                    baseRoute="recurring-revenue"
+                    baseRoute="revenue"
                 />
             </div>
             <div v-else class="bg-white dark:bg-dark-800 border rounded-md p-8 text-center text-gray-500 dark:text-dark-400">

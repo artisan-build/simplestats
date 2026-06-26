@@ -4,6 +4,8 @@ import {computed} from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import EyeIcon from 'bootstrap-icons/icons/eye.svg?component';
+import CheckIcon from 'bootstrap-icons/icons/check2.svg?component';
 
 const props = defineProps({
     currentProject: Object,
@@ -41,10 +43,7 @@ const setPreset = (preset) => {
         <Dropdown align="right" width="48">
             <template #trigger>
                 <SecondaryButton title="Dashboard detail level" style="margin-top:3px;" class="py-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    </svg>
+                    <EyeIcon class="size-4" />
                 </SecondaryButton>
             </template>
             <template #content>
@@ -57,9 +56,7 @@ const setPreset = (preset) => {
                     @click="setPreset(preset.id)"
                 >
                     {{ preset.name }}
-                    <svg v-if="currentPreset === preset.id" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
-                    </svg>
+                    <CheckIcon v-if="currentPreset === preset.id" class="size-4" />
                 </button>
             </template>
         </Dropdown>

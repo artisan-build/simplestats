@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\DataProviders\RecurringRevenueDataProvider;
+use App\Http\DataProviders\RevenueDataProvider;
 use App\Http\DataProviders\StatsGroupsDataProvider;
 use App\Http\DataProviders\StatsIndexDataProvider;
 use Illuminate\Http\Request;
@@ -15,9 +15,9 @@ class StatsController extends Controller
         return Inertia::render('Dashboard/Index', $dataProvider->toArray());
     }
 
-    public function recurringRevenue(RecurringRevenueDataProvider $dataProvider)
+    public function revenue(RevenueDataProvider $dataProvider)
     {
-        return Inertia::render('RecurringRevenue/Index', $dataProvider->toArray());
+        return Inertia::render('Revenue/Index', $dataProvider->toArray());
     }
 
     public function groups(StatsGroupsDataProvider $dataProvider): array

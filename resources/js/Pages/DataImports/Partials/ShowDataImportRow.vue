@@ -7,15 +7,13 @@ import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {truncate} from "@/Helpers/StringHelpers.js";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
-import {
-    ArrowPathIcon,
-    ArrowUturnLeftIcon,
-    CheckCircleIcon,
-    ClockIcon,
-    QuestionMarkCircleIcon,
-    XCircleIcon,
-    XMarkIcon,
-} from "@heroicons/vue/24/outline/index.js";
+import ArrowPathIcon from "bootstrap-icons/icons/arrow-clockwise.svg?component";
+import ArrowUturnLeftIcon from "bootstrap-icons/icons/arrow-return-left.svg?component";
+import CheckCircleIcon from "bootstrap-icons/icons/check-circle.svg?component";
+import ClockIcon from "bootstrap-icons/icons/clock.svg?component";
+import QuestionMarkCircleIcon from "bootstrap-icons/icons/question-circle.svg?component";
+import XCircleIcon from "bootstrap-icons/icons/x-circle.svg?component";
+import XMarkIcon from "bootstrap-icons/icons/x-lg.svg?component";
 
 const props = defineProps({
     projects: Array,

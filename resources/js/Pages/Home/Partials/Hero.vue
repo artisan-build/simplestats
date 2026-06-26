@@ -4,7 +4,8 @@ import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
 import {computed} from 'vue';
 import {testimonials} from "@/Data/testimonials.js";
-import {HandRaisedIcon} from "@heroicons/vue/24/outline/index.js";
+import BanIcon from "bootstrap-icons/icons/shield-x.svg?component";
+import ArrowRightIcon from "bootstrap-icons/icons/arrow-right.svg?component";
 
 const { localizedPath } = useLocale();
 const appEnv = import.meta.env.VITE_APP_ENV;
@@ -47,7 +48,7 @@ function trackGetStartedClick() {
             <a href="/docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:flex absolute right-0 top-0 -mr-64 -mt-10 rotate-[18deg] hover:rotate-[12deg] transition-transform">
                 <div class="rounded-2xl bg-white dark:bg-dark-800 ring-1 ring-gray-950/10 dark:ring-white/10 shadow-xl shadow-indigo-600/10 px-4 py-3 flex items-center gap-3">
                     <div class="flex items-center justify-center size-9 rounded-xl bg-indigo-600 text-white">
-                        <HandRaisedIcon class="size-5" />
+                        <BanIcon class="size-5" />
                     </div>
                     <div class="text-left">
                         <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $t("Can't be blocked") }}</div>
@@ -74,7 +75,7 @@ function trackGetStartedClick() {
             <div class="relative">
                 <button v-if="$page.props.canRegister" class="mb-4 inline-flex items-center justify-center px-6 py-3 mx-1.5 text-base font-medium text-center text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/25 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900 transition hover:scale-[1.02]" @click="trackGetStartedClick">
                     {{ $t('Get started for free') }}
-                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    <ArrowRightIcon class="size-5 ml-2 -mr-1" />
                 </button>
             </div>
             <div class="relative">

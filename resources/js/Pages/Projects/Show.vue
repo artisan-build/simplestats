@@ -14,6 +14,8 @@ import TextInput from "@/Components/TextInput.vue";
 import {ref, watchEffect} from "vue";
 import {useForm, usePage} from "@inertiajs/vue3";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
+import EyeIcon from "bootstrap-icons/icons/eye.svg?component";
+import ClipboardIcon from "bootstrap-icons/icons/clipboard.svg?component";
 
 defineProps({
     project: Object,
@@ -103,10 +105,7 @@ const regenerateApiToken = () => {
                                             class="cursor-pointer ms-6 text-sm text-gray-400 underline flex items-center"
                                             @click="viewApiToken(project)"
                                         >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                            </svg>
+                                            <EyeIcon class="size-4 mr-1" />
                                             View
                                         </button>
 
@@ -144,9 +143,7 @@ const regenerateApiToken = () => {
                         </div>
                         <div>
                             <button @click="copyToClipboard($page.props.jetstream.flash.token)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 -my-1.5 hover:scale-110">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z" />
-                                </svg>
+                                <ClipboardIcon class="size-5 -my-1.5 hover:scale-110" />
                             </button>
                         </div>
                     </div>

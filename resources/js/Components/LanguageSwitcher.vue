@@ -3,6 +3,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { usePage } from '@inertiajs/vue3';
 import { useLocale } from '@/Composables/useLocale.js';
 import { get as getFlag } from 'country-flag-emoji';
+import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?component';
 
 const { locale, supportedLocales, localeUrl } = useLocale();
 const localeConfig = usePage().props.localeConfig;
@@ -15,9 +16,7 @@ const getEmoji = (loc) => getFlag(localeConfig[loc]?.country)?.emoji ?? '';
         <MenuButton class="inline-flex items-center gap-1.5 hover:text-indigo-600 text-sm font-medium">
             <span class="text-base">{{ getEmoji(locale) }}</span>
             {{ localeConfig[locale]?.label ?? locale.toUpperCase() }}
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
+            <ChevronDownIcon class="size-4" />
         </MenuButton>
 
         <transition

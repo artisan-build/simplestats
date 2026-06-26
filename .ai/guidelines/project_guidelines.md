@@ -320,9 +320,11 @@ Jobs include automatic retry logic for fault tolerance.
 
 ### Icons
 
-- Always use Heroicons via the installed `@heroicons/vue` package. Import the component (e.g. `import { ChartPieIcon } from '@heroicons/vue/24/outline';`) and render it (`<ChartPieIcon class="size-6" />`). Never hand-write an inline `<svg>` path for a UI icon, and do not build custom/own icon SVGs when a Heroicon fits.
-- Pick the variant by context: `24/outline` for nav and standard UI, `24/solid` / `20/solid` / `16/solid` for filled/small accents. Match whatever sibling components already use.
-- Only the brand/app mark (`ApplicationIcon`) and genuinely bespoke illustrations that have no Heroicon equivalent may stay as custom SVG.
+- Always use **Bootstrap Icons** (the `bootstrap-icons` package), imported as SVG components via `vite-svg-loader`. Import the icon SVG with the `?component` query and render it like any Vue component: `import ChartPieIcon from 'bootstrap-icons/icons/pie-chart.svg?component';` then `<ChartPieIcon class="size-6" />`. Never hand-write an inline `<svg>` path for a UI icon, and do not build custom/own icon SVGs when a Bootstrap Icon fits.
+- Browse available icons at https://icons.getbootstrap.com or under `node_modules/bootstrap-icons/icons/*.svg`; the file name (kebab-case, e.g. `pie-chart`, `check-circle-fill`) is the import path. Many icons ship both an outline and a `-fill` variant: use the plain name for outline/standard UI and the `-fill` variant for filled/solid accents. Match whatever sibling components already use.
+- Sizing and color work via Tailwind utilities exactly as before (`size-6`, `h-5 w-5`, `text-indigo-500`), because the SVGs carry `fill="currentColor"` and a `viewBox`. No `font-size` workaround is needed.
+- For dynamic icons, store the imported component references in a map/array and render with `<component :is="...">` (e.g. `const roleIcons = { admin: KeyIcon, editor: PencilIcon };`), the same pattern as before.
+- Exceptions that stay as custom SVG: the brand/app mark (`ApplicationIcon` / `ApplicationMark`), the Laravel logo (`CustomIcons/LaravelIcon`), the social-provider logos (`SocialstreamIcons/*`), loading spinners, and genuinely bespoke illustrations (e.g. decorative gradients) that have no Bootstrap Icon equivalent.
 
 ### Carbon / Dates
 

@@ -4,6 +4,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
+import DotIcon from "bootstrap-icons/icons/dot.svg?component";
 
 const props = defineProps({
     teamStats: Object,
@@ -96,9 +97,7 @@ const teamChanged = () => {
                     <SelectInput id="range_amount" v-model="form.range_amount" class="block w-20 dark:!bg-dark-800" :options="rangeAmounts" @change="filterChanged" />
                     <InputLabel class="hidden" for="range_type" value="&nbsp;" />
                     <SelectInput id="range_type" v-model="form.range_type" class="block w-28 dark:!bg-dark-800" :options="rangeTypes" @change="filterChanged" />
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-gray-400" viewBox="0 0 16 16">
-                        <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-                    </svg>
+                    <DotIcon class="size-4 text-gray-400" />
                 </template>
 
                 <InputLabel class="hidden" for="rangePreset" value="Preset" />

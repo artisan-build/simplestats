@@ -17,6 +17,11 @@ import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
 import {formatRoas, profitClass as profitClassBase, roasClass as roasClassBase} from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
+import XLgIcon from "bootstrap-icons/icons/x-lg.svg?component";
+import TrashIcon from "bootstrap-icons/icons/trash.svg?component";
+import DashboardIcon from "bootstrap-icons/icons/grid.svg?component";
+import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
+import RetentionIcon from "bootstrap-icons/icons/activity.svg?component";
 
 const props = defineProps({
     teamStats: Object,
@@ -46,6 +51,10 @@ const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(c
 const roas = formatRoas;
 const roasClass = (value) => roasClassBase(value, neutral);
 const profitClass = (value) => profitClassBase(value, neutral);
+
+const analyzeIn = (routeName) => {
+    router.get(route(routeName, {...props.filters, project_id: props.campaign.project_id, campaign: props.campaign.id}));
+};
 
 const showModal = ref(false);
 const editSpend = ref(null);
@@ -98,27 +107,6 @@ const unlink = (trackCampaign) => {
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
                         Campaign: <span class="italic">{{ campaign.name }}</span>
                     </h1>
-                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-                        <Link
-                            :href="route('dashboard', {...filters, project_id: campaign.project_id, campaign: campaign.id})"
-                            class="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-                        >
-                            Analyse this campaign in the dashboard
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75" />
-                            </svg>
-                        </Link>
-                        <Link
-                            v-if="showsRecurring"
-                            :href="route('recurring-revenue', {...filters, project_id: campaign.project_id, campaign: campaign.id})"
-                            class="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-                        >
-                            Analyse its recurring revenue
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0-6.75-6.75M19.5 12l-6.75 6.75" />
-                            </svg>
-                        </Link>
-                    </div>
                 </div>
                 <CampaignFilter
                     :teamStats="teamStats"
@@ -128,6 +116,19 @@ const unlink = (trackCampaign) => {
                     submitRoute="campaigns.show"
                     :submitRouteParams="{campaign: campaign.id}"
                 />
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-sm text-gray-500 dark:text-dark-400 mr-1">Analyse this campaign in</span>
+                <SecondaryButton @click="analyzeIn('dashboard')">
+                    <DashboardIcon class="size-4 mr-1.5" /> Dashboard
+                </SecondaryButton>
+                <SecondaryButton v-if="showsRecurring" @click="analyzeIn('revenue')">
+                    <Wallet2Icon class="size-4 mr-1.5" /> Revenue
+                </SecondaryButton>
+                <SecondaryButton v-if="showsRegistrations" @click="analyzeIn('retention')">
+                    <RetentionIcon class="size-4 mr-1.5" /> Retention
+                </SecondaryButton>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -184,9 +185,7 @@ const unlink = (trackCampaign) => {
                         >
                             {{ utm.name }}
                             <button type="button" class="text-indigo-400 hover:text-red-700 dark:text-indigo-100 dark:hover:text-red-300" title="Unlink" @click.stop.prevent="unlink(utm)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
+                                <XLgIcon class="size-4" />
                             </button>
                         </Link>
                     </div>
@@ -245,9 +244,7 @@ const unlink = (trackCampaign) => {
                                 title="Delete"
                                 @click.stop="deleting = spend"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                </svg>
+                                <TrashIcon class="size-5" />
                             </button>
                         </td>
                     </tr>

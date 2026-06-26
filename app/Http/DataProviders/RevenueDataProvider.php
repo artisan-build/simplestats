@@ -5,7 +5,7 @@ namespace App\Http\DataProviders;
 use App\Concerns\BuildsMrrProps;
 use App\DTOs\StatsFilterDto;
 
-class RecurringRevenueDataProvider extends AbstractStatsDataProvider
+class RevenueDataProvider extends AbstractStatsDataProvider
 {
     use BuildsMrrProps;
 

@@ -12,13 +12,13 @@ beforeEach(function () {
 });
 
 test('recurring revenue route returns 200', function () {
-    $this->get(route('recurring-revenue'))->assertStatus(200);
+    $this->get(route('revenue'))->assertStatus(200);
 });
 
-test('recurring revenue renders RecurringRevenue/Index with the shared filter props', function () {
-    $this->get(route('recurring-revenue'))
+test('recurring revenue renders Revenue/Index with the shared filter props', function () {
+    $this->get(route('revenue'))
         ->assertInertia(fn ($page) => $page
-            ->component('RecurringRevenue/Index')
+            ->component('Revenue/Index')
             ->has('teamStats')
             ->has('presets')
             ->has('filters')
@@ -39,9 +39,9 @@ test('recurring revenue exposes mrr, movements and retention when the project tr
             | StatsService::TRACKING_USAGE_BITS_RECURRING,
     ]);
 
-    $this->get(route('recurring-revenue', ['project_id' => $project->id]))
+    $this->get(route('revenue', ['project_id' => $project->id]))
         ->assertInertia(fn ($page) => $page
-            ->component('RecurringRevenue/Index')
+            ->component('Revenue/Index')
             ->has('mrr', fn ($mrr) => $mrr
                 ->has('mrr')
                 ->has('arr')
@@ -93,9 +93,9 @@ test('recurring revenue mrr props are null when the project has no payments trac
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
     ]);
 
-    $this->get(route('recurring-revenue', ['project_id' => $project->id]))
+    $this->get(route('revenue', ['project_id' => $project->id]))
         ->assertInertia(fn ($page) => $page
-            ->component('RecurringRevenue/Index')
+            ->component('Revenue/Index')
             ->where('mrr', null)
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
@@ -112,9 +112,9 @@ test('recurring revenue mrr props are null when the project tracks payments but 
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
     ]);
 
-    $this->get(route('recurring-revenue', ['project_id' => $project->id]))
+    $this->get(route('revenue', ['project_id' => $project->id]))
         ->assertInertia(fn ($page) => $page
-            ->component('RecurringRevenue/Index')
+            ->component('Revenue/Index')
             ->where('mrr', null)
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)

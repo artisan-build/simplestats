@@ -1,5 +1,5 @@
 <script setup>
-import {defineComponent, ref, onMounted, onBeforeUnmount} from 'vue';
+import {defineComponent, onBeforeUnmount, onMounted, ref} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
 import {router, usePage} from "@inertiajs/vue3";
@@ -368,8 +368,8 @@ const selectedSeries = () => {
             />
         </div>
         <div class="pl-2 pr-0.5 relative">
-            <div class="absolute top-3 right-2 z-10" data-tour="chart-info">
-                <InfoTooltip :html="chart.info" placement="right" iconClass="w-6 h-6" />
+            <div class="absolute top-3 right-3 z-10" data-tour="chart-info">
+                <InfoTooltip :html="chart.info" placement="right" iconClass="size-5" />
             </div>
             <ApexChart
                 ref="chartInstance"

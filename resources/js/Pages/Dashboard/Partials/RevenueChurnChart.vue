@@ -116,7 +116,7 @@ const chartOptions = computed(() => ({
                     A lower gross line means fewer losses; a net line below zero means expansion outgrew churn.
                 </p>
             </div>
-            <InfoTooltip :html="infoHtml" placement="left" iconClass="size-6 shrink-0" />
+            <InfoTooltip :html="infoHtml" placement="left" iconClass="shrink-0 size-5" />
         </div>
 
         <div class="p-3">

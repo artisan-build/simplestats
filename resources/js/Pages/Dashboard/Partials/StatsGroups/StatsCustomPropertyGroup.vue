@@ -5,6 +5,7 @@ import axios from 'axios';
 import StatsGroupTable from "./StatsGroupTable.vue";
 import SegmentedToggle from "@/Components/SegmentedToggle.vue";
 import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import InfoIcon from 'bootstrap-icons/icons/info-circle.svg?component';
 
 const lifetimeOptions = [
     {value: false, label: 'Time range'},
@@ -161,9 +162,7 @@ onMounted(fetchData);
         <template #footer-right>
             <div class="flex items-center gap-1.5">
                 <div v-tooltip.left="{ content: `<div class='max-w-64 p-2 text-sm'>${lifetimeHint}</div>`, html: true }" class="text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                    </svg>
+                    <InfoIcon class="size-4" />
                 </div>
                 <SegmentedToggle :model-value="lifetime" :options="lifetimeOptions" @update:model-value="setLifetime" />
             </div>

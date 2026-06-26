@@ -2,6 +2,8 @@
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {onMounted, ref} from "vue";
 import {trans} from 'laravel-vue-i18n';
+import DashLgIcon from "bootstrap-icons/icons/dash-lg.svg?component";
+import PlusLgIcon from "bootstrap-icons/icons/plus-lg.svg?component";
 
 const questions = ref([
     {
@@ -70,14 +72,10 @@ onMounted(() => {
                         <h3 class="font-semibold text-gray-700 dark:text-dark-300">{{ question.title() }}</h3>
 
                         <span v-if="question.active" class="text-gray-400 bg-gray-200 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" />
-                            </svg>
+                            <DashLgIcon class="size-6" />
                         </span>
-                        <span v-else class="text-white bg-indigo-500 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
+                        <span v-else class="p-0.5 text-white bg-indigo-500 rounded-full">
+                            <PlusLgIcon class="size-5" />
                         </span>
                     </button>
 

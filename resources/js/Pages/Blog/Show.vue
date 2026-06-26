@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import Header from "@/Pages/Home/Partials/Header.vue";
 import Footer from "@/Components/Footer.vue";
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
+import ArrowLeftIcon from "bootstrap-icons/icons/arrow-left.svg?component";
 
 defineProps({
     post: Object,
@@ -28,7 +29,7 @@ function formatDate(dateString) {
     <article class="min-h-screen relative">
         <div class="max-w-3xl mx-auto px-6 py-16">
             <Link :href="route('blog.index')" class="inline-flex items-center text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 mb-8">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <ArrowLeftIcon class="size-4 mr-1" />
                 Back to Blog
             </Link>
 

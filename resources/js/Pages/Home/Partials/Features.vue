@@ -1,15 +1,13 @@
 <script setup>
-import {
-    ChartBarIcon,
-    CodeBracketIcon,
-    GiftIcon,
-    LightBulbIcon,
-    MapPinIcon,
-    PresentationChartBarIcon,
-    RocketLaunchIcon,
-    ShieldCheckIcon,
-    UserGroupIcon
-} from "@heroicons/vue/24/outline/index.js";
+import ChartBarIcon from "bootstrap-icons/icons/bar-chart.svg?component";
+import CodeBracketIcon from "bootstrap-icons/icons/code-slash.svg?component";
+import GiftIcon from "bootstrap-icons/icons/gift.svg?component";
+import LightBulbIcon from "bootstrap-icons/icons/lightbulb.svg?component";
+import MapPinIcon from "bootstrap-icons/icons/geo-alt.svg?component";
+import PresentationChartBarIcon from "bootstrap-icons/icons/graph-up-arrow.svg?component";
+import RocketLaunchIcon from "bootstrap-icons/icons/rocket-takeoff.svg?component";
+import ShieldCheckIcon from "bootstrap-icons/icons/shield-check.svg?component";
+import UserGroupIcon from "bootstrap-icons/icons/people.svg?component";
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 

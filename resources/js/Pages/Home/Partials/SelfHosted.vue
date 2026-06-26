@@ -1,6 +1,7 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {trans} from 'laravel-vue-i18n';
+import CheckCircleFillIcon from "bootstrap-icons/icons/check-circle-fill.svg?component";
 
 const props = defineProps({
     discount: Number,
@@ -107,9 +108,7 @@ YOUR ANSWER HERE`;
                     <div class="mt-8 space-y-8">
                         <div v-for="(feature, option) in license.features">
                             <div class="flex items-center" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-indigo-500">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
+                                <CheckCircleFillIcon class="size-5 text-indigo-500" />
 
                                 <span class="mx-4" :class="license.promoted ? 'text-gray-100' : 'text-gray-800 dark:text-dark-400'">{{ feature() }}</span>
                             </div>

@@ -5,7 +5,9 @@ import RangeSlider from "@/Components/RangeSlider.vue";
 import {computed, ref} from "vue";
 import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
-import {CreditCardIcon} from '@heroicons/vue/24/solid';
+import CreditCardIcon from 'bootstrap-icons/icons/credit-card-fill.svg?component';
+import CheckCircleFillIcon from 'bootstrap-icons/icons/check-circle-fill.svg?component';
+import XCircleIcon from 'bootstrap-icons/icons/x-circle.svg?component';
 
 const { localizedPath } = useLocale();
 
@@ -201,16 +203,12 @@ const yearlySavings = computed(() => {
                     <div class="mt-8 space-y-5">
                         <div v-for="(feature, option) in selectedPlan.features" :key="option">
                             <div v-if="selectedPlan.options[option]" class="flex items-center text-gray-800 dark:text-dark-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-indigo-500">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
+                                <CheckCircleFillIcon class="size-5 text-indigo-500" />
 
                                 <span class="mx-4">{{ $t(feature) }}</span>
                             </div>
                             <div v-else class="flex items-center text-gray-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                </svg>
+                                <XCircleIcon class="size-5" />
 
                                 <span class="mx-4">{{ $t(feature) }}</span>
                             </div>
@@ -222,7 +220,7 @@ const yearlySavings = computed(() => {
                             {{ $t('Get started') }}
                         </Link>
                         <p class="mt-3 text-center text-sm text-gray-500 dark:text-dark-400">
-                            <credit-card-icon class="size-4 inline-block" />
+                            <CreditCardIcon class="size-4 inline-block" />
                             {{ $t('No credit card required') }}
                         </p>
                     </template>

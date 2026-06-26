@@ -25,7 +25,6 @@ use App\Models\StatsTrackSource;
 use App\Models\StatsTrackTerm;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
-use App\Models\Team;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -261,7 +260,7 @@ class StatsService
             'payments' => [
                 'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
                 'name' => 'Payments',
-                'descr' => 'Track revenue and link it back to visitors or registrations.',
+                'descr' => 'Track payments and link them back to visitors or registrations.',
             ],
             'recurring' => [
                 'bit' => self::TRACKING_USAGE_BITS_RECURRING,

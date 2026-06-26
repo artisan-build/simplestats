@@ -107,7 +107,7 @@ const chartOptions = ref({
                     How recurring revenue changed each period: gains from new, reactivated and expanding subscribers stack above the line, losses from contraction and churn below it.
                 </p>
             </div>
-            <InfoTooltip :html="infoHtml" placement="left" iconClass="size-6 shrink-0" />
+            <InfoTooltip :html="infoHtml" placement="left" iconClass="shrink-0 size-5" />
         </div>
 
         <div class="p-3 pl-2 pr-0.5">

@@ -4,6 +4,7 @@ import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpe
 import {usePage} from "@inertiajs/vue3";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useStatsComparison} from "@/Composables/useStatsComparison.js";
+import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?component';
 
 /**
  * Generic grouped stats table: sortable header, gradient bars, comparison
@@ -77,9 +78,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                 <button class="whitespace-nowrap" :class="sort === column.key ? 'text-indigo-600' : ''" @click="emit('sort', column.key)">
                                     <span v-if="column.labelSmall" class="inline-block @2xl:hidden">{{ column.labelSmall }}</span>
                                     <span :class="column.labelSmall ? 'hidden @2xl:inline-block' : ''">{{ column.label }}</span>
-                                    <svg v-if="sort === column.key" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 hidden @md:inline-block">
-                                        <path fill-rule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                    </svg>
+                                    <ChevronDownIcon v-if="sort === column.key" class="size-4 hidden @md:inline-block" />
                                 </button>
                             </td>
                         </tr>

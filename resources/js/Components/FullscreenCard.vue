@@ -1,6 +1,6 @@
 <script setup>
-import {ArrowLeftIcon} from '@heroicons/vue/24/solid';
-import {ArrowLeftEndOnRectangleIcon} from '@heroicons/vue/24/outline';
+import ArrowLeftIcon from 'bootstrap-icons/icons/arrow-left.svg?component';
+import ArrowLeftEndOnRectangleIcon from 'bootstrap-icons/icons/box-arrow-in-right.svg?component';
 import {Head, router} from '@inertiajs/vue3';
 import Gradient from "@/Pages/Home/Partials/Gradient.vue";
 import Banner from "@/Components/Banner.vue";

@@ -1,7 +1,9 @@
 <script setup>
-import {CheckCircleIcon, MinusCircleIcon, XCircleIcon} from "@heroicons/vue/24/solid/index.js";
+import CheckCircleIcon from "bootstrap-icons/icons/check-circle-fill.svg?component";
+import MinusCircleIcon from "bootstrap-icons/icons/dash-circle-fill.svg?component";
+import XCircleIcon from "bootstrap-icons/icons/x-circle-fill.svg?component";
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
-import {competitors, comparisonFeatures} from "@/Data/comparison.js";
+import {comparisonFeatures, competitors} from "@/Data/comparison.js";
 </script>
 
 <template>
@@ -41,9 +43,9 @@ import {competitors, comparisonFeatures} from "@/Data/comparison.js";
                                 class="py-4 px-4 text-center"
                                 :class="competitor.key === 'simplestats' ? 'bg-indigo-50 dark:bg-indigo-900/10' : ''"
                             >
-                                <CheckCircleIcon v-if="feature[competitor.key] === true" class="w-6 h-6 text-indigo-500 mx-auto" />
-                                <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="w-6 h-6 text-indigo-300 dark:text-indigo-500/40 mx-auto" />
-                                <XCircleIcon v-else class="w-6 h-6 text-gray-300 dark:text-dark-600 mx-auto" />
+                                <CheckCircleIcon v-if="feature[competitor.key] === true" class="size-5 text-indigo-500 mx-auto" />
+                                <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="size-5 text-indigo-300 dark:text-indigo-500/40 mx-auto" />
+                                <XCircleIcon v-else class="size-5 text-gray-300 dark:text-dark-600 mx-auto" />
                             </td>
                         </tr>
                     </tbody>

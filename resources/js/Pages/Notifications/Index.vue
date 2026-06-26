@@ -5,7 +5,7 @@ import SelectInput from "@/Components/SelectInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
 import {router, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {PaperAirplaneIcon} from '@heroicons/vue/24/solid';
+import PaperAirplaneIcon from 'bootstrap-icons/icons/send-fill.svg?component';
 import {capitalize} from "@/Helpers/StringHelpers.js";
 import {computed} from "vue";
 
