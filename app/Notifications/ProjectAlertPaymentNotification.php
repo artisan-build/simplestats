@@ -47,7 +47,7 @@ class ProjectAlertPaymentNotification extends Notification
         $subject = '💵 New payment received on '.$projectName;
         if ($this->statsPayment->statsVisitor) {
             $this->statsPayment->statsVisitor->load(StatsVisitor::statsRelations());
-        } else {
+        } elseif ($this->statsPayment->statsUser) {
             $this->statsPayment->statsUser->load(StatsUser::statsRelations());
         }
 

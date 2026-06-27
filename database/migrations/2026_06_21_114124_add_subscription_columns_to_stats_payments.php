@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('stats_payments', function (Blueprint $table) {
-            $table->string('recurring_interval', 10)->nullable()->after('currency');
+            $table->string('subscription_interval', 10)->nullable()->after('currency');
+            $table->string('subscription_plan')->nullable()->after('subscription_interval');
         });
     }
 };

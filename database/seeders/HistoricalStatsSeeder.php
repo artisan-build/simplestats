@@ -37,7 +37,7 @@ class HistoricalStatsSeeder extends Seeder
                     'name' => $name,
                 ]));
 
-            $tracksRecurring = (bool) ($project->usage & StatsService::TRACKING_USAGE_BITS_RECURRING);
+            $tracksSubscription = (bool) ($project->usage & StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION);
 
             $count = $this->getUserSeedCount();
 
@@ -50,7 +50,7 @@ class HistoricalStatsSeeder extends Seeder
             StatsUser::factory(rand($count['from'], $count['to']))->create([
                 'team_id' => $project->team_id,
                 'project_id' => $project->id,
-            ])->each(function ($statsUser) use ($project, $eventNames, $timezone, $tracksRecurring, &$loginRows) {
+            ])->each(function ($statsUser) use ($project, $eventNames, $timezone, $tracksSubscription, &$loginRows) {
                 $visitorCount = app()->environment('testing') ? rand(1, 2) : rand(3, 6);
                 $visitors = StatsVisitor::factory($visitorCount)->create([
                     'team_id' => $project->team_id,
@@ -73,7 +73,7 @@ class HistoricalStatsSeeder extends Seeder
                     $loginTime->addDays(rand(1, 28));
                 }
 
-                if ($tracksRecurring && rand(1, 100) <= 12) {
+                if ($tracksSubscription && rand(1, 100) <= 12) {
                     $this->seedSubscription($project, $statsUser);
                 } elseif (rand(0, 9) === 0) {
                     $paymentTime = Carbon::parse($statsUser->time);
@@ -134,8 +134,8 @@ class HistoricalStatsSeeder extends Seeder
             }
 
             $factory = $yearly
-                ? StatsPayment::factory()->recurringYearly()
-                : StatsPayment::factory()->recurringMonthly();
+                ? StatsPayment::factory()->subscriptionYearly()
+                : StatsPayment::factory()->subscriptionMonthly();
 
             $factory->create([
                 'team_id' => $project->team_id,

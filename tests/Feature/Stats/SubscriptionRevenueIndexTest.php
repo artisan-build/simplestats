@@ -11,11 +11,11 @@ beforeEach(function () {
     $this->actingAs($this->user);
 });
 
-test('recurring revenue route returns 200', function () {
+test('subscription revenue route returns 200', function () {
     $this->get(route('revenue'))->assertStatus(200);
 });
 
-test('recurring revenue renders Revenue/Index with the shared filter props', function () {
+test('subscription revenue renders Revenue/Index with the shared filter props', function () {
     $this->get(route('revenue'))
         ->assertInertia(fn ($page) => $page
             ->component('Revenue/Index')
@@ -28,7 +28,7 @@ test('recurring revenue renders Revenue/Index with the shared filter props', fun
         );
 });
 
-test('recurring revenue exposes mrr, movements and retention when the project tracks recurring', function () {
+test('subscription revenue exposes mrr, movements and retention when the project tracks subscriptions', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -36,7 +36,7 @@ test('recurring revenue exposes mrr, movements and retention when the project tr
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ]);
 
     $this->get(route('revenue', ['project_id' => $project->id]))
@@ -85,7 +85,7 @@ test('recurring revenue exposes mrr, movements and retention when the project tr
         );
 });
 
-test('recurring revenue mrr props are null when the project has no payments tracking', function () {
+test('subscription revenue mrr props are null when the project has no payments tracking', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -103,7 +103,7 @@ test('recurring revenue mrr props are null when the project has no payments trac
         );
 });
 
-test('recurring revenue mrr props are null when the project tracks payments but not users', function () {
+test('subscription revenue mrr props are null when the project tracks payments but not users', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([

@@ -2,7 +2,7 @@
 
 namespace App\Builder;
 
-use App\Enums\PaymentInterval;
+use App\Enums\SubscriptionInterval;
 use App\Services\StatsService;
 
 /**
@@ -11,7 +11,7 @@ use App\Services\StatsService;
  * and computes a standalone snapshot at the END of every bucket
  * (date_seq + one interval) via a LATERAL subquery.
  *
- * Each bucket re-runs the snapshot logic: per user the latest recurring payment
+ * Each bucket re-runs the snapshot logic: per user the latest subscription payment
  * before the bucket end (DISTINCT ON), counted only while it sits inside its
  * interval window (interval + MRR_ACTIVE_GRACE_DAYS), yearly normalised to a
  * monthly amount (net / 12). The window is bucket-relative, so it lives in SQL
@@ -25,8 +25,8 @@ class MrrTimeSeriesSqlBuilder extends BaseSqlBuilder
 {
     public function build(): string
     {
-        $month = PaymentInterval::MONTH->value;
-        $year = PaymentInterval::YEAR->value;
+        $month = SubscriptionInterval::MONTH->value;
+        $year = SubscriptionInterval::YEAR->value;
         $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;
 
         // The running bucket ends in the future; cap at now so its churn window
@@ -50,25 +50,25 @@ class MrrTimeSeriesSqlBuilder extends BaseSqlBuilder
             LEFT JOIN LATERAL (
                 SELECT
                     COALESCE(SUM(
-                        CASE WHEN lr.recurring_interval = '$year' THEN lr.net / 12.0 ELSE lr.net END
+                        CASE WHEN lr.subscription_interval = '$year' THEN lr.net / 12.0 ELSE lr.net END
                     ), 0) AS mrr,
                     COUNT(*) AS subscribers
                 FROM (
                     SELECT DISTINCT ON (stats.stats_user_id)
                         stats.stats_user_id,
                         stats.net,
-                        stats.recurring_interval,
+                        stats.subscription_interval,
                         stats.time
                     FROM stats_payments stats
                     :trackingUserJoinConditions
                     WHERE :projectCondition
-                        AND stats.recurring_interval IS NOT NULL
+                        AND stats.subscription_interval IS NOT NULL
                         AND stats.stats_user_id IS NOT NULL
                         AND stats.time < $bucketEnd
                     ORDER BY stats.stats_user_id, stats.time DESC
                 ) lr
-                WHERE (lr.recurring_interval = '$month' AND lr.time > ($bucketEnd - INTERVAL '1 month' - INTERVAL '$grace days'))
-                    OR (lr.recurring_interval = '$year' AND lr.time > ($bucketEnd - INTERVAL '1 year' - INTERVAL '$grace days'))
+                WHERE (lr.subscription_interval = '$month' AND lr.time > ($bucketEnd - INTERVAL '1 month' - INTERVAL '$grace days'))
+                    OR (lr.subscription_interval = '$year' AND lr.time > ($bucketEnd - INTERVAL '1 year' - INTERVAL '$grace days'))
             ) snapshot ON TRUE
             ORDER BY date_clear DESC
         ";

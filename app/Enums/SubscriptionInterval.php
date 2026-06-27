@@ -4,7 +4,7 @@ namespace App\Enums;
 
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
-enum PaymentInterval: string
+enum SubscriptionInterval: string
 {
     use UsefulEnums;
 
@@ -13,7 +13,7 @@ enum PaymentInterval: string
 
     public static function toOptions(): array
     {
-        return collect(self::cases())->map(function (PaymentInterval $interval) {
+        return collect(self::cases())->map(function (SubscriptionInterval $interval) {
             return [
                 'id' => $interval->value,
                 'name' => $interval->title(),

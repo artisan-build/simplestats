@@ -33,9 +33,9 @@ const props = defineProps({
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
 
 // Curated breakdowns for the subscriptions context: pages and devices say little
-// about recurring revenue, so drop them and keep the acquisition/geography groups
+// about subscription revenue, so drop them and keep the acquisition/geography groups
 // (and custom properties, e.g. plan/tier, handled separately by StatsGroups).
-const recurringStatsGroups = computed(() => Object.fromEntries(
+const subscriptionStatsGroups = computed(() => Object.fromEntries(
     Object.entries(props.statsGroups).filter(([type]) => ! ['page', 'device'].includes(type)),
 ));
 
@@ -78,7 +78,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
                 <RevenueChurnChart v-if="revenue_churn?.length" :series="revenue_churn" :filters="filters" />
                 <StatsGroups
                     :filters="filters"
-                    :statsGroups="recurringStatsGroups"
+                    :statsGroups="subscriptionStatsGroups"
                     :propertyDimensions="propertyDimensions"
                     :hasCustomEvents="hasCustomEvents"
                     :topReferers="topReferers"

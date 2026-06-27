@@ -17,20 +17,20 @@ const iconSize = computed(() => props.stacked ? 'size-6' : 'size-8');
 
 let bits = props.modelValue;
 
-const recurringBit = props.trackingUsages.recurring?.bit ?? 0;
+const subscriptionBit = props.trackingUsages.subscription?.bit ?? 0;
 const usersBit = props.trackingUsages.users?.bit ?? 0;
 const paymentsBit = props.trackingUsages.payments?.bit ?? 0;
-const recurringPrereq = usersBit | paymentsBit;
+const subscriptionPrereq = usersBit | paymentsBit;
 
 const selectUsageType = (bit) => {
     bits ^= bit;
 
-    // Recurring requires registrations + payments: enabling it pulls those in,
+    // Subscriptions require registrations + payments: enabling it pulls those in,
     // removing either one clears it again.
-    if (bit === recurringBit && (bits & recurringBit)) {
-        bits |= recurringPrereq;
-    } else if ((bit === usersBit || bit === paymentsBit) && ((bits & recurringPrereq) !== recurringPrereq)) {
-        bits &= ~recurringBit;
+    if (bit === subscriptionBit && (bits & subscriptionBit)) {
+        bits |= subscriptionPrereq;
+    } else if ((bit === usersBit || bit === paymentsBit) && ((bits & subscriptionPrereq) !== subscriptionPrereq)) {
+        bits &= ~subscriptionBit;
     }
 
     emit('update:modelValue', bits);
@@ -56,7 +56,7 @@ const selectUsageType = (bit) => {
                     <div v-if="type === 'payments'">
                         <CoinIcon :class="iconSize" class="text-indigo-400" />
                     </div>
-                    <div v-if="type === 'recurring'">
+                    <div v-if="type === 'subscription'">
                         <Wallet2Icon :class="iconSize" class="text-indigo-400" />
                     </div>
                 </div>

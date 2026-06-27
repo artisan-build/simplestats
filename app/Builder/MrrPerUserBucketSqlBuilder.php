@@ -2,7 +2,7 @@
 
 namespace App\Builder;
 
-use App\Enums\PaymentInterval;
+use App\Enums\SubscriptionInterval;
 use App\Services\StatsService;
 
 /**
@@ -22,8 +22,8 @@ class MrrPerUserBucketSqlBuilder extends BaseSqlBuilder
 {
     public function build(): string
     {
-        $month = PaymentInterval::MONTH->value;
-        $year = PaymentInterval::YEAR->value;
+        $month = SubscriptionInterval::MONTH->value;
+        $year = SubscriptionInterval::YEAR->value;
         $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;
 
         $seed = $this->getDateInterval('sub', $this->getDateSelect(), 1, ':intervalType');
@@ -48,23 +48,23 @@ class MrrPerUserBucketSqlBuilder extends BaseSqlBuilder
             LEFT JOIN LATERAL (
                 SELECT
                     lr.stats_user_id,
-                    CASE WHEN lr.recurring_interval = '$year' THEN lr.net / 12.0 ELSE lr.net END AS mrr
+                    CASE WHEN lr.subscription_interval = '$year' THEN lr.net / 12.0 ELSE lr.net END AS mrr
                 FROM (
                     SELECT DISTINCT ON (stats.stats_user_id)
                         stats.stats_user_id,
                         stats.net,
-                        stats.recurring_interval,
+                        stats.subscription_interval,
                         stats.time
                     FROM stats_payments stats
                     :trackingUserJoinConditions
                     WHERE :projectCondition
-                        AND stats.recurring_interval IS NOT NULL
+                        AND stats.subscription_interval IS NOT NULL
                         AND stats.stats_user_id IS NOT NULL
                         AND stats.time < $bucketEnd
                     ORDER BY stats.stats_user_id, stats.time DESC
                 ) lr
-                WHERE (lr.recurring_interval = '$month' AND lr.time > ($bucketEnd - INTERVAL '1 month' - INTERVAL '$grace days'))
-                    OR (lr.recurring_interval = '$year' AND lr.time > ($bucketEnd - INTERVAL '1 year' - INTERVAL '$grace days'))
+                WHERE (lr.subscription_interval = '$month' AND lr.time > ($bucketEnd - INTERVAL '1 month' - INTERVAL '$grace days'))
+                    OR (lr.subscription_interval = '$year' AND lr.time > ($bucketEnd - INTERVAL '1 year' - INTERVAL '$grace days'))
             ) active ON TRUE
             ORDER BY date_clear ASC, active.stats_user_id
         ";

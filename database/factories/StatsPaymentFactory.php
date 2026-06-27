@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\PaymentInterval;
+use App\Enums\SubscriptionInterval;
 use App\Models\Project;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
@@ -50,13 +50,13 @@ class StatsPaymentFactory extends Factory
         ];
     }
 
-    public function recurringMonthly(): static
+    public function subscriptionMonthly(): static
     {
-        return $this->state(fn () => ['recurring_interval' => PaymentInterval::MONTH]);
+        return $this->state(fn () => ['subscription_interval' => SubscriptionInterval::MONTH]);
     }
 
-    public function recurringYearly(): static
+    public function subscriptionYearly(): static
     {
-        return $this->state(fn () => ['recurring_interval' => PaymentInterval::YEAR]);
+        return $this->state(fn () => ['subscription_interval' => SubscriptionInterval::YEAR]);
     }
 }

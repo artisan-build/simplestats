@@ -1,8 +1,8 @@
 <?php
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\PaymentInterval;
 use App\Enums\StatsRangeType;
+use App\Enums\SubscriptionInterval;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\MrrAggregationService;
@@ -46,7 +46,7 @@ function insertRcUser(string $id, int $teamId, int $projectId, ?int $sourceId = 
     ]);
 }
 
-function insertRcPayment(string $id, string $userId, int $teamId, int $projectId, float $net, ?PaymentInterval $interval, string $time): void
+function insertRcPayment(string $id, string $userId, int $teamId, int $projectId, float $net, ?SubscriptionInterval $interval, string $time): void
 {
     DB::table('stats_payments')->insert([
         'id' => $id,
@@ -56,7 +56,7 @@ function insertRcPayment(string $id, string $userId, int $teamId, int $projectId
         'gross' => $net,
         'net' => $net,
         'currency' => 'EUR',
-        'recurring_interval' => $interval?->value,
+        'subscription_interval' => $interval?->value,
         'counter' => 1,
         'time' => $time,
         'time_utc' => $time,
@@ -77,15 +77,15 @@ it('derives gross and net churn rates from the movement breakdown per bucket', f
     insertRcUser('u-expand', $this->team->id, $this->pid);
     insertRcUser('u-churn', $this->team->id, $this->pid);
 
-    insertRcPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-04-15 10:00:00');
-    insertRcPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-05-15 10:00:00');
-    insertRcPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertRcPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertRcPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertRcPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
-    insertRcPayment('e-1', 'u-expand', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-04-15 10:00:00');
-    insertRcPayment('e-2', 'u-expand', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-05-15 10:00:00');
-    insertRcPayment('e-3', 'u-expand', $this->team->id, $this->pid, 80, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertRcPayment('e-1', 'u-expand', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertRcPayment('e-2', 'u-expand', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertRcPayment('e-3', 'u-expand', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
-    insertRcPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, PaymentInterval::MONTH, '2026-04-15 10:00:00');
+    insertRcPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
 
     // Buckets newest first: June (start 150, expansion 30), May (start 190, churn 40).
     $churn = $this->service->getRevenueChurn(rcMonthFilter($this->pid, '2026-06-21', 2));
@@ -105,7 +105,7 @@ it('derives gross and net churn rates from the movement breakdown per bucket', f
 
 it('returns null rates for buckets with no starting mrr', function () {
     insertRcUser('u-1', $this->team->id, $this->pid);
-    insertRcPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertRcPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     $churn = $this->service->getRevenueChurn(rcMonthFilter($this->pid, '2026-06-21', 2));
 
@@ -125,10 +125,10 @@ it('attributes revenue churn per channel via the source filter', function () {
     insertRcUser('u-direct', $this->team->id, $this->pid, null);
 
     // Newsletter user lapses after April; direct user renews through June.
-    insertRcPayment('n-1', 'u-newsletter', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-04-15 10:00:00');
-    insertRcPayment('d-1', 'u-direct', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-04-15 10:00:00');
-    insertRcPayment('d-2', 'u-direct', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-05-15 10:00:00');
-    insertRcPayment('d-3', 'u-direct', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertRcPayment('n-1', 'u-newsletter', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertRcPayment('d-1', 'u-direct', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertRcPayment('d-2', 'u-direct', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertRcPayment('d-3', 'u-direct', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     // May bucket (start = April): unfiltered start 200, churn 100 -> 50%;
     // newsletter-only start 100, churn 100 -> 100%.

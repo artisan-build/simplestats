@@ -61,7 +61,7 @@ test('recurring tracking requires registrations and payments', function () {
         'name' => 'Recurring Only',
         'domain' => 'example.com',
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ])->assertSessionHasErrors('usage');
 });
 
@@ -72,6 +72,6 @@ test('recurring tracking is accepted together with registrations and payments', 
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ])->assertSessionHasNoErrors();
 });

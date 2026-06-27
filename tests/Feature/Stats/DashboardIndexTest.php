@@ -94,7 +94,7 @@ test('dashboard exposes the mrr_series prop when the project has recurring payme
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -102,7 +102,7 @@ test('dashboard exposes the mrr_series prop when the project has recurring payme
         'project_id' => $project->id,
     ]);
 
-    StatsPayment::factory()->recurringMonthly()->create([
+    StatsPayment::factory()->subscriptionMonthly()->create([
         'team_id' => $this->user->currentTeam->id,
         'project_id' => $project->id,
         'stats_user_id' => $statsUser->id,
@@ -130,7 +130,7 @@ test('dashboard exposes mrr_series_prev when a comparison is active', function (
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -138,7 +138,7 @@ test('dashboard exposes mrr_series_prev when a comparison is active', function (
         'project_id' => $project->id,
     ]);
 
-    StatsPayment::factory()->recurringMonthly()->create([
+    StatsPayment::factory()->subscriptionMonthly()->create([
         'team_id' => $this->user->currentTeam->id,
         'project_id' => $project->id,
         'stats_user_id' => $statsUser->id,
@@ -166,7 +166,7 @@ test('dashboard mrr_series_prev is null without a comparison', function () {
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -174,7 +174,7 @@ test('dashboard mrr_series_prev is null without a comparison', function () {
         'project_id' => $project->id,
     ]);
 
-    StatsPayment::factory()->recurringMonthly()->create([
+    StatsPayment::factory()->subscriptionMonthly()->create([
         'team_id' => $this->user->currentTeam->id,
         'project_id' => $project->id,
         'stats_user_id' => $statsUser->id,
@@ -212,7 +212,7 @@ test('dashboard exposes a zeroed mrr_series when the project tracks recurring bu
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING,
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -243,7 +243,7 @@ test('dashboard mrr_series prop is null when the project tracks payments but not
         'project_id' => $project->id,
     ]);
 
-    StatsPayment::factory()->recurringMonthly()->create([
+    StatsPayment::factory()->subscriptionMonthly()->create([
         'team_id' => $this->user->currentTeam->id,
         'project_id' => $project->id,
         'stats_user_id' => $statsUser->id,

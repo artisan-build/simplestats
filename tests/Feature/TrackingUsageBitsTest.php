@@ -6,7 +6,7 @@ use App\Services\StatsService;
 
 test('custom events are no longer a tracking usage bit', function () {
     expect(StatsService::getTrackingUsages()->keys()->all())
-        ->toBe(['visitors', 'users', 'payments', 'recurring']);
+        ->toBe(['visitors', 'users', 'payments', 'subscription']);
 
     expect(StatsService::getTrackingUsageBitsCount())->toBe(15);
 });

@@ -1,8 +1,8 @@
 <?php
 
 use App\DTOs\StatsFilterDto;
-use App\Enums\PaymentInterval;
 use App\Enums\StatsRangeType;
+use App\Enums\SubscriptionInterval;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\MrrAggregationService;
@@ -46,7 +46,7 @@ function insertStatsUser(string $id, int $teamId, int $projectId, ?int $sourceId
     ]);
 }
 
-function insertPayment(string $id, string $userId, int $teamId, int $projectId, float $net, ?PaymentInterval $interval, string $time): void
+function insertPayment(string $id, string $userId, int $teamId, int $projectId, float $net, ?SubscriptionInterval $interval, string $time): void
 {
     DB::table('stats_payments')->insert([
         'id' => $id,
@@ -56,7 +56,7 @@ function insertPayment(string $id, string $userId, int $teamId, int $projectId, 
         'gross' => $net,
         'net' => $net,
         'currency' => 'EUR',
-        'recurring_interval' => $interval?->value,
+        'subscription_interval' => $interval?->value,
         'counter' => 1,
         'time' => $time,
         'time_utc' => $time,
@@ -75,8 +75,8 @@ function dayFilter(int $projectId, string $rangeStart, int $trackSource = 0): St
 it('counts a monthly subscription in full and a yearly one as net/12', function () {
     insertStatsUser('u-month', $this->team->id, $this->pid);
     insertStatsUser('u-year', $this->team->id, $this->pid);
-    insertPayment('p-month', 'u-month', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
-    insertPayment('p-year', 'u-year', $this->team->id, $this->pid, 1200, PaymentInterval::YEAR, '2026-06-15 10:00:00');
+    insertPayment('p-month', 'u-month', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-year', 'u-year', $this->team->id, $this->pid, 1200, SubscriptionInterval::YEAR, '2026-06-15 10:00:00');
 
     $snapshot = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21'));
 
@@ -86,8 +86,8 @@ it('counts a monthly subscription in full and a yearly one as net/12', function 
 
 it('deduplicates per user and only counts the latest recurring payment', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-old', 'u-1', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-06-01 10:00:00');
-    insertPayment('p-new', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-old', 'u-1', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-06-01 10:00:00');
+    insertPayment('p-new', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     $snapshot = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21'));
 
@@ -97,7 +97,7 @@ it('deduplicates per user and only counts the latest recurring payment', functio
 it('drops a subscription whose last payment falls outside the interval window (churn)', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // Last monthly payment in April, snapshot in June -> well past month + grace.
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-04-01 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-04-01 10:00:00');
 
     $snapshot = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21'));
 
@@ -117,7 +117,7 @@ it('ignores one-time payments', function () {
 it('reflects subscription growth between range start and range end', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // First payment lands inside the month range (after start, before end).
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 40, PaymentInterval::MONTH, '2026-06-10 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 40, SubscriptionInterval::MONTH, '2026-06-10 10:00:00');
 
     $filter = new StatsFilterDto(
         projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::MONTH,
@@ -141,8 +141,8 @@ it('attributes MRR per channel via the source filter', function () {
 
     insertStatsUser('u-newsletter', $this->team->id, $this->pid, $sourceId);
     insertStatsUser('u-direct', $this->team->id, $this->pid, null);
-    insertPayment('p-newsletter', 'u-newsletter', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
-    insertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 80, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-newsletter', 'u-newsletter', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     $unfiltered = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21'));
     $filtered = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21', $sourceId));
@@ -155,7 +155,7 @@ it('reports the same current MRR for day and month ranges (as-of now, not the fu
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // Last monthly payment on May 20: still active today (June 21, within grace),
     // but already lapsed relative to the month-end (June 30) bucket boundary.
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 60, PaymentInterval::MONTH, '2026-05-20 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 60, SubscriptionInterval::MONTH, '2026-05-20 10:00:00');
 
     $day = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21'));
 
@@ -170,7 +170,7 @@ it('reports the same current MRR for day and month ranges (as-of now, not the fu
 
 it('caps the latest time-series bucket at now so it matches the day snapshot', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 60, PaymentInterval::MONTH, '2026-05-20 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 60, SubscriptionInterval::MONTH, '2026-05-20 10:00:00');
 
     $series = $this->service->getMrrTimeSeries(new StatsFilterDto(
         projectId: $this->pid, rangeAmount: 6, rangeType: StatsRangeType::MONTH,
@@ -200,7 +200,7 @@ function monthFilter(int $projectId, string $rangeStart, int $rangeAmount, int $
 it('builds one MRR snapshot per bucket and reflects churn over time', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // One monthly payment in March that is never renewed -> active only in its window.
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-03-10 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-03-10 10:00:00');
 
     $series = $this->service->getMrrTimeSeries(monthFilter($this->pid, '2026-06-21', 6));
 
@@ -211,8 +211,8 @@ it('builds one MRR snapshot per bucket and reflects churn over time', function (
 it('normalises yearly to net/12 and counts monthly in full per bucket', function () {
     insertStatsUser('u-month', $this->team->id, $this->pid);
     insertStatsUser('u-year', $this->team->id, $this->pid);
-    insertPayment('p-month', 'u-month', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
-    insertPayment('p-year', 'u-year', $this->team->id, $this->pid, 1200, PaymentInterval::YEAR, '2026-06-15 10:00:00');
+    insertPayment('p-month', 'u-month', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-year', 'u-year', $this->team->id, $this->pid, 1200, SubscriptionInterval::YEAR, '2026-06-15 10:00:00');
 
     $series = $this->service->getMrrTimeSeries(dayFilter($this->pid, '2026-06-21'));
 
@@ -229,8 +229,8 @@ it('attributes the MRR line per channel via the source filter', function () {
 
     insertStatsUser('u-newsletter', $this->team->id, $this->pid, $sourceId);
     insertStatsUser('u-direct', $this->team->id, $this->pid, null);
-    insertPayment('p-newsletter', 'u-newsletter', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
-    insertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 80, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-newsletter', 'u-newsletter', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     $unfiltered = $this->service->getMrrTimeSeries(dayFilter($this->pid, '2026-06-21'));
     $filtered = $this->service->getMrrTimeSeries(dayFilter($this->pid, '2026-06-21', $sourceId));
@@ -248,7 +248,7 @@ it('returns a zero line when there are no recurring payments', function () {
 
 it('matches the headline snapshot on the latest bucket', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     $filter = dayFilter($this->pid, '2026-06-21');
 
@@ -262,8 +262,8 @@ it('counts active subscribers per bucket and drops them on churn', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertStatsUser('u-2', $this->team->id, $this->pid);
     // u-1 active in June, u-2 only paid in March -> churned by June, active in March.
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-06-15 10:00:00');
-    insertPayment('p-2', 'u-2', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-03-10 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('p-2', 'u-2', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-03-10 10:00:00');
 
     $series = $this->service->getMrrTimeSeries(monthFilter($this->pid, '2026-06-21', 6));
 
@@ -279,7 +279,7 @@ it('reports a zero subscriber count when there are no recurring payments', funct
 
 it('classifies a new subscription and its later churn as movements', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, PaymentInterval::MONTH, '2026-03-10 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-03-10 10:00:00');
 
     $movements = $this->service->getMrrMovements(monthFilter($this->pid, '2026-06-21', 6));
 
@@ -293,9 +293,9 @@ it('classifies a new subscription and its later churn as movements', function ()
 
 it('classifies plan changes as expansion and contraction', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-03-05 10:00:00');
-    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 80, PaymentInterval::MONTH, '2026-04-05 10:00:00');
-    insertPayment('p-3', 'u-1', $this->team->id, $this->pid, 60, PaymentInterval::MONTH, '2026-05-05 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-03-05 10:00:00');
+    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-04-05 10:00:00');
+    insertPayment('p-3', 'u-1', $this->team->id, $this->pid, 60, SubscriptionInterval::MONTH, '2026-05-05 10:00:00');
 
     $movements = $this->service->getMrrMovements(monthFilter($this->pid, '2026-06-21', 6));
 
@@ -308,8 +308,8 @@ it('classifies plan changes as expansion and contraction', function () {
 
 it('distinguishes reactivation from new when a user returns after churn', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-02-05 10:00:00');
-    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-05-05 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-02-05 10:00:00');
+    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-05-05 10:00:00');
 
     $movements = $this->service->getMrrMovements(monthFilter($this->pid, '2026-06-21', 6));
 
@@ -322,9 +322,9 @@ it('distinguishes reactivation from new when a user returns after churn', functi
 it('keeps starting + movements = ending per bucket', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertStatsUser('u-2', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-03-05 10:00:00');
-    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 80, PaymentInterval::MONTH, '2026-04-05 10:00:00');
-    insertPayment('p-3', 'u-2', $this->team->id, $this->pid, 120, PaymentInterval::YEAR, '2026-04-20 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-03-05 10:00:00');
+    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-04-05 10:00:00');
+    insertPayment('p-3', 'u-2', $this->team->id, $this->pid, 120, SubscriptionInterval::YEAR, '2026-04-20 10:00:00');
 
     $movements = $this->service->getMrrMovements(monthFilter($this->pid, '2026-06-21', 6));
 
@@ -349,16 +349,16 @@ it('derives nrr, grr and quick ratio from the movement totals', function () {
     insertStatsUser('u-churn', $this->team->id, $this->pid);
 
     // Active at range start (April leading bucket) and renewing across the range.
-    insertPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-04-15 10:00:00');
-    insertPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-05-15 10:00:00');
-    insertPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
-    insertPayment('e-1', 'u-expand', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-04-15 10:00:00');
-    insertPayment('e-2', 'u-expand', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-05-15 10:00:00');
-    insertPayment('e-3', 'u-expand', $this->team->id, $this->pid, 80, PaymentInterval::MONTH, '2026-06-15 10:00:00');
+    insertPayment('e-1', 'u-expand', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertPayment('e-2', 'u-expand', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertPayment('e-3', 'u-expand', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
     // Only active at range start, lapses inside the range.
-    insertPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, PaymentInterval::MONTH, '2026-04-15 10:00:00');
+    insertPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
 
     $retention = $this->service->getMrrRetention(monthFilter($this->pid, '2026-06-21', 2));
 
@@ -375,7 +375,7 @@ it('derives nrr, grr and quick ratio from the movement totals', function () {
 
 it('returns null retention ratios when there is no starting mrr', function () {
     insertStatsUser('u-1', $this->team->id, $this->pid);
-    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, PaymentInterval::MONTH, '2026-05-20 10:00:00');
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-05-20 10:00:00');
 
     $retention = $this->service->getMrrRetention(monthFilter($this->pid, '2026-06-21', 2));
 

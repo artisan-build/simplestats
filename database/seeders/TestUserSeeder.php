@@ -52,13 +52,13 @@ class TestUserSeeder extends Seeder
         AppHelper::setTeamContextFromAuth($user);
 
         // Outside the test suite the demo project also tracks subscriptions so the
-        // Subscriptions area has data; tests keep the default bitmask (no recurring).
+        // Subscriptions area has data; tests keep the default bitmask (no subscription).
         $usage = StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
 
         if (! app()->environment('testing')) {
-            $usage |= StatsService::TRACKING_USAGE_BITS_RECURRING;
+            $usage |= StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION;
         }
 
         Project::factory()

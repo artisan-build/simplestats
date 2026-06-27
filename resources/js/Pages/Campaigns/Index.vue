@@ -53,8 +53,8 @@ const analyzeCampaign = (row) => {
 };
 
 // Only projects that track subscriptions have a revenue view to drill into.
-const recurringBit = props.trackingUsageBits.recurring;
-const tracksRecurring = (projectId) => !! ((props.teamStats.projects[projectId]?.usage ?? 0) & recurringBit);
+const subscriptionBit = props.trackingUsageBits.subscription;
+const tracksSubscription = (projectId) => !! ((props.teamStats.projects[projectId]?.usage ?? 0) & subscriptionBit);
 
 const usersBit = props.trackingUsageBits.users;
 const tracksUsers = (projectId) => !! ((props.teamStats.projects[projectId]?.usage ?? 0) & usersBit);
@@ -153,7 +153,7 @@ onMounted(() => startCampaignsTour());
                                 <button type="button" aria-label="Analyze in dashboard" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze in dashboard'" @click="analyzeCampaign(row)">
                                     <DashboardIcon class="size-5" />
                                 </button>
-                                <button v-if="tracksRecurring(row.project_id)" type="button" aria-label="Analyze revenue" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze revenue'" @click="analyzeCampaignRevenue(row)">
+                                <button v-if="tracksSubscription(row.project_id)" type="button" aria-label="Analyze revenue" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze revenue'" @click="analyzeCampaignRevenue(row)">
                                     <Wallet2Icon class="size-5" />
                                 </button>
                                 <button v-if="tracksUsers(row.project_id)" type="button" aria-label="Analyze retention" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze retention'" @click="analyzeCampaignRetention(row)">

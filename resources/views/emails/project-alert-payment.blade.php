@@ -15,7 +15,7 @@
 @endif
 |**Time**|{{ $statsPayment->time->format('H:i:s') }}|
 @foreach($statsTypes as $statsType)
-@if($stat = $statsPerson->stats['stats'.ucfirst(Str::camel($statsType['type']))] ?? null)
+@if($statsPerson && ($stat = $statsPerson->stats['stats'.ucfirst(Str::camel($statsType['type']))] ?? null))
 |**{{ str($statsType['title'])->singular() }}**|{{ $stat['name'] }}|
 @endif
 @endforeach

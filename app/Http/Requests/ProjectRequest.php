@@ -49,8 +49,8 @@ class ProjectRequest extends FormRequest
                 function (string $attribute, mixed $value, Closure $fail): void {
                     $required = StatsService::TRACKING_USAGE_BITS_USERS | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
 
-                    if (($value & StatsService::TRACKING_USAGE_BITS_RECURRING) && (($value & $required) !== $required)) {
-                        $fail('Recurring revenue tracking requires both Registrations and Payments.');
+                    if (($value & StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION) && (($value & $required) !== $required)) {
+                        $fail('Subscription tracking requires both Registrations and Payments.');
                     }
                 },
             ],

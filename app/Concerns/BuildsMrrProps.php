@@ -14,7 +14,7 @@ trait BuildsMrrProps
      */
     protected function buildMrrSnapshot(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksRecurring($teamStats, $filters)) {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
             return null;
         }
 
@@ -26,7 +26,7 @@ trait BuildsMrrProps
      */
     protected function buildMrrTimeSeries(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksRecurring($teamStats, $filters)) {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
             return null;
         }
 
@@ -50,7 +50,7 @@ trait BuildsMrrProps
      */
     protected function buildMrrMovements(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksRecurring($teamStats, $filters)) {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
             return null;
         }
 
@@ -62,7 +62,7 @@ trait BuildsMrrProps
      */
     protected function buildMrrRetention(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksRecurring($teamStats, $filters)) {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
             return null;
         }
 
@@ -74,7 +74,7 @@ trait BuildsMrrProps
      */
     protected function buildRevenueChurn(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->projectTracksRecurring($teamStats, $filters)) {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
             return null;
         }
 
@@ -82,12 +82,12 @@ trait BuildsMrrProps
     }
 
     /**
-     * Gated on the explicit RECURRING intent bit (not on whether a subscription
+     * Gated on the explicit SUBSCRIPTION intent bit (not on whether a subscription
      * payment already arrived) so a fresh subscription project shows an empty MRR
      * line from day one instead of the chart appearing only after its first payment.
      */
-    protected function projectTracksRecurring(Team $teamStats, StatsFilterDto $filters): bool
+    protected function projectTracksSubscription(Team $teamStats, StatsFilterDto $filters): bool
     {
-        return $this->projectTracksBit($teamStats, $filters, StatsService::TRACKING_USAGE_BITS_RECURRING);
+        return $this->projectTracksBit($teamStats, $filters, StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION);
     }
 }

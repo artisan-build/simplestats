@@ -79,9 +79,10 @@ class Transaction extends Model implements TrackablePayment
     }
 
     /**
-     * The billing interval for recurring payments, or null for one-time payments.
+     * The subscription a recurring payment belongs to (plan and billing
+     * interval), or null for a one-time payment.
      */
-    public function getTrackingRecurringInterval(): ?PaymentInterval
+    public function getTrackingSubscription(): ?TrackingSubscription
     {
         return null;
     }
@@ -100,29 +101,32 @@ You may tweak the defined methods to your needs and apply any logic you need the
 Remember that **Gross** and **Net** must return cents!
 :::
 
-### Recurring payments
+### Subscriptions
 
-`getTrackingRecurringInterval()` tells _SimpleStats_ whether a payment is part of a recurring subscription and how often it renews. Return a `PaymentInterval` for recurring payments, or `null` for one-time payments. This is what lets us compute recurring revenue metrics (MRR/ARR) down the line.
+`getTrackingSubscription()` tells _SimpleStats_ whether a payment is part of a subscription, which plan it belongs to and how often it renews. Return a `TrackingSubscription` for subscription payments, or `null` for one-time payments. This is what lets us compute recurring revenue metrics (MRR/ARR) and segment them by plan down the line.
+
+The `TrackingSubscription` value object takes a `plan` (a free-form string, e.g. `Starter`, `Business`, or `null` if you don't track plans) and an `interval` (`SubscriptionInterval::Month` or `SubscriptionInterval::Year`).
 
 ```php
-use SimpleStatsIo\LaravelClient\Enums\PaymentInterval;
+use SimpleStatsIo\LaravelClient\Data\TrackingSubscription;
+use SimpleStatsIo\LaravelClient\Enums\SubscriptionInterval;
 
 class Transaction extends Model implements TrackablePayment
 {
     //..
 
-    public function getTrackingRecurringInterval(): ?PaymentInterval
+    public function getTrackingSubscription(): ?TrackingSubscription
     {
         return match ($this->billing_cycle) {
-            'monthly' => PaymentInterval::Month,
-            'yearly' => PaymentInterval::Year,
+            'monthly' => new TrackingSubscription($this->plan_name, SubscriptionInterval::Month),
+            'yearly' => new TrackingSubscription($this->plan_name, SubscriptionInterval::Year),
             default => null, // one-time payment
         };
     }
 }
 ```
 
-The available intervals are `PaymentInterval::Month` and `PaymentInterval::Year`.
+The available intervals are `SubscriptionInterval::Month` and `SubscriptionInterval::Year`. The plan is optional, pass `null` if you don't want to track it.
 
 ### Payment Tracking for Visitors
 

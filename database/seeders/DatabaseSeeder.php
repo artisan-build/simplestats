@@ -125,7 +125,7 @@ class DatabaseSeeder extends Seeder
         $usage = StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS
             | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_RECURRING;
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION;
 
         Project::factory()->count(1)->state(['name' => 'SimpleStats', 'usage' => $usage])
             ->for(Team::find($user->current_team_id))

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\PaymentInterval;
+use App\Enums\SubscriptionInterval;
 use App\Models\Team;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -85,7 +85,7 @@ class SubscriptionService
         return $savings > 0 ? $savings : null;
     }
 
-    public function intervalForPriceId(?string $priceId): ?PaymentInterval
+    public function intervalForPriceId(?string $priceId): ?SubscriptionInterval
     {
         if (! $priceId) {
             return null;
@@ -93,10 +93,25 @@ class SubscriptionService
 
         foreach (config('spark.billables.user.plans', []) as $plan) {
             if (($plan['monthly_id'] ?? null) === $priceId) {
-                return PaymentInterval::MONTH;
+                return SubscriptionInterval::MONTH;
             }
             if (($plan['yearly_id'] ?? null) === $priceId) {
-                return PaymentInterval::YEAR;
+                return SubscriptionInterval::YEAR;
+            }
+        }
+
+        return null;
+    }
+
+    public function planForPriceId(?string $priceId): ?string
+    {
+        if (! $priceId) {
+            return null;
+        }
+
+        foreach (config('spark.billables.user.plans', []) as $plan) {
+            if (in_array($priceId, [$plan['monthly_id'] ?? null, $plan['yearly_id'] ?? null], true)) {
+                return $plan['name'] ?? null;
             }
         }
 

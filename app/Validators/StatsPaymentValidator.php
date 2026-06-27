@@ -2,7 +2,7 @@
 
 namespace App\Validators;
 
-use App\Enums\PaymentInterval;
+use App\Enums\SubscriptionInterval;
 use App\Services\ExchangeRateService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Validator;
@@ -46,8 +46,11 @@ class StatsPaymentValidator extends BaseStatsValidator
         if (! isset($input['orig_currency'])) {
             $input['orig_currency'] = null;
         }
-        if (! isset($input['recurring_interval'])) {
-            $input['recurring_interval'] = null;
+        if (! isset($input['subscription_interval'])) {
+            $input['subscription_interval'] = null;
+        }
+        if (! isset($input['subscription_plan'])) {
+            $input['subscription_plan'] = null;
         }
 
         // check if we have to convert currencies
@@ -93,7 +96,8 @@ class StatsPaymentValidator extends BaseStatsValidator
             'orig_gross' => ['sometimes', 'nullable', 'numeric'],
             'orig_net' => ['sometimes', 'nullable', 'numeric'],
             'orig_currency' => ['sometimes', 'nullable', new Currency],
-            'recurring_interval' => ['sometimes', 'nullable', Rule::enum(PaymentInterval::class)],
+            'subscription_interval' => ['sometimes', 'nullable', Rule::enum(SubscriptionInterval::class)],
+            'subscription_plan' => ['sometimes', 'nullable', 'string', 'max:255'],
         ]);
     }
 }

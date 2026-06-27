@@ -44,7 +44,7 @@ const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, pr
 
 const showsRevenue = currentProjectHasTrackingUsageBits(['payments']);
 const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
-const showsRecurring = currentProjectHasTrackingUsageBits(['recurring']);
+const showsSubscription = currentProjectHasTrackingUsageBits(['subscription']);
 
 const neutral = 'text-gray-950 dark:text-white';
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);
@@ -123,7 +123,7 @@ const unlink = (trackCampaign) => {
                 <SecondaryButton @click="analyzeIn('dashboard')">
                     <DashboardIcon class="size-4 mr-1.5" /> Dashboard
                 </SecondaryButton>
-                <SecondaryButton v-if="showsRecurring" @click="analyzeIn('revenue')">
+                <SecondaryButton v-if="showsSubscription" @click="analyzeIn('revenue')">
                     <Wallet2Icon class="size-4 mr-1.5" /> Revenue
                 </SecondaryButton>
                 <SecondaryButton v-if="showsRegistrations" @click="analyzeIn('retention')">

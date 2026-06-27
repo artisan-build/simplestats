@@ -65,7 +65,7 @@ class HandleInertiaRequests extends Middleware
                 $merge['currentPlanOptions'] = $currentTeam->owner->sparkPlan()->options;
                 $merge['teamTracksUsers'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_USERS);
                 $merge['teamTracksPayments'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_PAYMENTS);
-                $merge['teamTracksRecurring'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_RECURRING);
+                $merge['teamTracksSubscription'] = $currentTeam->tracksUsage(StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION);
                 $merge['campaignsTourCompleted'] = $request->user()->settings['campaignsTourCompleted'] ?? false;
             }
         }

@@ -40,7 +40,7 @@ const showFeedbackModal = ref(false);
                     Dashboard
                 </NavLink>
             </li>
-            <li v-if="$page.props.teamTracksRecurring" class="flex flex-col gap-y-1">
+            <li v-if="$page.props.teamTracksSubscription" class="flex flex-col gap-y-1">
                 <NavLink :href="route('revenue')" :active="route().current().startsWith('revenue')">
                     <template #icon>
                         <Wallet2Icon class="size-6" />

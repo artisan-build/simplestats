@@ -273,19 +273,19 @@ const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProje
 
 const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
 
-const recurringShown = currentProjectHasTrackingUsageBits(['payments', 'users']) && !! props.mrrSeries?.length;
+const subscriptionShown = currentProjectHasTrackingUsageBits(['payments', 'users']) && !! props.mrrSeries?.length;
 
 // A KPI shows when its tier is within the active preset AND the project tracks
 // the required bits. exceptBits excludes a KPI when an additional bit is present
 // (e.g. NAU only as the Activity fallback for projects without payments).
-// hideWhenRecurring drops the fallback Net in the average-revenue chart when the
+// hideWhenSubscription drops the fallback Net in the average-revenue chart when the
 // recurring revenue chart already carries Net.
 const kpiVisible = (kpi) =>
     PRESET_RANK[kpi.tier] <= presetRank
     && (! kpi.bits || currentProjectHasTrackingUsageBits(kpi.bits))
     && (! kpi.exceptBits || ! currentProjectHasTrackingUsageBits(kpi.exceptBits))
-    && (! kpi.requiresRecurring || recurringShown)
-    && ! (kpi.hideWhenRecurring && recurringShown)
+    && (! kpi.requiresSubscription || subscriptionShown)
+    && ! (kpi.hideWhenSubscription && subscriptionShown)
     && ! (cohortActive && COHORT_NA_KPIS.includes(kpi.key));
 
 const chartDefs = [
@@ -300,16 +300,16 @@ const chartDefs = [
     },
     {
         // When recurring revenue exists, Net lives in the Revenue chart and this one is the pure ARP* family; otherwise it carries Net and is the project's revenue chart.
-        name: recurringShown ? 'Average Revenue' : 'Revenue',
+        name: subscriptionShown ? 'Average Revenue' : 'Revenue',
         order: 4,
         group: [
-            {key: 'pd_net', formatter: 'currency', tier: 'simple', bits: ['payments'], hideWhenRecurring: true, tooltipExtra: [{key: 'pd_gross', label: 'Gross'}, {key: 'pd_fee', label: 'Fee'}], indicatorCallback: () => statsSum.pd_net},
+            {key: 'pd_net', formatter: 'currency', tier: 'simple', bits: ['payments'], hideWhenSubscription: true, tooltipExtra: [{key: 'pd_gross', label: 'Gross'}, {key: 'pd_fee', label: 'Fee'}], indicatorCallback: () => statsSum.pd_net},
             {key: 'lt_arpu', formatter: 'currency', tier: 'advanced', bits: ['payments', 'users'], indicatorCallback: () => lastStat('lt_arpu')},
             // Revenue per visitor is tiny, so 2 decimals lose all granularity; show 3.
             // Simple-tier for payment projects without users (they have no MRR chart to anchor revenue).
             {key: 'lt_arpv', formatter: 'currency', decimals: 3, tier: 'simple', bits: ['payments', 'visitors'], exceptBits: ['users'], indicatorCallback: () => lastStat('lt_arpv')},
             {key: 'lt_arpv', formatter: 'currency', decimals: 3, tier: 'advanced', bits: ['payments', 'visitors', 'users'], indicatorCallback: () => lastStat('lt_arpv')},
-            {key: 'arps', formatter: 'currency', tier: 'advanced', bits: ['payments', 'users'], requiresRecurring: true, indicatorCallback: () => lastStat('arps')},
+            {key: 'arps', formatter: 'currency', tier: 'advanced', bits: ['payments', 'users'], requiresSubscription: true, indicatorCallback: () => lastStat('arps')},
         ],
     },
     {
@@ -388,7 +388,7 @@ charts.forEach(function(chartGroup) {
 
 // Pushed after the loop above so its pre-built snapshot data is not overwritten
 // by extractStatsData4Chart (which reads the period-summed teamStats.stats).
-if (currentProjectHasTrackingUsageBits(['recurring']) && props.mrrSeries?.length) {
+if (currentProjectHasTrackingUsageBits(['subscription']) && props.mrrSeries?.length) {
     charts.push(buildMrrChart(props.mrrSeries));
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\PaymentInterval;
+use App\Enums\SubscriptionInterval;
 use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\StatsPayment;
@@ -30,6 +30,16 @@ function validPaymentPayload(array $overrides = []): array
         'net' => 8399,
         'currency' => 'EUR',
     ], $overrides);
+}
+
+// Attributes the payment to a stats user so the subscription assertions exercise
+// the persistence path without depending on the person-less payment alert flow.
+function subscriptionPaymentPayload(array $overrides = []): array
+{
+    return validPaymentPayload(array_merge([
+        'stats_user_id' => (string) fake()->unique()->randomNumber(5),
+        'stats_user_time' => now()->subDay()->format('Y-m-d H:i:s P'),
+    ], $overrides));
 }
 
 function setPaymentProjectContext($project): void
@@ -165,19 +175,12 @@ test('payment is created with correct amounts', function () {
         ->and($payment->net)->toBe(4200.0);
 });
 
-test('recurring_interval is stored when provided', function () {
-    $payload = validPaymentPayload(['recurring_interval' => 'month']);
+test('payment alert does not crash for a payment without an attributed person', function () {
+    // The project's default payment alert fires on creation; a payment with
+    // neither a stats user nor a visitor must still render the alert (amount
+    // and time only) instead of dereferencing a null person.
+    expect($this->project->userAlertNotifications()->where('settings->tracking->payments', true)->exists())->toBeTrue();
 
-    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
-
-    setPaymentProjectContext($this->project);
-
-    $payment = StatsPayment::where('id', $payload['id'])->first();
-    expect($payment)->not->toBeNull()
-        ->and($payment->recurring_interval)->toBe(PaymentInterval::MONTH);
-});
-
-test('recurring_interval defaults to null for one-time payments', function () {
     $payload = validPaymentPayload();
 
     $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
@@ -186,18 +189,56 @@ test('recurring_interval defaults to null for one-time payments', function () {
 
     $payment = StatsPayment::where('id', $payload['id'])->first();
     expect($payment)->not->toBeNull()
-        ->and($payment->recurring_interval)->toBeNull();
+        ->and($payment->stats_user_id)->toBeNull()
+        ->and($payment->stats_visitor_id)->toBeNull();
 });
 
-test('validation fails when recurring_interval is invalid', function () {
+test('subscription_interval is stored when provided', function () {
+    $payload = subscriptionPaymentPayload(['subscription_interval' => 'month']);
+
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
+
+    setPaymentProjectContext($this->project);
+
+    $payment = StatsPayment::where('id', $payload['id'])->first();
+    expect($payment)->not->toBeNull()
+        ->and($payment->subscription_interval)->toBe(SubscriptionInterval::MONTH);
+});
+
+test('subscription_plan is stored when provided', function () {
+    $payload = subscriptionPaymentPayload(['subscription_interval' => 'month', 'subscription_plan' => 'Business']);
+
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
+
+    setPaymentProjectContext($this->project);
+
+    $payment = StatsPayment::where('id', $payload['id'])->first();
+    expect($payment)->not->toBeNull()
+        ->and($payment->subscription_plan)->toBe('Business');
+});
+
+test('subscription_interval defaults to null for one-time payments', function () {
+    $payload = subscriptionPaymentPayload();
+
+    $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
+
+    setPaymentProjectContext($this->project);
+
+    $payment = StatsPayment::where('id', $payload['id'])->first();
+    expect($payment)->not->toBeNull()
+        ->and($payment->subscription_interval)->toBeNull()
+        ->and($payment->subscription_plan)->toBeNull();
+});
+
+test('validation fails when subscription_interval is invalid', function () {
     $response = $this->postJson(
         '/api/v1/stats-payment',
-        validPaymentPayload(['recurring_interval' => 'weekly']),
+        validPaymentPayload(['subscription_interval' => 'weekly']),
         apiHeaders($this->token),
     );
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors('recurring_interval');
+        ->assertJsonValidationErrors('subscription_interval');
 });
 
 test('payment with stats_user_id is stored correctly and StatsUser is auto-created', function () {
