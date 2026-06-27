@@ -15,7 +15,7 @@ const submitToggle = () => {
 <template>
     <form @submit.prevent="submitToggle" class="hidden lg:block">
         <InputLabel class="hidden" for="menu" value="&nbsp;" />
-        <button title="Toggle Sidebar" type="submit" class="text-gray-400 hover:text-gray-600 block p-3 pl-0">
+        <button type="submit" aria-label="Toggle Sidebar" class="text-gray-400 hover:text-gray-600 block p-3 pl-0">
             <SidebarIcon v-if="$page.props.auth.user.settings?.showMenu ?? true" class="size-6" />
             <SidebarInsetIcon v-else class="size-6" />
         </button>

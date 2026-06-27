@@ -181,10 +181,10 @@ const unlink = (trackCampaign) => {
                             :key="utm.id"
                             :href="route('dashboard', {...filters, project_id: campaign.project_id, track_campaign: utm.id})"
                             class="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-500 dark:text-dark-100 hover:bg-indigo-200 dark:hover:bg-indigo-400 border rounded-md px-2 py-1 text-sm font-mono"
-                            title="Analyse this utm_campaign in the dashboard"
+                            v-tooltip="'Analyse this utm_campaign in the dashboard'"
                         >
                             {{ utm.name }}
-                            <button type="button" class="text-indigo-400 hover:text-red-700 dark:text-indigo-100 dark:hover:text-red-300" title="Unlink" @click.stop.prevent="unlink(utm)">
+                            <button type="button" aria-label="Unlink" class="text-indigo-400 hover:text-red-700 dark:text-indigo-100 dark:hover:text-red-300" v-tooltip="'Unlink'" @click.stop.prevent="unlink(utm)">
                                 <XLgIcon class="size-4" />
                             </button>
                         </Link>
@@ -240,8 +240,8 @@ const unlink = (trackCampaign) => {
                         <td class="w-px border-t px-6 py-4">
                             <button
                                 type="button"
+                                aria-label="Delete"
                                 class="text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                                title="Delete"
                                 @click.stop="deleting = spend"
                             >
                                 <TrashIcon class="size-5" />

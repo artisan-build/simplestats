@@ -42,11 +42,14 @@ const setPreset = (preset) => {
         <InputLabel class="hidden" for="dashboardPreset" value="&nbsp;" />
         <Dropdown align="right" width="48">
             <template #trigger>
-                <SecondaryButton title="Dashboard detail level" style="margin-top:3px;" class="py-3">
+                <SecondaryButton aria-label="Dashboard detail level" style="margin-top:3px;" class="py-3">
                     <EyeIcon class="size-4" />
                 </SecondaryButton>
             </template>
             <template #content>
+                <div class="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-dark-400">
+                    Dashboard details
+                </div>
                 <button
                     v-for="preset in presets"
                     :key="preset.id"

@@ -318,6 +318,18 @@ Jobs include automatic retry logic for fault tolerance.
 
 - Never use the browser's native `confirm()` dialog. Always use the `ConfirmationModal` component (`@/Components/ConfirmationModal.vue`) for delete or destructive action confirmations.
 
+### Tooltips
+
+- For hover tooltips always use the `v-tooltip` directive (floating-vue, registered globally in `resources/js/app.js`). Never use the native HTML `title` attribute for tooltips.
+- Static text: `v-tooltip="'Label'"` (note the inner quotes, the directive takes a JS expression). Dynamic value: `v-tooltip="expr"`. With HTML/placement: `v-tooltip.left="{ content, html: true }"` (see `StatsFilter.vue` / `Components/InfoTooltip.vue`).
+- The directive works on plain elements and on components (it attaches to the component's root element, e.g. `SecondaryButton`).
+- **`v-tooltip` is not a full replacement for `title`'s accessibility role.** A tooltip is a *visual* hint only: floating-vue does not give the element an accessible name (it only adds a transient `aria-describedby` while open). The native `title` weakly did, so blindly swapping `title` → `v-tooltip` on an icon-only control silently removes its name for screen readers.
+  - Element already has a **visible text** label (accessible name present) → `v-tooltip` alone is fine. No `aria-label`, no `title`.
+  - **Icon-only** control (button/link whose content is only an SVG icon) → add `aria-label="…"` for accessibility, plus `v-tooltip` for the visual hint when a hover hint is wanted. Think of `aria-label` as the real replacement for `title`'s name role, and `v-tooltip` as the separate visual layer.
+- **Never set `title` and `v-tooltip` on the same element** — the browser shows the native tooltip on top of the floating one (double tooltip).
+- Before adding a tooltip at all, ask whether it earns its place: skip it when the icon is a universal convention (trash = delete, refresh = reload) or the meaning is otherwise obvious. Prefer a visible label or a dropdown header over a permanent hover-only hint where it fits.
+- `title` may still be used where it is not a tooltip: genuine accessibility/semantic attributes (e.g. an `<iframe title>`), `title` props of custom components, and the `<Head :title>` page title.
+
 ### Icons
 
 - Always use **Bootstrap Icons** (the `bootstrap-icons` package), imported as SVG components via `vite-svg-loader`. Import the icon SVG with the `?component` query and render it like any Vue component: `import ChartPieIcon from 'bootstrap-icons/icons/pie-chart.svg?component';` then `<ChartPieIcon class="size-6" />`. Never hand-write an inline `<svg>` path for a UI icon, and do not build custom/own icon SVGs when a Bootstrap Icon fits.

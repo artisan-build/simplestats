@@ -244,7 +244,7 @@ const showPresetModal = ref(false);
                                             @change="filterChanged"
                                         />
                                     </div>
-                                    <button type="button" @click="showPresetModal = true" title="Manage Presets" class="mt-1 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
+                                    <button type="button" aria-label="Manage Presets" @click="showPresetModal = true" class="mt-1 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
                                         <GearIcon class="size-5" />
                                     </button>
                                 </div>
@@ -276,7 +276,7 @@ const showPresetModal = ref(false);
                                 </div>
                                 <div class="">
                                     <InputLabel class="hidden" for="refresh" value="&nbsp;" />
-                                    <SecondaryButton type="submit" title="Reload" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                    <SecondaryButton type="submit" aria-label="Reload" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                                         <RefreshIcon class="size-4" />
                                         <span class="ml-2 hidden">Refresh</span>
                                     </SecondaryButton>

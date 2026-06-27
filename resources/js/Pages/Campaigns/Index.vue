@@ -132,7 +132,7 @@ onMounted(() => startCampaignsTour());
                         class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
                     >
                         <td class="border-t px-6 py-4 font-medium">
-                            <button type="button" class="text-left text-indigo-600 dark:text-indigo-400 hover:underline" title="Manage ad spend" @click="manageCampaign(row)">
+                            <button type="button" class="text-left text-indigo-600 dark:text-indigo-400 hover:underline" v-tooltip="'Manage ad spend'" @click="manageCampaign(row)">
                                 {{ row.name }}
                             </button>
                         </td>
@@ -150,13 +150,13 @@ onMounted(() => startCampaignsTour());
                         <td v-if="showsRegistrations" class="border-t px-6 py-4 text-right tabular-nums">{{ row.cac === null ? '–' : currency(row.cac) }}</td>
                         <td class="w-px border-t px-6 py-4">
                             <div class="flex items-center justify-end gap-2">
-                                <button type="button" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" title="Analyze in dashboard" @click="analyzeCampaign(row)">
+                                <button type="button" aria-label="Analyze in dashboard" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze in dashboard'" @click="analyzeCampaign(row)">
                                     <DashboardIcon class="size-5" />
                                 </button>
-                                <button v-if="tracksRecurring(row.project_id)" type="button" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" title="Analyze revenue" @click="analyzeCampaignRevenue(row)">
+                                <button v-if="tracksRecurring(row.project_id)" type="button" aria-label="Analyze revenue" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze revenue'" @click="analyzeCampaignRevenue(row)">
                                     <Wallet2Icon class="size-5" />
                                 </button>
-                                <button v-if="tracksUsers(row.project_id)" type="button" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" title="Analyze retention" @click="analyzeCampaignRetention(row)">
+                                <button v-if="tracksUsers(row.project_id)" type="button" aria-label="Analyze retention" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze retention'" @click="analyzeCampaignRetention(row)">
                                     <RetentionIcon class="size-5" />
                                 </button>
                             </div>

@@ -7,7 +7,6 @@ import InfoTooltip from "@/Components/InfoTooltip.vue";
 
 const props = defineProps({
     label: String,
-    description: {type: String, default: null},
     value: Number,
     formatter: String,
     // intra-period change in percent, or null when no meaningful comparison exists
@@ -41,7 +40,7 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
 </script>
 
 <template>
-    <div class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3" :title="description">
+    <div class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
         <div class="flex justify-between items-center text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
             <span>{{ label }}</span>
             <span class="inline-flex items-center gap-1">
