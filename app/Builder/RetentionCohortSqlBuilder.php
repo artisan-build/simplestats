@@ -76,6 +76,8 @@ class RetentionCohortSqlBuilder extends BaseSqlBuilder
             SELECT
                 b.idx AS cohort_idx,
                 '.$this->getDateFormat('b.bucket_start', ':dateFormat').' AS cohort_label,
+                '.$this->getDateFormat('b.bucket_start', 'YYYY-MM-DD HH24:MI:SS').' AS cohort_start,
+                '.$this->getDateFormat('b.bucket_end', 'YYYY-MM-DD HH24:MI:SS').' AS cohort_end,
                 COALESCE(cs.cohort_size, 0) AS cohort_size,
                 r.period_offset,
                 r.retained

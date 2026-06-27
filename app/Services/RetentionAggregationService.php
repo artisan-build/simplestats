@@ -37,7 +37,11 @@ class RetentionAggregationService
      * view can resolve a relative period of a cohort to its real calendar bucket
      * (cohort at idx, period p => bucket_labels[idx + p]) for the per-cell tooltip.
      *
-     * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, retention: array<int, float|null>}>}
+     * Each cohort also carries its raw bucket window (cohort_start/cohort_end, naive
+     * team-tz strings straight from the DB) so a drill-down link can scope the
+     * dashboard to exactly this registration window without re-deriving the bounds.
+     *
+     * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, cohort_start: string, cohort_end: string, retention: array<int, float|null>}>}
      */
     public function getRetentionCohorts(StatsFilterDto $filters): array
     {
@@ -50,8 +54,8 @@ class RetentionAggregationService
     }
 
     /**
-     * @param  array<int, array{cohort_idx: int, cohort_label: string, cohort_size: int, period_offset: ?int, retained: ?int}>  $rows
-     * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, retention: array<int, float|null>}>}
+     * @param  array<int, array{cohort_idx: int, cohort_label: string, cohort_start: string, cohort_end: string, cohort_size: int, period_offset: ?int, retained: ?int}>  $rows
+     * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, cohort_start: string, cohort_end: string, retention: array<int, float|null>}>}
      */
     private function pivotCohorts(array $rows, int $rangeAmount): array
     {
@@ -66,6 +70,8 @@ class RetentionAggregationService
             if (! isset($byCohort[$idx])) {
                 $byCohort[$idx] = [
                     'cohort' => $row['cohort_label'],
+                    'cohort_start' => $row['cohort_start'],
+                    'cohort_end' => $row['cohort_end'],
                     'size' => (int) $row['cohort_size'],
                     'periods' => [],
                 ];
@@ -118,6 +124,8 @@ class RetentionAggregationService
                 'cohort' => $cohort['cohort'],
                 'idx' => $idx,
                 'size' => $size,
+                'cohort_start' => $cohort['cohort_start'],
+                'cohort_end' => $cohort['cohort_end'],
                 'retention' => $retention,
             ];
         }

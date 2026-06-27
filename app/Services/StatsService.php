@@ -195,6 +195,11 @@ class StatsService
         $formatted = collect((array) $filters)
             ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => $value])
             ->merge(['range_start' => $filters->rangeStart->format('Y-m-d')])
+            // Carbon instances must reach the frontend as naive strings, not objects.
+            ->merge([
+                'cohort_start' => $filters->cohortStart?->format('Y-m-d H:i:s'),
+                'cohort_end' => $filters->cohortEnd?->format('Y-m-d H:i:s'),
+            ])
             ->except('custom_preset_id')
             ->filter()
             ->toArray();

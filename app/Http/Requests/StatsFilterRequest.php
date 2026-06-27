@@ -119,6 +119,9 @@ class StatsFilterRequest extends FormRequest
             'range_type' => ['sometimes', Rule::enum(StatsRangeType::class)],
             'range_amount' => ['sometimes', 'integer'],
             'range_start' => ['sometimes', 'date'],
+            'cohort_start' => ['sometimes', 'nullable', 'date'],
+            'cohort_end' => ['sometimes', 'nullable', 'date'],
+            'cohort_label' => ['sometimes', 'nullable', 'string'],
             'comparison' => [
                 'sometimes',
                 new Enum(ComparisonType::class),

@@ -77,7 +77,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return 'pd_reg_cte AS (
             SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_users stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionUser :propertyConditionUser
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionUser :propertyConditionUser :cohortConditionUser
             GROUP BY date
         )";
     }
@@ -223,7 +223,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT COUNT(*)
                     FROM stats_users stats
-                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingCondition :eventConditionUser :propertyConditionUser
+                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingCondition :eventConditionUser :propertyConditionUser :cohortConditionUser
                 ) AS count
             FROM date_sequence ds
         )";
@@ -278,7 +278,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
         return 'pd_visitors_cte AS (
             SELECT '.$this->getDateFormat('stats.time', ':dateFormat')." AS date, COUNT(*) AS count
             FROM stats_visitors stats
-            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionVisitor :propertyConditionVisitor
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionVisitor :propertyConditionVisitor :cohortConditionVisitor
             GROUP BY date
         )";
     }
@@ -337,7 +337,7 @@ class StatsAggregationsSqlBuilder extends BaseSqlBuilder
                 (
                     SELECT COUNT(*)
                     FROM stats_visitors stats
-                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingCondition :eventConditionVisitor :propertyConditionVisitor
+                    WHERE :projectCondition AND stats.time < ':startDateStart' :trackingCondition :eventConditionVisitor :propertyConditionVisitor :cohortConditionVisitor
                 ) AS count
             FROM date_sequence ds
         )";

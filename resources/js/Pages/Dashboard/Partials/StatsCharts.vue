@@ -28,6 +28,19 @@ const dashboardPreset = page.props.auth.user.settings.dashboardPreset ?? 'advanc
 const presetRank = PRESET_RANK[dashboardPreset] ?? 0;
 const isExpertLayout = dashboardPreset === 'expert';
 
+// A registration cohort is a set of registered users and has no visitor leg, so
+// visitor-derived KPIs (unique visitors, conversion rate, revenue per visitor)
+// are not applicable and are dropped from the funnel while a cohort is active.
+const cohortActive = !! props.filters.cohort_start;
+const COHORT_NA_KPIS = ['pd_visitor', 'pd_cr', 'lt_arpv'];
+
+// range_start is the period's end anchor; if it predates the cohort's first
+// signup, the whole observation window sits before the cohort exists and every
+// metric is empty. Surface that instead of letting it look like "no activity".
+const cohortStartsAfterPeriod = cohortActive
+    && !! props.filters.range_start
+    && new Date(props.filters.range_start) < new Date(props.filters.cohort_start.slice(0, 10));
+
 const extractStatsData4Chart = (statsGroups) => {
     const data = Object.values(props.teamStats.stats).reduce((acc, item, key) => {
         for (let group of statsGroups) {
@@ -272,7 +285,8 @@ const kpiVisible = (kpi) =>
     && (! kpi.bits || currentProjectHasTrackingUsageBits(kpi.bits))
     && (! kpi.exceptBits || ! currentProjectHasTrackingUsageBits(kpi.exceptBits))
     && (! kpi.requiresRecurring || recurringShown)
-    && ! (kpi.hideWhenRecurring && recurringShown);
+    && ! (kpi.hideWhenRecurring && recurringShown)
+    && ! (cohortActive && COHORT_NA_KPIS.includes(kpi.key));
 
 const chartDefs = [
     {
@@ -400,6 +414,12 @@ if (chartLenght > 1) {
         <CampaignKpiBar v-if="campaignSummary" :summary="campaignSummary" :showsRegistrations="showsRegistrations" />
         <p v-else-if="filters.campaign" class="text-sm text-gray-500 dark:text-dark-400">
             Spend-based campaign KPIs (ROAS, CAC, net profit) only apply to the full campaign. Clear the other active filters to see them.
+        </p>
+        <p v-if="cohortActive" class="text-sm text-gray-500 dark:text-dark-400">
+            Showing only the selected registration cohort. Visitor-based metrics (Visitors, CR, ARPV) are not applicable and are hidden.
+        </p>
+        <p v-if="cohortStartsAfterPeriod" class="text-sm text-amber-600 dark:text-amber-400">
+            The selected period ends before this cohort signed up, so there is nothing to show. Widen the period to cover the time since their registration.
         </p>
         <div class="grid gap-4" :class="{
             'md:grid-cols-1': chartLenght === 1,

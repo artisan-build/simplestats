@@ -128,6 +128,23 @@ class StatsFilterConditionsBuilder
             $conditions['trackingConditionForEventsCe'] = " AND ce.stats_visitor_id IN (SELECT sv.id FROM stats_visitors sv WHERE sv.project_id = ce.project_id{$visitorCondition}) ";
         }
 
+        // Registration-cohort window: scope every user-linked metric to users who
+        // registered in [cohortStart, cohortEnd). A registration cohort has no
+        // visitor leg, so every stats_visitors surface is forced empty.
+        $conditions['cohortConditionUser'] = '';
+        $conditions['cohortConditionVisitor'] = '';
+
+        if ($filters->cohortStart !== null && $filters->cohortEnd !== null) {
+            $cohortStart = $filters->cohortStart->format('Y-m-d H:i:s');
+            $cohortEnd = $filters->cohortEnd->format('Y-m-d H:i:s');
+
+            $conditions['cohortConditionUser'] = " AND stats.time >= '{$cohortStart}' AND stats.time < '{$cohortEnd}' ";
+            $conditions['cohortConditionVisitor'] = ' AND 1 = 0 ';
+
+            $userEntityConditions .= " AND su.time >= '{$cohortStart}' AND su.time < '{$cohortEnd}' ";
+            $visitorEntityConditions .= ' AND 1 = 0 ';
+        }
+
         $conditions['eventConditionEventName'] = '';
         $conditions['eventConditionEventNameCe'] = '';
         $conditions['eventConditionGroup'] = '';

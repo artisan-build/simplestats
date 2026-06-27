@@ -10,7 +10,9 @@ import MenuToggler from "@/Components/MenuToggler.vue";
 import TextInput from "@/Components/TextInput.vue";
 import DashboardPresetSwitcher from "@/Pages/Dashboard/Partials/DashboardPresetSwitcher.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
+import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
+import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
 import DotIcon from 'bootstrap-icons/icons/dot.svg?component';
 import GearIcon from 'bootstrap-icons/icons/gear.svg?component';
 import InfoIcon from 'bootstrap-icons/icons/info-circle.svg?component';
@@ -37,7 +39,15 @@ const props = defineProps({
 
 const page = usePage();
 
-const form = useForm(props.filters);
+// Inertia's useForm only serializes keys present at init. The cohort fields are
+// dropped from props.filters when inactive, so they must be seeded explicitly,
+// otherwise selecting a cohort would never be sent with the request.
+const form = useForm({
+    ...props.filters,
+    cohort_start: props.filters.cohort_start ?? null,
+    cohort_end: props.filters.cohort_end ?? null,
+    cohort_label: props.filters.cohort_label ?? null,
+});
 
 const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
     id: (i + 1).toString(),
@@ -59,6 +69,9 @@ const filterChanged = (event) => {
         }
         form.property_value = 0;
         form.campaign = 0;
+        form.cohort_start = null;
+        form.cohort_end = null;
+        form.cohort_label = null;
     }
 
     if (form.preset && form.preset !== 'custom') {
@@ -107,7 +120,26 @@ function isStatsGroupSet() {
     );
 }
 
+const clearCohort = (e) => {
+    form.cohort_start = null;
+    form.cohort_end = null;
+    form.cohort_label = null;
+    filterChanged(e);
+};
+
+// The cohort window only narrows the users; the observation period stays
+// whatever is selected separately.
+const applyCohort = (payload) => {
+    form.cohort_start = payload.cohort_start;
+    form.cohort_end = payload.cohort_end;
+    form.cohort_label = payload.cohort_label;
+    submit();
+};
+
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
+
+const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, props.trackingUsageBits);
+const showCohortPicker = props.submitRoute !== 'retention' && currentProjectHasTrackingUsageBits(['users']);
 
 const showPresetModal = ref(false);
 </script>
@@ -230,6 +262,10 @@ const showPresetModal = ref(false);
                                     />
                                 </div>
                                 <div class="hidden sm:block">
+                                    <DotIcon class="size-4" />
+                                </div>
+                                <CohortPicker v-if="showCohortPicker" :filters="filters" @apply="applyCohort" @clear="clearCohort" />
+                                <div v-if="showCohortPicker" class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
                                 <DashboardPresetSwitcher v-if="submitRoute !== 'retention'" :currentProject="currentProject" :trackingUsageBits="trackingUsageBits" />

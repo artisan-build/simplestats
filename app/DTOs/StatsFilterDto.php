@@ -64,6 +64,15 @@ class StatsFilterDto
         public int $customEventName = 0,
         public int $propertyValue = 0,
         public int $campaign = 0,
+        // Registration-cohort window: when set, every user-linked metric is scoped
+        // to users who registered in [cohortStart, cohortEnd). Naive team-tz wall-clock
+        // bounds matching the stats_users.time column, so no timezone shift is applied.
+        public ?CarbonInterface $cohortStart = null,
+        public ?CarbonInterface $cohortEnd = null,
+        // Display label carried over from the retention table so the filter badge
+        // renders the cohort exactly as that page does (matters for week ranges,
+        // where the raw bucket start does not format to a readable week label).
+        public ?string $cohortLabel = null,
     ) {}
 
     public static function fromRequest(StatsFilterRequest $request, ?int $projectId = null): self
@@ -94,6 +103,10 @@ class StatsFilterDto
             $rangeStart = $rangeStart->endOfDay();
         }
 
+        $cohortStart = $request->query('cohort_start');
+        $cohortEnd = $request->query('cohort_end');
+        $hasCohortWindow = $cohortStart && $cohortEnd;
+
         return new self(
             projectId: $effectiveProjectId,
             rangeAmount: $rangeAmount,
@@ -121,6 +134,9 @@ class StatsFilterDto
             propertyValue: $request->property_value ?? 0,
             // Query bag, not $request->campaign: the campaigns/{campaign} route binds it to a model.
             campaign: (int) ($request->query('campaign') ?? 0),
+            cohortStart: $hasCohortWindow ? CarbonImmutable::parse($cohortStart) : null,
+            cohortEnd: $hasCohortWindow ? CarbonImmutable::parse($cohortEnd) : null,
+            cohortLabel: $request->query('cohort_label') ?: null,
         );
     }
 
@@ -142,6 +158,8 @@ class StatsFilterDto
             $this->projectId,
             $this->rangeType,
             ...array_map(fn (string $property) => $this->$property, $dimensions),
+            $this->cohortStart?->format('Y-m-d H:i:s'),
+            $this->cohortEnd?->format('Y-m-d H:i:s'),
         ]));
     }
 

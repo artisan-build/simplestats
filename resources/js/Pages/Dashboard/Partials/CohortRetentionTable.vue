@@ -1,5 +1,6 @@
 <script setup>
 import {computed} from "vue";
+import {Link} from "@inertiajs/vue3";
 import {formatDate} from "@/Helpers/NumberHelpers.js";
 
 const props = defineProps({
@@ -10,6 +11,16 @@ const props = defineProps({
 // Same readable date rendering the Apex charts use for their axis (StatsCharts.vue),
 // so cohort labels match the rest of the dashboard.
 const formatLabel = (label) => formatDate(label, props.filters.range_type);
+
+// Drill from a cohort into the dashboard, scoped to exactly this registration
+// window. The observation period stays the one selected here: the retention
+// range already spans the cohorts, so it covers their lifetime without overriding it.
+const dashboardLink = (row) => route('dashboard', {
+    ...props.filters,
+    cohort_start: row.cohort_start,
+    cohort_end: row.cohort_end,
+    cohort_label: formatLabel(row.cohort),
+});
 
 const periodNoun = computed(() => ({
     hours: 'Hour',
@@ -86,7 +97,13 @@ const cellTooltip = (row, period, value) => {
                 <tbody>
                     <tr v-for="row in cohorts.cohorts" :key="row.cohort">
                         <td class="sticky left-0 z-10 bg-white dark:bg-dark-800 px-3 py-2 text-left font-medium text-gray-900 dark:text-dark-100 whitespace-nowrap">
-                            {{ formatLabel(row.cohort) }}
+                            <Link
+                                :href="dashboardLink(row)"
+                                v-tooltip="'Analyse this cohort in the dashboard'"
+                                class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                            >
+                                {{ formatLabel(row.cohort) }}
+                            </Link>
                         </td>
                         <td class="px-3 py-2 text-right tabular-nums text-gray-700 dark:text-dark-300">
                             {{ row.size }}
