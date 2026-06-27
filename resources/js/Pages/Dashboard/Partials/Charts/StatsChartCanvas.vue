@@ -3,9 +3,7 @@ import {defineComponent, onBeforeUnmount, onMounted, ref} from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import {cent2Currency, formatDate, formatMap} from "@/Helpers/NumberHelpers.js";
 import {router, usePage} from "@inertiajs/vue3";
-import StatsIndicator from "@/Pages/Dashboard/Partials/StatsIndicator.vue";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
-import axios from 'axios';
 import {
     differenceInDays,
     differenceInHours,
@@ -27,10 +25,19 @@ import {
 const ApexChart = defineComponent(VueApexCharts);
 
 const props = defineProps({
-    chart: Object,
-    chartLength: Number,
-    chartIndex: Number,
+    // Already resolved series to plot (1 entry, or 2 when a previous-period twin is present).
+    // series[0] is the primary serie and drives the click/tooltip lookups.
+    series: Array,
+    categories: Array,
+    formatter: String,
+    decimals: {type: Number, default: null},
+    name: {type: String, default: ''},
+    info: {type: String, default: ''},
     filters: Object,
+    height: {type: Number, default: 250},
+    clickable: {type: Boolean, default: true},
+    navigateRoute: {type: String, default: 'dashboard'},
+    navigateParams: {type: Object, default: () => ({})},
 });
 
 const page = usePage();
@@ -77,16 +84,6 @@ onBeforeUnmount(() => {
         el.removeEventListener('touchmove', onTouchMove);
     }
 });
-
-const series = ref(props.chart.data.series);
-const categories = props.chart.data.categories;
-
-let tmpSeriesIndex = Number(page.props.auth.user.settings.selectedSeries?.[props.chartIndex] ?? 0);
-const selectedSerieIndex = ref((series.value[tmpSeriesIndex] ? tmpSeriesIndex : 0));
-
-const formatter = () => {
-    return props.chart.group[selectedSerieIndex.value].formatter;
-};
 
 const newFilterForDataPoint = (clickedDate) => {
     let dateFormat = 'y-MM-dd';
@@ -149,22 +146,22 @@ const chartOptions = ref({
     chart: {
         events: {
             click: function(event, chartContext, opts) {
-                if (touchMoved) {
+                if (!props.clickable || touchMoved) {
                     return;
                 }
 
-                let clickedDate = series.value[selectedSerieIndex.value].dates[opts.dataPointIndex];
+                let clickedDate = props.series[0].dates[opts.dataPointIndex];
 
                 if (clickedDate) {
                     let newFilter = newFilterForDataPoint(clickedDate);
 
                     if ((Object.keys(newFilter).length > 0)) {
-                        router.get(route('dashboard'), { ...props.filters, ...newFilter }, {preserveScroll: true})
+                        router.get(route(props.navigateRoute, props.navigateParams), { ...props.filters, ...newFilter }, {preserveScroll: true})
                     }
                 }
             }
         },
-        height: 250,
+        height: props.height,
         type: 'area',
         zoom: {
             enabled: false,
@@ -176,7 +173,7 @@ const chartOptions = ref({
         background: isDarkMode.value ? '#262626' : '#FFFFFF',
     },
     title: {
-        text: props.chart.name,
+        text: props.name,
         align: 'left',
         offsetY: 12,
         style: {
@@ -192,18 +189,16 @@ const chartOptions = ref({
     legend: {
         show: false,
     },
-    // colors: [increaseType.color],
     dataLabels: {
         enabled: false
     },
     stroke: {
         width: 2,
         curve: 'smooth',
-        // curve: 'straight',
     },
     xaxis: {
         type: 'string',
-        categories: categories,
+        categories: props.categories,
         tickAmount: 5,
         labels: {
             rotate: 0,
@@ -218,20 +213,20 @@ const chartOptions = ref({
             formatter: function (value) {
                 let format = '';
 
-                if (formatter() === 'percent') {
-                    format = formatMap[formatter()](value, {
+                if (props.formatter === 'percent') {
+                    format = formatMap[props.formatter](value, {
                         minimumFractionDigits: 1,
                         maximumFractionDigits: 1,
                     }, page.props.teamCurrency);
-                } else if (formatter() === 'currency') {
-                    let dec = props.chart.group[selectedSerieIndex.value]?.decimals;
+                } else if (props.formatter === 'currency') {
+                    let dec = props.decimals;
 
-                    format = formatMap[formatter()](value, {
+                    format = formatMap[props.formatter](value, {
                         minimumFractionDigits: dec ?? ((cent2Currency(value) >= 1000) ? 1 : 0),
                         maximumFractionDigits: dec ?? ((cent2Currency(value) >= 1000) ? 1 : 0),
                     }, page.props.teamCurrency);
                 } else {
-                    format = formatMap[formatter()](value, {
+                    format = formatMap[props.formatter](value, {
                         minimumFractionDigits: (value >= 1000) ? 1 : 0,
                         maximumFractionDigits: (value >= 1000) ? 1 : 0,
                     }, page.props.teamCurrency);
@@ -246,23 +241,22 @@ const chartOptions = ref({
             formatter: function(value, options) {
                 let format = '';
 
-                if (formatter() === 'number') {
-                    format = formatMap[formatter()](value, {
+                if (props.formatter === 'number') {
+                    format = formatMap[props.formatter](value, {
                         minimumFractionDigits: (value >= 1000) ? 2 : 0,
                         maximumFractionDigits: (value >= 1000) ? 2 : 0,
                     }, page.props.teamCurrency);
                 } else {
-                    let dec = props.chart.group[selectedSerieIndex.value]?.decimals ?? 2;
+                    let dec = props.decimals ?? 2;
 
-                    format = formatMap[formatter()](value, {
+                    format = formatMap[props.formatter](value, {
                         minimumFractionDigits: (value === 0) ? 0 : dec,
                         maximumFractionDigits: (value === 0) ? 0 : dec,
                     }, page.props.teamCurrency);
                 }
 
-                // console.log(selectedSeries, options.seriesIndex)
-                if (series.value[selectedSerieIndex.value].datesPrev.length && options.seriesIndex === 1) {
-                    let prevDate = series.value[selectedSerieIndex.value].datesPrev[options.dataPointIndex];
+                if (props.series[0].datesPrev.length && options.seriesIndex === 1) {
+                    let prevDate = props.series[0].datesPrev[options.dataPointIndex];
                     let prevDateFormatted = formatDate(prevDate, props.filters.range_type);
 
                     // Only the day format omits the year and is safely Date-parseable; week/month/year
@@ -275,7 +269,7 @@ const chartOptions = ref({
                 }
 
                 if (options.seriesIndex === 0) {
-                    let selected = series.value[selectedSerieIndex.value];
+                    let selected = props.series[0];
 
                     if (selected?.tooltipExtra) {
                         let parts = selected.tooltipExtra.map(function (extra) {
@@ -300,17 +294,12 @@ const chartOptions = ref({
     },
     grid: {
         show: true,
-        // borderColor: '#f1f1f1',
         borderColor: isDarkMode.value ? '#3f3f46' : '#E5E7EB', // Linienfarbe für Dark/Light Mode
     },
 });
 
-if (props.chartLength <= 1) {
-    chartOptions.value.title.text = 'Chart';
-}
-
-const latestPeriod = categories[categories.length - 1];
-const previousPeriod = categories[categories.length - 2];
+const latestPeriod = props.categories[props.categories.length - 1];
+const previousPeriod = props.categories[props.categories.length - 2];
 const currentPeriod = formatDate(page.props.rangeCurrent, page.props.filters.range_type);
 
 let hasCurrentPeriod = latestPeriod === currentPeriod;
@@ -326,67 +315,24 @@ if (hasCurrentPeriod) {
         ]
     };
 }
-
-const selectSeries = (selectedSerie) => {
-    selectedSerieIndex.value = selectedSerie.index;
-
-    axios(route('stats.set-series', {
-        chartIndex: props.chartIndex,
-        seriesIndex: selectedSerie.index,
-    }), {
-        method: 'POST',
-    });
-};
-
-const selectedSeries = () => {
-    let tmpSelectedSeries = series.value.filter((serie, index) => index === selectedSerieIndex.value);
-
-    if (tmpSelectedSeries[0].dataPrev.length) {
-        tmpSelectedSeries[1] = { ...tmpSelectedSeries[0] };
-        tmpSelectedSeries[1].data = tmpSelectedSeries[1].dataPrev;
-        tmpSelectedSeries[1].dates = tmpSelectedSeries[1].datesPrev;
-        tmpSelectedSeries[1].name = tmpSelectedSeries[1].namePrev;
-        tmpSelectedSeries[1].nameSmall = tmpSelectedSeries[1].nameSmallPrev;
-        tmpSelectedSeries[1].color = tmpSelectedSeries[1].colorPrev;
-    }
-
-    return tmpSelectedSeries;
-};
 </script>
 
 <template>
-    <div class="@container bg-white dark:bg-dark-800 border rounded-md" :class="chart.class">
-        <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3"></div>
-        <div :class="'grid gap-3 grid-cols-'+series.length+' pt-3 px-3'">
-            <StatsIndicator
-                v-for="(serie, serieIndex) in series"
-                :serie="serie"
-                :serieIndex="serieIndex"
-                :selectedSerieIndex="selectedSerieIndex"
-                :hasCurrent="hasCurrentPeriod"
-                @selectSeries="selectSeries"
-            />
+    <div class="pl-2 pr-0.5 relative" :class="{ 'cursor-pointer': clickable }">
+        <div v-if="info" class="absolute top-3 right-3 z-10" data-tour="chart-info">
+            <InfoTooltip :html="info" placement="right" iconClass="size-5" />
         </div>
-        <div class="pl-2 pr-0.5 relative">
-            <div class="absolute top-3 right-3 z-10" data-tour="chart-info">
-                <InfoTooltip :html="chart.info" placement="right" iconClass="size-5" />
-            </div>
-            <ApexChart
-                ref="chartInstance"
-                type="area"
-                :height="chartOptions.chart.height"
-                :options="chartOptions"
-                :series="selectedSeries()"
-            />
-        </div>
+        <ApexChart
+            ref="chartInstance"
+            type="area"
+            :height="chartOptions.chart.height"
+            :options="chartOptions"
+            :series="series"
+        />
     </div>
 </template>
 
 <style scoped>
-.vue-apexcharts {
-    cursor: pointer;
-}
-
 @media (max-width: 1023px) {
     :deep(.apexcharts-xaxis) {
         display: none;

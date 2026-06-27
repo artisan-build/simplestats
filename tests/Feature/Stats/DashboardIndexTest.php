@@ -380,3 +380,61 @@ test('dashboard route does not build engagement_series', function () {
             ->where('engagement_series', null)
         );
 });
+
+test('metric route renders Dashboard/Metric with the kpi prop', function () {
+    $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor']))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('kpi', 'pd_visitor')
+            ->where('plan_breakdown', null)
+        );
+});
+
+test('metric route exposes plan_breakdown for an MRR kpi on a subscription project', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+    ]);
+
+    $statsUser = StatsUser::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+    ]);
+
+    StatsPayment::factory()->subscriptionMonthly()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $project->id,
+        'stats_user_id' => $statsUser->id,
+        'time' => now(),
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'mrr', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('kpi', 'mrr')
+            ->has('plan_breakdown', 1)
+        );
+});
+
+test('metric route returns null plan_breakdown for a non-MRR kpi', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'pd_reg', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('plan_breakdown', null)
+        );
+});

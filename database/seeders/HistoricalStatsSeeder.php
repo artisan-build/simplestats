@@ -19,6 +19,9 @@ class HistoricalStatsSeeder extends Seeder
 {
     const DEFAULT_CURRENCY = 'EUR';
 
+    /** Tiers ordered cheapest to most expensive so price moves map onto plan switches. */
+    const SUBSCRIPTION_PLANS = ['Starter', 'Pro', 'Business', 'Enterprise'];
+
     /**
      * Seed historical stats data (users, visitors, logins, payments and
      * custom events) for every existing project.
@@ -125,12 +128,18 @@ class HistoricalStatsSeeder extends Seeder
 
         $amount = $yearly ? rand(8000, 120000) / 100 : rand(900, 9900) / 100;
 
+        $planIndex = rand(0, count(self::SUBSCRIPTION_PLANS) - 1);
+
         $maxRenewals = $yearly ? 3 : 24;
         $renewals = app()->environment('testing') ? rand(1, 3) : rand(1, $maxRenewals);
 
         for ($i = 0; $i < $renewals && $time->lessThanOrEqualTo($now); $i++) {
             if ($i > 0 && rand(1, 100) <= 12) {
-                $amount = round($amount * (rand(0, 1) === 1 ? rand(110, 150) : rand(60, 90)) / 100, 2);
+                $expansion = rand(0, 1) === 1;
+                $amount = round($amount * ($expansion ? rand(110, 150) : rand(60, 90)) / 100, 2);
+
+                // A price change is a plan switch: nudge the tier in the same direction.
+                $planIndex = max(0, min(count(self::SUBSCRIPTION_PLANS) - 1, $planIndex + ($expansion ? 1 : -1)));
             }
 
             $factory = $yearly
@@ -144,6 +153,7 @@ class HistoricalStatsSeeder extends Seeder
                 'currency' => self::DEFAULT_CURRENCY,
                 'gross' => $amount,
                 'net' => round($amount * 0.8, 2),
+                'subscription_plan' => self::SUBSCRIPTION_PLANS[$planIndex],
                 'time' => $time->copy(),
             ]);
 

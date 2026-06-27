@@ -1,0 +1,141 @@
+<script setup>
+import {computed, onMounted} from "vue";
+import {Link, router} from "@inertiajs/vue3";
+import AppLayout from '@/Layouts/AppLayout.vue';
+import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
+import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
+import StatsChartCanvas from "@/Pages/Dashboard/Partials/Charts/StatsChartCanvas.vue";
+import HeadlineKpiTile from "@/Pages/Dashboard/Partials/HeadlineKpiTile.vue";
+import MetricPlanBreakdown from "@/Pages/Dashboard/Partials/MetricPlanBreakdown.vue";
+import {resolveChartSeries, useChartDefinitions} from "@/Composables/useChartDefinitions.js";
+
+const props = defineProps({
+    kpi: String,
+    teamStats: Object,
+    presets: Array,
+    allPresets: Array,
+    hiddenPresets: Array,
+    customPresets: Array,
+    filters: Object,
+    statsGroups: Object,
+    propertyDimensions: Array,
+    hasCustomEvents: Boolean,
+    statsGroupNames: Object,
+    topReferers: Object,
+    rangeTypes: Array,
+    trackingUsageBits: Object,
+    comparisonTypes: Object,
+    mrr_series: {type: Array, default: null},
+    mrr_series_prev: {type: Array, default: null},
+    plan_breakdown: {type: Array, default: null},
+});
+
+const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
+
+const {sections, findKpi} = useChartDefinitions({
+    filters: props.filters,
+    teamStats: props.teamStats,
+    currentProject,
+    trackingUsageBits: props.trackingUsageBits,
+    mrrSeries: props.mrr_series,
+    mrrSeriesPrev: props.mrr_series_prev,
+});
+
+const activeKpi = computed(() => findKpi(props.kpi));
+
+// A KPI key that the current team/preset does not surface (e.g. a stale link kept
+// across a team switch) has no chart to show, so fall back to the dashboard.
+const invalidKpi = ! activeKpi.value;
+
+onMounted(() => {
+    if (invalidKpi) {
+        router.get(route('dashboard'), props.filters, {preserveScroll: true});
+    }
+});
+</script>
+
+<template>
+    <AppLayout title="Dashboard" :fullscreen="true">
+        <StatsFilter
+            :teamStats="teamStats"
+            :statsGroups="statsGroups"
+            :statsGroupNames="statsGroupNames"
+            :presets="presets"
+            :allPresets="allPresets"
+            :hiddenPresets="hiddenPresets"
+            :customPresets="customPresets"
+            :filters="filters"
+            :rangeTypes="rangeTypes"
+            :topReferers="topReferers"
+            :trackingUsageBits="trackingUsageBits"
+            :comparisonTypes="comparisonTypes"
+            submitRoute="dashboard.metric"
+            :submitRouteParams="{ kpi }"
+        />
+
+        <div v-if="activeKpi" class="grid grid-cols-1 lg:grid-cols-[14rem_minmax(0,1fr)] gap-4">
+            <!-- Left themed menu -->
+            <nav class="bg-white dark:bg-dark-800 border rounded-md p-2 h-fit lg:sticky lg:top-24">
+                <Link :href="route('dashboard', filters)" class="block px-3 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                    &larr; Overview
+                </Link>
+                <div v-for="section in sections" :key="section.name" class="mt-2">
+                    <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-dark-500">
+                        {{ section.name }}
+                    </div>
+                    <Link
+                        v-for="item in section.kpis"
+                        :key="item.key"
+                        :href="route('dashboard.metric', { kpi: item.key, ...filters })"
+                        preserve-scroll
+                        class="block px-3 py-1.5 text-sm rounded-md"
+                        :class="item.key === kpi
+                            ? 'bg-gray-100 dark:bg-dark-900/50 text-gray-950 dark:text-white font-medium'
+                            : 'text-gray-700 dark:text-dark-300 hover:bg-gray-50 dark:hover:bg-dark-900/30'"
+                    >
+                        {{ item.title }}
+                    </Link>
+                </div>
+            </nav>
+
+            <!-- Main: big chart + breakdown -->
+            <div class="space-y-4 min-w-0">
+                <div class="bg-white dark:bg-dark-800 border rounded-md">
+                    <HeadlineKpiTile
+                        bare
+                        delta-inline
+                        :label="activeKpi.titleLong"
+                        :value="activeKpi.indicator"
+                        :formatter="activeKpi.formatter"
+                        :delta="activeKpi.delta"
+                        :infoTitle="activeKpi.infoTitle"
+                        :infoText="activeKpi.infoText"
+                    />
+                    <StatsChartCanvas
+                        :series="resolveChartSeries(activeKpi.serie)"
+                        :categories="activeKpi.categories"
+                        :formatter="activeKpi.formatter"
+                        :decimals="activeKpi.decimals"
+                        :filters="filters"
+                        :height="380"
+                        navigateRoute="dashboard.metric"
+                        :navigateParams="{ kpi }"
+                    />
+                </div>
+
+                <MetricPlanBreakdown v-if="activeKpi.isMrr" :planBreakdown="plan_breakdown" />
+                <StatsGroups
+                    :filters="filters"
+                    :statsGroups="statsGroups"
+                    :propertyDimensions="propertyDimensions"
+                    :hasCustomEvents="hasCustomEvents"
+                    :topReferers="topReferers"
+                    :currentProject="currentProject"
+                    :trackingUsageBits="trackingUsageBits"
+                    baseRoute="dashboard.metric"
+                    :routeParams="{ kpi }"
+                />
+            </div>
+        </div>
+    </AppLayout>
+</template>

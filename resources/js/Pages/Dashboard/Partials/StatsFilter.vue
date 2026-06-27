@@ -6,9 +6,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
-import MenuToggler from "@/Components/MenuToggler.vue";
 import TextInput from "@/Components/TextInput.vue";
-import DashboardPresetSwitcher from "@/Pages/Dashboard/Partials/DashboardPresetSwitcher.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
 import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
@@ -145,11 +143,8 @@ const showPresetModal = ref(false);
 </script>
 
 <template>
-    <div>
+    <div class="sticky top-0 py-4 mb-4 -mt-4 bg-gray-50 dark:bg-dark-900 z-20 border-b">
         <div class="flex">
-            <div>
-                <MenuToggler />
-            </div>
             <form @submit.prevent="submit" class="flex-grow">
                 <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-center justify-start md:justify-end">
                     <div class="flex-grow">
@@ -268,7 +263,6 @@ const showPresetModal = ref(false);
                                 <div v-if="showCohortPicker" class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
-                                <DashboardPresetSwitcher v-if="submitRoute !== 'retention'" :currentProject="currentProject" :trackingUsageBits="trackingUsageBits" />
                                 <div class="hidden">
                                     <div v-tooltip.left="{ content: `<div class='flex flex-col space-y-4 max-w-64 p-2 text-sm'>${chartDescription}</div>`, html: true }" class="text-gray-400">
                                         <InfoIcon class="size-4" />

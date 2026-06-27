@@ -38,6 +38,14 @@ class StatsDetailsService
     }
 
     /**
+     * @return array<int, array{plan: string|null, subscribers: int, mrr: float}>
+     */
+    public function getMrrByPlan(StatsFilterDto $filters): array
+    {
+        return $this->mrrAggregationService->getMrrByPlan($filters);
+    }
+
+    /**
      * @return array<int, array{date: string, date_clear: string, mrr: float, subscribers: int}>
      */
     public function getMrrTimeSeries(StatsFilterDto $filters): array

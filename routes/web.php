@@ -109,6 +109,7 @@ Route::middleware([
     Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/metric/{kpi}', [StatsController::class, 'metric'])->name('dashboard.metric');
     Route::get('revenue', [StatsController::class, 'revenue'])->name('revenue');
     Route::get('retention', [StatsController::class, 'index'])->name('retention');
     Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns');
@@ -118,7 +119,6 @@ Route::middleware([
     Route::delete('campaigns/{campaign}/track-campaigns/{trackCampaign}', [CampaignController::class, 'unlinkTrackCampaign'])->name('campaigns.track-campaigns.unlink');
     Route::resource('ad-spends', AdSpendController::class)->only(['store', 'update', 'destroy']);
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
-    Route::post('stats/set-series', [StatsController::class, 'setSeries'])->name('stats.set-series');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
     Route::post('stats/hide-read-docs-warning', [StatsController::class, 'hideReadDocsWarning'])->name('stats.hide-read-docs-warning');
 
@@ -136,7 +136,6 @@ Route::middleware([
     Route::get('projects/{project}/token-regenerate', [ProjectController::class, 'tokenRegenerate'])->name('projects.token-regenerate');
 
     // User Settings
-    Route::get('user-settings/toggle-menu', [UserSettingsController::class, 'toggleMenu'])->name('user-settings.toggle-menu');
     Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');
     Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
     Route::post('user-settings/complete-campaigns-tour', [UserSettingsController::class, 'completeCampaignsTour'])->name('user-settings.complete-campaigns-tour');

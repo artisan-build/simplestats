@@ -16,6 +16,7 @@ const props = defineProps({
     currentProject: Object,
     trackingUsageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
+    routeParams: {type: Object, default: () => ({})},
 });
 
 const data = ref([]);
@@ -146,7 +147,7 @@ onMounted(fetchData);
         </template>
         <template #name-cell="{item}">
             <!-- direction: rtl; is that on small screens the page uris got truncated from left so that you can see the end of the uri with prio -->
-            <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 dark:text-indigo-400 underline': filters[filters.stats_type] === item.type_id}" preserve-scroll :href="route(baseRoute, {...filters, [filters.stats_type]: item.type_id ?? -1})">
+            <Link class="group truncate" :style="(statsGroupType === 'page') ? 'direction: rtl;' : '' " :class="{'text-indigo-600 dark:text-indigo-400 underline': filters[filters.stats_type] === item.type_id}" preserve-scroll :href="route(baseRoute, {...routeParams, ...filters, [filters.stats_type]: item.type_id ?? -1})">
                 <StatsIcon v-if="statsGroupType !== 'page' && statsGroupType !== 'event'" :statsName="item.name" :statsType="filters.stats_type" :statsIconType="statsTypeIcon(statsGroup, item)" />
                 <span class="group-hover:underline ml-2" v-tooltip="{ content: topReferers[item.name] ?? item.name, delay: 2000 }">{{ topReferers[item.name] ?? item.name }}</span>
             </Link>

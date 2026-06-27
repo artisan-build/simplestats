@@ -28,6 +28,14 @@ export default {
                 '4xl': '2160px',
                 '5xl': '2560px',
             },
+            // Tailwind only ships max-w-screen-* for the default breakpoints (sm..2xl),
+            // so the custom screens above need matching maxWidth tokens to be usable
+            // as max-w-screen-3xl/4xl/5xl.
+            maxWidth: {
+                'screen-3xl': '1920px',
+                'screen-4xl': '2160px',
+                'screen-5xl': '2560px',
+            },
             colors: {
                 dark: {
                     50:  '#fbfbfb',

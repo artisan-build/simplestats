@@ -8,7 +8,7 @@ import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue"
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
 import ReadDocsWarning from "@/Pages/Dashboard/Partials/ReadDocsWarning.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted} from "vue";
 import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 
 const props = defineProps({
@@ -39,14 +39,7 @@ const props = defineProps({
 
 const {startTour} = useOnboardingTour();
 
-const isScrolled = ref(false)
-
-const handleScroll = () => {
-    isScrolled.value = window.scrollY > 0
-}
-
 onMounted(() => {
-    window.addEventListener('scroll', handleScroll)
     if (! props.showRetention) {
         startTour();
     }
@@ -55,11 +48,6 @@ onMounted(() => {
 // Filtering and drill-down links must stay on the current route (dashboard or
 // retention), so everything navigation-related is keyed off this base route.
 const baseRoute = props.showRetention ? 'retention' : 'dashboard';
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll)
-})
-
 
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
 </script>
@@ -78,23 +66,21 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
         <div>
-            <div class="sticky top-0 px-4 py-2 -mx-4 -my-2 mb-2 bg-gray-50 dark:bg-dark-900 z-20" :class="{'border-b dark:border-dark-700 shadow-sm': isScrolled}">
-                <StatsFilter
-                    :teamStats="teamStats"
-                    :statsGroups="statsGroups"
-                    :statsGroupNames="statsGroupNames"
-                    :presets="presets"
-                    :allPresets="allPresets"
-                    :hiddenPresets="hiddenPresets"
-                    :customPresets="customPresets"
-                    :filters="filters"
-                    :rangeTypes="rangeTypes"
-                    :topReferers="topReferers"
-                    :trackingUsageBits="trackingUsageBits"
-                    :comparisonTypes="comparisonTypes"
-                    :submitRoute="baseRoute"
-                />
-            </div>
+            <StatsFilter
+                :teamStats="teamStats"
+                :statsGroups="statsGroups"
+                :statsGroupNames="statsGroupNames"
+                :presets="presets"
+                :allPresets="allPresets"
+                :hiddenPresets="hiddenPresets"
+                :customPresets="customPresets"
+                :filters="filters"
+                :rangeTypes="rangeTypes"
+                :topReferers="topReferers"
+                :trackingUsageBits="trackingUsageBits"
+                :comparisonTypes="comparisonTypes"
+                :submitRoute="baseRoute"
+            />
             <div class="grid grid-cols-1 gap-4">
                 <div class="min-w-0">
                     <div v-if="showRetention && retention_cohorts" class="space-y-4">
@@ -119,7 +105,10 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :campaignSummary="campaign_summary"
                     />
                 </div>
-                <div>
+                <div class="space-y-3">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-dark-400">
+                        Breakdown
+                    </h2>
                     <StatsGroups
                         :filters="filters"
                         :statsGroups="statsGroups"

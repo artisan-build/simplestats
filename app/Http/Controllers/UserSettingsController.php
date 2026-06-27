@@ -9,14 +9,6 @@ use Illuminate\Validation\Rule;
 
 class UserSettingsController extends Controller
 {
-    public function toggleMenu(Request $request)
-    {
-        $showMenu = $request->user()->settings['showMenu'] ?? true;
-        $request->user()->updateSettings('showMenu', ! $showMenu);
-
-        return redirect()->back();
-    }
-
     public function setDashboardPreset(Request $request)
     {
         $request->validate([

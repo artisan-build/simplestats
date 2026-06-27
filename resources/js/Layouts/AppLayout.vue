@@ -3,7 +3,6 @@ import {ref} from 'vue';
 import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import Navigation from "@/Components/Navigation.vue";
-import MenuToggler from "@/Components/MenuToggler.vue";
 import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 import ListIcon from 'bootstrap-icons/icons/list.svg?component';
 import CloseIcon from 'bootstrap-icons/icons/x-lg.svg?component';
@@ -28,9 +27,8 @@ const sidebarIsOpen = ref(false);
         <div v-if="$page.props.onboardingPassed" @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-dark-950/75 lg:hidden"></div>
 
         <aside v-if="$page.props.onboardingPassed"
-            class="bg-white dark:bg-dark-800 px-3 fixed border-r dark:border-dark-700 shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all -translate-x-full rtl:translate-x-full"
+            class="bg-white dark:bg-dark-800 px-3 fixed border-r dark:border-dark-700 shadow inset-y-0 start-0 z-30 grid h-screen content-between transition-all -translate-x-full rtl:translate-x-full lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky"
             :class="{
-                'lg:transition-none lg:translate-x-0 rtl:lg:-translate-x-0 lg:sticky': $page.props.auth.user.settings?.showMenu ?? true,
                 'translate-x-0 shadow-xl rtl:-translate-x-0 lg:sticky': sidebarIsOpen,
             }"
         >
@@ -44,12 +42,9 @@ const sidebarIsOpen = ref(false);
                     <CloseIcon v-else class="size-6" />
                 </button>
             </div>
-            <main class="mx-auto h-full w-full p-4" :class="{'max-w-screen-2xl': ! fullscreen}">
+            <main class="mx-auto h-full w-full p-4" :class="fullscreen ? 'max-w-screen-2xl' : 'max-w-screen-2xl'">
                 <header v-if="$slots.header" class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between gap-b-4 pb-4">
                     <h1 class="flex items-center w-full text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
-                        <div v-if="! ($page.props.auth.user.settings?.showMenu ?? true)">
-                            <MenuToggler />
-                        </div>
                         <div class="flex flex-grow justify-between items-center max-w-3xl mx-auto">
                             <slot name="header" />
                             <div v-if="$page.props.auth.user.all_teams.length > 1">

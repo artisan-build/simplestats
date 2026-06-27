@@ -14,6 +14,12 @@ const props = defineProps({
     // optional spelled-out name + explanation, shown via an info icon next to the label
     infoTitle: {type: String, default: null},
     infoText: {type: String, default: null},
+    // drop the card chrome (border/background/rounding) so the tile can sit flush
+    // inside a parent card, e.g. fused with the chart below it
+    bare: {type: Boolean, default: false},
+    // place the delta right next to the value (and larger) instead of pushing it to
+    // the far edge; used on the metric detail header where the number is the focus
+    deltaInline: {type: Boolean, default: false},
 });
 
 const hasDelta = computed(() => props.delta !== null && props.delta !== 0);
@@ -40,14 +46,18 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
 </script>
 
 <template>
-    <div class="bg-white dark:bg-dark-800 border rounded-md py-2 px-3">
-        <div class="flex justify-between items-center text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
+    <div :class="bare ? 'pt-5 px-3' : 'bg-white dark:bg-dark-800 border rounded-md py-2 px-3'">
+        <div class="flex items-center font-medium tracking-wider text-gray-700 dark:text-dark-400" :class="bare ? 'text-lg gap-2' : 'text-sm justify-between'">
             <span>{{ label }}</span>
             <span class="inline-flex items-center gap-1">
-                <InfoTooltip v-if="infoText" :title="infoTitle" :text="infoText" iconClass="size-5" />
+                <!-- bare: the description is shown inline below, so the icon would be redundant -->
+                <InfoTooltip v-if="infoText && ! bare" :title="infoTitle" :text="infoText" iconClass="size-5" />
             </span>
         </div>
-        <div class="flex justify-between items-end gap-2 mt-1">
+        <p v-if="bare && infoText" class="mt-0.5 text-sm text-gray-500 dark:text-dark-400">
+            {{ infoText }}
+        </p>
+        <div class="flex mt-1" :class="deltaInline ? 'items-baseline gap-3' : 'justify-between items-end gap-2'">
             <div class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">
                 <span v-if="formatter === 'currency'">
                     {{ formatMap.currency(value, {
@@ -57,7 +67,7 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
                 </span>
                 <span v-else>{{ formatMap[formatter](value) }}</span>
             </div>
-            <div v-if="hasDelta" class="text-sm font-bold whitespace-nowrap" :class="deltaClass">
+            <div v-if="hasDelta" class="font-bold whitespace-nowrap" :class="[deltaClass, deltaInline ? 'text-lg' : 'text-sm']">
                 {{ formatMap.percent(delta, {
                     minimumFractionDigits: deltaFractionDigits,
                     maximumFractionDigits: deltaFractionDigits,

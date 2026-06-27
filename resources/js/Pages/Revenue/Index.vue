@@ -6,7 +6,7 @@ import MrrMovementsChart from "@/Pages/Dashboard/Partials/MrrMovementsChart.vue"
 import RevenueChurnChart from "@/Pages/Dashboard/Partials/RevenueChurnChart.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
 import SubscriptionPlanAlarm from "@/Pages/Dashboard/Partials/SubscriptionPlanAlarm.vue";
-import {computed, onMounted, onUnmounted, ref} from "vue";
+import {computed} from "vue";
 
 const props = defineProps({
     teamStats: Object,
@@ -38,15 +38,6 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
 const subscriptionStatsGroups = computed(() => Object.fromEntries(
     Object.entries(props.statsGroups).filter(([type]) => ! ['page', 'device'].includes(type)),
 ));
-
-const isScrolled = ref(false);
-
-const handleScroll = () => {
-    isScrolled.value = window.scrollY > 0;
-};
-
-onMounted(() => window.addEventListener('scroll', handleScroll));
-onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 </script>
 
 <template>
@@ -55,23 +46,21 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
         <div>
-            <div class="sticky top-0 px-4 py-2 -mx-4 -my-2 mb-2 bg-gray-50 dark:bg-dark-900 z-20" :class="{'border-b dark:border-dark-700 shadow-sm': isScrolled}">
-                <StatsFilter
-                    :teamStats="teamStats"
-                    :statsGroups="statsGroups"
-                    :statsGroupNames="statsGroupNames"
-                    :presets="presets"
-                    :allPresets="allPresets"
-                    :hiddenPresets="hiddenPresets"
-                    :customPresets="customPresets"
-                    :filters="filters"
-                    :rangeTypes="rangeTypes"
-                    :topReferers="topReferers"
-                    :trackingUsageBits="trackingUsageBits"
-                    :comparisonTypes="comparisonTypes"
-                    submitRoute="revenue"
-                />
-            </div>
+            <StatsFilter
+                :teamStats="teamStats"
+                :statsGroups="statsGroups"
+                :statsGroupNames="statsGroupNames"
+                :presets="presets"
+                :allPresets="allPresets"
+                :hiddenPresets="hiddenPresets"
+                :customPresets="customPresets"
+                :filters="filters"
+                :rangeTypes="rangeTypes"
+                :topReferers="topReferers"
+                :trackingUsageBits="trackingUsageBits"
+                :comparisonTypes="comparisonTypes"
+                submitRoute="revenue"
+            />
             <div v-if="mrr_movements?.length" class="grid gap-4">
                 <HeadlineKpiBar v-if="mrr" :mrr="mrr" :retention="mrr_retention" :filters="filters" />
                 <MrrMovementsChart :movements="mrr_movements" :filters="filters" />

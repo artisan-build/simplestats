@@ -47,7 +47,28 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
             'engagement_series' => $showRetention ? $this->engagementSeries($teamStats, $filters) : null,
             'showRetention' => $showRetention,
             'retention_cohorts' => $showRetention ? $this->buildRetentionCohorts($teamStats, $filters) : null,
+            'plan_breakdown' => $this->planBreakdown($teamStats, $filters),
         ]);
+    }
+
+    /**
+     * The per-plan MRR table only appears on the metric detail view for an
+     * MRR-sourced KPI, so it is computed only there (and gated on the
+     * subscription bit inside buildPlanBreakdown).
+     *
+     * @return array<int, array{plan: string|null, subscribers: int, mrr: float}>|null
+     */
+    private function planBreakdown(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->request->routeIs('dashboard.metric')) {
+            return null;
+        }
+
+        if (! in_array($this->request->route('kpi'), ['mrr', 'subscribers', 'arps'], true)) {
+            return null;
+        }
+
+        return $this->buildPlanBreakdown($teamStats, $filters);
     }
 
     private function campaignSummary(StatsFilterDto $filters): ?array

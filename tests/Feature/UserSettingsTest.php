@@ -36,7 +36,7 @@ test('set dashboard preset rejects an unknown preset', function () {
 
 test('migration sets existing users to the expert preset and keeps other settings', function () {
     DB::table('users')->where('id', $this->user->id)->update([
-        'settings' => json_encode(['showMenu' => false, 'tourCompleted' => true]),
+        'settings' => json_encode(['campaignsTourCompleted' => true, 'tourCompleted' => true]),
     ]);
 
     $migration = require database_path('migrations/2026_06_22_115534_set_dashboard_preset_for_existing_users.php');
@@ -45,6 +45,6 @@ test('migration sets existing users to the expert preset and keeps other setting
     $settings = $this->user->fresh()->settings;
 
     expect($settings['dashboardPreset'])->toBe('expert')
-        ->and($settings['showMenu'])->toBeFalse()
+        ->and($settings['campaignsTourCompleted'])->toBeTrue()
         ->and($settings['tourCompleted'])->toBeTrue();
 });

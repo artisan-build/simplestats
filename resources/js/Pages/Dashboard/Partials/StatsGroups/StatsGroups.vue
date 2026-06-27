@@ -11,6 +11,8 @@ const props = defineProps({
     currentProject: Object,
     trackingUsageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
+    // Extra route params merged into every drill-down link (e.g. {kpi} on the metric page).
+    routeParams: {type: Object, default: () => ({})},
 });
 </script>
 
@@ -31,6 +33,7 @@ const props = defineProps({
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
                 :baseRoute="baseRoute"
+                :routeParams="routeParams"
             />
         </div>
 
@@ -47,6 +50,7 @@ const props = defineProps({
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
                 :baseRoute="baseRoute"
+                :routeParams="routeParams"
             />
         </div>
     </div>

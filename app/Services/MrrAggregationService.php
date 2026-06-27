@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Builder\MrrByPlanSqlBuilder;
 use App\Builder\MrrPerUserBucketSqlBuilder;
 use App\Builder\MrrSnapshotSqlBuilder;
 use App\Builder\MrrTimeSeriesSqlBuilder;
@@ -266,14 +267,7 @@ class MrrAggregationService
      */
     private function computeMrrAtDate(array $filterConditions, string $asOfDate): float
     {
-        $asOf = CarbonImmutable::parse($asOfDate);
-        $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;
-
-        $conditions = array_merge($filterConditions, [
-            'asOfDate' => $asOfDate,
-            'monthWindowStart' => $asOf->subMonth()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
-            'yearWindowStart' => $asOf->subYear()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
-        ]);
+        $conditions = $this->snapshotWindowConditions($filterConditions, $asOfDate);
 
         $builder = new MrrSnapshotSqlBuilder;
         $sql = strtr($builder->build(), $this->formatFilter($conditions));
@@ -281,5 +275,49 @@ class MrrAggregationService
         $result = $this->getDataArray($sql);
 
         return round((float) ($result[0]['mrr'] ?? 0), 2);
+    }
+
+    /**
+     * Active MRR broken down by subscription_plan, taken as a point-in-time
+     * snapshot at the now-capped range end (the same instant as the headline MRR
+     * tile). Channel/property filters narrow it like every other MRR surface.
+     *
+     * @return array<int, array{plan: string|null, subscribers: int, mrr: float}>
+     */
+    public function getMrrByPlan(StatsFilterDto $filters): array
+    {
+        $filterConditions = $this->filterConditionsBuilder->build($filters);
+
+        $asOfDate = min($filterConditions['endDateEnd'], $this->nowCap());
+        $conditions = $this->snapshotWindowConditions($filterConditions, $asOfDate);
+
+        $builder = new MrrByPlanSqlBuilder;
+        $sql = strtr($builder->build(), $this->formatFilter($conditions));
+
+        return array_map(fn (array $row): array => [
+            'plan' => $row['plan'] ?? null,
+            'subscribers' => (int) $row['subscribers'],
+            'mrr' => round((float) $row['mrr'], 2),
+        ], $this->getDataArray($sql));
+    }
+
+    /**
+     * The active-subscription window for an as-of snapshot: a monthly sub counts
+     * while its last payment is within a month (plus grace), a yearly one within a
+     * year (plus grace). Shared by the total snapshot and the per-plan breakdown.
+     *
+     * @param  array<string, mixed>  $filterConditions
+     * @return array<string, mixed>
+     */
+    private function snapshotWindowConditions(array $filterConditions, string $asOfDate): array
+    {
+        $asOf = CarbonImmutable::parse($asOfDate);
+        $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;
+
+        return array_merge($filterConditions, [
+            'asOfDate' => $asOfDate,
+            'monthWindowStart' => $asOf->subMonth()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
+            'yearWindowStart' => $asOf->subYear()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
+        ]);
     }
 }

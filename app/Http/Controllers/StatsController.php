@@ -15,6 +15,13 @@ class StatsController extends Controller
         return Inertia::render('Dashboard/Index', $dataProvider->toArray());
     }
 
+    public function metric(StatsIndexDataProvider $dataProvider, string $kpi)
+    {
+        return Inertia::render('Dashboard/Metric', array_merge($dataProvider->toArray(), [
+            'kpi' => $kpi,
+        ]));
+    }
+
     public function revenue(RevenueDataProvider $dataProvider)
     {
         return Inertia::render('Revenue/Index', $dataProvider->toArray());
@@ -23,16 +30,6 @@ class StatsController extends Controller
     public function groups(StatsGroupsDataProvider $dataProvider): array
     {
         return $dataProvider->toArray();
-    }
-
-    public function setSeries(Request $request)
-    {
-        $chartIndex = $request->chartIndex;
-        $seriesIndex = $request->seriesIndex;
-
-        $request->user()->updateSettings("selectedSeries.$chartIndex", $seriesIndex);
-
-        return response()->json();
     }
 
     public function hideFreePlanWarning(Request $request)

@@ -82,6 +82,21 @@ trait BuildsMrrProps
     }
 
     /**
+     * Per-plan MRR breakdown for the metric detail view. Gated like every MRR
+     * surface; null when the project does not track subscriptions.
+     *
+     * @return array<int, array{plan: string|null, subscribers: int, mrr: float}>|null
+     */
+    protected function buildPlanBreakdown(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getMrrByPlan($filters);
+    }
+
+    /**
      * Gated on the explicit SUBSCRIPTION intent bit (not on whether a subscription
      * payment already arrived) so a fresh subscription project shows an empty MRR
      * line from day one instead of the chart appearing only after its first payment.
