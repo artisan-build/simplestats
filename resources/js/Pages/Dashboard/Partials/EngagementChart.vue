@@ -30,15 +30,15 @@ const chartSeries = computed(() => [
 
 const infoHtml = computed(() => `
     <div>
-        <div class="font-bold text-green-300">${activeLabel.value} (bars)</div>
+        <div class="font-bold text-green-300">${activeLabel.value}</div>
         <div>Distinct users active in each ${periodNoun.value} (any login, including registration). Follows the selected range and granularity.</div>
     </div>
     <div>
-        <div class="font-bold text-green-300">Stickiness (line)</div>
+        <div class="font-bold text-green-300">Stickiness</div>
         <div>Average daily active users as a percentage of monthly active users (DAU/MAU) on a rolling 30-day window, plotted as of each ${periodNoun.value}. Higher means your active users come back more often; 20%+ is a common benchmark.</div>
     </div>
     <div>
-        <div class="font-bold text-green-300">User Churn (line)</div>
+        <div class="font-bold text-green-300">User Churn</div>
         <div>Share of the preceding month's active users (30-60 days back) who did not log in again in the rolling last 30 days, as of each ${periodNoun.value}. Lower is better.</div>
     </div>
 `);
