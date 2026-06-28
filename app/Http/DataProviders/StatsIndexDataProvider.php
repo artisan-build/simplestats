@@ -65,10 +65,7 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
      */
     private function engagementSeriesProp(bool $showRetention, Team $teamStats, StatsFilterDto $filters): ?array
     {
-        $forMetric = $this->request->routeIs('dashboard.metric')
-            && in_array($this->request->route('kpi'), self::ENGAGEMENT_KPIS, true);
-
-        if (! $showRetention && ! $forMetric) {
+        if (! $showRetention && ! $this->isMetricFor(self::ENGAGEMENT_KPIS)) {
             return null;
         }
 
@@ -83,11 +80,7 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
      */
     private function revenueChurnProp(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->request->routeIs('dashboard.metric')) {
-            return null;
-        }
-
-        if (! in_array($this->request->route('kpi'), self::CHURN_KPIS, true)) {
+        if (! $this->isMetricFor(self::CHURN_KPIS)) {
             return null;
         }
 
@@ -103,15 +96,20 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
      */
     private function planBreakdown(Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $this->request->routeIs('dashboard.metric')) {
-            return null;
-        }
-
-        if (! in_array($this->request->route('kpi'), ['mrr', 'subscribers', 'arps'], true)) {
+        if (! $this->isMetricFor(['mrr', 'subscribers', 'arps'])) {
             return null;
         }
 
         return $this->buildPlanBreakdown($teamStats, $filters);
+    }
+
+    /**
+     * @param  array<int, string>  $kpis
+     */
+    private function isMetricFor(array $kpis): bool
+    {
+        return $this->request->routeIs('dashboard.metric')
+            && in_array($this->request->route('kpi'), $kpis, true);
     }
 
     private function campaignSummary(StatsFilterDto $filters): ?array
