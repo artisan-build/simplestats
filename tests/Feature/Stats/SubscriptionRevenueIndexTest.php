@@ -80,6 +80,15 @@ test('subscription revenue exposes mrr, movements and retention when the project
                     ->has('mrr')
                     ->has('gross_churn_rate')
                     ->has('net_churn_rate')
+                    ->has('quick_ratio')
+                )
+            )
+            ->has('mrr_series', fn ($series) => $series
+                ->each(fn ($item) => $item
+                    ->has('date')
+                    ->has('date_clear')
+                    ->has('mrr')
+                    ->has('subscribers')
                 )
             )
         );
@@ -97,6 +106,7 @@ test('subscription revenue mrr props are null when the project has no payments t
         ->assertInertia(fn ($page) => $page
             ->component('Revenue/Index')
             ->where('mrr', null)
+            ->where('mrr_series', null)
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
             ->where('revenue_churn', null)
@@ -116,6 +126,7 @@ test('subscription revenue mrr props are null when the project tracks payments b
         ->assertInertia(fn ($page) => $page
             ->component('Revenue/Index')
             ->where('mrr', null)
+            ->where('mrr_series', null)
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
             ->where('revenue_churn', null)

@@ -78,6 +78,11 @@ export function useChartDefinitions(ctx) {
 
     const kpiDefs = getKpiDefinitions(ctx.filters.range_type);
 
+    // The revenue page reuses this composable for its MRR/churn KPIs but never loads the
+    // period-summed stats (only StatsIndexDataProvider builds them), so default to empty:
+    // the period chartDefs then yield nothing and only the MRR/engagement/churn builders run.
+    const periodStats = ctx.teamStats.stats ?? {};
+
     const isDarkMode = document.documentElement.classList.contains('dark');
 
     const cohortActive = !! ctx.filters.cohort_start;
@@ -90,7 +95,7 @@ export function useChartDefinitions(ctx) {
         && new Date(ctx.filters.range_start) < new Date(ctx.filters.cohort_start.slice(0, 10));
 
     const extractStatsData4Chart = (statsGroups) => {
-        const data = Object.values(ctx.teamStats.stats).reduce((acc, item, key) => {
+        const data = Object.values(periodStats).reduce((acc, item, key) => {
             for (let group of statsGroups) {
                 if (!(group.key in acc.series)) {
                     acc.series[group.key] = {
@@ -158,7 +163,7 @@ export function useChartDefinitions(ctx) {
         return data;
     };
 
-    let statsArray = Object.values(ctx.teamStats.stats);
+    let statsArray = Object.values(periodStats);
     let statsSum = {};
     let statsSumLength = {};
     statsArray.forEach(item => {
@@ -230,7 +235,7 @@ export function useChartDefinitions(ctx) {
         const netByDate = {};
         const netPrevByDate = {};
         const prevDateByDate = {};
-        Object.values(ctx.teamStats.stats).forEach((item, i) => {
+        Object.values(periodStats).forEach((item, i) => {
             netByDate[item.date_clear] = item.pd_net;
             if (prevList) {
                 netPrevByDate[item.date_clear] = prevList[i]?.pd_net ?? 0;
@@ -262,6 +267,20 @@ export function useChartDefinitions(ctx) {
                 indicator: statsSum.pd_net,
             },
         ];
+
+        // ARPS (MRR per subscriber) is a snapshot-derived recurring metric. The dashboard
+        // sources it from the period stats (Average Revenue chart), but the revenue page has
+        // no period stats, so it opts in here to surface ARPS from the same MRR snapshot. Off
+        // elsewhere to avoid a duplicate ARPS entry in the metric menu.
+        if (ctx.includeMrrArps) {
+            seriesDefs.splice(2, 0, {
+                key: 'arps', formatter: 'currency',
+                data: ordered.map(item => item.subscribers > 0 ? item.mrr / item.subscribers : 0),
+                dataPrev: orderedPrev ? ordered.map((item, i) => (orderedPrev[i]?.subscribers > 0 ? orderedPrev[i].mrr / orderedPrev[i].subscribers : 0)) : [],
+                datesPrev: snapshotDatesPrev(),
+                indicator: latest.subscribers > 0 ? latest.mrr / latest.subscribers : 0,
+            });
+        }
 
         const series = seriesDefs.map(def => {
             const hasPrev = !! def.dataPrev?.length;
@@ -315,6 +334,66 @@ export function useChartDefinitions(ctx) {
             group: seriesDefs.map(def => ({key: def.key, formatter: def.formatter, title: kpiDefs[def.key].short})),
             info,
             data: {series, categories},
+        };
+    };
+
+    // Build a standalone chart group from a flat time series (newest-first) the way
+    // buildMrrChart does for MRR snapshots: one serie per def, reversed to oldest-first,
+    // indicator = latest bucket. No previous-period twin (comparison is not built for
+    // these sources yet), so dataPrev/datesPrev stay empty. def.dataKey reads a differently
+    // named source field (e.g. gross_churn_rate -> the gross_churn KPI). Per-bucket rates
+    // can be null and are coalesced to 0; a single bucket draws a flat line (a rate or
+    // snapshot never starts at 0, so no 0 -> value ramp like the period charts).
+    const buildFlatSeriesChart = (name, order, series, defs) => {
+        const ordered = [...series].reverse();
+        const color = isDarkMode ? '#00A3E0' : '#93c5fd';
+        const dates = ordered.map(item => item.date_clear);
+        const latest = series[0];
+
+        const built = defs.map(def => {
+            const field = def.dataKey ?? def.key;
+            const serieName = kpiDefs[def.key].short;
+
+            return {
+                data: ordered.map(item => item[field] ?? 0),
+                dataPrev: [],
+                dates: [...dates],
+                datesPrev: [],
+                name: serieName,
+                nameSmall: serieName,
+                color,
+                key: def.key,
+                formatter: def.formatter,
+                decimals: def.decimals,
+                indicator: latest[field] ?? 0,
+            };
+        });
+
+        const categories = ordered.map(item => formatDate(item.date, ctx.filters.range_type));
+
+        if (categories.length === 1) {
+            categories[1] = categories[0];
+            built.forEach(serie => {
+                serie.data[1] = serie.data[0];
+                serie.dates[1] = serie.dates[0];
+            });
+        }
+
+        const info = defs.map(def => {
+            const kpiDef = kpiDefs[def.key];
+
+            return `<div>
+                        <div class="font-bold text-green-300">${kpiDef.long} (${kpiDef.short})</div>
+                        <div>${kpiDef.description}</div>
+                     </div>`;
+        }).join('');
+
+        return {
+            name,
+            order,
+            group: defs.map(def => ({key: def.key, formatter: def.formatter, title: kpiDefs[def.key].short})),
+            info,
+            data: {series: built, categories},
         };
     };
 
@@ -439,6 +518,22 @@ export function useChartDefinitions(ctx) {
     // by extractStatsData4Chart (which reads the period-summed teamStats.stats).
     if (currentProjectHasTrackingUsageBits(['subscription']) && ctx.mrrSeries?.length) {
         charts.push(buildMrrChart(ctx.mrrSeries));
+    }
+
+    if (ctx.engagementSeries?.length) {
+        charts.push(buildFlatSeriesChart('Engagement', 7, ctx.engagementSeries, [
+            {key: 'active_users', formatter: 'number'},
+            {key: 'stickiness', formatter: 'percent'},
+            {key: 'user_churn', formatter: 'percent'},
+        ]));
+    }
+
+    if (ctx.revenueChurn?.length) {
+        charts.push(buildFlatSeriesChart('Churn & efficiency', 8, ctx.revenueChurn, [
+            {key: 'gross_churn', dataKey: 'gross_churn_rate', formatter: 'percent'},
+            {key: 'net_churn', dataKey: 'net_churn_rate', formatter: 'percent'},
+            {key: 'quick_ratio', formatter: 'number', decimals: 2},
+        ]));
     }
 
     charts.sort((a, b) => a.order - b.order);

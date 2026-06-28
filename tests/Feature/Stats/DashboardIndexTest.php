@@ -438,3 +438,73 @@ test('metric route returns null plan_breakdown for a non-MRR kpi', function () {
             ->where('plan_breakdown', null)
         );
 });
+
+test('metric route exposes engagement_series for an engagement kpi drilled into from retention', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'stickiness', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('kpi', 'stickiness')
+            ->has('engagement_series')
+        );
+});
+
+test('metric route does not build engagement_series for a non-engagement kpi', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('engagement_series', null)
+        );
+});
+
+test('metric route exposes revenue_churn for a churn kpi drilled into from revenue', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'net_churn', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('kpi', 'net_churn')
+            ->has('revenue_churn')
+        );
+});
+
+test('metric route does not build revenue_churn for a non-churn kpi', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
+            | StatsService::TRACKING_USAGE_BITS_USERS
+            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
+            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'mrr', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('revenue_churn', null)
+        );
+});

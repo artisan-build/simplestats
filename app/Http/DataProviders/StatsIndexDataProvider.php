@@ -18,6 +18,10 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
 {
     use BuildsMrrProps;
 
+    private const ENGAGEMENT_KPIS = ['active_users', 'stickiness', 'user_churn'];
+
+    private const CHURN_KPIS = ['gross_churn', 'net_churn', 'quick_ratio'];
+
     public function __construct(
         StatsFilterRequest $request,
         StatsDetailsService $statsDetailsService,
@@ -44,11 +48,50 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
             'mrr_series' => $this->buildMrrTimeSeries($teamStats, $filters),
             'mrr_series_prev' => $this->buildMrrTimeSeriesComparison($teamStats, $filters),
             'campaign_summary' => $this->campaignSummary($filters),
-            'engagement_series' => $showRetention ? $this->engagementSeries($teamStats, $filters) : null,
+            'engagement_series' => $this->engagementSeriesProp($showRetention, $teamStats, $filters),
+            'revenue_churn' => $this->revenueChurnProp($teamStats, $filters),
             'showRetention' => $showRetention,
             'retention_cohorts' => $showRetention ? $this->buildRetentionCohorts($teamStats, $filters) : null,
             'plan_breakdown' => $this->planBreakdown($teamStats, $filters),
         ]);
+    }
+
+    /**
+     * Engagement powers the retention page and, for drilldown, the metric detail view
+     * of an engagement KPI. Gated per kpi so a non-engagement metric page skips the
+     * rolling DAU/MAU aggregations.
+     *
+     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>|null
+     */
+    private function engagementSeriesProp(bool $showRetention, Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        $forMetric = $this->request->routeIs('dashboard.metric')
+            && in_array($this->request->route('kpi'), self::ENGAGEMENT_KPIS, true);
+
+        if (! $showRetention && ! $forMetric) {
+            return null;
+        }
+
+        return $this->engagementSeries($teamStats, $filters);
+    }
+
+    /**
+     * Revenue churn lives on the revenue page (built there) and is only needed here for
+     * the metric detail view of a churn KPI drilled into from there.
+     *
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null, quick_ratio: float|null}>|null
+     */
+    private function revenueChurnProp(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->request->routeIs('dashboard.metric')) {
+            return null;
+        }
+
+        if (! in_array($this->request->route('kpi'), self::CHURN_KPIS, true)) {
+            return null;
+        }
+
+        return $this->buildRevenueChurn($teamStats, $filters);
     }
 
     /**

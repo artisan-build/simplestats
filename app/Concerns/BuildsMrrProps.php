@@ -70,7 +70,7 @@ trait BuildsMrrProps
     }
 
     /**
-     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null}>|null
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null, quick_ratio: float|null}>|null
      */
     protected function buildRevenueChurn(Team $teamStats, StatsFilterDto $filters): ?array
     {

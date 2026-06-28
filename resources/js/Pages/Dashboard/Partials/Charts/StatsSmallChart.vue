@@ -25,6 +25,8 @@ const currencyFractionDigits = computed(() => {
 
     return (props.kpi.indicator < 10000 || props.kpi.indicator >= 100000) ? 2 : 0;
 });
+
+const numberFractionDigits = computed(() => props.kpi.decimals ?? (props.kpi.indicator >= 1000 ? 2 : 0));
 </script>
 
 <template>
@@ -48,7 +50,7 @@ const currencyFractionDigits = computed(() => {
                             {{ formatMap.percent(kpi.indicator, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
                         </span>
                         <span v-else>
-                            {{ formatMap.number(kpi.indicator, {minimumFractionDigits: (kpi.indicator >= 1000) ? 2 : 0, maximumFractionDigits: (kpi.indicator >= 1000) ? 2 : 0}) }}
+                            {{ formatMap.number(kpi.indicator, {minimumFractionDigits: numberFractionDigits, maximumFractionDigits: numberFractionDigits}) }}
                         </span>
                     </div>
                     <div v-if="hasDelta" class="text-sm font-bold whitespace-nowrap" :class="deltaClass">

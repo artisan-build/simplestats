@@ -202,7 +202,7 @@ class MrrAggregationService
      * are null when the starting MRR is zero. The mrr field carries the bucket's
      * ending MRR as context for the chart bars.
      *
-     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null}>
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null, quick_ratio: float|null}>
      */
     public function getRevenueChurn(StatsFilterDto $filters): array
     {
@@ -217,6 +217,7 @@ class MrrAggregationService
                 'mrr' => $bucket['ending_mrr'],
                 'gross_churn_rate' => $starting > 0 ? round($grossLost / $starting * 100, 1) : null,
                 'net_churn_rate' => $starting > 0 ? round($netLost / $starting * 100, 1) : null,
+                'quick_ratio' => $grossLost > 0 ? round(($bucket['new'] + $bucket['expansion']) / $grossLost, 2) : null,
             ];
         }, $this->getMrrMovements($filters));
     }

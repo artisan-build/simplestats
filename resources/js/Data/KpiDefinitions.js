@@ -46,6 +46,16 @@ export function getKpiDefinitions(rangeType) {
             long: 'MRR Quick Ratio',
             description: 'Growth efficiency over the selected period: (new + expansion) / (contraction + churn). Above 1 means recurring revenue gained outpaces revenue lost.',
         },
+        gross_churn: {
+            short: 'Gross churn',
+            long: 'Gross Revenue Churn',
+            description: "Share of the "+periodName+"'s starting MRR lost to cancellations and downgrades (churn + contraction). Lower is better.",
+        },
+        net_churn: {
+            short: 'Net churn',
+            long: 'Net Revenue Churn',
+            description: 'Gross churn offset by expansion and reactivation. Below zero means expansion outweighed losses (net revenue growth from existing subscribers).',
+        },
         pd_net: {
             small: 'Rev',
             short: 'Revenue',
@@ -140,6 +150,21 @@ export function getKpiDefinitions(rangeType) {
         lt_reg2tau: {
             short: 'Reg. to Active',
             description: 'Percentage of registered users who become active.',
+        },
+        active_users: {
+            short: XAU(rangeType),
+            long: 'Active Users',
+            description: 'Distinct users active in each '+periodName+' (any login, including registration). Follows the selected range and granularity.',
+        },
+        stickiness: {
+            short: 'Stickiness',
+            long: 'User Stickiness',
+            description: 'Average daily active users as a percentage of monthly active users (DAU/MAU) on a rolling 30-day window, plotted as of each '+periodName+'. Higher means your active users come back more often; 20%+ is a common benchmark.',
+        },
+        user_churn: {
+            short: 'User Churn',
+            long: 'User Churn',
+            description: "Share of the preceding month's active users (30-60 days back) who did not log in again in the rolling last 30 days, as of each "+periodName+'. Lower is better.',
         },
     }
 }

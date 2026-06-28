@@ -242,9 +242,11 @@ const chartOptions = ref({
                 let format = '';
 
                 if (props.formatter === 'number') {
+                    let dec = props.decimals ?? ((value >= 1000) ? 2 : 0);
+
                     format = formatMap[props.formatter](value, {
-                        minimumFractionDigits: (value >= 1000) ? 2 : 0,
-                        maximumFractionDigits: (value >= 1000) ? 2 : 0,
+                        minimumFractionDigits: dec,
+                        maximumFractionDigits: dec,
                     }, page.props.teamCurrency);
                 } else {
                     let dec = props.decimals ?? 2;

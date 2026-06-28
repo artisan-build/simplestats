@@ -70,7 +70,7 @@ class StatsDetailsService
     }
 
     /**
-     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null}>
+     * @return array<int, array{date: string, date_clear: string, mrr: float, gross_churn_rate: float|null, net_churn_rate: float|null, quick_ratio: float|null}>
      */
     public function getRevenueChurn(StatsFilterDto $filters): array
     {
