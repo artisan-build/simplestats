@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
 import StatsCharts from "@/Pages/Dashboard/Partials/StatsCharts.vue";
 import CohortRetentionTable from "@/Pages/Dashboard/Partials/CohortRetentionTable.vue";
+import RetentionCurveChart from "@/Pages/Dashboard/Partials/RetentionCurveChart.vue";
 import EngagementCharts from "@/Pages/Dashboard/Partials/EngagementCharts.vue";
 import StatsGroups from "@/Pages/Dashboard/Partials/StatsGroups/StatsGroups.vue";
 import FreePlanWarning from "@/Pages/Dashboard/Partials/FreePlanWarning.vue";
@@ -91,6 +92,11 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                             :currentProject="currentProject"
                             :trackingUsageBits="trackingUsageBits"
                             :engagementSeries="engagement_series"
+                        />
+                        <RetentionCurveChart
+                            v-if="retention_cohorts.cohorts.length"
+                            :cohorts="retention_cohorts"
+                            :filters="filters"
                         />
                         <CohortRetentionTable
                             :cohorts="retention_cohorts"
