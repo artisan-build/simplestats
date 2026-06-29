@@ -41,6 +41,10 @@ const showFooter = computed(() => props.canLoadMore || !! slots['footer-left'] |
 
 const visibleColumns = computed(() => props.columns.filter((column) => column.visible !== false));
 
+// Bold the active metric's column only on the metric detail view (highlightColumn);
+// the overview breakdown stays calm and just marks the sort in the header.
+const emphasizedColumn = computed(() => props.highlightColumn);
+
 const formatters = {
     number: (value) => formatNumber(Number(value)),
     percent: (value) => formatPercent(Number(value)),
@@ -77,7 +81,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                             <td v-for="column in [{key: 'name', label: nameLabel, width: nameWidth}, ...visibleColumns]" :key="column.key"
                                 :style="`width: ${column.width};`" :class="column.key === 'name' ? 'py-1.5' : 'p-1.5 text-right'"
                             >
-                                <button class="whitespace-nowrap" :class="[sort === column.key ? 'text-indigo-600' : '', column.key === highlightColumn ? 'font-semibold' : '']" @click="emit('sort', column.key)">
+                                <button class="whitespace-nowrap" :class="[sort === column.key ? 'text-indigo-600' : '', column.key === emphasizedColumn ? 'font-semibold' : '']" @click="emit('sort', column.key)">
                                     <span v-if="column.labelSmall" class="inline-block @2xl:hidden">{{ column.labelSmall }}</span>
                                     <span :class="column.labelSmall ? 'hidden @2xl:inline-block' : ''">{{ column.label }}</span>
                                     <ChevronDownIcon v-if="sort === column.key" class="size-4 hidden @md:inline-block" />
@@ -93,7 +97,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                 </div>
                             </td>
                             <td v-for="column in visibleColumns" :key="column.key" class="p-1.5 text-right">
-                                <span :class="column.key === highlightColumn ? 'font-semibold text-gray-900 dark:text-white' : ''">{{ formatValue(column, item) }}</span>
+                                <span :class="column.key === emphasizedColumn ? 'font-semibold text-gray-900 dark:text-white' : ''">{{ formatValue(column, item) }}</span>
                                 <span v-if="comparisonChange(item, column.key) !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, column.key))">{{ formatComparison(comparisonChange(item, column.key)) }}</span>
                             </td>
                         </tr>
