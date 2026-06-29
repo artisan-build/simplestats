@@ -8,6 +8,7 @@ import StatsChartCanvas from "@/Pages/Dashboard/Partials/Charts/StatsChartCanvas
 import HeadlineKpiTile from "@/Pages/Dashboard/Partials/HeadlineKpiTile.vue";
 import MetricPlanBreakdown from "@/Pages/Dashboard/Partials/MetricPlanBreakdown.vue";
 import {resolveChartSeries, useChartDefinitions} from "@/Composables/useChartDefinitions.js";
+import SlidersIcon from 'bootstrap-icons/icons/sliders.svg?component';
 
 const props = defineProps({
     kpi: String,
@@ -98,6 +99,19 @@ onMounted(() => {
                             : 'text-gray-700 dark:text-dark-300 hover:bg-gray-50 dark:hover:bg-dark-900/30'"
                     >
                         {{ item.title }}
+                    </Link>
+                </div>
+
+                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-dark-700">
+                    <p class="px-3 pb-1 text-xs text-gray-400 dark:text-dark-500">
+                        Missing a metric?
+                    </p>
+                    <Link
+                        :href="route('projects.show', currentProject.id)"
+                        class="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md text-gray-600 dark:text-dark-300 hover:bg-gray-50 dark:hover:bg-dark-900/30 hover:text-gray-900 dark:hover:text-white"
+                    >
+                        <SlidersIcon class="size-4 shrink-0" />
+                        <span>Configure tracking</span>
                     </Link>
                 </div>
             </nav>
