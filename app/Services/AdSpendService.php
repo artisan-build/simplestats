@@ -6,9 +6,11 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Models\AdSpend;
 use App\Models\Campaign;
+use App\Models\Project;
 use App\Models\StatsTrackCampaign;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class AdSpendService
@@ -24,19 +26,19 @@ class AdSpendService
      * bundles one or more tracked utm_campaign dimensions; its revenue is the sum of
      * those dimensions' range-scoped revenue, its spend the overlap-allocated budget.
      * All campaigns are listed (even at zero), so a freshly created one is visible.
+     * Paginated so the per-row LTV computation only runs for the visible page.
      *
-     * @return array<int, array<string, mixed>>
+     * @return LengthAwarePaginator<int, array<string, mixed>>
      */
-    public function getCampaignProfitability(StatsFilterDto $filters): array
+    public function getCampaignProfitability(StatsFilterDto $filters, int $perPage = 20): LengthAwarePaginator
     {
         [$windowStart, $windowEnd] = $this->resolveWindow($filters);
 
         $revenueByUtm = $this->revenueByUtm($filters);
 
         return $this->campaignsForFilter($filters)
-            ->map(fn (Campaign $campaign) => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd))
-            ->values()
-            ->toArray();
+            ->paginate($perPage)
+            ->through(fn (Campaign $campaign) => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd, $filters));
     }
 
     /**
@@ -46,9 +48,9 @@ class AdSpendService
     {
         [$windowStart, $windowEnd] = $this->resolveWindow($filters);
 
-        $campaign->loadMissing(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name']);
+        $campaign->loadMissing(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name,usage']);
 
-        return $this->buildRow($campaign, $this->revenueByUtm($filters), $windowStart, $windowEnd);
+        return $this->buildRow($campaign, $this->revenueByUtm($filters), $windowStart, $windowEnd, $filters);
     }
 
     /**
@@ -94,18 +96,17 @@ class AdSpendService
     }
 
     /**
-     * @return Collection<int, Campaign>
+     * @return Builder<Campaign>
      */
-    private function campaignsForFilter(StatsFilterDto $filters): Collection
+    private function campaignsForFilter(StatsFilterDto $filters): Builder
     {
         return Campaign::query()
-            ->with(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name'])
+            ->with(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name,usage'])
             ->when(
                 $filters->projectId !== StatsFilterDto::TRACK_ALL,
                 fn ($query) => $query->where('project_id', $filters->projectId),
             )
-            ->orderByDesc('created_at')
-            ->get();
+            ->orderByDesc('created_at');
     }
 
     /**
@@ -124,7 +125,7 @@ class AdSpendService
      * @param  Collection<int, array<string, mixed>>  $revenueByUtm
      * @return array<string, mixed>
      */
-    private function buildRow(Campaign $campaign, Collection $revenueByUtm, CarbonImmutable $windowStart, CarbonImmutable $windowEnd): array
+    private function buildRow(Campaign $campaign, Collection $revenueByUtm, CarbonImmutable $windowStart, CarbonImmutable $windowEnd, StatsFilterDto $filters): array
     {
         $net = 0;
         $reg = 0;
@@ -143,6 +144,7 @@ class AdSpendService
         }
 
         $spend = (int) $campaign->adSpends->sum(fn (AdSpend $adSpend) => $adSpend->allocatedFor($windowStart, $windowEnd));
+        $cac = $reg > 0 ? (int) round($spend / $reg) : null;
 
         return [
             'campaign_id' => $campaign->id,
@@ -155,7 +157,41 @@ class AdSpendService
             'spend' => $spend,
             'net_profit' => $net - $spend,
             'roas' => $spend > 0 ? round($net / $spend, 2) : null,
-            'cac' => $reg > 0 ? (int) round($spend / $reg) : null,
+            'cac' => $cac,
+            ...$this->subscriptionKpisFor($filters, $campaign, $cac),
+        ];
+    }
+
+    /**
+     * LTV:CAC and CAC-payback for one campaign. Both need the campaign's subscription
+     * economics (filter-scoped via the campaign special key) and the CAC; either is
+     * null when the campaign's project does not track subscriptions, has no CAC
+     * (no registrations), or has no subscribers. A churn-free range yields a null
+     * LTV (no lifetime to estimate) but a valid payback (ARPS still known).
+     *
+     * @return array{ltv_cac: float|null, cac_payback: float|null}
+     */
+    private function subscriptionKpisFor(StatsFilterDto $base, Campaign $campaign, ?int $cac): array
+    {
+        $empty = ['ltv_cac' => null, 'cac_payback' => null];
+
+        if ($cac === null || ! $campaign->project?->hasUsages([Project::USAGE_SUBSCRIPTION])) {
+            return $empty;
+        }
+
+        $scoped = clone $base;
+        $scoped->campaign = $campaign->id;
+        $scoped->projectId = $campaign->project_id;
+
+        $economics = $this->statsDetailsService->getSubscriptionEconomics($scoped);
+
+        if ($economics === null) {
+            return $empty;
+        }
+
+        return [
+            'ltv_cac' => $economics['ltv'] !== null && $cac > 0 ? round($economics['ltv'] / $cac, 2) : null,
+            'cac_payback' => $economics['arps'] > 0 ? round($cac / $economics['arps'], 1) : null,
         ];
     }
 

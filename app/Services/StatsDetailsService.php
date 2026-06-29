@@ -84,6 +84,14 @@ class StatsDetailsService
         return $this->mrrAggregationService->getLtv($filters);
     }
 
+    /**
+     * @return array{arps: float, monthly_churn: float|null, ltv: float|null}|null
+     */
+    public function getSubscriptionEconomics(StatsFilterDto $filters): ?array
+    {
+        return $this->mrrAggregationService->getSubscriptionEconomics($filters);
+    }
+
     public function getTimeToPay(StatsFilterDto $filters): ?float
     {
         return $this->funnelTimingService->getTimeToPay($filters);

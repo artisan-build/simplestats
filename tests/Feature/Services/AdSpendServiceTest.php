@@ -2,12 +2,15 @@
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
+use App\Enums\SubscriptionInterval;
 use App\Models\AdSpend;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\AdSpendService;
+use App\Services\MrrAggregationService;
 use Carbon\CarbonImmutable;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
@@ -208,4 +211,136 @@ it('bundles revenue from multiple linked utm campaigns and sums spend entries', 
     expect($rows[0]['net'])->toBe(20000)
         ->and($rows[0]['spend'])->toBe(10000)
         ->and($rows[0]['roas'])->toBe(2.0);
+});
+
+function enableSubscriptionTracking(Project $project): void
+{
+    $project->update(['usage' => $project->usage | Project::USAGE_SUBSCRIPTION]);
+}
+
+function makeSubscriptionPayment(string $id, string $userId, int $teamId, int $projectId, float $net, string $time): void
+{
+    DB::table('stats_payments')->insert([
+        'id' => $id,
+        'stats_user_id' => $userId,
+        'team_id' => $teamId,
+        'project_id' => $projectId,
+        'gross' => $net,
+        'net' => $net,
+        'currency' => 'EUR',
+        'subscription_interval' => SubscriptionInterval::MONTH->value,
+        'counter' => 1,
+        'time' => $time,
+        'time_utc' => $time,
+    ]);
+}
+
+it('computes ltv:cac and cac payback for a subscription campaign', function () {
+    enableSubscriptionTracking($this->project);
+
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Sub Ads');
+    $utm = makeTrackCampaign($this->team->id, 'sub_ads', $campaign);
+
+    // Registered in-range (drives reg/cac); their payment chains reach back before
+    // the range so the MRR snapshot has a starting MRR and observable churn.
+    makeCampaignUser('u-stable', $this->team->id, $this->pid, $utm, '2026-06-10 10:00:00');
+    makeCampaignUser('u-churn', $this->team->id, $this->pid, $utm, '2026-06-10 10:00:00');
+
+    makeSubscriptionPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, '2026-04-15 10:00:00');
+    makeSubscriptionPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, '2026-05-15 10:00:00');
+    makeSubscriptionPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, '2026-06-15 10:00:00');
+    makeSubscriptionPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, '2026-04-15 10:00:00');
+
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
+        'amount' => 200, 'starts_on' => '2026-04-01', 'ends_on' => '2026-06-30',
+    ]);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 2, rangeType: StatsRangeType::MONTH,
+        rangeStart: CarbonImmutable::parse('2026-06-21'), comparison: '0',
+    );
+
+    $row = $this->service->getCampaignProfitability($filter)[0];
+
+    $economics = app(MrrAggregationService::class)->getSubscriptionEconomics($filter);
+
+    expect($row['ltv_cac'])->toBe(round($economics['ltv'] / $row['cac'], 2))
+        ->and($row['cac_payback'])->toBe(round($row['cac'] / $economics['arps'], 1));
+});
+
+it('leaves ltv:cac and payback null when the project does not track subscriptions', function () {
+    $campaign = makeCampaign($this->team->id, $this->pid, 'No Sub');
+    $utm = makeTrackCampaign($this->team->id, 'no_sub', $campaign);
+    makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
+    makeCampaignPayment('p1', 'u1', $this->team->id, $this->pid, 10000, '2026-06-15 10:00:00');
+
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
+        'amount' => 5000, 'starts_on' => '2026-06-01', 'ends_on' => '2026-06-20',
+    ]);
+
+    $row = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'))[0];
+
+    expect($row['cac'])->toBe(5000)
+        ->and($row['ltv_cac'])->toBeNull()
+        ->and($row['cac_payback'])->toBeNull();
+});
+
+it('leaves ltv:cac and payback null when the campaign has no cac', function () {
+    enableSubscriptionTracking($this->project);
+
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Spend Only');
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
+        'amount' => 3000, 'starts_on' => '2026-06-01', 'ends_on' => '2026-06-20',
+    ]);
+
+    $row = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'))[0];
+
+    expect($row['cac'])->toBeNull()
+        ->and($row['ltv_cac'])->toBeNull()
+        ->and($row['cac_payback'])->toBeNull();
+});
+
+it('keeps a payback while leaving ltv:cac null for a churn-free campaign', function () {
+    enableSubscriptionTracking($this->project);
+
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Sticky Ads');
+    $utm = makeTrackCampaign($this->team->id, 'sticky_ads', $campaign);
+
+    makeCampaignUser('u-stable', $this->team->id, $this->pid, $utm, '2026-06-10 10:00:00');
+    makeSubscriptionPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, '2026-04-15 10:00:00');
+    makeSubscriptionPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, '2026-05-15 10:00:00');
+    makeSubscriptionPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, '2026-06-15 10:00:00');
+
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
+        'amount' => 200, 'starts_on' => '2026-04-01', 'ends_on' => '2026-06-30',
+    ]);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 2, rangeType: StatsRangeType::MONTH,
+        rangeStart: CarbonImmutable::parse('2026-06-21'), comparison: '0',
+    );
+
+    $row = $this->service->getCampaignProfitability($filter)[0];
+
+    expect($row['ltv_cac'])->toBeNull()
+        ->and($row['cac_payback'])->not->toBeNull();
+});
+
+it('paginates campaigns and only computes kpis for the visible page', function () {
+    enableSubscriptionTracking($this->project);
+
+    foreach (range(1, 25) as $i) {
+        makeCampaign($this->team->id, $this->pid, "Campaign {$i}");
+    }
+
+    $paginator = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'), 20);
+
+    expect($paginator)->toBeInstanceOf(LengthAwarePaginator::class)
+        ->and($paginator->total())->toBe(25)
+        ->and($paginator->perPage())->toBe(20)
+        ->and($paginator->count())->toBe(20);
 });

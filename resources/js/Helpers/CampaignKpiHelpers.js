@@ -18,3 +18,31 @@ export function profitClass(value, neutral = '') {
 
     return value > 0 ? POSITIVE : NEGATIVE;
 }
+
+export const formatLtvCac = (value) => value === null ? '–' : `${value.toFixed(2)}×`;
+
+export function ltvCacClass(value, neutral = '') {
+    if (value === null) {
+        return neutral;
+    }
+
+    if (value >= 3) {
+        return POSITIVE;
+    }
+
+    return value < 1 ? NEGATIVE : neutral;
+}
+
+export const formatPayback = (value) => value === null ? '–' : `${value.toFixed(1)} mo`;
+
+export function paybackClass(value, neutral = '') {
+    if (value === null) {
+        return neutral;
+    }
+
+    if (value <= 12) {
+        return POSITIVE;
+    }
+
+    return value > 24 ? NEGATIVE : neutral;
+}

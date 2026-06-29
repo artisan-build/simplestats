@@ -58,7 +58,7 @@ test('campaigns lists a campaign with its spend as a profitability row', functio
     $this->get(route('campaigns', ['range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21']))
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Index')
-            ->has('campaigns', 1, fn ($row) => $row
+            ->has('campaigns.data', 1, fn ($row) => $row
                 ->where('campaign_id', $campaign->id)
                 ->where('name', 'Google Ads')
                 ->where('spend', 5000)
@@ -66,6 +66,7 @@ test('campaigns lists a campaign with its spend as a profitability row', functio
                 ->where('net_profit', -5000)
                 ->etc()
             )
+            ->has('campaigns.links')
         );
 });
 
@@ -78,9 +79,48 @@ test('campaigns lists a freshly created campaign even without spend', function (
 
     $this->get(route('campaigns'))
         ->assertInertia(fn ($page) => $page
-            ->has('campaigns', 1, fn ($row) => $row
+            ->has('campaigns.data', 1, fn ($row) => $row
                 ->where('name', 'Pre-launch')
                 ->where('spend', 0)
+                ->etc()
+            )
+        );
+});
+
+test('campaigns paginates the profitability list at 20 per page', function () {
+    Campaign::factory()->count(25)->create([
+        'team_id' => $this->team->id,
+        'project_id' => $this->project->id,
+    ]);
+
+    $this->get(route('campaigns'))
+        ->assertInertia(fn ($page) => $page
+            ->has('campaigns.data', 20)
+            ->where('campaigns.total', 25)
+            ->where('campaigns.per_page', 20)
+        );
+
+    $this->get(route('campaigns', ['page' => 2]))
+        ->assertInertia(fn ($page) => $page
+            ->has('campaigns.data', 5)
+            ->where('campaigns.current_page', 2)
+        );
+});
+
+test('campaigns exposes ltv:cac and cac payback keys on each row', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
+
+    Campaign::factory()->create([
+        'team_id' => $this->team->id,
+        'project_id' => $this->project->id,
+        'name' => 'Sub Ads',
+    ]);
+
+    $this->get(route('campaigns'))
+        ->assertInertia(fn ($page) => $page
+            ->has('campaigns.data', 1, fn ($row) => $row
+                ->where('ltv_cac', null)
+                ->where('cac_payback', null)
                 ->etc()
             )
         );

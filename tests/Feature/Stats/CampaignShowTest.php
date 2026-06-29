@@ -90,6 +90,48 @@ test('campaign show returns a zero summary when the campaign has no spend or rev
         );
 });
 
+test('campaign show summary carries ltv:cac and cac payback keys', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
+
+    $this->get(route('campaigns.show', $this->campaign))
+        ->assertInertia(fn ($page) => $page
+            ->where('summary.ltv_cac', null)
+            ->where('summary.cac_payback', null)
+        );
+});
+
+test('campaign show summary matches the matching index row', function () {
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id,
+        'campaign_id' => $this->campaign->id,
+        'amount' => 5000,
+        'starts_on' => '2026-06-17',
+        'ends_on' => '2026-06-21',
+    ]);
+
+    $query = ['range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21'];
+
+    $summary = null;
+    $this->get(route('campaigns.show', ['campaign' => $this->campaign->id, ...$query]))
+        ->assertInertia(function ($page) use (&$summary) {
+            $summary = $page->toArray()['props']['summary'];
+        });
+
+    $row = null;
+    $this->get(route('campaigns', $query))
+        ->assertInertia(function ($page) use (&$row) {
+            $row = $page->toArray()['props']['campaigns']['data'][0];
+        });
+
+    expect($row)->toMatchArray([
+        'campaign_id' => $summary['campaign_id'],
+        'spend' => $summary['spend'],
+        'net_profit' => $summary['net_profit'],
+        'ltv_cac' => $summary['ltv_cac'],
+        'cac_payback' => $summary['cac_payback'],
+    ]);
+});
+
 test('campaign show 404s for another team campaign', function () {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
     $foreignId = DB::table('campaigns')->insertGetId([

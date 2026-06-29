@@ -15,7 +15,15 @@ import {Link, router, useForm, usePage} from "@inertiajs/vue3";
 import {ref} from "vue";
 import {useUsage} from "@/Composables/useUsage.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
-import {formatRoas, profitClass as profitClassBase, roasClass as roasClassBase} from "@/Helpers/CampaignKpiHelpers.js";
+import {
+    formatLtvCac,
+    formatPayback,
+    formatRoas,
+    ltvCacClass as ltvCacClassBase,
+    paybackClass as paybackClassBase,
+    profitClass as profitClassBase,
+    roasClass as roasClassBase
+} from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
 import XLgIcon from "bootstrap-icons/icons/x-lg.svg?component";
 import TrashIcon from "bootstrap-icons/icons/trash.svg?component";
@@ -51,6 +59,8 @@ const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(c
 const roas = formatRoas;
 const roasClass = (value) => roasClassBase(value, neutral);
 const profitClass = (value) => profitClassBase(value, neutral);
+const ltvCacClass = (value) => ltvCacClassBase(value, neutral);
+const paybackClass = (value) => paybackClassBase(value, neutral);
 
 const analyzeIn = (routeName) => {
     router.get(route(routeName, {...props.filters, project_id: props.campaign.project_id, campaign: props.campaign.id}));
@@ -96,12 +106,12 @@ const unlink = (trackCampaign) => {
 </script>
 
 <template>
-    <AppLayout :title="campaign.name" :fullscreen="false">
+    <AppLayout :title="campaign.name" :fullscreen="true">
         <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
 
-        <div class="max-w-5xl mx-auto space-y-8">
+        <div class="space-y-8">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="space-y-1">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
@@ -131,7 +141,7 @@ const unlink = (trackCampaign) => {
                 </SecondaryButton>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-3">
                 <div class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         Spend <InfoTooltip :title="metricInfo.spend.title" :text="metricInfo.spend.text" />
@@ -162,7 +172,19 @@ const unlink = (trackCampaign) => {
                     <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
                         CAC <InfoTooltip :title="metricInfo.cac.title" :text="metricInfo.cac.text" />
                     </div>
-                    <div class="mt-1 text-xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ summary.cac === null ? '–' : currency(summary.cac) }}</div>
+                    <div class="mt-1 text-xl font-semibold tracking-tight" :class="ltvCacClass(summary.ltv_cac)">{{ summary.cac === null ? '–' : currency(summary.cac) }}</div>
+                </div>
+                <div v-if="showsSubscription" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
+                    <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
+                        LTV:CAC <InfoTooltip :title="metricInfo.ltvCac.title" :text="metricInfo.ltvCac.text" />
+                    </div>
+                    <div class="mt-1 text-xl font-semibold tracking-tight" :class="ltvCacClass(summary.ltv_cac)">{{ formatLtvCac(summary.ltv_cac) }}</div>
+                </div>
+                <div v-if="showsSubscription" class="bg-white dark:bg-dark-800 border rounded-md py-3 px-4">
+                    <div class="flex items-center gap-1 text-sm font-medium tracking-wider text-gray-700 dark:text-dark-400">
+                        Payback <InfoTooltip :title="metricInfo.cacPayback.title" :text="metricInfo.cacPayback.text" />
+                    </div>
+                    <div class="mt-1 text-xl font-semibold tracking-tight" :class="paybackClass(summary.cac_payback)">{{ formatPayback(summary.cac_payback) }}</div>
                 </div>
             </div>
 
@@ -216,7 +238,7 @@ const unlink = (trackCampaign) => {
                 </div>
             </div>
 
-            <ActionTable :links="adSpends.links" maxWidth="max-w-5xl">
+            <ActionTable :links="adSpends.links" maxWidth="max-w-none">
                 <template #title>Ad spend entries</template>
                 <template #description>All budgets for this campaign. Click a row to edit it.</template>
                 <template #aside>

@@ -271,29 +271,45 @@ class MrrAggregationService
      */
     public function getLtv(StatsFilterDto $filters): ?float
     {
+        return $this->getSubscriptionEconomics($filters)['ltv'] ?? null;
+    }
+
+    /**
+     * The subscription unit economics behind LTV, exposed together so CAC-payback
+     * can reuse ARPS independently of LTV (a churn-free range yields a valid ARPS
+     * but a null LTV). All three come from a single computation. Returns null only
+     * when there are no subscribers to estimate from.
+     *
+     * @return array{arps: float, monthly_churn: float|null, ltv: float|null}|null
+     */
+    public function getSubscriptionEconomics(StatsFilterDto $filters): ?array
+    {
         $latest = Arr::first($this->getMrrTimeSeries($filters));
 
         if ($latest === null || $latest['subscribers'] <= 0) {
             return null;
         }
 
-        $retention = $this->getMrrRetention($filters);
-        $starting = $retention['starting_mrr'];
-
-        if ($starting <= 0) {
-            return null;
-        }
-
-        $periodGrossChurn = ($retention['contraction'] + $retention['churn']) / $starting;
-        $monthlyChurn = $periodGrossChurn * (self::DAYS_PER_MONTH / $this->rangeDays($filters));
-
-        if ($monthlyChurn <= 0) {
-            return null;
-        }
-
         $arps = $latest['mrr'] / $latest['subscribers'];
 
-        return round($arps / $monthlyChurn, 2);
+        $retention = $this->getMrrRetention($filters);
+        $starting = $retention['starting_mrr'];
+        $monthlyChurn = null;
+
+        if ($starting > 0) {
+            $periodGrossChurn = ($retention['contraction'] + $retention['churn']) / $starting;
+            $candidate = $periodGrossChurn * (self::DAYS_PER_MONTH / $this->rangeDays($filters));
+
+            if ($candidate > 0) {
+                $monthlyChurn = $candidate;
+            }
+        }
+
+        return [
+            'arps' => $arps,
+            'monthly_churn' => $monthlyChurn,
+            'ltv' => $monthlyChurn !== null ? round($arps / $monthlyChurn, 2) : null,
+        ];
     }
 
     /**

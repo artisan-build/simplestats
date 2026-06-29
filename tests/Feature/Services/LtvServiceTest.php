@@ -136,6 +136,45 @@ it('returns null when the range has no starting mrr', function () {
     expect($this->service->getLtv(ltvMonthFilter($this->pid, '2026-06-21', 2)))->toBeNull();
 });
 
+it('exposes ARPS, monthly churn and an LTV matching getLtv', function () {
+    insertLtvUser('u-stable', $this->team->id, $this->pid);
+    insertLtvUser('u-churn', $this->team->id, $this->pid);
+
+    insertLtvPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertLtvPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertLtvPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+    insertLtvPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+
+    $filter = ltvMonthFilter($this->pid, '2026-06-21', 2);
+    $economics = $this->service->getSubscriptionEconomics($filter);
+
+    // Current (June) MRR = 100, subscribers = 1 -> ARPS 100.
+    $periodGrossChurn = 40 / 140;
+    $monthlyChurn = $periodGrossChurn * (30.44 / ltvRangeDays($filter));
+
+    expect($economics['arps'])->toBe(100.0)
+        ->and($economics['monthly_churn'])->toBe($monthlyChurn)
+        ->and($economics['ltv'])->toBe(round(100.0 / $monthlyChurn, 2))
+        ->and($economics['ltv'])->toBe($this->service->getLtv($filter));
+});
+
+it('exposes a valid ARPS but a null LTV when there is no churn', function () {
+    insertLtvUser('u-stable', $this->team->id, $this->pid);
+    insertLtvPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
+    insertLtvPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+    insertLtvPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
+
+    $economics = $this->service->getSubscriptionEconomics(ltvMonthFilter($this->pid, '2026-06-21', 2));
+
+    expect($economics['arps'])->toBe(100.0)
+        ->and($economics['monthly_churn'])->toBeNull()
+        ->and($economics['ltv'])->toBeNull();
+});
+
+it('returns null economics when there are no subscribers', function () {
+    expect($this->service->getSubscriptionEconomics(ltvMonthFilter($this->pid, '2026-06-21', 2)))->toBeNull();
+});
+
 it('attributes LTV per channel via the source filter', function () {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,

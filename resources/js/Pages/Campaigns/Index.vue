@@ -14,7 +14,15 @@ import {router, usePage} from "@inertiajs/vue3";
 import {useUsage} from "@/Composables/useUsage.js";
 import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
-import {formatRoas as roas, profitClass, roasClass} from "@/Helpers/CampaignKpiHelpers.js";
+import {
+    formatLtvCac,
+    formatPayback,
+    formatRoas as roas,
+    ltvCacClass,
+    paybackClass,
+    profitClass,
+    roasClass
+} from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
 
 const props = defineProps({
@@ -24,7 +32,7 @@ const props = defineProps({
     rangeTypes: Array,
     subscriptionPlanAlarm: Array,
     usageBits: Object,
-    campaigns: {type: Array, default: () => []},
+    campaigns: {type: Object, default: () => ({data: [], links: []})},
     projects: {type: Array, default: () => []},
 });
 
@@ -35,10 +43,11 @@ const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
 
 const showsRevenue = currentProjectHasUsages(['payments']);
 const showsRegistrations = currentProjectHasUsages(['users']);
+const showsSubscription = currentProjectHasUsages(['subscription']);
 const showProjectColumn = props.projects.length > 1 && (props.filters.project_id ?? 0) === 0;
 const defaultProjectId = props.projects.find(project => project.id === props.filters.project_id)?.id ?? props.projects[0]?.id;
 
-const columnCount = 2 + (showProjectColumn ? 1 : 0) + (showsRevenue ? 3 : 0) + (showsRegistrations ? 1 : 0);
+const columnCount = 2 + (showProjectColumn ? 1 : 0) + (showsRevenue ? 3 : 0) + (showsRegistrations ? 1 : 0) + (showsSubscription ? 2 : 0);
 
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);
 
@@ -73,12 +82,12 @@ onMounted(() => startCampaignsTour());
 </script>
 
 <template>
-    <AppLayout title="Campaigns" :fullscreen="false">
+    <AppLayout title="Campaigns" :fullscreen="true">
         <div v-if="subscriptionPlanAlarm.length > 0" class="mb-6">
             <SubscriptionPlanAlarm :subscriptionPlanAlarm="subscriptionPlanAlarm" />
         </div>
 
-        <div class="max-w-5xl mx-auto space-y-6">
+        <div class="space-y-6">
             <div class="space-y-3" data-tour="campaigns-intro">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Campaigns</h1>
@@ -90,15 +99,15 @@ onMounted(() => startCampaignsTour());
                         submitRoute="campaigns"
                     />
                 </div>
-                <h2 class="text-base text-gray-500 dark:text-dark-400">
+                <h2 class="max-w-3xl text-base text-gray-500 dark:text-dark-400">
                     Use your favorite ad portal for <span class="italic font-semibold">targeting</span>, SimpleStats for <span class="italic font-semibold">analysing</span>!
                 </h2>
-                <p class="text-sm text-gray-500 dark:text-dark-400">
+                <p class="max-w-3xl text-sm text-gray-500 dark:text-dark-400">
                     No tracking pixel, GDPR compliant and immune to ad blockers: enter what you spent on Meta, Google &amp; co. and see each campaign's real, server-side measured revenue, ROAS, CAC and net profit, the numbers your ad dashboards can't show you.
                 </p>
             </div>
 
-            <ActionTable :links="[]" maxWidth="max-w-5xl">
+            <ActionTable :links="campaigns.links" maxWidth="max-w-none">
                 <template #title>Campaign profitability</template>
                 <template #description>Spend versus the revenue it generated, for the selected range. Click a campaign to manage its ad spend.</template>
                 <template #aside>
@@ -124,10 +133,16 @@ onMounted(() => startCampaignsTour());
                         <th v-if="showsRegistrations" class="pb-4 pt-6 px-6 text-right">
                             <span class="inline-flex items-center justify-end gap-1">CAC <InfoTooltip :title="metricInfo.cac.title" :text="metricInfo.cac.text" /></span>
                         </th>
+                        <th v-if="showsSubscription" class="pb-4 pt-6 px-6 text-right">
+                            <span class="inline-flex items-center justify-end gap-1">LTV:CAC <InfoTooltip :title="metricInfo.ltvCac.title" :text="metricInfo.ltvCac.text" /></span>
+                        </th>
+                        <th v-if="showsSubscription" class="pb-4 pt-6 px-6 text-right">
+                            <span class="inline-flex items-center justify-end gap-1">Payback <InfoTooltip :title="metricInfo.cacPayback.title" :text="metricInfo.cacPayback.text" /></span>
+                        </th>
                         <th class="pb-4 pt-6 px-6"></th>
                     </tr>
                     <tr
-                        v-for="row in campaigns"
+                        v-for="row in campaigns.data"
                         :key="row.campaign_id + '-' + row.name"
                         class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
                     >
@@ -147,7 +162,9 @@ onMounted(() => startCampaignsTour());
                             {{ currency(row.net_profit) }}
                         </td>
                         <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums font-medium" :class="roasClass(row.roas)">{{ roas(row.roas) }}</td>
-                        <td v-if="showsRegistrations" class="border-t px-6 py-4 text-right tabular-nums">{{ row.cac === null ? '–' : currency(row.cac) }}</td>
+                        <td v-if="showsRegistrations" class="border-t px-6 py-4 text-right tabular-nums" :class="[ltvCacClass(row.ltv_cac), row.ltv_cac !== null ? 'font-medium' : '']">{{ row.cac === null ? '–' : currency(row.cac) }}</td>
+                        <td v-if="showsSubscription" class="border-t px-6 py-4 text-right tabular-nums font-medium" :class="ltvCacClass(row.ltv_cac)">{{ formatLtvCac(row.ltv_cac) }}</td>
+                        <td v-if="showsSubscription" class="border-t px-6 py-4 text-right tabular-nums font-medium" :class="paybackClass(row.cac_payback)">{{ formatPayback(row.cac_payback) }}</td>
                         <td class="w-px border-t px-6 py-4">
                             <div class="flex items-center justify-end gap-2">
                                 <button type="button" aria-label="Analyze in dashboard" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze in dashboard'" @click="analyzeCampaign(row)">
@@ -162,7 +179,7 @@ onMounted(() => startCampaignsTour());
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="!campaigns.length">
+                    <tr v-if="!campaigns.data.length">
                         <td class="border-t px-6 py-8 text-center text-gray-500 dark:text-dark-400" :colspan="columnCount + 1">
                             No campaigns yet. Track a campaign to enter its ad spend and start measuring ROAS, CAC and net profit.
                         </td>
