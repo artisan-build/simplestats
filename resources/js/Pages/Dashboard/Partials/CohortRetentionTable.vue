@@ -1,5 +1,5 @@
 <script setup>
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {Link} from "@inertiajs/vue3";
 import {formatDate} from "@/Helpers/NumberHelpers.js";
 
@@ -34,11 +34,23 @@ const periodHeaders = computed(() =>
     Array.from({length: props.cohorts.period_count}, (_, i) => `${periodNoun.value} ${i}`)
 );
 
-// Opaque emerald swatch whose lightness scales with the retention share, so it
-// reads as a heatmap on any background (light or dark) without per-mode classes.
+const isDarkMode = ref(document.documentElement.classList.contains('dark'));
+
+// Opaque emerald swatch whose lightness scales with the retention share. Light mode
+// fades a bright emerald towards white; dark mode keeps the swatch deep and low-saturation
+// so a full cohort reads as a calm emerald instead of glaring against the dark background.
 const cellStyle = (value) => {
     if (value === null || value === undefined) {
         return {};
+    }
+
+    if (isDarkMode.value) {
+        const lightness = 17 + (value / 100) * 26;
+
+        return {
+            backgroundColor: `hsl(160, 55%, ${lightness}%)`,
+            color: '#d1fae5',
+        };
     }
 
     const lightness = 96 - (value / 100) * 60;
