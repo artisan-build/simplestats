@@ -6,7 +6,8 @@ const props = defineProps({
     filters: Object,
     teamStats: Object,
     currentProject: Object,
-    trackingUsageBits: Object,
+    usageBits: Object,
+    flagBits: Object,
     engagementSeries: {type: Array, default: null},
 });
 
@@ -14,7 +15,8 @@ const {kpiByKey} = useChartDefinitions({
     filters: props.filters,
     teamStats: props.teamStats,
     currentProject: props.currentProject,
-    trackingUsageBits: props.trackingUsageBits,
+    usageBits: props.usageBits,
+    flagBits: props.flagBits,
     engagementSeries: props.engagementSeries,
 });
 

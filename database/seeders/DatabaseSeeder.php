@@ -12,7 +12,6 @@ use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
 use App\Observers\StatsObserver;
-use App\Services\StatsService;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -122,10 +121,10 @@ class DatabaseSeeder extends Seeder
     {
         $user = User::where('email', config('app.test.user')['email'])->firstOrFail();
 
-        $usage = StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION;
+        $usage = Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION;
 
         Project::factory()->count(1)->state(['name' => 'SimpleStats', 'usage' => $usage])
             ->for(Team::find($user->current_team_id))

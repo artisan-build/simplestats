@@ -11,7 +11,7 @@ import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
 import RetentionIcon from "bootstrap-icons/icons/activity.svg?component";
 import {onMounted, ref} from "vue";
 import {router, usePage} from "@inertiajs/vue3";
-import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useUsage} from "@/Composables/useUsage.js";
 import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
 import {formatRoas as roas, profitClass, roasClass} from "@/Helpers/CampaignKpiHelpers.js";
@@ -23,7 +23,7 @@ const props = defineProps({
     filters: Object,
     rangeTypes: Array,
     subscriptionPlanAlarm: Array,
-    trackingUsageBits: Object,
+    usageBits: Object,
     campaigns: {type: Array, default: () => []},
     projects: {type: Array, default: () => []},
 });
@@ -31,10 +31,10 @@ const props = defineProps({
 const page = usePage();
 
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
-const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, props.trackingUsageBits);
+const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
 
-const showsRevenue = currentProjectHasTrackingUsageBits(['payments']);
-const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
+const showsRevenue = currentProjectHasUsages(['payments']);
+const showsRegistrations = currentProjectHasUsages(['users']);
 const showProjectColumn = props.projects.length > 1 && (props.filters.project_id ?? 0) === 0;
 const defaultProjectId = props.projects.find(project => project.id === props.filters.project_id)?.id ?? props.projects[0]?.id;
 
@@ -53,10 +53,10 @@ const analyzeCampaign = (row) => {
 };
 
 // Only projects that track subscriptions have a revenue view to drill into.
-const subscriptionBit = props.trackingUsageBits.subscription;
+const subscriptionBit = props.usageBits.subscription;
 const tracksSubscription = (projectId) => !! ((props.teamStats.projects[projectId]?.usage ?? 0) & subscriptionBit);
 
-const usersBit = props.trackingUsageBits.users;
+const usersBit = props.usageBits.users;
 const tracksUsers = (projectId) => !! ((props.teamStats.projects[projectId]?.usage ?? 0) & usersBit);
 
 const analyzeCampaignRevenue = (row) => {

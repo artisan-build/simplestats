@@ -7,6 +7,7 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
 use App\Http\Requests\StatsFilterRequest;
 use App\Models\Campaign;
+use App\Models\Project;
 use App\Models\Team;
 use App\Services\AdSpendService;
 use App\Services\RefererService;
@@ -175,6 +176,6 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
      */
     private function projectTracksUsers(Team $teamStats, StatsFilterDto $filters): bool
     {
-        return $this->projectTracksBit($teamStats, $filters, StatsService::TRACKING_USAGE_BITS_USERS);
+        return $this->projectTracksBit($teamStats, $filters, Project::USAGE_USERS);
     }
 }

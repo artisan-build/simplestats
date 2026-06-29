@@ -5,6 +5,7 @@ namespace App\Http\DataProviders;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangePreset;
 use App\Http\Requests\StatsFilterRequest;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\RefererService;
@@ -54,7 +55,10 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
             'freePlanWarning' => ['show' => StatsService::showFreePlanWarning($user)],
             'readDocsWarning' => ['show' => StatsService::showReadDocsWarning($user)],
             'subscriptionPlanAlarm' => $this->subscriptionService->getPlanAlarm($user->team),
-            'trackingUsageBits' => StatsService::getTrackingUsages()->mapWithKeys(function ($item, $key) {
+            'usageBits' => Project::getUsages()->mapWithKeys(function ($item, $key) {
+                return [$key => $item['bit']];
+            }),
+            'flagBits' => Project::getFlags()->mapWithKeys(function ($item, $key) {
                 return [$key => $item['bit']];
             }),
             'comparisonTypes' => StatsService::getComparisonTypes(),
@@ -93,7 +97,11 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
 
         // we need to do prepend before keyBy('id')
         $mergedUsageBits = $teamStats->projects->reduce(fn ($carry, $project) => $carry | $project['usage'], 0);
-        $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects', $mergedUsageBits));
+        // flags merge with AND (not OR like usage): a business-model property applies to the
+        // "All Projects" view only when every project has it, so KPIs are hidden across all
+        // projects only if they are redundant for all of them.
+        $mergedFlags = $teamStats->projects->reduce(fn ($carry, $project) => $carry & $project['flags'], Project::getFlagBitsCount());
+        $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects', $mergedUsageBits, $mergedFlags));
 
         // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
         // this would not update $teamStats cause of laravel intern relation management...

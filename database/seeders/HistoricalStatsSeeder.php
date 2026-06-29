@@ -9,7 +9,6 @@ use App\Models\StatsLogin;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
-use App\Services\StatsService;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
@@ -40,7 +39,7 @@ class HistoricalStatsSeeder extends Seeder
                     'name' => $name,
                 ]));
 
-            $tracksSubscription = (bool) ($project->usage & StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION);
+            $tracksSubscription = (bool) ($project->usage & Project::USAGE_SUBSCRIPTION);
 
             $count = $this->getUserSeedCount();
 

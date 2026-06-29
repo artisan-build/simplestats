@@ -28,7 +28,8 @@ const props = defineProps({
     freePlanWarning: Object,
     readDocsWarning: Object,
     subscriptionPlanAlarm: Array,
-    trackingUsageBits: Object,
+    usageBits: Object,
+    flagBits: Object,
     comparisonTypes: Object,
     mrr_series: {type: Array, default: null},
     mrr_series_prev: {type: Array, default: null},
@@ -78,7 +79,7 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                 :filters="filters"
                 :rangeTypes="rangeTypes"
                 :topReferers="topReferers"
-                :trackingUsageBits="trackingUsageBits"
+                :usageBits="usageBits"
                 :comparisonTypes="comparisonTypes"
                 :submitRoute="baseRoute"
             />
@@ -90,7 +91,8 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                             :filters="filters"
                             :teamStats="teamStats"
                             :currentProject="currentProject"
-                            :trackingUsageBits="trackingUsageBits"
+                            :usageBits="usageBits"
+                            :flagBits="flagBits"
                             :engagementSeries="engagement_series"
                         />
                         <RetentionCurveChart
@@ -108,7 +110,8 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :filters="filters"
                         :teamStats="teamStats"
                         :currentProject="currentProject"
-                        :trackingUsageBits="trackingUsageBits"
+                        :usageBits="usageBits"
+                        :flagBits="flagBits"
                         :mrrSeries="mrr_series"
                         :mrrSeriesPrev="mrr_series_prev"
                         :campaignSummary="campaign_summary"
@@ -125,7 +128,7 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :hasCustomEvents="hasCustomEvents"
                         :topReferers="topReferers"
                         :currentProject="currentProject"
-                        :trackingUsageBits="trackingUsageBits"
+                        :usageBits="usageBits"
                         :baseRoute="baseRoute"
                     />
                 </div>

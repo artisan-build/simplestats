@@ -2,7 +2,6 @@
 
 use App\Models\Project;
 use App\Models\User;
-use App\Services\StatsService;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -23,7 +22,7 @@ test('subscription revenue renders Revenue/Index with the shared filter props', 
             ->has('presets')
             ->has('filters')
             ->has('rangeTypes')
-            ->has('trackingUsageBits')
+            ->has('usageBits')
             ->has('comparisonTypes')
         );
 });
@@ -33,10 +32,10 @@ test('subscription revenue exposes mrr, movements and retention when the project
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $this->get(route('revenue', ['project_id' => $project->id]))
@@ -99,7 +98,7 @@ test('subscription revenue mrr props are null when the project has no payments t
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     $this->get(route('revenue', ['project_id' => $project->id]))
@@ -118,8 +117,8 @@ test('subscription revenue mrr props are null when the project tracks payments b
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_PAYMENTS,
     ]);
 
     $this->get(route('revenue', ['project_id' => $project->id]))

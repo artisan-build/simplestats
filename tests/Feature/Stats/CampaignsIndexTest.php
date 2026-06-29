@@ -32,7 +32,7 @@ test('campaigns renders Campaigns/Index with the shared filter and profitability
             ->has('presets')
             ->has('filters')
             ->has('rangeTypes')
-            ->has('trackingUsageBits')
+            ->has('usageBits')
             ->has('campaigns')
             ->has('projects')
             ->missing('adSpends')

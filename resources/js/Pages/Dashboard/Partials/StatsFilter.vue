@@ -10,7 +10,7 @@ import TextInput from "@/Components/TextInput.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
 import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
-import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useUsage} from "@/Composables/useUsage.js";
 import DotIcon from 'bootstrap-icons/icons/dot.svg?component';
 import GearIcon from 'bootstrap-icons/icons/gear.svg?component';
 import InfoIcon from 'bootstrap-icons/icons/info-circle.svg?component';
@@ -29,7 +29,7 @@ const props = defineProps({
     filters: Object,
     rangeTypes: Array,
     topReferers: Object,
-    trackingUsageBits: Object,
+    usageBits: Object,
     comparisonTypes: Object,
     submitRoute: {type: String, default: 'dashboard'},
     submitRouteParams: {type: Object, default: () => ({})},
@@ -136,8 +136,8 @@ const applyCohort = (payload) => {
 
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
 
-const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, props.trackingUsageBits);
-const showCohortPicker = props.submitRoute !== 'retention' && currentProjectHasTrackingUsageBits(['users']);
+const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
+const showCohortPicker = props.submitRoute !== 'retention' && currentProjectHasUsages(['users']);
 
 const showPresetModal = ref(false);
 </script>

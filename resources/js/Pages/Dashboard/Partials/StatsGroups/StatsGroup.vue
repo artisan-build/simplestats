@@ -5,7 +5,7 @@ import {XAU} from "@/Helpers/StringHelpers.js";
 import axios from 'axios';
 import StatsIcon from "@/Components/StatsIcon.vue";
 import StatsGroupTable from "./StatsGroupTable.vue";
-import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useUsage} from "@/Composables/useUsage.js";
 
 const props = defineProps({
     filters: Object,
@@ -14,7 +14,7 @@ const props = defineProps({
     statsGroupSelected: String,
     topReferers: Object,
     currentProject: Object,
-    trackingUsageBits: Object,
+    usageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
     routeParams: {type: Object, default: () => ({})},
     // Metric detail view: curated breakdown columns + the primary column to highlight/sort by.
@@ -26,7 +26,7 @@ const data = ref([]);
 const dataPrevious = ref([]);
 const loading = ref(true);
 
-const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProject, props.trackingUsageBits);
+const {currentProjectHasUsages} = useUsage(props.currentProject, props.usageBits);
 
 const filters = Object.assign({}, props.filters);
 
@@ -62,14 +62,14 @@ const defaultColumns = isEventGroup
         {key: 'visitors', label: 'Visitors', format: 'number', width: '15%'},
         {key: 'triggered', label: 'Triggered', format: 'number', width: '15%'},
         {key: 'cr', label: 'Conv. Rate', labelSmall: 'CR', format: 'percent', width: '18%'},
-        {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '18%', visible: currentProjectHasTrackingUsageBits(['payments'])},
+        {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '18%', visible: currentProjectHasUsages(['payments'])},
     ]
     : [
-        {key: 'visitors', label: 'Visitors', labelSmall: 'Visits', format: 'number', width: '12%', visible: currentProjectHasTrackingUsageBits(['visitors'])},
-        {key: 'reg', label: 'Regs', format: 'number', width: '10%', visible: currentProjectHasTrackingUsageBits(['users'])},
-        {key: 'cr', label: 'Conv.', labelSmall: 'CR', format: 'percent', width: '12%', visible: currentProjectHasTrackingUsageBits(['users', 'visitors'])},
-        {key: 'dau', label: xauLabel, format: 'number', width: '10%', visible: currentProjectHasTrackingUsageBits(['users'])},
-        {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '12%', visible: currentProjectHasTrackingUsageBits(['payments'])},
+        {key: 'visitors', label: 'Visitors', labelSmall: 'Visits', format: 'number', width: '12%', visible: currentProjectHasUsages(['visitors'])},
+        {key: 'reg', label: 'Regs', format: 'number', width: '10%', visible: currentProjectHasUsages(['users'])},
+        {key: 'cr', label: 'Conv.', labelSmall: 'CR', format: 'percent', width: '12%', visible: currentProjectHasUsages(['users', 'visitors'])},
+        {key: 'dau', label: xauLabel, format: 'number', width: '10%', visible: currentProjectHasUsages(['users'])},
+        {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '12%', visible: currentProjectHasUsages(['payments'])},
     ];
 
 // Build the active KPI's curated column set, intersected with the project's tracking
@@ -82,7 +82,7 @@ const buildCuratedColumns = () => {
     const cols = props.breakdownColumns
         .map((key) => columnRegistry[key])
         .filter(Boolean)
-        .filter((col) => ! col.bits || currentProjectHasTrackingUsageBits(col.bits));
+        .filter((col) => ! col.bits || currentProjectHasUsages(col.bits));
 
     if (! cols.some((col) => col.key === props.breakdownPrimary)) {
         return null;
@@ -107,7 +107,7 @@ if (! filters.stats_sort) {
 // so opt in whenever the curated set surfaces them for a recurring-revenue project.
 if (curatedColumns
     && ['mrr', 'subscribers', 'arps'].includes(props.breakdownPrimary)
-    && currentProjectHasTrackingUsageBits(['subscription'])
+    && currentProjectHasUsages(['subscription'])
 ) {
     filters.metric = 'mrr';
 }

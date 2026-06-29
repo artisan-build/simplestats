@@ -4,7 +4,7 @@ import {Link} from "@inertiajs/vue3";
 import axios from 'axios';
 import StatsGroupTable from "./StatsGroupTable.vue";
 import SegmentedToggle from "@/Components/SegmentedToggle.vue";
-import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useUsage} from "@/Composables/useUsage.js";
 import InfoIcon from 'bootstrap-icons/icons/info-circle.svg?component';
 
 const lifetimeOptions = [
@@ -20,7 +20,7 @@ const props = defineProps({
     propertyNameSelected: [Number, String],
     lifetimeSelected: Boolean,
     currentProject: Object,
-    trackingUsageBits: Object,
+    usageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
     routeParams: {type: Object, default: () => ({})},
     // Metric detail view: highlight + default-sort by the active KPI when it maps to
@@ -34,7 +34,7 @@ const dataPrevious = ref([]);
 const loading = ref(true);
 const lifetime = ref(props.lifetimeSelected);
 
-const {currentProjectHasTrackingUsageBits} = useTrackingUsage(props.currentProject, props.trackingUsageBits);
+const {currentProjectHasUsages} = useUsage(props.currentProject, props.usageBits);
 
 const filters = Object.assign({}, props.filters);
 const preselectedDimension = props.propertyDimensions.find((dimension) => dimension.id === Number(props.propertyNameSelected));
@@ -70,14 +70,14 @@ const fetchData = async () => {
 // Visitors (and CR) column is hidden when the property has no visitor data.
 const hasVisitorData = computed(() => data.value.some((item) => Number(item.visitors) > 0));
 
-const showVisitors = computed(() => currentProjectHasTrackingUsageBits(['visitors']) && hasVisitorData.value);
-const showCr = computed(() => showVisitors.value && currentProjectHasTrackingUsageBits(['users', 'visitors']));
+const showVisitors = computed(() => currentProjectHasUsages(['visitors']) && hasVisitorData.value);
+const showCr = computed(() => showVisitors.value && currentProjectHasUsages(['users', 'visitors']));
 
 const columns = computed(() => [
     {key: 'visitors', label: 'Visitors', labelSmall: 'Visits', format: 'number', width: '13%', visible: showVisitors.value},
-    {key: 'reg', label: 'Regs', format: 'number', width: '13%', visible: currentProjectHasTrackingUsageBits(['users'])},
+    {key: 'reg', label: 'Regs', format: 'number', width: '13%', visible: currentProjectHasUsages(['users'])},
     {key: 'cr', label: 'Conv.', labelSmall: 'CR', format: 'percent', width: '13%', visible: showCr.value},
-    {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '15%', visible: currentProjectHasTrackingUsageBits(['payments'])},
+    {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '15%', visible: currentProjectHasUsages(['payments'])},
 ]);
 
 const changeDimension = (nameId) => {

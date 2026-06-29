@@ -78,7 +78,7 @@ class StatsAggregationsService
         // otherwise it is wasted work returning 0s.
         $withMrr = $withMrr
             && $trackablePerson === TrackablePerson::USER
-            && (bool) $project?->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION]);
+            && (bool) $project?->hasUsages([Project::USAGE_SUBSCRIPTION]);
 
         if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
@@ -583,7 +583,7 @@ class StatsAggregationsService
     {
         $trackablePerson = TrackablePerson::VISITOR;
 
-        if (! $project || $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
+        if (! $project || $project->hasUsages([Project::USAGE_USERS])) {
             $trackablePerson = TrackablePerson::USER;
         }
 

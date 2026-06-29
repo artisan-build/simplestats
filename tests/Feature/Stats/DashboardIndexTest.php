@@ -5,7 +5,6 @@ use App\Models\Project;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\User;
-use App\Services\StatsService;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -38,7 +37,7 @@ test('dashboard renders Dashboard/Index with expected props', function () {
             ->has('freePlanWarning')
             ->has('readDocsWarning')
             ->has('subscriptionPlanAlarm')
-            ->has('trackingUsageBits')
+            ->has('usageBits')
             ->has('comparisonTypes')
         );
 });
@@ -49,18 +48,18 @@ test('all projects view merges tracking usage bits from individual projects', fu
 
     Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     $this->get(route('dashboard', ['project_id' => 0]))
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard/Index')
-            ->where('teamStats.projects.0.usage', StatsService::TRACKING_USAGE_BITS_VISITORS)
+            ->where('teamStats.projects.0.usage', Project::USAGE_VISITORS)
         );
 });
 
@@ -69,15 +68,15 @@ test('all projects view includes payment bits when one project has payments', fu
 
     Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+        'usage' => Project::USAGE_VISITORS | Project::USAGE_PAYMENTS,
     ]);
 
-    $expectedUsage = StatsService::TRACKING_USAGE_BITS_VISITORS | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+    $expectedUsage = Project::USAGE_VISITORS | Project::USAGE_PAYMENTS;
 
     $this->get(route('dashboard', ['project_id' => 0]))
         ->assertInertia(fn ($page) => $page
@@ -91,10 +90,10 @@ test('dashboard exposes the mrr_series prop when the project has recurring payme
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -127,10 +126,10 @@ test('dashboard exposes mrr_series_prev when a comparison is active', function (
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -163,10 +162,10 @@ test('dashboard mrr_series_prev is null without a comparison', function () {
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -192,9 +191,9 @@ test('dashboard mrr_series prop is null when the project does not track recurrin
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -209,10 +208,10 @@ test('dashboard exposes a zeroed mrr_series when the project tracks recurring bu
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -234,8 +233,8 @@ test('dashboard mrr_series prop is null when the project tracks payments but not
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_PAYMENTS,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -261,7 +260,7 @@ test('dashboard mrr_series prop is null when the project has no payments trackin
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -276,8 +275,8 @@ test('retention route renders Dashboard/Index in retention mode with cohorts whe
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
     ]);
 
     $this->get(route('retention', ['project_id' => $project->id]))
@@ -294,8 +293,8 @@ test('dashboard route renders with retention off and no cohorts', function () {
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -311,7 +310,7 @@ test('retention route exposes no cohorts when the project does not track users',
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     $this->get(route('retention', ['project_id' => $project->id]))
@@ -339,8 +338,8 @@ test('retention route exposes engagement_series when the project tracks users', 
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
     ]);
 
     $this->get(route('retention', ['project_id' => $project->id]))
@@ -355,7 +354,7 @@ test('retention engagement_series is null when the project does not track users'
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     $this->get(route('retention', ['project_id' => $project->id]))
@@ -370,8 +369,8 @@ test('dashboard route does not build engagement_series', function () {
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
     ]);
 
     $this->get(route('dashboard', ['project_id' => $project->id]))
@@ -395,10 +394,10 @@ test('metric route exposes plan_breakdown for an MRR kpi on a subscription proje
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $statsUser = StatsUser::factory()->create([
@@ -426,10 +425,10 @@ test('metric route returns null plan_breakdown for a non-MRR kpi', function () {
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'pd_reg', 'project_id' => $project->id]))
@@ -444,8 +443,8 @@ test('metric route exposes engagement_series for an engagement kpi drilled into 
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'stickiness', 'project_id' => $project->id]))
@@ -461,8 +460,8 @@ test('metric route exposes engagement_series for any kpi when the project tracks
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))
@@ -478,7 +477,7 @@ test('metric route does not build engagement_series when the project does not tr
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
+        'usage' => Project::USAGE_VISITORS,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))
@@ -493,10 +492,10 @@ test('metric route exposes revenue_churn for a churn kpi drilled into from reven
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'net_churn', 'project_id' => $project->id]))
@@ -512,10 +511,10 @@ test('metric route does not build revenue_churn for a non-churn kpi', function (
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'mrr', 'project_id' => $project->id]))

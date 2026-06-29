@@ -9,7 +9,7 @@ const props = defineProps({
     hasCustomEvents: Boolean,
     topReferers: Object,
     currentProject: Object,
-    trackingUsageBits: Object,
+    usageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
     // Extra route params merged into every drill-down link (e.g. {kpi} on the metric page).
     routeParams: {type: Object, default: () => ({})},
@@ -34,7 +34,7 @@ const props = defineProps({
                 :statsGroupSelected="$page.props.auth.user.settings?.selectedGroupTypes?.[filters.project_id]?.[statsGroupType]"
                 :topReferers="topReferers"
                 :currentProject="currentProject"
-                :trackingUsageBits="trackingUsageBits"
+                :usageBits="usageBits"
                 :breakdownColumns="breakdownColumns"
                 :breakdownPrimary="breakdownPrimary"
                 :baseRoute="baseRoute"
@@ -53,7 +53,7 @@ const props = defineProps({
                 :propertyNameSelected="$page.props.auth.user.settings?.selectedGroupTypes?.[filters.project_id]?.property"
                 :lifetimeSelected="$page.props.auth.user.settings?.propertyLifetime?.[filters.project_id] ?? false"
                 :currentProject="currentProject"
-                :trackingUsageBits="trackingUsageBits"
+                :usageBits="usageBits"
                 :breakdownPrimary="breakdownPrimary"
                 :baseRoute="baseRoute"
                 :routeParams="routeParams"

@@ -2,7 +2,6 @@
 
 use App\Models\Project;
 use App\Models\User;
-use App\Services\StatsService;
 
 use function Pest\Laravel\actingAs;
 
@@ -60,8 +59,8 @@ test('recurring tracking requires registrations and payments', function () {
     $this->post(route('projects.store'), [
         'name' => 'Recurring Only',
         'domain' => 'example.com',
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_SUBSCRIPTION,
     ])->assertSessionHasErrors('usage');
 });
 
@@ -69,9 +68,60 @@ test('recurring tracking is accepted together with registrations and payments', 
     $this->post(route('projects.store'), [
         'name' => 'Full Recurring',
         'domain' => 'example.com',
-        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS
-            | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS
+            | Project::USAGE_SUBSCRIPTION,
     ])->assertSessionHasNoErrors();
+});
+
+test('the paid-only flag requires registrations and payments', function () {
+    $this->post(route('projects.store'), [
+        'name' => 'Paywalled',
+        'domain' => 'example.com',
+        'usage' => Project::USAGE_VISITORS,
+        'flags' => Project::FLAG_PAID_ONLY,
+    ])->assertSessionHasErrors('flags');
+});
+
+test('the paid-only flag is accepted and persisted with registrations and payments', function () {
+    $this->post(route('projects.store'), [
+        'name' => 'Paid Only',
+        'domain' => 'example.com',
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS,
+        'flags' => Project::FLAG_PAID_ONLY,
+    ])->assertSessionHasNoErrors();
+
+    expect(Project::where('name', 'Paid Only')->value('flags'))->toBe(Project::FLAG_PAID_ONLY);
+});
+
+test('flags above the supported bit count are rejected', function () {
+    $this->post(route('projects.store'), [
+        'name' => 'Bad Flags',
+        'domain' => 'example.com',
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS,
+        'flags' => Project::getFlagBitsCount() + 1,
+    ])->assertSessionHasErrors('flags');
+});
+
+test('flags default to zero when omitted', function () {
+    $this->post(route('projects.store'), [
+        'name' => 'No Flags',
+        'domain' => 'example.com',
+        'usage' => Project::USAGE_VISITORS,
+    ])->assertSessionHasNoErrors();
+
+    expect(Project::where('name', 'No Flags')->value('flags'))->toBe(0);
+});
+
+test('hasFlags reflects the stored flags bitmask', function () {
+    $with = Project::factory()->create(['flags' => Project::FLAG_PAID_ONLY]);
+    $without = Project::factory()->create(['flags' => 0]);
+
+    expect($with->hasFlags([Project::FLAG_PAID_ONLY]))->toBeTrue();
+    expect($without->hasFlags([Project::FLAG_PAID_ONLY]))->toBeFalse();
 });

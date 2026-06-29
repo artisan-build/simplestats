@@ -10,7 +10,7 @@ return new class extends Migration
      * dynamically by StatsCustomEventService::hasCustomEvents). Clear the
      * retired events bit (8) from every project's usage bitmask so no value
      * exceeds the new max (ProjectRequest validates against
-     * StatsService::getTrackingUsageBitsCount(), now 7).
+     * Project::getUsageBitsCount(), now 7).
      */
     public function up(): void
     {

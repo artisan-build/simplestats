@@ -4,10 +4,9 @@ use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\StatsTrackCampaign;
 use App\Models\User;
-use App\Services\StatsService;
 use Illuminate\Support\Facades\DB;
 
-const USAGE_WITHOUT_PAYMENTS = StatsService::TRACKING_USAGE_BITS_VISITORS | StatsService::TRACKING_USAGE_BITS_USERS;
+const USAGE_WITHOUT_PAYMENTS = Project::USAGE_VISITORS | Project::USAGE_USERS;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();

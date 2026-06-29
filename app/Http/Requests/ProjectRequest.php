@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Services\StatsService;
+use App\Models\Project;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -45,12 +45,25 @@ class ProjectRequest extends FormRequest
                 'required',
                 'integer',
                 'min:1',
-                'max:'.StatsService::getTrackingUsageBitsCount(),
+                'max:'.Project::getUsageBitsCount(),
                 function (string $attribute, mixed $value, Closure $fail): void {
-                    $required = StatsService::TRACKING_USAGE_BITS_USERS | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+                    $required = Project::USAGE_USERS | Project::USAGE_PAYMENTS;
 
-                    if (($value & StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION) && (($value & $required) !== $required)) {
+                    if (($value & Project::USAGE_SUBSCRIPTION) && (($value & $required) !== $required)) {
                         $fail('Subscription tracking requires both Registrations and Payments.');
+                    }
+                },
+            ],
+            'flags' => [
+                'sometimes',
+                'integer',
+                'min:0',
+                'max:'.Project::getFlagBitsCount(),
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    $required = Project::USAGE_USERS | Project::USAGE_PAYMENTS;
+
+                    if (($value & Project::FLAG_PAID_ONLY) && (((int) $this->input('usage') & $required) !== $required)) {
+                        $fail('The "paid users only" option requires both Registrations and Payments.');
                     }
                 },
             ],

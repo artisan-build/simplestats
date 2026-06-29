@@ -6,7 +6,6 @@ use App\Actions\CreateProject;
 use App\Actions\UpdateProject;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
-use App\Services\StatsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,7 +15,8 @@ class SetupProjectController extends Controller
     {
         return Inertia::render('Setup/Project', [
             'project' => $request->user()->currentTeam->projects()->first() ?? new Project,
-            'trackingUsages' => StatsService::getTrackingUsages(),
+            'usages' => Project::getUsages(),
+            'flags' => Project::getFlags(),
         ]);
     }
 

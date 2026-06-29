@@ -7,7 +7,6 @@ use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Services\StatsService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 
@@ -54,12 +53,12 @@ class TestUserSeeder extends Seeder
 
         // Outside the test suite the demo project also tracks subscriptions so the
         // Subscriptions area has data; tests keep the default bitmask (no subscription).
-        $usage = StatsService::TRACKING_USAGE_BITS_VISITORS
-            | StatsService::TRACKING_USAGE_BITS_USERS
-            | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+        $usage = Project::USAGE_VISITORS
+            | Project::USAGE_USERS
+            | Project::USAGE_PAYMENTS;
 
         if (! app()->environment('testing')) {
-            $usage |= StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION;
+            $usage |= Project::USAGE_SUBSCRIPTION;
         }
 
         Project::factory()

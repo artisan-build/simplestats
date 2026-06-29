@@ -6,18 +6,21 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
+import UsageField from "@/Components/Project/UsageField.vue";
+import FlagsField from "@/Components/Project/FlagsField.vue";
 
 const props = defineProps({
     project: Object,
     permissions: Object,
-    trackingUsages: Object,
+    usages: Object,
+    flags: Object,
 });
 
 const form = useForm({
     name: props.project.name,
     domain: props.project.domain,
     usage: props.project.usage,
+    flags: props.project.flags,
 });
 
 const updateProject = () => {
@@ -71,13 +74,19 @@ const appName = import.meta.env.VITE_APP_NAME;
                 <InputError :message="form.errors.domain" class="mt-2" />
             </div>
 
-            <div class="col-span-6">
-                <InputLabel for="usage" :value="`What would you like to track?`" />
-                <div class="mt-1">
-                    <TrackingUsageSelector v-model="form.usage" :trackingUsages="trackingUsages" />
-                </div>
-                <InputError :message="form.errors.usage" class="mt-2" />
-            </div>
+            <UsageField
+                v-model="form.usage"
+                :usages="usages"
+                :error="form.errors.usage"
+            />
+
+            <FlagsField
+                v-model="form.flags"
+                :flags="flags"
+                :usage="form.usage"
+                :usages="usages"
+                :error="form.errors.flags"
+            />
         </template>
 
         <template v-if="permissions.canUpdateProject" #actions>

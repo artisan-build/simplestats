@@ -2,13 +2,12 @@
 
 use App\Models\Project;
 use App\Models\User;
-use App\Services\StatsService;
 
 test('custom events are no longer a tracking usage bit', function () {
-    expect(StatsService::getTrackingUsages()->keys()->all())
+    expect(Project::getUsages()->keys()->all())
         ->toBe(['visitors', 'users', 'payments', 'subscription']);
 
-    expect(StatsService::getTrackingUsageBitsCount())->toBe(15);
+    expect(Project::getUsageBitsCount())->toBe(15);
 });
 
 test('migration clears the retired events bit from project usage', function () {

@@ -25,7 +25,8 @@ const props = defineProps({
     statsGroupNames: Object,
     topReferers: Object,
     rangeTypes: Array,
-    trackingUsageBits: Object,
+    usageBits: Object,
+    flagBits: Object,
     comparisonTypes: Object,
     mrr_series: {type: Array, default: null},
     mrr_series_prev: {type: Array, default: null},
@@ -40,7 +41,8 @@ const {sections, findKpi} = useChartDefinitions({
     filters: props.filters,
     teamStats: props.teamStats,
     currentProject,
-    trackingUsageBits: props.trackingUsageBits,
+    usageBits: props.usageBits,
+    flagBits: props.flagBits,
     mrrSeries: props.mrr_series,
     mrrSeriesPrev: props.mrr_series_prev,
     engagementSeries: props.engagement_series,
@@ -76,7 +78,7 @@ onMounted(() => {
             :filters="filters"
             :rangeTypes="rangeTypes"
             :topReferers="topReferers"
-            :trackingUsageBits="trackingUsageBits"
+            :usageBits="usageBits"
             :comparisonTypes="comparisonTypes"
             submitRoute="dashboard.metric"
             :submitRouteParams="{ kpi }"
@@ -166,7 +168,7 @@ onMounted(() => {
                     :hasCustomEvents="hasCustomEvents"
                     :topReferers="topReferers"
                     :currentProject="currentProject"
-                    :trackingUsageBits="trackingUsageBits"
+                    :usageBits="usageBits"
                     :breakdownColumns="activeKpi.breakdown?.columns"
                     :breakdownPrimary="activeKpi.breakdown?.primary"
                     baseRoute="dashboard.metric"

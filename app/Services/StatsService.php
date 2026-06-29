@@ -48,16 +48,6 @@ class StatsService
     // not briefly dropped from MRR. Referenced by MrrAggregationService::computeMrrAtDate().
     const MRR_ACTIVE_GRACE_DAYS = 3;
 
-    const TRACKING_USAGE_BITS_VISITORS = 1;
-
-    const TRACKING_USAGE_BITS_USERS = 2;
-
-    const TRACKING_USAGE_BITS_PAYMENTS = 4;
-
-    // Bit value 8 was previously the retired "events" bit, cleared from all rows by
-    // the 2026_06_11 migration, so reusing it for subscriptions is safe.
-    const TRACKING_USAGE_BITS_SUBSCRIPTION = 8;
-
     protected static array $statsModels = [
         StatsVisitor::class,
         StatsUser::class,
@@ -249,37 +239,6 @@ class StatsService
                 $project->update(['stats_starting_at' => $start]);
             }
         });
-    }
-
-    public static function getTrackingUsages(): Collection
-    {
-        return collect([
-            'visitors' => [
-                'bit' => self::TRACKING_USAGE_BITS_VISITORS,
-                'name' => 'Visitors',
-                'descr' => 'Track anonymous visitors with UTMs, location, devices, etc.',
-            ],
-            'users' => [
-                'bit' => self::TRACKING_USAGE_BITS_USERS,
-                'name' => 'Registrations',
-                'descr' => 'Track user signups and logins, including timestamps.',
-            ],
-            'payments' => [
-                'bit' => self::TRACKING_USAGE_BITS_PAYMENTS,
-                'name' => 'Payments',
-                'descr' => 'Track payments and link them back to visitors or registrations.',
-            ],
-            'subscription' => [
-                'bit' => self::TRACKING_USAGE_BITS_SUBSCRIPTION,
-                'name' => 'Subscriptions',
-                'descr' => 'Track subscriptions (MRR/ARR). Requires Registrations and Payments.',
-            ],
-        ]);
-    }
-
-    public static function getTrackingUsageBitsCount()
-    {
-        return self::getTrackingUsages()->sum('bit');
     }
 
     public static function getComparisonTypes(): array

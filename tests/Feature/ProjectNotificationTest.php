@@ -2,12 +2,11 @@
 
 use App\Enums\UserNotificationType;
 use App\Models\Project;
-use App\Services\StatsService;
 
 it('defaults project alert tracking settings to true for enabled tracking types', function () {
-    $usage = StatsService::TRACKING_USAGE_BITS_VISITORS
-        | StatsService::TRACKING_USAGE_BITS_USERS
-        | StatsService::TRACKING_USAGE_BITS_PAYMENTS;
+    $usage = Project::USAGE_VISITORS
+        | Project::USAGE_USERS
+        | Project::USAGE_PAYMENTS;
 
     $project = new Project(['usage' => $usage]);
 
@@ -20,7 +19,7 @@ it('defaults project alert tracking settings to true for enabled tracking types'
 });
 
 it('excludes disabled tracking types from project alert settings', function () {
-    $project = new Project(['usage' => StatsService::TRACKING_USAGE_BITS_VISITORS]);
+    $project = new Project(['usage' => Project::USAGE_VISITORS]);
 
     $notifications = $project->getDefaultUserNotificationTypes();
     $alert = $notifications->firstWhere('type', UserNotificationType::PROJECT_ALERT);

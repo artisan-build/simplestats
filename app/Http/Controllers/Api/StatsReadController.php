@@ -137,11 +137,11 @@ class StatsReadController extends Controller
 
         $hidden = [];
 
-        if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS])) {
+        if (! $project->hasUsages([Project::USAGE_USERS])) {
             array_push($hidden, 'reg', 'cr', 'dau');
         }
 
-        if (! $project->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS])) {
+        if (! $project->hasUsages([Project::USAGE_PAYMENTS])) {
             $hidden[] = 'net';
         }
 

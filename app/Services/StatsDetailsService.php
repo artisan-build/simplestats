@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
+use App\Models\Project;
 use Illuminate\Support\Collection;
 
 class StatsDetailsService
@@ -159,12 +160,13 @@ class StatsDetailsService
         ]);
     }
 
-    public function getAllFilterFor(string $type, ?int $usage = null): array
+    public function getAllFilterFor(string $type, ?int $usage = null, ?int $flags = null): array
     {
         return [
             'id' => StatsFilterDto::TRACK_ALL,
             'name' => 'All',
-            'usage' => $usage ?? StatsService::getTrackingUsageBitsCount(),
+            'usage' => $usage ?? Project::getUsageBitsCount(),
+            'flags' => $flags ?? 0,
         ];
     }
 }

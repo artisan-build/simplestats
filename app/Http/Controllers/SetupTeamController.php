@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Jetstream\UpdateTeam;
-use App\Services\StatsService;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -27,9 +27,9 @@ class SetupTeamController extends Controller
         if ($team->projects()->count() <= 0) {
             $team->projects()->create([
                 'name' => '',
-                'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-                    | StatsService::TRACKING_USAGE_BITS_USERS
-                    | StatsService::TRACKING_USAGE_BITS_PAYMENTS,
+                'usage' => Project::USAGE_VISITORS
+                    | Project::USAGE_USERS
+                    | Project::USAGE_PAYMENTS,
             ]);
         }
 

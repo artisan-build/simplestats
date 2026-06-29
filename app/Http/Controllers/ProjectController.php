@@ -9,7 +9,6 @@ use App\Enums\DashboardPreset;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Services\StatsAggregationsService;
-use App\Services\StatsService;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,7 +27,8 @@ class ProjectController extends Controller
     {
         return Inertia::render('Projects/Index', [
             'projects' => Project::orderBy('created_at', 'desc')->paginate(10),
-            'trackingUsages' => StatsService::getTrackingUsages(),
+            'usages' => Project::getUsages(),
+            'flags' => Project::getFlags(),
             'permissions' => [
                 'canCreateProject' => Gate::check('create', Project::class),
             ],
@@ -56,7 +56,8 @@ class ProjectController extends Controller
 
         return Inertia::render('Projects/Show', [
             'project' => $project,
-            'trackingUsages' => StatsService::getTrackingUsages(),
+            'usages' => Project::getUsages(),
+            'flags' => Project::getFlags(),
             'permissions' => [
                 'canDeleteProject' => Gate::check('delete', $project),
                 'canUpdateProject' => Gate::check('update', $project),

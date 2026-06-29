@@ -10,7 +10,6 @@ use App\Enums\UserNotificationType;
 use App\Events\ProjectCreated;
 use App\Events\ProjectDeleted;
 use App\Observers\ProjectObserver;
-use App\Services\StatsService;
 use App\ValueObjects\UserNotificationTypeObject;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -30,6 +29,18 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
     use HasTeamScope;
 
     const TOKEN_NAME = 'API Token';
+
+    const USAGE_VISITORS = 1;
+
+    const USAGE_USERS = 2;
+
+    const USAGE_PAYMENTS = 4;
+
+    // Bit value 8 was previously the retired "events" bit, cleared from all rows by
+    // the 2026_06_11 migration, so reusing it for subscriptions is safe.
+    const USAGE_SUBSCRIPTION = 8;
+
+    const FLAG_PAID_ONLY = 1;
 
     protected $casts = [
         'stats_starting_at' => 'date',
@@ -60,7 +71,7 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
         return $this->userNotifications()->where('type', UserNotificationType::PROJECT_ALERT->value);
     }
 
-    public function hasTrackingUsageBits(array $bits): bool
+    public function hasUsages(array $bits): bool
     {
         foreach ($bits as $bit) {
             if (! ($bit & $this->usage)) {
@@ -71,6 +82,67 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
         return true;
     }
 
+    public function hasFlags(array $bits): bool
+    {
+        foreach ($bits as $bit) {
+            if (! ($bit & $this->flags)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static function getUsages(): Collection
+    {
+        return collect([
+            'visitors' => [
+                'bit' => self::USAGE_VISITORS,
+                'name' => 'Visitors',
+                'descr' => 'Track anonymous visitors with UTMs, location, devices, etc.',
+            ],
+            'users' => [
+                'bit' => self::USAGE_USERS,
+                'name' => 'Registrations',
+                'descr' => 'Track user signups and logins, including timestamps.',
+            ],
+            'payments' => [
+                'bit' => self::USAGE_PAYMENTS,
+                'name' => 'Payments',
+                'descr' => 'Track payments and link them back to visitors or registrations.',
+            ],
+            'subscription' => [
+                'bit' => self::USAGE_SUBSCRIPTION,
+                'name' => 'Subscriptions',
+                'descr' => 'Track subscriptions (MRR/ARR). Requires Registrations and Payments.',
+            ],
+        ]);
+    }
+
+    public static function getUsageBitsCount(): int
+    {
+        return self::getUsages()->sum('bit');
+    }
+
+    /**
+     * @return Collection<string, array{bit: int, name: string, descr: string}>
+     */
+    public static function getFlags(): Collection
+    {
+        return collect([
+            'paid_only' => [
+                'bit' => self::FLAG_PAID_ONLY,
+                'name' => 'Paid users only',
+                'descr' => 'Every registered user is a paying customer (no free plan or unpaid trial). Used for better metrics calculation.',
+            ],
+        ]);
+    }
+
+    public static function getFlagBitsCount(): int
+    {
+        return self::getFlags()->sum('bit');
+    }
+
     public function getDefaultUserNotificationTypes(): Collection
     {
         return collect([
@@ -79,9 +151,9 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
                 frequency: UserNotificationFrequency::WEEKLY,
                 settings: [
                     'tracking' => collect([
-                        'visitors' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_VISITORS]),
-                        'users' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS]),
-                        'payments' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS]),
+                        'visitors' => $this->hasUsages([self::USAGE_VISITORS]),
+                        'users' => $this->hasUsages([self::USAGE_USERS]),
+                        'payments' => $this->hasUsages([self::USAGE_PAYMENTS]),
                     ])->filter()->toArray(),
                     'types' => [
                         StatsTrackReferer::class,
@@ -96,8 +168,8 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
                 frequency: null,
                 settings: [
                     'tracking' => collect([
-                        'registrations' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_USERS]),
-                        'payments' => $this->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_PAYMENTS]),
+                        'registrations' => $this->hasUsages([self::USAGE_USERS]),
+                        'payments' => $this->hasUsages([self::USAGE_PAYMENTS]),
                     ])->filter()->toArray(),
                 ]
             ),

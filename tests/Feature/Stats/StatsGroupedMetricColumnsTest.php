@@ -6,7 +6,6 @@ use App\Models\Project;
 use App\Models\StatsPayment;
 use App\Models\User;
 use App\Services\StatsAggregationsService;
-use App\Services\StatsService;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Database\Seeders\TestUserSeeder;
@@ -113,7 +112,7 @@ it('computes per-dimension revenue ratios (arpv/arpu) in the grouped breakdown',
 it('computes a per-dimension MRR snapshot when withMrr is enabled', function () {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
-    $this->project->update(['usage' => $this->project->usage | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION]);
+    $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
 
     $sourceId = makeSource($this->team->id, 'newsletter');
 
@@ -174,9 +173,9 @@ it('does not compute MRR for a project that does not track subscriptions even wh
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     // Drop the subscription bit (keep visitors+users+payments).
-    $this->project->update(['usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
-        | StatsService::TRACKING_USAGE_BITS_USERS
-        | StatsService::TRACKING_USAGE_BITS_PAYMENTS]);
+    $this->project->update(['usage' => Project::USAGE_VISITORS
+        | Project::USAGE_USERS
+        | Project::USAGE_PAYMENTS]);
 
     $sourceId = makeSource($this->team->id, 'newsletter');
     insertSourceUser($this->team->id, $this->pid, $sourceId, 'u1', '2026-06-01 12:00:00');
@@ -204,7 +203,7 @@ it('does not compute MRR for a project that does not track subscriptions even wh
 it('serves per-dimension MRR through the stats.grouped endpoint with metric=mrr', function () {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
-    $this->project->update(['usage' => $this->project->usage | StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION]);
+    $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
 
     $sourceId = makeSource($this->team->id, 'newsletter');
     insertSourceUser($this->team->id, $this->pid, $sourceId, 'u1', '2026-06-01 12:00:00');

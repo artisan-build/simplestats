@@ -13,7 +13,7 @@ import InfoTooltip from "@/Components/InfoTooltip.vue";
 import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 import {Link, router, useForm, usePage} from "@inertiajs/vue3";
 import {ref} from "vue";
-import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useUsage} from "@/Composables/useUsage.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
 import {formatRoas, profitClass as profitClassBase, roasClass as roasClassBase} from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
@@ -29,7 +29,7 @@ const props = defineProps({
     filters: Object,
     rangeTypes: Array,
     subscriptionPlanAlarm: Array,
-    trackingUsageBits: Object,
+    usageBits: Object,
     campaign: Object,
     summary: Object,
     adSpends: Object,
@@ -40,11 +40,11 @@ const props = defineProps({
 const page = usePage();
 
 const currentProject = props.teamStats.projects[props.campaign.project_id] ?? props.teamStats.projects[0];
-const {currentProjectHasTrackingUsageBits} = useTrackingUsage(currentProject, props.trackingUsageBits);
+const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
 
-const showsRevenue = currentProjectHasTrackingUsageBits(['payments']);
-const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
-const showsSubscription = currentProjectHasTrackingUsageBits(['subscription']);
+const showsRevenue = currentProjectHasUsages(['payments']);
+const showsRegistrations = currentProjectHasUsages(['users']);
+const showsSubscription = currentProjectHasUsages(['subscription']);
 
 const neutral = 'text-gray-950 dark:text-white';
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);

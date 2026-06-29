@@ -1,7 +1,8 @@
 import {formatDate} from "@/Helpers/NumberHelpers.js";
 import {getKpiDefinitions} from "@/Data/KpiDefinitions.js";
 import {usePage} from "@inertiajs/vue3";
-import {useTrackingUsage} from "@/Composables/useTrackingUsage.js";
+import {useUsage} from "@/Composables/useUsage.js";
+import {useFlags} from "@/Composables/useFlags.js";
 
 // A registration cohort is a set of registered users and has no visitor leg, so
 // visitor-derived KPIs (unique visitors, conversion rate, revenue per visitor)
@@ -415,9 +416,14 @@ export function useChartDefinitions(ctx) {
         };
     };
 
-    const {currentProjectHasTrackingUsageBits} = useTrackingUsage(ctx.currentProject, ctx.trackingUsageBits);
+    const {currentProjectHasUsages} = useUsage(ctx.currentProject, ctx.usageBits);
+    const {currentProjectHasFlags} = useFlags(ctx.currentProject, ctx.flagBits);
 
-    const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
+    // Paid-only: every registered user pays, so each "X" vs "paying X" KPI pair collapses
+    // to the same value (and Reg-to-Pay to ~100%). The redundant paying-variants are hidden.
+    const paidOnly = currentProjectHasFlags(['paid_only']);
+
+    const showsRegistrations = currentProjectHasUsages(['users']);
 
     // Net revenue's companions depend on what the project tracks: registration-aware
     // (Regs/ARPU) when users are tracked, visitor-aware (Visits/ARPV) for guest-checkout
@@ -432,17 +438,18 @@ export function useChartDefinitions(ctx) {
         return BREAKDOWN_SETS[key] ?? null;
     };
 
-    const subscriptionShown = currentProjectHasTrackingUsageBits(['payments', 'users']) && !! ctx.mrrSeries?.length;
+    const subscriptionShown = currentProjectHasUsages(['payments', 'users']) && !! ctx.mrrSeries?.length;
 
     // A KPI shows when the project tracks the required bits. exceptBits excludes a KPI
     // when an additional bit is present (e.g. NAU only as the Activity fallback for
     // projects without payments). hideWhenSubscription drops the fallback Net in the
     // average-revenue chart when the recurring revenue chart already carries Net.
     const kpiVisible = (kpi) =>
-        (! kpi.bits || currentProjectHasTrackingUsageBits(kpi.bits))
-        && (! kpi.exceptBits || ! currentProjectHasTrackingUsageBits(kpi.exceptBits))
+        (! kpi.bits || currentProjectHasUsages(kpi.bits))
+        && (! kpi.exceptBits || ! currentProjectHasUsages(kpi.exceptBits))
         && (! kpi.requiresSubscription || subscriptionShown)
         && ! (kpi.hideWhenSubscription && subscriptionShown)
+        && ! (kpi.hideWhenPaidOnly && paidOnly)
         && ! (cohortActive && COHORT_NA_KPIS.includes(kpi.key));
 
     const chartDefs = [
@@ -469,7 +476,7 @@ export function useChartDefinitions(ctx) {
                 {key: 'lt_arpv', formatter: 'currency', decimals: 3, bits: ['payments', 'visitors', 'users'], indicatorCallback: () => lastStat('lt_arpv')},
                 {key: 'arps', formatter: 'currency', bits: ['payments', 'users'], requiresSubscription: true, indicatorCallback: () => lastStat('arps')},
                 {key: 'lt_arpu', formatter: 'currency', bits: ['payments', 'users'], indicatorCallback: () => lastStat('lt_arpu')},
-                {key: 'lt_arppu', formatter: 'currency', bits: ['payments', 'users'], indicatorCallback: () => lastStat('lt_arppu')},
+                {key: 'lt_arppu', formatter: 'currency', bits: ['payments', 'users'], hideWhenPaidOnly: true, indicatorCallback: () => lastStat('lt_arppu')},
                 {key: 'pd_arpdau', formatter: 'currency', bits: ['users', 'payments'], indicatorCallback: () => lastStat('pd_arpdau')},
             ],
         },
@@ -482,8 +489,8 @@ export function useChartDefinitions(ctx) {
                 {key: 'pd_nau', formatter: 'number', bits: ['users'], exceptBits: ['payments'], indicatorCallback: () => statsSum.pd_nau},
                 {key: 'lt_reg2dau', formatter: 'percent', bits: ['users'], exceptBits: ['payments'], indicatorCallback: () => lastStat('lt_reg2dau')},
                 {key: 'pd_dau', formatter: 'number', bits: ['users', 'payments'], indicatorCallback: () => lastStat('pd_dau')},
-                {key: 'pd_dapu', formatter: 'number', bits: ['users', 'payments'], indicatorCallback: () => lastStat('pd_dapu')},
-                {key: 'lt_pu', formatter: 'number', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_pu')},
+                {key: 'pd_dapu', formatter: 'number', bits: ['users', 'payments'], hideWhenPaidOnly: true, indicatorCallback: () => lastStat('pd_dapu')},
+                {key: 'lt_pu', formatter: 'number', bits: ['users', 'payments'], hideWhenPaidOnly: true, indicatorCallback: () => lastStat('lt_pu')},
             ],
         },
         {
@@ -491,7 +498,7 @@ export function useChartDefinitions(ctx) {
             order: 5,
             group: [
                 {key: 'pd_nau', formatter: 'number', bits: ['users', 'payments'], indicatorCallback: () => statsSum.pd_nau},
-                {key: 'pd_napu', formatter: 'number', bits: ['users', 'payments'], indicatorCallback: () => statsSum.pd_napu},
+                {key: 'pd_napu', formatter: 'number', bits: ['users', 'payments'], hideWhenPaidOnly: true, indicatorCallback: () => statsSum.pd_napu},
             ],
         },
         {
@@ -499,7 +506,7 @@ export function useChartDefinitions(ctx) {
             order: 6,
             group: [
                 {key: 'lt_reg2dau', formatter: 'percent', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_reg2dau')},
-                {key: 'lt_reg2pu', formatter: 'percent', bits: ['users', 'payments'], indicatorCallback: () => lastStat('lt_reg2pu')},
+                {key: 'lt_reg2pu', formatter: 'percent', bits: ['users', 'payments'], hideWhenPaidOnly: true, indicatorCallback: () => lastStat('lt_reg2pu')},
             ],
         },
     ];
@@ -547,7 +554,7 @@ export function useChartDefinitions(ctx) {
 
     // Pushed after the loop above so its pre-built snapshot data is not overwritten
     // by extractStatsData4Chart (which reads the period-summed teamStats.stats).
-    if (currentProjectHasTrackingUsageBits(['subscription']) && ctx.mrrSeries?.length) {
+    if (currentProjectHasUsages(['subscription']) && ctx.mrrSeries?.length) {
         charts.push(buildMrrChart(ctx.mrrSeries));
     }
 

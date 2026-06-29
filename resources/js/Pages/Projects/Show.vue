@@ -20,7 +20,8 @@ import ClipboardIcon from "bootstrap-icons/icons/clipboard.svg?component";
 defineProps({
     project: Object,
     permissions: Object,
-    trackingUsages: Object,
+    usages: Object,
+    flags: Object,
 });
 
 const page = usePage();
@@ -74,7 +75,7 @@ const regenerateApiToken = () => {
         </template>
 
         <div>
-            <UpdateProjectForm :project="project" :permissions="permissions" :trackingUsages="trackingUsages" />
+            <UpdateProjectForm :project="project" :permissions="permissions" :usages="usages" :flags="flags" />
 
             <div v-if="project.tokens && project.tokens.length > 0">
                 <SectionBorder />

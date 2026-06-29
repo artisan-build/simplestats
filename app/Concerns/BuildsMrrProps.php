@@ -4,6 +4,7 @@ namespace App\Concerns;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
+use App\Models\Project;
 use App\Models\Team;
 use App\Services\StatsService;
 
@@ -103,6 +104,6 @@ trait BuildsMrrProps
      */
     protected function projectTracksSubscription(Team $teamStats, StatsFilterDto $filters): bool
     {
-        return $this->projectTracksBit($teamStats, $filters, StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION);
+        return $this->projectTracksBit($teamStats, $filters, Project::USAGE_SUBSCRIPTION);
     }
 }

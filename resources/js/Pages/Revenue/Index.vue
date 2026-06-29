@@ -24,7 +24,8 @@ const props = defineProps({
     topReferers: Object,
     rangeTypes: Array,
     subscriptionPlanAlarm: Array,
-    trackingUsageBits: Object,
+    usageBits: Object,
+    flagBits: Object,
     comparisonTypes: Object,
     mrr: {type: Object, default: null},
     mrr_series: {type: Array, default: null},
@@ -42,7 +43,8 @@ const {kpiByKey} = useChartDefinitions({
     filters: props.filters,
     teamStats: props.teamStats,
     currentProject,
-    trackingUsageBits: props.trackingUsageBits,
+    usageBits: props.usageBits,
+    flagBits: props.flagBits,
     mrrSeries: props.mrr_series,
     mrrSeriesPrev: props.mrr_series_prev,
     revenueChurn: props.revenue_churn,
@@ -82,7 +84,7 @@ const subscriptionStatsGroups = computed(() => Object.fromEntries(
                 :filters="filters"
                 :rangeTypes="rangeTypes"
                 :topReferers="topReferers"
-                :trackingUsageBits="trackingUsageBits"
+                :usageBits="usageBits"
                 :comparisonTypes="comparisonTypes"
                 submitRoute="revenue"
             />
@@ -121,7 +123,7 @@ const subscriptionStatsGroups = computed(() => Object.fromEntries(
                     :hasCustomEvents="hasCustomEvents"
                     :topReferers="topReferers"
                     :currentProject="currentProject"
-                    :trackingUsageBits="trackingUsageBits"
+                    :usageBits="usageBits"
                     baseRoute="revenue"
                 />
             </div>

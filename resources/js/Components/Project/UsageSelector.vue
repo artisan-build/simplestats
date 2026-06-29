@@ -7,7 +7,7 @@ import Wallet2Icon from 'bootstrap-icons/icons/wallet2.svg?component';
 
 const props = defineProps({
     modelValue: Number,
-    trackingUsages: Object,
+    usages: Object,
     stacked: { type: Boolean, default: false },
 });
 
@@ -17,9 +17,9 @@ const iconSize = computed(() => props.stacked ? 'size-6' : 'size-8');
 
 let bits = props.modelValue;
 
-const subscriptionBit = props.trackingUsages.subscription?.bit ?? 0;
-const usersBit = props.trackingUsages.users?.bit ?? 0;
-const paymentsBit = props.trackingUsages.payments?.bit ?? 0;
+const subscriptionBit = props.usages.subscription?.bit ?? 0;
+const usersBit = props.usages.users?.bit ?? 0;
+const paymentsBit = props.usages.payments?.bit ?? 0;
 const subscriptionPrereq = usersBit | paymentsBit;
 
 const selectUsageType = (bit) => {
@@ -40,7 +40,7 @@ const selectUsageType = (bit) => {
 
 <template>
     <div class="grid gap-6 text-left" :class="(stacked) ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'">
-        <div v-for="(track, type) in trackingUsages"
+        <div v-for="(track, type) in usages"
              @click="selectUsageType(track.bit)"
              class="cursor-pointer select-none rounded-xl border-2 hover:border-indigo-200 dark:hover:border-gray-400 transition"
              :class="[(track.bit & bits) ? '!border-indigo-400' : '', (stacked) ? 'p-2' : 'p-3']"

@@ -9,20 +9,23 @@ import TextInput from "@/Components/TextInput.vue";
 import SectionBorder from "@/Components/SectionBorder.vue";
 import ActionTable from "@/Components/ActionTable.vue";
 import {Link, useForm} from "@inertiajs/vue3";
-import TrackingUsageSelector from "@/Components/TrackingUsageSelector.vue";
+import UsageField from "@/Components/Project/UsageField.vue";
+import FlagsField from "@/Components/Project/FlagsField.vue";
 import ProjectFavicon from "@/Components/ProjectFavicon.vue";
 import ChevronRightIcon from "bootstrap-icons/icons/chevron-right.svg?component";
 
 defineProps({
     projects: Object,
     permissions: Object,
-    trackingUsages: Object,
+    usages: Object,
+    flags: Object,
 });
 
 const createProjectForm = useForm({
     name: '',
     domain: '',
     usage: 0,
+    flags: 0,
 });
 
 const createProject = () => {
@@ -79,13 +82,18 @@ const appName = import.meta.env.VITE_APP_NAME;
                             />
                             <InputError :message="createProjectForm.errors.domain" class="mt-2" />
                         </div>
-                        <div class="col-span-6">
-                            <InputLabel for="usage" :value="`What would you like to track?`" />
-                            <div class="mt-1">
-                                <TrackingUsageSelector v-model="createProjectForm.usage" :trackingUsages="trackingUsages" />
-                            </div>
-                            <InputError :message="createProjectForm.errors.usage" class="mt-2" />
-                        </div>
+                        <UsageField
+                            v-model="createProjectForm.usage"
+                            :usages="usages"
+                            :error="createProjectForm.errors.usage"
+                        />
+                        <FlagsField
+                            v-model="createProjectForm.flags"
+                            :flags="flags"
+                            :usage="createProjectForm.usage"
+                            :usages="usages"
+                            :error="createProjectForm.errors.flags"
+                        />
                     </template>
 
                     <template #actions>
