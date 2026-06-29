@@ -34,7 +34,7 @@ class EngagementAggregationService
      * churn are null when their denominator is 0. Closed buckets are served from
      * the per-bucket cache, the open bucket is recomputed live (getCachedSeries).
      *
-     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>
+     * @return array<int, array{date: string, date_clear: string, stickiness: float|null, user_churn: float|null}>
      */
     public function getEngagementTimeSeries(StatsFilterDto $filters): array
     {
@@ -53,7 +53,6 @@ class EngagementAggregationService
             return [
                 'date' => $row['date'],
                 'date_clear' => $row['date_clear'],
-                'active_users' => (int) $row['active_users'],
                 'stickiness' => $mau > 0 ? round($dau / $mau * 100, 1) : null,
                 'user_churn' => $mauPrior > 0 ? round($churned / $mauPrior * 100, 1) : null,
             ];

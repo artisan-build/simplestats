@@ -18,8 +18,6 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
 {
     use BuildsMrrProps;
 
-    private const ENGAGEMENT_KPIS = ['active_users', 'stickiness', 'user_churn'];
-
     private const CHURN_KPIS = ['gross_churn', 'net_churn', 'quick_ratio'];
 
     public function __construct(
@@ -57,15 +55,17 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
     }
 
     /**
-     * Engagement powers the retention page and, for drilldown, the metric detail view
-     * of an engagement KPI. Gated per kpi so a non-engagement metric page skips the
-     * rolling DAU/MAU aggregations.
+     * Engagement (Stickiness / User Churn) powers the retention page and the metric detail
+     * view. It is loaded on every metric page (not just engagement KPIs) so the detail
+     * sidebar always offers these KPIs whenever the project tracks users, matching the
+     * retention page. The dashboard overview skips it to avoid the rolling DAU/MAU
+     * aggregations there.
      *
-     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>|null
+     * @return array<int, array{date: string, date_clear: string, stickiness: float|null, user_churn: float|null}>|null
      */
     private function engagementSeriesProp(bool $showRetention, Team $teamStats, StatsFilterDto $filters): ?array
     {
-        if (! $showRetention && ! $this->isMetricFor(self::ENGAGEMENT_KPIS)) {
+        if (! $showRetention && ! $this->request->routeIs('dashboard.metric')) {
             return null;
         }
 
@@ -133,7 +133,7 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
      * Unlike the campaign summary, engagement is fully dimensionable (channel
      * attribution is free), so it has no toFilterArray gate and follows any filter.
      *
-     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>|null
+     * @return array<int, array{date: string, date_clear: string, stickiness: float|null, user_churn: float|null}>|null
      */
     private function engagementSeries(Team $teamStats, StatsFilterDto $filters): ?array
     {

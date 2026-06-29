@@ -151,11 +151,6 @@ export function getKpiDefinitions(rangeType) {
             short: 'Reg. to Active',
             description: 'Percentage of registered users who become active.',
         },
-        active_users: {
-            short: XAU(rangeType),
-            long: 'Active Users',
-            description: 'Distinct users active in each '+periodName+' (any login, including registration). Follows the selected range and granularity.',
-        },
         stickiness: {
             short: 'Stickiness',
             long: 'User Stickiness',

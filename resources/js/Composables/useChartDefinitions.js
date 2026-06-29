@@ -522,7 +522,6 @@ export function useChartDefinitions(ctx) {
 
     if (ctx.engagementSeries?.length) {
         charts.push(buildFlatSeriesChart('Engagement', 7, ctx.engagementSeries, [
-            {key: 'active_users', formatter: 'number'},
             {key: 'stickiness', formatter: 'percent'},
             {key: 'user_churn', formatter: 'percent'},
         ]));
@@ -575,6 +574,17 @@ export function useChartDefinitions(ctx) {
 
         return {name: chart.name, order: chart.order, info: chart.info, categories: chart.data.categories, kpis};
     });
+
+    // Fold the Engagement KPIs into Activity since they read as the same family in the
+    // metric detail sidebar.
+    const activitySection = sections.find((s) => s.name === 'Activity');
+    const engagementSection = sections.find((s) => s.name === 'Engagement');
+
+    if (activitySection && engagementSection) {
+        activitySection.name = 'Activity & Engagement';
+        activitySection.kpis.push(...engagementSection.kpis);
+        sections.splice(sections.indexOf(engagementSection), 1);
+    }
 
     // Curated overview: pick the first OVERVIEW_SECTION_SIZE present KPIs per section.
     const overviewSections = OVERVIEW_DEFS

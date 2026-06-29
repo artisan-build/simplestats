@@ -86,7 +86,7 @@ class StatsDetailsService
     }
 
     /**
-     * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>
+     * @return array<int, array{date: string, date_clear: string, stickiness: float|null, user_churn: float|null}>
      */
     public function getEngagementTimeSeries(StatsFilterDto $filters): array
     {

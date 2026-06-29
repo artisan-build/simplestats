@@ -8,9 +8,6 @@ namespace App\Builder;
  * (capped at now so a running bucket is measured as-of today), computes three
  * things via LATERAL subqueries:
  *
- *  - active_users: distinct active users within the bucket itself (counter >= 1),
- *    the range-adaptive active line (DAU/WAU/MAU depending on the bucket size),
- *    matching pd_dau.
  *  - dau / mau: the rolling 30-day stickiness inputs as of the bucket end
  *    (avg daily active = distinct user-days / 30, monthly active = distinct
  *    users), so the caller can plot stickiness = dau / mau over time independent
@@ -40,22 +37,12 @@ class EngagementTimeSeriesSqlBuilder extends BaseSqlBuilder
             )
             SELECT
                 ".$this->getDateFormat('ds.date_seq', ':dateFormat').' AS date,
-                '.$this->getDateFormat('ds.date_seq', ':dateFormatClear').' AS date_clear,
-                COALESCE(bucket.active_users, 0) AS active_users,
+                '.$this->getDateFormat('ds.date_seq', ':dateFormatClear')." AS date_clear,
                 COALESCE(roll.user_days, 0)::float / 30 AS dau,
                 COALESCE(roll.mau, 0) AS mau,
                 COALESCE(churn.mau_prior, 0) AS mau_prior,
                 COALESCE(churn.churned, 0) AS churned
             FROM date_sequence ds
-            LEFT JOIN LATERAL (
-                SELECT COUNT(DISTINCT '.$this->getDistinctFields(['stats.stats_user_id', 'stats.project_id'])." ) AS active_users
-                FROM stats_logins stats
-                :trackingUserJoinConditions
-                WHERE :projectCondition
-                    AND stats.counter >= 1
-                    AND stats.time >= ds.date_seq
-                    AND stats.time < $bucketEnd
-            ) bucket ON TRUE
             LEFT JOIN LATERAL (
                 SELECT COUNT(*) AS user_days, COUNT(DISTINCT (ud.uid, ud.pid)) AS mau
                 FROM (

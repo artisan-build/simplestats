@@ -20,7 +20,7 @@ const {kpiByKey} = useChartDefinitions({
 
 const sections = [{
     name: 'Engagement',
-    kpis: ['active_users', 'stickiness', 'user_churn'].map((key) => kpiByKey[key]).filter(Boolean),
+    kpis: ['pd_dau', 'stickiness', 'user_churn'].map((key) => kpiByKey[key]).filter(Boolean),
 }].filter((section) => section.kpis.length > 0);
 </script>
 

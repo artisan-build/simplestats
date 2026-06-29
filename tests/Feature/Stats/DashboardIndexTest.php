@@ -456,13 +456,29 @@ test('metric route exposes engagement_series for an engagement kpi drilled into 
         );
 });
 
-test('metric route does not build engagement_series for a non-engagement kpi', function () {
+test('metric route exposes engagement_series for any kpi when the project tracks users', function () {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
         'team_id' => $this->user->currentTeam->id,
         'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS
             | StatsService::TRACKING_USAGE_BITS_USERS,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('kpi', 'pd_visitor')
+            ->has('engagement_series')
+        );
+});
+
+test('metric route does not build engagement_series when the project does not track users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => StatsService::TRACKING_USAGE_BITS_VISITORS,
     ]);
 
     $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))

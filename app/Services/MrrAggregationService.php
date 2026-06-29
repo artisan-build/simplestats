@@ -25,6 +25,16 @@ class MrrAggregationService
 {
     use RunsFilteredStatsQueries;
 
+    /**
+     * Per-request memo for getMrrMovements. The per-user-per-bucket pivot is the
+     * heaviest MRR query and is requested up to three times per Revenue page load
+     * (movements, retention, revenue churn all derive from it), so compute it once
+     * per filter signature within the request.
+     *
+     * @var array<string, array<int, array<string, mixed>>>
+     */
+    private array $movementsMemo = [];
+
     public function __construct(
         private StatsFilterConditionsBuilder $filterConditionsBuilder,
         private StatsAggregationsService $aggregations,
@@ -111,6 +121,16 @@ class MrrAggregationService
      */
     public function getMrrMovements(StatsFilterDto $filters): array
     {
+        $memoKey = implode('|', [
+            $filters->makeHash(),
+            $filters->rangeStart->format('Y-m-d H:i:s'),
+            $filters->rangeAmount,
+        ]);
+
+        if (isset($this->movementsMemo[$memoKey])) {
+            return $this->movementsMemo[$memoKey];
+        }
+
         $filterConditions = $this->filterConditionsBuilder->build($filters);
 
         $builder = new MrrPerUserBucketSqlBuilder;
@@ -168,7 +188,7 @@ class MrrAggregationService
             }
         }
 
-        return array_reverse($movements);
+        return $this->movementsMemo[$memoKey] = array_reverse($movements);
     }
 
     /**

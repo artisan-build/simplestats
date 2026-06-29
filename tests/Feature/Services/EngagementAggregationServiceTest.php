@@ -148,7 +148,7 @@ it('returns null stickiness and churn when there is no activity', function () {
         ->and($bucket['user_churn'])->toBeNull();
 });
 
-it('builds a per-bucket engagement series with active users, rolling stickiness and churn', function () {
+it('builds a per-bucket engagement series with rolling stickiness and churn', function () {
     insertEngagementUser('u1', $this->team->id, $this->pid);
     insertEngagementLogin('u1', $this->team->id, $this->pid, '2026-06-23 10:00:00');
 
@@ -163,10 +163,9 @@ it('builds a per-bucket engagement series with active users, rolling stickiness 
     $series = $this->service->getEngagementTimeSeries($filter);
 
     expect($series)->not->toBeEmpty()
-        ->and($series[0])->toHaveKeys(['date', 'date_clear', 'active_users', 'stickiness', 'user_churn']);
+        ->and($series[0])->toHaveKeys(['date', 'date_clear', 'stickiness', 'user_churn']);
 
-    $activeBucket = collect($series)->firstWhere('active_users', '>', 0);
-    expect($activeBucket['active_users'])->toBe(1)
-        // rolling 30d as of that bucket: 1 user-day / 30 over MAU 1.
-        ->and($activeBucket['stickiness'])->toBe(round((1 / 30) / 1 * 100, 1));
+    $activeBucket = collect($series)->firstWhere('stickiness', '>', 0);
+    // rolling 30d as of that bucket: 1 user-day / 30 over MAU 1.
+    expect($activeBucket['stickiness'])->toBe(round((1 / 30) / 1 * 100, 1));
 });

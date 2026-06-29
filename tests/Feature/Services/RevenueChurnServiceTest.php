@@ -147,3 +147,24 @@ it('returns null rates when there are no recurring payments', function () {
         ->and($churn[0]['net_churn_rate'])->toBeNull()
         ->and($churn[0]['mrr'])->toBe(0.0);
 });
+
+it('computes the per-user-bucket movements query only once across movements, retention and churn', function () {
+    insertRcUser('u-1', $this->team->id, $this->pid);
+    insertRcPayment('p-1', 'u-1', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
+
+    $filter = rcMonthFilter($this->pid, '2026-06-21', 2);
+
+    DB::flushQueryLog();
+    DB::enableQueryLog();
+
+    $this->service->getMrrMovements($filter);
+    $this->service->getMrrRetention($filter);
+    $this->service->getRevenueChurn($filter);
+
+    $perUserBucketQueries = collect(DB::getQueryLog())
+        ->filter(fn (array $entry) => str_contains($entry['query'], 'active.stats_user_id'));
+
+    expect($perUserBucketQueries)->toHaveCount(1);
+
+    DB::disableQueryLog();
+});
