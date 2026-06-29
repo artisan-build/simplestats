@@ -202,6 +202,7 @@ class StatsIncrementService
     {
         return $this->withinBucket(StatsAggregation::query(), $case, $bucketStart)
             ->where('type', $case->value)
+            ->where('kind', 'period')
             ->where(function ($query) use ($stat) {
                 $query->where(function ($query) use ($stat) {
                     $query->where('team_id', $stat->team_id)->whereNull('project_id');

@@ -27,6 +27,7 @@ class MrrAggregationService
 
     public function __construct(
         private StatsFilterConditionsBuilder $filterConditionsBuilder,
+        private StatsAggregationsService $aggregations,
     ) {}
 
     /**
@@ -60,25 +61,40 @@ class MrrAggregationService
     /**
      * Per-bucket MRR snapshot line over the filtered range: one active-recurring
      * snapshot per bucket, taken at the bucket end. Unlike getMrrSnapshot (two
-     * points), this is the full curve for the MRR chart. Uncached for now (a
-     * lateral snapshot per bucket); the per-bucket shape does fit the
-     * StatsAggregation bucket cache, which is the planned follow-up.
+     * points), this is the full curve for the MRR chart. Closed buckets are served
+     * from the per-bucket cache, the open bucket is recomputed live (getCachedSeries).
      *
      * @return array<int, array{date: string, date_clear: string, mrr: float, subscribers: int}>
      */
     public function getMrrTimeSeries(StatsFilterDto $filters): array
+    {
+        $rows = $this->aggregations->getCachedSeries(
+            $filters,
+            'mrr',
+            fn (StatsFilterDto $rangeFilters): array => $this->computeMrrRaw($rangeFilters),
+        );
+
+        // Normalise after the merge so JSON-decoded cached buckets (whole numbers
+        // come back as int) and live buckets share one type shape.
+        return array_map(fn (array $row): array => [
+            'date' => $row['date'],
+            'date_clear' => $row['date_clear'],
+            'mrr' => round((float) $row['mrr'], 2),
+            'subscribers' => (int) $row['subscribers'],
+        ], $rows);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function computeMrrRaw(StatsFilterDto $filters): array
     {
         $filterConditions = $this->filterConditionsBuilder->build($filters);
 
         $builder = new MrrTimeSeriesSqlBuilder;
         $sql = strtr($builder->build(), $this->formatFilter($this->withNowCap($filterConditions)));
 
-        return array_map(function (array $row): array {
-            $row['mrr'] = round((float) $row['mrr'], 2);
-            $row['subscribers'] = (int) $row['subscribers'];
-
-            return $row;
-        }, $this->getDataArray($sql));
+        return $this->getDataArray($sql);
     }
 
     /**

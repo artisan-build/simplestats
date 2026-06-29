@@ -31,7 +31,7 @@ class StatsAggregationsService
         private StatsFilterConditionsBuilder $filterConditionsBuilder,
     ) {}
 
-    public function storeAggregatedData(Collection $data, StatsFilterDto $filters): void
+    public function storeAggregatedData(Collection $data, StatsFilterDto $filters, string $kind = 'period'): void
     {
         if (! config('app.stats_aggregation_enabled')) {
             return;
@@ -41,11 +41,12 @@ class StatsAggregationsService
         $filterHash = $filters->makeHash();
         $filterJson = json_encode($filters->toFilterArray());
 
-        $upsertData = $data->map(function ($item) use ($filters, $teamId, $filterHash, $filterJson) {
+        $upsertData = $data->map(function ($item) use ($filters, $teamId, $filterHash, $filterJson, $kind) {
             return [
                 'team_id' => $teamId,
                 'project_id' => $filters->projectId ?: null,
                 'filter_hash' => $filterHash,
+                'kind' => $kind,
                 'filter' => $filterJson,
                 'type' => $filters->rangeType,
                 'time' => $item['date_clear'],
@@ -54,7 +55,7 @@ class StatsAggregationsService
             ];
         });
 
-        StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time'], update: ['data', 'filter']);
+        StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time', 'kind'], update: ['data', 'filter']);
     }
 
     /**
@@ -187,6 +188,7 @@ class StatsAggregationsService
         if (config('app.stats_aggregation_enabled')) {
             $aggregatedDataKeyedById = StatsAggregation::query()
                 ->where('filter_hash', $filters->makeHash())
+                ->where('kind', 'period')
                 ->whereBetween('time', [
                     $filterConditions['startDateStart'],
                     $filterConditions['endDateEnd'],
@@ -194,12 +196,7 @@ class StatsAggregationsService
                 ->orderBy('time', 'desc')
                 ->pluck('data', 'id');
 
-            // Refresh selected_at so the GC (ClearOldStatsAggregations) keeps hot
-            // rows. Throttled to avoid a write on every single read: the GC window
-            // is 400 days, so an hours-stale selected_at is irrelevant.
-            StatsAggregation::whereIn('id', $aggregatedDataKeyedById->keys())
-                ->where('selected_at', '<', now()->subHours(6))
-                ->update(['selected_at' => now()]);
+            $this->refreshSelectedAt($aggregatedDataKeyedById->keys());
 
             $aggregatedData = $this->formatAggregatedData($aggregatedDataKeyedById);
         }
@@ -219,9 +216,117 @@ class StatsAggregationsService
         return $aggregatedData->sortKeysDesc();
     }
 
+    /**
+     * Per-bucket cache for non-period series (MRR, engagement) that share the
+     * bucket grid but not the additive period/lifetime model. Closed buckets are
+     * served from (and lazily backfilled into) stats_aggregations under $kind. The
+     * single open (current) bucket is always recomputed live and never stored: its
+     * value drifts with wall-clock time (builders cap it at now via :nowCap), so a
+     * stored value would freeze stale once the bucket closes. Closed buckets are
+     * anchored to a fixed bucket end and only change on stat events in their window,
+     * which the existing invalidateByStatsUpdate clears kind-agnostically.
+     *
+     * @param  callable(StatsFilterDto): array<int, array<string, mixed>>  $compute  Runs the metric builder for a (sub)range; each row carries a 'date_clear' key.
+     * @return array<int, array<string, mixed>> Rows ordered by date_clear desc.
+     */
+    public function getCachedSeries(StatsFilterDto $filters, string $kind, callable $compute): array
+    {
+        if (! config('app.stats_aggregation_enabled')) {
+            return $compute($filters);
+        }
+
+        $filterConditions = $this->getFilterConditions($filters);
+        $dateFormatClear = $filters->rangeType->dateFormatClear()['php'];
+        $openKey = trim($filters->rangeType->rangeStart(now())->format($dateFormatClear));
+
+        $period = CarbonPeriodImmutable::create(
+            $filterConditions['startDateStart'],
+            '1 '.$filterConditions['intervalType']->toString(),
+            $filterConditions['endDateStart']
+        )->toArray();
+
+        $cachedById = StatsAggregation::query()
+            ->where('filter_hash', $filters->makeHash())
+            ->where('kind', $kind)
+            ->where('type', $filters->rangeType->value)
+            ->whereBetween('time', [
+                $filterConditions['startDateStart'],
+                $filterConditions['endDateEnd'],
+            ])
+            ->pluck('data', 'id');
+
+        $this->refreshSelectedAt($cachedById->keys());
+
+        $byKey = $cachedById->keyBy(fn ($data) => trim($data['date_clear']));
+
+        $missingDates = [];
+        $rangeIncludesOpen = false;
+
+        foreach ($period as $date) {
+            $key = trim(CarbonImmutable::parse($date)->format($dateFormatClear));
+
+            if ($key === $openKey) {
+                $rangeIncludesOpen = true;
+            } elseif (! $byKey->has($key)) {
+                $missingDates[] = CarbonImmutable::parse($date);
+            }
+        }
+
+        if (! empty($missingDates)) {
+            $fresh = collect();
+
+            foreach ($this->groupContiguousDates($missingDates, $filterConditions['intervalType']) as $range) {
+                $rangeFilters = $this->subRangeFilters($filters, count($range), end($range));
+
+                // A sub-range can surface the open bucket at its edge; it is only ever recomputed live, never persisted.
+                $fresh = $fresh->merge(
+                    collect($compute($rangeFilters))->reject(fn (array $row) => trim($row['date_clear']) === $openKey)
+                );
+            }
+
+            if ($fresh->isNotEmpty()) {
+                $this->storeAggregatedData($fresh, $filters, $kind);
+
+                foreach ($fresh as $row) {
+                    $byKey->put(trim($row['date_clear']), $row);
+                }
+            }
+        }
+
+        if ($rangeIncludesOpen) {
+            foreach ($compute($this->subRangeFilters($filters, 1, now())) as $row) {
+                if (trim($row['date_clear']) === $openKey) {
+                    $byKey->put($openKey, $row);
+                }
+            }
+        }
+
+        return $byKey->sortKeysDesc()->values()->all();
+    }
+
     private function getFilterConditions(StatsFilterDto $filters): array
     {
         return $this->filterConditionsBuilder->build($filters);
+    }
+
+    private function subRangeFilters(StatsFilterDto $filters, int $rangeAmount, CarbonImmutable $rangeStart): StatsFilterDto
+    {
+        return new StatsFilterDto(...array_merge((array) $filters, [
+            'rangeAmount' => $rangeAmount,
+            'rangeStart' => $rangeStart,
+        ]));
+    }
+
+    /**
+     * Refresh selected_at so the GC (ClearOldStatsAggregations) keeps hot rows.
+     * Throttled to avoid a write on every read: the GC window is 400 days, so an
+     * hours-stale selected_at is irrelevant.
+     */
+    private function refreshSelectedAt(Collection $ids): void
+    {
+        StatsAggregation::whereIn('id', $ids)
+            ->where('selected_at', '<', now()->subHours(6))
+            ->update(['selected_at' => now()]);
     }
 
     /**
@@ -256,10 +361,7 @@ class StatsAggregationsService
         $ranges = $this->groupContiguousDates($missingDates, $filterConditions['intervalType']);
 
         foreach ($ranges as $range) {
-            $rangeFilters = new StatsFilterDto(...array_merge((array) $filters, [
-                'rangeAmount' => count($range),
-                'rangeStart' => end($range),
-            ]));
+            $rangeFilters = $this->subRangeFilters($filters, count($range), end($range));
 
             $missingAggregatedData = $missingAggregatedData->merge(
                 $this->getRawData($this->getFilterConditions($rangeFilters), $rangeFilters->projectId, $rangeFilters)
@@ -343,6 +445,7 @@ class StatsAggregationsService
 
         $predecessor = StatsAggregation::query()
             ->where('filter_hash', $filters->makeHash())
+            ->where('kind', 'period')
             ->where('type', $filters->rangeType->value)
             ->where('time', $predecessorKey)
             ->first(['id', 'data']);

@@ -66,7 +66,7 @@ const chartOptions = ref({
         zoom: {enabled: false},
         background: isDarkMode.value ? '#262626' : '#FFFFFF',
     },
-    colors: ['#22c55e', '#14b8a6', '#3b82f6', '#f97316', '#ef4444'],
+    colors: ['#4ade80', '#2dd4bf', '#60a5fa', '#fb923c', '#f87171'],
     theme: {mode: isDarkMode.value ? 'dark' : 'light'},
     plotOptions: {
         bar: {columnWidth: '70%'},

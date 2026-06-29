@@ -23,6 +23,7 @@ class EngagementAggregationService
 
     public function __construct(
         private StatsFilterConditionsBuilder $filterConditionsBuilder,
+        private StatsAggregationsService $aggregations,
     ) {}
 
     /**
@@ -30,18 +31,18 @@ class EngagementAggregationService
      * chart: the bucket-local active users (range-adaptive DAU/WAU/MAU) plus the
      * rolling-30d stickiness and monthly user churn as of each bucket end
      * (now-capped, so a running bucket is measured as of today). Stickiness and
-     * churn are null when their denominator is 0. Uncached for now (a LATERAL
-     * rolling window per bucket, like the MRR time series).
+     * churn are null when their denominator is 0. Closed buckets are served from
+     * the per-bucket cache, the open bucket is recomputed live (getCachedSeries).
      *
      * @return array<int, array{date: string, date_clear: string, active_users: int, stickiness: float|null, user_churn: float|null}>
      */
     public function getEngagementTimeSeries(StatsFilterDto $filters): array
     {
-        $filterConditions = $this->filterConditionsBuilder->build($filters);
-        $filterConditions['nowCap'] = now()->format(StatsRangeType::DATE_FORMAT);
-
-        $builder = new EngagementTimeSeriesSqlBuilder;
-        $sql = strtr($builder->build(), $this->formatFilter($filterConditions));
+        $rows = $this->aggregations->getCachedSeries(
+            $filters,
+            'engagement',
+            fn (StatsFilterDto $rangeFilters): array => $this->computeEngagementRaw($rangeFilters),
+        );
 
         return array_map(function (array $row): array {
             $dau = (float) $row['dau'];
@@ -56,6 +57,24 @@ class EngagementAggregationService
                 'stickiness' => $mau > 0 ? round($dau / $mau * 100, 1) : null,
                 'user_churn' => $mauPrior > 0 ? round($churned / $mauPrior * 100, 1) : null,
             ];
-        }, $this->getDataArray($sql));
+        }, $rows);
+    }
+
+    /**
+     * Raw rolling-window inputs per bucket; only raw counts are cached, the
+     * stickiness / user-churn ratios are derived in PHP over the merged
+     * closed+open set.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function computeEngagementRaw(StatsFilterDto $filters): array
+    {
+        $filterConditions = $this->filterConditionsBuilder->build($filters);
+        $filterConditions['nowCap'] = now()->format(StatsRangeType::DATE_FORMAT);
+
+        $builder = new EngagementTimeSeriesSqlBuilder;
+        $sql = strtr($builder->build(), $this->formatFilter($filterConditions));
+
+        return $this->getDataArray($sql);
     }
 }
