@@ -52,6 +52,7 @@ const columnRegistry = {
     arpu:     {key: 'arpu', label: 'ARPU', format: 'currency', bits: ['payments', 'users']},
     arpdau:   {key: 'arpdau', label: 'ARPDAU', format: 'currency', bits: ['payments', 'users']},
     reg2dau:  {key: 'reg2dau', label: 'Reg→Active', labelSmall: 'R→A', format: 'percent', bits: ['users']},
+    time_to_convert: {key: 'time_to_convert', label: 'Time to Conv.', labelSmall: 'TTC', format: 'days', bits: ['visitors', 'users']},
     mrr:      {key: 'mrr', label: 'MRR', format: 'currency', bits: ['subscription']},
     subscribers: {key: 'subscribers', label: 'Subs', format: 'number', bits: ['subscription']},
     arps:     {key: 'arps', label: 'ARPS', format: 'currency', bits: ['subscription']},
@@ -110,6 +111,14 @@ if (curatedColumns
     && currentProjectHasUsages(['subscription'])
 ) {
     filters.metric = 'mrr';
+}
+
+// The per-dimension time-to-convert median is likewise opt-in (an extra grouped query).
+if (curatedColumns
+    && props.breakdownPrimary === 'time_to_convert'
+    && currentProjectHasUsages(['visitors', 'users'])
+) {
+    filters.metric = 'time_to_convert';
 }
 
 const fetchData = async () => {

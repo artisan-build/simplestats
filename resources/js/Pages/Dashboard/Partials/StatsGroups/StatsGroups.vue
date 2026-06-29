@@ -1,4 +1,5 @@
 <script setup>
+import {computed} from 'vue';
 import StatsGroup from "./StatsGroup.vue";
 import StatsCustomPropertyGroup from "./StatsCustomPropertyGroup.vue";
 
@@ -16,12 +17,28 @@ const props = defineProps({
     // Metric detail view: curated breakdown columns + the primary column to highlight/sort by.
     breakdownColumns: {type: Array, default: null},
     breakdownPrimary: {type: String, default: null},
+    // Custom Events and Custom Properties never re-express the active metric (events have
+    // their own fixed columns, properties only carry the visitors/reg/cr/net base set), so
+    // the metric detail view opts out and shows them only on the overview.
+    showCustomDimensions: {type: Boolean, default: true},
+});
+
+// Drop the event group from the dimension tables when custom dimensions are hidden, so it
+// never mounts (and never fires its grouped query) on the metric detail view.
+const visibleStatsGroups = computed(() => {
+    if (props.showCustomDimensions) {
+        return props.statsGroups;
+    }
+
+    return Object.fromEntries(
+        Object.entries(props.statsGroups).filter(([type]) => type !== 'event')
+    );
 });
 </script>
 
 <template>
     <div class="grid gap-4 grid-cols-1 lg:grid-cols-2">
-        <div v-for="(statsGroup, statsGroupType, index) in statsGroups" :key="statsGroup.id"
+        <div v-for="(statsGroup, statsGroupType, index) in visibleStatsGroups" :key="statsGroup.id"
              v-show="statsGroupType !== 'event' || hasCustomEvents"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
              :class="{'lg:col-span-2': statsGroupType === 'event' && ! propertyDimensions?.length}"
@@ -43,7 +60,7 @@ const props = defineProps({
         </div>
 
         <!-- Custom properties: dynamic dimensions (e.g. ab_test, company) -->
-        <div v-if="propertyDimensions && propertyDimensions.length"
+        <div v-if="showCustomDimensions && propertyDimensions && propertyDimensions.length"
              class="flex items-stretch bg-white dark:bg-dark-800 border rounded-md"
              :class="{'lg:col-span-2': ! hasCustomEvents}"
         >

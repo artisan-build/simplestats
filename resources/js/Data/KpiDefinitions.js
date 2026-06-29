@@ -53,7 +53,7 @@ export function getKpiDefinitions(rangeType) {
         },
         time_to_convert: {
             short: 'Time to Convert',
-            long: 'Time to Registration',
+            long: 'Time to Convert',
             description: 'Median number of days from first visit to registration, by registration date. Only counts registrations linked to a prior visit (tracked going forward).',
         },
         quick_ratio: {

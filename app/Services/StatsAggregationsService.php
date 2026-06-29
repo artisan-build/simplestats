@@ -16,6 +16,7 @@ use App\Models\BaseStat;
 use App\Models\Project;
 use App\Models\StatsAggregation;
 use App\Models\StatsCustomPropertyName;
+use App\Models\Team;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
@@ -61,7 +62,7 @@ class StatsAggregationsService
     /**
      * TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
      */
-    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9, bool $withMrr = false): Collection
+    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9, bool $withMrr = false, bool $withTimeToConvert = false): Collection
     {
         $statsTypeSnake = str($statsType)->snake()->toString();
 
@@ -74,19 +75,28 @@ class StatsAggregationsService
         $project = Project::with('team:id,timezone')->find($filters->projectId);
         $trackablePerson = $this->getTrackablePersonByProject($project);
 
-        // Only compute the MRR snapshot when the project tracks recurring revenue,
-        // otherwise it is wasted work returning 0s.
+        // Only compute the MRR snapshot when the scope tracks recurring revenue, otherwise it
+        // is wasted work returning 0s. The "All projects" scope (TRACK_ALL) has no concrete
+        // Project row, so fall back to team-level usage (OR-merged across the team's projects,
+        // matching how BuildsMrrProps gates every MRR surface). Without this the frontend would
+        // sort by mrr while the column was skipped, producing an ORDER BY on a missing column.
         $withMrr = $withMrr
             && $trackablePerson === TrackablePerson::USER
-            && (bool) $project?->hasUsages([Project::USAGE_SUBSCRIPTION]);
+            && $this->groupedScopeTracksUsage($project, [Project::USAGE_SUBSCRIPTION]);
+
+        $withTimeToConvert = $withTimeToConvert
+            && $trackablePerson === TrackablePerson::USER
+            && $this->groupedScopeTracksUsage($project, [Project::USAGE_VISITORS, Project::USAGE_USERS]);
 
         if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
                 $statsSort)
             )->build();
         } else {
+            $statsSort = $this->resolveGroupedSort($statsSort, $trackablePerson, $withMrr, $withTimeToConvert);
+
             $sql = (new StatsAggregationsGroupedSqlBuilder(
-                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $withMrr)
+                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $withMrr, $withTimeToConvert)
             )->build();
         }
 
@@ -188,7 +198,7 @@ class StatsAggregationsService
                 }
             }
 
-            foreach (['cr', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'arps'] as $ratio) {
+            foreach (['cr', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'arps', 'time_to_convert'] as $ratio) {
                 if (isset($item[$ratio])) {
                     $item[$ratio] = (float) $item[$ratio];
                 }
@@ -588,5 +598,58 @@ class StatsAggregationsService
         }
 
         return $trackablePerson;
+    }
+
+    /**
+     * Whether the grouped scope tracks all of the given usage bits. A concrete project is
+     * checked directly; the "All projects" scope (null project) falls back to team-level
+     * tracking, where each bit may be satisfied by a different project (OR-merged usage).
+     *
+     * @param  array<int, int>  $bits
+     */
+    private function groupedScopeTracksUsage(?Project $project, array $bits): bool
+    {
+        if ($project !== null) {
+            return $project->hasUsages($bits);
+        }
+
+        $team = Team::find(AppHelper::getTeamId());
+
+        if ($team === null) {
+            return false;
+        }
+
+        foreach ($bits as $bit) {
+            if (! $team->tracksUsage($bit)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * The grouped breakdown can only ORDER BY a column it actually selected. Available
+     * columns depend on what the scope tracks (USER columns) and the opt-in snapshot columns
+     * (MRR, time-to-convert), so a sort the current query does not produce (e.g. a stale
+     * "mrr" sort carried over without the MRR opt-in) falls back to an always-present column.
+     */
+    private function resolveGroupedSort(string $statsSort, TrackablePerson $trackablePerson, bool $withMrr, bool $withTimeToConvert): string
+    {
+        $allowed = ['name', 'net', 'visitors', 'arpv'];
+
+        if ($trackablePerson === TrackablePerson::USER) {
+            $allowed = array_merge($allowed, ['reg', 'cr', 'dau', 'arpu', 'arpdau', 'reg2dau']);
+        }
+
+        if ($withMrr) {
+            $allowed = array_merge($allowed, ['mrr', 'subscribers', 'arps']);
+        }
+
+        if ($withTimeToConvert) {
+            $allowed[] = 'time_to_convert';
+        }
+
+        return in_array($statsSort, $allowed, true) ? $statsSort : 'net';
     }
 }

@@ -57,13 +57,26 @@ function insertSourceVisitors(int $teamId, int $projectId, int $sourceId, string
     }
 }
 
-function insertSourceUser(int $teamId, int $projectId, int $sourceId, string $id, string $time): void
+function insertSourceVisitorReturningId(int $teamId, int $projectId, int $sourceId, string $time): int
+{
+    return DB::table('stats_visitors')->insertGetId([
+        'team_id' => $teamId,
+        'project_id' => $projectId,
+        'visitor_hash' => Str::uuid()->toString(),
+        'stats_track_source_id' => $sourceId,
+        'time' => $time,
+        'time_utc' => $time,
+    ]);
+}
+
+function insertSourceUser(int $teamId, int $projectId, int $sourceId, string $id, string $time, ?int $visitorId = null): void
 {
     DB::table('stats_users')->insert([
         'id' => $id,
         'team_id' => $teamId,
         'project_id' => $projectId,
         'stats_track_source_id' => $sourceId,
+        'stats_visitor_id' => $visitorId,
         'time' => $time,
         'time_utc' => $time,
         'registered' => true,
@@ -200,6 +213,76 @@ it('does not compute MRR for a project that does not track subscriptions even wh
         ->and($row)->not->toHaveKey('mrr');
 });
 
+it('computes a per-dimension time-to-convert median when withTimeToConvert is enabled', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS]);
+
+    $sourceId = makeSource($this->team->id, 'newsletter');
+
+    $v1 = insertSourceVisitorReturningId($this->team->id, $this->pid, $sourceId, '2026-03-28 12:00:00');
+    $v2 = insertSourceVisitorReturningId($this->team->id, $this->pid, $sourceId, '2026-03-26 12:00:00');
+
+    insertSourceUser($this->team->id, $this->pid, $sourceId, 'u1', '2026-03-30 12:00:00', $v1);
+    insertSourceUser($this->team->id, $this->pid, $sourceId, 'u2', '2026-03-30 12:00:00', $v2);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+
+    $row = app(StatsAggregationsService::class)
+        ->getAggregatedGroupedData($filter, 'track_source', 'time_to_convert', 10, withTimeToConvert: true)
+        ->firstWhere('name', 'newsletter');
+
+    // median of 2 days (u1) and 4 days (u2)
+    expect($row)->not->toBeNull()
+        ->and((int) $row['reg'])->toBe(2)
+        ->and((float) $row['time_to_convert'])->toBe(3.0);
+});
+
+it('omits the time-to-convert column by default', function () {
+    $sourceId = makeSource($this->team->id, 'newsletter');
+    insertSourceVisitors($this->team->id, $this->pid, $sourceId, '2026-03-30 12:00:00', 3);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+
+    $row = app(StatsAggregationsService::class)
+        ->getAggregatedGroupedData($filter, 'track_source', 'visitors', 10)
+        ->firstWhere('name', 'newsletter');
+
+    expect($row)->not->toBeNull()
+        ->and($row)->not->toHaveKey('time_to_convert');
+});
+
+it('serves per-dimension time-to-convert through the stats.grouped endpoint with metric=time_to_convert', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS]);
+
+    $sourceId = makeSource($this->team->id, 'newsletter');
+
+    $v1 = insertSourceVisitorReturningId($this->team->id, $this->pid, $sourceId, '2026-03-29 12:00:00');
+    insertSourceUser($this->team->id, $this->pid, $sourceId, 'u1', '2026-03-30 12:00:00', $v1);
+
+    $response = $this->actingAs($this->user)->getJson(route('stats.grouped', [
+        'project_id' => $this->pid,
+        'range_type' => StatsRangeType::DAY->value,
+        'range_amount' => 1,
+        'range_start' => '2026-03-30',
+        'comparison' => '0',
+        'stats_type' => 'track_source',
+        'stats_sort' => 'time_to_convert',
+        'metric' => 'time_to_convert',
+    ]));
+
+    $response->assertOk();
+
+    $row = collect($response->json('data'))->firstWhere('name', 'newsletter');
+
+    expect($row)->not->toBeNull()
+        ->and((float) $row['time_to_convert'])->toBe(1.0);
+});
+
 it('serves per-dimension MRR through the stats.grouped endpoint with metric=mrr', function () {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
@@ -233,4 +316,62 @@ it('serves per-dimension MRR through the stats.grouped endpoint with metric=mrr'
     expect($row)->not->toBeNull()
         ->and((float) $row['mrr'])->toBe(30.0)
         ->and((int) $row['subscribers'])->toBe(1);
+});
+
+it('serves the per-dimension MRR breakdown for the All-projects scope sorted by mrr', function () {
+    Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
+
+    $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
+
+    $sourceId = makeSource($this->team->id, 'newsletter');
+    insertSourceUser($this->team->id, $this->pid, $sourceId, 'u1', '2026-06-01 12:00:00');
+
+    StatsPayment::factory()->subscriptionMonthly()->create([
+        'stats_user_id' => 'u1', 'stats_visitor_id' => null,
+        'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'gross' => 30, 'net' => 30,
+        'time' => '2026-06-10 12:00:00', 'time_utc' => '2026-06-10 12:00:00',
+    ]);
+
+    // "All projects" (TRACK_ALL) has no concrete Project row: the breakdown must still
+    // resolve the subscription opt-in from team-level usage instead of skipping the mrr
+    // column while ordering by it (which previously crashed with "column mrr does not exist").
+    $response = $this->actingAs($this->user)->getJson(route('stats.grouped', [
+        'project_id' => StatsFilterDto::TRACK_ALL,
+        'range_type' => StatsRangeType::MONTH->value,
+        'range_amount' => 1,
+        'range_start' => '2026-06-15',
+        'comparison' => '0',
+        'stats_type' => 'track_source',
+        'stats_sort' => 'mrr',
+        'metric' => 'mrr',
+    ]));
+
+    $response->assertOk();
+
+    $row = collect($response->json('data'))->firstWhere('name', 'newsletter');
+
+    expect($row)->not->toBeNull()
+        ->and((float) $row['mrr'])->toBe(30.0)
+        ->and((int) $row['subscribers'])->toBe(1);
+});
+
+it('falls back to a present column when sorted by a column the query did not select', function () {
+    $sourceId = makeSource($this->team->id, 'newsletter');
+    insertSourceVisitors($this->team->id, $this->pid, $sourceId, '2026-03-30 12:00:00', 3);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+
+    // withMrr stays false, so mrr is never selected; sorting by it must not emit an
+    // ORDER BY on a missing column.
+    $row = app(StatsAggregationsService::class)
+        ->getAggregatedGroupedData($filter, 'track_source', 'mrr', 10)
+        ->firstWhere('name', 'newsletter');
+
+    expect($row)->not->toBeNull()
+        ->and($row)->not->toHaveKey('mrr')
+        ->and((int) $row['visitors'])->toBe(3);
 });

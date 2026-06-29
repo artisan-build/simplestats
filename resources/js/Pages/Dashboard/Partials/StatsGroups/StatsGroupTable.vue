@@ -49,6 +49,9 @@ const formatters = {
     number: (value) => formatNumber(Number(value)),
     percent: (value) => formatPercent(Number(value)),
     currency: (value) => formatCurrency(value, {}, page.props.teamCurrency),
+    days: (value) => value !== null && Number.isFinite(Number(value))
+        ? `${formatNumber(Number(value), {maximumFractionDigits: 1})} days`
+        : '-',
 };
 
 const formatValue = (column, item) => formatters[column.format](item[column.key]);

@@ -26,6 +26,7 @@ const BREAKDOWN_SETS = {
     pd_arpdau:   {columns: ['dau', 'net', 'arpdau'],       primary: 'arpdau'},
     pd_dau:      {columns: ['reg', 'dau'],                 primary: 'dau'},
     lt_reg2dau:  {columns: ['reg', 'dau', 'reg2dau'],      primary: 'reg2dau'},
+    time_to_convert: {columns: ['visitors', 'reg', 'time_to_convert'], primary: 'time_to_convert'},
     mrr:         {columns: ['subscribers', 'mrr', 'arps'], primary: 'mrr'},
     subscribers: {columns: ['subscribers', 'mrr', 'arps'], primary: 'subscribers'},
     arps:        {columns: ['subscribers', 'mrr', 'arps'], primary: 'arps'},
@@ -384,6 +385,7 @@ export function useChartDefinitions(ctx) {
                 key: def.key,
                 formatter: def.formatter,
                 decimals: def.decimals,
+                suffix: def.suffix ?? null,
                 indicator: latest[field] ?? 0,
             };
         });
@@ -577,7 +579,7 @@ export function useChartDefinitions(ctx) {
     // not added to OVERVIEW_DEFS, so it never enters the curated 3x3 dashboard overview.
     if (ctx.timeToConvertSeries?.length) {
         charts.push(buildFlatSeriesChart('Time to convert', 9, ctx.timeToConvertSeries, [
-            {key: 'time_to_convert', formatter: 'number', decimals: 1},
+            {key: 'time_to_convert', formatter: 'number', decimals: 1, suffix: 'days'},
         ]));
     }
 
@@ -602,6 +604,7 @@ export function useChartDefinitions(ctx) {
                 titleSmall: serie.nameSmall,
                 formatter: serie.formatter,
                 decimals: serie.decimals ?? null,
+                suffix: serie.suffix ?? null,
                 serie,
                 categories: chart.data.categories,
                 indicator: serie.indicator,

@@ -16,6 +16,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected string $typeIdFallback,
         protected TrackablePerson $trackablePerson,
         protected bool $withMrr = false,
+        protected bool $withTimeToConvert = false,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -31,11 +32,14 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
         $this->applySql($this->getLT_VISITORS());
 
+        $this->applySql($this->getLT_NET(), $this->withMrr || $this->withTimeToConvert);
+
         if ($this->withMrr) {
-            $this->applySql($this->getLT_NET());
-            $this->applySql($this->getLT_MRR(), false);
-        } else {
-            $this->applySql($this->getLT_NET(), false);
+            $this->applySql($this->getLT_MRR(), $this->withTimeToConvert);
+        }
+
+        if ($this->withTimeToConvert) {
+            $this->applySql($this->getLT_TIME_TO_CONVERT(), false);
         }
 
         $this->applySql($this->getSELECT(), false);
@@ -136,6 +140,20 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         )';
     }
 
+    protected function getLT_TIME_TO_CONVERT(): string
+    {
+        $median = $this->medianDaysBetween('sv.time', 'stats.time');
+
+        return "lt_time_to_convert AS (
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id, $median AS time_to_convert
+            FROM stats_users stats
+            JOIN stats_visitors sv
+                ON sv.id = stats.stats_visitor_id AND sv.team_id = stats.team_id AND sv.project_id = stats.project_id
+            WHERE :projectCondition AND stats.registered = true AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionUser :propertyConditionUser :cohortConditionUser
+            GROUP BY type_id
+        )";
+    }
+
     protected function getSELECT(): string
     {
         $sql = 'SELECT
@@ -164,6 +182,11 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
                 ROUND(COALESCE((lt_mrr.mrr / NULLIF(lt_mrr.subscribers, 0))::numeric, 0), 2) AS arps';
         }
 
+        if ($this->withTimeToConvert) {
+            $sql .= ',
+                ROUND(lt_time_to_convert.time_to_convert::numeric, 1) AS time_to_convert';
+        }
+
         return $sql;
     }
 
@@ -185,6 +208,11 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         if ($this->withMrr) {
             $sql .= '
                 LEFT JOIN lt_mrr ON sg.type_id = lt_mrr.type_id';
+        }
+
+        if ($this->withTimeToConvert) {
+            $sql .= '
+                LEFT JOIN lt_time_to_convert ON sg.type_id = lt_time_to_convert.type_id';
         }
 
         return $sql;

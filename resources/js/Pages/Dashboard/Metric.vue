@@ -146,6 +146,7 @@ onMounted(() => {
                         :label="activeKpi.titleLong"
                         :value="activeKpi.indicator"
                         :formatter="activeKpi.formatter"
+                        :suffix="activeKpi.suffix"
                         :delta="activeKpi.delta"
                         :infoTitle="activeKpi.infoTitle"
                         :infoText="activeKpi.infoText"
@@ -173,6 +174,7 @@ onMounted(() => {
                     :usageBits="usageBits"
                     :breakdownColumns="activeKpi.breakdown?.columns"
                     :breakdownPrimary="activeKpi.breakdown?.primary"
+                    :showCustomDimensions="false"
                     baseRoute="dashboard.metric"
                     :routeParams="{ kpi }"
                 />
