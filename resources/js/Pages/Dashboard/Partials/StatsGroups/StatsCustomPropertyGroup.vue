@@ -23,6 +23,10 @@ const props = defineProps({
     trackingUsageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
     routeParams: {type: Object, default: () => ({})},
+    // Metric detail view: highlight + default-sort by the active KPI when it maps to
+    // one of this group's columns. The property SQL has no ratio/MRR columns, so other
+    // primaries (arpv, mrr, ...) are ignored and the default 'reg' sort stays.
+    breakdownPrimary: {type: String, default: null},
 });
 
 const data = ref([]);
@@ -41,8 +45,12 @@ const selectedNameId = ref(preselectedDimension?.id ?? props.propertyDimensions[
 filters.stats_type = 'property';
 filters.property_name_id = selectedNameId.value;
 filters.lifetime = lifetime.value ? 1 : undefined;
+
+const propertyColumnKeys = ['visitors', 'reg', 'cr', 'net'];
+const curatedPrimary = props.breakdownPrimary && propertyColumnKeys.includes(props.breakdownPrimary) ? props.breakdownPrimary : null;
+
 if (! filters.stats_sort) {
-    filters.stats_sort = 'reg';
+    filters.stats_sort = curatedPrimary ?? 'reg';
 }
 
 const fetchData = async () => {
@@ -141,6 +149,7 @@ onMounted(fetchData);
         :data-previous="dataPrevious"
         :columns="columns"
         :sort="filters.stats_sort"
+        :highlight-column="curatedPrimary"
         name-label="Value"
         name-width="46%"
         :percentage="calculatePercentage"

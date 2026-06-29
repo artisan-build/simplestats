@@ -12,6 +12,24 @@ const COHORT_NA_KPIS = ['pd_visitor', 'pd_cr', 'lt_arpv'];
 // view) only applies to these; everything else uses the dimension StatsGroups.
 const MRR_KPI_KEYS = ['mrr', 'subscribers', 'arps'];
 
+// Curated breakdown columns per KPI for the metric detail view: the primary is
+// highlighted and becomes the default sort, the companions give a ratio its inputs.
+// KPIs not listed here (and bit-dependent pd_net, see breakdownFor) fall back to the
+// breakdown's default columns.
+const BREAKDOWN_SETS = {
+    pd_visitor:  {columns: ['visitors', 'reg', 'cr'],      primary: 'visitors'},
+    pd_reg:      {columns: ['visitors', 'reg', 'cr'],      primary: 'reg'},
+    pd_cr:       {columns: ['visitors', 'reg', 'cr'],      primary: 'cr'},
+    lt_arpv:     {columns: ['visitors', 'net', 'arpv'],    primary: 'arpv'},
+    lt_arpu:     {columns: ['reg', 'net', 'arpu'],         primary: 'arpu'},
+    pd_arpdau:   {columns: ['dau', 'net', 'arpdau'],       primary: 'arpdau'},
+    pd_dau:      {columns: ['reg', 'dau'],                 primary: 'dau'},
+    lt_reg2dau:  {columns: ['reg', 'dau', 'reg2dau'],      primary: 'reg2dau'},
+    mrr:         {columns: ['subscribers', 'mrr', 'arps'], primary: 'mrr'},
+    subscribers: {columns: ['subscribers', 'mrr', 'arps'], primary: 'subscribers'},
+    arps:        {columns: ['subscribers', 'mrr', 'arps'], primary: 'arps'},
+};
+
 // The curated dashboard overview: a fixed ~9 KPIs (3 per section) instead of the
 // full catalog, so the small-multiples dashboard stays a clean monitoring surface.
 // Each section lists candidate keys in priority order; the first 3 that the project
@@ -401,6 +419,19 @@ export function useChartDefinitions(ctx) {
 
     const showsRegistrations = currentProjectHasTrackingUsageBits(['users']);
 
+    // Net revenue's companions depend on what the project tracks: registration-aware
+    // (Regs/ARPU) when users are tracked, visitor-aware (Visits/ARPV) for guest-checkout
+    // projects that track payments without registrations.
+    const breakdownFor = (key) => {
+        if (key === 'pd_net') {
+            return showsRegistrations
+                ? {columns: ['reg', 'net', 'arpu'], primary: 'net'}
+                : {columns: ['visitors', 'net', 'arpv'], primary: 'net'};
+        }
+
+        return BREAKDOWN_SETS[key] ?? null;
+    };
+
     const subscriptionShown = currentProjectHasTrackingUsageBits(['payments', 'users']) && !! ctx.mrrSeries?.length;
 
     // A KPI shows when the project tracks the required bits. exceptBits excludes a KPI
@@ -564,6 +595,7 @@ export function useChartDefinitions(ctx) {
                 infoTitle: kpiDef.long ?? kpiDef.short ?? serie.key,
                 infoText: kpiDef.description ?? '',
                 isMrr: MRR_KPI_KEYS.includes(serie.key),
+                breakdown: breakdownFor(serie.key),
                 sectionName: chart.name,
             };
 

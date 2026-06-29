@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\ComparisonType;
+use App\Enums\StatsRangeType;
 use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\StatsCustomEventName;
@@ -27,6 +28,7 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -302,5 +304,27 @@ class StatsService
         return $user->currentTeam->events_count_overall <= 0
             && $user->created_at->diffInDays(now()) > 1
             && ! ($user->settings['hideReadDocsWarning'] ?? false);
+    }
+
+    /**
+     * The active-subscription window for an as-of MRR snapshot: a monthly sub counts
+     * while its last payment is within a month (plus grace), a yearly one within a
+     * year (plus grace). Single source of truth shared by the per-plan and
+     * per-dimension MRR builders. Defaults the as-of date to the range end capped at
+     * now, matching the headline MRR tile.
+     *
+     * @param  array<string, mixed>  $filterConditions
+     * @return array<string, mixed>
+     */
+    public static function mrrSnapshotWindowConditions(array $filterConditions, ?string $asOfDate = null): array
+    {
+        $asOfDate ??= min($filterConditions['endDateEnd'], now()->format(StatsRangeType::DATE_FORMAT));
+        $asOf = CarbonImmutable::parse($asOfDate);
+
+        return array_merge($filterConditions, [
+            'asOfDate' => $asOfDate,
+            'monthWindowStart' => $asOf->subMonth()->subDays(self::MRR_ACTIVE_GRACE_DAYS)->format(StatsRangeType::DATE_FORMAT),
+            'yearWindowStart' => $asOf->subYear()->subDays(self::MRR_ACTIVE_GRACE_DAYS)->format(StatsRangeType::DATE_FORMAT),
+        ]);
     }
 }

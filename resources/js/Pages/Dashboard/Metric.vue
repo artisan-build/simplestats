@@ -150,6 +150,8 @@ onMounted(() => {
                     :topReferers="topReferers"
                     :currentProject="currentProject"
                     :trackingUsageBits="trackingUsageBits"
+                    :breakdownColumns="activeKpi.breakdown?.columns"
+                    :breakdownPrimary="activeKpi.breakdown?.primary"
                     baseRoute="dashboard.metric"
                     :routeParams="{ kpi }"
                 />

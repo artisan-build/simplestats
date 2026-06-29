@@ -15,6 +15,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected string $statsSort,
         protected string $typeIdFallback,
         protected TrackablePerson $trackablePerson,
+        protected bool $withMrr = false,
     ) {
         $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
     }
@@ -29,7 +30,13 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         }
 
         $this->applySql($this->getLT_VISITORS());
-        $this->applySql($this->getLT_NET(), false);
+
+        if ($this->withMrr) {
+            $this->applySql($this->getLT_NET());
+            $this->applySql($this->getLT_MRR(), false);
+        } else {
+            $this->applySql($this->getLT_NET(), false);
+        }
 
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
@@ -111,6 +118,24 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         )";
     }
 
+    /**
+     * Active recurring revenue per dimension as an as-of snapshot. USER-only:
+     * subscriptions imply registrations and revenue is attributed to the user.
+     */
+    protected function getLT_MRR(): string
+    {
+        $typeId = "COALESCE(su.$this->statsDBType, $this->typeIdFallback) AS type_id";
+
+        return 'lt_mrr AS (
+            SELECT
+                lr.type_id AS type_id,
+                COUNT(*) AS subscribers,
+                COALESCE(SUM('.$this->mrrMonthlyAmount().'), 0) AS mrr'
+            .$this->activeSubscriptionsFrom("<= ':asOfDate'", "':monthWindowStart'", "':yearWindowStart'", [$typeId]).'
+            GROUP BY lr.type_id
+        )';
+    }
+
     protected function getSELECT(): string
     {
         $sql = 'SELECT
@@ -121,12 +146,23 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             $sql .= '
                 COALESCE(lt_reg.count, 0) as reg,
                 ROUND(COALESCE((lt_reg.count * 100.0 / NULLIF(lt_visitors.count, 0)), 0), 2) AS cr,
-                COALESCE(pd_dau.count, 0) AS dau,';
+                COALESCE(pd_dau.count, 0) AS dau,
+                ROUND(COALESCE((lt_net.count / NULLIF(lt_reg.count, 0))::numeric, 0), 2) AS arpu,
+                ROUND(COALESCE((lt_net.count / NULLIF(pd_dau.count, 0))::numeric, 0), 2) AS arpdau,
+                ROUND(COALESCE(pd_dau.count * 100.0 / NULLIF(lt_reg.count, 0), 0), 2) AS reg2dau,';
         }
 
         $sql .= '
             COALESCE(lt_visitors.count, 0) AS visitors,
-            COALESCE(lt_net.count, 0) AS net';
+            COALESCE(lt_net.count, 0) AS net,
+            ROUND(COALESCE((lt_net.count / NULLIF(lt_visitors.count, 0))::numeric, 0), 4) AS arpv';
+
+        if ($this->withMrr) {
+            $sql .= ',
+                COALESCE(lt_mrr.mrr, 0) AS mrr,
+                COALESCE(lt_mrr.subscribers, 0) AS subscribers,
+                ROUND(COALESCE((lt_mrr.mrr / NULLIF(lt_mrr.subscribers, 0))::numeric, 0), 2) AS arps';
+        }
 
         return $sql;
     }
@@ -145,6 +181,11 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         $sql .= '
             LEFT JOIN lt_visitors ON sg.type_id = lt_visitors.type_id
             LEFT JOIN lt_net ON sg.type_id = lt_net.type_id';
+
+        if ($this->withMrr) {
+            $sql .= '
+                LEFT JOIN lt_mrr ON sg.type_id = lt_mrr.type_id';
+        }
 
         return $sql;
     }

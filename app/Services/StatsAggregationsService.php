@@ -61,7 +61,7 @@ class StatsAggregationsService
     /**
      * TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
      */
-    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9): Collection
+    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9, bool $withMrr = false): Collection
     {
         $statsTypeSnake = str($statsType)->snake()->toString();
 
@@ -74,17 +74,27 @@ class StatsAggregationsService
         $project = Project::with('team:id,timezone')->find($filters->projectId);
         $trackablePerson = $this->getTrackablePersonByProject($project);
 
+        // Only compute the MRR snapshot when the project tracks recurring revenue,
+        // otherwise it is wasted work returning 0s.
+        $withMrr = $withMrr
+            && $trackablePerson === TrackablePerson::USER
+            && (bool) $project?->hasTrackingUsageBits([StatsService::TRACKING_USAGE_BITS_SUBSCRIPTION]);
+
         if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
                 $statsSort)
             )->build();
         } else {
             $sql = (new StatsAggregationsGroupedSqlBuilder(
-                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson)
+                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $withMrr)
             )->build();
         }
 
         $filterConditions = $this->getFilterConditions($filters);
+
+        if ($withMrr) {
+            $filterConditions = StatsService::mrrSnapshotWindowConditions($filterConditions);
+        }
 
         if ($trackablePerson === TrackablePerson::USER) {
             $tz = $project?->team?->timezone ?? config('app.timezone');
@@ -102,7 +112,7 @@ class StatsAggregationsService
         $sql = strtr($sql, $this->formatFilter($filterConditions));
         // echo nl2br($sql);die;
 
-        $dataArray = $this->roundNetValues($this->getDataArray($sql));
+        $dataArray = $this->castNumericValues($this->getDataArray($sql));
 
         // hack to fix rtl stats grouped page names
         foreach ($dataArray as &$item) {
@@ -116,6 +126,7 @@ class StatsAggregationsService
                 && (! isset($item['reg']) || $item['reg'] == 0)
                 && (! isset($item['net']) || $item['net'] == 0)
                 && (! isset($item['visitors']) || $item['visitors'] == 0)
+                && (! isset($item['mrr']) || $item['mrr'] == 0)
                 && (! isset($item['triggered']) || $item['triggered'] == 0);
         })->take($limit);
     }
@@ -153,7 +164,7 @@ class StatsAggregationsService
 
         $sql = strtr($sql, $this->formatFilter($filterConditions));
 
-        $dataArray = $this->roundNetValues($this->getDataArray($sql));
+        $dataArray = $this->castNumericValues($this->getDataArray($sql));
 
         return collect($dataArray)->reject(function ($item) {
             return $item['reg'] == 0 && $item['visitors'] == 0 && $item['net'] == 0;
@@ -161,14 +172,26 @@ class StatsAggregationsService
     }
 
     /**
+     * Postgres returns numeric/float columns (net, MRR, ratios) as strings, which the
+     * frontend formatters render as '-'. Cast them to floats so the columns show;
+     * counts already arrive as ints.
+     *
      * @param  array<int, array<string, mixed>>  $rows
      * @return array<int, array<string, mixed>>
      */
-    private function roundNetValues(array $rows): array
+    private function castNumericValues(array $rows): array
     {
         return array_map(function ($item) {
-            if (isset($item['net'])) {
-                $item['net'] = round($item['net'], 2);
+            foreach (['net', 'mrr'] as $money) {
+                if (isset($item[$money])) {
+                    $item[$money] = round((float) $item[$money], 2);
+                }
+            }
+
+            foreach (['cr', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'arps'] as $ratio) {
+                if (isset($item[$ratio])) {
+                    $item[$ratio] = (float) $item[$ratio];
+                }
             }
 
             return $item;

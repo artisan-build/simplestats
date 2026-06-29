@@ -236,11 +236,17 @@ class StatsFilterRequest extends FormRequest
             'stats_sort' => [
                 'sometimes',
                 'string',
-                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered']),
+                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'mrr', 'subscribers', 'arps']),
             ],
             'limit' => [
                 'sometimes',
                 'integer',
+            ],
+            // gates the per-dimension MRR snapshot columns on the metric detail breakdown
+            'metric' => [
+                'sometimes',
+                'string',
+                Rule::in(['mrr']),
             ],
         ];
     }

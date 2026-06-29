@@ -20,6 +20,8 @@ const props = defineProps({
     // [{key, label, labelSmall?, format: 'number'|'percent'|'currency', width, visible?}]
     columns: Array,
     sort: String,
+    // key of the column to visually emphasise (the metric detail view's active KPI)
+    highlightColumn: String,
     nameLabel: String,
     nameWidth: String,
     // (item) => 0-100, drives the gradient bar of the name cell
@@ -75,7 +77,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                             <td v-for="column in [{key: 'name', label: nameLabel, width: nameWidth}, ...visibleColumns]" :key="column.key"
                                 :style="`width: ${column.width};`" :class="column.key === 'name' ? 'py-1.5' : 'p-1.5 text-right'"
                             >
-                                <button class="whitespace-nowrap" :class="sort === column.key ? 'text-indigo-600' : ''" @click="emit('sort', column.key)">
+                                <button class="whitespace-nowrap" :class="[sort === column.key ? 'text-indigo-600' : '', column.key === highlightColumn ? 'font-semibold' : '']" @click="emit('sort', column.key)">
                                     <span v-if="column.labelSmall" class="inline-block @2xl:hidden">{{ column.labelSmall }}</span>
                                     <span :class="column.labelSmall ? 'hidden @2xl:inline-block' : ''">{{ column.label }}</span>
                                     <ChevronDownIcon v-if="sort === column.key" class="size-4 hidden @md:inline-block" />
@@ -91,7 +93,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                                 </div>
                             </td>
                             <td v-for="column in visibleColumns" :key="column.key" class="p-1.5 text-right">
-                                <span>{{ formatValue(column, item) }}</span>
+                                <span :class="column.key === highlightColumn ? 'font-semibold text-gray-900 dark:text-white' : ''">{{ formatValue(column, item) }}</span>
                                 <span v-if="comparisonChange(item, column.key) !== null" class="block text-xs font-semibold leading-tight" :class="comparisonClass(comparisonChange(item, column.key))">{{ formatComparison(comparisonChange(item, column.key)) }}</span>
                             </td>
                         </tr>

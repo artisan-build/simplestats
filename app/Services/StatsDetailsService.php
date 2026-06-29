@@ -107,6 +107,7 @@ class StatsDetailsService
         ?string $sort = null,
         ?int $propertyNameId = null,
         bool $lifetime = false,
+        bool $withMrr = false,
     ): array {
         if ($statsType === 'property') {
             return $this->statsAggregationsService->getAggregatedPropertyData(
@@ -123,6 +124,7 @@ class StatsDetailsService
             $statsType,
             $sort,
             $limit,
+            $withMrr,
         )->values()->toArray();
     }
 

@@ -57,6 +57,7 @@ class StatsGroupsDataProvider extends AbstractDataProvider
             $this->request->stats_sort,
             $this->request->property_name_id,
             $this->request->boolean('lifetime'),
+            $this->request->input('metric') === 'mrr',
         );
     }
 }

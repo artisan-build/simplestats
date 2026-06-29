@@ -10,7 +10,6 @@ use App\Builder\StatsFilterConditionsBuilder;
 use App\Concerns\RunsFilteredStatsQueries;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 
 /**
@@ -339,22 +338,11 @@ class MrrAggregationService
     }
 
     /**
-     * The active-subscription window for an as-of snapshot: a monthly sub counts
-     * while its last payment is within a month (plus grace), a yearly one within a
-     * year (plus grace). Shared by the total snapshot and the per-plan breakdown.
-     *
      * @param  array<string, mixed>  $filterConditions
      * @return array<string, mixed>
      */
     private function snapshotWindowConditions(array $filterConditions, string $asOfDate): array
     {
-        $asOf = CarbonImmutable::parse($asOfDate);
-        $grace = StatsService::MRR_ACTIVE_GRACE_DAYS;
-
-        return array_merge($filterConditions, [
-            'asOfDate' => $asOfDate,
-            'monthWindowStart' => $asOf->subMonth()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
-            'yearWindowStart' => $asOf->subYear()->subDays($grace)->format(StatsRangeType::DATE_FORMAT),
-        ]);
+        return StatsService::mrrSnapshotWindowConditions($filterConditions, $asOfDate);
     }
 }

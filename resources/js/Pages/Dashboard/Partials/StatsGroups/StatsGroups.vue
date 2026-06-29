@@ -13,6 +13,9 @@ const props = defineProps({
     baseRoute: {type: String, default: 'dashboard'},
     // Extra route params merged into every drill-down link (e.g. {kpi} on the metric page).
     routeParams: {type: Object, default: () => ({})},
+    // Metric detail view: curated breakdown columns + the primary column to highlight/sort by.
+    breakdownColumns: {type: Array, default: null},
+    breakdownPrimary: {type: String, default: null},
 });
 </script>
 
@@ -32,6 +35,8 @@ const props = defineProps({
                 :topReferers="topReferers"
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
+                :breakdownColumns="breakdownColumns"
+                :breakdownPrimary="breakdownPrimary"
                 :baseRoute="baseRoute"
                 :routeParams="routeParams"
             />
@@ -49,6 +54,7 @@ const props = defineProps({
                 :lifetimeSelected="$page.props.auth.user.settings?.propertyLifetime?.[filters.project_id] ?? false"
                 :currentProject="currentProject"
                 :trackingUsageBits="trackingUsageBits"
+                :breakdownPrimary="breakdownPrimary"
                 :baseRoute="baseRoute"
                 :routeParams="routeParams"
             />

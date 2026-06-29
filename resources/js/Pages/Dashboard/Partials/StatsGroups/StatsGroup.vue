@@ -17,6 +17,9 @@ const props = defineProps({
     trackingUsageBits: Object,
     baseRoute: {type: String, default: 'dashboard'},
     routeParams: {type: Object, default: () => ({})},
+    // Metric detail view: curated breakdown columns + the primary column to highlight/sort by.
+    breakdownColumns: {type: Array, default: null},
+    breakdownPrimary: {type: String, default: null},
 });
 
 const data = ref([]);
@@ -35,11 +38,26 @@ if (props.statsGroupSelected) {
 
 const isEventGroup = props.statsGroupType === 'event';
 
-if (! filters.stats_sort) {
-    filters.stats_sort = isEventGroup ? 'triggered' : 'visitors';
-}
+const xauLabel = XAU(filters.range_type);
 
-const columns = isEventGroup
+// Every breakdown column a curated set can request, with its label/format and the
+// tracking bits that gate it.
+const columnRegistry = {
+    visitors: {key: 'visitors', label: 'Visitors', labelSmall: 'Visits', format: 'number', bits: ['visitors']},
+    reg:      {key: 'reg', label: 'Regs', format: 'number', bits: ['users']},
+    cr:       {key: 'cr', label: 'Conv.', labelSmall: 'CR', format: 'percent', bits: ['users', 'visitors']},
+    dau:      {key: 'dau', label: xauLabel, format: 'number', bits: ['users']},
+    net:      {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', bits: ['payments']},
+    arpv:     {key: 'arpv', label: 'ARPV', format: 'currency', bits: ['payments', 'visitors']},
+    arpu:     {key: 'arpu', label: 'ARPU', format: 'currency', bits: ['payments', 'users']},
+    arpdau:   {key: 'arpdau', label: 'ARPDAU', format: 'currency', bits: ['payments', 'users']},
+    reg2dau:  {key: 'reg2dau', label: 'Reg→Active', labelSmall: 'R→A', format: 'percent', bits: ['users']},
+    mrr:      {key: 'mrr', label: 'MRR', format: 'currency', bits: ['subscription']},
+    subscribers: {key: 'subscribers', label: 'Subs', format: 'number', bits: ['subscription']},
+    arps:     {key: 'arps', label: 'ARPS', format: 'currency', bits: ['subscription']},
+};
+
+const defaultColumns = isEventGroup
     ? [
         {key: 'visitors', label: 'Visitors', format: 'number', width: '15%'},
         {key: 'triggered', label: 'Triggered', format: 'number', width: '15%'},
@@ -50,9 +68,49 @@ const columns = isEventGroup
         {key: 'visitors', label: 'Visitors', labelSmall: 'Visits', format: 'number', width: '12%', visible: currentProjectHasTrackingUsageBits(['visitors'])},
         {key: 'reg', label: 'Regs', format: 'number', width: '10%', visible: currentProjectHasTrackingUsageBits(['users'])},
         {key: 'cr', label: 'Conv.', labelSmall: 'CR', format: 'percent', width: '12%', visible: currentProjectHasTrackingUsageBits(['users', 'visitors'])},
-        {key: 'dau', label: XAU(filters.range_type), format: 'number', width: '10%', visible: currentProjectHasTrackingUsageBits(['users'])},
+        {key: 'dau', label: xauLabel, format: 'number', width: '10%', visible: currentProjectHasTrackingUsageBits(['users'])},
         {key: 'net', label: 'Revenue', labelSmall: 'Rev.', format: 'currency', width: '12%', visible: currentProjectHasTrackingUsageBits(['payments'])},
     ];
+
+// Build the active KPI's curated column set, intersected with the project's tracking
+// bits. If the highlighted primary doesn't survive that filter, fall back to defaults.
+const buildCuratedColumns = () => {
+    if (isEventGroup || ! props.breakdownColumns?.length) {
+        return null;
+    }
+
+    const cols = props.breakdownColumns
+        .map((key) => columnRegistry[key])
+        .filter(Boolean)
+        .filter((col) => ! col.bits || currentProjectHasTrackingUsageBits(col.bits));
+
+    if (! cols.some((col) => col.key === props.breakdownPrimary)) {
+        return null;
+    }
+
+    const width = `${Math.floor(56 / cols.length)}%`;
+
+    return cols.map((col) => ({...col, width}));
+};
+
+const curatedColumns = buildCuratedColumns();
+const columns = curatedColumns ?? defaultColumns;
+const highlightColumn = curatedColumns ? props.breakdownPrimary : undefined;
+
+if (! filters.stats_sort) {
+    filters.stats_sort = isEventGroup
+        ? 'triggered'
+        : (curatedColumns ? props.breakdownPrimary : 'visitors');
+}
+
+// The MRR columns are a point-in-time snapshot the backend only computes on request,
+// so opt in whenever the curated set surfaces them for a recurring-revenue project.
+if (curatedColumns
+    && ['mrr', 'subscribers', 'arps'].includes(props.breakdownPrimary)
+    && currentProjectHasTrackingUsageBits(['subscription'])
+) {
+    filters.metric = 'mrr';
+}
 
 const fetchData = async () => {
     try {
@@ -130,6 +188,7 @@ onMounted(fetchData);
         :data-previous="dataPrevious"
         :columns="columns"
         :sort="filters.stats_sort"
+        :highlight-column="highlightColumn"
         name-label="Name"
         :name-width="isEventGroup ? '34%' : '44%'"
         :percentage="calculatePercentage"
