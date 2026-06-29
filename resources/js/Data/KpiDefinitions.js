@@ -41,6 +41,11 @@ export function getKpiDefinitions(rangeType) {
             long: 'Gross Revenue Retention',
             description: 'Recurring revenue retained from the customers active at the start of the selected period, excluding expansion: (start − contraction − churn) / start.',
         },
+        ltv: {
+            short: 'LTV',
+            long: 'Customer Lifetime Value',
+            description: 'Average recurring revenue a subscriber generates over their lifetime: ARPS ÷ monthly gross MRR churn rate.',
+        },
         quick_ratio: {
             short: 'Quick Ratio',
             long: 'MRR Quick Ratio',

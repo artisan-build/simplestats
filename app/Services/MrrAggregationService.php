@@ -10,6 +10,7 @@ use App\Builder\StatsFilterConditionsBuilder;
 use App\Concerns\RunsFilteredStatsQueries;
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 
 /**
@@ -23,6 +24,8 @@ use Illuminate\Support\Arr;
 class MrrAggregationService
 {
     use RunsFilteredStatsQueries;
+
+    private const DAYS_PER_MONTH = 30.44;
 
     /**
      * Per-request memo for getMrrMovements. The per-user-per-bucket pivot is the
@@ -255,6 +258,57 @@ class MrrAggregationService
                 'quick_ratio' => $grossLost > 0 ? round(($bucket['new'] + $bucket['expansion']) / $grossLost, 2) : null,
             ];
         }, $this->getMrrMovements($filters));
+    }
+
+    /**
+     * Subscription Customer Lifetime Value as a derived snapshot:
+     * LTV = ARPS / monthly gross MRR churn rate, where ARPS = current MRR /
+     * current subscribers (now-capped, the latest series bucket) and the monthly
+     * churn rate is the period gross churn (contraction + churn) / starting MRR
+     * from getMrrRetention, normalised linearly to a 30.44-day month over the
+     * selected range. Returns null when there is no churn, no starting MRR, or no
+     * subscribers to estimate a lifetime from. Filter-scoped like every MRR surface.
+     */
+    public function getLtv(StatsFilterDto $filters): ?float
+    {
+        $latest = Arr::first($this->getMrrTimeSeries($filters));
+
+        if ($latest === null || $latest['subscribers'] <= 0) {
+            return null;
+        }
+
+        $retention = $this->getMrrRetention($filters);
+        $starting = $retention['starting_mrr'];
+
+        if ($starting <= 0) {
+            return null;
+        }
+
+        $periodGrossChurn = ($retention['contraction'] + $retention['churn']) / $starting;
+        $monthlyChurn = $periodGrossChurn * (self::DAYS_PER_MONTH / $this->rangeDays($filters));
+
+        if ($monthlyChurn <= 0) {
+            return null;
+        }
+
+        $arps = $latest['mrr'] / $latest['subscribers'];
+
+        return round($arps / $monthlyChurn, 2);
+    }
+
+    /**
+     * Length of the selected range in days, capped at now like the MRR snapshot
+     * so the normalisation window matches the churn measurement window. Floored at
+     * 1 to keep a single-bucket range from dividing by zero.
+     */
+    private function rangeDays(StatsFilterDto $filters): float
+    {
+        $filterConditions = $this->filterConditionsBuilder->build($filters);
+
+        $rangeEnd = min($filterConditions['endDateEnd'], $this->nowCap());
+        $rangeStart = $filterConditions['startDateStart'];
+
+        return max(1.0, CarbonImmutable::parse($rangeStart)->diffInDays(CarbonImmutable::parse($rangeEnd)));
     }
 
     /**

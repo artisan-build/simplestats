@@ -78,6 +78,11 @@ class StatsDetailsService
         return $this->mrrAggregationService->getRevenueChurn($filters);
     }
 
+    public function getLtv(StatsFilterDto $filters): ?float
+    {
+        return $this->mrrAggregationService->getLtv($filters);
+    }
+
     /**
      * @return array{period_count: int, bucket_labels: array<int, string>, cohorts: array<int, array{cohort: string, idx: int, size: int, retention: array<int, float|null>}>}
      */

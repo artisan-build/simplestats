@@ -25,6 +25,7 @@ class RevenueDataProvider extends AbstractStatsDataProvider
             'mrr_movements' => $this->buildMrrMovements($teamStats, $filters),
             'mrr_retention' => $this->buildMrrRetention($teamStats, $filters),
             'revenue_churn' => $this->buildRevenueChurn($teamStats, $filters),
+            'ltv' => $this->buildLtv($teamStats, $filters),
         ]);
     }
 }

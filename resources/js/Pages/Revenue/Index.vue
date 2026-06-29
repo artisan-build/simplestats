@@ -33,6 +33,7 @@ const props = defineProps({
     mrr_movements: {type: Array, default: null},
     mrr_retention: {type: Object, default: null},
     revenue_churn: {type: Array, default: null},
+    ltv: {type: Number, default: null},
 });
 
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
@@ -89,7 +90,7 @@ const subscriptionStatsGroups = computed(() => Object.fromEntries(
                 submitRoute="revenue"
             />
             <div v-if="mrr_movements?.length" class="grid gap-4">
-                <div v-if="mrr" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div v-if="mrr" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <HeadlineKpiTile
                         :label="kpiDefs.arr.short"
                         :infoTitle="kpiDefs.arr.long"
@@ -112,6 +113,13 @@ const subscriptionStatsGroups = computed(() => Object.fromEntries(
                         :infoText="kpiDefs.grr.description"
                         :value="mrr_retention.grr"
                         formatter="percent"
+                    />
+                    <HeadlineKpiTile
+                        :label="kpiDefs.ltv.short"
+                        :infoTitle="kpiDefs.ltv.long"
+                        :infoText="kpiDefs.ltv.description"
+                        :value="ltv"
+                        formatter="currency"
                     />
                 </div>
                 <StatsSmallChartGrid v-if="revenueSections.length" :sections="revenueSections" :filters="filters" />

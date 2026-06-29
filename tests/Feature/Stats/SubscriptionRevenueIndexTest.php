@@ -90,6 +90,7 @@ test('subscription revenue exposes mrr, movements and retention when the project
                     ->has('subscribers')
                 )
             )
+            ->has('ltv')
         );
 });
 
@@ -109,6 +110,7 @@ test('subscription revenue mrr props are null when the project has no payments t
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
             ->where('revenue_churn', null)
+            ->where('ltv', null)
         );
 });
 
@@ -129,5 +131,6 @@ test('subscription revenue mrr props are null when the project tracks payments b
             ->where('mrr_movements', null)
             ->where('mrr_retention', null)
             ->where('revenue_churn', null)
+            ->where('ltv', null)
         );
 });

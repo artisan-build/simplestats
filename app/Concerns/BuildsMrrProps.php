@@ -82,6 +82,15 @@ trait BuildsMrrProps
         return $this->statsDetailsService->getRevenueChurn($filters);
     }
 
+    protected function buildLtv(Team $teamStats, StatsFilterDto $filters): ?float
+    {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getLtv($filters);
+    }
+
     /**
      * Per-plan MRR breakdown for the metric detail view. Gated like every MRR
      * surface; null when the project does not track subscriptions.
