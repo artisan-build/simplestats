@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {Link, router} from "@inertiajs/vue3";
 import AppLayout from '@/Layouts/AppLayout.vue';
 import StatsFilter from "@/Pages/Dashboard/Partials/StatsFilter.vue";
@@ -9,6 +9,7 @@ import HeadlineKpiTile from "@/Pages/Dashboard/Partials/HeadlineKpiTile.vue";
 import MetricPlanBreakdown from "@/Pages/Dashboard/Partials/MetricPlanBreakdown.vue";
 import {resolveChartSeries, useChartDefinitions} from "@/Composables/useChartDefinitions.js";
 import SlidersIcon from 'bootstrap-icons/icons/sliders.svg?component';
+import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?component';
 
 const props = defineProps({
     kpi: String,
@@ -48,6 +49,9 @@ const {sections, findKpi} = useChartDefinitions({
 
 const activeKpi = computed(() => findKpi(props.kpi));
 
+// On small screens the full KPI list collapses behind a select-like trigger.
+const metricListOpen = ref(false);
+
 // A KPI key that the current team/preset does not surface (e.g. a stale link kept
 // across a team switch) has no chart to show, so fall back to the dashboard.
 const invalidKpi = ! activeKpi.value;
@@ -84,22 +88,35 @@ onMounted(() => {
                 <Link :href="route('dashboard', filters)" class="block px-3 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
                     &larr; Overview
                 </Link>
-                <div v-for="section in sections" :key="section.name" class="mt-2">
-                    <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-dark-500">
-                        {{ section.name }}
+
+                <button
+                    type="button"
+                    @click="metricListOpen = ! metricListOpen"
+                    :aria-expanded="metricListOpen"
+                    class="lg:hidden mt-1 w-full flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-md border border-gray-200 dark:border-dark-700 text-gray-900 dark:text-white"
+                >
+                    <span class="truncate font-medium">{{ activeKpi.title }}</span>
+                    <ChevronDownIcon class="size-4 shrink-0 text-gray-400 transition-transform" :class="{ 'rotate-180': metricListOpen }" />
+                </button>
+
+                <div class="lg:block" :class="metricListOpen ? 'block' : 'hidden'">
+                    <div v-for="section in sections" :key="section.name" class="mt-2">
+                        <div class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-dark-500">
+                            {{ section.name }}
+                        </div>
+                        <Link
+                            v-for="item in section.kpis"
+                            :key="item.key"
+                            :href="route('dashboard.metric', { kpi: item.key, ...filters })"
+                            preserve-scroll
+                            class="block px-3 py-1.5 text-sm rounded-md"
+                            :class="item.key === kpi
+                                ? 'bg-gray-100 dark:bg-dark-900/50 text-gray-950 dark:text-white font-medium'
+                                : 'text-gray-700 dark:text-dark-300 hover:bg-gray-50 dark:hover:bg-dark-900/30'"
+                        >
+                            {{ item.title }}
+                        </Link>
                     </div>
-                    <Link
-                        v-for="item in section.kpis"
-                        :key="item.key"
-                        :href="route('dashboard.metric', { kpi: item.key, ...filters })"
-                        preserve-scroll
-                        class="block px-3 py-1.5 text-sm rounded-md"
-                        :class="item.key === kpi
-                            ? 'bg-gray-100 dark:bg-dark-900/50 text-gray-950 dark:text-white font-medium'
-                            : 'text-gray-700 dark:text-dark-300 hover:bg-gray-50 dark:hover:bg-dark-900/30'"
-                    >
-                        {{ item.title }}
-                    </Link>
                 </div>
 
                 <div class="mt-3 pt-3 border-t border-gray-100 dark:border-dark-700">
