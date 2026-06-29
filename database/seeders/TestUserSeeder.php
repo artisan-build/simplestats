@@ -30,6 +30,7 @@ class TestUserSeeder extends Seeder
                 'terms' => true,
                 'settings' => [
                     'tourCompleted' => true,
+                    'campaignsTourCompleted' => true,
                 ],
             ]);
 
