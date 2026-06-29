@@ -33,6 +33,7 @@ const props = defineProps({
     plan_breakdown: {type: Array, default: null},
     engagement_series: {type: Array, default: null},
     revenue_churn: {type: Array, default: null},
+    time_to_convert_series: {type: Array, default: null},
 });
 
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
@@ -47,6 +48,7 @@ const {sections, findKpi} = useChartDefinitions({
     mrrSeriesPrev: props.mrr_series_prev,
     engagementSeries: props.engagement_series,
     revenueChurn: props.revenue_churn,
+    timeToConvertSeries: props.time_to_convert_series,
 });
 
 const activeKpi = computed(() => findKpi(props.kpi));

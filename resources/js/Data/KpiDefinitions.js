@@ -46,6 +46,16 @@ export function getKpiDefinitions(rangeType) {
             long: 'Customer Lifetime Value',
             description: 'Average recurring revenue a subscriber generates over their lifetime: ARPS ÷ monthly gross MRR churn rate.',
         },
+        time_to_pay: {
+            short: 'Time to Pay',
+            long: 'Time to First Payment',
+            description: 'Median number of days from registration to first payment, for customers whose first payment falls in the selected period.',
+        },
+        time_to_convert: {
+            short: 'Time to Convert',
+            long: 'Time to Registration',
+            description: 'Median number of days from first visit to registration, by registration date. Only counts registrations linked to a prior visit (tracked going forward).',
+        },
         quick_ratio: {
             short: 'Quick Ratio',
             long: 'MRR Quick Ratio',

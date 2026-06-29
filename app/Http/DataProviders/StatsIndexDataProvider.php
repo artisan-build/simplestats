@@ -48,6 +48,7 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
             'mrr_series_prev' => $this->buildMrrTimeSeriesComparison($teamStats, $filters),
             'campaign_summary' => $this->campaignSummary($filters),
             'engagement_series' => $this->engagementSeriesProp($showRetention, $teamStats, $filters),
+            'time_to_convert_series' => $this->timeToConvertSeriesProp($teamStats, $filters),
             'revenue_churn' => $this->revenueChurnProp($teamStats, $filters),
             'showRetention' => $showRetention,
             'retention_cohorts' => $showRetention ? $this->buildRetentionCohorts($teamStats, $filters) : null,
@@ -71,6 +72,27 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
         }
 
         return $this->engagementSeries($teamStats, $filters);
+    }
+
+    /**
+     * Time to convert (median visit -> registration days) lives only in the metric detail
+     * view: surfacing it on the dashboard would grow the curated 3x3 overview. Like
+     * engagement it is fully dimensionable (channel attribution is free), so no filter gate
+     * beyond the visitors+users bits and the metric route. Null on the overview.
+     *
+     * @return array<int, array{date: string, date_clear: string, time_to_convert: float}>|null
+     */
+    private function timeToConvertSeriesProp(Team $teamStats, StatsFilterDto $filters): ?array
+    {
+        if (! $this->request->routeIs('dashboard.metric')) {
+            return null;
+        }
+
+        if (! $this->projectTracksVisitorsAndUsers($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getTimeToConvertSeries($filters);
     }
 
     /**
@@ -177,5 +199,15 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
     private function projectTracksUsers(Team $teamStats, StatsFilterDto $filters): bool
     {
         return $this->projectTracksBit($teamStats, $filters, Project::USAGE_USERS);
+    }
+
+    /**
+     * Time to convert needs both a first visit and a registration, so it is gated on
+     * the VISITORS and USERS bits together.
+     */
+    private function projectTracksVisitorsAndUsers(Team $teamStats, StatsFilterDto $filters): bool
+    {
+        return $this->projectTracksBit($teamStats, $filters, Project::USAGE_VISITORS)
+            && $this->projectTracksBit($teamStats, $filters, Project::USAGE_USERS);
     }
 }

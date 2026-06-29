@@ -150,6 +150,7 @@ _Core parameters:_
 | **device_platform**  | _string_ `nullable`  | The device `platform` (OS) of the user. (If the `user_agent` is set, we take the device platform that refers to it.) |
 | **device_browser**   | _string_ `nullable`  | The device `browser` of the user. (If the `user_agent` is set, we take the device browser that refers to it.)        |
 | **page_entry**       | _string_ `nullable`  | The page `entry` point of the user.                                                                                  |
+| **visitor_hash**     | _string_ `nullable`  | The `visitor_hash` of the visitor this registration converted from. Links the user to its prior visit (for visit-to-registration timing). |
 | **properties**       | _object_ `nullable`  | Custom properties to group analytics by, as a `name: value` map (e.g. `{"ab_test": "B"}`). Values must be scalar. Max 50 names per request. See [custom properties](how-to-track-custom-properties.md). |
 :::
 

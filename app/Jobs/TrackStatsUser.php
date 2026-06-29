@@ -15,6 +15,8 @@ class TrackStatsUser extends BaseStatsTrack
     {
         parent::handle();
 
+        $this->resolveVisitorHash();
+
         $addLogin = $this->input['add_login'] ?? false;
         unset($this->input['add_login']);
 

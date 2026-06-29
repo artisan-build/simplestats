@@ -53,6 +53,11 @@ abstract class BaseSqlBuilder
         return "CASE WHEN $alias.subscription_interval = '$year' THEN $alias.net / 12.0 ELSE $alias.net END";
     }
 
+    protected function medianDaysBetween(string $start, string $end): string
+    {
+        return "PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY EXTRACT(EPOCH FROM ($end - $start)) / 86400.0)";
+    }
+
     protected function applySql(string $sql, bool $addComma = true): void
     {
         $this->sql .= $sql;

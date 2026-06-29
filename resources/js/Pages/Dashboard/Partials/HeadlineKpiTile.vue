@@ -14,6 +14,8 @@ const props = defineProps({
     // optional spelled-out name + explanation, shown via an info icon next to the label
     infoTitle: {type: String, default: null},
     infoText: {type: String, default: null},
+    // optional unit appended after the value (e.g. 'days'); hidden when value is missing
+    suffix: {type: String, default: null},
     // drop the card chrome (border/background/rounding) so the tile can sit flush
     // inside a parent card, e.g. fused with the chart below it
     bare: {type: Boolean, default: false},
@@ -66,6 +68,7 @@ const deltaFractionDigits = computed(() => Math.abs(props.delta) >= 10 ? 1 : 2);
                     }, $page.props.teamCurrency) }}
                 </span>
                 <span v-else>{{ formatMap[formatter](value) }}</span>
+                <span v-if="suffix && Number.isFinite(value)" class="ml-1 text-base font-normal text-gray-500 dark:text-dark-400">{{ suffix }}</span>
             </div>
             <div v-if="hasDelta" class="font-bold whitespace-nowrap" :class="[deltaClass, deltaInline ? 'text-lg' : 'text-sm']">
                 {{ formatMap.percent(delta, {

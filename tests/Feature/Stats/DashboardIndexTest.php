@@ -380,6 +380,53 @@ test('dashboard route does not build engagement_series', function () {
         );
 });
 
+test('metric route exposes time_to_convert_series when the project tracks visitors and users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->has('time_to_convert_series')
+        );
+});
+
+test('metric route time_to_convert_series is null when the project does not track users', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => Project::USAGE_VISITORS,
+    ]);
+
+    $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor', 'project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Metric')
+            ->where('time_to_convert_series', null)
+        );
+});
+
+test('dashboard route does not build time_to_convert_series', function () {
+    Project::where('team_id', $this->user->currentTeam->id)->delete();
+
+    $project = Project::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'usage' => Project::USAGE_VISITORS
+            | Project::USAGE_USERS,
+    ]);
+
+    $this->get(route('dashboard', ['project_id' => $project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->component('Dashboard/Index')
+            ->where('time_to_convert_series', null)
+        );
+});
+
 test('metric route renders Dashboard/Metric with the kpi prop', function () {
     $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor']))
         ->assertInertia(fn ($page) => $page

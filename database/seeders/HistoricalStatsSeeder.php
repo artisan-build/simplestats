@@ -60,6 +60,16 @@ class HistoricalStatsSeeder extends Seeder
                     'time' => $statsUser->time,
                 ]);
 
+                // Link ~70% of registrations to a prior visit so Time-to-Convert has data;
+                // the converting visit happened up to two weeks before the signup.
+                if (rand(1, 100) <= 70) {
+                    $convertedFrom = $visitors->first();
+                    $convertedFrom->update([
+                        'time' => Carbon::parse($statsUser->time)->subDays(rand(0, 14)),
+                    ]);
+                    $statsUser->update(['stats_visitor_id' => $convertedFrom->id]);
+                }
+
                 $loginTime = Carbon::parse($statsUser->time);
                 $loginCount = app()->environment('testing') ? rand(0, 3) : rand(0, 20);
                 for ($i = 0; $i < $loginCount; $i++) {

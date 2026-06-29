@@ -7,6 +7,7 @@ use App\Models\StatsUser;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     $this->seed(TestUserSeeder::class);
@@ -170,6 +171,34 @@ test('tracking fields are accepted', function () {
 
     $statsUser = StatsUser::where('id', $payload['id'])->first();
     expect($statsUser)->not->toBeNull();
+});
+
+test('visitor_hash links the registration to its visitor', function () {
+    $visitorId = DB::table('stats_visitors')->insertGetId([
+        'team_id' => $this->project->team_id,
+        'project_id' => $this->project->id,
+        'visitor_hash' => 'hash-abc',
+        'time' => now()->subDays(2)->format('Y-m-d H:i:s'),
+        'time_utc' => now()->subDays(2)->format('Y-m-d H:i:s'),
+    ]);
+
+    $payload = validUserPayload(['visitor_hash' => 'hash-abc']);
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
+
+    setUserProjectContext($this->project);
+
+    $statsUser = StatsUser::where('id', $payload['id'])->first();
+    expect((int) $statsUser->stats_visitor_id)->toBe($visitorId);
+});
+
+test('unknown visitor_hash leaves the registration unlinked', function () {
+    $payload = validUserPayload(['visitor_hash' => 'does-not-exist']);
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
+
+    setUserProjectContext($this->project);
+
+    $statsUser = StatsUser::where('id', $payload['id'])->first();
+    expect($statsUser->stats_visitor_id)->toBeNull();
 });
 
 test('events_count_monthly is incremented on team via StatsObserver', function () {

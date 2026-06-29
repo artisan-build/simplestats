@@ -13,6 +13,7 @@ class StatsUserValidator extends BaseStatsValidator
         return array_merge(parent::rules(), $this->trackingValidation, $this->propertyRules(), [
             'id' => ['required'],
             'add_login' => ['sometimes', 'bool'],
+            'visitor_hash' => ['nullable', 'string'],
         ]);
     }
 }

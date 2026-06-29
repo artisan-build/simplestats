@@ -573,6 +573,14 @@ export function useChartDefinitions(ctx) {
         ]));
     }
 
+    // Only present on the metric detail route (folded into Acquisition below). Deliberately
+    // not added to OVERVIEW_DEFS, so it never enters the curated 3x3 dashboard overview.
+    if (ctx.timeToConvertSeries?.length) {
+        charts.push(buildFlatSeriesChart('Time to convert', 9, ctx.timeToConvertSeries, [
+            {key: 'time_to_convert', formatter: 'number', decimals: 1},
+        ]));
+    }
+
     charts.sort((a, b) => a.order - b.order);
 
     // Per-KPI view: flatten the section series into individual KPIs so the dashboard
@@ -623,6 +631,16 @@ export function useChartDefinitions(ctx) {
         activitySection.name = 'Activity & Engagement';
         activitySection.kpis.push(...engagementSection.kpis);
         sections.splice(sections.indexOf(engagementSection), 1);
+    }
+
+    // Time to convert reads as an acquisition-funnel metric (alongside CR), so fold its
+    // standalone section into Acquisition in the metric detail sidebar.
+    const acquisitionSection = sections.find((s) => s.name === 'Acquisition');
+    const timeToConvertSection = sections.find((s) => s.name === 'Time to convert');
+
+    if (acquisitionSection && timeToConvertSection) {
+        acquisitionSection.kpis.push(...timeToConvertSection.kpis);
+        sections.splice(sections.indexOf(timeToConvertSection), 1);
     }
 
     // Curated overview: pick the first OVERVIEW_SECTION_SIZE present KPIs per section.

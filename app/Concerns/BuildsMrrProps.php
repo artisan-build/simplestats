@@ -91,6 +91,15 @@ trait BuildsMrrProps
         return $this->statsDetailsService->getLtv($filters);
     }
 
+    protected function buildTimeToPay(Team $teamStats, StatsFilterDto $filters): ?float
+    {
+        if (! $this->projectTracksSubscription($teamStats, $filters)) {
+            return null;
+        }
+
+        return $this->statsDetailsService->getTimeToPay($filters);
+    }
+
     /**
      * Per-plan MRR breakdown for the metric detail view. Gated like every MRR
      * surface; null when the project does not track subscriptions.

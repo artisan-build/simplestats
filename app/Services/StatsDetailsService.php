@@ -15,6 +15,7 @@ class StatsDetailsService
         private MrrAggregationService $mrrAggregationService,
         private RetentionAggregationService $retentionAggregationService,
         private EngagementAggregationService $engagementAggregationService,
+        private FunnelTimingService $funnelTimingService,
     ) {}
 
     public function getStats(StatsFilterDto $filters): array
@@ -81,6 +82,19 @@ class StatsDetailsService
     public function getLtv(StatsFilterDto $filters): ?float
     {
         return $this->mrrAggregationService->getLtv($filters);
+    }
+
+    public function getTimeToPay(StatsFilterDto $filters): ?float
+    {
+        return $this->funnelTimingService->getTimeToPay($filters);
+    }
+
+    /**
+     * @return array<int, array{date: string, date_clear: string, time_to_convert: float}>
+     */
+    public function getTimeToConvertSeries(StatsFilterDto $filters): array
+    {
+        return $this->funnelTimingService->getTimeToConvertSeries($filters);
     }
 
     /**
