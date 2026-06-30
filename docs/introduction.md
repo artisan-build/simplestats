@@ -40,52 +40,9 @@ unaffected by ad blockers and privacy tools, making them a better choice for bus
 
 ## KPIs
 
-On our dashboard, we provide you with the following [KPIs](https://en.wikipedia.org/wiki/Performance_indicator).
+SimpleStats computes a wide range of [KPIs](https://en.wikipedia.org/wiki/Performance_indicator) from your tracking data, covering acquisition, revenue, retention, and recurring revenue. Which ones apply depends on what your project tracks: visitors only, registrations, payments, or full subscription analytics.
 
-::: info
-Don't worry if you do not understand the list below immediately.
-It's easier to understand it when you see it in action on the dashboard.
-:::
-
-| Key          | Short                              | Description                                                                                                                                          |
-|--------------|------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **VISITORS** | Unique Visitors                    | Number of unique visitors for the selected period.                                                                                                   |
-| **REG**      | Registrations                      | Number of new registrations for the selected period.                                                                                                 |
-| **CR**       | Conversion Rate                    | Percentage of unique visitors who registered at the selected period.                                                                                 |
-| **NET**      | Net revenue                        | Net revenue for the selected period.                                                                                                                 |
-| **FEE**      | Fee                                | Fee for the selected period.                                                                                                                         |
-| **GROSS**    | Gross revenue                      | Gross revenue for the selected period.                                                                                                               |
-| **ARPDAU**   | Average Revenue Per DAU            | The average revenue per DAU.                                                                                                                         |
-| **ARPU**     | Average Revenue Per User           | The average revenue per User (how much is a user/lead/reg worth in money).                                                                           |
-| **ARPV**     | Average Revenue Per Visitor        | The average revenue per Unique Visitor (how much is a unique visitor worth in money).                                                                |
-| **NAU**      | New Active Users                   | Number of users who returned at the selected period to the app (=2nd login) after the registration (=1st login).                                     |
-| **NAPU**     | New Active Paying Users            | Number of users who did their first payment at the selected period.                                                                                  |
-| **PU**       | Paying Users                       | Number of users who did at least one payment over lifetime.                                                                                          |
-| **ARPPU**    | Average Revenue Per Paying User    | The average revenue per paying User.                                                                                                                 |
-| **DAU**      | Daily Active Users                 | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
-| **DAPU**     | Daily Active Paying Users          | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
-| **DAAPU**    | Daily Active Active Paying Users   | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
-| **WAU**      | Weekly Active Users                | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
-| **WAPU**     | Weekly Active Paying Users         | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
-| **WAAPU**    | Weekly Active Active Paying Users  | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
-| **MAU**      | Monthly Active Users               | Number of users who logged in at the selected period (without 1st login = registration).                                                             |
-| **MAPU**     | Monthly Active Paying Users        | Number of users who logged in or registered at the selected period and did at least one payment over lifetime (including the selected period)        |
-| **MAAPU**    | Monthly Active Active Paying Users | Number of users who logged in or registered during the given period and did at least one payment in the last 20 days (including the selected period) |
-| **REG2DAU**  | Reg. to DAU                        | Percentage of registered users who become DAUs                                                                                                       |
-| **REG2WAU**  | Reg. to WAU                        | Percentage of registered users who become WAUs                                                                                                       |
-| **REG2MAU**  | Reg. to MAU                        | Percentage of registered users who become MAUs                                                                                                       |
-| **REG2PU**   | Reg. to Pay                        | Percentage of registered users who become paying user.                                                                                               |
-
-### Campaign Profitability
-
-On the **Campaigns** page you enter how much you spent on ads per campaign (e.g. "Google Ads = 500 € from June 1 to June 30"). SimpleStats already knows the revenue each campaign brought in, so it turns your spend into profit metrics per campaign. These are not on the main dashboard, they sit directly on each campaign, because spend and return are always per channel.
-
-| Key            | Short                    | Description                                                                                                                                                  |
-|----------------|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **SPEND**      | Ad Spend                 | What you paid for ads on this campaign during the selected period. Entered manually; days outside the period are prorated.                                    |
-| **NET PROFIT** | Net Profit               | Net revenue from the campaign minus its ad spend. Positive means the campaign earned more than it cost, negative means it cost more than it earned.           |
-| **ROAS**       | Return On Ad Spend       | Revenue divided by spend. `2.00×` means you earned 2 € back for every 1 € spent. Above `1.00×` is profitable, below it the campaign loses money.              |
-| **CAC**        | Customer Acquisition Cost | Ad spend divided by new registrations from the campaign. The average cost of acquiring one new sign-up.                                                       |
+See the full [KPIs reference](/kpis) for every metric, what it means, and how it is calculated.
 
 ## Help
 

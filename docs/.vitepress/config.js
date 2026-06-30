@@ -94,6 +94,7 @@ export default defineConfig({
                 text: 'Resources',
                 collapsed: true,
                 items: [
+                    {text: 'KPIs', link: '/kpis'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
                     {text: 'Troubleshooting', link: '/troubleshooting'},
                     {text: 'Contribution', link: '/contribution'},
