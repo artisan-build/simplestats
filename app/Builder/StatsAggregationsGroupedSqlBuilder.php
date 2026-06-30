@@ -3,12 +3,9 @@
 namespace App\Builder;
 
 use App\Enums\TrackablePerson;
-use App\Services\StatsService;
 
 class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 {
-    protected int $nauLoginCounter;
-
     public function __construct(
         protected string $statsTable,
         protected string $statsDBType,
@@ -17,9 +14,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected TrackablePerson $trackablePerson,
         protected bool $withMrr = false,
         protected bool $withTimeToConvert = false,
-    ) {
-        $this->nauLoginCounter = StatsService::NAU_LOGIN_COUNTER;
-    }
+    ) {}
 
     public function build(): string
     {
@@ -59,7 +54,8 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
     }
 
     /**
-     * dau: Number of unique accounts who logged in on this day (without 1st login = registration)
+     * dau: unique active accounts, matching the headline pd_dau definition
+     * (the registration login counts as active).
      */
     protected function getPD_DAU(): string
     {
@@ -67,7 +63,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.project_id']).") AS count
             FROM stats_logins stats
             :trackingUserJoinConditions AND :projectCondition
-            WHERE :projectCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= $this->nauLoginCounter
+            WHERE :projectCondition AND stats.time >= ':dauEndDateStart' AND stats.time <= ':dauEndDateEnd' and stats.counter >= 1
             GROUP BY type_id
         )";
     }

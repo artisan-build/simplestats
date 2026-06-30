@@ -1,7 +1,7 @@
 <script setup>
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css';
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {
     endOfMonth,
     endOfQuarter,
@@ -38,6 +38,8 @@ const initialRange = (props.filters.cohort_start && props.filters.cohort_end)
     : null;
 
 const range = ref(initialRange);
+
+const isActive = computed(() => Boolean(range.value && range.value[0] && range.value[1]));
 
 // Calendar-aligned windows, so cohorts stay comparable month-over-month etc.
 const presetDates = ref([
@@ -89,7 +91,7 @@ const onChange = (dates) => {
         :enable-time-picker="false"
         :preset-dates="presetDates"
         @update:model-value="onChange"
-        class="cohort-picker"
+        :class="['cohort-picker', { 'cohort-picker-active': isActive }]"
         :ui="{ menu: '!p-3' }"
     >
         <template #preset-date-range-button="{ label, value, presetDate }">
@@ -113,6 +115,24 @@ const onChange = (dates) => {
 
 .cohort-picker .dp__input {
     height: 42px !important;
+}
+
+.cohort-picker-active .dp__input {
+    background-color: theme('colors.indigo.100');
+    border-color: theme('colors.indigo.300');
+}
+
+.dark .cohort-picker-active .dp__input {
+    background-color: theme('colors.indigo.500');
+    border-color: theme('colors.indigo.600');
+}
+
+.cohort-picker .dp--clear-btn svg {
+    fill: theme('colors.gray.600');
+}
+
+.cohort-picker .dp--clear-btn:hover svg {
+    fill: theme('colors.gray.800');
 }
 
 .dp__theme_light {

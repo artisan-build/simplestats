@@ -122,6 +122,38 @@ it('computes per-dimension revenue ratios (arpv/arpu) in the grouped breakdown',
         ->and((float) $row['reg2dau'])->toBe(0.0);
 });
 
+it('counts the registration login (counter 1) in the grouped DAU, matching the headline DAU definition', function () {
+    Carbon::setTestNow(Carbon::parse('2026-04-05 12:00:00'));
+
+    $sourceId = makeSource($this->team->id, 'newsletter');
+    insertSourceUser($this->team->id, $this->pid, $sourceId, 'u1', '2026-03-30 12:00:00');
+
+    // The registration login carries counter 1. The DAU definition is "logged in OR
+    // registered", so this user is active on 2026-03-30 exactly like the headline pd_dau counts them.
+    DB::table('stats_logins')->insert([
+        'stats_user_id' => 'u1',
+        'team_id' => $this->team->id,
+        'project_id' => $this->pid,
+        'time' => '2026-03-30 12:00:00',
+        'time_utc' => '2026-03-30 12:00:00',
+        'counter' => 1,
+    ]);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+
+    $row = app(StatsAggregationsService::class)
+        ->getAggregatedGroupedData($filter, 'track_source', 'dau', 10)
+        ->firstWhere('name', 'newsletter');
+
+    expect($row)->not->toBeNull()
+        ->and((int) $row['reg'])->toBe(1)
+        ->and((int) $row['dau'])->toBe(1)
+        ->and((float) $row['reg2dau'])->toBe(100.0);
+});
+
 it('computes a per-dimension MRR snapshot when withMrr is enabled', function () {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 

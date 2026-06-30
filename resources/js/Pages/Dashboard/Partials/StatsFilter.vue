@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -139,6 +139,24 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
 const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
 const showCohortPicker = props.submitRoute !== 'retention' && currentProjectHasUsages(['users']);
 
+const comparisonActive = computed(() => Boolean(form.comparison) && String(form.comparison) !== '0');
+const comparisonClass = computed(() => comparisonActive.value
+    ? 'mt-1 block w-full !bg-indigo-100 dark:!bg-indigo-500 !border-indigo-300 dark:!border-indigo-600'
+    : 'mt-1 block w-full dark:!bg-dark-800');
+
+const resetFilters = (e) => {
+    form.property_value = 0;
+    form.campaign = 0;
+
+    Object.values(props.statsGroups).forEach(statsGroup =>
+        statsGroup.forEach(item => {
+            form[item.type] = 0;
+        })
+    );
+
+    filterChanged(e);
+};
+
 const showPresetModal = ref(false);
 </script>
 
@@ -251,7 +269,7 @@ const showPresetModal = ref(false);
                                     <SelectInput
                                         id="rangeComparison"
                                         v-model="form.comparison"
-                                        class="mt-1 block w-full dark:!bg-dark-800"
+                                        :class="comparisonClass"
                                         :options="comparisonTypes"
                                         @change="filterChanged"
                                     />
@@ -286,26 +304,29 @@ const showPresetModal = ref(false);
                 <SearchIcon class="size-5" />
                 <template v-for="statsGroup in statsGroups">
                     <template v-for="group in statsGroup">
-                        <div v-if="filters[group.type]" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
+                        <div v-if="filters[group.type]" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-2 py-0.5">
                             {{ groupLabel(group) }} is <strong>{{ topReferers[statsGroupNames[group.type]] ?? statsGroupNames[group.type] }}</strong>
                             <button class="ml-1 hover:text-red-700" @click="(e) => { form[group.type] = 0; filterChanged(e); }">
-                                <CloseIcon class="size-5 inline-block" />
+                                <CloseIcon class="size-4 inline-block" />
                             </button>
                         </div>
                     </template>
                 </template>
-                <div v-if="filters.property_value" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
+                <div v-if="filters.property_value" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-2 py-0.5">
                     {{ statsGroupNames.property_value_title ?? 'Property' }} is <strong>{{ statsGroupNames.property_value }}</strong>
                     <button class="ml-1 hover:text-red-700" @click="(e) => { form.property_value = 0; filterChanged(e); }">
-                        <CloseIcon class="size-5 inline-block" />
+                        <CloseIcon class="size-4 inline-block" />
                     </button>
                 </div>
-                <div v-if="filters.campaign" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-1 py-0.5">
+                <div v-if="filters.campaign" class="bg-indigo-100 dark:bg-indigo-500 border rounded-md px-2 py-0.5">
                     Campaign is <strong>{{ statsGroupNames.campaign }}</strong>
                     <button class="ml-1 hover:text-red-700" @click="(e) => { form.campaign = 0; filterChanged(e); }">
-                        <CloseIcon class="size-5 inline-block" />
+                        <CloseIcon class="size-4 inline-block" />
                     </button>
                 </div>
+                <button type="button" aria-label="Reset all filters" v-tooltip="'Reset all filters'" @click="resetFilters" class="ml-auto p-1 hover:text-red-700">
+                    <CloseIcon class="size-5 inline-block" />
+                </button>
             </div>
         </div>
         <CustomPresetModal

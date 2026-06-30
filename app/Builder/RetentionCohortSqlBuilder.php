@@ -11,10 +11,12 @@ namespace App\Builder;
  * the two bucket indexes, which keeps the offset correct across the variable
  * length of week/month/year buckets (a plain epoch division would not).
  *
- * Only return logins (counter >= 2, the same definition the DAU metric uses) count
- * as retained: counter 1 is the registration login itself, so period 0 is the
- * cohort baseline (100 %, added by the caller) rather than a measured value, and
- * the SQL only emits period_offset >= 1.
+ * Retention deliberately counts only return logins (counter >= 2), which is a
+ * stricter definition than the DAU metric (counter >= 1): the registration login
+ * (counter 1) is never a "return", so a user whose first login lands in a later
+ * bucket because they registered without a login still does not count as retained.
+ * Period 0 is the cohort baseline (100 %, added by the caller) and the SQL only
+ * emits period_offset >= 1 (enforced by `b.idx > cu.cohort_idx`).
  *
  * stats_users is aliased to `stats` so the shared :projectCondition /
  * :trackingCondition / property / event fragments apply verbatim (the table

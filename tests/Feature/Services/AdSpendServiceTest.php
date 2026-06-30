@@ -246,6 +246,9 @@ it('computes ltv:cac and cac payback for a subscription campaign', function () {
     makeCampaignUser('u-stable', $this->team->id, $this->pid, $utm, '2026-06-10 10:00:00');
     makeCampaignUser('u-churn', $this->team->id, $this->pid, $utm, '2026-06-10 10:00:00');
 
+    // Reaches back before the 3-month economics window so its starting (baseline)
+    // bucket carries MRR and a churn rate can be derived.
+    makeSubscriptionPayment('s-0', 'u-stable', $this->team->id, $this->pid, 100, '2026-03-15 10:00:00');
     makeSubscriptionPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, '2026-04-15 10:00:00');
     makeSubscriptionPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, '2026-05-15 10:00:00');
     makeSubscriptionPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, '2026-06-15 10:00:00');
@@ -263,10 +266,58 @@ it('computes ltv:cac and cac payback for a subscription campaign', function () {
 
     $row = $this->service->getCampaignProfitability($filter)[0];
 
-    $economics = app(MrrAggregationService::class)->getSubscriptionEconomics($filter);
+    // The economics half is measured over the fixed trailing window (3 months from
+    // now, campaign-scoped), not the UI range.
+    $economicsFilter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 3, rangeType: StatsRangeType::MONTH,
+        rangeStart: now(), comparison: '0', campaign: $campaign,
+    );
+    $economics = app(MrrAggregationService::class)->getSubscriptionEconomics($economicsFilter);
 
     expect($row['ltv_cac'])->toBe(round($economics['ltv'] / $row['cac'], 2))
         ->and($row['cac_payback'])->toBe(round($row['cac'] / $economics['arps'], 1));
+});
+
+it('keeps the economics half of ltv:cac and payback independent of the ui range', function () {
+    enableSubscriptionTracking($this->project);
+
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Stable Econ');
+    $utm = makeTrackCampaign($this->team->id, 'stable_econ', $campaign);
+
+    // Both users register in June, so the CAC is identical across the two ranges
+    // below; their payment chains reach back so the fixed window observes churn.
+    makeCampaignUser('u-stable', $this->team->id, $this->pid, $utm, '2026-06-07 10:00:00');
+    makeCampaignUser('u-churn', $this->team->id, $this->pid, $utm, '2026-06-07 10:00:00');
+
+    makeSubscriptionPayment('s-0', 'u-stable', $this->team->id, $this->pid, 100, '2026-03-15 10:00:00');
+    makeSubscriptionPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, '2026-04-15 10:00:00');
+    makeSubscriptionPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, '2026-05-15 10:00:00');
+    makeSubscriptionPayment('s-3', 'u-stable', $this->team->id, $this->pid, 100, '2026-06-15 10:00:00');
+    makeSubscriptionPayment('c-1', 'u-churn', $this->team->id, $this->pid, 40, '2026-04-15 10:00:00');
+
+    // Fully contained in both ranges, so the allocated spend is identical too.
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id, 'campaign_id' => $campaign,
+        'amount' => 400, 'starts_on' => '2026-06-01', 'ends_on' => '2026-06-30',
+    ]);
+
+    $shortRange = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::MONTH,
+        rangeStart: CarbonImmutable::parse('2026-06-21'), comparison: '0',
+    );
+    $longRange = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 6, rangeType: StatsRangeType::MONTH,
+        rangeStart: CarbonImmutable::parse('2026-06-21'), comparison: '0',
+    );
+
+    $short = $this->service->getCampaignProfitability($shortRange)[0];
+    $long = $this->service->getCampaignProfitability($longRange)[0];
+
+    expect($short['cac'])->toBe($long['cac'])
+        ->and($short['ltv_cac'])->not->toBeNull()
+        ->and($short['ltv_cac'])->toBe($long['ltv_cac'])
+        ->and($short['cac_payback'])->not->toBeNull()
+        ->and($short['cac_payback'])->toBe($long['cac_payback']);
 });
 
 it('leaves ltv:cac and payback null when the project does not track subscriptions', function () {

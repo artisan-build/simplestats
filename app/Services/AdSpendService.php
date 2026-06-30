@@ -17,6 +17,15 @@ class AdSpendService
 {
     private const CAMPAIGN_LIMIT = 100;
 
+    /**
+     * Trailing window over which the subscription economics (ARPS, churn -> LTV)
+     * behind LTV:CAC and CAC-payback are measured, independent of the UI range.
+     * Kept short enough that the window stays close to actual recurring revenue:
+     * the churn rate divides by the window's starting MRR, so a window reaching
+     * back before a project's first subscriptions would yield a null lifetime.
+     */
+    private const ECONOMICS_TRAILING_MONTHS = 3;
+
     public function __construct(
         private StatsDetailsService $statsDetailsService,
     ) {}
@@ -164,10 +173,16 @@ class AdSpendService
 
     /**
      * LTV:CAC and CAC-payback for one campaign. Both need the campaign's subscription
-     * economics (filter-scoped via the campaign special key) and the CAC; either is
-     * null when the campaign's project does not track subscriptions, has no CAC
-     * (no registrations), or has no subscribers. A churn-free range yields a null
-     * LTV (no lifetime to estimate) but a valid payback (ARPS still known).
+     * economics and the CAC; either is null when the campaign's project does not track
+     * subscriptions, has no CAC (no registrations), or has no subscribers. A churn-free
+     * window yields a null LTV (no lifetime to estimate) but a valid payback (ARPS still
+     * known).
+     *
+     * Only CAC is range-scoped (it is an acquisition cost). The economics half is
+     * deliberately measured over a fixed trailing window, not the UI range: LTV is a
+     * forward lifetime projection and ARPS a current snapshot, so binding them to the
+     * selected range would make both KPIs drift with range length even when the
+     * underlying unit economics are unchanged.
      *
      * @return array{ltv_cac: float|null, cac_payback: float|null}
      */
@@ -179,11 +194,7 @@ class AdSpendService
             return $empty;
         }
 
-        $scoped = clone $base;
-        $scoped->campaign = $campaign->id;
-        $scoped->projectId = $campaign->project_id;
-
-        $economics = $this->statsDetailsService->getSubscriptionEconomics($scoped);
+        $economics = $this->statsDetailsService->getSubscriptionEconomics($this->economicsFilter($base, $campaign));
 
         if ($economics === null) {
             return $empty;
@@ -193,6 +204,18 @@ class AdSpendService
             'ltv_cac' => $economics['ltv'] !== null && $cac > 0 ? round($economics['ltv'] / $cac, 2) : null,
             'cac_payback' => $economics['arps'] > 0 ? round($cac / $economics['arps'], 1) : null,
         ];
+    }
+
+    private function economicsFilter(StatsFilterDto $base, Campaign $campaign): StatsFilterDto
+    {
+        $scoped = clone $base;
+        $scoped->campaign = $campaign->id;
+        $scoped->projectId = $campaign->project_id;
+        $scoped->rangeType = StatsRangeType::MONTH;
+        $scoped->rangeAmount = self::ECONOMICS_TRAILING_MONTHS;
+        $scoped->rangeStart = now();
+
+        return $scoped;
     }
 
     /**
