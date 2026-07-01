@@ -2,7 +2,7 @@
 title: "A/B Testing for Laravel: See Which Variant Actually Makes Money"
 slug: "ab-testing-for-laravel"
 date: "2026-06-07"
-excerpt: "You A/B test your landing page, but your analytics only tells you which variant got more visitors, not which one produced more paying users. With custom properties you tag each visitor with their variant, and SimpleStats follows it through signup all the way to revenue. You assign the variant; we measure it. And the same mechanism works for any segment: plan, company, anything you track."
+excerpt: "You A/B test your landing page, but your analytics only tells you which variant got more visitors, not which one produced more paying users. With custom properties you tag each visitor with their variant, and SimpleStats follows it through signup all the way to revenue. You assign the variant; we measure it. And the same mechanism works for any segment: industry, company, anything you track."
 tags:
   - Laravel
   - A/B Testing
@@ -16,7 +16,7 @@ You ship two versions of your landing page and split traffic between them. A wee
 
 That last step is exactly where attribution usually breaks. SimpleStats closes it with **custom properties**: you tag a visitor with their variant on the landing page, and that tag rides along through signup and every later payment. Group by the variant in the dashboard and you see visitors, registrations, conversion rate _and_ net revenue for `A` vs `B`, side by side.
 
-One thing up front so nobody is surprised: SimpleStats does not run the test for you. No traffic splitting, no significance math. **You assign the variant; SimpleStats measures it**, all the way to revenue. And though A/B tests are the obvious use, the same mechanism groups your analytics by any attribute you track, plan, company, signup source. More on that at the end.
+One thing up front so nobody is surprised: SimpleStats does not run the test for you. No traffic splitting, no significance math. **You assign the variant; SimpleStats measures it**, all the way to revenue. And though A/B tests are the obvious use, the same mechanism groups your analytics by any attribute you track, industry, company, signup source. More on that at the end.
 
 Custom property tracking requires **version 4.1+** of the [client package](https://github.com/simplestats-io/laravel-client).
 
@@ -69,10 +69,6 @@ So the full funnel, with zero manual calls after the resolver:
 ## See it in the dashboard
 
 Custom properties show up as a new grouping table next to the existing ones (tracking codes, locations, devices, pages). Each property name becomes a tab, each value becomes a row with visitors, registrations, conversion rate and revenue. For an A/B test that is two rows, `A` and `B`, with revenue on each.
-
-![SimpleStats dashboard comparing A/B test variants by visitors, registrations, conversion rate and revenue](/images/blog/screenshot_custom_properties.png)
-
-Clicking a value pivots the **entire dashboard** to that segment: every KPI, every chart, every other grouping table is then filtered to e.g. `ab_test is B`, the same way the existing filters work. Click `B`, and the whole dashboard becomes "everything that happened to the B cohort", including which campaigns those users originally came from.
 
 ## Beyond A/B tests: any segment
 
@@ -135,10 +131,10 @@ The practical limits:
 - Names and values are trimmed to **252 characters**.
 - A single track request may include up to **50 properties**.
 
-Custom properties are dimensions, not a data warehouse: a handful of well-chosen properties (`ab_test`, `plan`, `industry`, `signup_source`) beats mirroring half your users table.
+Custom properties are dimensions, not a data warehouse: a handful of well-chosen properties (`ab_test`, `role`, `industry`, `signup_source`) beats mirroring half your users table.
 
 ## Wrapping up
 
-A/B testing tools are good at telling you which variant gets more clicks. The hard question, which variant makes more money, needs the variant to survive all the way from an anonymous landing-page visit to a payment. Custom properties carry it there: one small resolver class, and every KPI in your dashboard can be split by variant, plan, or anything else you track.
+A/B testing tools are good at telling you which variant gets more clicks. The hard question, which variant makes more money, needs the variant to survive all the way from an anonymous landing-page visit to a payment. Custom properties carry it there: one small resolver class, and every KPI in your dashboard can be split by variant, industry, or anything else you track.
 
 The full reference lives in the [How to track custom properties](/docs/how-to-track-custom-properties.html) docs.
