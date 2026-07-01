@@ -5,22 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsVisitorRequest;
 use App\Jobs\TrackStatsVisitor;
-use App\Models\StatsVisitor;
 use App\Services\BotDetectionService;
 use Illuminate\Http\JsonResponse;
+
 use function Illuminate\Support\defer;
 
 class StatsVisitorController extends Controller
 {
-    /**
-     * as long as you are allowed to track stats logins,
-     * you are allowed to track stats visitors
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(StatsVisitor::class, 'stats_visitor');
-    }
-
     public function store(StatsVisitorRequest $request): JsonResponse
     {
         if (BotDetectionService::isBot(urldecode($request->user_agent))) {

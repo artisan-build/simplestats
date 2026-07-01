@@ -3,6 +3,8 @@
 namespace App\Observers;
 
 use App\Models\BaseStat;
+use App\Models\Project;
+use App\Models\Team;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsIncrementService;
 
@@ -47,7 +49,20 @@ class StatsObserver
             return;
         }
 
+        // Mirror created(): the event counters are increment-only otherwise, so a row that was
+        // counted and later removed (dedup/merge maintenance, import undo) would inflate usage
+        // forever. The decrement is floored at 0 and scope-free so it always hits the right rows
+        // regardless of the current team context.
+        $this->decrementCounter(Team::class, $stat->team_id, 'events_count_monthly');
+        $this->decrementCounter(Team::class, $stat->team_id, 'events_count_overall');
+        $this->decrementCounter(Project::class, $stat->project_id, 'events_count_monthly');
+
         $this->statsAggregationsService->invalidateByStatsUpdate($stat);
+    }
+
+    private function decrementCounter(string $model, int $id, string $column): void
+    {
+        $model::withoutGlobalScopes()->whereKey($id)->where($column, '>', 0)->decrement($column);
     }
 
     public function restored(BaseStat $stat): void
