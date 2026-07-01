@@ -4,6 +4,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Notifications\UserDeletedNotification;
 use App\Notifications\UserInactiveNotification;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Notification;
 
 it('deletes inactive users after 10 days warning period', function () {
@@ -122,6 +123,78 @@ it('sends 1 day final warning to users warned 9+ days ago', function () {
 
     // Should receive final warning but NOT be deleted (only after 10 days)
     expect($user->fresh())->not->toBeNull();
+    Notification::assertSentTo($user, UserInactiveNotification::class);
+});
+
+it('clears the warning when a warned user logs back in', function () {
+    $user = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(5),
+        'last_login_at' => now()->subDays(55),
+    ]);
+
+    event(new Login('web', $user, false));
+
+    expect($user->fresh()->inactive_since)->toBeNull();
+    expect($user->fresh()->last_login_at)->not->toBeNull();
+});
+
+it('does not delete a user who logged back in after the warning', function () {
+    Notification::fake();
+
+    $user = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(11),
+        'last_login_at' => now()->subDays(61),
+    ]);
+
+    // User logs back in before the command runs, which clears inactive_since.
+    event(new Login('web', $user, false));
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($user->fresh())->not->toBeNull();
+    expect($user->fresh()->inactive_since)->toBeNull();
+    Notification::assertNotSentTo($user, UserDeletedNotification::class);
+});
+
+it('does not send a final warning to a user who logged back in after the reminder', function () {
+    Notification::fake();
+
+    // User already received the first warning 9+ days ago (final-warning window).
+    $user = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(9)->subHour(),
+        'last_login_at' => now()->subDays(60),
+    ]);
+
+    event(new Login('web', $user, false));
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($user->fresh())->not->toBeNull();
+    expect($user->fresh()->inactive_since)->toBeNull();
+    Notification::assertNotSentTo($user, UserInactiveNotification::class);
+    Notification::assertNotSentTo($user, UserDeletedNotification::class);
+});
+
+it('warns the returning user again only after a fresh inactivity period', function () {
+    Notification::fake();
+
+    $user = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(11),
+        'last_login_at' => now()->subDays(61),
+    ]);
+
+    event(new Login('web', $user, false));
+
+    $this->artisan('app:check-inactive-users');
+    expect($user->fresh())->not->toBeNull();
+    Notification::assertNothingSentTo($user);
+
+    // A fresh inactivity period must pass before the user is warned again.
+    $user->update(['last_login_at' => now()->subDays(51)]);
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($user->fresh()->inactive_since)->not->toBeNull();
     Notification::assertSentTo($user, UserInactiveNotification::class);
 });
 

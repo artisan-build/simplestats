@@ -8,6 +8,10 @@ import PresentationChartBarIcon from "bootstrap-icons/icons/graph-up-arrow.svg?c
 import RocketLaunchIcon from "bootstrap-icons/icons/rocket-takeoff.svg?component";
 import ShieldCheckIcon from "bootstrap-icons/icons/shield-check.svg?component";
 import UserGroupIcon from "bootstrap-icons/icons/people.svg?component";
+import ArrowRepeatIcon from "bootstrap-icons/icons/arrow-repeat.svg?component";
+import CashCoinIcon from "bootstrap-icons/icons/cash-coin.svg?component";
+import BarChartStepsIcon from "bootstrap-icons/icons/bar-chart-steps.svg?component";
+import CurrencyExchangeIcon from "bootstrap-icons/icons/currency-exchange.svg?component";
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
@@ -42,7 +46,27 @@ const f = {
     kpis: {
         icon: ChartBarIcon,
         title: () => trans("KPIs"),
-        descr: () => trans("Unique Visitors, Conversion Rate, Daily Active Users, ARPU, Revenue and many more KPIs out of the box, all filterable by date, location, device and UTM."),
+        descr: () => trans("Unique Visitors, Conversion Rate, Active Users, ARPU, MRR, Revenue and many more KPIs across the whole funnel, all filterable by date, location, device and channel."),
+    },
+    subscriptions: {
+        icon: ArrowRepeatIcon,
+        title: () => trans("Subscriptions"),
+        descr: () => trans("MRR, ARR, churn and retention out of the box, attributed to the channel that won each customer."),
+    },
+    profit: {
+        icon: CashCoinIcon,
+        title: () => trans("Campaign profit"),
+        descr: () => trans("Add your ad spend per campaign and get ROAS, CAC and LTV:CAC, so you see which channels make money after costs."),
+    },
+    retention: {
+        icon: BarChartStepsIcon,
+        title: () => trans("Retention"),
+        descr: () => trans("Cohort retention, stickiness and active users, per channel. See not just who signs up, but who comes back and keeps paying."),
+    },
+    currency: {
+        icon: CurrencyExchangeIcon,
+        title: () => trans("Multi-currency"),
+        descr: () => trans("Selling in several currencies? Foreign payments are auto-converted at daily exchange rates into your team's currency, so every revenue metric stays comparable."),
     },
     privacy: {
         icon: ShieldCheckIcon,
@@ -125,20 +149,41 @@ const f = {
                     <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.utms.descr() }}</p>
                 </li>
 
-                <!-- Bottom row: 5 small cards -->
-                <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
-                    <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-                        <component :is="f.kpis.icon" class="size-6" />
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.kpis.title() }}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.kpis.descr() }}</p>
-                </li>
+                <!-- Bottom rows: utility fillers wrap two wide "depth" rows -->
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                         <component :is="f.simple.icon" class="size-6" />
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.simple.title() }}</h3>
                     <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.simple.descr() }}</p>
+                </li>
+                <li class="lg:col-span-2 flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
+                    <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <component :is="f.subscriptions.icon" class="size-6" />
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.subscriptions.title() }}</h3>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.subscriptions.descr() }}</p>
+                </li>
+                <li class="lg:col-span-2 flex flex-col gap-3 rounded-3xl bg-indigo-600 p-7 text-white shadow-lg shadow-indigo-600/20">
+                    <div class="flex items-center justify-center size-11 rounded-xl bg-white/15 backdrop-blur">
+                        <component :is="f.profit.icon" class="size-6" />
+                    </div>
+                    <h3 class="text-lg font-semibold">{{ f.profit.title() }}</h3>
+                    <p class="text-sm leading-relaxed text-indigo-100">{{ f.profit.descr() }}</p>
+                </li>
+                <li class="lg:col-span-2 flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
+                    <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <component :is="f.retention.icon" class="size-6" />
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.retention.title() }}</h3>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.retention.descr() }}</p>
+                </li>
+                <li class="lg:col-span-2 flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
+                    <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <component :is="f.kpis.icon" class="size-6" />
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.kpis.title() }}</h3>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.kpis.descr() }}</p>
                 </li>
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
@@ -160,6 +205,13 @@ const f = {
                     </div>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.free.title() }}</h3>
                     <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.free.descr() }}</p>
+                </li>
+                <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
+                    <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <component :is="f.currency.icon" class="size-6" />
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.currency.title() }}</h3>
+                    <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.currency.descr() }}</p>
                 </li>
             </ul>
         </div>

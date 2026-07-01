@@ -1,13 +1,15 @@
 <script setup>
-import {router} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import {useLocale} from "@/Composables/useLocale.js";
 import {trans} from 'laravel-vue-i18n';
 import {computed} from 'vue';
 import {testimonials} from "@/Data/testimonials.js";
+// eslint-disable-next-line no-unused-vars -- used by the paused "Can't be blocked" badge below
 import BanIcon from "bootstrap-icons/icons/shield-x.svg?component";
 import ArrowRightIcon from "bootstrap-icons/icons/arrow-right.svg?component";
 
 const { localizedPath } = useLocale();
+const page = usePage();
 const appEnv = import.meta.env.VITE_APP_ENV;
 const appName = import.meta.env.VITE_APP_NAME;
 
@@ -18,17 +20,61 @@ const stats = [
     { term: '5 min', description: 'setup' },
 ];
 
-const heroHeadline = computed(() =>
-    trans('Analytics for :laravel', {
-        laravel: '<span class="relative inline-block"><span class="absolute inset-x-0 bottom-2 h-3 -skew-x-6 bg-indigo-200/70 dark:bg-indigo-500/30"></span><span class="relative">Laravel</span></span>',
-    })
-);
+const headlineClass = 'm-auto mb-10 text-5xl font-extrabold tracking-tight leading-none md:text-6xl xl:text-7xl dark:text-white px-6 sm:px-3 max-w-screen-lg';
+const subheadClass = 'relative m-auto mb-8 font-light text-gray-500 lg:mb-10 md:text-lg lg:text-xl dark:text-dark-400 px-6 sm:px-3 max-w-screen-md';
+const statsClass = 'mb-10 mx-auto max-w-3xl px-6 hidden sm:grid sm:grid-cols-4 gap-y-3 tabular-nums';
 
-const heroSubhead = computed(() =>
-    trans('Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate. Set up in just a few :minutes.', {
-        minutes: `<a href="/docs" target="_blank" class="font-bold text-indigo-500">${trans('minutes')}</a>`,
-    })
-);
+// Highlight markup kept as a string so it can live inside the v-html headlines.
+const hl = (word) =>
+    `<span class="relative inline-block"><span class="absolute inset-x-0 bottom-2 h-3 -skew-x-6 bg-indigo-200/70 dark:bg-indigo-500/30"></span><span class="relative">${word}</span></span>`;
+
+// Hero A/B variants. The active variant is chosen server-side (AbTestHeroVariant
+// middleware via a sticky cookie) and shared as the `heroVariant` Inertia prop, so a
+// visitor always sees the same hero and we can tag + measure it through to revenue.
+// Keys here must match the active set in the middleware. Paused variants stay
+// commented out for a later round.
+const FALLBACK_VARIANT = 'control';
+
+const variants = {
+    control: {
+        headline: () => trans('Analytics for :laravel', {
+            laravel: hl('Laravel'),
+        }),
+        subhead: () => trans('Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.'),
+    },
+    visitor_to_revenue: {
+        headline: () => trans('From :visitor to :revenue.', {
+            visitor: hl(trans('visitor')),
+            revenue: hl(trans('revenue')),
+        }),
+        subhead: () => trans('See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.'),
+    },
+    outcome_rotation: {
+        headline: () => trans('Know which channels :break drive your :revenue.', {
+            break: '<br class="hidden sm:block" />',
+            revenue: hl(trans('revenue')),
+        }),
+        subhead: () => trans('SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.'),
+    },
+
+    // Paused variants (kept for a later A/B round, not in the active rotation):
+    // analytics_meets_revenue: {
+    //     headline: () => trans('Where :analytics meets :revenue.', {
+    //         analytics: hl(trans('analytics')),
+    //         revenue: hl(trans('revenue')),
+    //     }),
+    //     subhead: () => trans('Plausible shows you traffic. Baremetrics shows you MRR. SimpleStats connects them: which channels turn into real, recurring revenue. Server-side, for Laravel.'),
+    // },
+    // campaigns_make_money: {
+    //     headline: () => trans('See which campaigns :break actually :makeMoney.', {
+    //         break: '<br class="hidden sm:block" />',
+    //         makeMoney: hl(trans('make money')),
+    //     }),
+    //     subhead: () => trans('SimpleStats already knows the revenue behind every channel. Add your ad spend and see real ROAS, CAC and profit, after churn. Server-side, built for Laravel.'),
+    // },
+};
+
+const current = computed(() => variants[page.props.heroVariant] ?? variants[FALLBACK_VARIANT]);
 
 function trackGetStartedClick() {
     window.axios.post(route('tracking.get-started-click')).finally(() => {
@@ -39,13 +85,14 @@ function trackGetStartedClick() {
 
 <template>
     <section class="animationElement text-center pt-24">
-        <h1
-            class="m-auto mb-10 text-5xl font-extrabold tracking-tight leading-none md:text-6xl xl:text-7xl dark:text-white px-6 sm:px-3 max-w-screen-lg"
-            v-html="heroHeadline"
-        ></h1>
-        <div class="relative m-auto mb-8 font-light text-gray-500 lg:mb-10 md:text-lg lg:text-xl dark:text-dark-400 px-6 sm:px-3 max-w-screen-md">
-            <span v-html="heroSubhead"></span>
-            <a href="/docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:flex absolute right-0 top-0 -mr-64 -mt-10 rotate-[18deg] hover:rotate-[12deg] transition-transform">
+        <h1 :class="headlineClass">
+            <span v-html="current.headline()"></span>
+        </h1>
+
+        <div :class="subheadClass">
+            <span v-html="current.subhead()"></span>
+            <!-- "Can't be blocked" badge (paused):
+            <a href="/docs/introduction.html#server-side-vs-client-side-tracking" target="_blank" class="hidden xl:flex absolute right-0 top-20 -mr-64 -mt-10 rotate-[18deg] hover:rotate-[12deg] transition-transform">
                 <div class="rounded-2xl bg-white dark:bg-dark-800 ring-1 ring-gray-950/10 dark:ring-white/10 shadow-xl shadow-indigo-600/10 px-4 py-3 flex items-center gap-3">
                     <div class="flex items-center justify-center size-9 rounded-xl bg-indigo-600 text-white">
                         <BanIcon class="size-5" />
@@ -56,9 +103,10 @@ function trackGetStartedClick() {
                     </div>
                 </div>
             </a>
+            -->
         </div>
 
-        <dl class="mb-10 mx-auto max-w-3xl px-6 hidden sm:grid sm:grid-cols-4 gap-y-3 tabular-nums">
+        <dl :class="statsClass">
             <div
                 v-for="(stat, index) in stats"
                 :key="stat.term"

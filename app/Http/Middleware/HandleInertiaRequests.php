@@ -66,7 +66,6 @@ class HandleInertiaRequests extends Middleware
                 $merge['teamTracksUsers'] = $currentTeam->tracksUsage(Project::USAGE_USERS);
                 $merge['teamTracksPayments'] = $currentTeam->tracksUsage(Project::USAGE_PAYMENTS);
                 $merge['teamTracksSubscription'] = $currentTeam->tracksUsage(Project::USAGE_SUBSCRIPTION);
-                $merge['campaignsTourCompleted'] = $request->user()->settings['campaignsTourCompleted'] ?? false;
             }
         }
 

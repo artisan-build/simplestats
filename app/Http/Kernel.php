@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AbTestHeroVariant;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\AllowIframeEmbedding;
 use App\Http\Middleware\Api\CheckClientVersion;
@@ -87,6 +88,7 @@ class Kernel extends HttpKernel
             DisableMutateRequestsInDemoEnv::class,
             ForwardToOnboarding::class,
             CheckAppType::class,
+            AbTestHeroVariant::class,
         ],
 
         'api' => [

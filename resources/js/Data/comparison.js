@@ -4,23 +4,50 @@ export const competitors = [
     {key: 'simplestats', name: 'SimpleStats'},
     {key: 'plausible', name: 'Plausible'},
     {key: 'fathom', name: 'Fathom'},
+    {key: 'baremetrics', name: 'Baremetrics'},
     {key: 'ga', name: 'Google Analytics'},
 ];
 
 // true = fully supported, 'partial' = limited/manual support, false = not supported
 export const comparisonFeatures = [
     {
-        label: () => trans('Revenue Attribution'),
+        label: () => trans('Marketing attribution'),
         simplestats: true,
         plausible: 'partial',
         fathom: false,
+        baremetrics: false,
         ga: true,
+    },
+    {
+        label: () => trans('Revenue per channel'),
+        simplestats: true,
+        plausible: false,
+        fathom: false,
+        baremetrics: false,
+        ga: 'partial',
     },
     {
         label: () => trans('User & Payment tracking'),
         simplestats: true,
         plausible: false,
         fathom: false,
+        baremetrics: true,
+        ga: 'partial',
+    },
+    {
+        label: () => trans('MRR, churn & retention'),
+        simplestats: true,
+        plausible: false,
+        fathom: false,
+        baremetrics: true,
+        ga: false,
+    },
+    {
+        label: () => trans('Ad spend & ROAS / CAC'),
+        simplestats: true,
+        plausible: false,
+        fathom: false,
+        baremetrics: false,
         ga: 'partial',
     },
     {
@@ -28,6 +55,7 @@ export const comparisonFeatures = [
         simplestats: true,
         plausible: false,
         fathom: false,
+        baremetrics: false,
         ga: false,
     },
     {
@@ -35,6 +63,7 @@ export const comparisonFeatures = [
         simplestats: true,
         plausible: false,
         fathom: false,
+        baremetrics: false,
         ga: false,
     },
     {
@@ -42,6 +71,7 @@ export const comparisonFeatures = [
         simplestats: true,
         plausible: false,
         fathom: false,
+        baremetrics: false,
         ga: false,
     },
     {
@@ -49,6 +79,7 @@ export const comparisonFeatures = [
         simplestats: true,
         plausible: false,
         fathom: false,
+        baremetrics: false,
         ga: false,
     },
     {
@@ -56,6 +87,7 @@ export const comparisonFeatures = [
         simplestats: true,
         plausible: true,
         fathom: true,
+        baremetrics: true,
         ga: false,
     },
     {
@@ -63,6 +95,7 @@ export const comparisonFeatures = [
         simplestats: true,
         plausible: true,
         fathom: false,
+        baremetrics: false,
         ga: false,
     },
 ];

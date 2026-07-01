@@ -27,13 +27,6 @@ class UserSettingsController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function completeCampaignsTour(Request $request): JsonResponse
-    {
-        $request->user()->updateSettings('campaignsTourCompleted', true);
-
-        return response()->json(['status' => 'ok']);
-    }
-
     public function setPropertyLifetime(Request $request): JsonResponse
     {
         $request->validate([

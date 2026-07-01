@@ -138,7 +138,6 @@ Route::middleware([
     // User Settings
     Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');
     Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
-    Route::post('user-settings/complete-campaigns-tour', [UserSettingsController::class, 'completeCampaignsTour'])->name('user-settings.complete-campaigns-tour');
     Route::post('user-settings/property-lifetime', [UserSettingsController::class, 'setPropertyLifetime'])->name('user-settings.property-lifetime');
 
     // Feedback

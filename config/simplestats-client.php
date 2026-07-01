@@ -1,5 +1,6 @@
 <?php
 
+use App\Analytics\VisitorCustomPropertiesResolver;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Auth\Events\Login;
@@ -191,6 +192,6 @@ return [
 
     'custom_properties_resolvers' => [
         'user' => null,
-        'visitor' => null,
+        'visitor' => VisitorCustomPropertiesResolver::class,
     ],
 ];

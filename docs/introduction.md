@@ -1,6 +1,8 @@
 # Introduction
 
-_**SimpleStats**_ is a streamlined analytics tool tailored for **Laravel** applications, transcending mere counts of views and visits. It offers **precise insights** into user origins and behaviors. With default tracking and filtering via [UTM](https://en.wikipedia.org/wiki/UTM_parameters) codes, you gain detailed analysis of **marketing** campaigns, identifying which efforts drive **revenue**. Effortlessly evaluate campaign **ROI**, discover cost-effective user acquisition channels, and pinpoint the most effective performance channels. _SimpleStats_ ensures full **GDPR compliance** and a minimalistic and straightforward installation process.
+_**SimpleStats**_ is server-side analytics for **Laravel**, built to follow the whole funnel: from the first **visit**, through **registration**, to every **payment**. It ties each step back to the [UTM](https://en.wikipedia.org/wiki/UTM_parameters) source or referrer that caused it, so you see not just traffic but which **channels** actually drive **revenue**.
+
+That funnel is the part no other tool covers: web analytics (Plausible, Fathom) never see your payments, and subscription analytics (Baremetrics, ProfitWell) never see your acquisition channels. SimpleStats sits in between, and goes deeper where it matters: **MRR / ARR**, **churn** and **retention** for subscription apps, and **ROAS / CAC / LTV:CAC** once you add your ad spend per campaign, so you can tell which campaigns make money after costs and churn. It is fully **GDPR compliant**, **ad-blocker proof**, and installs in a few minutes.
 
 ## How to set up SimpleStats in just a few minutes
 
@@ -18,7 +20,7 @@ Basically all we do is provide a [composer package](/installation), which allows
 
 ### Data Visualisation
 
-We collect this data in a GDPR-compliant way, aggregate it and make it filterable and visible for you on our nice-looking dashboard at https://simplestats.io. This allows you to see how your campaigns and users perform during a selected time period filtered by UTMs, referrers, and countries!
+We collect this data in a GDPR-compliant way, aggregate it and make it filterable and visible for you on our nice-looking dashboard at https://simplestats.io. This allows you to see how your campaigns, users and revenue perform during a selected time period, filtered by UTMs, referrers, and countries. Subscription apps additionally get MRR, churn and retention, and once you enter your ad spend per campaign, profit metrics like ROAS and CAC, all attributed back to the channel.
 
 ### Teams and Projects
 

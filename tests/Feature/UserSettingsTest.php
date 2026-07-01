@@ -19,13 +19,6 @@ test('set dashboard preset persists a valid preset', function () {
     expect($this->user->fresh()->settings['dashboardPreset'])->toBe('expert');
 });
 
-test('completing the campaigns tour persists the flag', function () {
-    $this->post(route('user-settings.complete-campaigns-tour'))
-        ->assertOk();
-
-    expect($this->user->fresh()->settings['campaignsTourCompleted'])->toBeTrue();
-});
-
 test('set dashboard preset rejects an unknown preset', function () {
     $this->from(route('dashboard'))
         ->post(route('user-settings.set-dashboard-preset'), ['preset' => 'ultra'])
@@ -36,7 +29,7 @@ test('set dashboard preset rejects an unknown preset', function () {
 
 test('migration sets existing users to the expert preset and keeps other settings', function () {
     DB::table('users')->where('id', $this->user->id)->update([
-        'settings' => json_encode(['campaignsTourCompleted' => true, 'tourCompleted' => true]),
+        'settings' => json_encode(['tourCompleted' => true]),
     ]);
 
     $migration = require database_path('migrations/2026_06_22_115534_set_dashboard_preset_for_existing_users.php');
@@ -45,6 +38,5 @@ test('migration sets existing users to the expert preset and keeps other setting
     $settings = $this->user->fresh()->settings;
 
     expect($settings['dashboardPreset'])->toBe('expert')
-        ->and($settings['campaignsTourCompleted'])->toBeTrue()
         ->and($settings['tourCompleted'])->toBeTrue();
 });

@@ -9,10 +9,9 @@ import InfoTooltip from "@/Components/InfoTooltip.vue";
 import DashboardIcon from "bootstrap-icons/icons/grid.svg?component";
 import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
 import RetentionIcon from "bootstrap-icons/icons/activity.svg?component";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {router, usePage} from "@inertiajs/vue3";
 import {useUsage} from "@/Composables/useUsage.js";
-import {useOnboardingTour} from "@/Composables/useOnboardingTour.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
 import {
     formatLtvCac,
@@ -75,10 +74,6 @@ const analyzeCampaignRevenue = (row) => {
 const analyzeCampaignRetention = (row) => {
     router.get(route('retention', {...props.filters, project_id: row.project_id, campaign: row.campaign_id}));
 };
-
-const {startCampaignsTour} = useOnboardingTour();
-
-onMounted(() => startCampaignsTour());
 </script>
 
 <template>
@@ -88,7 +83,7 @@ onMounted(() => startCampaignsTour());
         </div>
 
         <div class="space-y-6">
-            <div class="space-y-3" data-tour="campaigns-intro">
+            <div class="space-y-3">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Campaigns</h1>
                     <CampaignFilter
@@ -111,11 +106,11 @@ onMounted(() => startCampaignsTour());
                 <template #title>Campaign profitability</template>
                 <template #description>Spend versus the revenue it generated, for the selected range. Click a campaign to manage its ad spend.</template>
                 <template #aside>
-                    <PrimaryButton data-tour="add-campaign" class="shrink-0 whitespace-nowrap" @click="showCampaignModal = true">Track a campaign</PrimaryButton>
+                    <PrimaryButton class="shrink-0 whitespace-nowrap" @click="showCampaignModal = true">Track a campaign</PrimaryButton>
                 </template>
 
                 <template #content>
-                    <tr class="text-left font-bold text-gray-700 dark:text-dark-300" data-tour="campaign-metrics">
+                    <tr class="text-left font-bold text-gray-700 dark:text-dark-300">
                         <th class="pb-4 pt-6 px-6">Campaign</th>
                         <th v-if="showProjectColumn" class="pb-4 pt-6 px-6">Project</th>
                         <th class="pb-4 pt-6 px-6 text-right">
