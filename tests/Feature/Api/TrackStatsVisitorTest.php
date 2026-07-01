@@ -1,10 +1,12 @@
 <?php
 
 use App\Helpers\AppHelper;
+use App\Jobs\TrackStatsVisitor;
 use App\Models\Project;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Context;
 
 beforeEach(function () {
@@ -158,4 +160,58 @@ test('events_count_monthly is incremented on project via StatsObserver', functio
 
     $project->refresh();
     expect($project->events_count_monthly)->toBeGreaterThan($initialCount);
+});
+
+test('reaching the monthly event limit returns a terminal 200 and does not dispatch the tracking job', function () {
+    Bus::fake();
+
+    $team = $this->project->team;
+    $limit = $team->owner->sparkPlan()->options['Events'];
+    $team->update(['events_count_monthly' => $limit]);
+
+    $response = $this->postJson('/api/v1/stats-visitor', validVisitorPayload(), apiHeaders($this->token));
+
+    $response->assertOk()->assertJson(['message' => 'Monthly event limit reached.']);
+    Bus::assertNotDispatched(TrackStatsVisitor::class);
+});
+
+test('deleting a stat decrements the event counters', function () {
+    $payload = validVisitorPayload(['visitor_hash' => 'delete-hash-'.fake()->uuid()]);
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    $team = $this->project->team->refresh();
+    $project = $this->project->fresh();
+
+    $teamMonthlyBefore = $team->events_count_monthly;
+    $teamOverallBefore = $team->events_count_overall;
+    $projectMonthlyBefore = $project->events_count_monthly;
+    expect($teamMonthlyBefore)->toBeGreaterThan(0);
+
+    StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->firstOrFail()->delete();
+
+    $team->refresh();
+    $project->refresh();
+    expect($team->events_count_monthly)->toBe($teamMonthlyBefore - 1);
+    expect($team->events_count_overall)->toBe($teamOverallBefore - 1);
+    expect($project->events_count_monthly)->toBe($projectMonthlyBefore - 1);
+});
+
+test('deleting a stat never pushes a counter below zero', function () {
+    $payload = validVisitorPayload(['visitor_hash' => 'floor-hash-'.fake()->uuid()]);
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    $team = $this->project->team;
+    $team->update(['events_count_monthly' => 0, 'events_count_overall' => 0]);
+    $this->project->update(['events_count_monthly' => 0]);
+
+    StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->firstOrFail()->delete();
+
+    $team->refresh();
+    expect($team->events_count_monthly)->toBe(0);
+    expect($team->events_count_overall)->toBe(0);
+    expect($this->project->fresh()->events_count_monthly)->toBe(0);
 });

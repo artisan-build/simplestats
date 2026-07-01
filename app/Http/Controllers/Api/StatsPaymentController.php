@@ -5,18 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsPaymentRequest;
 use App\Jobs\TrackStatsPayment;
-use App\Models\StatsPayment;
 use Illuminate\Http\JsonResponse;
 
 use function Illuminate\Support\defer;
 
 class StatsPaymentController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorizeResource(StatsPayment::class, 'stats_payment');
-    }
-
     public function store(StatsPaymentRequest $request): JsonResponse
     {
         defer(fn () => TrackStatsPayment::dispatch(

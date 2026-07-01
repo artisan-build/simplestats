@@ -84,6 +84,17 @@ class SubscriptionService
         return $savings > 0 ? $savings : null;
     }
 
+    public function hasReachedMonthlyEventLimit(Team $team): bool
+    {
+        $allowedEvents = $team->owner->sparkPlan()->options['Events'];
+
+        if ($allowedEvents === self::UNLIMITED_AMOUNT) {
+            return false;
+        }
+
+        return $team->events_count_monthly >= $allowedEvents;
+    }
+
     public function getPlanAlarm(Team $team): array
     {
         $teamOwner = $team->owner;
