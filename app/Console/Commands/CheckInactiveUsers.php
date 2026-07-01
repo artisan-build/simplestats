@@ -6,35 +6,36 @@ use App\Models\User;
 use App\Notifications\UserDeletedNotification;
 use App\Notifications\UserInactiveNotification;
 use Illuminate\Console\Command;
-use Laravel\Jetstream\Contracts\DeletesUsers;
 
 class CheckInactiveUsers extends Command
 {
     protected $signature = 'app:check-inactive-users';
 
-    protected $description = 'Checks inactive users and removes empty teams';
+    protected $description = 'Marks inactive users for deletion after the warning period';
 
     public function handle(): void
     {
-        // first delete already warned users, so that they do not get another notification
-        $this->deleteInactiveUsers();
+        // first mark already warned users, so that they do not get another notification
+        $this->markInactiveUsers();
 
         // notify inactive users
         $this->notifyInactiveUsers();
     }
 
-    private function deleteInactiveUsers(): void
+    private function markInactiveUsers(): void
     {
-        $deletesUsers = app(DeletesUsers::class);
-
+        // Soft delete only: the user, their teams and stats stay intact for the
+        // grace window so a wrongly-flagged account can be restored without a backup.
+        // The SoftDeletes scope hides already-marked users from these queries; the
+        // real cascading delete runs later in app:purge-pending-deleted-users.
         User::query()
             ->whereDoesntHave('subscriptions', function ($query) {
                 $query->where('status', 'active');
             })
             ->where('inactive_since', '<', now()->subDays(10))
-            ->each(function (User $user) use ($deletesUsers) {
+            ->each(function (User $user) {
                 $user->notify(new UserDeletedNotification($user));
-                $deletesUsers->delete($user);
+                $user->delete();
             });
     }
 

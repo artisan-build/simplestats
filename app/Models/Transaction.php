@@ -6,6 +6,7 @@ use Carbon\CarbonInterface;
 use Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
+use SimpleStatsIo\LaravelClient\Data\TrackingSubscription;
 
 class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
 {
@@ -42,5 +43,12 @@ class Transaction extends PaddleTransaction implements TrackablePaymentWithCondi
     public function getTrackingCurrency(): string
     {
         return $this->currency;
+    }
+
+    // TODO: map the Paddle subscription (plan + interval) once recurring tracking
+    // is wired up; null keeps the prior one-time-payment behaviour for now.
+    public function getTrackingSubscription(): ?TrackingSubscription
+    {
+        return null;
     }
 }

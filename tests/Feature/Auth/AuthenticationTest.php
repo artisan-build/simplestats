@@ -31,3 +31,16 @@ test('users cannot authenticate with invalid password', function () {
 
     $this->assertGuest();
 });
+
+test('users marked for deletion cannot authenticate', function () {
+    $user = User::factory()->create([
+        'deleted_at' => now(),
+    ]);
+
+    $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertGuest();
+});
