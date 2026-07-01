@@ -6,79 +6,38 @@ use App\Notifications\UserDeletedNotification;
 use App\Notifications\UserInactiveNotification;
 use Illuminate\Support\Facades\Notification;
 
-it('deletes inactive users after 10 days warning period', function () {
+it('marks inactive users for deletion after the 10 day warning period', function () {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
         'inactive_since' => now()->subDays(11),
     ]);
+    $personalTeam = $user->personalTeam();
 
     $this->artisan('app:check-inactive-users');
 
-    expect($user->fresh())->toBeNull();
+    // Soft mark only: user and their data survive the grace window.
+    expect($user->fresh())->not->toBeNull();
+    expect($user->fresh()->deleted_at)->not->toBeNull();
+    expect($personalTeam->fresh())->not->toBeNull();
     Notification::assertSentTo($user, UserDeletedNotification::class);
 });
 
-it('deletes owned teams when inactive user is deleted', function () {
+it('does not re-notify users already marked for deletion', function () {
     Notification::fake();
 
-    $owner = User::factory()->withPersonalTeam()->create([
+    $user = User::factory()->withPersonalTeam()->create([
         'inactive_since' => now()->subDays(11),
+        'deleted_at' => now()->subDay(),
     ]);
-    $personalTeam = $owner->personalTeam();
 
     $this->artisan('app:check-inactive-users');
 
-    expect($owner->fresh())->toBeNull();
-    expect($personalTeam->fresh())->toBeNull();
+    Notification::assertNotSentTo($user, UserDeletedNotification::class);
+    Notification::assertNotSentTo($user, UserInactiveNotification::class);
 });
 
-it('removes deleted user from other teams and cleans up the team', function () {
-    Notification::fake();
-
-    $teamOwner = User::factory()->withPersonalTeam()->create();
-    $sharedTeam = Team::factory()->create([
-        'user_id' => $teamOwner->id,
-        'personal_team' => false,
-    ]);
-
-    $member = User::factory()->withPersonalTeam()->create([
-        'inactive_since' => now()->subDays(11),
-        'current_team_id' => $sharedTeam->id,
-    ]);
-    $sharedTeam->users()->attach($member, ['role' => 'editor']);
-
-    $this->artisan('app:check-inactive-users');
-
-    expect($member->fresh())->toBeNull();
-    expect($sharedTeam->fresh()->users)->toHaveCount(0);
-    expect($teamOwner->fresh())->not->toBeNull();
-});
-
-it('deletes owned team and detaches members when owner becomes inactive', function () {
-    Notification::fake();
-
-    $owner = User::factory()->withPersonalTeam()->create([
-        'inactive_since' => now()->subDays(11),
-    ]);
-    $sharedTeam = Team::factory()->create([
-        'user_id' => $owner->id,
-        'personal_team' => false,
-    ]);
-
-    $member = User::factory()->withPersonalTeam()->create();
-    $sharedTeam->users()->attach($member, ['role' => 'editor']);
-    $member->update(['current_team_id' => $sharedTeam->id]);
-
-    $this->artisan('app:check-inactive-users');
-
-    expect($owner->fresh())->toBeNull();
-    expect($sharedTeam->fresh())->toBeNull();
-    expect($member->fresh())->not->toBeNull();
-    expect($member->fresh()->teams)->toHaveCount(0);
-});
-
-it('does not delete users with active subscriptions', function () {
+it('does not mark users with active subscriptions', function () {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -92,7 +51,7 @@ it('does not delete users with active subscriptions', function () {
 
     $this->artisan('app:check-inactive-users');
 
-    expect($user->fresh())->not->toBeNull();
+    expect($user->fresh()->deleted_at)->toBeNull();
     Notification::assertNotSentTo($user, UserDeletedNotification::class);
 });
 
@@ -120,8 +79,8 @@ it('sends 1 day final warning to users warned 9+ days ago', function () {
 
     $this->artisan('app:check-inactive-users');
 
-    // Should receive final warning but NOT be deleted (only after 10 days)
-    expect($user->fresh())->not->toBeNull();
+    // Should receive final warning but NOT be marked (only after 10 days)
+    expect($user->fresh()->deleted_at)->toBeNull();
     Notification::assertSentTo($user, UserInactiveNotification::class);
 });
 

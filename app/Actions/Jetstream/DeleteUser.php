@@ -13,7 +13,7 @@ class DeleteUser implements DeletesUsers
     /**
      * The team deleter implementation.
      *
-     * @var \Laravel\Jetstream\Contracts\DeletesTeams
+     * @var DeletesTeams
      */
     protected $deletesTeams;
 
@@ -40,7 +40,10 @@ class DeleteUser implements DeletesUsers
                 $user->subscription()->cancelNow();
             }
 
-            $user->delete();
+            // forceDelete (not soft): this is the real, irreversible removal used by
+            // both self-serve account deletion and the post-grace purge job. It also
+            // triggers the KeepsDeletedModels archival (guarded by shouldKeep()).
+            $user->forceDelete();
         });
     }
 
