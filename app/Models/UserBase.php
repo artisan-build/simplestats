@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
@@ -31,7 +32,15 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     }
     use HasTeams;
     use Impersonate;
-    use KeepsDeletedModels;
+
+    // SoftDeletes and KeepsDeletedModels both declare restore()/restoreQuietly();
+    // let SoftDeletes win (un-trash) and keep the archive-restore under an alias.
+    use KeepsDeletedModels, SoftDeletes {
+        SoftDeletes::restore insteadof KeepsDeletedModels;
+        SoftDeletes::restoreQuietly insteadof KeepsDeletedModels;
+        KeepsDeletedModels::restore as restoreFromArchive;
+        KeepsDeletedModels::restoreQuietly as restoreQuietlyFromArchive;
+    }
     use Notifiable;
     use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
@@ -57,6 +66,13 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'settings' => 'array',
     ];
+
+    // Archive into deleted_models only on the final forceDelete (the purge job),
+    // not on the soft delete that opens the grace window.
+    public function shouldKeep(): bool
+    {
+        return $this->isForceDeleting();
+    }
 
     const SESSION_SETTINGS_KEY = 'temp_user_settings_';
 
