@@ -85,11 +85,14 @@ class HistoricalStatsSeeder extends Seeder
                     $loginTime->addDays(rand(1, 28));
                 }
 
-                if ($tracksSubscription && rand(1, 100) <= 12) {
+                if ($tracksSubscription && rand(1, 100) <= 40) {
                     $this->seedSubscription($project, $statsUser);
                 } elseif (rand(0, 9) === 0) {
                     $paymentTime = Carbon::parse($statsUser->time);
-                    $paymentCount = app()->environment('testing') ? rand(0, 3) : rand(0, 20);
+                    // Keep one-time lifetime modest so recurring subscribers (whose LTV
+                    // builds over many renewals) rank as the actual power users instead of
+                    // a handful of users who happened to fire 20 large one-off payments.
+                    $paymentCount = app()->environment('testing') ? rand(0, 3) : rand(1, 4);
                     for ($i = 0; $i < $paymentCount; $i++) {
                         StatsPayment::factory()->create([
                             'team_id' => $project->team_id,
@@ -135,11 +138,11 @@ class HistoricalStatsSeeder extends Seeder
         $now = now();
         $time = Carbon::parse($statsUser->time);
 
-        $amount = $yearly ? rand(8000, 120000) / 100 : rand(900, 9900) / 100;
+        $amount = $yearly ? rand(19000, 240000) / 100 : rand(1900, 19900) / 100;
 
         $planIndex = rand(0, count(self::SUBSCRIPTION_PLANS) - 1);
 
-        $maxRenewals = $yearly ? 3 : 24;
+        $maxRenewals = $yearly ? 4 : 36;
         $renewals = app()->environment('testing') ? rand(1, 3) : rand(1, $maxRenewals);
 
         for ($i = 0; $i < $renewals && $time->lessThanOrEqualTo($now); $i++) {

@@ -6,18 +6,12 @@ import ApplicationIcon from "@/Components/ApplicationIcon.vue";
 import ProfileDropdown from "@/Pages/Profile/Partials/ProfileDropdown.vue";
 import FeedbackModal from "@/Components/FeedbackModal.vue";
 import FolderIcon from "bootstrap-icons/icons/folder.svg?component";
-import LightBulbIcon from "bootstrap-icons/icons/lightbulb.svg?component";
-import QuestionMarkCircleIcon from "bootstrap-icons/icons/question-circle.svg?component";
 import RetentionIcon from "bootstrap-icons/icons/activity.svg?component";
+import AwardIcon from "bootstrap-icons/icons/award.svg?component";
 import UserGroupIcon from "bootstrap-icons/icons/people.svg?component";
 import DashboardIcon from "bootstrap-icons/icons/grid.svg?component";
 import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
 import BroadcastPinIcon from "bootstrap-icons/icons/broadcast-pin.svg?component";
-
-const supportAction = (e) => {
-    e.preventDefault();
-    window.open('https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g');
-}
 
 const showFeedbackModal = ref(false);
 </script>
@@ -56,6 +50,14 @@ const showFeedbackModal = ref(false);
                     Retention
                 </NavLink>
             </li>
+            <li v-if="$page.props.teamTracksUsers" class="flex flex-col gap-y-1">
+                <NavLink :href="route('power-users')" :active="route().current().startsWith('power-users')">
+                    <template #icon>
+                        <AwardIcon class="size-6" />
+                    </template>
+                    Users
+                </NavLink>
+            </li>
             <li v-if="$page.props.teamTracksPayments" class="flex flex-col gap-y-1">
                 <NavLink :href="route('campaigns')" :active="route().current().startsWith('campaigns')">
                     <template #icon>
@@ -64,32 +66,16 @@ const showFeedbackModal = ref(false);
                     Campaigns
                 </NavLink>
             </li>
+        </ul>
+    </div>
+    <div class="flex flex-col gap-y-1 mb-3">
+        <ul class="flex flex-col gap-y-3">
             <li class="flex flex-col gap-y-1">
                 <NavLink :href="route('projects.index')" :active="route().current().startsWith('projects')">
                     <template #icon>
                         <FolderIcon class="size-6" />
                     </template>
                     Projects
-                </NavLink>
-            </li>
-        </ul>
-    </div>
-    <div class="flex flex-col gap-y-1 mb-3">
-        <ul class="flex flex-col gap-y-3">
-            <li class="flex flex-col gap-y-1">
-                <NavLink as="button" @click="showFeedbackModal = true">
-                    <template #icon>
-                        <LightBulbIcon class="size-6" />
-                    </template>
-                    Feedback
-                </NavLink>
-            </li>
-            <li class="flex flex-col gap-y-1">
-                <NavLink @click="supportAction">
-                    <template #icon>
-                        <QuestionMarkCircleIcon class="size-6" />
-                    </template>
-                    Support
                 </NavLink>
             </li>
             <li class="flex flex-col gap-y-1">
@@ -103,7 +89,7 @@ const showFeedbackModal = ref(false);
             <li class="flex flex-col gap-y-1" data-tour="profile-dropdown">
                 <NavLink as="button" :active="route().t.routes[route().current()].uri.includes('user')">
                     <template #icon>
-                        <ProfileDropdown direction="up" :triggerText="$page.props.auth.user.name" />
+                        <ProfileDropdown direction="up" :triggerText="$page.props.auth.user.name" @feedback="showFeedbackModal = true" />
                     </template>
                 </NavLink>
             </li>

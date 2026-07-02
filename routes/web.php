@@ -11,6 +11,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\ImprintController;
+use App\Http\Controllers\PowerUserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SetupInstallController;
 use App\Http\Controllers\SetupProjectController;
@@ -112,6 +113,7 @@ Route::middleware([
     Route::get('dashboard/metric/{kpi}', [StatsController::class, 'metric'])->name('dashboard.metric');
     Route::get('revenue', [StatsController::class, 'revenue'])->name('revenue');
     Route::get('retention', [StatsController::class, 'index'])->name('retention');
+    Route::get('power-users', [PowerUserController::class, 'index'])->name('power-users');
     Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns');
     Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
@@ -134,6 +136,7 @@ Route::middleware([
     Route::resource('projects', ProjectController::class)->except(['edit', 'create']);
     Route::get('projects/{project}/token-view', [ProjectController::class, 'tokenView'])->name('projects.token-view');
     Route::get('projects/{project}/token-regenerate', [ProjectController::class, 'tokenRegenerate'])->name('projects.token-regenerate');
+    Route::put('projects/{project}/impersonate-url', [ProjectController::class, 'updateImpersonateUrl'])->name('projects.impersonate-url.update');
 
     // User Settings
     Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');

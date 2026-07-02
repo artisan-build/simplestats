@@ -9,6 +9,7 @@ use App\Enums\DashboardPreset;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Services\StatsAggregationsService;
+use Closure;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -77,6 +78,39 @@ class ProjectController extends Controller
         }
 
         app(UpdateProject::class)($request->user(), $project, $validated);
+
+        return redirect()->back();
+    }
+
+    public function updateImpersonateUrl(Request $request, Project $project): RedirectResponse
+    {
+        $this->authorize('update', $project);
+
+        $request->merge([
+            'impersonate_base_url' => filled($request->impersonate_base_url)
+                ? trim($request->impersonate_base_url)
+                : null,
+        ]);
+
+        $validated = $request->validate([
+            'impersonate_base_url' => ['nullable', 'string', 'max:255', function (string $attribute, mixed $value, Closure $fail) {
+                // {id} is a placeholder for the tracked user id and is not a valid URL
+                // character, so validate the URL with a stand-in in its place.
+                if (! filter_var(str_replace('{id}', '1', $value), FILTER_VALIDATE_URL)) {
+                    $fail('The impersonate base URL must be a valid URL.');
+                }
+            }],
+        ]);
+
+        $url = $validated['impersonate_base_url'] ?? null;
+
+        // Only trim a trailing slash in append mode; a token url is stored verbatim so
+        // the {id} position is preserved exactly.
+        if ($url !== null && ! str_contains($url, '{id}')) {
+            $url = rtrim($url, '/');
+        }
+
+        $project->update(['impersonate_base_url' => $url]);
 
         return redirect()->back();
     }

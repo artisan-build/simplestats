@@ -9,6 +9,8 @@ import FileImportIcon from "bootstrap-icons/icons/file-arrow-up.svg?component";
 import CreditCardIcon from "bootstrap-icons/icons/credit-card.svg?component";
 import GearIcon from "bootstrap-icons/icons/gear.svg?component";
 import SignOutIcon from "bootstrap-icons/icons/box-arrow-right.svg?component";
+import LightBulbIcon from "bootstrap-icons/icons/lightbulb.svg?component";
+import QuestionMarkCircleIcon from "bootstrap-icons/icons/question-circle.svg?component";
 
 defineProps({
     triggerText: {
@@ -17,8 +19,14 @@ defineProps({
     }
 })
 
+defineEmits(['feedback']);
+
 const logout = () => {
     router.post(route('logout'));
+};
+
+const supportAction = () => {
+    window.open('https://tawk.to/chat/6601f04ea0c6737bd124880f/1hprp5d8g');
 };
 
 const appType = import.meta.env.VITE_APP_TYPE;
@@ -90,6 +98,26 @@ const appType = import.meta.env.VITE_APP_TYPE;
                         <GearIcon class="size-4" />
                     </div>
                     <div>Admin</div>
+                </div>
+            </DropdownLink>
+
+            <div class="border-t border-gray-200 dark:border-dark-600" />
+
+            <DropdownLink as="button" @click="$emit('feedback')">
+                <div class="flex items-center gap-2">
+                    <div>
+                        <LightBulbIcon class="size-4" />
+                    </div>
+                    <div>Feedback</div>
+                </div>
+            </DropdownLink>
+
+            <DropdownLink as="button" @click="supportAction">
+                <div class="flex items-center gap-2">
+                    <div>
+                        <QuestionMarkCircleIcon class="size-4" />
+                    </div>
+                    <div>Support</div>
                 </div>
             </DropdownLink>
 
