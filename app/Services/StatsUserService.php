@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
+use App\Enums\SubscriptionInterval;
 use App\Models\StatsLogin;
 use App\Models\StatsPayment;
 use App\Models\StatsUser;
@@ -34,6 +35,12 @@ class StatsUserService
         $sortColumn = self::POWER_USER_SORTS[$sort] ?? null;
         $direction = $direction === 'asc' ? 'asc' : 'desc';
 
+        // Mirrors the MRR active-subscription rule (BaseSqlBuilder::activeSubscriptionsFrom):
+        // a plan only counts while the latest recurring payment is within its interval
+        // plus grace, otherwise the user churned and current_plan stays NULL.
+        $monthWindowStart = now()->subMonth()->subDays(StatsService::MRR_ACTIVE_GRACE_DAYS);
+        $yearWindowStart = now()->subYear()->subDays(StatsService::MRR_ACTIVE_GRACE_DAYS);
+
         return StatsUser::query()
             ->where('registered', true)
             ->when(
@@ -62,8 +69,14 @@ class StatsUserService
                     ->selectRaw('MAX(time)')
                     ->whereColumn('stats_logins.stats_user_id', 'stats_users.id')
                     ->whereColumn('stats_logins.project_id', 'stats_users.project_id'),
+                // Pick the latest recurring payment first, THEN null it out when expired.
+                // Filtering on the window before picking would resurrect an older still-
+                // in-window payment (e.g. a yearly one) after a plan switch that churned.
                 'current_plan' => StatsPayment::query()
-                    ->select('subscription_plan')
+                    ->selectRaw(
+                        'CASE WHEN (subscription_interval = ? AND time > ?) OR (subscription_interval = ? AND time > ?) THEN subscription_plan END',
+                        [SubscriptionInterval::MONTH->value, $monthWindowStart, SubscriptionInterval::YEAR->value, $yearWindowStart],
+                    )
                     ->whereColumn('stats_payments.stats_user_id', 'stats_users.id')
                     ->whereColumn('stats_payments.project_id', 'stats_users.project_id')
                     ->whereNotNull('subscription_interval')

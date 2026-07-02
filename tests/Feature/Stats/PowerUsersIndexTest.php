@@ -87,8 +87,8 @@ test('power users can be sorted alphabetically by their current plan', function 
     makePowerUser('starter-user', $this->project);
     makePowerUser('pro-user', $this->project);
 
-    StatsPayment::factory()->subscriptionMonthly()->create(['id' => 's1', 'stats_user_id' => 'starter-user', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 1000, 'net' => 800, 'subscription_plan' => 'Starter', 'time' => '2026-05-01 10:00:00']);
-    StatsPayment::factory()->subscriptionMonthly()->create(['id' => 's2', 'stats_user_id' => 'pro-user', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 2000, 'net' => 1600, 'subscription_plan' => 'Pro', 'time' => '2026-05-01 10:00:00']);
+    StatsPayment::factory()->subscriptionMonthly()->create(['id' => 's1', 'stats_user_id' => 'starter-user', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 1000, 'net' => 800, 'subscription_plan' => 'Starter', 'time' => '2026-06-01 10:00:00']);
+    StatsPayment::factory()->subscriptionMonthly()->create(['id' => 's2', 'stats_user_id' => 'pro-user', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 2000, 'net' => 1600, 'subscription_plan' => 'Pro', 'time' => '2026-06-01 10:00:00']);
 
     $this->get(route('power-users', ['project_id' => $this->project->id, 'sort' => 'plan', 'direction' => 'asc']))
         ->assertInertia(fn ($page) => $page
@@ -217,6 +217,61 @@ test('current plan is the latest subscription payment plan when subscriptions ar
             ->has('powerUsers.data', 1, fn ($row) => $row
                 ->where('id', 'sub')
                 ->where('current_plan', 'Pro')
+                ->etc()
+            )
+        );
+});
+
+test('a churned monthly subscriber whose last payment is older than the interval has no current plan', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
+
+    makePowerUser('churned', $this->project);
+
+    // Test-now is 2026-06-21; the month window (interval + 3 grace days) starts 2026-05-18.
+    StatsPayment::factory()->subscriptionMonthly()->create(['id' => 'c1', 'stats_user_id' => 'churned', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 1000, 'net' => 800, 'subscription_plan' => 'Starter', 'time' => '2026-05-01 10:00:00']);
+
+    $this->get(route('power-users', ['project_id' => $this->project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->has('powerUsers.data', 1, fn ($row) => $row
+                ->where('id', 'churned')
+                ->where('current_plan', null)
+                ->etc()
+            )
+        );
+});
+
+test('a yearly subscriber stays on their plan even when the last payment is months ago', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
+
+    makePowerUser('yearly', $this->project);
+
+    StatsPayment::factory()->subscriptionYearly()->create(['id' => 'y1', 'stats_user_id' => 'yearly', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 12000, 'net' => 9600, 'subscription_plan' => 'Pro Yearly', 'time' => '2025-12-15 10:00:00']);
+
+    $this->get(route('power-users', ['project_id' => $this->project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->has('powerUsers.data', 1, fn ($row) => $row
+                ->where('id', 'yearly')
+                ->where('current_plan', 'Pro Yearly')
+                ->etc()
+            )
+        );
+});
+
+test('only the latest recurring payment decides activity, an older in-window yearly does not resurrect a churned monthly', function () {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
+
+    makePowerUser('switcher', $this->project);
+
+    // Yearly payment still inside the year window, but the user later switched to
+    // monthly and let that lapse: the latest recurring payment rules, so no plan.
+    StatsPayment::factory()->subscriptionYearly()->create(['id' => 'sw1', 'stats_user_id' => 'switcher', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 12000, 'net' => 9600, 'subscription_plan' => 'Pro Yearly', 'time' => '2025-10-01 10:00:00']);
+    StatsPayment::factory()->subscriptionMonthly()->create(['id' => 'sw2', 'stats_user_id' => 'switcher', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'gross' => 1000, 'net' => 800, 'subscription_plan' => 'Starter', 'time' => '2026-04-01 10:00:00']);
+
+    $this->get(route('power-users', ['project_id' => $this->project->id]))
+        ->assertInertia(fn ($page) => $page
+            ->has('powerUsers.data', 1, fn ($row) => $row
+                ->where('id', 'switcher')
+                ->where('current_plan', null)
                 ->etc()
             )
         );
