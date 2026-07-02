@@ -12,7 +12,10 @@ use App\Services\StatsService;
  *
  * The sequence starts ONE interval before the range so the first visible bucket
  * has a previous baseline to diff against; that leading bucket is dropped by the
- * caller. Each bucket end re-runs the snapshot logic (DISTINCT ON per user,
+ * caller. amount_signature identifies the priced amount in its original currency
+ * (interval + orig currency/net, falling back to the converted net for payments
+ * made in the team currency), so the movement classification can tell FX
+ * conversion jitter between renewals from a real up/downgrade. Each bucket end re-runs the snapshot logic (DISTINCT ON per user,
  * interval + MRR_ACTIVE_GRACE_DAYS window, yearly normalised to net / 12). The
  * LATERAL is LEFT joined so empty buckets still emit a row (null user) and the
  * caller keeps every bucket in the grid.
@@ -42,13 +45,15 @@ class MrrPerUserBucketSqlBuilder extends BaseSqlBuilder
                 ".$this->getDateFormat('ds.date_seq', ':dateFormat').' AS date,
                 '.$this->getDateFormat('ds.date_seq', ':dateFormatClear').' AS date_clear,
                 active.stats_user_id,
-                active.mrr
+                active.mrr,
+                active.amount_signature
             FROM date_sequence ds
             LEFT JOIN LATERAL (
                 SELECT
                     lr.stats_user_id,
-                    '.$this->mrrMonthlyAmount().' AS mrr'
-                    .$this->activeSubscriptionsFrom("< $bucketEnd", $monthWindow, $yearWindow).'
+                    '.$this->mrrMonthlyAmount()." AS mrr,
+                    lr.subscription_interval || ':' || COALESCE(lr.orig_currency || ':' || lr.orig_net::text, lr.net::text) AS amount_signature"
+                    .$this->activeSubscriptionsFrom("< $bucketEnd", $monthWindow, $yearWindow, ['stats.orig_net', 'stats.orig_currency']).'
             ) active ON TRUE
             ORDER BY date_clear ASC, active.stats_user_id
         ';

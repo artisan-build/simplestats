@@ -204,6 +204,18 @@ test('selecting all projects shows users team-wide, a specific project filters t
         );
 });
 
+test('changing the project with a preset persists it and a bare visit restores it', function () {
+    $this->get(route('power-users', ['project_id' => $this->project->id, 'preset' => 'last_30_days']));
+
+    expect($this->user->fresh()->settings['statsFilters'][$this->team->id]['project_id'])
+        ->toEqual($this->project->id);
+
+    $this->get(route('power-users'))
+        ->assertInertia(fn ($page) => $page
+            ->where('filters.project_id', $this->project->id)
+        );
+});
+
 test('current plan is the latest subscription payment plan when subscriptions are tracked', function () {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 

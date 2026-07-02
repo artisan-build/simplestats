@@ -138,7 +138,7 @@ class MrrAggregationService
         $builder = new MrrPerUserBucketSqlBuilder;
         $sql = strtr($builder->build(), $this->formatFilter($this->withNowCap($filterConditions)));
 
-        [$buckets, $userMrrByBucket] = $this->pivotPerUserBuckets($this->getDataArray($sql));
+        [$buckets, $userMrrByBucket, $userSigByBucket] = $this->pivotPerUserBuckets($this->getDataArray($sql));
 
         $everActive = array_fill_keys(array_keys($userMrrByBucket[0] ?? []), true);
 
@@ -153,6 +153,20 @@ class MrrAggregationService
             foreach (array_keys($prev + $curr) as $userId) {
                 $p = $prev[$userId] ?? 0.0;
                 $c = $curr[$userId] ?? 0.0;
+
+                // A renewal of the same priced amount (identical signature) that converts
+                // to a slightly different team-currency value is FX jitter, not an
+                // up/downgrade. Snap it back to the previous amount (also in the bucket
+                // pivot, so the next comparison and ending_mrr use the smoothed value
+                // and the starting + movements = ending waterfall stays exact).
+                if ($p > 0.0 && $c > 0.0 && $c !== $p
+                    && ($userSigByBucket[$i - 1][$userId] ?? null) === ($userSigByBucket[$i][$userId] ?? false)
+                ) {
+                    $userMrrByBucket[$i][$userId] = $p;
+                    $curr[$userId] = $p;
+
+                    continue;
+                }
 
                 if ($p == 0.0 && $c > 0.0) {
                     if (! empty($everActive[$userId])) {
@@ -328,13 +342,14 @@ class MrrAggregationService
     }
 
     /**
-     * @param  array<int, array{date: string, date_clear: string, stats_user_id: ?string, mrr: ?float}>  $rows
-     * @return array{0: array<int, array{date: string, date_clear: string}>, 1: array<int, array<string, float>>}
+     * @param  array<int, array{date: string, date_clear: string, stats_user_id: ?string, mrr: ?float, amount_signature: ?string}>  $rows
+     * @return array{0: array<int, array{date: string, date_clear: string}>, 1: array<int, array<string, float>>, 2: array<int, array<string, ?string>>}
      */
     private function pivotPerUserBuckets(array $rows): array
     {
         $buckets = [];
         $userMrrByBucket = [];
+        $userSigByBucket = [];
         $indexByDate = [];
 
         foreach ($rows as $row) {
@@ -344,14 +359,16 @@ class MrrAggregationService
                 $indexByDate[$key] = count($buckets);
                 $buckets[] = ['date' => $row['date'], 'date_clear' => $key];
                 $userMrrByBucket[] = [];
+                $userSigByBucket[] = [];
             }
 
             if ($row['stats_user_id'] !== null) {
                 $userMrrByBucket[$indexByDate[$key]][$row['stats_user_id']] = round((float) $row['mrr'], 2);
+                $userSigByBucket[$indexByDate[$key]][$row['stats_user_id']] = $row['amount_signature'];
             }
         }
 
-        return [$buckets, $userMrrByBucket];
+        return [$buckets, $userMrrByBucket, $userSigByBucket];
     }
 
     private function nowCap(): string

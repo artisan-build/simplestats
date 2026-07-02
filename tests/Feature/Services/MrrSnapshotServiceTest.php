@@ -46,7 +46,7 @@ function insertStatsUser(string $id, int $teamId, int $projectId, ?int $sourceId
     ]);
 }
 
-function insertPayment(string $id, string $userId, int $teamId, int $projectId, float $net, ?SubscriptionInterval $interval, string $time): void
+function insertPayment(string $id, string $userId, int $teamId, int $projectId, float $net, ?SubscriptionInterval $interval, string $time, ?float $origNet = null, ?string $origCurrency = null): void
 {
     DB::table('stats_payments')->insert([
         'id' => $id,
@@ -56,6 +56,9 @@ function insertPayment(string $id, string $userId, int $teamId, int $projectId, 
         'gross' => $net,
         'net' => $net,
         'currency' => 'EUR',
+        'orig_gross' => $origNet,
+        'orig_net' => $origNet,
+        'orig_currency' => $origCurrency,
         'subscription_interval' => $interval?->value,
         'counter' => 1,
         'time' => $time,
@@ -382,4 +385,27 @@ it('returns null retention ratios when there is no starting mrr', function () {
     expect($retention['starting_mrr'])->toBe(0.0)
         ->and($retention['nrr'])->toBeNull()
         ->and($retention['grr'])->toBeNull();
+});
+
+it('treats FX conversion jitter between renewals as unchanged instead of expansion or contraction', function () {
+    insertStatsUser('u-1', $this->team->id, $this->pid);
+    // Same 20 USD subscription converting to a different EUR amount each renewal
+    // (2000 -> 2015, daily exchange rates), then a real upgrade to 21.50 USD.
+    insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 2000, SubscriptionInterval::MONTH, '2026-03-05 10:00:00', origNet: 2000, origCurrency: 'USD');
+    insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 2015, SubscriptionInterval::MONTH, '2026-04-05 10:00:00', origNet: 2000, origCurrency: 'USD');
+    insertPayment('p-3', 'u-1', $this->team->id, $this->pid, 2150, SubscriptionInterval::MONTH, '2026-05-05 10:00:00', origNet: 2150, origCurrency: 'USD');
+
+    $movements = $this->service->getMrrMovements(monthFilter($this->pid, '2026-06-21', 6));
+
+    // the jitter renewal is no movement; the real upgrade diffs against the
+    // smoothed 2000, not the jittered 2015
+    expect(collect($movements)->sum('new'))->toBe(2000.0)
+        ->and(collect($movements)->sum('expansion'))->toBe(150.0)
+        ->and(collect($movements)->sum('contraction'))->toBe(0.0);
+
+    // the smoothed value keeps the waterfall exact in every bucket
+    foreach ($movements as $m) {
+        $expected = round($m['starting_mrr'] + $m['new'] + $m['reactivation'] + $m['expansion'] - $m['contraction'] - $m['churn'], 2);
+        expect($m['ending_mrr'])->toBe($expected);
+    }
 });

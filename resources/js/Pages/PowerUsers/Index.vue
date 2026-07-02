@@ -112,8 +112,17 @@ const planColor = (name) => {
 const sortParams = {project_id: selectedProjectId};
 
 const projectId = ref(selectedProjectId);
+// Carry the full filters (incl. preset) like CampaignFilter does: only requests
+// with a preset are persisted to the user's statsFilters settings, so the
+// selected project survives navigating away and back.
 const changeProject = () => {
-    router.get(route('power-users'), {project_id: projectId.value}, {preserveScroll: true, preserveState: false});
+    const params = {...props.filters, project_id: projectId.value};
+    if (params.preset && params.preset !== 'custom') {
+        delete params.range_start;
+        delete params.range_amount;
+        delete params.range_type;
+    }
+    router.get(route('power-users'), params, {preserveScroll: true, preserveState: false});
 };
 
 const impersonateForm = useForm({

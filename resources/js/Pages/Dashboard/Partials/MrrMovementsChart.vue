@@ -44,18 +44,25 @@ const ordered = [...props.movements].reverse();
 const categories = ordered.map(item => formatDate(item.date, props.filters.range_type));
 
 // Contraction and churn are revenue lost, so they stack below the zero line.
+// `|| 0` avoids JS negative zero, which Intl would render as "-€0".
 const series = [
     {name: 'New', data: ordered.map(item => item.new)},
     {name: 'Reactivation', data: ordered.map(item => item.reactivation)},
     {name: 'Expansion', data: ordered.map(item => item.expansion)},
-    {name: 'Contraction', data: ordered.map(item => -item.contraction)},
-    {name: 'Churn', data: ordered.map(item => -item.churn)},
+    {name: 'Contraction', data: ordered.map(item => -item.contraction || 0)},
+    {name: 'Churn', data: ordered.map(item => -item.churn || 0)},
 ];
 
-const currency = (value) => formatCurrency(value, {
-    minimumFractionDigits: (Math.abs(cent2Currency(value)) >= 1000) ? 1 : 0,
-    maximumFractionDigits: (Math.abs(cent2Currency(value)) >= 1000) ? 1 : 0,
-}, page.props.teamCurrency);
+// Sub-euro amounts keep their cents, so a tiny movement never reads as a bogus €0.
+const currency = (value) => {
+    const abs = Math.abs(cent2Currency(value));
+    const digits = abs >= 1000 ? 1 : (abs > 0 && abs < 1 ? 2 : 0);
+
+    return formatCurrency(value, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+    }, page.props.teamCurrency);
+};
 
 const chartOptions = ref({
     chart: {
