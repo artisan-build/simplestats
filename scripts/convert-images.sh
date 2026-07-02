@@ -31,6 +31,9 @@ if [[ ! -d "$TARGET" ]]; then
     exit 1
 fi
 
+# -sharp_yuv keeps fine text crisp (better RGB->YUV conversion). Sources are
+# 2x retina captures displayed at half size, which hides lossy artifacts, so
+# q85 is enough.
 WEBP_QUALITY=85
 MIN_SAVINGS_PERCENT=10
 
@@ -61,12 +64,17 @@ keep_if_smaller() {
 
 convert_file() {
     local src="$1"
-    local webp="${src%.*}.webp"
+
+    # 2x retina sources are named *_2x.png but ship as the plain name; only
+    # the webp goes to git/production, the source png stays local (gitignored).
+    local base="${src%.*}"
+    base="${base%_2x}"
+    local webp="${base}.webp"
 
     if [[ $FORCE -eq 0 && -f "$webp" && "$webp" -nt "$src" ]]; then
         echo "skip  $webp"
     else
-        cwebp -q "$WEBP_QUALITY" -quiet "$src" -o "$webp"
+        cwebp -q "$WEBP_QUALITY" -sharp_yuv -m 6 -quiet "$src" -o "$webp"
         keep_if_smaller "$src" "$webp"
     fi
 }

@@ -16,8 +16,8 @@ const themes = [
 
 const activeScreen = ref('dashboard');
 
-function screenshotPath(key, theme, ext) {
-    return `images/screenshots/screenshot_${key}_${theme}.${ext}`;
+function screenshotPath(key, theme) {
+    return `images/screenshots/screenshot_${key}_${theme}.webp`;
 }
 
 onMounted(() => {
@@ -29,7 +29,7 @@ onMounted(() => {
         screens
             .filter((screen) => screen.key !== activeScreen.value)
             .forEach((screen) => {
-                new Image().src = screenshotPath(screen.key, theme, 'webp');
+                new Image().src = screenshotPath(screen.key, theme);
             });
     };
 
@@ -46,15 +46,19 @@ onMounted(() => {
         <div class="w-full max-w-screen-xl">
             <div class="relative">
                 <template v-for="screen in screens" :key="screen.key">
-                    <picture
+                    <!-- 2x retina webp shown at half size, browsers downscale for 1x displays -->
+                    <img
                         v-for="theme in themes"
                         v-show="screen.key === activeScreen"
                         :key="`${screen.key}-${theme.name}`"
                         :class="theme.class"
+                        width="1280"
+                        height="832"
+                        :src="screenshotPath(screen.key, theme.name)"
+                        :alt="screen.alt"
+                        loading="lazy"
+                        fetchpriority="low"
                     >
-                        <source :srcset="screenshotPath(screen.key, theme.name, 'webp')" type="image/webp">
-                        <img width="1280" height="832" :src="screenshotPath(screen.key, theme.name, 'png')" :alt="screen.alt" loading="lazy" fetchpriority="low">
-                    </picture>
                 </template>
                 <button
                     v-for="screen in screens"
