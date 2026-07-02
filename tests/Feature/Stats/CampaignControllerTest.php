@@ -62,6 +62,43 @@ test('campaign rejects a project from another team', function () {
     ])->assertSessionHasErrors('project_id');
 });
 
+test('updating a campaign renames it', function () {
+    $campaign = Campaign::factory()->create([
+        'team_id' => $this->team->id,
+        'project_id' => $this->project->id,
+        'name' => 'Old name',
+    ]);
+
+    $this->patch(route('campaigns.update', $campaign), ['name' => 'New name'])
+        ->assertRedirect();
+
+    expect($campaign->fresh()->name)->toBe('New name');
+});
+
+test('updating a campaign requires a name', function () {
+    $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
+
+    $this->patch(route('campaigns.update', $campaign), ['name' => ''])
+        ->assertSessionHasErrors('name');
+});
+
+test('updating a campaign of another team is not possible', function () {
+    $otherUser = User::factory()->withPersonalTeam()->create();
+    $this->actingAs($otherUser);
+    $otherProject = Project::factory()->create(['team_id' => $otherUser->currentTeam->id]);
+    $campaign = Campaign::factory()->create([
+        'team_id' => $otherUser->currentTeam->id,
+        'project_id' => $otherProject->id,
+        'name' => 'Orig',
+    ]);
+    $this->actingAs($this->user);
+
+    $this->patch(route('campaigns.update', $campaign), ['name' => 'Hijack'])
+        ->assertNotFound();
+
+    expect($campaign->fresh()->name)->toBe('Orig');
+});
+
 test('linking a utm value creates and attaches the tracked dimension', function () {
     $campaign = Campaign::factory()->create([
         'team_id' => $this->team->id,

@@ -6,6 +6,7 @@ use App\Http\DataProviders\CampaignsDataProvider;
 use App\Http\DataProviders\CampaignShowDataProvider;
 use App\Http\Requests\CampaignLinkRequest;
 use App\Http\Requests\CampaignRequest;
+use App\Http\Requests\CampaignUpdateRequest;
 use App\Models\Campaign;
 use App\Models\StatsTrackCampaign;
 use App\Services\CampaignService;
@@ -39,6 +40,13 @@ class CampaignController extends Controller
         );
 
         return redirect()->route('campaigns.show', $campaign);
+    }
+
+    public function update(CampaignUpdateRequest $request, Campaign $campaign): RedirectResponse
+    {
+        $this->campaignService->rename($campaign, $request->validated('name'));
+
+        return redirect()->back();
     }
 
     public function linkTrackCampaign(CampaignLinkRequest $request, Campaign $campaign): RedirectResponse

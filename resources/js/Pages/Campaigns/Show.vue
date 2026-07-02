@@ -26,6 +26,7 @@ import {
 } from "@/Helpers/CampaignKpiHelpers.js";
 import {campaignMetricInfo as metricInfo} from "@/Data/CampaignMetricInfo.js";
 import XLgIcon from "bootstrap-icons/icons/x-lg.svg?component";
+import PencilIcon from "bootstrap-icons/icons/pencil.svg?component";
 import TrashIcon from "bootstrap-icons/icons/trash.svg?component";
 import DashboardIcon from "bootstrap-icons/icons/grid.svg?component";
 import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
@@ -89,6 +90,30 @@ const remove = () => {
     });
 };
 
+const editingName = ref(false);
+const nameForm = useForm({name: props.campaign.name});
+
+const startEditName = () => {
+    nameForm.name = props.campaign.name;
+    nameForm.clearErrors();
+    editingName.value = true;
+};
+
+const cancelEditName = () => {
+    editingName.value = false;
+    nameForm.reset();
+    nameForm.clearErrors();
+};
+
+const saveName = () => {
+    nameForm.patch(route('campaigns.update', {campaign: props.campaign.id}), {
+        preserveScroll: true,
+        onSuccess: () => {
+            editingName.value = false;
+        },
+    });
+};
+
 const linkForm = useForm({name: ''});
 
 const link = () => {
@@ -114,9 +139,34 @@ const unlink = (trackCampaign) => {
         <div class="space-y-8">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div class="space-y-1">
-                    <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
-                        Campaign: <span class="italic">{{ campaign.name }}</span>
+                    <h1 v-if="!editingName" class="flex items-center gap-2 text-2xl font-bold tracking-tight text-gray-950 dark:text-white">
+                        <span>Campaign: <span class="italic">{{ campaign.name }}</span></span>
+                        <button
+                            type="button"
+                            aria-label="Rename campaign"
+                            class="text-gray-400 hover:text-gray-600 dark:text-dark-400 dark:hover:text-dark-200"
+                            v-tooltip="'Rename campaign'"
+                            @click="startEditName"
+                        >
+                            <PencilIcon class="size-4" />
+                        </button>
                     </h1>
+                    <template v-else>
+                        <form @submit.prevent="saveName" class="flex items-center gap-2">
+                            <TextInput
+                                v-model="nameForm.name"
+                                type="text"
+                                class="block w-72 py-1.5 text-lg font-bold"
+                                autofocus
+                                @keyup.esc="cancelEditName"
+                            />
+                            <PrimaryButton type="submit" :class="{ 'opacity-25': nameForm.processing }" :disabled="nameForm.processing">
+                                Save
+                            </PrimaryButton>
+                            <SecondaryButton type="button" @click="cancelEditName">Cancel</SecondaryButton>
+                        </form>
+                        <InputError :message="nameForm.errors.name" class="mt-1" />
+                    </template>
                 </div>
                 <CampaignFilter
                     :teamStats="teamStats"
@@ -221,7 +271,7 @@ const unlink = (trackCampaign) => {
                                 v-model="linkForm.name"
                                 type="text"
                                 list="linkable-utms"
-                                class="block w-full font-mono"
+                                class="block w-full font-mono py-1.5 text-sm"
                                 placeholder="exact utm_campaign value"
                             />
                             <datalist id="linkable-utms">

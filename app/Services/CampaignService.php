@@ -18,6 +18,13 @@ class CampaignService
         ]);
     }
 
+    public function rename(Campaign $campaign, string $name): Campaign
+    {
+        $campaign->update(['name' => $name]);
+
+        return $campaign;
+    }
+
     /**
      * Attach a tracked utm_campaign dimension to a campaign. The name is resolved
      * via firstOrCreate, identical to what the tracking pipeline does on the first

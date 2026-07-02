@@ -117,6 +117,7 @@ Route::middleware([
     Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns');
     Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
+    Route::patch('campaigns/{campaign}', [CampaignController::class, 'update'])->name('campaigns.update');
     Route::post('campaigns/{campaign}/track-campaigns', [CampaignController::class, 'linkTrackCampaign'])->name('campaigns.track-campaigns.link');
     Route::delete('campaigns/{campaign}/track-campaigns/{trackCampaign}', [CampaignController::class, 'unlinkTrackCampaign'])->name('campaigns.track-campaigns.unlink');
     Route::resource('ad-spends', AdSpendController::class)->only(['store', 'update', 'destroy']);
