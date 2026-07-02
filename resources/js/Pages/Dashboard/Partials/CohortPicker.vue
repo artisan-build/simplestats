@@ -91,7 +91,7 @@ const onChange = (dates) => {
         :enable-time-picker="false"
         :preset-dates="presetDates"
         @update:model-value="onChange"
-        :class="['cohort-picker', { 'cohort-picker-active': isActive }]"
+        :class="['cohort-picker mt-1', { 'cohort-picker-active': isActive }]"
         :ui="{ menu: '!p-3' }"
     >
         <template #preset-date-range-button="{ label, value, presetDate }">

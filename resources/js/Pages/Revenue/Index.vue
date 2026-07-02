@@ -141,6 +141,8 @@ const subscriptionStatsGroups = computed(() => Object.fromEntries(
                     :topReferers="topReferers"
                     :currentProject="currentProject"
                     :usageBits="usageBits"
+                    :breakdownColumns="['reg', 'subscribers', 'mrr', 'arps']"
+                    breakdownPrimary="mrr"
                     baseRoute="revenue"
                 />
             </div>
