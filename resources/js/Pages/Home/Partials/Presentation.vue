@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref} from 'vue';
 
 const screens = [
     { key: 'dashboard', label: 'Dashboard', alt: 'Web analytics dashboard for Laravel apps', top: '14.8%' },
@@ -9,7 +9,16 @@ const screens = [
     { key: 'campaigns', label: 'Campaigns', alt: 'Campaign ROI analytics for Laravel apps', top: '40.3%' },
 ];
 
+const themes = [
+    { name: 'light', class: 'block dark:hidden' },
+    { name: 'dark', class: 'hidden dark:block' },
+];
+
 const activeScreen = ref('dashboard');
+
+function screenshotPath(key, theme, ext) {
+    return `images/screenshots/screenshot_${key}_${theme}.${ext}`;
+}
 
 onMounted(() => {
     // Warm the cache for the other screens once the browser is idle, so the
@@ -20,7 +29,7 @@ onMounted(() => {
         screens
             .filter((screen) => screen.key !== activeScreen.value)
             .forEach((screen) => {
-                new Image().src = `images/screenshots/screenshot_${screen.key}_${theme}.webp`;
+                new Image().src = screenshotPath(screen.key, theme, 'webp');
             });
     };
 
@@ -37,13 +46,14 @@ onMounted(() => {
         <div class="w-full max-w-screen-xl">
             <div class="relative">
                 <template v-for="screen in screens" :key="screen.key">
-                    <picture v-show="screen.key === activeScreen" class="block dark:hidden">
-                        <source :srcset="`images/screenshots/screenshot_${screen.key}_light.webp`" type="image/webp">
-                        <img width="1280" height="832" :src="`images/screenshots/screenshot_${screen.key}_light.png`" :alt="screen.alt" loading="lazy" fetchpriority="low">
-                    </picture>
-                    <picture v-show="screen.key === activeScreen" class="hidden dark:block">
-                        <source :srcset="`images/screenshots/screenshot_${screen.key}_dark.webp`" type="image/webp">
-                        <img width="1280" height="832" :src="`images/screenshots/screenshot_${screen.key}_dark.png`" :alt="screen.alt" loading="lazy" fetchpriority="low">
+                    <picture
+                        v-for="theme in themes"
+                        v-show="screen.key === activeScreen"
+                        :key="`${screen.key}-${theme.name}`"
+                        :class="theme.class"
+                    >
+                        <source :srcset="screenshotPath(screen.key, theme.name, 'webp')" type="image/webp">
+                        <img width="1280" height="832" :src="screenshotPath(screen.key, theme.name, 'png')" :alt="screen.alt" loading="lazy" fetchpriority="low">
                     </picture>
                 </template>
                 <button
@@ -56,7 +66,7 @@ onMounted(() => {
                     @click="activeScreen = screen.key"
                 >
                     <span class="relative flex size-3">
-                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-300 opacity-75"></span>
+                        <span class="absolute inline-flex size-full animate-ping rounded-full bg-indigo-300 opacity-75"></span>
                         <span class="relative inline-flex size-3 rounded-full bg-indigo-400"></span>
                     </span>
                 </button>

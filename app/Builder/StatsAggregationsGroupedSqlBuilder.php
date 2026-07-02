@@ -14,6 +14,9 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected TrackablePerson $trackablePerson,
         protected bool $withMrr = false,
         protected bool $withTimeToConvert = false,
+        protected bool $withNau = false,
+        /** @var array{int, int, int}|array{} day offsets per checkpoint, empty = retention columns off */
+        protected array $retentionCheckpoints = [],
     ) {}
 
     public function build(): string
@@ -27,14 +30,22 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
 
         $this->applySql($this->getLT_VISITORS());
 
-        $this->applySql($this->getLT_NET(), $this->withMrr || $this->withTimeToConvert);
+        $this->applySql($this->getLT_NET(), $this->withMrr || $this->withTimeToConvert || $this->withNau || $this->hasRetention());
 
         if ($this->withMrr) {
-            $this->applySql($this->getLT_MRR(), $this->withTimeToConvert);
+            $this->applySql($this->getLT_MRR(), $this->withTimeToConvert || $this->withNau || $this->hasRetention());
         }
 
         if ($this->withTimeToConvert) {
-            $this->applySql($this->getLT_TIME_TO_CONVERT(), false);
+            $this->applySql($this->getLT_TIME_TO_CONVERT(), $this->withNau || $this->hasRetention());
+        }
+
+        if ($this->withNau) {
+            $this->applySql($this->getLT_NAU(), $this->hasRetention());
+        }
+
+        if ($this->hasRetention()) {
+            $this->applySql($this->getLT_RETENTION(), false);
         }
 
         $this->applySql($this->getSELECT(), false);
@@ -150,6 +161,57 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         )";
     }
 
+    protected function hasRetention(): bool
+    {
+        return $this->retentionCheckpoints !== [];
+    }
+
+    /**
+     * New Active Users per dimension: users whose first return login (counter = 2,
+     * unique per user) falls in the range, attributed via the user row like pd_dau.
+     */
+    protected function getLT_NAU(): string
+    {
+        return "lt_nau AS (
+            SELECT COALESCE(su.$this->statsDBType, $this->typeIdFallback) as type_id, COUNT(DISTINCT ".$this->getDistinctFields(['stats.stats_user_id', 'stats.project_id']).") AS count
+            FROM stats_logins stats
+            :trackingUserJoinConditions AND :projectCondition
+            WHERE :projectCondition AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' AND stats.counter = 2
+            GROUP BY type_id
+        )";
+    }
+
+    /**
+     * Unbounded retention per dimension value: a user counts as retained at
+     * checkpoint N when their latest return login (counter >= 2) happened at or
+     * after registration + N days, so one MAX(sl.time) per user answers every
+     * checkpoint. Denominators are right-censored to users registered at least
+     * N days before now; the visible Signups column stays the uncensored lt_reg.
+     * Checkpoint offsets are trusted ints from StatsRangeType, not user input.
+     */
+    protected function getLT_RETENTION(): string
+    {
+        $pairs = collect($this->retentionCheckpoints)->map(function (int $days, int $index) {
+            $checkpoint = $index + 1;
+
+            return "COUNT(*) FILTER (WHERE stats.time <= ':nowCap'::timestamp - INTERVAL '$days days') AS observable_c$checkpoint,
+                COUNT(*) FILTER (WHERE stats.time <= ':nowCap'::timestamp - INTERVAL '$days days' AND lr.last_return >= stats.time + INTERVAL '$days days') AS retained_c$checkpoint";
+        })->implode(",\n                ");
+
+        return "lt_retention AS (
+            SELECT COALESCE(stats.$this->statsDBType, $this->typeIdFallback) as type_id,
+                $pairs
+            FROM stats_users stats
+            LEFT JOIN LATERAL (
+                SELECT MAX(sl.time) AS last_return
+                FROM stats_logins sl
+                WHERE sl.stats_user_id = stats.id AND sl.project_id = stats.project_id AND sl.counter >= 2
+            ) lr ON TRUE
+            WHERE :projectCondition AND stats.registered = true AND stats.time >= ':startDateStart' AND stats.time <= ':endDateEnd' :trackingCondition :eventConditionUser :propertyConditionUser :cohortConditionUser
+            GROUP BY type_id
+        )";
+    }
+
     protected function getSELECT(): string
     {
         $sql = 'SELECT
@@ -183,6 +245,20 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
                 ROUND(lt_time_to_convert.time_to_convert::numeric, 1) AS time_to_convert';
         }
 
+        if ($this->withNau) {
+            $sql .= ',
+                COALESCE(lt_nau.count, 0) AS nau';
+        }
+
+        if ($this->hasRetention()) {
+            // deliberately no COALESCE: NULL = checkpoint not observable yet (censored)
+            foreach (array_keys($this->retentionCheckpoints) as $index) {
+                $checkpoint = $index + 1;
+                $sql .= ",
+                ROUND(lt_retention.retained_c$checkpoint * 100.0 / NULLIF(lt_retention.observable_c$checkpoint, 0), 1) AS ret_c$checkpoint";
+            }
+        }
+
         return $sql;
     }
 
@@ -209,6 +285,16 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         if ($this->withTimeToConvert) {
             $sql .= '
                 LEFT JOIN lt_time_to_convert ON sg.type_id = lt_time_to_convert.type_id';
+        }
+
+        if ($this->withNau) {
+            $sql .= '
+                LEFT JOIN lt_nau ON sg.type_id = lt_nau.type_id';
+        }
+
+        if ($this->hasRetention()) {
+            $sql .= '
+                LEFT JOIN lt_retention ON sg.type_id = lt_retention.type_id';
         }
 
         return $sql;

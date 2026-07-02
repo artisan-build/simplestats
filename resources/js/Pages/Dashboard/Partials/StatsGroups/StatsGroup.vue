@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import {Link} from "@inertiajs/vue3";
-import {XAU} from "@/Helpers/StringHelpers.js";
+import {XAU, retentionCheckpointLabels} from "@/Helpers/StringHelpers.js";
 import axios from 'axios';
 import StatsIcon from "@/Components/StatsIcon.vue";
 import StatsGroupTable from "./StatsGroupTable.vue";
@@ -39,6 +39,7 @@ if (props.statsGroupSelected) {
 const isEventGroup = props.statsGroupType === 'event';
 
 const xauLabel = XAU(filters.range_type);
+const retentionLabels = retentionCheckpointLabels(filters.range_type, filters.range_amount);
 
 // Every breakdown column a curated set can request, with its label/format and the
 // tracking bits that gate it.
@@ -52,6 +53,15 @@ const columnRegistry = {
     arpu:     {key: 'arpu', label: 'ARPU', format: 'currency', bits: ['payments', 'users']},
     arpdau:   {key: 'arpdau', label: 'ARPDAU', format: 'currency', bits: ['payments', 'users']},
     reg2dau:  {key: 'reg2dau', label: 'Reg→Active', labelSmall: 'R→A', format: 'percent', bits: ['users']},
+    nau:      {key: 'nau', label: 'NAU', format: 'number', bits: ['users'], tooltip: {
+        title: 'New Active Users',
+        text: 'Users whose first return (their 2nd login) happened in the selected range, no matter when they signed up.',
+    }},
+    // whole percent: channel comparison doesn't need sub-percent precision, and the
+    // often small censored denominators make decimals false precision anyway
+    ret_c1:   {key: 'ret_c1', ...retentionLabels[0], format: 'percent', decimals: 0, bits: ['users']},
+    ret_c2:   {key: 'ret_c2', ...retentionLabels[1], format: 'percent', decimals: 0, bits: ['users']},
+    ret_c3:   {key: 'ret_c3', ...retentionLabels[2], format: 'percent', decimals: 0, bits: ['users']},
     time_to_convert: {key: 'time_to_convert', label: 'Time to Conv.', labelSmall: 'TTC', format: 'days', bits: ['visitors', 'users']},
     mrr:      {key: 'mrr', label: 'MRR', format: 'currency', bits: ['subscription']},
     subscribers: {key: 'subscribers', label: 'Subs', format: 'number', bits: ['subscription']},
@@ -119,6 +129,19 @@ if (curatedColumns
     && currentProjectHasUsages(['visitors', 'users'])
 ) {
     filters.metric = 'time_to_convert';
+}
+
+// The retention checkpoint columns are opt-in as well. Checked against the curated
+// set (not just the primary) because metric pages surface them as secondary
+// companions (e.g. DAU); buildCuratedColumns already gated them on the users bit.
+if (curatedColumns?.some((col) => ['ret_c1', 'ret_c2', 'ret_c3'].includes(col.key))) {
+    filters.metric = 'retention';
+}
+
+// The per-dimension NAU count rides the same opt-in; backend-side 'nau' implies
+// the retention columns too (a request carries only one metric value).
+if (curatedColumns?.some((col) => col.key === 'nau')) {
+    filters.metric = 'nau';
 }
 
 const fetchData = async () => {

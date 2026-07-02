@@ -62,7 +62,7 @@ class StatsAggregationsService
     /**
      * TODO the $limit should actually affect the query, but I want to filter by payments, regs, maus
      */
-    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9, bool $withMrr = false, bool $withTimeToConvert = false): Collection
+    public function getAggregatedGroupedData(StatsFilterDto $filters, string $statsType, string $statsSort = 'net', int $limit = 9, bool $withMrr = false, bool $withTimeToConvert = false, bool $withRetention = false, bool $withNau = false): Collection
     {
         $statsTypeSnake = str($statsType)->snake()->toString();
 
@@ -88,19 +88,32 @@ class StatsAggregationsService
             && $trackablePerson === TrackablePerson::USER
             && $this->groupedScopeTracksUsage($project, [Project::USAGE_VISITORS, Project::USAGE_USERS]);
 
+        $withRetention = $withRetention
+            && $trackablePerson === TrackablePerson::USER
+            && $this->groupedScopeTracksUsage($project, [Project::USAGE_USERS]);
+
+        $withNau = $withNau
+            && $trackablePerson === TrackablePerson::USER
+            && $this->groupedScopeTracksUsage($project, [Project::USAGE_USERS]);
+
         if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
                 $statsSort)
             )->build();
         } else {
-            $statsSort = $this->resolveGroupedSort($statsSort, $trackablePerson, $withMrr, $withTimeToConvert);
+            $statsSort = $this->resolveGroupedSort($statsSort, $trackablePerson, $withMrr, $withTimeToConvert, $withRetention, $withNau);
 
             $sql = (new StatsAggregationsGroupedSqlBuilder(
-                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $withMrr, $withTimeToConvert)
+                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $withMrr, $withTimeToConvert, $withNau,
+                $withRetention ? $filters->rangeType->retentionCheckpointDays($filters->rangeAmount) : [])
             )->build();
         }
 
         $filterConditions = $this->getFilterConditions($filters);
+
+        if ($withRetention) {
+            $filterConditions['nowCap'] = now()->format(StatsRangeType::DATE_FORMAT);
+        }
 
         if ($withMrr) {
             $filterConditions = StatsService::mrrSnapshotWindowConditions($filterConditions);
@@ -137,6 +150,7 @@ class StatsAggregationsService
                 && (! isset($item['net']) || $item['net'] == 0)
                 && (! isset($item['visitors']) || $item['visitors'] == 0)
                 && (! isset($item['mrr']) || $item['mrr'] == 0)
+                && (! isset($item['nau']) || $item['nau'] == 0)
                 && (! isset($item['triggered']) || $item['triggered'] == 0);
         })->take($limit);
     }
@@ -198,7 +212,7 @@ class StatsAggregationsService
                 }
             }
 
-            foreach (['cr', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'arps', 'time_to_convert'] as $ratio) {
+            foreach (['cr', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'arps', 'time_to_convert', 'ret_c1', 'ret_c2', 'ret_c3'] as $ratio) {
                 if (isset($item[$ratio])) {
                     $item[$ratio] = (float) $item[$ratio];
                 }
@@ -634,7 +648,7 @@ class StatsAggregationsService
      * (MRR, time-to-convert), so a sort the current query does not produce (e.g. a stale
      * "mrr" sort carried over without the MRR opt-in) falls back to an always-present column.
      */
-    private function resolveGroupedSort(string $statsSort, TrackablePerson $trackablePerson, bool $withMrr, bool $withTimeToConvert): string
+    private function resolveGroupedSort(string $statsSort, TrackablePerson $trackablePerson, bool $withMrr, bool $withTimeToConvert, bool $withRetention, bool $withNau): string
     {
         $allowed = ['name', 'net', 'visitors', 'arpv'];
 
@@ -648,6 +662,14 @@ class StatsAggregationsService
 
         if ($withTimeToConvert) {
             $allowed[] = 'time_to_convert';
+        }
+
+        if ($withRetention) {
+            $allowed = array_merge($allowed, ['ret_c1', 'ret_c2', 'ret_c3']);
+        }
+
+        if ($withNau) {
+            $allowed[] = 'nau';
         }
 
         return in_array($statsSort, $allowed, true) ? $statsSort : 'net';

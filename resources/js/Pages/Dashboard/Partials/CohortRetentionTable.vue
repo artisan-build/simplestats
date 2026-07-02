@@ -63,7 +63,9 @@ const cellStyle = (value) => {
 
 const isEmpty = (value) => value === null || value === undefined;
 
-const formatValue = (value) => isEmpty(value) ? '–' : `${value}%`;
+// whole percent like the breakdown columns; the underlying data keeps one decimal
+// for the averaged retention curve
+const formatValue = (value) => isEmpty(value) ? '–' : `${Math.round(value)}%`;
 
 // The column header is the relative age period; the real calendar bucket of a cell
 // differs per row, so it lives in a hover tooltip instead (cohort idx + period maps
@@ -78,7 +80,7 @@ const cellTooltip = (row, period, value) => {
     const readable = formatLabel(label);
 
     if (!isEmpty(value)) {
-        return `${readable}: ${value}% returned`;
+        return `${readable}: ${Math.round(value)}% returned`;
     }
 
     return row.size === 0 ? `${readable}: no registrations` : `${readable}: not yet`;
@@ -90,7 +92,8 @@ const cellTooltip = (row, period, value) => {
         <div class="px-4 py-3 border-b dark:border-dark-700">
             <h3 class="font-medium text-gray-900 dark:text-dark-100">Retention by registration cohort</h3>
             <p class="text-sm text-gray-500 dark:text-dark-400">
-                Share of each cohort that returned (logged in again) in the following {{ periodNoun.toLowerCase() }}s.
+                Share of each cohort that returned (logged in again) within each following {{ periodNoun.toLowerCase() }};
+                a cell only counts activity in that specific {{ periodNoun.toLowerCase() }}.
                 Read across a row to see how a cohort's retention decays over time.
             </p>
         </div>

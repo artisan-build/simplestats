@@ -137,6 +137,8 @@ class StatsDetailsService
         bool $lifetime = false,
         bool $withMrr = false,
         bool $withTimeToConvert = false,
+        bool $withRetention = false,
+        bool $withNau = false,
     ): array {
         if ($statsType === 'property') {
             return $this->statsAggregationsService->getAggregatedPropertyData(
@@ -155,6 +157,8 @@ class StatsDetailsService
             $limit,
             $withMrr,
             $withTimeToConvert,
+            $withRetention,
+            $withNau,
         )->values()->toArray();
     }
 

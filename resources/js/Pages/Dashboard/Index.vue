@@ -51,6 +51,11 @@ onMounted(() => {
 // retention), so everything navigation-related is keyed off this base route.
 const baseRoute = props.showRetention ? 'retention' : 'dashboard';
 
+// Retention mode swaps the breakdown to the curated Signups + checkpoint columns.
+// Keyed on retention_cohorts (like the cohort grid above), so a project without
+// registration tracking degrades to the plain default breakdown.
+const retentionBreakdown = props.showRetention && !! props.retention_cohorts;
+
 const currentProject = props.teamStats.projects[props.filters.project_id] ?? props.teamStats.projects[0];
 </script>
 
@@ -130,6 +135,9 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
                         :currentProject="currentProject"
                         :usageBits="usageBits"
                         :baseRoute="baseRoute"
+                        :breakdownColumns="retentionBreakdown ? ['reg', 'ret_c1', 'ret_c2', 'ret_c3'] : null"
+                        :breakdownPrimary="retentionBreakdown ? 'ret_c2' : null"
+                        :showCustomDimensions="! retentionBreakdown"
                     />
                 </div>
             </div>

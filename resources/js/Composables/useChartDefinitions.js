@@ -24,7 +24,10 @@ const BREAKDOWN_SETS = {
     lt_arpv:     {columns: ['visitors', 'net', 'arpv'],    primary: 'arpv'},
     lt_arpu:     {columns: ['reg', 'net', 'arpu'],         primary: 'arpu'},
     pd_arpdau:   {columns: ['dau', 'net', 'arpdau'],       primary: 'arpdau'},
-    pd_dau:      {columns: ['reg', 'dau'],                 primary: 'dau'},
+    pd_dau:      {columns: ['reg', 'dau', 'ret_c2'],       primary: 'dau'},
+    // NAU plus the two longer retention checkpoints (staying power). The first
+    // checkpoint is skipped: "came back at all" is what NAU itself already says.
+    pd_nau:      {columns: ['reg', 'nau', 'ret_c2', 'ret_c3'], primary: 'nau'},
     lt_reg2dau:  {columns: ['reg', 'dau', 'reg2dau'],      primary: 'reg2dau'},
     time_to_convert: {columns: ['visitors', 'reg', 'time_to_convert'], primary: 'time_to_convert'},
     mrr:         {columns: ['subscribers', 'mrr', 'arps'], primary: 'mrr'},

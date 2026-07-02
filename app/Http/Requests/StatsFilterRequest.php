@@ -236,18 +236,19 @@ class StatsFilterRequest extends FormRequest
             'stats_sort' => [
                 'sometimes',
                 'string',
-                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'mrr', 'subscribers', 'arps', 'time_to_convert']),
+                Rule::in(['name', 'net', 'reg', 'visitors', 'cr', 'dau', 'total', 'triggered', 'arpv', 'arpu', 'arpdau', 'reg2dau', 'mrr', 'subscribers', 'arps', 'time_to_convert', 'nau', 'ret_c1', 'ret_c2', 'ret_c3']),
             ],
             'limit' => [
                 'sometimes',
                 'integer',
             ],
             // gates the per-dimension columns only the metric detail breakdown needs
-            // (MRR snapshot, time-to-convert median)
+            // (MRR snapshot, time-to-convert median, retention checkpoints; 'nau'
+            // enables the NAU count plus the retention checkpoints)
             'metric' => [
                 'sometimes',
                 'string',
-                Rule::in(['mrr', 'time_to_convert']),
+                Rule::in(['mrr', 'time_to_convert', 'retention', 'nau']),
             ],
         ];
     }

@@ -4,6 +4,7 @@ import {formatCurrency, formatNumber, formatPercent} from "@/Helpers/NumberHelpe
 import {usePage} from "@inertiajs/vue3";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useStatsComparison} from "@/Composables/useStatsComparison.js";
+import {infoTooltipContent} from "@/Helpers/TooltipHelpers.js";
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?component';
 
 /**
@@ -45,16 +46,33 @@ const visibleColumns = computed(() => props.columns.filter((column) => column.vi
 // the overview breakdown stays calm and just marks the sort in the header.
 const emphasizedColumn = computed(() => props.highlightColumn);
 
+// Column tooltips ({title, text}) render in the shared InfoTooltip look
+// (width-capped, green title) instead of an unbounded plain-string tooltip.
+const headerTooltip = (column) => column.tooltip
+    ? {content: infoTooltipContent(column.tooltip), html: true}
+    : null;
+
 const formatters = {
     number: (value) => formatNumber(Number(value)),
-    percent: (value) => formatPercent(Number(value)),
+    // null = not observable yet (censored retention checkpoints), never 0%
+    percent: (value, column) => {
+        if (value === null || value === undefined) {
+            return '-';
+        }
+
+        const options = column.decimals !== undefined
+            ? {minimumFractionDigits: column.decimals, maximumFractionDigits: column.decimals}
+            : undefined;
+
+        return formatPercent(Number(value), options);
+    },
     currency: (value) => formatCurrency(value, {}, page.props.teamCurrency),
     days: (value) => value !== null && Number.isFinite(Number(value))
         ? `${formatNumber(Number(value), {maximumFractionDigits: 1})} days`
         : '-',
 };
 
-const formatValue = (column, item) => formatters[column.format](item[column.key]);
+const formatValue = (column, item) => formatters[column.format](item[column.key], column);
 
 const isDarkMode = ref(document.documentElement.classList.contains('dark'));
 const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
@@ -84,7 +102,7 @@ const gradientColor = (isDarkMode.value) ? '46, 89, 113' : '220, 236, 254';
                             <td v-for="column in [{key: 'name', label: nameLabel, width: nameWidth}, ...visibleColumns]" :key="column.key"
                                 :style="`width: ${column.width};`" :class="column.key === 'name' ? 'py-1.5' : 'p-1.5 text-right'"
                             >
-                                <button class="whitespace-nowrap" :class="[sort === column.key ? 'text-indigo-600' : '', column.key === emphasizedColumn ? 'font-semibold' : '']" @click="emit('sort', column.key)">
+                                <button class="whitespace-nowrap" :class="[sort === column.key ? 'text-indigo-600' : '', column.key === emphasizedColumn ? 'font-semibold' : '']" v-tooltip="headerTooltip(column)" @click="emit('sort', column.key)">
                                     <span v-if="column.labelSmall" class="inline-block @2xl:hidden">{{ column.labelSmall }}</span>
                                     <span :class="column.labelSmall ? 'hidden @2xl:inline-block' : ''">{{ column.label }}</span>
                                     <ChevronDownIcon v-if="sort === column.key" class="size-4 hidden @md:inline-block" />

@@ -25,6 +25,12 @@ export function useStatsComparison(dataPrevious) {
             return null;
         }
 
+        // null = not computable (e.g. censored retention checkpoints); a delta
+        // against a coalesced 0 would fake a -100% on a young cohort
+        if (item[field] === null || previous[field] === null) {
+            return null;
+        }
+
         const current = Number(item[field] ?? 0);
         const prev = Number(previous[field] ?? 0);
 

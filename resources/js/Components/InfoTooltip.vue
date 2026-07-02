@@ -1,6 +1,7 @@
 <script setup>
 import {computed} from 'vue';
 import InfoCircleIcon from 'bootstrap-icons/icons/info-circle.svg?component';
+import {infoTooltipContent} from '@/Helpers/TooltipHelpers.js';
 
 const props = defineProps({
     // Spelled-out name, shown as the green title.
@@ -13,13 +14,7 @@ const props = defineProps({
     iconClass: {type: String, default: 'size-4 ml-1'},
 });
 
-const content = computed(() => {
-    const inner = props.html
-        ? props.html
-        : `<div><div class="font-bold text-green-300">${props.title}</div><div>${props.text}</div></div>`;
-
-    return `<div class="flex flex-col space-y-4 max-w-64 p-2 text-sm">${inner}</div>`;
-});
+const content = computed(() => infoTooltipContent(props));
 </script>
 
 <template>

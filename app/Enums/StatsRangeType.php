@@ -148,6 +148,36 @@ enum StatsRangeType: string
         };
     }
 
+    /**
+     * Day offsets for the retention breakdown checkpoints: 1 range unit, ~1/4 and
+     * ~1/2 of the range. The largest checkpoint must stay well below the range
+     * length, since the cohort only contains users registered inside the range,
+     * a checkpoint at the full range length has an always-empty censored
+     * denominator (structurally blank column). HOUR falls back to a day ladder:
+     * sub-day retention is meaningless and the cells are censored anyway.
+     * Mirrored in retentionCheckpointLabels() (StringHelpers.js).
+     *
+     * @return array{int, int, int}
+     */
+    public function retentionCheckpointDays(int $rangeAmount): array
+    {
+        if ($this === self::HOUR) {
+            return [1, 7, 30];
+        }
+
+        $unitDays = match ($this) {
+            self::DAY => 1,
+            self::WEEK => 7,
+            self::MONTH => 30,
+            self::YEAR => 365,
+        };
+
+        $second = max(2, intdiv($rangeAmount, 4));
+        $third = max($second + 1, intdiv($rangeAmount, 2));
+
+        return [$unitDays, $second * $unitDays, $third * $unitDays];
+    }
+
     public function getDAUDates(CarbonInterface $endDateStart): array
     {
         return match ($this) {

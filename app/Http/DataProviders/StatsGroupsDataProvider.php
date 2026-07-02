@@ -59,6 +59,10 @@ class StatsGroupsDataProvider extends AbstractDataProvider
             $this->request->boolean('lifetime'),
             $this->request->input('metric') === 'mrr',
             $this->request->input('metric') === 'time_to_convert',
+            // 'nau' implies the retention columns: the NAU metric page shows both,
+            // and a request only carries one metric value.
+            in_array($this->request->input('metric'), ['retention', 'nau'], true),
+            $this->request->input('metric') === 'nau',
         );
     }
 }
