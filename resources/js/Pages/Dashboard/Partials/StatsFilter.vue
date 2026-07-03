@@ -1,6 +1,6 @@
 <script setup>
 import {computed, ref} from "vue";
-import {router, useForm, usePage} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -9,7 +9,7 @@ import pluralize from 'pluralize';
 import TextInput from "@/Components/TextInput.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
 import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
-import ProjectFavicon from "@/Components/ProjectFavicon.vue";
+import ScopeSelector from "@/Components/ScopeSelector.vue";
 import {useUsage} from "@/Composables/useUsage.js";
 import DotIcon from 'bootstrap-icons/icons/dot.svg?component';
 import GearIcon from 'bootstrap-icons/icons/gear.svg?component';
@@ -34,8 +34,6 @@ const props = defineProps({
     submitRoute: {type: String, default: 'dashboard'},
     submitRouteParams: {type: Object, default: () => ({})},
 });
-
-const page = usePage();
 
 // Inertia's useForm only serializes keys present at init. The cohort fields are
 // dropped from props.filters when inactive, so they must be seeded explicitly,
@@ -91,14 +89,6 @@ const chartDescription = `
     </div>
 </div>
 `;
-
-const teamChanged = () => {
-    router.put(route('current-team.update'), {
-        team_id: page.props.auth.user.current_team_id,
-    }, {
-        preserveState: false,
-    });
-};
 
 const isCustomRange = () => {
     return form.preset === 'custom';
@@ -167,41 +157,11 @@ const showPresetModal = ref(false);
                 <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-center justify-start md:justify-end">
                     <div class="flex-grow">
                         <div class="flex flex-wrap gap-x-8 gap-y-5 items-center justify-between">
-                            <div class="flex flex-wrap gap-x-2 items-center">
-                                <div v-if="$page.props.auth.user.all_teams.length > 1">
-                                    <InputLabel class="hidden" for="teamId" value="Team" />
-                                    <SelectInput
-                                        id="teamId"
-                                        v-model="$page.props.auth.user.current_team_id"
-                                        class="mt-1 block w-40 dark:!bg-dark-800"
-                                        :options="$page.props.auth.user.all_teams"
-                                        @change="teamChanged"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel class="hidden" for="project_id" value="Project" />
-                                    <SelectInput
-                                        id="project_id"
-                                        v-model="form.project_id"
-                                        class="mt-1 block w-48 dark:!bg-dark-800"
-                                        :options="teamStats.projects"
-                                        @change="filterChanged"
-                                    >
-                                        <template #selected="{ option }">
-                                            <span class="flex items-center gap-2">
-                                                <ProjectFavicon :domain="option?.domain" />
-                                                <span class="truncate">{{ option?.name ?? 'Select...' }}</span>
-                                            </span>
-                                        </template>
-                                        <template #option="{ option }">
-                                            <span class="flex items-center gap-2">
-                                                <ProjectFavicon :domain="option.domain" />
-                                                <span class="truncate">{{ option.name }}</span>
-                                            </span>
-                                        </template>
-                                    </SelectInput>
-                                </div>
-                            </div>
+                            <ScopeSelector
+                                v-model:project-id="form.project_id"
+                                :projects="teamStats.projects"
+                                @project-changed="filterChanged"
+                            />
                             <div class="flex flex-wrap gap-x-2 items-center">
                                 <div v-if="isCustomRange()">
                                     <span>

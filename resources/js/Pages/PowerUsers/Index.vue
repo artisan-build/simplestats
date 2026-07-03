@@ -2,9 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionTable from '@/Components/ActionTable.vue';
 import SortableHeader from '@/Components/SortableHeader.vue';
-import SelectInput from '@/Components/SelectInput.vue';
-import ProjectFavicon from '@/Components/ProjectFavicon.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import ScopeSelector from '@/Components/ScopeSelector.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import InfoTooltip from '@/Components/InfoTooltip.vue';
@@ -153,29 +151,11 @@ const saveImpersonateUrl = () => {
             <div class="space-y-3">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <h1 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Power Users</h1>
-                    <div>
-                        <InputLabel class="hidden" for="project_id" value="Project" />
-                        <SelectInput
-                            id="project_id"
-                            v-model="projectId"
-                            class="block w-48 dark:!bg-dark-800"
-                            :options="teamStats.projects"
-                            @change="changeProject"
-                        >
-                            <template #selected="{ option }">
-                                <span class="flex items-center gap-2">
-                                    <ProjectFavicon :domain="option?.domain" />
-                                    <span class="truncate">{{ option?.name ?? 'Select...' }}</span>
-                                </span>
-                            </template>
-                            <template #option="{ option }">
-                                <span class="flex items-center gap-2">
-                                    <ProjectFavicon :domain="option.domain" />
-                                    <span class="truncate">{{ option.name }}</span>
-                                </span>
-                            </template>
-                        </SelectInput>
-                    </div>
+                    <ScopeSelector
+                        v-model:project-id="projectId"
+                        :projects="teamStats.projects"
+                        @project-changed="changeProject"
+                    />
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div class="max-w-3xl space-y-1">
