@@ -10,6 +10,7 @@ import TextInput from "@/Components/TextInput.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
 import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
 import ScopeSelector from "@/Components/ScopeSelector.vue";
+import InfoTooltip from "@/Components/InfoTooltip.vue";
 import {useUsage} from "@/Composables/useUsage.js";
 import DotIcon from 'bootstrap-icons/icons/dot.svg?component';
 import GearIcon from 'bootstrap-icons/icons/gear.svg?component';
@@ -129,6 +130,16 @@ const currentProject = props.teamStats.projects[props.filters.project_id] ?? pro
 const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
 const showCohortPicker = props.submitRoute !== 'retention' && currentProjectHasUsages(['users']);
 
+// period vs. cycle isn't self-evident from the labels, so spell out what each one
+// compares against (kept generic across range types).
+const comparisonHelp = `
+    <div class="space-y-1.5 text-left">
+        <div><span class="font-semibold text-green-300">Previous period</span><br>The equally long span right before the current one (e.g. the 12 weeks before the last 12).</div>
+        <div><span class="font-semibold text-green-300">Previous cycle</span><br>The matching slot one calendar step up: a day vs. the same weekday last week, a week vs. last month, a month vs. last year. Good for weekday or seasonal patterns.</div>
+        <div><span class="font-semibold text-green-300">Year over year</span><br>The exact same range one year earlier.</div>
+    </div>
+`;
+
 const comparisonActive = computed(() => Boolean(form.comparison) && String(form.comparison) !== '0');
 const comparisonClass = computed(() => comparisonActive.value
     ? 'mt-1 block w-full !bg-indigo-100 dark:!bg-indigo-500 !border-indigo-300 dark:!border-indigo-600'
@@ -224,20 +235,31 @@ const showPresetModal = ref(false);
                                 <div class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
-                                <div>
-                                    <InputLabel class="hidden" for="rangeComparison" value="Comparison" />
-                                    <SelectInput
-                                        id="rangeComparison"
-                                        v-model="form.comparison"
-                                        :class="comparisonClass"
-                                        :options="comparisonTypes"
-                                        @change="filterChanged"
-                                    />
+                                <div class="flex items-center gap-1">
+                                    <div>
+                                        <InputLabel class="hidden" for="rangeComparison" value="Comparison" />
+                                        <SelectInput
+                                            id="rangeComparison"
+                                            v-model="form.comparison"
+                                            :class="comparisonClass"
+                                            :options="comparisonTypes"
+                                            @change="filterChanged"
+                                        />
+                                    </div>
+                                    <InfoTooltip :html="comparisonHelp" placement="bottom" icon-class="size-5 mt-1 ml-1" />
                                 </div>
                                 <div class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
-                                <CohortPicker v-if="showCohortPicker" :filters="filters" @apply="applyCohort" @clear="clearCohort" />
+                                <div v-if="showCohortPicker" class="flex items-center gap-1">
+                                    <CohortPicker :filters="filters" @apply="applyCohort" @clear="clearCohort" />
+                                    <InfoTooltip
+                                        title="Cohort filter"
+                                        text="Narrows every metric to users who registered inside the chosen window. The observation period stays whatever you selected separately, so you can follow one signup cohort over time."
+                                        placement="bottom"
+                                        icon-class="size-5 mt-1 ml-1"
+                                    />
+                                </div>
                                 <div v-if="showCohortPicker" class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
