@@ -26,23 +26,23 @@ const teamChanged = () => {
 </script>
 
 <template>
-    <div class="flex flex-wrap gap-x-2 items-center">
-        <div v-if="page.props.auth.user.all_teams.length > 1">
+    <div class="flex flex-row flex-wrap gap-x-2 gap-y-3 items-center w-full sm:w-auto">
+        <div v-if="page.props.auth.user.all_teams.length > 1" class="flex-1 sm:flex-none min-w-0">
             <InputLabel class="hidden" for="teamId" value="Team" />
             <SelectInput
                 id="teamId"
                 v-model="currentTeamId"
-                class="block w-40 dark:!bg-dark-800"
+                class="block w-full sm:w-40 dark:!bg-dark-800"
                 :options="page.props.auth.user.all_teams"
                 @change="teamChanged"
             />
         </div>
-        <div>
+        <div class="flex-1 sm:flex-none min-w-0">
             <InputLabel class="hidden" for="project_id" value="Project" />
             <SelectInput
                 id="project_id"
                 :model-value="projectId"
-                class="block w-48 dark:!bg-dark-800"
+                class="block w-full sm:w-48 dark:!bg-dark-800"
                 :options="projects"
                 @update:model-value="emit('update:projectId', $event)"
                 @change="emit('project-changed')"

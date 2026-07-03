@@ -110,7 +110,13 @@ const onChange = (dates) => {
 
 <style>
 .cohort-picker {
-    width: 220px;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .cohort-picker {
+        width: 220px;
+    }
 }
 
 .cohort-picker .dp__input {

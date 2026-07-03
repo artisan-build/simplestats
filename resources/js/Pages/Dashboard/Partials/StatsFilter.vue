@@ -167,98 +167,102 @@ const showPresetModal = ref(false);
             <form @submit.prevent="submit" class="flex-grow">
                 <div class="flex flex-wrap w-full gap-x-8 gap-y-5 items-center justify-start md:justify-end">
                     <div class="flex-grow">
-                        <div class="flex flex-wrap gap-x-8 gap-y-5 items-center justify-between">
+                        <div class="flex flex-col sm:flex-row flex-wrap gap-x-8 gap-y-4 sm:gap-y-5 items-stretch sm:items-center justify-between">
                             <ScopeSelector
                                 v-model:project-id="form.project_id"
                                 :projects="teamStats.projects"
                                 @project-changed="filterChanged"
                             />
-                            <div class="flex flex-wrap gap-x-2 items-center">
-                                <div v-if="isCustomRange()">
-                                    <span>
+                            <div class="flex flex-col sm:flex-row sm:flex-wrap gap-y-3 sm:gap-y-5 gap-x-2 items-stretch sm:items-center w-full sm:w-auto">
+                                <div v-if="isCustomRange()" class="flex flex-wrap items-center gap-x-2 gap-y-2 sm:contents">
+                                    <span class="text-sm text-gray-500 dark:text-dark-400 sm:text-inherit sm:dark:text-inherit">
                                         From
                                     </span>
-                                </div>
-                                <div v-if="isCustomRange()">
-                                    <InputLabel class="hidden" for="range_start" value="Start from" />
-                                    <TextInput
-                                        type="date"
-                                        id="range_start"
-                                        v-model="form.range_start"
-                                        class="mt-1 block w-36 dark:!bg-dark-800"
-                                        @change="filterChanged"
-                                    />
-                                </div>
-                                <div v-if="isCustomRange()">
-                                    <span>
+                                    <div class="flex-1 sm:flex-none">
+                                        <InputLabel class="hidden" for="range_start" value="Start from" />
+                                        <TextInput
+                                            type="date"
+                                            id="range_start"
+                                            v-model="form.range_start"
+                                            class="mt-1 sm:mt-0 block w-full sm:w-36 dark:!bg-dark-800"
+                                            @change="filterChanged"
+                                        />
+                                    </div>
+                                    <span class="text-sm text-gray-500 dark:text-dark-400 sm:text-inherit sm:dark:text-inherit">
                                         last
                                     </span>
-                                </div>
-                                <div v-if="isCustomRange()">
-                                    <InputLabel class="hidden" for="range_amount" value="Last" />
-                                    <SelectInput
-                                        id="range_amount"
-                                        v-model="form.range_amount"
-                                        class="mt-1 block w-20 dark:!bg-dark-800"
-                                        :options="rangeAmounts"
-                                        @change="filterChanged"
-                                    />
-                                </div>
-                                <div v-if="isCustomRange()">
-                                    <InputLabel class="hidden" for="range_type" value="&nbsp;" />
-                                    <SelectInput
-                                        id="range_type"
-                                        v-model="form.range_type"
-                                        class="mt-1 block w-28 dark:!bg-dark-800"
-                                        :options="rangeTypes"
-                                        @change="filterChanged"
-                                    />
-                                </div>
-                                <div v-if="isCustomRange()">
-                                    <DotIcon class="size-4" />
+                                    <div>
+                                        <InputLabel class="hidden" for="range_amount" value="Last" />
+                                        <SelectInput
+                                            id="range_amount"
+                                            v-model="form.range_amount"
+                                            class="mt-1 sm:mt-0 block w-20 dark:!bg-dark-800"
+                                            :options="rangeAmounts"
+                                            @change="filterChanged"
+                                        />
+                                    </div>
+                                    <div class="flex-1 sm:flex-none">
+                                        <InputLabel class="hidden" for="range_type" value="&nbsp;" />
+                                        <SelectInput
+                                            id="range_type"
+                                            v-model="form.range_type"
+                                            class="mt-1 sm:mt-0 block w-full sm:w-28 dark:!bg-dark-800"
+                                            :options="rangeTypes"
+                                            @change="filterChanged"
+                                        />
+                                    </div>
+                                    <div class="hidden sm:block">
+                                        <DotIcon class="size-4" />
+                                    </div>
                                 </div>
                                 <div class="flex items-center gap-1" data-tour="presets">
-                                    <div>
+                                    <div class="flex-1 sm:flex-none">
                                         <InputLabel class="hidden" for="rangePreset" value="Preset" />
                                         <SelectInput
                                             id="rangePreset"
                                             v-model="form.preset"
-                                            class="mt-1 block w-40 dark:!bg-dark-800"
+                                            class="mt-1 block w-full sm:w-40 dark:!bg-dark-800"
                                             :options="presets"
                                             @change="filterChanged"
                                         />
                                     </div>
-                                    <button type="button" aria-label="Manage Presets" @click="showPresetModal = true" class="mt-1 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
+                                    <button type="button" aria-label="Manage Presets" @click="showPresetModal = true" class="hidden sm:block mt-1 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
                                         <GearIcon class="size-5" />
                                     </button>
                                 </div>
                                 <div class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
-                                <div class="flex items-center gap-1">
-                                    <div>
-                                        <InputLabel class="hidden" for="rangeComparison" value="Comparison" />
-                                        <SelectInput
-                                            id="rangeComparison"
-                                            v-model="form.comparison"
-                                            :class="comparisonClass"
-                                            :options="comparisonTypes"
-                                            @change="filterChanged"
-                                        />
+                                <div class="flex flex-row gap-2 sm:contents">
+                                    <div class="flex items-center gap-1 flex-1 sm:flex-none">
+                                        <div class="flex-1 sm:flex-none">
+                                            <InputLabel class="hidden" for="rangeComparison" value="Comparison" />
+                                            <SelectInput
+                                                id="rangeComparison"
+                                                v-model="form.comparison"
+                                                :class="comparisonClass"
+                                                :options="comparisonTypes"
+                                                @change="filterChanged"
+                                            />
+                                        </div>
+                                        <span class="hidden sm:inline-flex">
+                                            <InfoTooltip :html="comparisonHelp" placement="bottom" icon-class="size-5 mt-1 ml-1" />
+                                        </span>
                                     </div>
-                                    <InfoTooltip :html="comparisonHelp" placement="bottom" icon-class="size-5 mt-1 ml-1" />
-                                </div>
-                                <div class="hidden sm:block">
-                                    <DotIcon class="size-4" />
-                                </div>
-                                <div v-if="showCohortPicker" class="flex items-center gap-1">
-                                    <CohortPicker :filters="filters" @apply="applyCohort" @clear="clearCohort" />
-                                    <InfoTooltip
-                                        title="Cohort filter"
-                                        text="Narrows every metric to users who registered inside the chosen window. The observation period stays whatever you selected separately, so you can follow one signup cohort over time."
-                                        placement="bottom"
-                                        icon-class="size-5 mt-1 ml-1"
-                                    />
+                                    <div class="hidden sm:block">
+                                        <DotIcon class="size-4" />
+                                    </div>
+                                    <div v-if="showCohortPicker" class="flex items-center gap-1 flex-1 sm:flex-none">
+                                        <CohortPicker :filters="filters" @apply="applyCohort" @clear="clearCohort" />
+                                        <span class="hidden sm:inline-flex">
+                                            <InfoTooltip
+                                                title="Cohort filter"
+                                                text="Narrows every metric to users who registered inside the chosen window. The observation period stays whatever you selected separately, so you can follow one signup cohort over time."
+                                                placement="bottom"
+                                                icon-class="size-5 mt-1 ml-1"
+                                            />
+                                        </span>
+                                    </div>
                                 </div>
                                 <div v-if="showCohortPicker" class="hidden sm:block">
                                     <DotIcon class="size-4" />
@@ -268,11 +272,11 @@ const showPresetModal = ref(false);
                                         <InfoIcon class="size-4" />
                                     </div>
                                 </div>
-                                <div class="">
+                                <div class="mt-1 sm:mt-0">
                                     <InputLabel class="hidden" for="refresh" value="&nbsp;" />
-                                    <SecondaryButton type="submit" aria-label="Reload" style="margin-top:3px;" class="py-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                    <SecondaryButton type="submit" aria-label="Reload" class="w-full sm:w-auto justify-center py-3 sm:mt-[3px]" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                                         <RefreshIcon class="size-4" />
-                                        <span class="ml-2 hidden">Refresh</span>
+                                        <span class="ml-2 sm:hidden">Refresh</span>
                                     </SecondaryButton>
                                 </div>
                             </div>
