@@ -74,22 +74,24 @@ onMounted(() => {
                         <span class="relative inline-flex size-3 rounded-full bg-indigo-400"></span>
                     </span>
                 </button>
-            </div>
 
-            <div class="mt-4 flex flex-wrap justify-center gap-2 lg:hidden">
-                <button
-                    v-for="screen in screens"
-                    :key="`tab-${screen.key}`"
-                    type="button"
-                    class="rounded-full px-4 py-1.5 text-sm font-medium transition"
-                    :class="screen.key === activeScreen
-                        ? 'bg-indigo-500 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'"
-                    :aria-pressed="screen.key === activeScreen"
-                    @click="activeScreen = screen.key"
-                >
-                    {{ screen.label }}
-                </button>
+                <div class="absolute inset-x-0 bottom-3 flex justify-center px-3 lg:hidden">
+                    <div class="flex max-w-full flex-wrap justify-center gap-1.5 rounded-full border border-gray-200/70 bg-white/80 p-1.5 shadow-lg backdrop-blur dark:border-gray-700/70 dark:bg-gray-900/80">
+                        <button
+                            v-for="screen in screens"
+                            :key="`tab-${screen.key}`"
+                            type="button"
+                            class="rounded-full px-3 py-1 text-xs font-medium transition sm:text-sm"
+                            :class="screen.key === activeScreen
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
+                            :aria-pressed="screen.key === activeScreen"
+                            @click="activeScreen = screen.key"
+                        >
+                            {{ screen.label }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
