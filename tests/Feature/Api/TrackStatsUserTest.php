@@ -1,13 +1,16 @@
 <?php
 
+use App\Enums\UserNotificationType;
 use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\StatsLogin;
 use App\Models\StatsUser;
 use App\Models\User;
+use App\Notifications\ProjectAlertRegistrationNotification;
 use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     $this->seed(TestUserSeeder::class);
@@ -36,6 +39,45 @@ function setUserProjectContext($project): void
     AppHelper::setTeamContextFromAuth($project);
     Context::add('project_id', $project->id);
     Context::add('request_url', '/api/v1/stats-user');
+}
+
+/**
+ * Simulates a parallel ingest worker winning the insert race (SIMPLESTATS-72): the
+ * creating hook fires between the job's firstOrNew lookup and its insert, so the raw
+ * insert lands exactly inside that window and the job's own insert hits the pkey.
+ * Fires only once so the job's retry attempt goes through cleanly (in production the
+ * winner's row survives, here it is rolled back together with the job's savepoint).
+ */
+function insertConflictingStatsUserRowOnCreating(string $userId, Project $project): void
+{
+    $fired = false;
+
+    StatsUser::creating(function (StatsUser $statsUser) use ($userId, $project, &$fired) {
+        if ($fired || (string) $statsUser->id !== $userId) {
+            return;
+        }
+
+        $fired = true;
+
+        DB::table('stats_users')->insert([
+            'id' => $userId,
+            'team_id' => $project->team_id,
+            'project_id' => $project->id,
+            'time' => now()->format('Y-m-d H:i:s'),
+            'time_utc' => now()->format('Y-m-d H:i:s'),
+            'registered' => false,
+        ]);
+    });
+}
+
+function enableRegistrationAlerts($project, $user): void
+{
+    $project->userNotifications()->updateOrCreate([
+        'user_id' => $user->id,
+        'type' => UserNotificationType::PROJECT_ALERT->value,
+    ], [
+        'settings' => ['tracking' => ['registrations' => true]],
+    ]);
 }
 
 test('store user with auth and required fields returns 200', function () {
@@ -140,6 +182,41 @@ test('without add_login flag no login record is created', function () {
 
     $login = StatsLogin::where('stats_user_id', $payload['id'])->first();
     expect($login)->toBeNull();
+});
+
+test('a concurrent insert between firstOrNew and save is retried instead of failing', function () {
+    Notification::fake();
+    enableRegistrationAlerts($this->project, $this->user);
+
+    $payload = validUserPayload(['page_entry' => '/signup']);
+    insertConflictingStatsUserRowOnCreating($payload['id'], $this->project);
+
+    $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
+
+    setUserProjectContext($this->project);
+
+    $users = StatsUser::where('id', $payload['id'])->get();
+    expect($users)->toHaveCount(1)
+        ->and($users->first()->registered)->toBeTrue()
+        ->and($users->first()->stats_page_entry_id)->not->toBeNull();
+
+    Notification::assertSentToTimes($this->user, ProjectAlertRegistrationNotification::class, 1);
+});
+
+test('a duplicate registration for an already registered user sends no second alert', function () {
+    Notification::fake();
+    enableRegistrationAlerts($this->project, $this->user);
+
+    $userId = (string) fake()->unique()->randomNumber(5);
+
+    $this->postJson('/api/v1/stats-user', validUserPayload(['id' => $userId]), apiHeaders($this->token))->assertOk();
+    $this->postJson('/api/v1/stats-user', validUserPayload(['id' => $userId]), apiHeaders($this->token))->assertOk();
+
+    setUserProjectContext($this->project);
+
+    expect(StatsUser::where('id', $userId)->count())->toBe(1);
+
+    Notification::assertSentToTimes($this->user, ProjectAlertRegistrationNotification::class, 1);
 });
 
 test('bot user agents are rejected with 200', function () {

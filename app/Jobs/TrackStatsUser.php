@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\StatsUser;
 use App\Validators\StatsLoginValidator;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class TrackStatsUser extends BaseStatsTrack
 {
@@ -23,15 +24,26 @@ class TrackStatsUser extends BaseStatsTrack
         $properties = $this->input['properties'] ?? [];
         unset($this->input['properties']);
 
-        $statsUser = StatsUser::firstOrNew(['id' => $this->input['id']]);
+        // retried once because a parallel ingest worker (duplicate stats-user call or a
+        // login/payment placeholder shell) can win the insert between firstOrNew and save;
+        // the second attempt then finds the winner's row and takes the update path
+        [$statsUser, $isFirstRegistration] = retry(2, function () {
+            $statsUser = StatsUser::firstOrNew(['id' => $this->input['id']]);
 
-        // a pre-existing registered row was already alerted; a new row or a placeholder shell
-        // (registered = false) is the first real registration.
-        $isFirstRegistration = ! ($statsUser->exists && $statsUser->registered);
+            // a pre-existing registered row was already alerted; a new row or a placeholder shell
+            // (registered = false) is the first real registration.
+            $isFirstRegistration = ! ($statsUser->exists && $statsUser->registered);
 
-        $statsUser->fill($this->input);
-        $statsUser->registered = true;
-        $statsUser->save();
+            $statsUser->fill($this->input);
+            $statsUser->registered = true;
+
+            // savepoint wrapper (same as the framework's createOrFirst): without it, a unique
+            // violation inside an outer transaction (e.g. RefreshDatabase) aborts the whole
+            // Postgres transaction and the retry could not run
+            $statsUser->newModelQuery()->withSavepointIfNeeded(fn () => $statsUser->save());
+
+            return [$statsUser, $isFirstRegistration];
+        }, 0, fn ($e) => $e instanceof UniqueConstraintViolationException);
 
         $statsUser->recordCustomProperties($properties, CarbonImmutable::parse($this->input['time']));
 
