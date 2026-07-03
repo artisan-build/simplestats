@@ -58,10 +58,12 @@ const columnRegistry = {
         text: 'Users whose first return (their 2nd login) happened in the selected range, no matter when they signed up.',
     }},
     // whole percent: channel comparison doesn't need sub-percent precision, and the
-    // often small censored denominators make decimals false precision anyway
-    ret_c1:   {key: 'ret_c1', ...retentionLabels[0], format: 'percent', decimals: 0, bits: ['users']},
-    ret_c2:   {key: 'ret_c2', ...retentionLabels[1], format: 'percent', decimals: 0, bits: ['users']},
-    ret_c3:   {key: 'ret_c3', ...retentionLabels[2], format: 'percent', decimals: 0, bits: ['users']},
+    // often small censored denominators make decimals false precision anyway.
+    // sortWith: rank by signup volume, not the rate itself, so a 3-user channel at
+    // 100% doesn't outrank a 1000-user one (the rate stays the highlighted column).
+    ret_c1:   {key: 'ret_c1', ...retentionLabels[0], format: 'percent', decimals: 0, bits: ['users'], sortWith: 'reg'},
+    ret_c2:   {key: 'ret_c2', ...retentionLabels[1], format: 'percent', decimals: 0, bits: ['users'], sortWith: 'reg'},
+    ret_c3:   {key: 'ret_c3', ...retentionLabels[2], format: 'percent', decimals: 0, bits: ['users'], sortWith: 'reg'},
     time_to_convert: {key: 'time_to_convert', label: 'Time to Conv.', labelSmall: 'TTC', format: 'days', bits: ['visitors', 'users']},
     mrr:      {key: 'mrr', label: 'MRR', format: 'currency', bits: ['subscription']},
     subscribers: {key: 'subscribers', label: 'Subs', format: 'number', bits: ['subscription']},
@@ -108,10 +110,17 @@ const curatedColumns = buildCuratedColumns();
 const columns = curatedColumns ?? defaultColumns;
 const highlightColumn = curatedColumns ? props.breakdownPrimary : undefined;
 
+// Rate columns opt out of sorting by themselves (sortWith, see registry): they rank by a
+// volume column while staying the highlighted primary.
+const primaryDef = curatedColumns ? columnRegistry[props.breakdownPrimary] : null;
+const defaultCuratedSort = primaryDef?.sortWith && curatedColumns.some((col) => col.key === primaryDef.sortWith)
+    ? primaryDef.sortWith
+    : props.breakdownPrimary;
+
 if (! filters.stats_sort) {
     filters.stats_sort = isEventGroup
         ? 'triggered'
-        : (curatedColumns ? props.breakdownPrimary : 'visitors');
+        : (curatedColumns ? defaultCuratedSort : 'visitors');
 }
 
 // The MRR columns are a point-in-time snapshot the backend only computes on request,
@@ -194,13 +203,13 @@ const calculatePercentage = (current) => {
     const defaultSort = isEventGroup ? 'triggered' : 'visitors';
     const sort = (filters.stats_sort === 'name' || (isEventGroup && filters.stats_sort === 'visitors')) ? defaultSort : filters.stats_sort ;
 
-    let highest = data.value.reduce((max, item) => item[sort] > max[sort] ? item : max, data.value[0])[sort] ?? 0;
+    const highest = data.value.reduce((max, item) => item[sort] > max[sort] ? item : max, data.value[0])[sort];
 
-    // if net is 0 then we try visitors
-    // if (highest <= 0) {
-    //     highest = data.value.reduce((max, item) => item.visitors > max.visitors ? item : max, data.value[0]).visitors;
-    //     return Math.floor((current.visitors / highest) * 100);
-    // }
+    // Rate columns can be null (censored retention), and the max is 0/null when a whole
+    // dimension is still censored: guard against NaN/Infinity gradient bars.
+    if (! highest || current[sort] == null) {
+        return 0;
+    }
 
     return Math.floor((current[sort] / highest) * 100);
 };
