@@ -64,7 +64,7 @@ onMounted(() => {
                     v-for="screen in screens"
                     v-show="screen.key !== activeScreen"
                     :key="`hotspot-${screen.key}`"
-                    class="absolute -translate-x-1/2 -translate-y-1/2"
+                    class="absolute hidden -translate-x-1/2 -translate-y-1/2 lg:block"
                     :style="{ top: screen.top, left: '6.65%' }"
                     :aria-label="`Show ${screen.label} screenshot`"
                     @click="activeScreen = screen.key"
@@ -73,6 +73,22 @@ onMounted(() => {
                         <span class="absolute inline-flex size-full animate-ping rounded-full bg-indigo-300 opacity-75"></span>
                         <span class="relative inline-flex size-3 rounded-full bg-indigo-400"></span>
                     </span>
+                </button>
+            </div>
+
+            <div class="mt-4 flex flex-wrap justify-center gap-2 lg:hidden">
+                <button
+                    v-for="screen in screens"
+                    :key="`tab-${screen.key}`"
+                    type="button"
+                    class="rounded-full px-4 py-1.5 text-sm font-medium transition"
+                    :class="screen.key === activeScreen
+                        ? 'bg-indigo-500 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'"
+                    :aria-pressed="screen.key === activeScreen"
+                    @click="activeScreen = screen.key"
+                >
+                    {{ screen.label }}
                 </button>
             </div>
         </div>
