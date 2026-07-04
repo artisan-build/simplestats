@@ -6,12 +6,13 @@ use App\Concerns\HasCounterByStatsUser;
 use App\Concerns\HasStatsUserAssurance;
 use App\Exceptions\ImportCanceledException;
 use App\Models\DataImport;
+use App\Services\SubscriptionService;
 use App\Validators\BaseStatsValidator;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -74,9 +75,12 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
             throw new ImportCanceledException;
         }
 
-        // TODO this may be an performance issue? on 100k data import we would do 100k queries.
-        // check if the users team plan has the rights to create more stats records...
-        Gate::authorize('create', [$this->modelClass, $this->counter]);
+        // check if the users team plan has the rights to create more stats records;
+        // counterpart of the EnsureWithinEventLimit middleware on the API ingest routes
+        // (the counter delta is needed because batch inserts bypass the StatsObserver increments)
+        if (app(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->dataImport->team, $this->counter)) {
+            throw new AuthorizationException('Monthly event limit reached.');
+        }
 
         $this->counter++;
 

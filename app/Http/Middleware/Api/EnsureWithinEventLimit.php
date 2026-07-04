@@ -15,6 +15,7 @@ class EnsureWithinEventLimit
 
     /**
      * Reject ingest requests once the team's monthly event limit is reached.
+     * Counterpart for data imports: BaseStatsImport::model().
      *
      * We respond with 200 (not 403) so the client treats it as terminal and
      * drops the request instead of retrying it for the rest of the month,

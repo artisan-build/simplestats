@@ -118,7 +118,16 @@ class SubscriptionService
         return null;
     }
 
-    public function hasReachedMonthlyEventLimit(Team $team): bool
+    /**
+     * Single source of truth for the plan event limit. Enforced in TWO places,
+     * keep them in sync when changing semantics here:
+     * - EnsureWithinEventLimit middleware (API ingest, responds terminal 200)
+     * - BaseStatsImport::model() (data imports, throws AuthorizationException)
+     *
+     * $delta covers events not yet reflected in events_count_monthly, e.g. rows
+     * batch-inserted during an import (model observers do not fire there).
+     */
+    public function hasReachedMonthlyEventLimit(Team $team, int $delta = 0): bool
     {
         $allowedEvents = $team->owner->sparkPlan()->options['Events'];
 
@@ -126,7 +135,7 @@ class SubscriptionService
             return false;
         }
 
-        return $team->events_count_monthly >= $allowedEvents;
+        return $team->events_count_monthly + $delta >= $allowedEvents;
     }
 
     public function getPlanAlarm(Team $team): array
