@@ -91,7 +91,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
             <div class="mr-4 text-center">
                 <component
                     :class="getTrackedJobStatusOptions(dataImport.tracked_job).svgClass"
-                    class="inline-block h-6 w-6" :is="getTrackedJobStatusOptions(dataImport.tracked_job).icon"
+                    class="inline-block size-5 ml-2" :is="getTrackedJobStatusOptions(dataImport.tracked_job).icon"
                     v-tooltip="getTrackedJobStatusOptions(dataImport.tracked_job).text"
                 />
                 <span v-if="! dataImport.tracked_job?.finished_at" class="block">
