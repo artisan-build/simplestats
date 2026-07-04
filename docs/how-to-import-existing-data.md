@@ -92,9 +92,33 @@ The first row of your import file must be a **heading row** (_a row in which eac
 
 ### Simulated Natural Login Behavior (SNLB)
 
-_Coming soon_: In many cases, historical login data for users isn't readily available. To address this, we're introducing an upcoming feature that allows for the optional inclusion of a `last_known_activity` field. This field could correspond to the `updated_at` attribute, a `last_login` field, or any similar date in your `users` table that best approximates the user's most recent activity.
+In many cases, historical login data for users isn't readily available. Without logins, activity metrics like DAU/WAU/MAU stay empty for the imported period. To address this, your user import file may optionally include a `last_known_activity` column. This field could correspond to the `updated_at` attribute, a `last_login` field, or any similar date in your `users` table that best approximates the user's most recent activity.
 
-By supplying this information, we will generate simulated login entries to mimic natural login patterns, based on the assumption that each user logged in at least **once a week** from their registration date to their _last known activity_. This enhancement aims to provide a richer, more accurate representation of your historical user engagement over time.
+By supplying this information, we generate simulated login entries to mimic natural login patterns, based on the assumption that each user logged in at least **once a week** from their registration date to their _last known activity_. This provides a richer, more accurate representation of your historical user engagement over time.
+
+| Key                     | Type                | Description                                                                                              |
+|-------------------------|---------------------|----------------------------------------------------------------------------------------------------------|
+| **last_known_activity** | _string_ `nullable` | The time of the user's most recent activity.<br/>Format: `Y-m-d H:i:s`, must be equal or after `time` |
+
+How it works:
+
+- The first simulated login is placed at the registration `time`, followed by logins at least once a week with natural variation, and a final login exactly at `last_known_activity`.
+- Values in the future are clamped to the current time.
+- Users that already have login data are skipped, so re-imports won't create duplicates.
+- Rolling back the import also removes the generated logins.
+
+Here is an **example** of how the SQL query from above may look like with SNLB:
+
+```sql
+SELECT
+    id,
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`,
+    DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s') AS `last_known_activity`
+FROM
+    users
+WHERE
+    1;
+```
 
 ## Importing Payment Data
 
