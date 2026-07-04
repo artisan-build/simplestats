@@ -6,6 +6,7 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
 {
     public function __construct(
         protected string $statsSort,
+        protected int $limit,
     ) {}
 
     public function build(): string
@@ -15,9 +16,13 @@ class StatsAggregationsGroupedEventsSqlBuilder extends BaseSqlBuilder
         $this->applySql($this->getEventStats());
         $this->applySql($this->getNet(), false);
 
+        $this->applySql('SELECT * FROM (', false);
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
+        $this->applySql(') grouped_rows', false);
+        $this->applySql('WHERE visitors <> 0 OR triggered <> 0 OR net <> 0', false);
         $this->applySql($this->getORDER(), false);
+        $this->applySql("LIMIT $this->limit", false);
 
         return $this->sql;
     }

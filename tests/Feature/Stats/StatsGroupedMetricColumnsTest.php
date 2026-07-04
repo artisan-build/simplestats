@@ -782,3 +782,30 @@ it('serves per-dimension NAU with retention through the stats.grouped endpoint w
         ->and((int) $row['nau'])->toBe(1)
         ->and((float) $row['ret_c1'])->toBe(100.0);
 });
+
+it('caps the grouped breakdown at the requested limit and drops all-zero dimension rows', function () {
+    $small = makeSource($this->team->id, 'small');
+    $medium = makeSource($this->team->id, 'medium');
+    $large = makeSource($this->team->id, 'large');
+    makeSource($this->team->id, 'inactive');
+
+    insertSourceVisitors($this->team->id, $this->pid, $small, '2026-03-30 12:00:00', 1);
+    insertSourceVisitors($this->team->id, $this->pid, $medium, '2026-03-30 12:00:00', 2);
+    insertSourceVisitors($this->team->id, $this->pid, $large, '2026-03-30 12:00:00', 3);
+
+    $filter = new StatsFilterDto(
+        projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
+        rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
+    );
+
+    $service = app(StatsAggregationsService::class);
+
+    $top = $service->getAggregatedGroupedData($filter, 'track_source', 'visitors', 2);
+
+    expect($top->pluck('name')->all())->toBe(['large', 'medium']);
+
+    // 'inactive' has a dimension row but no activity at all, 'Direct / Unknown' stays at zero too
+    $all = $service->getAggregatedGroupedData($filter, 'track_source', 'visitors', 10);
+
+    expect($all->pluck('name')->all())->toBe(['large', 'medium', 'small']);
+});

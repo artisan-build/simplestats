@@ -98,13 +98,13 @@ class StatsAggregationsService
 
         if ($statsType === 'custom_event_name') {
             $sql = (new StatsAggregationsGroupedEventsSqlBuilder(
-                $statsSort)
+                $statsSort, $limit)
             )->build();
         } else {
             $statsSort = $this->resolveGroupedSort($statsSort, $trackablePerson, $withMrr, $withTimeToConvert, $withRetention, $withNau);
 
             $sql = (new StatsAggregationsGroupedSqlBuilder(
-                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $withMrr, $withTimeToConvert, $withNau,
+                $statsTable, $statsDBType, $statsSort, $typeIdFallback, $trackablePerson, $limit, $withMrr, $withTimeToConvert, $withNau,
                 $withRetention ? $filters->rangeType->retentionCheckpointDays($filters->rangeAmount) : [])
             )->build();
         }
@@ -144,15 +144,7 @@ class StatsAggregationsService
             }
         }
 
-        return collect($dataArray)->reject(function ($item) {
-            return (! isset($item['dau']) || $item['dau'] == 0)
-                && (! isset($item['reg']) || $item['reg'] == 0)
-                && (! isset($item['net']) || $item['net'] == 0)
-                && (! isset($item['visitors']) || $item['visitors'] == 0)
-                && (! isset($item['mrr']) || $item['mrr'] == 0)
-                && (! isset($item['nau']) || $item['nau'] == 0)
-                && (! isset($item['triggered']) || $item['triggered'] == 0);
-        })->take($limit);
+        return collect($dataArray);
     }
 
     /**
@@ -180,7 +172,7 @@ class StatsAggregationsService
         }
 
         $sql = (new StatsAggregationsGroupedPropertiesSqlBuilder(
-            $statsSort, $lifetime
+            $statsSort, $limit, $lifetime
         ))->build();
 
         $filterConditions = $this->getFilterConditions($filters);
@@ -190,9 +182,7 @@ class StatsAggregationsService
 
         $dataArray = $this->castNumericValues($this->getDataArray($sql));
 
-        return collect($dataArray)->reject(function ($item) {
-            return $item['reg'] == 0 && $item['visitors'] == 0 && $item['net'] == 0;
-        })->take($limit);
+        return collect($dataArray);
     }
 
     /**

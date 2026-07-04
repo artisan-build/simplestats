@@ -22,6 +22,7 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
 {
     public function __construct(
         protected string $statsSort,
+        protected int $limit,
         protected bool $lifetime = false,
     ) {}
 
@@ -32,9 +33,13 @@ class StatsAggregationsGroupedPropertiesSqlBuilder extends BaseSqlBuilder
         $this->applySql($this->getReg());
         $this->applySql($this->getNet(), false);
 
+        $this->applySql('SELECT * FROM (', false);
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
+        $this->applySql(') grouped_rows', false);
+        $this->applySql('WHERE reg <> 0 OR visitors <> 0 OR net <> 0', false);
         $this->applySql($this->getORDER(), false);
+        $this->applySql("LIMIT $this->limit", false);
 
         return $this->sql;
     }

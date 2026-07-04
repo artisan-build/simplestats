@@ -101,13 +101,13 @@ abstract class BaseSqlBuilder
             $oder .= ', reg DESC NULLS LAST';
         }
 
-        $oder .= ', visitors DESC;';
+        $oder .= ', visitors DESC';
 
         return $oder;
     }
 
     protected function getEventsGroupedOrderBy(string $sort): string
     {
-        return "ORDER BY {$sort} DESC NULLS LAST, triggered DESC NULLS LAST, visitors DESC;";
+        return "ORDER BY {$sort} DESC NULLS LAST, triggered DESC NULLS LAST, visitors DESC";
     }
 }

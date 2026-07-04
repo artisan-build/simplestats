@@ -12,6 +12,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
         protected string $statsSort,
         protected string $typeIdFallback,
         protected TrackablePerson $trackablePerson,
+        protected int $limit,
         protected bool $withMrr = false,
         protected bool $withTimeToConvert = false,
         protected bool $withNau = false,
@@ -48,11 +49,40 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             $this->applySql($this->getLT_RETENTION(), false);
         }
 
+        $this->applySql('SELECT * FROM (', false);
         $this->applySql($this->getSELECT(), false);
         $this->applySql($this->getFROM(), false);
+        $this->applySql(') grouped_rows', false);
+        $this->applySql($this->getWHERE(), false);
         $this->applySql($this->getORDER(), false);
+        $this->applySql("LIMIT $this->limit", false);
 
         return $this->sql;
+    }
+
+    /**
+     * All-zero rows are dropped and the row cap applied in SQL, not in PHP: the
+     * stats_groups CTE yields one row per dimension value of the whole team (tens
+     * of thousands of entry pages for large teams), and hydrating them all just to
+     * take() a handful exhausted the request memory limit.
+     */
+    protected function getWHERE(): string
+    {
+        $nonZeroColumns = ['visitors', 'net'];
+
+        if ($this->trackablePerson === TrackablePerson::USER) {
+            $nonZeroColumns = ['dau', 'reg', ...$nonZeroColumns];
+        }
+
+        if ($this->withMrr) {
+            $nonZeroColumns[] = 'mrr';
+        }
+
+        if ($this->withNau) {
+            $nonZeroColumns[] = 'nau';
+        }
+
+        return 'WHERE '.collect($nonZeroColumns)->map(fn (string $column) => "$column <> 0")->implode(' OR ');
     }
 
     protected function getCTE(): string
