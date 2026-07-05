@@ -54,15 +54,25 @@ _Core fields:_
 
 Here is an **example** of how such an SQL query may look like:
 
-```sql
+::: code-group
+
+```sql [MySQL]
 SELECT
     id,
-    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`
 FROM
-    users
-WHERE
-    1;
+    users;
 ```
+
+```sql [PostgreSQL]
+SELECT
+    id,
+    to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') AS "time"
+FROM
+    users;
+```
+
+:::
 
 ### With Condition
 
@@ -70,7 +80,9 @@ Sometimes you may not want to count all users as "valid" registrations. So you m
 
 The query could look like this:
 
-```sql
+::: code-group
+
+```sql [MySQL]
 SELECT
     id,
     DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`
@@ -79,6 +91,18 @@ FROM
 WHERE
     email_verified_at IS NOT NULL;
 ```
+
+```sql [PostgreSQL]
+SELECT
+    id,
+    to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') AS "time"
+FROM
+    users
+WHERE
+    email_verified_at IS NOT NULL;
+```
+
+:::
 
 Now export the output of the query, save the file and then you can **upload** the file inside the app to start a new import!
 
@@ -109,16 +133,27 @@ How it works:
 
 Here is an **example** of how the SQL query from above may look like with SNLB:
 
-```sql
+::: code-group
+
+```sql [MySQL]
 SELECT
     id,
     DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`,
     DATE_FORMAT(updated_at, '%Y-%m-%d %H:%i:%s') AS `last_known_activity`
 FROM
-    users
-WHERE
-    1;
+    users;
 ```
+
+```sql [PostgreSQL]
+SELECT
+    id,
+    to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') AS "time",
+    to_char(updated_at, 'YYYY-MM-DD HH24:MI:SS') AS "last_known_activity"
+FROM
+    users;
+```
+
+:::
 
 ## Importing Payment Data
 
@@ -143,19 +178,33 @@ The following fields are allowed:
 
 Assuming the table is called `transactions`, here is an **example** of how such an SQL query may look like:
 
-```sql
+::: code-group
+
+```sql [MySQL]
 SELECT
     id,
     user_id AS stats_user_id,
     total AS gross,
     total - tax AS net,
     'USD' AS currency,
-    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`
 FROM
-    transactions
-WHERE
-    1;
+    transactions;
 ```
+
+```sql [PostgreSQL]
+SELECT
+    id,
+    user_id AS stats_user_id,
+    total AS gross,
+    total - tax AS net,
+    'USD' AS currency,
+    to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') AS "time"
+FROM
+    transactions;
+```
+
+:::
 
 ### With Condition
 
@@ -163,19 +212,37 @@ Sometimes you may not want to count all payments as "valid". So you may only exp
 
 The query could look like this:
 
-```sql
+::: code-group
+
+```sql [MySQL]
 SELECT
     id,
     user_id AS stats_user_id,
     total AS gross,
     total - tax AS net,
     'USD' AS currency,
-    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as `time`
+    DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS `time`
 FROM
     transactions
 WHERE
     status = 'completed';
 ```
+
+```sql [PostgreSQL]
+SELECT
+    id,
+    user_id AS stats_user_id,
+    total AS gross,
+    total - tax AS net,
+    'USD' AS currency,
+    to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') AS "time"
+FROM
+    transactions
+WHERE
+    status = 'completed';
+```
+
+:::
 
 Now export the output of the query, save the file and then you can **upload** the file inside the app to start a new import!
 
