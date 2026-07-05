@@ -24,6 +24,7 @@ class UserNotificationIndexDataProvider extends AbstractDataProvider
             'notificationTypes' => UserNotificationType::toArray(),
             'notificationStatsTypes' => StatsService::asOptions(),
             'notificationFrequencies' => UserNotificationFrequency::toOptions(),
+            'loginSummaryEnabled' => $this->request->user()->settings['loginSummaryEnabled'] ?? true,
         ];
     }
 

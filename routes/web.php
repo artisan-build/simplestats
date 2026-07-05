@@ -11,6 +11,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\ImprintController;
+use App\Http\Controllers\LoginSummaryController;
 use App\Http\Controllers\PowerUserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SetupInstallController;
@@ -143,6 +144,10 @@ Route::middleware([
     Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');
     Route::post('user-settings/complete-tour', [UserSettingsController::class, 'completeTour'])->name('user-settings.complete-tour');
     Route::post('user-settings/property-lifetime', [UserSettingsController::class, 'setPropertyLifetime'])->name('user-settings.property-lifetime');
+    Route::post('user-settings/login-summary', [UserSettingsController::class, 'setLoginSummary'])->name('user-settings.login-summary');
+
+    // Login Summary
+    Route::get('login-summary', LoginSummaryController::class)->name('login-summary');
 
     // Feedback
     Route::post('feedback', FeedbackController::class)->name('feedback.store');

@@ -7,7 +7,7 @@ import {router, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import PaperAirplaneIcon from 'bootstrap-icons/icons/send-fill.svg?component';
 import {capitalize} from "@/Helpers/StringHelpers.js";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 
 const page = usePage();
 
@@ -16,7 +16,16 @@ const props = defineProps({
     notificationTypes: Array,
     notificationStatsTypes: Array,
     notificationFrequencies: Array,
+    loginSummaryEnabled: Boolean,
 })
+
+const loginSummaryChecked = ref(props.loginSummaryEnabled);
+
+const updateLoginSummary = () => {
+    router.post(route('user-settings.login-summary'), {enabled: loginSummaryChecked.value}, {
+        preserveScroll: true,
+    });
+}
 
 const hasConfigurableOptions = (notification) =>
     Object.keys(notification.settings?.tracking ?? {}).length > 0 || !!notification.frequency;
@@ -54,6 +63,29 @@ const trigger = (notification) => {
             </div>
             <FormSection>
                 <template #form>
+                    <div class="col-span-6">
+                        <div>
+                            <h3>Login Summary</h3>
+                            <p class="mt-1 text-sm text-gray-600 dark:text-dark-400 text-justify">
+                                Shows a small summary across all your projects when you return after being away for a while.
+                            </p>
+                        </div>
+                        <div class="w-full mt-3 px-3 py-2 gap-3 border rounded-md flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50 dark:bg-dark-900">
+                            <div class="truncate">
+                                All projects
+                            </div>
+                            <label class="flex items-center">
+                                <Checkbox
+                                    name="loginSummaryEnabled"
+                                    @change="updateLoginSummary"
+                                    v-model:checked="loginSummaryChecked"
+                                />
+                                <span class="ms-2 text-sm text-gray-600 dark:text-dark-400">
+                                    Enabled
+                                </span>
+                            </label>
+                        </div>
+                    </div>
                     <div v-for="(groupNotifications, group) in visibleNotifications" class="col-span-6">
                         <div>
                             <h3>{{ notificationTypes[group]?.title ?? group }}</h3>

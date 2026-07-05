@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Listeners\CreateTeamMemberNotifications;
 use App\Listeners\EmailVerificationListener;
 use App\Listeners\SetCurrentTeam;
+use App\Services\LoginSummaryService;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -56,7 +57,10 @@ class EventServiceProvider extends ServiceProvider
         });
 
         Event::listen(Login::class, function ($event) {
+            session()->put(LoginSummaryService::SESSION_KEY, true);
+
             $event->user->update([
+                'previous_login_at' => $event->user->last_login_at,
                 'last_login_at' => now(),
                 'inactive_since' => null,
             ]);

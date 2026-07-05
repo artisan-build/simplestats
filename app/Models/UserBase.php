@@ -64,6 +64,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'previous_login_at' => 'immutable_datetime',
         'settings' => 'array',
     ];
 

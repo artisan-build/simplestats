@@ -2,6 +2,7 @@
 import {ref} from 'vue';
 import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
+import LoginSummaryModal from '@/Components/LoginSummaryModal.vue';
 import Navigation from "@/Components/Navigation.vue";
 import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 import ListIcon from 'bootstrap-icons/icons/list.svg?component';
@@ -23,6 +24,8 @@ const sidebarIsOpen = ref(false);
         <Head :title="title" />
 
         <Banner />
+
+        <LoginSummaryModal />
 
         <div v-if="$page.props.onboardingPassed" @click="sidebarIsOpen = false" v-show="sidebarIsOpen" class="fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-dark-950/75 lg:hidden"></div>
 

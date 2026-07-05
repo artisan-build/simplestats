@@ -27,6 +27,17 @@ class UserSettingsController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    public function setLoginSummary(Request $request)
+    {
+        $request->validate([
+            'enabled' => ['required', 'boolean'],
+        ]);
+
+        $request->user()->updateSettings('loginSummaryEnabled', $request->boolean('enabled'));
+
+        return redirect()->back();
+    }
+
     public function setPropertyLifetime(Request $request): JsonResponse
     {
         $request->validate([
