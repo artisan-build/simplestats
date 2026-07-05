@@ -75,8 +75,9 @@ onMounted(() => {
                     </span>
                 </button>
 
-                <div class="absolute inset-x-0 bottom-3 flex justify-center px-3 lg:hidden">
-                    <div class="flex max-w-full flex-wrap justify-center gap-1.5 rounded-full border border-gray-200/70 bg-white/80 p-1.5 shadow-lg backdrop-blur dark:border-gray-700/70 dark:bg-gray-900/80">
+                <!-- Below 420px the five labels don't fit in one row, so the tab bar is hidden entirely. -->
+                <div class="absolute inset-x-0 bottom-3 hidden justify-center px-3 min-[420px]:flex lg:hidden">
+                    <div class="flex max-w-full justify-center gap-1.5 rounded-full border border-gray-200/70 bg-white/80 p-1.5 shadow-lg backdrop-blur dark:border-gray-700/70 dark:bg-gray-900/80">
                         <button
                             v-for="screen in screens"
                             :key="`tab-${screen.key}`"

@@ -82,27 +82,27 @@ class ProjectController extends Controller
         return redirect()->back();
     }
 
-    public function updateImpersonateUrl(Request $request, Project $project): RedirectResponse
+    public function updateUserLinkUrl(Request $request, Project $project): RedirectResponse
     {
         $this->authorize('update', $project);
 
         $request->merge([
-            'impersonate_base_url' => filled($request->impersonate_base_url)
-                ? trim($request->impersonate_base_url)
+            'user_link_base_url' => filled($request->user_link_base_url)
+                ? trim($request->user_link_base_url)
                 : null,
         ]);
 
         $validated = $request->validate([
-            'impersonate_base_url' => ['nullable', 'string', 'max:255', function (string $attribute, mixed $value, Closure $fail) {
+            'user_link_base_url' => ['nullable', 'string', 'max:255', function (string $attribute, mixed $value, Closure $fail) {
                 // {id} is a placeholder for the tracked user id and is not a valid URL
                 // character, so validate the URL with a stand-in in its place.
                 if (! filter_var(str_replace('{id}', '1', $value), FILTER_VALIDATE_URL)) {
-                    $fail('The impersonate base URL must be a valid URL.');
+                    $fail('The user link base URL must be a valid URL.');
                 }
             }],
         ]);
 
-        $url = $validated['impersonate_base_url'] ?? null;
+        $url = $validated['user_link_base_url'] ?? null;
 
         // Only trim a trailing slash in append mode; a token url is stored verbatim so
         // the {id} position is preserved exactly.
@@ -110,7 +110,7 @@ class ProjectController extends Controller
             $url = rtrim($url, '/');
         }
 
-        $project->update(['impersonate_base_url' => $url]);
+        $project->update(['user_link_base_url' => $url]);
 
         return redirect()->back();
     }

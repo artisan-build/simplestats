@@ -2,7 +2,7 @@
 
 namespace App\Http\DataProviders;
 
-use App\Models\User;
+use App\Services\BlogService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -14,6 +14,7 @@ class BlogIndexDataProvider extends AbstractDataProvider
 
     public function __construct(
         private Request $request,
+        private BlogService $blogService,
     ) {}
 
     public function toArray(): array
@@ -22,46 +23,17 @@ class BlogIndexDataProvider extends AbstractDataProvider
 
         $page = $this->request->integer('page', 1);
         $paginatedPosts = $allPosts->forPage($page, self::PER_PAGE)->values();
-
-        $authors = $this->loadAuthors($paginatedPosts);
-        $postsWithAuthors = $this->hydratePostsWithAuthors($paginatedPosts, $authors);
+        $postCards = $this->blogService->toPostCards($paginatedPosts);
 
         return [
-            'posts' => $this->buildPaginator($postsWithAuthors, $allPosts->count(), $page),
+            'posts' => $this->buildPaginator($postCards, $allPosts->count(), $page),
         ];
     }
 
-    private function loadAuthors(Collection $posts): Collection
-    {
-        $authorIds = $posts
-            ->pluck('meta.author_id')
-            ->filter()
-            ->unique()
-            ->values();
-
-        return User::query()
-            ->whereIn('id', $authorIds)
-            ->get(['id', 'name', 'profile_photo_path'])
-            ->keyBy('id');
-    }
-
-    private function hydratePostsWithAuthors(Collection $posts, Collection $authors): Collection
-    {
-        return $posts->map(function ($post) use ($authors) {
-            $data = $post->toArray();
-            $authorId = $post->meta['author_id'] ?? null;
-            $data['author'] = $authorId && $authors->has($authorId)
-                ? $authors->get($authorId)
-                : null;
-
-            return $data;
-        });
-    }
-
-    private function buildPaginator(Collection $postsWithAuthors, int $totalCount, int $page): LengthAwarePaginator
+    private function buildPaginator(Collection $postCards, int $totalCount, int $page): LengthAwarePaginator
     {
         return new LengthAwarePaginator(
-            $postsWithAuthors,
+            $postCards,
             $totalCount,
             self::PER_PAGE,
             $page,

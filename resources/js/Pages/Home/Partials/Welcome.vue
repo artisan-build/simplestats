@@ -12,12 +12,14 @@ import Testimonials from "@/Pages/Home/Partials/Testimonials.vue";
 import Pricing from "@/Pages/Home/Partials/Pricing.vue";
 import SelfHosted from "@/Pages/Home/Partials/SelfHosted.vue";
 import Faq from "@/Pages/Home/Faq.vue";
+import BlogPosts from "@/Pages/Home/Partials/BlogPosts.vue";
 import Bottom from "@/Pages/Home/Partials/Bottom.vue";
 
 defineProps({
     plans: Array,
     banners: Array,
     discount: Number,
+    latestPosts: Array,
 });
 </script>
 
@@ -48,6 +50,8 @@ defineProps({
         <SelfHosted :discount="discount" />
 
         <Faq />
+
+        <BlogPosts :posts="latestPosts" />
 
         <Bottom />
     </div>

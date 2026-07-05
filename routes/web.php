@@ -137,7 +137,7 @@ Route::middleware([
     Route::resource('projects', ProjectController::class)->except(['edit', 'create']);
     Route::get('projects/{project}/token-view', [ProjectController::class, 'tokenView'])->name('projects.token-view');
     Route::get('projects/{project}/token-regenerate', [ProjectController::class, 'tokenRegenerate'])->name('projects.token-regenerate');
-    Route::put('projects/{project}/impersonate-url', [ProjectController::class, 'updateImpersonateUrl'])->name('projects.impersonate-url.update');
+    Route::put('projects/{project}/user-link-url', [ProjectController::class, 'updateUserLinkUrl'])->name('projects.user-link-url.update');
 
     // User Settings
     Route::post('user-settings/dashboard-preset', [UserSettingsController::class, 'setDashboardPreset'])->name('user-settings.set-dashboard-preset');

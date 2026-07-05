@@ -214,5 +214,10 @@
     "Laravel-native": "Laravel-native",
     "Ad-blocker proof": "Ad-blocker proof",
     "Self-hosting option": "Self-hosting option",
-    "Open API": "Open API"
+    "Open API": "Open API",
+
+    "Blog": "Blog",
+    "Latest from": "Latest from",
+    "our blog": "our blog",
+    "View all posts": "View all posts"
 }

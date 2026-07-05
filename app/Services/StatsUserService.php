@@ -48,7 +48,7 @@ class StatsUserService
                 fn ($query) => $query->where('project_id', $filters->projectId),
             )
             ->with([
-                'project:id,name,domain,impersonate_base_url',
+                'project:id,name,domain,user_link_base_url',
                 'statsLocationCountry:id,name',
                 'statsDeviceType:id,name',
                 'statsDevicePlatform:id,name',

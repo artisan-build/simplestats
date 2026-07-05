@@ -59,7 +59,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="pb-32">
+    <section>
         <div class="container max-w-4xl px-6 py-10 mx-auto">
 
             <SectionHeader id="faq" :eyebrow="$t('FAQ')">

@@ -7,13 +7,14 @@ defineProps({
     plans: Array,
     banners: Array,
     discount: Number,
+    latestPosts: Array,
 });
 </script>
 
 <template>
     <Head :title="$t('Revenue attribution analytics tool for Laravel apps')" />
 
-    <Welcome :plans="plans" :banners="banners" :discount="discount" />
+    <Welcome :plans="plans" :banners="banners" :discount="discount" :latest-posts="latestPosts" />
 
     <Footer />
 </template>

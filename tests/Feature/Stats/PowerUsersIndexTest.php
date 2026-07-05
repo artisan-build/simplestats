@@ -312,8 +312,8 @@ test('each row exposes the location, device and referer dimensions for icons', f
         );
 });
 
-test('the selected project impersonate base url is exposed on each row for building links', function () {
-    $this->project->update(['impersonate_base_url' => 'https://app.example.com/impersonate/take']);
+test('the selected project user link base url is exposed on each row for building links', function () {
+    $this->project->update(['user_link_base_url' => 'https://app.example.com/admin/users']);
 
     makePowerUser('imp', $this->project);
 
@@ -321,45 +321,45 @@ test('the selected project impersonate base url is exposed on each row for build
         ->assertInertia(fn ($page) => $page
             ->has('powerUsers.data', 1, fn ($row) => $row
                 ->where('id', 'imp')
-                ->where('project.impersonate_base_url', 'https://app.example.com/impersonate/take')
+                ->where('project.user_link_base_url', 'https://app.example.com/admin/users')
                 ->etc()
             )
         );
 });
 
-test('updating the impersonate base url stores it trimmed of a trailing slash', function () {
-    $this->put(route('projects.impersonate-url.update', $this->project), [
-        'impersonate_base_url' => 'https://app.example.com/impersonate/take/',
+test('updating the user link base url stores it trimmed of a trailing slash', function () {
+    $this->put(route('projects.user-link-url.update', $this->project), [
+        'user_link_base_url' => 'https://app.example.com/admin/users/',
     ])->assertRedirect();
 
-    expect($this->project->fresh()->impersonate_base_url)->toBe('https://app.example.com/impersonate/take');
+    expect($this->project->fresh()->user_link_base_url)->toBe('https://app.example.com/admin/users');
 });
 
-test('an impersonate url with an {id} token is accepted and stored verbatim', function () {
-    $this->put(route('projects.impersonate-url.update', $this->project), [
-        'impersonate_base_url' => 'https://app.example.com/impersonate/{id}/take',
+test('a user link url with an {id} token is accepted and stored verbatim', function () {
+    $this->put(route('projects.user-link-url.update', $this->project), [
+        'user_link_base_url' => 'https://app.example.com/admin/users/{id}/details',
     ])->assertRedirect()->assertSessionHasNoErrors();
 
-    expect($this->project->fresh()->impersonate_base_url)->toBe('https://app.example.com/impersonate/{id}/take');
+    expect($this->project->fresh()->user_link_base_url)->toBe('https://app.example.com/admin/users/{id}/details');
 });
 
-test('the impersonate base url must be a valid url', function () {
-    $this->put(route('projects.impersonate-url.update', $this->project), [
-        'impersonate_base_url' => 'not-a-url',
-    ])->assertSessionHasErrors('impersonate_base_url');
+test('the user link base url must be a valid url', function () {
+    $this->put(route('projects.user-link-url.update', $this->project), [
+        'user_link_base_url' => 'not-a-url',
+    ])->assertSessionHasErrors('user_link_base_url');
 });
 
-test('a null impersonate base url clears the setting', function () {
-    $this->project->update(['impersonate_base_url' => 'https://app.example.com/take']);
+test('a null user link base url clears the setting', function () {
+    $this->project->update(['user_link_base_url' => 'https://app.example.com/admin/users']);
 
-    $this->put(route('projects.impersonate-url.update', $this->project), [
-        'impersonate_base_url' => null,
+    $this->put(route('projects.user-link-url.update', $this->project), [
+        'user_link_base_url' => null,
     ])->assertRedirect();
 
-    expect($this->project->fresh()->impersonate_base_url)->toBeNull();
+    expect($this->project->fresh()->user_link_base_url)->toBeNull();
 });
 
-test('a user cannot set the impersonate base url on another teams project', function () {
+test('a user cannot set the user link base url on another teams project', function () {
     // Create the foreign project while acting as its owner so the HasTeamScope saving
     // hook stamps the stranger's team_id (otherwise it would inherit our team).
     $stranger = User::factory()->withPersonalTeam()->create();
@@ -369,9 +369,9 @@ test('a user cannot set the impersonate base url on another teams project', func
     $this->actingAs($this->user);
 
     // The global team scope hides the foreign project from route-model binding entirely.
-    $this->put(route('projects.impersonate-url.update', $strangerProject), [
-        'impersonate_base_url' => 'https://evil.example.com/take',
+    $this->put(route('projects.user-link-url.update', $strangerProject), [
+        'user_link_base_url' => 'https://evil.example.com/take',
     ])->assertNotFound();
 
-    expect($strangerProject->fresh()->impersonate_base_url)->toBeNull();
+    expect($strangerProject->fresh()->user_link_base_url)->toBeNull();
 });

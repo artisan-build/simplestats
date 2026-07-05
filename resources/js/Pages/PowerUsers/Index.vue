@@ -76,8 +76,8 @@ const avatar = (row) => `https://api.dicebear.com/9.x/avataaars/svg?seed=${encod
 
 // {id} marks where the user id goes (apps put it mid-path or in a query); without
 // a token we fall back to appending it, so a plain base url still works.
-const impersonateLink = (row) => {
-    const base = row.project?.impersonate_base_url;
+const userLink = (row) => {
+    const base = row.project?.user_link_base_url;
     if (!base) {
         return null;
     }
@@ -123,18 +123,18 @@ const changeProject = () => {
     router.get(route('power-users'), params, {preserveScroll: true, preserveState: false});
 };
 
-const impersonateForm = useForm({
-    impersonate_base_url: currentProject?.impersonate_base_url ?? '',
+const userLinkForm = useForm({
+    user_link_base_url: currentProject?.user_link_base_url ?? '',
 });
 // Autosave when the field loses focus (or on Enter); dedupe identical values so a
 // blur without an edit does not fire a redundant request.
-const lastSavedUrl = ref(impersonateForm.impersonate_base_url);
-const saveImpersonateUrl = () => {
-    if (impersonateForm.impersonate_base_url === lastSavedUrl.value) {
+const lastSavedUrl = ref(userLinkForm.user_link_base_url);
+const saveUserLinkUrl = () => {
+    if (userLinkForm.user_link_base_url === lastSavedUrl.value) {
         return;
     }
-    lastSavedUrl.value = impersonateForm.impersonate_base_url;
-    impersonateForm.put(route('projects.impersonate-url.update', props.filters.project_id), {
+    lastSavedUrl.value = userLinkForm.user_link_base_url;
+    userLinkForm.put(route('projects.user-link-url.update', props.filters.project_id), {
         preserveScroll: true,
         preserveState: true,
     });
@@ -170,25 +170,25 @@ const saveImpersonateUrl = () => {
                     <div v-if="isSpecificProject && permissions.canUpdateProject" class="shrink-0">
                         <div class="flex items-center gap-2">
                             <span class="inline-flex items-center whitespace-nowrap text-sm text-gray-500 dark:text-dark-400">
-                                <label for="impersonate_base_url">Impersonate URL</label>
+                                <label for="user_link_base_url">User link</label>
                                 <InfoTooltip
-                                    title="Impersonate URL"
-                                    text="Base URL to open an impersonation link in your app. Use {id} where the user ID goes; without {id} it is appended to the end."
+                                    title="User link"
+                                    text="Base URL to open a user in your app, e.g. your admin's user page or an impersonation link. Use {id} where the user ID goes; without {id} it is appended to the end. The target should require an authenticated admin session."
                                 />
                             </span>
                             <TextInput
-                                id="impersonate_base_url"
-                                v-model="impersonateForm.impersonate_base_url"
+                                id="user_link_base_url"
+                                v-model="userLinkForm.user_link_base_url"
                                 type="text"
                                 class="w-80 text-sm"
-                                placeholder="https://example.com/users/{id}/impersonate"
-                                @blur="saveImpersonateUrl"
-                                @keyup.enter="saveImpersonateUrl"
+                                placeholder="https://example.com/admin/users/{id}"
+                                @blur="saveUserLinkUrl"
+                                @keyup.enter="saveUserLinkUrl"
                             />
-                            <span v-if="impersonateForm.processing" class="whitespace-nowrap text-sm text-gray-400 dark:text-dark-500">Saving…</span>
-                            <span v-else-if="impersonateForm.recentlySuccessful" class="whitespace-nowrap text-sm text-green-600 dark:text-green-400">Saved</span>
+                            <span v-if="userLinkForm.processing" class="whitespace-nowrap text-sm text-gray-400 dark:text-dark-500">Saving…</span>
+                            <span v-else-if="userLinkForm.recentlySuccessful" class="whitespace-nowrap text-sm text-green-600 dark:text-green-400">Saved</span>
                         </div>
-                        <InputError :message="impersonateForm.errors.impersonate_base_url" class="mt-1" />
+                        <InputError :message="userLinkForm.errors.user_link_base_url" class="mt-1" />
                     </div>
                 </div>
             </div>
@@ -309,13 +309,13 @@ const saveImpersonateUrl = () => {
                         <td class="w-px border-t px-6 py-4">
                             <div class="flex items-center justify-end">
                                 <a
-                                    v-if="impersonateLink(row)"
-                                    :href="impersonateLink(row)"
+                                    v-if="userLink(row)"
+                                    :href="userLink(row)"
                                     target="_blank"
                                     rel="noopener"
-                                    aria-label="Impersonate user"
+                                    aria-label="Open user in your app"
                                     class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
-                                    v-tooltip="'Impersonate user'"
+                                    v-tooltip="'Open in your app'"
                                 >
                                     <BoxArrowUpRightIcon class="size-5" />
                                 </a>

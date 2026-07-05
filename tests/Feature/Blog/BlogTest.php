@@ -73,6 +73,37 @@ test('blog index hydrates posts with author data', function () {
         );
 });
 
+test('landing page shows the latest three blog posts without full content', function () {
+    $author = User::factory()->create();
+    createMarkdownPost($this->blogPath, 'oldest-post', extra: ['date' => '2026-01-01']);
+    createMarkdownPost($this->blogPath, 'middle-post', extra: ['date' => '2026-02-01']);
+    createMarkdownPost($this->blogPath, 'newer-post', extra: ['date' => '2026-03-01']);
+    createMarkdownPost($this->blogPath, 'newest-post', extra: ['date' => '2026-04-01', 'author_id' => $author->id]);
+    createMarkdownPost($this->blogPath, 'draft-post', published: false, extra: ['date' => '2026-05-01']);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Home/LandingPage')
+            ->has('latestPosts', 3)
+            ->where('latestPosts.0.slug', 'newest-post')
+            ->where('latestPosts.0.author.id', $author->id)
+            ->where('latestPosts.1.slug', 'newer-post')
+            ->where('latestPosts.2.slug', 'middle-post')
+            ->missing('latestPosts.0.html')
+            ->missing('latestPosts.0.body')
+        );
+});
+
+test('landing page latest posts are empty when no posts exist', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Home/LandingPage')
+            ->has('latestPosts', 0)
+        );
+});
+
 test('blog show page returns successful response for published post', function () {
     $author = User::factory()->create();
     createMarkdownPost($this->blogPath, 'test-published-post', extra: ['author_id' => $author->id]);
