@@ -147,7 +147,18 @@ if [ -f artisan ]; then
 
   if [ "$BLOG_WARM_CACHE" = "true" ]; then
     printf '\nℹ️ Blog Warm Cache\n'
-    $FORGE_PHP artisan blog:warm-cache
+    # Re-highlight only posts whose markdown changed since the live release;
+    # --missing additionally catches cold or expired cache entries.
+    if PREVIOUS_SHA=$(git -C "$BASE_DIR/current" rev-parse HEAD 2>/dev/null) \
+      && CHANGED_BLOG_FILES=$(git diff --name-only "$PREVIOUS_SHA" HEAD -- resources/markdown/blog/ 2>/dev/null); then
+      CHANGED_BLOG_SLUGS=$(printf '%s\n' "$CHANGED_BLOG_FILES" | sed -e 's|.*/||' -e 's|\.md$||' | tr '\n' ' ')
+      printf 'Blog posts changed since %s: %s\n' "${PREVIOUS_SHA:0:7}" "${CHANGED_BLOG_SLUGS:-none}"
+      # word splitting of $CHANGED_BLOG_SLUGS is intended: one argument per slug
+      $FORGE_PHP artisan blog:warm-cache --missing $CHANGED_BLOG_SLUGS
+    else
+      printf 'No previous release to compare against, warming all posts\n'
+      $FORGE_PHP artisan blog:warm-cache
+    fi
   fi
 
   if [ "$GENERATE_SITEMAP" = "true" ]; then

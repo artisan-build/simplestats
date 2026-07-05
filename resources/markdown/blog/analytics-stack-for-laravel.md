@@ -72,17 +72,25 @@ Here's how the three familiar layers map onto a single server-side tool.
 
 Unique visitors, sources, campaigns, countries, devices, conversion rate. The privacy-first web analytics you'd expect, GDPR-compliant and unaffected by ad blockers because it's server-side. This is the base of the funnel, and every metric above it can be sliced by these same dimensions.
 
+![SimpleStats dashboard with visitors, registrations, conversion rate and revenue for a Laravel app](/images/screenshots/screenshot_dashboard_light.webp)
+
 ### Subscription metrics (the ChartMogul job)
 
 MRR and ARR, MRR movements (new, expansion, contraction, churn, reactivation), Net and Gross Revenue Retention, Quick Ratio, revenue churn and LTV. The full subscription dashboard you'd otherwise pay a separate tool for. The difference: every one of these can be filtered by the channel the customers came from. We go deep on this in [SaaS Metrics for Laravel](/blog/saas-metrics-for-laravel-mrr-churn-ltv).
+
+![MRR, ARR and subscription analytics for a Laravel app in SimpleStats](/images/screenshots/screenshot_revenue_light.webp)
 
 ### Campaign profit (the ad-pixel job, done right)
 
 Enter your ad spend per campaign and you get ROAS, CAC, net profit, LTV:CAC and CAC-payback per channel, computed from revenue that's *already* attributed to the campaign that earned it. This is what the pixel was always supposed to give you and never quite did. The full breakdown is in [Marketing ROI for Laravel](/blog/marketing-roi-for-laravel).
 
+![Campaign ROI with ad spend, ROAS, CAC and net profit per channel in SimpleStats](/images/screenshots/screenshot_campaigns_light.webp)
+
 ### Retention per channel (the part nobody else has)
 
 On top of all that: cohort retention you can filter by channel, so the question shifts from "do users come back?" to "which channel brings the users who come back?", plus stickiness and user churn. More in [Laravel Retention Analytics](/blog/laravel-retention-analytics).
+
+![Cohort retention analytics filtered by channel for a Laravel app in SimpleStats](/images/screenshots/screenshot_retention_light.webp)
 
 ---
 

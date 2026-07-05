@@ -5,10 +5,13 @@ namespace App\Console\Commands;
 use App\Services\BlogService;
 use Illuminate\Console\Command;
 use JCFrane\MdBlog\Facades\MdBlog;
+use JCFrane\MdBlog\Post;
 
 class WarmBlogCacheCommand extends Command
 {
-    protected $signature = 'blog:warm-cache';
+    protected $signature = 'blog:warm-cache
+                            {slugs?* : Warm only the posts with these slugs}
+                            {--missing : Also warm posts whose cache entry is missing or expired}';
 
     /**
      * Shiki highlighting spawns a Node.js subprocess, but Laravel Herd's PHP-FPM
@@ -22,7 +25,18 @@ class WarmBlogCacheCommand extends Command
 
     public function handle(BlogService $blogService): int
     {
+        $slugs = collect($this->argument('slugs'));
         $posts = MdBlog::latest();
+
+        $unknown = $slugs->diff($posts->pluck('slug'));
+        if ($unknown->isNotEmpty()) {
+            $this->warn("Skipping unknown or unpublished slugs: {$unknown->implode(', ')}");
+        }
+
+        if ($slugs->isNotEmpty() || $this->option('missing')) {
+            $posts = $posts->filter(fn (Post $post) => $slugs->contains($post->slug)
+                || ($this->option('missing') && ! $blogService->hasWarmHighlightCache($post)));
+        }
 
         foreach ($posts as $post) {
             $blogService->warmPostHighlightCache($post);
