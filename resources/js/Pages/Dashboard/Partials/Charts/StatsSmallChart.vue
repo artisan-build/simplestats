@@ -14,7 +14,9 @@ const props = defineProps({
 });
 
 const hasDelta = computed(() => props.kpi.delta !== 0);
-const deltaClass = computed(() => hasDelta.value ? (props.kpi.delta > 0 ? 'text-green-600' : 'text-red-400') : 'text-blue-400');
+// Color reflects whether the movement is good, the arrow keeps the actual direction.
+const deltaIsGood = computed(() => props.kpi.lowerIsBetter ? props.kpi.delta < 0 : props.kpi.delta > 0);
+const deltaClass = computed(() => hasDelta.value ? (deltaIsGood.value ? 'text-green-600' : 'text-red-400') : 'text-blue-400');
 const deltaIcon = computed(() => hasDelta.value ? (props.kpi.delta > 0 ? ArrowTrendingUpIcon : ArrowTrendingDownIcon) : null);
 const deltaFractionDigits = computed(() => Math.abs(props.kpi.delta) >= 10 ? 1 : 2);
 

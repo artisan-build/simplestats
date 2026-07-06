@@ -20,7 +20,7 @@ const gridColsClass = (count) => ({
     <div class="space-y-6">
         <section v-for="section in sections" :key="section.name" class="space-y-3">
             <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-dark-400">
-                {{ section.name }} asd
+                {{ section.name }}
             </h2>
             <div class="grid gap-4" :class="gridColsClass(section.kpis.length)">
                 <StatsSmallChart

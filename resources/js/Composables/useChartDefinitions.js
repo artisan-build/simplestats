@@ -64,7 +64,9 @@ const computeDelta = (serie, hasCurrent) => {
         previous = serie.dataPrev.length ? serie.dataPrev[serie.dataPrev.length - 2] : d[d.length - 3];
     }
 
-    let increase = (((latest - previous) / previous) * 100);
+    // Divide by |previous| so the sign always reflects the direction of movement,
+    // even when the baseline is negative (e.g. net churn below zero).
+    let increase = (((latest - previous) / Math.abs(previous)) * 100);
 
     if (isNaN(increase)) {
         increase = 0;
@@ -612,6 +614,7 @@ export function useChartDefinitions(ctx) {
                 categories: chart.data.categories,
                 indicator: serie.indicator,
                 delta: computeDelta(serie, hasCurrent),
+                lowerIsBetter: kpiDef.lowerIsBetter ?? false,
                 info: `<div><div class="font-bold text-green-300">${title}</div><div>${kpiDef.description ?? ''}</div></div>`,
                 infoTitle: kpiDef.long ?? kpiDef.short ?? serie.key,
                 infoText: kpiDef.description ?? '',

@@ -148,6 +148,7 @@ onMounted(() => {
                         :formatter="activeKpi.formatter"
                         :suffix="activeKpi.suffix"
                         :delta="activeKpi.delta"
+                        :lowerIsBetter="activeKpi.lowerIsBetter"
                         :infoTitle="activeKpi.infoTitle"
                         :infoText="activeKpi.infoText"
                     />

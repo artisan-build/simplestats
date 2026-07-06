@@ -22,6 +22,9 @@ const props = defineProps({
     // place the delta right next to the value (and larger) instead of pushing it to
     // the far edge; used on the metric detail header where the number is the focus
     deltaInline: {type: Boolean, default: false},
+    // a falling value is the good direction (churn, time-to-x); flips the delta color,
+    // the arrow keeps showing the actual movement
+    lowerIsBetter: {type: Boolean, default: false},
 });
 
 const hasDelta = computed(() => props.delta !== null && props.delta !== 0);
@@ -31,7 +34,9 @@ const deltaClass = computed(() => {
         return 'text-blue-400';
     }
 
-    return props.delta > 0 ? 'text-green-600' : 'text-red-400';
+    const isGood = props.lowerIsBetter ? props.delta < 0 : props.delta > 0;
+
+    return isGood ? 'text-green-600' : 'text-red-400';
 });
 
 const deltaIcon = computed(() => {

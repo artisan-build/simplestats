@@ -50,11 +50,13 @@ export function getKpiDefinitions(rangeType) {
             short: 'Time to Pay',
             long: 'Time to First Payment',
             description: 'Median number of days from registration to first payment, for customers whose first payment falls in the selected period.',
+            lowerIsBetter: true,
         },
         time_to_convert: {
             short: 'Time to Convert',
             long: 'Time to Convert',
             description: 'Median number of days from first visit to registration, by registration date. Only counts registrations linked to a prior visit (tracked going forward).',
+            lowerIsBetter: true,
         },
         quick_ratio: {
             short: 'Quick Ratio',
@@ -65,11 +67,13 @@ export function getKpiDefinitions(rangeType) {
             short: 'Gross churn',
             long: 'Gross Revenue Churn',
             description: "Share of the "+periodName+"'s starting MRR lost to cancellations and downgrades (churn + contraction). Lower is better.",
+            lowerIsBetter: true,
         },
         net_churn: {
             short: 'Net churn',
             long: 'Net Revenue Churn',
             description: 'Gross churn offset by expansion and reactivation. Below zero means expansion outweighed losses (net revenue growth from existing subscribers).',
+            lowerIsBetter: true,
         },
         pd_net: {
             small: 'Rev',
@@ -175,6 +179,7 @@ export function getKpiDefinitions(rangeType) {
             short: 'User Churn',
             long: 'User Churn',
             description: "Share of the preceding month's active users (30-60 days back) who did not log in again in the rolling last 30 days, as of each "+periodName+'. Lower is better.',
+            lowerIsBetter: true,
         },
     }
 }
