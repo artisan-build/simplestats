@@ -46,9 +46,9 @@ class LoginSummaryService
             'net' => $team->tracksUsage(Project::USAGE_PAYMENTS) ? round($rows->sum('pd_net'), 2) : null,
             'reg' => $team->tracksUsage(Project::USAGE_USERS) ? (int) $rows->sum('pd_reg') : null,
             'visitors' => $team->tracksUsage(Project::USAGE_VISITORS) ? (int) $rows->sum('pd_visitor') : null,
-        ])->reject(fn ($value) => $value === null);
+        ])->filter(fn ($value) => $value > 0);
 
-        if ($metrics->filter(fn ($value) => $value > 0)->isEmpty()) {
+        if ($metrics->isEmpty()) {
             return null;
         }
 

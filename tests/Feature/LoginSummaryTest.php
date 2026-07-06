@@ -175,6 +175,22 @@ test('summary only contains metrics the team tracks', function () {
     expect($response->json('summary.metrics'))->toBe(['visitors' => 1]);
 });
 
+test('summary omits metrics with zero values', function () {
+    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+
+    StatsVisitor::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $this->project->id,
+        'time' => now()->subHour()->format('Y-m-d H:i:s'),
+    ]);
+
+    $response = $this->withSession([LoginSummaryService::SESSION_KEY => true])
+        ->getJson(route('login-summary'))
+        ->assertSuccessful();
+
+    expect($response->json('summary.metrics'))->toBe(['visitors' => 1]);
+});
+
 test('the login summary setting can be toggled', function () {
     $this->post(route('user-settings.login-summary'), ['enabled' => false])
         ->assertRedirect();
