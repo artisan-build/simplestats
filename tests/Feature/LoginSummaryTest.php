@@ -140,6 +140,12 @@ test('summary can only be fetched once per login', function () {
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
+    StatsUser::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $this->project->id,
+        'time' => now()->subHour()->format('Y-m-d H:i:s'),
+    ]);
+
     $this->withSession([LoginSummaryService::SESSION_KEY => true])
         ->getJson(route('login-summary'))
         ->assertJsonPath('summary.metrics.visitors', 1);
@@ -184,11 +190,32 @@ test('summary omits metrics with zero values', function () {
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
+    StatsUser::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $this->project->id,
+        'time' => now()->subHour()->format('Y-m-d H:i:s'),
+    ]);
+
     $response = $this->withSession([LoginSummaryService::SESSION_KEY => true])
         ->getJson(route('login-summary'))
         ->assertSuccessful();
 
-    expect($response->json('summary.metrics'))->toBe(['visitors' => 1]);
+    expect($response->json('summary.metrics'))->toBe(['reg' => 1, 'visitors' => 1]);
+});
+
+test('summary is null when only one of several tracked metrics is non-zero', function () {
+    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+
+    StatsVisitor::factory()->create([
+        'team_id' => $this->user->currentTeam->id,
+        'project_id' => $this->project->id,
+        'time' => now()->subHour()->format('Y-m-d H:i:s'),
+    ]);
+
+    $this->withSession([LoginSummaryService::SESSION_KEY => true])
+        ->getJson(route('login-summary'))
+        ->assertSuccessful()
+        ->assertJsonPath('summary', null);
 });
 
 test('the login summary setting can be toggled', function () {

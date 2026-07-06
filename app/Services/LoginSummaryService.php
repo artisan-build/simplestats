@@ -42,13 +42,17 @@ class LoginSummaryService
         $rows = collect($this->statsDetailsService->getRaw($this->getFilter($user)));
         $team = $user->currentTeam;
 
-        $metrics = collect([
+        $tracked = collect([
             'net' => $team->tracksUsage(Project::USAGE_PAYMENTS) ? round($rows->sum('pd_net'), 2) : null,
             'reg' => $team->tracksUsage(Project::USAGE_USERS) ? (int) $rows->sum('pd_reg') : null,
             'visitors' => $team->tracksUsage(Project::USAGE_VISITORS) ? (int) $rows->sum('pd_visitor') : null,
-        ])->filter(fn ($value) => $value > 0);
+        ])->reject(fn ($value) => $value === null);
 
-        if ($metrics->isEmpty()) {
+        $metrics = $tracked->filter(fn ($value) => $value > 0);
+
+        // A lone non-zero metric (usually just visitors) is not worth a modal,
+        // unless it is the only metric the team tracks at all.
+        if ($metrics->isEmpty() || $metrics->count() < min(2, $tracked->count())) {
             return null;
         }
 
