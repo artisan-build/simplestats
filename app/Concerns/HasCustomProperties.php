@@ -7,6 +7,7 @@ use App\Models\StatsCustomPropertyName;
 use App\Models\StatsCustomPropertyValue;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Str;
 
 trait HasCustomProperties
@@ -72,21 +73,28 @@ trait HasCustomProperties
                 'value' => $value,
             ]);
 
-            $property = StatsCustomProperty::firstOrNew([
-                'project_id' => $this->project_id,
-                'propertyable_type' => $this->getMorphClass(),
-                'propertyable_id' => $this->id,
-                'stats_custom_property_name_id' => $propertyName->id,
-            ]);
+            // retried once because a parallel ingest worker can win the insert between
+            // firstOrNew and save; the second attempt then finds the winner's row and
+            // takes the update path (savepoint rationale: see TrackStatsUser)
+            retry(2, function () use ($propertyName, $propertyValue, $time) {
+                $property = StatsCustomProperty::firstOrNew([
+                    'project_id' => $this->project_id,
+                    'propertyable_type' => $this->getMorphClass(),
+                    'propertyable_id' => $this->id,
+                    'stats_custom_property_name_id' => $propertyName->id,
+                ]);
 
-            if ($property->exists && CarbonImmutable::parse($property->time, 'UTC')->greaterThan($time)) {
-                continue;
-            }
+                if ($property->exists && CarbonImmutable::parse($property->time, 'UTC')->greaterThan($time)) {
+                    return;
+                }
 
-            $property->fill([
-                'stats_custom_property_value_id' => $propertyValue->id,
-                'time' => $time->format('Y-m-d H:i:s'),
-            ])->save();
+                $property->fill([
+                    'stats_custom_property_value_id' => $propertyValue->id,
+                    'time' => $time->format('Y-m-d H:i:s'),
+                ]);
+
+                $property->newModelQuery()->withSavepointIfNeeded(fn () => $property->save());
+            }, 0, fn ($e) => $e instanceof UniqueConstraintViolationException);
         }
     }
 

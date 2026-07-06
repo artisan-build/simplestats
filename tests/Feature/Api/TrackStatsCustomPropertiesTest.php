@@ -9,6 +9,7 @@ use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
     $this->seed(TestUserSeeder::class);
@@ -260,6 +261,57 @@ test('distinct property names are not capped per project', function () {
     $statsUser->recordCustomProperties($properties);
 
     expect(StatsCustomPropertyName::where('project_id', $this->project->id)->count())->toBe(60);
+});
+
+/**
+ * Simulates a parallel ingest worker winning the pivot insert race (SIMPLESTATS-77): the
+ * creating hook fires between recordCustomProperties' firstOrNew lookup and its insert,
+ * so the raw insert lands exactly inside that window and the pivot insert hits the unique
+ * constraint. Fires only once so the retry attempt goes through cleanly (in production
+ * the winner's row survives, here it is rolled back together with the savepoint).
+ */
+function insertConflictingCustomPropertyRowOnCreating(): void
+{
+    $fired = false;
+
+    StatsCustomProperty::creating(function (StatsCustomProperty $property) use (&$fired) {
+        if ($fired) {
+            return;
+        }
+
+        $fired = true;
+
+        DB::table('stats_custom_properties')->insert([
+            'team_id' => $property->team_id,
+            'project_id' => $property->project_id,
+            'propertyable_type' => $property->propertyable_type,
+            'propertyable_id' => $property->propertyable_id,
+            'stats_custom_property_name_id' => $property->stats_custom_property_name_id,
+            'stats_custom_property_value_id' => $property->stats_custom_property_value_id,
+            'time' => now()->subHour()->format('Y-m-d H:i:s'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    });
+}
+
+test('a parallel worker winning the pivot insert race does not fail the property update', function () {
+    ctx($this->project);
+
+    $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
+
+    insertConflictingCustomPropertyRowOnCreating();
+
+    $visitor->recordCustomProperties(['ab_test' => 'B']);
+
+    $properties = StatsCustomProperty::where('propertyable_type', 'stats_visitor')
+        ->where('propertyable_id', $visitor->id)
+        ->with(['name', 'value'])
+        ->get();
+
+    expect($properties)->toHaveCount(1)
+        ->and($properties->first()->name->name)->toBe('ab_test')
+        ->and($properties->first()->value->value)->toBe('B');
 });
 
 test('non-scalar and empty property values are skipped', function () {
