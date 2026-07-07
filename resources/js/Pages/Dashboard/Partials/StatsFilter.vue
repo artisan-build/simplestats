@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, nextTick, ref} from "vue";
 import {useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -88,6 +88,21 @@ const chartDescription = `
 
 const isCustomRange = () => {
     return form.preset === 'custom';
+};
+
+const customRangePicker = ref(null);
+
+// Switching to "Custom" only reveals the opened picker; the request is
+// deferred until the range is applied, so the dashboard doesn't reload twice.
+// The open() must wait until the closing preset listbox has restored focus to
+// its own button, otherwise the popover closes again (focus moved outside).
+const presetChanged = (e) => {
+    if (form.preset === 'custom') {
+        nextTick(() => setTimeout(() => customRangePicker.value?.open(), 150));
+        return;
+    }
+
+    filterChanged(e);
 };
 
 const applyCustomRange = (payload) => {
@@ -184,7 +199,7 @@ const showPresetModal = ref(false);
                                             v-model="form.preset"
                                             class="mt-1 block w-full sm:w-40 dark:!bg-dark-800"
                                             :options="presets"
-                                            @change="filterChanged"
+                                            @change="presetChanged"
                                         />
                                     </div>
                                     <button type="button" aria-label="Manage Presets" @click="showPresetModal = true" class="hidden sm:block mt-1 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
@@ -196,6 +211,7 @@ const showPresetModal = ref(false);
                                         <DotIcon class="size-4" />
                                     </div>
                                     <CustomRangePicker
+                                        ref="customRangePicker"
                                         :range-start="form.range_start"
                                         :range-amount="form.range_amount"
                                         :range-type="form.range_type"

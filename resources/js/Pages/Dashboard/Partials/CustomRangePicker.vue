@@ -58,11 +58,23 @@ const apply = (close) => {
     });
     close();
 };
+
+const button = ref(null);
+
+const open = () => {
+    const el = button.value?.$el;
+    if (el && el.getAttribute('aria-expanded') !== 'true') {
+        el.click();
+    }
+};
+
+defineExpose({open});
 </script>
 
 <template>
     <Popover class="relative">
         <PopoverButton
+            ref="button"
             class="relative mt-1 block w-full sm:w-auto cursor-default rounded-md border border-gray-300 dark:border-dark-700 bg-white dark:bg-dark-800 py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-dark-200"
             @click="seed"
         >
@@ -100,18 +112,22 @@ const apply = (close) => {
                     <div>
                         <InputLabel for="custom_range_amount" value="Last" />
                         <div class="mt-1 flex gap-2">
-                            <SelectInput
-                                id="custom_range_amount"
-                                v-model="amount"
-                                class="block w-20"
-                                :options="rangeAmounts"
-                            />
-                            <SelectInput
-                                id="custom_range_type"
-                                v-model="type"
-                                class="block flex-1"
-                                :options="rangeTypes"
-                            />
+                            <div class="w-24">
+                                <SelectInput
+                                    id="custom_range_amount"
+                                    v-model="amount"
+                                    class="block w-full"
+                                    :options="rangeAmounts"
+                                />
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <SelectInput
+                                    id="custom_range_type"
+                                    v-model="type"
+                                    class="block w-full"
+                                    :options="rangeTypes"
+                                />
+                            </div>
                         </div>
                     </div>
                     <PrimaryButton class="w-full justify-center">Apply</PrimaryButton>
