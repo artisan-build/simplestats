@@ -6,8 +6,8 @@ import InputLabel from "@/Components/InputLabel.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {periodSingular} from "@/Helpers/StringHelpers.js";
 import pluralize from 'pluralize';
-import TextInput from "@/Components/TextInput.vue";
 import CustomPresetModal from "@/Pages/Dashboard/Partials/CustomPresetModal.vue";
+import CustomRangePicker from "@/Pages/Dashboard/Partials/CustomRangePicker.vue";
 import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
 import ScopeSelector from "@/Components/ScopeSelector.vue";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
@@ -45,11 +45,6 @@ const form = useForm({
     cohort_end: props.filters.cohort_end ?? null,
     cohort_label: props.filters.cohort_label ?? null,
 });
-
-const rangeAmounts = Array.from({ length: 60 }, (_, i) => ({
-    id: (i + 1).toString(),
-    name: (i + 1).toString()
-}));
 
 const submit = () => {
     form.get(route(props.submitRoute, props.submitRouteParams), {preserveScroll: true});
@@ -93,6 +88,13 @@ const chartDescription = `
 
 const isCustomRange = () => {
     return form.preset === 'custom';
+};
+
+const applyCustomRange = (payload) => {
+    form.range_start = payload.range_start;
+    form.range_amount = payload.range_amount;
+    form.range_type = payload.range_type;
+    submit();
 };
 
 const utmGroupTypes = ['track_source', 'track_medium', 'track_campaign', 'track_term', 'track_content'];
@@ -174,47 +176,6 @@ const showPresetModal = ref(false);
                                 @project-changed="filterChanged"
                             />
                             <div class="flex flex-col sm:flex-row sm:flex-wrap gap-y-3 sm:gap-y-5 gap-x-2 items-stretch sm:items-center w-full sm:w-auto">
-                                <div v-if="isCustomRange()" class="flex flex-wrap items-center gap-x-2 gap-y-2 sm:contents">
-                                    <span class="text-sm text-gray-500 dark:text-dark-400 sm:text-inherit sm:dark:text-inherit">
-                                        From
-                                    </span>
-                                    <div class="flex-1 sm:flex-none">
-                                        <InputLabel class="hidden" for="range_start" value="Start from" />
-                                        <TextInput
-                                            type="date"
-                                            id="range_start"
-                                            v-model="form.range_start"
-                                            class="mt-1 sm:mt-0 block w-full sm:w-36 dark:!bg-dark-800"
-                                            @change="filterChanged"
-                                        />
-                                    </div>
-                                    <span class="text-sm text-gray-500 dark:text-dark-400 sm:text-inherit sm:dark:text-inherit">
-                                        last
-                                    </span>
-                                    <div>
-                                        <InputLabel class="hidden" for="range_amount" value="Last" />
-                                        <SelectInput
-                                            id="range_amount"
-                                            v-model="form.range_amount"
-                                            class="mt-1 sm:mt-0 block w-20 dark:!bg-dark-800"
-                                            :options="rangeAmounts"
-                                            @change="filterChanged"
-                                        />
-                                    </div>
-                                    <div class="flex-1 sm:flex-none">
-                                        <InputLabel class="hidden" for="range_type" value="&nbsp;" />
-                                        <SelectInput
-                                            id="range_type"
-                                            v-model="form.range_type"
-                                            class="mt-1 sm:mt-0 block w-full sm:w-28 dark:!bg-dark-800"
-                                            :options="rangeTypes"
-                                            @change="filterChanged"
-                                        />
-                                    </div>
-                                    <div class="hidden sm:block">
-                                        <DotIcon class="size-4" />
-                                    </div>
-                                </div>
                                 <div class="flex items-center gap-1" data-tour="presets">
                                     <div class="flex-1 sm:flex-none">
                                         <InputLabel class="hidden" for="rangePreset" value="Preset" />
@@ -230,6 +191,18 @@ const showPresetModal = ref(false);
                                         <GearIcon class="size-5" />
                                     </button>
                                 </div>
+                                <template v-if="isCustomRange()">
+                                    <div class="hidden sm:block">
+                                        <DotIcon class="size-4" />
+                                    </div>
+                                    <CustomRangePicker
+                                        :range-start="form.range_start"
+                                        :range-amount="form.range_amount"
+                                        :range-type="form.range_type"
+                                        :range-types="rangeTypes"
+                                        @apply="applyCustomRange"
+                                    />
+                                </template>
                                 <div class="hidden sm:block">
                                     <DotIcon class="size-4" />
                                 </div>
