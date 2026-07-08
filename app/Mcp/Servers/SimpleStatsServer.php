@@ -6,6 +6,7 @@ use App\Mcp\Tools\GetGroupedBreakdown;
 use App\Mcp\Tools\GetKpiStats;
 use App\Mcp\Tools\GetRecurringRevenueStats;
 use App\Mcp\Tools\GetRetentionCohorts;
+use App\Mcp\Tools\ListAppPages;
 use App\Mcp\Tools\ListStatsCapabilities;
 use App\Mcp\Tools\SearchDocs;
 use Laravel\Mcp\Server;
@@ -25,5 +26,6 @@ class SimpleStatsServer extends Server
         GetRecurringRevenueStats::class,
         GetRetentionCohorts::class,
         SearchDocs::class,
+        ListAppPages::class,
     ];
 }

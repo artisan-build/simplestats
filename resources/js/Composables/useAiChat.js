@@ -32,6 +32,7 @@ const toolLabels = {
     'get-recurring-revenue-stats': 'Calculating recurring revenue…',
     'get-retention-cohorts': 'Building retention cohorts…',
     'search-docs': 'Searching the docs…',
+    'list-app-pages': 'Finding the right page…',
 };
 
 // localStorage is only touched lazily from onMounted hooks, never at module

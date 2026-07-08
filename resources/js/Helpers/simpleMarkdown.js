@@ -9,11 +9,20 @@ const escapeHtml = (text) => text
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
+const renderLink = (match, label, url) => {
+    // In-app links stay in the tab (and get SPA-navigated by AiChatMessage),
+    // external ones open in a new tab.
+    const isInternal = typeof window !== 'undefined' && url.startsWith(`${window.location.origin}/`);
+    const externalAttrs = isInternal ? '' : ' target="_blank" rel="noopener noreferrer"';
+
+    return `<a href="${url}"${externalAttrs} class="text-indigo-600 dark:text-indigo-400 underline">${label}</a>`;
+};
+
 const renderInline = (text) => text
     .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-gray-100 dark:bg-dark-700 text-[0.85em]">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline">$1</a>');
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, renderLink);
 
 const UL_CLASS = 'list-disc ps-5 space-y-1';
 const OL_CLASS = 'list-decimal ps-5 space-y-1';

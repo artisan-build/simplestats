@@ -6,6 +6,7 @@ use App\Mcp\Tools\GetGroupedBreakdown;
 use App\Mcp\Tools\GetKpiStats;
 use App\Mcp\Tools\GetRecurringRevenueStats;
 use App\Mcp\Tools\GetRetentionCohorts;
+use App\Mcp\Tools\ListAppPages;
 use App\Mcp\Tools\ListStatsCapabilities;
 use App\Mcp\Tools\SearchDocs;
 use App\Models\Project;
@@ -46,6 +47,7 @@ class StatsAssistant implements Agent, Conversational, HasTools
         - Use the list-stats-capabilities tool when you are unsure which projects, breakdown dimensions, or date presets exist.
         - For subscription questions (MRR, ARR, expansion/contraction, churn, NRR/GRR, LTV) use the recurring revenue tool; for "do users come back" questions use the retention cohorts tool.
         - For setup and how-to questions about {$appName} itself (installation, tracking configuration, client package, API) use the search-docs tool and include the docs link in your answer.
+        - When the user asks where to find or do something in the app ("Where can I create a project?", "How do I invite team members?") use the list-app-pages tool and answer with the page name and its link. Never invent in-app URLs.
         - Prefer date presets for relative ranges ("last month" -> last_month, "this year" -> this_year). Use start_date/end_date only when no preset fits.
         - Always state which date range (and project, if not the default) the numbers refer to.
         - If a tool returns no data or an error, say so plainly and suggest what to check. Do not guess.
@@ -70,6 +72,7 @@ class StatsAssistant implements Agent, Conversational, HasTools
             app(GetRecurringRevenueStats::class),
             app(GetRetentionCohorts::class),
             app(SearchDocs::class),
+            app(ListAppPages::class),
         ];
     }
 }

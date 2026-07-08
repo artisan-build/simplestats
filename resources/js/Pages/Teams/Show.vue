@@ -24,9 +24,10 @@ defineProps({
         </template>
 
         <div>
-            <UpdateTeamNameForm :team="team" :permissions="permissions" />
+            <UpdateTeamNameForm id="team-details" :team="team" :permissions="permissions" />
 
             <TeamEventUsage
+                id="event-usage"
                 class="mt-10 sm:mt-0"
                 :team="team"
             />
@@ -35,6 +36,7 @@ defineProps({
                 <SectionBorder />
 
                 <UpdateTeamAiSettingsForm
+                    id="ai-assistant"
                     class="mt-10 sm:mt-0"
                     :team="team"
                     :ai-settings="aiSettings"
@@ -43,6 +45,7 @@ defineProps({
             </template>
 
             <TeamMemberManager
+                id="team-members"
                 class="mt-10 sm:mt-0"
                 :team="team"
                 :available-roles="availableRoles"
