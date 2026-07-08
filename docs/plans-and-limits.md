@@ -21,6 +21,10 @@ This page provides an overview of all plan features and technical limits.
 
 </div>
 
+::: tip AI Assistant fair use
+The AI Assistant includes a fair-use limit of 100 chat messages per team per day. Teams that configure their own AI provider key on the team settings page are not limited.
+:::
+
 <style>
 .full-width-table table {
   width: 100%;

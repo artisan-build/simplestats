@@ -5,6 +5,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Services\Ai\AiChatStreamer;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Ai\Contracts\ConversationStore;
 use Laravel\Ai\Exceptions\RateLimitedException;
 
@@ -85,6 +86,36 @@ it('lists only the user\'s own conversations', function () {
         ->assertJsonPath('0.id', $ownId)
         ->assertJsonPath('0.title', 'My conversation')
         ->assertJsonMissing(['id' => $foreignId]);
+});
+
+it('enforces the daily message limit per team', function () {
+    StatsAssistant::fake(['One.', 'Two.']);
+    config()->set('ai.chat.daily_message_limit', 2);
+
+    foreach (['First', 'Second'] as $message) {
+        $this->actingAs($this->user)->post(route('ai.chat.store'), ['message' => $message])
+            ->assertSuccessful()
+            ->streamedContent();
+    }
+
+    $this->actingAs($this->user)->postJson(route('ai.chat.store'), ['message' => 'Third'])
+        ->assertTooManyRequests()
+        ->assertJsonPath('message', fn (string $message) => str_contains($message, 'daily AI message limit'));
+});
+
+it('exempts teams with their own AI key from the daily limit', function () {
+    StatsAssistant::fake(['One.', 'Two.']);
+    config()->set('ai.chat.daily_message_limit', 1);
+
+    $this->user->team->forceFill(['ai_provider' => 'gemini', 'ai_api_key' => 'own-key'])->save();
+
+    RateLimiter::clear('ai-chat-daily:'.$this->user->team->id);
+
+    foreach (['First', 'Second'] as $message) {
+        $this->actingAs($this->user)->post(route('ai.chat.store'), ['message' => $message])
+            ->assertSuccessful()
+            ->streamedContent();
+    }
 });
 
 it('blocks the chat for plans without the AI assistant', function () {

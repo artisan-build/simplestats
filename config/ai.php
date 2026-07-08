@@ -23,6 +23,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Chat Fair-Use Limit
+    |--------------------------------------------------------------------------
+    |
+    | Maximum AI chat messages per team per day (rolling 24h window) when the
+    | team uses the app's own AI provider quota. Teams with their own key
+    | (BYOK) are exempt. Set to 0 to disable the limit.
+    |
+    */
+
+    'chat' => [
+        'daily_message_limit' => (int) env('AI_CHAT_DAILY_MESSAGE_LIMIT', 100),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Conversations
     |--------------------------------------------------------------------------
     |
