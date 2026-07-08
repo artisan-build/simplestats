@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-pdo": "*",
         "ext-zip": "*",
         "ashallendesign/laravel-exchange-rates": "^7.2",
@@ -20,9 +20,11 @@
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.1",
         "laravel-lang/common": "^6.8",
+        "laravel/ai": "^0.8.1",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.33",
         "laravel/jetstream": "^5.0",
+        "laravel/mcp": "^0.7.2",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
         "laravel/spark-paddle": "^5.3",
@@ -30,8 +32,8 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/iso3166": "^4.3",
         "maatwebsite/excel": "^3.1",
-        "matomo/device-detector": "^6.0",
         "mateusjunges/laravel-trackable-jobs": "^2.0",
+        "matomo/device-detector": "^6.0",
         "openspout/openspout": ">=4.23 <4.29",
         "sentry/sentry-laravel": "^4.7",
         "simplestats-io/laravel-client": "dev-main",
@@ -102,6 +104,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.3.32"
         }
     },
     "repositories": {

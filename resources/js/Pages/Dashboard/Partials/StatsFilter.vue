@@ -1,5 +1,5 @@
 <script setup>
-import {computed, nextTick, ref} from "vue";
+import {computed, nextTick, ref, watch} from "vue";
 import {useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -12,12 +12,14 @@ import CohortPicker from "@/Pages/Dashboard/Partials/CohortPicker.vue";
 import ScopeSelector from "@/Components/ScopeSelector.vue";
 import InfoTooltip from "@/Components/InfoTooltip.vue";
 import {useUsage} from "@/Composables/useUsage.js";
+import {useAiChat} from "@/Composables/useAiChat.js";
 import DotIcon from 'bootstrap-icons/icons/dot.svg?component';
 import GearIcon from 'bootstrap-icons/icons/gear.svg?component';
 import InfoIcon from 'bootstrap-icons/icons/info-circle.svg?component';
 import RefreshIcon from 'bootstrap-icons/icons/arrow-repeat.svg?component';
 import SearchIcon from 'bootstrap-icons/icons/search.svg?component';
 import CloseIcon from 'bootstrap-icons/icons/x-lg.svg?component';
+import StarsIcon from 'bootstrap-icons/icons/stars.svg?component';
 
 const props = defineProps({
     teamStats: Object,
@@ -176,6 +178,11 @@ const resetFilters = (e) => {
 };
 
 const showPresetModal = ref(false);
+
+const aiChat = useAiChat();
+
+// The assistant defaults to the project the user is currently looking at.
+watch(() => form.project_id, (id) => aiChat.setContextProjectId(id), {immediate: true});
 </script>
 
 <template>
@@ -268,6 +275,10 @@ const showPresetModal = ref(false);
                                         <span class="ml-2 sm:hidden">Refresh</span>
                                     </SecondaryButton>
                                 </div>
+                                <button type="button" aria-label="Ask AI" v-tooltip="'Ask AI about your stats'" @click="aiChat.toggle()" class="mt-1 p-1.5 rounded hover:bg-gray-100 dark:hover:bg-dark-700 flex justify-center items-center gap-2" :class="aiChat.isOpen.value ? 'text-indigo-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'">
+                                    <StarsIcon class="size-5" />
+                                    <span class="sm:hidden">Ask AI</span>
+                                </button>
                             </div>
                         </div>
                     </div>

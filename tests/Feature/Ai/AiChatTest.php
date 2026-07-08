@@ -1,0 +1,152 @@
+<?php
+
+use App\Ai\Agents\StatsAssistant;
+use App\Models\Project;
+use App\Models\User;
+use App\Services\Ai\AiChatStreamer;
+use Database\Seeders\TestUserSeeder;
+use Laravel\Ai\Contracts\ConversationStore;
+use Laravel\Ai\Exceptions\RateLimitedException;
+
+beforeEach(function () {
+    $this->seed(TestUserSeeder::class);
+    $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
+    $this->project = Project::first();
+});
+
+it('streams a response and exposes the conversation id as a header', function () {
+    StatsAssistant::fake(['You had 42 registrations last month.']);
+
+    $response = $this->actingAs($this->user)->post(route('ai.chat.store'), [
+        'message' => 'How many registrations did I get last month?',
+    ]);
+
+    $response->assertSuccessful()
+        ->assertHeader('Content-Type', 'text/event-stream; charset=utf-8')
+        ->assertHeader('X-Conversation-Id');
+
+    // The fake gateway chunks the text across multiple text_delta events.
+    expect($response->streamedContent())
+        ->toContain('"type":"text_delta"')
+        ->toContain('registrations')
+        ->toContain('data: [DONE]');
+
+    StatsAssistant::assertPrompted('How many registrations did I get last month?');
+});
+
+it('continues an existing conversation instead of creating a new one', function () {
+    StatsAssistant::fake(['First answer.', 'Second answer.']);
+
+    $first = $this->actingAs($this->user)->post(route('ai.chat.store'), [
+        'message' => 'First question',
+    ]);
+    $first->streamedContent();
+
+    $conversationId = $first->headers->get('X-Conversation-Id');
+
+    $second = $this->actingAs($this->user)->post(route('ai.chat.store'), [
+        'message' => 'Follow-up question',
+        'conversation_id' => $conversationId,
+    ]);
+
+    expect($second->headers->get('X-Conversation-Id'))->toBe($conversationId);
+});
+
+it('starts a fresh conversation for a foreign conversation id', function () {
+    StatsAssistant::fake(['Answer.']);
+
+    $otherUser = User::factory()->withPersonalTeam()->create();
+    $foreignConversationId = app(ConversationStore::class)->storeConversation($otherUser->id, 'Foreign');
+
+    $response = $this->actingAs($this->user)->post(route('ai.chat.store'), [
+        'message' => 'Hello',
+        'conversation_id' => $foreignConversationId,
+    ]);
+
+    expect($response->headers->get('X-Conversation-Id'))->not->toBe($foreignConversationId);
+});
+
+it('validates the message', function () {
+    $this->actingAs($this->user)->postJson(route('ai.chat.store'), [
+        'message' => '',
+    ])->assertUnprocessable();
+});
+
+it('requires authentication', function () {
+    // TestUserSeeder leaves the created user on the web guard.
+    auth()->forgetGuards();
+
+    $this->post(route('ai.chat.store'), ['message' => 'Hi'])->assertRedirect();
+});
+
+it('shows a conversation with its messages', function () {
+    StatsAssistant::fake(['The answer is 42.']);
+
+    $response = $this->actingAs($this->user)->post(route('ai.chat.store'), [
+        'message' => 'What is the answer?',
+    ]);
+    $response->streamedContent();
+
+    $conversationId = $response->headers->get('X-Conversation-Id');
+
+    $this->actingAs($this->user)->getJson(route('ai.conversations.show', $conversationId))
+        ->assertSuccessful()
+        ->assertJsonPath('id', $conversationId)
+        ->assertJsonPath('messages.0.role', 'user')
+        ->assertJsonPath('messages.0.content', 'What is the answer?')
+        ->assertJsonPath('messages.1.role', 'assistant')
+        ->assertJsonPath('messages.1.content', 'The answer is 42.');
+});
+
+it('denies access to another user\'s conversation', function () {
+    $otherUser = User::factory()->withPersonalTeam()->create();
+    $foreignConversationId = app(ConversationStore::class)->storeConversation($otherUser->id, 'Foreign');
+
+    $this->actingAs($this->user)->getJson(route('ai.conversations.show', $foreignConversationId))
+        ->assertForbidden();
+});
+
+it('translates provider rate limits into a friendly stream error event', function () {
+    $events = function () {
+        yield from [];
+
+        throw RateLimitedException::forProvider('gemini', 429);
+    };
+
+    $response = app(AiChatStreamer::class)->response($events(), 'conv-id');
+
+    // Laravel's generator stream wrapper calls ob_flush(), which pushes the
+    // echoed content one buffer level up: capture with two nested buffers.
+    ob_start();
+    ob_start();
+    $response->sendContent();
+    $output = ob_get_clean().ob_get_clean();
+
+    expect($output)
+        ->toContain('"type":"error"')
+        ->toContain('rate limit is reached. Please wait a minute')
+        ->toContain('data: [DONE]')
+        ->and($response->headers->get('X-Conversation-Id'))->toBe('conv-id');
+});
+
+it('translates unexpected stream failures into a generic error event', function () {
+    $events = function () {
+        yield 'first-event';
+
+        throw new RuntimeException('boom');
+    };
+
+    $response = app(AiChatStreamer::class)->response($events(), 'conv-id');
+
+    // Laravel's generator stream wrapper calls ob_flush(), which pushes the
+    // echoed content one buffer level up: capture with two nested buffers.
+    ob_start();
+    ob_start();
+    $response->sendContent();
+    $output = ob_get_clean().ob_get_clean();
+
+    expect($output)
+        ->toContain('data: first-event')
+        ->toContain('Something went wrong. Please try again.')
+        ->toContain('data: [DONE]');
+});

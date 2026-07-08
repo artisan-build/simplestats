@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdSpendController;
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\AiConversationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CurrentTeamController;
@@ -123,6 +125,10 @@ Route::middleware([
     Route::delete('campaigns/{campaign}/track-campaigns/{trackCampaign}', [CampaignController::class, 'unlinkTrackCampaign'])->name('campaigns.track-campaigns.unlink');
     Route::resource('ad-spends', AdSpendController::class)->only(['store', 'update', 'destroy']);
     Route::get('stats/grouped', [StatsController::class, 'groups'])->name('stats.grouped');
+
+    // AI chat assistant
+    Route::post('ai/chat', [AiChatController::class, 'store'])->middleware('throttle:30,1')->name('ai.chat.store');
+    Route::get('ai/conversations/{conversation}', [AiConversationController::class, 'show'])->name('ai.conversations.show');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
     Route::post('stats/hide-read-docs-warning', [StatsController::class, 'hideReadDocsWarning'])->name('stats.hide-read-docs-warning');
 

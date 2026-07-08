@@ -15,6 +15,7 @@ use Illuminate\Support\Arr;
 use JoelButcher\Socialstream\HasConnectedAccounts;
 use JoelButcher\Socialstream\SetsProfilePhotoFromUrl;
 use Lab404\Impersonate\Models\Impersonate;
+use Laravel\Ai\Concerns\HasConversations;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
@@ -26,6 +27,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
     use HasConnectedAccounts;
+    use HasConversations;
     use HasFactory;
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;

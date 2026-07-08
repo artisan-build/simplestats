@@ -12,6 +12,9 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
+        // Helpers/composables build HTML strings with Tailwind classes
+        // (e.g. simpleMarkdown.js, TooltipHelpers.js).
+        './resources/js/**/*.js',
     ],
 
     theme: {

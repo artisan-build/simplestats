@@ -1,10 +1,12 @@
 <script setup>
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import {Head} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import LoginSummaryModal from '@/Components/LoginSummaryModal.vue';
 import Navigation from "@/Components/Navigation.vue";
+import AiChatPanel from '@/Components/AiChat/AiChatPanel.vue';
 import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
+import {useAiChat} from '@/Composables/useAiChat.js';
 import ListIcon from 'bootstrap-icons/icons/list.svg?component';
 import CloseIcon from 'bootstrap-icons/icons/x-lg.svg?component';
 
@@ -17,6 +19,10 @@ defineProps({
 });
 
 const sidebarIsOpen = ref(false);
+
+const aiChat = useAiChat();
+
+onMounted(aiChat.initFromStorage);
 </script>
 
 <template>
@@ -65,5 +71,16 @@ const sidebarIsOpen = ref(false);
                 <slot />
             </main>
         </div>
+
+        <template v-if="$page.props.onboardingPassed && aiChat.isOpen.value">
+            <!-- Desktop: inline column pushing the content; mobile: overlay drawer -->
+            <aside class="hidden lg:flex w-96 shrink-0 flex-col sticky top-0 h-screen bg-white dark:bg-dark-800 border-l dark:border-dark-700">
+                <AiChatPanel />
+            </aside>
+            <div @click="aiChat.setOpen(false)" class="fixed inset-0 z-30 bg-gray-950/50 dark:bg-dark-950/75 lg:hidden"></div>
+            <aside class="fixed inset-y-0 end-0 z-40 flex w-full max-w-sm flex-col bg-white dark:bg-dark-800 border-l dark:border-dark-700 shadow-xl lg:hidden">
+                <AiChatPanel />
+            </aside>
+        </template>
     </div>
 </template>
