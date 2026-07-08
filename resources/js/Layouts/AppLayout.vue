@@ -62,7 +62,10 @@ const startChatResize = (event) => {
                 <Navigation />
         </aside>
 
-        <div class="w-screen flex flex-1 flex-col bg-gray-50 dark:bg-dark-900">
+        <!-- min-w-0: as a flex item this column must be allowed to shrink below its
+             content's min-width (wide tables), otherwise the AI chat aside gets
+             pushed out and clipped; wide content scrolls in its own overflow box. -->
+        <div class="w-screen min-w-0 flex flex-1 flex-col bg-gray-50 dark:bg-dark-900">
             <div class="lg:hidden px-6 py-3 -mb-6">
                 <button v-if="$page.props.onboardingPassed" @click="sidebarIsOpen = ! sidebarIsOpen" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-dark-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-dark-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <ListIcon v-if="! sidebarIsOpen" class="size-6" />

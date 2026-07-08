@@ -40,7 +40,18 @@ const scrollToBottom = () => {
 };
 
 watch(() => aiChat.messages.value.map((message) => message.content.length).join(), scrollToBottom);
-onMounted(scrollToBottom);
+
+// The panel only mounts when the chat opens (v-if in AppLayout), so this
+// focuses the input for every trigger (StatsFilter pill, global button).
+onMounted(() => {
+    scrollToBottom();
+    nextTick(() => textarea.value?.focus());
+});
+
+const newConversation = () => {
+    aiChat.newConversation();
+    nextTick(() => textarea.value?.focus());
+};
 
 const resizeTextarea = () => {
     const el = textarea.value;
@@ -101,7 +112,7 @@ const onKeydown = (event) => {
                 </Dropdown>
             </div>
             <div class="flex items-center gap-1">
-                <button type="button" aria-label="New conversation" v-tooltip="'New conversation'" @click="aiChat.newConversation()" class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
+                <button type="button" aria-label="New conversation" v-tooltip="'New conversation'" @click="newConversation()" class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
                     <PlusIcon class="size-5" />
                 </button>
                 <button type="button" aria-label="Close chat" @click="aiChat.setOpen(false)" class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">
