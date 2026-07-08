@@ -4,23 +4,34 @@ import {reactive, ref} from 'vue';
 // panel share the same state across Inertia navigations.
 const isOpen = ref(false);
 const conversationId = ref(null);
+const conversations = ref([]);
 const messages = ref([]);
 const isStreaming = ref(false);
 const toolActivity = ref(null);
 const error = ref(null);
 const contextProjectId = ref(null);
+const panelWidth = ref(384);
 
 let abortController = null;
 let initialized = false;
 let hydrated = false;
+let conversationsLoaded = false;
 
 const OPEN_KEY = 'ai-chat-open';
 const CONVERSATION_KEY = 'ai-chat-conversation-id';
+const WIDTH_KEY = 'ai-chat-width';
+
+const PANEL_WIDTH_DEFAULT = 384;
+const PANEL_WIDTH_MIN = 320;
+const PANEL_WIDTH_MAX = 640;
 
 const toolLabels = {
     'list-stats-capabilities': 'Looking up your projects…',
     'get-kpi-stats': 'Crunching your KPIs…',
     'get-grouped-breakdown': 'Breaking down your stats…',
+    'get-recurring-revenue-stats': 'Calculating recurring revenue…',
+    'get-retention-cohorts': 'Building retention cohorts…',
+    'search-docs': 'Searching the docs…',
 };
 
 // localStorage is only touched lazily from onMounted hooks, never at module
@@ -33,6 +44,7 @@ const initFromStorage = () => {
     initialized = true;
     isOpen.value = localStorage.getItem(OPEN_KEY) === '1';
     conversationId.value = localStorage.getItem(CONVERSATION_KEY) || null;
+    panelWidth.value = clampPanelWidth(parseInt(localStorage.getItem(WIDTH_KEY), 10) || PANEL_WIDTH_DEFAULT);
 
     if (isOpen.value) {
         hydrateConversation();
@@ -61,6 +73,16 @@ const setOpen = (open) => {
 
 const toggle = () => setOpen(!isOpen.value);
 
+const clampPanelWidth = (width) => Math.min(PANEL_WIDTH_MAX, Math.max(PANEL_WIDTH_MIN, width));
+
+const setPanelWidth = (width) => {
+    panelWidth.value = clampPanelWidth(Math.round(width));
+
+    if (typeof window !== 'undefined') {
+        localStorage.setItem(WIDTH_KEY, panelWidth.value);
+    }
+};
+
 const hydrateConversation = async () => {
     if (hydrated || !conversationId.value) {
         hydrated = true;
@@ -85,6 +107,35 @@ const newConversation = () => {
     persistConversationId(null);
     messages.value = [];
     error.value = null;
+};
+
+const loadConversations = async () => {
+    if (conversationsLoaded) {
+        return;
+    }
+
+    conversationsLoaded = true;
+
+    try {
+        const {data} = await axios.get(route('ai.conversations.index'));
+        conversations.value = data;
+    } catch {
+        conversationsLoaded = false;
+    }
+};
+
+const switchConversation = async (id) => {
+    if (id === conversationId.value) {
+        return;
+    }
+
+    abort();
+    persistConversationId(id);
+    messages.value = [];
+    error.value = null;
+    hydrated = false;
+
+    await hydrateConversation();
 };
 
 const abort = () => {
@@ -207,6 +258,8 @@ const sendMessage = async (text) => {
         isStreaming.value = false;
         toolActivity.value = null;
         abortController = null;
+        // Title or updated_at changed, refetch on next dropdown open.
+        conversationsLoaded = false;
     }
 };
 
@@ -250,11 +303,15 @@ const retry = () => {
 export function useAiChat() {
     return {
         isOpen,
+        conversationId,
+        conversations,
         messages,
         isStreaming,
         toolActivity,
         error,
         contextProjectId,
+        panelWidth,
+        setPanelWidth,
         initFromStorage,
         toggle,
         setOpen,
@@ -262,6 +319,8 @@ export function useAiChat() {
         abort,
         retry,
         newConversation,
+        loadConversations,
+        switchConversation,
         setContextProjectId: (id) => contextProjectId.value = id,
     };
 }

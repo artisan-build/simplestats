@@ -4,12 +4,14 @@ import DeleteTeamForm from '@/Pages/Teams/Partials/DeleteTeamForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import TeamMemberManager from '@/Pages/Teams/Partials/TeamMemberManager.vue';
 import UpdateTeamNameForm from '@/Pages/Teams/Partials/UpdateTeamNameForm.vue';
+import UpdateTeamAiSettingsForm from '@/Pages/Teams/Partials/UpdateTeamAiSettingsForm.vue';
 import TeamEventUsage from "@/Pages/Teams/Partials/TeamEventUsage.vue";
 
 defineProps({
     team: Object,
     availableRoles: Array,
     permissions: Object,
+    aiSettings: Object,
 });
 </script>
 
@@ -28,6 +30,17 @@ defineProps({
                 class="mt-10 sm:mt-0"
                 :team="team"
             />
+
+            <template v-if="$page.props.currentPlanOptions?.AiAssistant">
+                <SectionBorder />
+
+                <UpdateTeamAiSettingsForm
+                    class="mt-10 sm:mt-0"
+                    :team="team"
+                    :ai-settings="aiSettings"
+                    :permissions="permissions"
+                />
+            </template>
 
             <TeamMemberManager
                 class="mt-10 sm:mt-0"

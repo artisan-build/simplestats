@@ -43,6 +43,14 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
+        label: () => trans('AI analytics assistant'),
+        simplestats: true,
+        plausible: false,
+        fathom: false,
+        baremetrics: false,
+        ga: 'partial',
+    },
+    {
         label: () => trans('Ad spend & ROAS / CAC'),
         simplestats: true,
         plausible: false,

@@ -20,6 +20,7 @@ use App\Http\Controllers\SetupInstallController;
 use App\Http\Controllers\SetupProjectController;
 use App\Http\Controllers\SetupTeamController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\TeamAiSettingsController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\TrackingController;
@@ -111,6 +112,7 @@ Route::middleware([
 
     Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
     Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+    Route::put('/teams/{team}/ai-settings', [TeamAiSettingsController::class, 'update'])->name('teams.ai-settings.update');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');
     Route::get('dashboard/metric/{kpi}', [StatsController::class, 'metric'])->name('dashboard.metric');
@@ -128,6 +130,7 @@ Route::middleware([
 
     // AI chat assistant
     Route::post('ai/chat', [AiChatController::class, 'store'])->middleware('throttle:30,1')->name('ai.chat.store');
+    Route::get('ai/conversations', [AiConversationController::class, 'index'])->name('ai.conversations.index');
     Route::get('ai/conversations/{conversation}', [AiConversationController::class, 'show'])->name('ai.conversations.show');
     Route::post('stats/hide-free-plan-warning', [StatsController::class, 'hideFreePlanWarning'])->name('stats.hide-free-plan-warning');
     Route::post('stats/hide-read-docs-warning', [StatsController::class, 'hideReadDocsWarning'])->name('stats.hide-read-docs-warning');

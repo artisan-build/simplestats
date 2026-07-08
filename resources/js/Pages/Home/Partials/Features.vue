@@ -12,6 +12,7 @@ import ArrowRepeatIcon from "bootstrap-icons/icons/arrow-repeat.svg?component";
 import CashCoinIcon from "bootstrap-icons/icons/cash-coin.svg?component";
 import BarChartStepsIcon from "bootstrap-icons/icons/bar-chart-steps.svg?component";
 import CurrencyExchangeIcon from "bootstrap-icons/icons/currency-exchange.svg?component";
+import StarsIcon from "bootstrap-icons/icons/stars.svg?component";
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
@@ -67,6 +68,11 @@ const f = {
         icon: CurrencyExchangeIcon,
         title: () => trans("Multi-currency"),
         descr: () => trans("Selling in several currencies? Foreign payments are auto-converted at daily exchange rates into your team's currency, so every revenue metric stays comparable."),
+    },
+    askAi: {
+        icon: StarsIcon,
+        title: () => trans("Ask AI"),
+        descr: () => trans("Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server."),
     },
     privacy: {
         icon: ShieldCheckIcon,
@@ -185,6 +191,23 @@ const f = {
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ f.kpis.title() }}</h3>
                     <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">{{ f.kpis.descr() }}</p>
                 </li>
+                <!-- Full-width banner: Ask AI -->
+                <li class="sm:col-span-2 lg:col-span-4 relative overflow-hidden rounded-3xl bg-indigo-600 p-8 lg:p-10 text-white shadow-lg shadow-indigo-600/20">
+                    <div class="absolute -bottom-32 -left-32 size-96 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
+                    <div class="relative flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12">
+                        <div class="flex items-center gap-4 shrink-0">
+                            <div class="flex items-center justify-center size-12 rounded-xl bg-white/15 backdrop-blur">
+                                <component :is="f.askAi.icon" class="size-6" />
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold tracking-tight">{{ f.askAi.title() }}</h3>
+                                <div class="text-sm font-semibold uppercase tracking-widest text-indigo-200">{{ $t('Chat & MCP') }}</div>
+                            </div>
+                        </div>
+                        <p class="text-base leading-relaxed text-indigo-100 max-w-3xl">{{ f.askAi.descr() }}</p>
+                    </div>
+                </li>
+
                 <li class="flex flex-col gap-3 rounded-3xl bg-white dark:bg-dark-800 p-7 ring-1 ring-gray-950/5 dark:ring-white/10">
                     <div class="flex items-center justify-center size-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                         <component :is="f.api.icon" class="size-6" />

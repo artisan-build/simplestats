@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Ai\TeamAiConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Response;
@@ -31,6 +32,12 @@ class TeamController extends Controller
                 ->select('id', 'name', 'domain', 'events_count_monthly')
                 ->orderByDesc('events_count_monthly')
                 ->get(),
+            'aiSettings' => [
+                'provider' => $team->ai_provider,
+                'model' => $team->ai_model,
+                'keySet' => $team->ai_api_key !== null,
+                'availableProviders' => TeamAiConfig::allowedProviders(),
+            ],
         ]);
     }
 }

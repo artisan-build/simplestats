@@ -33,6 +33,12 @@
     "Create a team, invite co-workers to your projects, and assign permissions. Each team is fully separated by tenancy.": "Crea un equipo, invita a tus compañeros a tus proyectos y asígnales permisos. Cada equipo está totalmente separado por tenant.",
     "Free": "Gratis",
     "There will always be a free plan, with no credit card required to sign up. Subscribe to support us as your business grows.": "Siempre habrá un plan gratuito, sin necesidad de tarjeta de crédito al registrarte. Suscríbete para apoyarnos a medida que tu negocio crece.",
+    "AI Assistant": "Asistente de IA",
+    "AI analytics assistant": "Asistente de análisis con IA",
+    "Ask AI": "Ask AI",
+    "Chat & MCP": "Chat & MCP",
+    "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.": "Haz preguntas sobre tus estadísticas en lenguaje natural y obtén respuestas basadas en tus datos reales. Chatea directamente en tu dashboard o conecta Claude, Cursor y otras herramientas de IA a tus datos a través del servidor MCP integrado.",
+
     "Subscribe at your": "Suscríbete según tu",
     "scale": "necesidad",
     "monthly": "mensual",

@@ -9,6 +9,7 @@ import TeamDropdown from "@/Pages/Teams/Partials/TeamDropdown.vue";
 import {useAiChat} from '@/Composables/useAiChat.js';
 import ListIcon from 'bootstrap-icons/icons/list.svg?component';
 import CloseIcon from 'bootstrap-icons/icons/x-lg.svg?component';
+import StarsIcon from 'bootstrap-icons/icons/stars.svg?component';
 
 defineProps({
     title: String,
@@ -23,6 +24,23 @@ const sidebarIsOpen = ref(false);
 const aiChat = useAiChat();
 
 onMounted(aiChat.initFromStorage);
+
+const startChatResize = (event) => {
+    event.preventDefault();
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const onMove = (e) => aiChat.setPanelWidth(window.innerWidth - e.clientX);
+    const onUp = () => {
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+};
 </script>
 
 <template>
@@ -72,9 +90,27 @@ onMounted(aiChat.initFromStorage);
             </main>
         </div>
 
-        <template v-if="$page.props.onboardingPassed && aiChat.isOpen.value">
+        <!-- Global Ask AI trigger, reachable on every page (the StatsFilter button only exists on stats pages) -->
+        <button
+            v-if="$page.props.onboardingPassed && $page.props.currentPlanOptions?.AiAssistant && !aiChat.isOpen.value"
+            type="button"
+            aria-label="Ask AI"
+            v-tooltip="'Ask AI'"
+            @click="aiChat.setOpen(true)"
+            class="fixed bottom-6 end-6 z-30 flex size-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 hover:scale-105"
+        >
+            <StarsIcon class="size-6" />
+        </button>
+
+        <template v-if="$page.props.onboardingPassed && $page.props.currentPlanOptions?.AiAssistant && aiChat.isOpen.value">
             <!-- Desktop: inline column pushing the content; mobile: overlay drawer -->
-            <aside class="hidden lg:flex w-96 shrink-0 flex-col sticky top-0 h-screen bg-white dark:bg-dark-800 border-l dark:border-dark-700">
+            <aside
+                class="hidden lg:flex shrink-0 flex-col sticky top-0 h-screen bg-white dark:bg-dark-800 border-l dark:border-dark-700"
+                :style="{width: aiChat.panelWidth.value + 'px'}"
+            >
+                <div @pointerdown="startChatResize" class="group absolute inset-y-0 -start-1 z-10 w-2 cursor-col-resize">
+                    <div class="mx-auto h-full w-0.5 transition-colors group-hover:bg-indigo-400/70 group-active:bg-indigo-500"></div>
+                </div>
                 <AiChatPanel />
             </aside>
             <div @click="aiChat.setOpen(false)" class="fixed inset-0 z-30 bg-gray-950/50 dark:bg-dark-950/75 lg:hidden"></div>

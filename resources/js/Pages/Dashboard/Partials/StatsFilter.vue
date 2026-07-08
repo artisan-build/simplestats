@@ -1,6 +1,6 @@
 <script setup>
 import {computed, nextTick, ref, watch} from "vue";
-import {useForm} from "@inertiajs/vue3";
+import {Link, useForm} from "@inertiajs/vue3";
 import SelectInput from "@/Components/SelectInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
@@ -275,10 +275,14 @@ watch(() => form.project_id, (id) => aiChat.setContextProjectId(id), {immediate:
                                         <span class="ml-2 sm:hidden">Refresh</span>
                                     </SecondaryButton>
                                 </div>
-                                <button type="button" aria-label="Ask AI" v-tooltip="'Ask AI about your stats'" @click="aiChat.toggle()" class="mt-1 p-1.5 rounded hover:bg-gray-100 dark:hover:bg-dark-700 flex justify-center items-center gap-2" :class="aiChat.isOpen.value ? 'text-indigo-500' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'">
+                                <button v-if="$page.props.currentPlanOptions?.AiAssistant" type="button" aria-label="Ask AI" v-tooltip="'Ask AI about your stats'" @click="aiChat.toggle()" class="mt-1 sm:mt-[3px] px-3 py-2.5 text-sm rounded-lg border font-medium flex justify-center items-center gap-2 transition-colors" :class="aiChat.isOpen.value ? 'border-indigo-300 bg-indigo-100 text-indigo-700 dark:border-indigo-500/40 dark:bg-indigo-500/20 dark:text-indigo-300' : 'border-indigo-200 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-400 dark:hover:bg-indigo-500/20'">
                                     <StarsIcon class="size-5" />
-                                    <span class="sm:hidden">Ask AI</span>
+                                    <span>Ask AI</span>
                                 </button>
+                                <Link v-else :href="route('spark.portal')" aria-label="Ask AI (upgrade required)" v-tooltip="'The AI assistant is available on paid plans. Upgrade to unlock it.'" class="mt-1 sm:mt-[3px] px-3 py-2.5 text-sm rounded-lg border dark:border-dark-700 flex justify-center items-center gap-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-700">
+                                    <StarsIcon class="size-5" />
+                                    <span>Ask AI</span>
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -106,6 +106,7 @@ export default defineConfig({
                 items: [
                     {text: 'Ingest API', link: '/ingest-api'},
                     {text: 'Query API', link: '/query-api'},
+                    {text: 'MCP Server', link: '/mcp-server'},
                 ]
             },
         ],

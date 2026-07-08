@@ -22,6 +22,8 @@ class RouteServiceProvider extends ServiceProvider
 
     private const API_RATE_LIMIT_DEFAULT = 200;
 
+    private const MCP_RATE_LIMIT = 60;
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
@@ -40,6 +42,14 @@ class RouteServiceProvider extends ServiceProvider
             }
 
             return Limit::perMinute($limit)->by($key);
+        });
+
+        RateLimiter::for('mcp', function (Request $request) {
+            $project = $request->user();
+
+            return $project instanceof Project
+                ? Limit::perMinute(self::MCP_RATE_LIMIT)->by('mcp:'.$project->id)
+                : Limit::perMinute(10)->by($request->ip());
         });
 
         $this->routes(function () {

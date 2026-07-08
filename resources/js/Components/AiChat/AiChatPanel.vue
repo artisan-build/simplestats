@@ -1,14 +1,26 @@
 <script setup>
-import {nextTick, onMounted, ref, watch} from 'vue';
+import {computed, nextTick, onMounted, ref, watch} from 'vue';
 import {useAiChat} from '@/Composables/useAiChat.js';
 import AiChatMessage from '@/Components/AiChat/AiChatMessage.vue';
+import Dropdown from '@/Components/Dropdown.vue';
 import StarsIcon from 'bootstrap-icons/icons/stars.svg?component';
 import PlusIcon from 'bootstrap-icons/icons/plus-lg.svg?component';
 import CloseIcon from 'bootstrap-icons/icons/x-lg.svg?component';
 import SendIcon from 'bootstrap-icons/icons/send.svg?component';
 import StopIcon from 'bootstrap-icons/icons/stop-circle.svg?component';
+import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?component';
 
 const aiChat = useAiChat();
+
+const currentTitle = computed(() => {
+    const active = aiChat.conversations.value.find((conversation) => conversation.id === aiChat.conversationId.value);
+
+    if (active) {
+        return active.title;
+    }
+
+    return aiChat.messages.value.find((message) => message.role === 'user')?.content ?? 'Ask AI';
+});
 
 const input = ref('');
 const messageList = ref(null);
@@ -18,6 +30,7 @@ const exampleQuestions = [
     'How many registrations did I get last month?',
     'Which referrer brings the most revenue?',
     'How did my conversion rate develop this month?',
+    'How do I set up payment tracking?',
 ];
 
 const scrollToBottom = () => {
@@ -61,9 +74,31 @@ const onKeydown = (event) => {
 <template>
     <div class="flex h-full flex-col">
         <div class="flex items-center justify-between gap-2 border-b dark:border-dark-700 px-4 py-3">
-            <div class="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
-                <StarsIcon class="size-5 text-indigo-500" />
-                Ask AI
+            <div class="flex min-w-0 items-center gap-2 font-semibold text-gray-900 dark:text-white">
+                <StarsIcon class="size-5 shrink-0 text-indigo-500" />
+                <Dropdown align="left" width="48" :content-classes="['py-1', 'bg-white dark:bg-dark-700', 'max-h-80', 'overflow-y-auto']">
+                    <template #trigger>
+                        <button type="button" aria-label="Switch conversation" v-tooltip="'Conversations'" @click="aiChat.loadConversations()" class="flex min-w-0 max-w-52 items-center gap-1.5 rounded px-1.5 py-1 hover:bg-gray-100 dark:hover:bg-dark-700">
+                            <span class="truncate">{{ currentTitle }}</span>
+                            <ChevronDownIcon class="size-3 shrink-0 text-gray-400" />
+                        </button>
+                    </template>
+                    <template #content>
+                        <div v-if="!aiChat.conversations.value.length" class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+                            No conversations yet
+                        </div>
+                        <button
+                            v-for="conversation in aiChat.conversations.value"
+                            :key="conversation.id"
+                            type="button"
+                            @click="aiChat.switchConversation(conversation.id)"
+                            class="block w-full truncate px-4 py-2 text-start text-sm font-normal hover:bg-gray-100 dark:hover:bg-dark-600"
+                            :class="conversation.id === aiChat.conversationId.value ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-300'"
+                        >
+                            {{ conversation.title }}
+                        </button>
+                    </template>
+                </Dropdown>
             </div>
             <div class="flex items-center gap-1">
                 <button type="button" aria-label="New conversation" v-tooltip="'New conversation'" @click="aiChat.newConversation()" class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-dark-700">

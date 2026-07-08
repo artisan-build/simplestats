@@ -21,6 +21,17 @@ class Team extends JetstreamTeam
     protected $casts = [
         'personal_team' => 'boolean',
         'events_reset_at' => 'datetime',
+        'ai_api_key' => 'encrypted',
+    ];
+
+    /**
+     * The team is serialized to the frontend on the team settings page; the
+     * decrypted BYOK key must never leave the backend.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'ai_api_key',
     ];
 
     /**

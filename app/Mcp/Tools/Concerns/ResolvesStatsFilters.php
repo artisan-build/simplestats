@@ -4,8 +4,10 @@ namespace App\Mcp\Tools\Concerns;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangePreset;
+use App\Models\Project;
 use App\Services\Ai\AiStatsFilterFactory;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Validation\Rule;
 use Laravel\Mcp\Request;
 
@@ -25,7 +27,7 @@ trait ResolvesStatsFilters
             'end_date' => $schema->string()
                 ->description('Range end date (YYYY-MM-DD), required with start_date.'),
             'project_id' => $schema->integer()
-                ->description('Project ID to scope to. Use 0 for all projects (default).'),
+                ->description('Project ID to scope to. Use 0 for all projects. When omitted, defaults to the authenticated project (project API token) or all projects.'),
         ];
     }
 
@@ -44,11 +46,14 @@ trait ResolvesStatsFilters
 
     protected function resolveFilters(Request $request): StatsFilterDto
     {
+        // Context project_id is only set on the web MCP endpoint (project API
+        // token): an omitted project_id then defaults to the token's project,
+        // while an explicit 0 still means all team projects.
         return app(AiStatsFilterFactory::class)->make(
             preset: $request->get('preset'),
             startDate: $request->get('start_date'),
             endDate: $request->get('end_date'),
-            projectId: (int) ($request->get('project_id') ?? 0),
+            projectId: (int) ($request->get('project_id') ?? Context::get('project_id') ?? 0),
         );
     }
 
@@ -70,6 +75,18 @@ trait ResolvesStatsFilters
             ),
             'currency' => auth()->user()?->team?->currency ?? 'EUR',
         ];
+    }
+
+    /**
+     * Whether the filtered project (or, for "all projects", any team project)
+     * has the given USAGE_* bit enabled. Team scoping comes from HasTeamScope.
+     */
+    protected function tracksUsage(StatsFilterDto $filters, int $usageBit): bool
+    {
+        return Project::query()
+            ->when($filters->projectId !== StatsFilterDto::TRACK_ALL, fn ($query) => $query->whereKey($filters->projectId))
+            ->whereRaw('(usage & ?) > 0', [$usageBit])
+            ->exists();
     }
 
     /**

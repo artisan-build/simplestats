@@ -23,9 +23,11 @@ class ListStatsCapabilities extends Tool
             return Response::structured([
                 'projects' => [
                     ['id' => StatsFilterDto::TRACK_ALL, 'name' => 'All projects'],
-                    ...Project::query()->get(['id', 'name'])->map(fn (Project $project) => [
+                    ...Project::query()->get(['id', 'name', 'usage'])->map(fn (Project $project) => [
                         'id' => $project->id,
                         'name' => $project->name,
+                        'tracks_registrations' => $project->hasUsages([Project::USAGE_USERS]),
+                        'tracks_subscriptions' => $project->hasUsages([Project::USAGE_SUBSCRIPTION]),
                     ])->all(),
                 ],
                 'dimensions' => StatsService::getStatsTypesFlatMap(['model', 'icon'])

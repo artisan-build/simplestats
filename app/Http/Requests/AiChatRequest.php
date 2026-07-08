@@ -8,7 +8,7 @@ class AiChatRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return (bool) ($this->user()?->currentTeam?->owner?->sparkPlan()->options['AiAssistant'] ?? false);
     }
 
     /**

@@ -72,6 +72,31 @@ it('validates the message', function () {
     ])->assertUnprocessable();
 });
 
+it('lists only the user\'s own conversations', function () {
+    $store = app(ConversationStore::class);
+    $ownId = $store->storeConversation($this->user->id, 'My conversation');
+
+    $otherUser = User::factory()->withPersonalTeam()->create();
+    $foreignId = $store->storeConversation($otherUser->id, 'Foreign conversation');
+
+    $this->actingAs($this->user)->getJson(route('ai.conversations.index'))
+        ->assertSuccessful()
+        ->assertJsonCount(1)
+        ->assertJsonPath('0.id', $ownId)
+        ->assertJsonPath('0.title', 'My conversation')
+        ->assertJsonMissing(['id' => $foreignId]);
+});
+
+it('blocks the chat for plans without the AI assistant', function () {
+    // Outside production sparkPlan() falls back to the highest configured
+    // plan, so shrinking the list to the Free plan simulates a free user.
+    config()->set('spark.billables.user.plans', [config('spark.billables.user.plans')[0]]);
+
+    $this->actingAs($this->user)->postJson(route('ai.chat.store'), [
+        'message' => 'How many registrations did I get last month?',
+    ])->assertForbidden();
+});
+
 it('requires authentication', function () {
     // TestUserSeeder leaves the created user on the web guard.
     auth()->forgetGuards();
