@@ -106,7 +106,8 @@ trait ResolvesStatsFilters
                     $row[$key] = round($row[$key] / 100, 2);
                 }
             }
-        } unset($row);
+        }
+        unset($row);
 
         return $rows;
     }

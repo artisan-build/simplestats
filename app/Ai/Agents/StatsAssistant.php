@@ -23,9 +23,6 @@ class StatsAssistant implements Agent, Conversational, HasTools
 
     public function __construct(public ?int $currentProjectId = null) {}
 
-    /**
-     * Get the instructions that the agent should follow.
-     */
     public function instructions(): Stringable|string
     {
         $project = $this->currentProjectId ? Project::find($this->currentProjectId) : null;
@@ -35,12 +32,14 @@ class StatsAssistant implements Agent, Conversational, HasTools
             : 'Default to all projects (project_id 0) unless the user asks about a specific project.';
 
         $appName = config('app.name');
+        $today = now()->toDateString();
+        $timezone = config('app.timezone');
 
         return <<<PROMPT
         You are the {$appName} analytics assistant. You answer questions about the user's product analytics (visitors, registrations, conversion, revenue, active users) using the provided tools. Never invent or estimate numbers; every figure you state must come from a tool result.
 
         Context:
-        - Today is {$this->today()} in the team's timezone ({$this->timezone()}).
+        - Today is {$today} in the team's timezone ({$timezone}).
         - {$projectContext}
 
         Behavior:
@@ -60,8 +59,6 @@ class StatsAssistant implements Agent, Conversational, HasTools
     }
 
     /**
-     * Get the tools available to the agent.
-     *
      * @return Tool[]
      */
     public function tools(): iterable
@@ -74,15 +71,5 @@ class StatsAssistant implements Agent, Conversational, HasTools
             app(GetRetentionCohorts::class),
             app(SearchDocs::class),
         ];
-    }
-
-    private function today(): string
-    {
-        return now()->toDateString();
-    }
-
-    private function timezone(): string
-    {
-        return config('app.timezone');
     }
 }

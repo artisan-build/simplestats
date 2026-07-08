@@ -1,6 +1,6 @@
 <script setup>
-import {onMounted, ref} from 'vue';
-import {Head} from '@inertiajs/vue3';
+import {computed, onMounted, ref} from 'vue';
+import {Head, usePage} from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import LoginSummaryModal from '@/Components/LoginSummaryModal.vue';
 import Navigation from "@/Components/Navigation.vue";
@@ -22,6 +22,9 @@ defineProps({
 const sidebarIsOpen = ref(false);
 
 const aiChat = useAiChat();
+
+const page = usePage();
+const canUseAiChat = computed(() => page.props.onboardingPassed && page.props.currentPlanOptions?.AiAssistant);
 
 onMounted(aiChat.initFromStorage);
 
@@ -95,7 +98,7 @@ const startChatResize = (event) => {
 
         <!-- Global Ask AI trigger, reachable on every page (the StatsFilter button only exists on stats pages) -->
         <button
-            v-if="$page.props.onboardingPassed && $page.props.currentPlanOptions?.AiAssistant && !aiChat.isOpen.value"
+            v-if="canUseAiChat && !aiChat.isOpen.value"
             type="button"
             aria-label="Ask AI"
             v-tooltip="'Ask AI'"
@@ -105,7 +108,7 @@ const startChatResize = (event) => {
             <StarsIcon class="size-6" />
         </button>
 
-        <template v-if="$page.props.onboardingPassed && $page.props.currentPlanOptions?.AiAssistant && aiChat.isOpen.value">
+        <template v-if="canUseAiChat && aiChat.isOpen.value">
             <!-- Desktop: inline column pushing the content; mobile: overlay drawer -->
             <aside
                 class="hidden lg:flex shrink-0 flex-col sticky top-0 h-screen bg-white dark:bg-dark-800 border-l dark:border-dark-700"
