@@ -61,7 +61,7 @@ class ListStatsCapabilities extends Tool
         } catch (Throwable $e) {
             report($e);
 
-            return Response::error('Could not list stats capabilities: '.$e->getMessage());
+            return Response::error('Could not list stats capabilities. The error was reported, tell the user to try again or rephrase.');
         }
     }
 

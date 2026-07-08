@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Servers;
 
+use App\Mcp\Tools\GetCampaignPerformance;
 use App\Mcp\Tools\GetGroupedBreakdown;
 use App\Mcp\Tools\GetKpiStats;
 use App\Mcp\Tools\GetRecurringRevenueStats;
@@ -25,6 +26,7 @@ class SimpleStatsServer extends Server
         GetGroupedBreakdown::class,
         GetRecurringRevenueStats::class,
         GetRetentionCohorts::class,
+        GetCampaignPerformance::class,
         SearchDocs::class,
         ListAppPages::class,
     ];

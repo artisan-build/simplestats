@@ -15,7 +15,9 @@ Prefer chatting inside the app? The same assistant powers the **Ask AI** panel o
 | `get-grouped-breakdown` | Breakdowns by dimension (referrer, source, campaign, country, device, ...) |
 | `get-recurring-revenue-stats` | MRR/ARR snapshots, movements, churn, NRR/GRR, subscription economics |
 | `get-retention-cohorts` | Registration retention cohorts |
+| `get-campaign-performance` | Per-campaign profitability: spend, revenue, net profit, ROAS, CAC, LTV:CAC, payback |
 | `search-docs` | Searches this documentation |
+| `list-app-pages` | Lists the in-app pages with descriptions and links |
 
 ## Endpoint & Authentication
 

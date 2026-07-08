@@ -46,7 +46,7 @@ class GetKpiStats extends Tool
         } catch (Throwable $e) {
             report($e);
 
-            return Response::error('Could not load KPI stats: '.$e->getMessage());
+            return Response::error('Could not load KPI stats. The error was reported, tell the user to try again or rephrase.');
         }
     }
 

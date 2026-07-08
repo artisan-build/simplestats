@@ -49,7 +49,7 @@ class GetRetentionCohorts extends Tool
         } catch (Throwable $e) {
             report($e);
 
-            return Response::error('Could not load retention cohorts: '.$e->getMessage());
+            return Response::error('Could not load retention cohorts. The error was reported, tell the user to try again or rephrase.');
         }
     }
 

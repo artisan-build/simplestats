@@ -31,6 +31,7 @@ const toolLabels = {
     'get-grouped-breakdown': 'Breaking down your stats…',
     'get-recurring-revenue-stats': 'Calculating recurring revenue…',
     'get-retention-cohorts': 'Building retention cohorts…',
+    'get-campaign-performance': 'Comparing your campaigns…',
     'search-docs': 'Searching the docs…',
     'list-app-pages': 'Finding the right page…',
 };

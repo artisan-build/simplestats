@@ -37,7 +37,7 @@ class SearchDocs extends Tool
         } catch (Throwable $e) {
             report($e);
 
-            return Response::error('Could not search the docs: '.$e->getMessage());
+            return Response::error('Could not search the docs. The error was reported, tell the user to try again or rephrase.');
         }
     }
 

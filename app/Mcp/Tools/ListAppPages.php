@@ -26,7 +26,7 @@ class ListAppPages extends Tool
         } catch (Throwable $e) {
             report($e);
 
-            return Response::error('Could not list app pages: '.$e->getMessage());
+            return Response::error('Could not list app pages. The error was reported, tell the user to try again or rephrase.');
         }
     }
 

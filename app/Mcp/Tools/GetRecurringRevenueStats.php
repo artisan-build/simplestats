@@ -86,7 +86,7 @@ class GetRecurringRevenueStats extends Tool
         } catch (Throwable $e) {
             report($e);
 
-            return Response::error('Could not load recurring revenue stats: '.$e->getMessage());
+            return Response::error('Could not load recurring revenue stats. The error was reported, tell the user to try again or rephrase.');
         }
     }
 

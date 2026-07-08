@@ -10,12 +10,17 @@ const escapeHtml = (text) => text
     .replace(/"/g, '&quot;');
 
 const renderLink = (match, label, url) => {
-    // In-app links stay in the tab (and get SPA-navigated by AiChatMessage),
-    // external ones open in a new tab.
+    // Injection hardening: tool results contain user-controlled strings
+    // (referrer/campaign names, ...), so only same-origin URLs become
+    // clickable links (SPA-navigated by AiChatMessage). Everything else is
+    // rendered as plain text.
     const isInternal = typeof window !== 'undefined' && url.startsWith(`${window.location.origin}/`);
-    const externalAttrs = isInternal ? '' : ' target="_blank" rel="noopener noreferrer"';
 
-    return `<a href="${url}"${externalAttrs} class="text-indigo-600 dark:text-indigo-400 underline">${label}</a>`;
+    if (!isInternal) {
+        return label === url ? url : `${label} (${url})`;
+    }
+
+    return `<a href="${url}" class="text-indigo-600 dark:text-indigo-400 underline">${label}</a>`;
 };
 
 const renderInline = (text) => text
