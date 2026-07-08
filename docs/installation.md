@@ -1,5 +1,9 @@
 # Installation
 
+A few minutes from now, you will have a dashboard like this for your own app:
+
+![The SimpleStats dashboard: acquisition, revenue and breakdown by channel at a glance](https://simplestats.io/images/screenshots/screenshot_dashboard_light.webp)
+
 ## Composer
 
 You can install the **client** package via composer:

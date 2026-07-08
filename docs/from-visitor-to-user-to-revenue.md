@@ -39,6 +39,10 @@ Not every app requires user accounts. For e-commerce sites with guest checkout, 
 | **Login** | They return and log in | Active user event (DAU/WAU/MAU) |
 | **Payment** | They purchase a subscription | Revenue attributed to `google` / `spring-sale` |
 
+The **Users** page shows exactly this chain for every single user: where they came from, when they registered, how often they log in, and the revenue they generated.
+
+![The Users page: referrer, registration, logins and lifetime revenue per user](https://simplestats.io/images/screenshots/screenshot_users_light.webp)
+
 ## What Questions Can You Answer?
 
 With this full-funnel data, your SimpleStats dashboard can answer questions like:

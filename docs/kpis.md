@@ -46,6 +46,8 @@ Which KPIs apply to your project depends on what you track. A content site that 
 
 If your project tracks **subscriptions**, SimpleStats turns your recurring payments into the standard subscription-SaaS metrics. These are point-in-time figures: revenue snapshots are taken as of the end of the selected period, while churn and efficiency look at what changed across it.
 
+![The Revenue page: MRR, subscribers, churn and MRR movements](https://simplestats.io/images/screenshots/screenshot_revenue_light.webp)
+
 | Key             | Short                       | Description                                                                                                                                                            |
 |-----------------|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **MRR**         | Monthly Recurring Revenue   | Active recurring revenue as of the end of the selected period, normalized to a monthly amount (yearly plans counted as net / 12).                                     |
@@ -62,6 +64,8 @@ If your project tracks **subscriptions**, SimpleStats turns your recurring payme
 ## Engagement & Retention
 
 These metrics describe how reliably your users keep coming back. They are computed on rolling windows and plotted as of each period.
+
+![The Retention page: engagement metrics, average retention curve and retention by registration cohort](https://simplestats.io/images/screenshots/screenshot_retention_light.webp)
 
 | Key            | Short            | Description                                                                                                                                                            |
 |----------------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -80,6 +84,8 @@ How long it takes users to move through your funnel. Both are medians, by the da
 ## Campaign Profitability
 
 On the **Campaigns** page you enter how much you spent on ads per campaign (e.g. "Google Ads = 500 € from June 1 to June 30"). SimpleStats already knows the revenue each campaign brought in, so it turns your spend into profit metrics per campaign. These are not on the main dashboard, they sit directly on each campaign, because spend and return are always per channel.
+
+![The Campaigns page: spend versus revenue, ROAS, CAC and payback per campaign](https://simplestats.io/images/screenshots/screenshot_campaigns_light.webp)
 
 | Key            | Short                    | Description                                                                                                                                                  |
 |----------------|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
