@@ -12,7 +12,7 @@ Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 
 ## Requirements
 
-- **PHP:** 8.2 or higher
+- **PHP:** 8.3 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip
 - **Laravel:** 11 or higher
 - **Database:** PostgreSQL 14 or higher

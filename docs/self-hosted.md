@@ -14,7 +14,7 @@ We recommend the SaaS version for anyone looking for a smooth, worry‑free anal
 
 _**SimpleStats**_ Self-hosted requires:
 
-- **PHP:** 8.2 or higher
+- **PHP:** 8.3 or higher
 - **Laravel:** 11 or higher
 - **Database:** PostgreSQL 14 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip

@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-pdo": "*",
         "ext-zip": "*",
         "ashallendesign/laravel-exchange-rates": "^7.2",
@@ -16,9 +16,11 @@
         "joelbutcher/socialstream": "^6.2",
         "lab404/laravel-impersonate": "^1.7",
         "laracraft-tech/laravel-useful-additions": "^4.1",
+        "laravel/ai": "^0.8.1",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.33",
         "laravel/jetstream": "^5.0",
+        "laravel/mcp": "^0.7.2",
         "laravel/pulse": "^1.2",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
@@ -88,6 +90,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.3.32"
         }
     },
     "minimum-stability": "dev",

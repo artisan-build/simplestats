@@ -48,7 +48,16 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 2. **Self-hosted**: Full control over data and deployment, requires valid license
    - Setup, maintenance, and troubleshooting are the customer's responsibility
    - Uses `composer.self-hosted.json` for dependencies
-   - Requires: PHP 8.2+, Laravel 12+, PostgreSQL 14+, Node.js 21.6+
+   - Requires: PHP 8.3+, Laravel 12+, PostgreSQL 14+, Node.js 21.6+
+
+### Keep `composer.self-hosted.json` in Sync
+
+`composer.self-hosted.json` (plus its `composer.self-hosted.lock`) is the dependency manifest for the self-hosted build and is **not** generated from `composer.json`. Whenever `composer.json` changes, decide explicitly and mirror where needed:
+
+- **New package for a shared feature** (available self-hosted, e.g. `laravel/ai` + `laravel/mcp` for the AI assistant): add it to `composer.self-hosted.json` too, with the same version constraint.
+- **New saas-only package** (e.g. Spark, Filament, og-image, blog/landing/translation tooling): do NOT add it, but guard every call site behind `config('app.app_type') === 'saas'` (see `AppServiceProvider`, `app/Models/User.php`).
+- **PHP requirement or `config.platform` changes**: mirror them (self-hosted is on `php: ^8.3` + platform pin `8.3.32` since `laravel/ai` requires `^8.3`). Also update the requirements lists in `README.md`, `docs/self-hosted.md`, and this file.
+- After editing, regenerate the lock without touching the local `vendor/` (which belongs to `composer.json`): `COMPOSER=composer.self-hosted.json composer update <packages> --with-all-dependencies --no-install --no-scripts`. Verify the resolved versions match `composer.lock`.
 
 ## Laravel Boost
 
