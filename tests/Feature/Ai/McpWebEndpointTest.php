@@ -81,6 +81,6 @@ it('serves team-scoped kpi stats defaulting to the token project', function () {
     $response->assertOk();
 
     expect($response->getContent())
-        ->toContain('Project '.$this->project->id)
+        ->toContain($this->project->name)
         ->not->toContain('All projects');
 });

@@ -23,11 +23,22 @@ const renderLink = (match, label, url) => {
     return `<a href="${url}" class="text-indigo-600 dark:text-indigo-400 underline">${label}</a>`;
 };
 
-const renderInline = (text) => text
+// LLMs often emit bare URLs instead of markdown links; linkify those too
+// (same renderLink hardening applies). Runs after the markdown-link pass; the
+// prefix group skips URLs already sitting inside a href="..." attribute.
+// Trailing sentence punctuation is not part of the URL.
+const autolinkBareUrls = (text) => text.replace(/(^|[^"'>])(https?:\/\/[^\s<]+)/g, (match, prefix, url) => {
+    const trailing = url.match(/[.,;:!?)\]]+$/)?.[0] ?? '';
+    const cleanUrl = trailing ? url.slice(0, -trailing.length) : url;
+
+    return prefix + renderLink(match, cleanUrl, cleanUrl) + trailing;
+});
+
+const renderInline = (text) => autolinkBareUrls(text
     .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-gray-100 dark:bg-dark-700 text-[0.85em]">$1</code>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, renderLink);
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, renderLink));
 
 const UL_CLASS = 'list-disc ps-5 space-y-1';
 const OL_CLASS = 'list-decimal ps-5 space-y-1';

@@ -104,6 +104,41 @@ it('returns kpi stats with totals for a preset range', function () {
         });
 });
 
+it('adds per-project totals when the scope is all projects', function () {
+    $secondProject = Project::factory()
+        ->state(['name' => 'Second App', 'usage' => $this->project->usage])
+        ->for($this->team)
+        ->create();
+
+    $time = now()->subDay()->format('Y-m-d').' 12:00:00';
+    aiToolInsertVisitors($this->team->id, $this->project->id, $time, 5);
+    aiToolInsertVisitors($this->team->id, $secondProject->id, $time, 3);
+
+    SimpleStatsServer::actingAs($this->user)
+        ->tool(GetKpiStats::class, ['preset' => 'last_7_days', 'project_id' => 0])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) {
+            $json->where('totals.pd_visitor', fn ($count) => (float) $count === 8.0)
+                ->where('per_project.0.project', $this->project->name)
+                ->where('per_project.0.totals.pd_visitor', fn ($count) => (float) $count === 5.0)
+                ->where('per_project.1.project', 'Second App')
+                ->where('per_project.1.totals.pd_visitor', fn ($count) => (float) $count === 3.0)
+                ->etc();
+        });
+});
+
+it('omits per-project totals for a single project scope', function () {
+    $time = now()->subDay()->format('Y-m-d').' 12:00:00';
+    aiToolInsertVisitors($this->team->id, $this->project->id, $time, 5);
+
+    SimpleStatsServer::actingAs($this->user)
+        ->tool(GetKpiStats::class, ['preset' => 'last_7_days', 'project_id' => $this->project->id])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) {
+            $json->missing('per_project')->etc();
+        });
+});
+
 it('rejects a call without any date range', function () {
     SimpleStatsServer::actingAs($this->user)
         ->tool(GetKpiStats::class, [])

@@ -25,15 +25,19 @@ class StatsAssistant implements Agent, Conversational, HasMiddleware, HasTools
 {
     use Promptable, RemembersConversations;
 
-    public function __construct(public ?int $currentProjectId = null) {}
+    public function __construct(public ?int $currentProjectId = null, public ?string $currentPreset = null) {}
 
     public function instructions(): Stringable|string
     {
         $project = $this->currentProjectId ? Project::find($this->currentProjectId) : null;
 
         $projectContext = $project
-            ? "The user is currently viewing the project \"{$project->name}\" (project_id {$project->id}). Default to this project unless they ask about another one or all projects."
-            : 'Default to all projects (project_id 0) unless the user asks about a specific project.';
+            ? "The user is currently viewing the project \"{$project->name}\" (project_id {$project->id}). Every question refers to this project unless the user explicitly names another project or asks about all projects."
+            : 'No specific project is selected: questions refer to all projects (project_id 0) unless the user explicitly names one.';
+
+        $rangeContext = $this->currentPreset
+            ? "The dashboard currently shows the \"{$this->currentPreset}\" date range. When the user does not name a time range, use this preset."
+            : 'When the user does not name a time range, default to the last_30_days preset.';
 
         $appName = config('app.name');
         $today = now()->toDateString();
@@ -45,15 +49,19 @@ class StatsAssistant implements Agent, Conversational, HasMiddleware, HasTools
         Context:
         - Today is {$today} in the team's timezone ({$timezone}).
         - {$projectContext}
+        - {$rangeContext}
 
         Behavior:
-        - Use the list-stats-capabilities tool when you are unsure which projects, breakdown dimensions, or date presets exist.
+        - Never ask which project or date range the user means. Use the context above, call the tools right away, and state the assumed project (by name) and range in your answer; the user will correct you if they meant something else.
+        - When the scope is all projects, present the per-project figures followed by the overall total, unless the user explicitly asks only for the combined number. The KPI and recurring revenue tools return them as per_project; for breakdowns, retention or campaigns call the tool once per project when the user wants a per-project split.
+        - Use the list-stats-capabilities tool when you are unsure which breakdown dimensions or date presets exist.
         - For subscription questions (MRR, ARR, expansion/contraction, churn, NRR/GRR, LTV) use the recurring revenue tool; for "do users come back" questions use the retention cohorts tool.
         - For campaign, ad spend, ROAS, CAC or "which campaign is best" questions use the campaign performance tool. Its legend explains every metric; use it when the user asks what a value means.
         - For setup and how-to questions about {$appName} itself (installation, tracking configuration, client package, API) use the search-docs tool and include the docs link in your answer.
         - When the user asks where to find or do something in the app ("Where can I create a project?", "How do I invite team members?") use the list-app-pages tool and answer with the page name and its link. Never invent in-app URLs.
         - Prefer date presets for relative ranges ("last month" -> last_month, "this year" -> this_year). Use start_date/end_date only when no preset fits.
         - Always state which date range (and project, if not the default) the numbers refer to.
+        - Refer to projects by their name, never by their numeric id ("Project 1"). Ids are internal tool parameters only; the scope block of every tool result contains the proper project name.
         - If a tool returns no data or an error, say so plainly and suggest what to check. Do not guess.
 
         Security:

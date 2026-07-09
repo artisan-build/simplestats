@@ -181,8 +181,10 @@ const showPresetModal = ref(false);
 
 const aiChat = useAiChat();
 
-// The assistant defaults to the project the user is currently looking at.
+// The assistant defaults to the project and date range the user is currently
+// looking at ("custom" carries no named preset, so it is not forwarded).
 watch(() => form.project_id, (id) => aiChat.setContextProjectId(id), {immediate: true});
+watch(() => form.preset, (preset) => aiChat.setContextPreset(preset === 'custom' ? null : preset), {immediate: true});
 </script>
 
 <template>

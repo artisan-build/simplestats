@@ -17,7 +17,7 @@ use Laravel\Mcp\Server\Attributes\Version;
 
 #[Name('SimpleStats')]
 #[Version('1.0.0')]
-#[Instructions('Query the authenticated team\'s SimpleStats analytics: KPI time series (visitors, registrations, revenue, active users), breakdowns by dimensions like referrer, source, campaign, country, or device, recurring revenue (MRR/ARR, movements, churn), and registration retention cohorts. Call list-stats-capabilities first to discover projects, dimensions, presets, and KPI keys. All data is automatically scoped to the current team.')]
+#[Instructions('Query the authenticated team\'s SimpleStats analytics: KPI time series (visitors, registrations, revenue, active users), breakdowns by dimensions like referrer, source, campaign, country, or device, recurring revenue (MRR/ARR, movements, churn), and registration retention cohorts. Call list-stats-capabilities first to discover projects, dimensions, presets, and KPI keys. All data is automatically scoped to the current team. Always refer to projects by their name, never by their numeric id: ids are internal tool parameters and should not appear in answers.')]
 class SimpleStatsServer extends Server
 {
     protected array $tools = [

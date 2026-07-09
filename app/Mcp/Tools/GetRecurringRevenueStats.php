@@ -73,14 +73,26 @@ class GetRecurringRevenueStats extends Tool
                     : $this->centsToCurrency($data, $config['money']);
             }
 
-            return Response::structured([
+            $perProject = $section === 'snapshot'
+                ? $this->perProjectBreakdown(
+                    $filters,
+                    fn (int $projectId) => $this->centsToCurrency(
+                        [$this->statsDetailsService->getMrrSnapshot($this->resolveFilters($request, $projectId))],
+                        self::SECTIONS['snapshot']['money'],
+                    )[0],
+                    Project::USAGE_SUBSCRIPTION,
+                )
+                : null;
+
+            return Response::structured(array_filter([
                 'scope' => $this->describeScope($filters),
                 'section' => $section,
                 'data' => $data,
+                'per_project' => $perProject,
                 'note' => ($data === null || $data === []
                     ? 'No subscription data for this range/filter. '
                     : '').self::SECTION_NOTES[$section].' Monetary values are in the scope currency.',
-            ]);
+            ], fn ($value) => $value !== null));
         } catch (ValidationException $e) {
             return Response::error('Invalid arguments: '.collect($e->errors())->flatten()->implode(' '));
         } catch (Throwable $e) {

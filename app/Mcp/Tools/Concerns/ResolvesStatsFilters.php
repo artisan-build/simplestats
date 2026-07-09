@@ -6,6 +6,7 @@ use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangePreset;
 use App\Models\Project;
 use App\Services\Ai\AiStatsFilterFactory;
+use Closure;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Validation\Rule;
@@ -44,7 +45,7 @@ trait ResolvesStatsFilters
         ];
     }
 
-    protected function resolveFilters(Request $request): StatsFilterDto
+    protected function resolveFilters(Request $request, ?int $overrideProjectId = null): StatsFilterDto
     {
         // Context project_id is only set on the web MCP endpoint (project API
         // token): an omitted project_id then defaults to the token's project,
@@ -53,7 +54,7 @@ trait ResolvesStatsFilters
             preset: $request->get('preset'),
             startDate: $request->get('start_date'),
             endDate: $request->get('end_date'),
-            projectId: (int) ($request->get('project_id') ?? Context::get('project_id') ?? 0),
+            projectId: $overrideProjectId ?? (int) ($request->get('project_id') ?? Context::get('project_id') ?? 0),
         );
     }
 
@@ -65,7 +66,7 @@ trait ResolvesStatsFilters
         return [
             'project' => $filters->projectId === StatsFilterDto::TRACK_ALL
                 ? 'All projects'
-                : "Project {$filters->projectId}",
+                : (Project::find($filters->projectId)?->name ?? "Project {$filters->projectId}"),
             'range' => sprintf(
                 '%d %s back from %s (%s)',
                 $filters->rangeAmount,
@@ -75,6 +76,35 @@ trait ResolvesStatsFilters
             ),
             'currency' => auth()->user()?->team?->currency ?? 'EUR',
         ];
+    }
+
+    /**
+     * Per-project variant of a tool result when the scope is "all projects",
+     * so the model can break an answer down without one tool call per project.
+     * Skipped for single-project teams and for unusually large teams to bound
+     * the query cost. $resolve receives a project id and returns the extra
+     * keys merged next to the project name.
+     *
+     * @param  Closure(int): array<string, mixed>  $resolve
+     * @return array<int, array<string, mixed>>|null
+     */
+    protected function perProjectBreakdown(StatsFilterDto $filters, Closure $resolve, ?int $usageBit = null): ?array
+    {
+        if ($filters->projectId !== StatsFilterDto::TRACK_ALL) {
+            return null;
+        }
+
+        $projects = Project::query()
+            ->when($usageBit !== null, fn ($query) => $query->whereRaw('(usage & ?) > 0', [$usageBit]))
+            ->get(['id', 'name']);
+
+        if ($projects->count() < 2 || $projects->count() > 10) {
+            return null;
+        }
+
+        return $projects
+            ->map(fn (Project $project) => ['project' => $project->name, ...$resolve($project->id)])
+            ->all();
     }
 
     /**

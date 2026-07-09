@@ -20,6 +20,9 @@ class AiChatRequest extends FormRequest
             'message' => ['required', 'string', 'max:2000'],
             'conversation_id' => ['nullable', 'uuid'],
             'project_id' => ['nullable', 'integer', 'min:0'],
+            // Dashboard range preset as soft context; unknown values (e.g.
+            // custom presets) are ignored via tryFrom in the controller.
+            'context_preset' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

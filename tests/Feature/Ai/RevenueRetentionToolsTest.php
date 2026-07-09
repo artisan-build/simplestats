@@ -76,6 +76,37 @@ it('returns the mrr snapshot with money converted from cents', function () {
         });
 });
 
+it('adds per-project mrr snapshots when the scope is all projects', function () {
+    $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
+
+    $secondProject = Project::factory()
+        ->state(['name' => 'Second App', 'usage' => $this->project->usage])
+        ->for($this->team)
+        ->create();
+
+    $time = now()->subDay()->format('Y-m-d').' 12:00:00';
+    revToolInsertUser('sub-a', $this->team->id, $this->project->id, $time);
+    revToolInsertSubscriptionPayment('sub-a', $this->team->id, $this->project->id, $time, 10000.0);
+    revToolInsertUser('sub-b', $this->team->id, $secondProject->id, $time);
+    revToolInsertSubscriptionPayment('sub-b', $this->team->id, $secondProject->id, $time, 5000.0);
+
+    SimpleStatsServer::actingAs($this->user)
+        ->tool(GetRecurringRevenueStats::class, [
+            'section' => 'snapshot',
+            'preset' => 'last_7_days',
+            'project_id' => 0,
+        ])
+        ->assertOk()
+        ->assertStructuredContent(function ($json) {
+            $json->where('data.mrr', fn ($mrr) => (float) $mrr === 150.0)
+                ->where('per_project.0.project', $this->project->name)
+                ->where('per_project.0.mrr', fn ($mrr) => (float) $mrr === 100.0)
+                ->where('per_project.1.project', 'Second App')
+                ->where('per_project.1.mrr', fn ($mrr) => (float) $mrr === 50.0)
+                ->etc();
+        });
+});
+
 it('notes when the project does not track subscriptions', function () {
     SimpleStatsServer::actingAs($this->user)
         ->tool(GetRecurringRevenueStats::class, [

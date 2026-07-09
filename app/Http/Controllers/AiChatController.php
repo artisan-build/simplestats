@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ai\Agents\StatsAssistant;
+use App\Enums\StatsRangePreset;
 use App\Helpers\AppHelper;
 use App\Http\Requests\AiChatRequest;
 use App\Services\Ai\AiChatStreamer;
@@ -38,7 +39,10 @@ class AiChatController extends Controller
             $request->input('message'),
         );
 
-        $agent = new StatsAssistant(currentProjectId: $request->integer('project_id') ?: null);
+        $agent = new StatsAssistant(
+            currentProjectId: $request->integer('project_id') ?: null,
+            currentPreset: StatsRangePreset::tryFrom((string) $request->input('context_preset'))?->value,
+        );
 
         $byokProvider = $teamAiConfig->activate($user->team);
 

@@ -68,6 +68,22 @@ it('starts a fresh conversation for a foreign conversation id', function () {
     expect($response->headers->get('X-Conversation-Id'))->not->toBe($foreignConversationId);
 });
 
+it('injects the current project and range into the agent instructions', function () {
+    auth()->setUser($this->user);
+
+    $withContext = (string) (new StatsAssistant(currentProjectId: $this->project->id, currentPreset: 'this_year'))->instructions();
+    $withoutContext = (string) (new StatsAssistant)->instructions();
+
+    expect($withContext)
+        ->toContain($this->project->name)
+        ->toContain('"this_year" date range')
+        ->toContain('Never ask which project or date range');
+
+    expect($withoutContext)
+        ->toContain('all projects (project_id 0)')
+        ->toContain('default to the last_30_days preset');
+});
+
 it('validates the message', function () {
     $this->actingAs($this->user)->postJson(route('ai.chat.store'), [
         'message' => '',

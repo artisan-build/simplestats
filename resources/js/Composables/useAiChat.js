@@ -10,6 +10,7 @@ const isStreaming = ref(false);
 const toolActivity = ref(null);
 const error = ref(null);
 const contextProjectId = ref(null);
+const contextPreset = ref(null);
 const panelWidth = ref(384);
 
 let abortController = null;
@@ -184,6 +185,7 @@ const sendMessage = async (text) => {
                 message,
                 conversation_id: conversationId.value,
                 project_id: contextProjectId.value || null,
+                context_preset: contextPreset.value || null,
             }),
             signal: abortController.signal,
         });
@@ -285,6 +287,14 @@ const handleEvent = (event, assistantMessage) => {
         case 'tool_result':
             toolActivity.value = null;
             break;
+        case 'stream_end':
+            // Flaky models (flash-lite in particular) sometimes stop
+            // mid-sentence; the provider then reports no proper stop reason.
+            // Keep the partial answer, but offer a retry.
+            if (['unknown', 'length', 'content_filter', 'error'].includes(event.reason) && assistantMessage.content !== '') {
+                error.value = 'The answer may have been cut off. Use retry to get a complete one.';
+            }
+            break;
         case 'error':
             throw new Error(event.message || 'The assistant ran into an error.');
     }
@@ -324,5 +334,6 @@ export function useAiChat() {
         loadConversations,
         switchConversation,
         setContextProjectId: (id) => contextProjectId.value = id,
+        setContextPreset: (preset) => contextPreset.value = preset,
     };
 }
