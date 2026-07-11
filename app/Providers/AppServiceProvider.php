@@ -8,6 +8,7 @@ use App\Models\StatsVisitor;
 use App\Models\User;
 use App\Observers\UserObserver;
 use App\PulseUsers;
+use App\Services\Ai\NullConversationStore;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Ai\Contracts\ConversationStore;
+use Laravel\Ai\Storage\DatabaseConversationStore;
 use Laravel\Pulse\Contracts\ResolvesUsers;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Health\Checks\Checks\CacheCheck;
@@ -44,6 +47,19 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ResolvesUsers::class, PulseUsers::class);
+
+        // While impersonating (and in demo mode, where all visitors share one
+        // account) AI conversations are not persisted: the chat still works,
+        // but nothing lands in the user's conversation history. Scoped, not
+        // singleton: the decision depends on the session and must be
+        // re-evaluated per request under Octane.
+        $this->app->scoped(ConversationStore::class, function () {
+            $ephemeral = app()->environment('demo') || auth()->user()?->isImpersonated();
+
+            return $ephemeral
+                ? new NullConversationStore
+                : new DatabaseConversationStore(config('ai.conversations.connection'));
+        });
     }
 
     /**

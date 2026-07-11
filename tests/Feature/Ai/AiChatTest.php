@@ -5,6 +5,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Services\Ai\AiChatStreamer;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Ai\Contracts\ConversationStore;
@@ -146,6 +147,19 @@ it('flags suspicious assistant output in the log', function () {
 
     Log::shouldHaveReceived('warning')->once()->withArgs(fn (string $message) => str_contains($message, 'prompt injection echo')
         && str_contains($message, 'evil.example'));
+});
+
+it('does not persist conversations while impersonating', function () {
+    StatsAssistant::fake(['Answer.']);
+
+    $response = $this->actingAs($this->user)
+        ->withSession([config('laravel-impersonate.session_key') => 999])
+        ->post(route('ai.chat.store'), ['message' => 'Question']);
+    $response->streamedContent();
+
+    expect($response->headers->get('X-Conversation-Id'))->not->toBeNull()
+        ->and(DB::table('agent_conversations')->count())->toBe(0)
+        ->and(DB::table('agent_conversation_messages')->count())->toBe(0);
 });
 
 it('blocks the chat for plans without the AI assistant', function () {

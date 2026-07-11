@@ -44,8 +44,6 @@ class AiChatController extends Controller
             currentPreset: StatsRangePreset::tryFrom((string) $request->input('context_preset'))?->value,
         );
 
-        $byokProvider = $teamAiConfig->activate($user->team);
-
         $stream = $agent
             ->continue($conversationId, as: $user)
             ->stream($request->input('message'), provider: $byokProvider);
