@@ -4,5 +4,6 @@ _SimpleStats_ filters out **bot and crawler traffic** automatically on the clien
 
 A request is **skipped** (no visitor recorded, no API call dispatched) when:
 
-- the request has **no User-Agent string** at all, or
 - the User-Agent matches a **known bot signature** via [matomo/device-detector](https://github.com/matomo-org/device-detector), covering thousands of crawlers, scrapers, AI/LLM crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.), social media previewers, and uptime monitors
+- the User-Agent is **not a real browser or mobile app**: HTTP libraries (curl, python-requests, ...), headless browsers, and scripted clients faking a browser User-Agent
+- the request is a speculative browser **prefetch/prerender**, since the visitor may never actually see the page
