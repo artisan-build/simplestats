@@ -1,5 +1,12 @@
 <?php
 
+use App\Location\IpApiDriver;
+use App\Location\Position;
+use Stevebauman\Location\Drivers\GeoPlugin;
+use Stevebauman\Location\Drivers\Ip2locationio;
+use Stevebauman\Location\Drivers\IpInfo;
+use Stevebauman\Location\Drivers\MaxMind;
+
 return [
 
     /*
@@ -11,7 +18,7 @@ return [
     |
     */
 
-    'driver' => Stevebauman\Location\Drivers\IpApi::class,
+    'driver' => IpApiDriver::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -26,10 +33,10 @@ return [
     */
 
     'fallbacks' => [
-        Stevebauman\Location\Drivers\Ip2locationio::class,
-        Stevebauman\Location\Drivers\IpInfo::class,
-        Stevebauman\Location\Drivers\GeoPlugin::class,
-        Stevebauman\Location\Drivers\MaxMind::class,
+        Ip2locationio::class,
+        IpInfo::class,
+        GeoPlugin::class,
+        MaxMind::class,
     ],
 
     /*
@@ -43,7 +50,22 @@ return [
     |
     */
 
-    'position' => Stevebauman\Location\Position::class,
+    'position' => Position::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Datacenter IP Filter
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, visitors whose IP belongs to a hosting provider/datacenter
+    | (AWS, GCP, Hetzner, ...) are not tracked, since such traffic is
+    | practically always bots faking a real browser. VPN/proxy exits are kept,
+    | they carry real people. Requires a driver that provides the flags (the
+    | default IpApiDriver does); unknown flags fail open.
+    |
+    */
+
+    'datacenter_ip_filter' => env('LOCATION_DATACENTER_IP_FILTER', true),
 
     /*
     |--------------------------------------------------------------------------

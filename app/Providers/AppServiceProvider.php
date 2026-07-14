@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Observers\UserObserver;
 use App\PulseUsers;
 use App\Services\Ai\NullConversationStore;
+use App\Services\LocationService;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -47,6 +48,10 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ResolvesUsers::class, PulseUsers::class);
+
+        // Singleton so the datacenter check and the geo mutator share one
+        // memoized lookup per IP within a worker process.
+        $this->app->singleton(LocationService::class);
 
         // While impersonating (and in demo mode, where all visitors share one
         // account) AI conversations are not persisted: the chat still works,

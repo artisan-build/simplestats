@@ -5,6 +5,7 @@ namespace App\Concerns;
 use App\Helpers\FileHelper;
 use App\Models\BaseStat;
 use App\Models\Project;
+use App\Services\LocationService;
 use App\Services\RefererService;
 use App\Services\StatsService;
 use DeviceDetector\DeviceDetector;
@@ -13,7 +14,6 @@ use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
-use Stevebauman\Location\Facades\Location;
 
 trait HasStatsTracking
 {
@@ -119,7 +119,7 @@ trait HasStatsTracking
                     ];
                 }
 
-                if ($position = Location::get($value)) {
+                if ($position = app(LocationService::class)->get($value)) {
                     return [
                         'location_country' => "$position->countryName ($position->countryCode)",
                         'location_region' => "$position->regionName ($position->countryCode)",

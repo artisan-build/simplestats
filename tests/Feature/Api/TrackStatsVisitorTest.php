@@ -2,12 +2,14 @@
 
 use App\Helpers\AppHelper;
 use App\Jobs\TrackStatsVisitor;
+use App\Location\Position;
 use App\Models\Project;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Context;
+use Stevebauman\Location\Facades\Location;
 
 beforeEach(function () {
     $this->seed(TestUserSeeder::class);
@@ -214,4 +216,78 @@ test('deleting a stat never pushes a counter below zero', function () {
     expect($team->events_count_monthly)->toBe(0);
     expect($team->events_count_overall)->toBe(0);
     expect($this->project->fresh()->events_count_monthly)->toBe(0);
+});
+
+test('visitors from datacenter IPs are not tracked', function () {
+    config(['location.datacenter_ip_filter' => true]);
+
+    $position = new Position;
+    $position->isHosting = true;
+    $position->isProxy = false;
+    Location::fake(['20.42.1.5' => $position]);
+
+    $payload = validVisitorPayload([
+        'ip' => '20.42.1.5',
+        'visitor_hash' => 'datacenter-hash-'.fake()->uuid(),
+    ]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeFalse();
+});
+
+test('visitors from VPN/proxy IPs are tracked', function () {
+    config(['location.datacenter_ip_filter' => true]);
+
+    $position = new Position;
+    $position->isHosting = true;
+    $position->isProxy = true;
+    Location::fake(['185.220.100.1' => $position]);
+
+    $payload = validVisitorPayload([
+        'ip' => '185.220.100.1',
+        'visitor_hash' => 'vpn-hash-'.fake()->uuid(),
+    ]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
+});
+
+test('visitors are tracked when the hosting flag is unknown', function () {
+    config(['location.datacenter_ip_filter' => true]);
+
+    Location::fake(['198.51.100.7' => new Position]);
+
+    $payload = validVisitorPayload([
+        'ip' => '198.51.100.7',
+        'visitor_hash' => 'unknown-flags-hash-'.fake()->uuid(),
+    ]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
+});
+
+test('visitors are tracked when the location lookup fails', function () {
+    config(['location.datacenter_ip_filter' => true]);
+
+    Location::fake([]);
+
+    $payload = validVisitorPayload([
+        'ip' => '198.51.100.8',
+        'visitor_hash' => 'lookup-failed-hash-'.fake()->uuid(),
+    ]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });

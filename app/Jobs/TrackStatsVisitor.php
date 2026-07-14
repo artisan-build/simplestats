@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\StatsVisitor;
+use App\Services\BotDetectionService;
 use Carbon\CarbonImmutable;
 
 class TrackStatsVisitor extends BaseStatsTrack
@@ -13,6 +14,10 @@ class TrackStatsVisitor extends BaseStatsTrack
     public function handle(): void
     {
         parent::handle();
+
+        if (BotDetectionService::isDatacenterIp($this->input['ip'] ?? null)) {
+            return;
+        }
 
         $properties = $this->input['properties'] ?? [];
         unset($this->input['properties']);
