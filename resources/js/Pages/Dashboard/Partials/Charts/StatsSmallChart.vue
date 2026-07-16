@@ -70,6 +70,7 @@ const numberFractionDigits = computed(() => props.kpi.decimals ?? (props.kpi.ind
             :filters="filters"
             :height="140"
             :clickable="false"
+            :max-x-labels="4"
         />
     </Link>
 </template>

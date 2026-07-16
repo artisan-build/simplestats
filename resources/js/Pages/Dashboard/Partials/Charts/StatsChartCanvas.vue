@@ -38,7 +38,38 @@ const props = defineProps({
     clickable: {type: Boolean, default: true},
     navigateRoute: {type: String, default: 'dashboard'},
     navigateParams: {type: Object, default: () => ({})},
+    // Caps the number of x axis date labels (first and last always included,
+    // the rest evenly spread). For narrow small-multiple cards. Null keeps
+    // Apex' default tick distribution.
+    maxXLabels: {type: Number, default: null},
 });
+
+// Picks the category indices to label: first and last always, the rest evenly
+// spread. Falls back to fewer labels when the spread would put two labels
+// directly next to each other (e.g. 6 points -> 3 labels instead of 4).
+const visibleXLabels = () => {
+    const count = props.categories.length;
+
+    if (count <= props.maxXLabels) {
+        return new Set(props.categories);
+    }
+
+    let indices = [0, count - 1];
+
+    for (let amount = props.maxXLabels; amount > 2; amount--) {
+        const spread = Array.from({length: amount}, (_, i) => Math.round(i * (count - 1) / (amount - 1)));
+        const minGap = Math.min(...spread.slice(1).map((index, i) => index - spread[i]));
+
+        if (minGap >= 2) {
+            indices = spread;
+            break;
+        }
+    }
+
+    return new Set(indices.map((index) => props.categories[index]));
+};
+
+const xLabels = props.maxXLabels ? visibleXLabels() : null;
 
 const page = usePage();
 
@@ -199,9 +230,17 @@ const chartOptions = ref({
     xaxis: {
         type: 'string',
         categories: props.categories,
-        tickAmount: 5,
+        // With maxXLabels the label filtering happens in the formatter, so every
+        // category must get a tick slot (tickAmount would re-thin our selection).
+        tickAmount: props.maxXLabels ? undefined : 5,
         labels: {
             rotate: 0,
+            formatter: props.maxXLabels
+                ? (value) => xLabels.has(value) ? value : ''
+                : undefined,
+        },
+        axisTicks: {
+            show: !props.maxXLabels,
         },
         tooltip: {
             enabled: false,
@@ -297,6 +336,9 @@ const chartOptions = ref({
     grid: {
         show: true,
         borderColor: isDarkMode.value ? '#3f3f46' : '#E5E7EB', // Linienfarbe für Dark/Light Mode
+        // The first date label is centered under the first data point and would
+        // get clipped at the svg edge without extra room.
+        ...(props.maxXLabels ? {padding: {left: 35}} : {}),
     },
 });
 
