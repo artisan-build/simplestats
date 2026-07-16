@@ -276,6 +276,11 @@ const chartOptions = ref({
         }
     },
     tooltip: {
+        // The x axis label formatter blanks most categories in maxXLabels mode
+        // and would blank the tooltip title too, so resolve it independently.
+        x: {
+            formatter: (value, {dataPointIndex}) => props.categories[dataPointIndex] ?? value,
+        },
         y: {
             formatter: function(value, options) {
                 let format = '';
