@@ -121,6 +121,17 @@ test('bot user agents are rejected with 200', function () {
         ->assertJson(['message' => 'Bots are not allowed']);
 });
 
+test('headless browser user agents are rejected with 200', function () {
+    $payload = validVisitorPayload([
+        'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/126.0.0.0 Safari/537.36',
+    ]);
+
+    $response = $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token));
+
+    $response->assertOk()
+        ->assertJson(['message' => 'Bots are not allowed']);
+});
+
 test('tracking fields are accepted', function () {
     $payload = validVisitorPayload([
         'visitor_hash' => 'tracking-hash-'.fake()->uuid(),
@@ -224,6 +235,7 @@ test('visitors from datacenter IPs are not tracked', function () {
     $position = new Position;
     $position->isHosting = true;
     $position->isProxy = false;
+    $position->asn = 16509; // AWS
     Location::fake(['20.42.1.5' => $position]);
 
     $payload = validVisitorPayload([
@@ -238,12 +250,37 @@ test('visitors from datacenter IPs are not tracked', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeFalse();
 });
 
-test('visitors from VPN/proxy IPs are tracked', function () {
+test('visitors from datacenter IPs flagged as proxy are still not tracked', function () {
     config(['location.datacenter_ip_filter' => true]);
 
+    // AWS IP that ip-api also flags as proxy: under the old `hosting && !proxy`
+    // rule this leaked through, now the non-VPN ASN keeps it filtered.
     $position = new Position;
     $position->isHosting = true;
     $position->isProxy = true;
+    $position->asn = 16509; // AWS
+    Location::fake(['20.42.1.6' => $position]);
+
+    $payload = validVisitorPayload([
+        'ip' => '20.42.1.6',
+        'visitor_hash' => 'datacenter-proxy-hash-'.fake()->uuid(),
+    ]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeFalse();
+});
+
+test('visitors from consumer VPN exits are tracked', function () {
+    config(['location.datacenter_ip_filter' => true]);
+
+    // Hosted on M247 (AS9009), where consumer VPN providers run their exits.
+    $position = new Position;
+    $position->isHosting = true;
+    $position->isProxy = true;
+    $position->asn = 9009;
     Location::fake(['185.220.100.1' => $position]);
 
     $payload = validVisitorPayload([

@@ -96,6 +96,7 @@ export default defineConfig({
                 items: [
                     {text: 'KPIs Reference', link: '/kpis'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
+                    {text: 'Counting Visitors', link: '/counting-visitors'},
                     {text: 'Troubleshooting', link: '/troubleshooting'},
                     {text: 'Contribution', link: '/contribution'},
                 ]

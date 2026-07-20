@@ -45,3 +45,45 @@ test('failed location lookups are not cached', function () {
 
     expect((new LocationService)->get('203.0.113.10')->isHosting)->toBeTrue();
 });
+
+test('the asn survives the cache round trip', function () {
+    $position = new Position;
+    $position->isHosting = true;
+    $position->asn = 16509;
+    Location::fake(['203.0.113.11' => $position]);
+
+    app(LocationService::class)->get('203.0.113.11');
+
+    swapLocationFake([]);
+
+    expect((new LocationService)->get('203.0.113.11')->asn)->toBe(16509);
+});
+
+test('positions without a hosting flag are only cached briefly', function () {
+    // A fallback driver (ip-api throttled) returns geo but no hosting flag.
+    // Caching that for a full day would keep the datacenter filter blind, so
+    // it must expire quickly.
+    Location::fake(['203.0.113.12' => new Position]);
+
+    expect(app(LocationService::class)->get('203.0.113.12'))->toBeInstanceOf(Position::class);
+
+    swapLocationFake([]);
+
+    $this->travel(16)->minutes();
+
+    expect((new LocationService)->get('203.0.113.12'))->toBeFalse();
+});
+
+test('positions with a hosting flag stay cached beyond the short window', function () {
+    $position = new Position;
+    $position->isHosting = true;
+    Location::fake(['203.0.113.13' => $position]);
+
+    app(LocationService::class)->get('203.0.113.13');
+
+    swapLocationFake([]);
+
+    $this->travel(16)->minutes();
+
+    expect((new LocationService)->get('203.0.113.13')->isHosting)->toBeTrue();
+});

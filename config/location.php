@@ -59,9 +59,10 @@ return [
     |
     | When enabled, visitors whose IP belongs to a hosting provider/datacenter
     | (AWS, GCP, Hetzner, ...) are not tracked, since such traffic is
-    | practically always bots faking a real browser. VPN/proxy exits are kept,
-    | they carry real people. Requires a driver that provides the flags (the
-    | default IpApiDriver does); unknown flags fail open.
+    | practically always bots faking a real browser. Consumer VPN exits (hosted
+    | on M247/Datacamp) are kept, they carry real people. Requires a driver that
+    | provides the hosting flag (the default IpApiDriver does); unknown flags
+    | fail open.
     |
     */
 

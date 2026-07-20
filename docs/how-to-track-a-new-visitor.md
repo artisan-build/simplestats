@@ -17,7 +17,7 @@ The `visitor_hash` enables seamless visitor identification across different sess
 With this, you gain a clear picture of which marketing efforts contribute most **effectively** to your site's growth, all while respecting _user privacy_.
 
 ::: tip
-This privacy-first hashing approach is similar to what other analytics tools like **Plausible** and **Fathom Analytics** use. The key difference is that SimpleStats tracks entirely server-side, making it invisible to ad blockers.
+This privacy-first hashing approach is similar to what other analytics tools like **Plausible** and **Fathom Analytics** use. The key difference is that SimpleStats tracks entirely server-side, making it invisible to ad blockers. See [Counting Visitors](/counting-visitors) for how this affects your numbers versus other tools.
 :::
 
 ::: info

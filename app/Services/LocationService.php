@@ -36,6 +36,11 @@ class LocationService
      * rotates daily (same idea as the visitor hash salt) and the cached value
      * holds no IP, so no plain IP is ever persisted. Failed lookups are not
      * cached, a later job may succeed.
+     *
+     * A position without the hosting flag means ip-api throttled us and a
+     * fallback driver (which has no flag) answered. Caching that for a full day
+     * would keep the datacenter filter blind to that IP even after the rate
+     * limit frees up, so such results are cached only briefly.
      */
     protected function resolve(string $ip): BasePosition|false
     {
@@ -48,14 +53,15 @@ class LocationService
         $position = Location::get($ip);
 
         if ($position instanceof BasePosition) {
-            Cache::put($key, $this->dehydrate($position), now()->addDay());
+            $hasHostingFlag = $position instanceof Position && $position->isHosting !== null;
+            Cache::put($key, $this->dehydrate($position), $hasHostingFlag ? now()->addDay() : now()->addMinutes(15));
         }
 
         return $position;
     }
 
     /**
-     * @return array{countryName: ?string, countryCode: ?string, regionName: ?string, cityName: ?string, isHosting: ?bool, isProxy: ?bool}
+     * @return array{countryName: ?string, countryCode: ?string, regionName: ?string, cityName: ?string, isHosting: ?bool, isProxy: ?bool, asn: ?int}
      */
     protected function dehydrate(BasePosition $position): array
     {
@@ -66,6 +72,7 @@ class LocationService
             'cityName' => $position->cityName,
             'isHosting' => $position instanceof Position ? $position->isHosting : null,
             'isProxy' => $position instanceof Position ? $position->isProxy : null,
+            'asn' => $position instanceof Position ? $position->asn : null,
         ];
     }
 
@@ -78,6 +85,7 @@ class LocationService
         $position->cityName = $cached['cityName'];
         $position->isHosting = $cached['isHosting'];
         $position->isProxy = $cached['isProxy'];
+        $position->asn = $cached['asn'] ?? null;
 
         return $position;
     }

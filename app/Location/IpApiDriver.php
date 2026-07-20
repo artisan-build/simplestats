@@ -32,8 +32,21 @@ class IpApiDriver extends IpApi
         if ($position instanceof Position) {
             $position->isProxy = $location->proxy;
             $position->isHosting = $location->hosting;
+            $position->asn = $this->parseAsn($location->as);
         }
 
         return $position;
+    }
+
+    /**
+     * ip-api returns the AS as a string like "AS16509 Amazon.com, Inc.".
+     */
+    protected function parseAsn(?string $as): ?int
+    {
+        if ($as === null || ! preg_match('/AS(\d+)/', $as, $matches)) {
+            return null;
+        }
+
+        return (int) $matches[1];
     }
 }

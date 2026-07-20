@@ -40,6 +40,8 @@ This makes it a more reliable choice for collecting accurate data and maintainin
 In summary, while client-side analytics are easier to implement, server-side analytics provide more accurate and comprehensive data,
 unaffected by ad blockers and privacy tools, making them a better choice for businesses needing reliable metrics.
 
+Wondering how SimpleStats counts visitors, and why its numbers can differ from other analytics tools? See [Counting Visitors](/counting-visitors) for where each tool gains or loses visitors, and what a healthy difference looks like.
+
 ## KPIs
 
 SimpleStats computes a wide range of [KPIs](https://en.wikipedia.org/wiki/Performance_indicator) from your tracking data, covering acquisition, revenue, retention, and recurring revenue. Which ones apply depends on what your project tracks: visitors only, registrations, payments, or full subscription analytics.

@@ -35,8 +35,9 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 
 ### Database Strategy
 
-- **SaaS**: PostgreSQL
-- **Self-hosted**: PostgreSQL
+- **SimpleStats app (SaaS)**: PostgreSQL
+- **SimpleStats app (self-hosted)**: PostgreSQL
+- **Client package (`packages/simplestats-io/laravel-client`)**: **DB-agnostic.** The client package is installed into the *customer's* Laravel app, whose database is unknown to us (MySQL, MariaDB, SQLite, PostgreSQL, ...). Never assume PostgreSQL when working in the client package. Anything the package touches (migrations, cache/DB-backed features, column sizes/types) must work across all Laravel-supported drivers, and code/config decisions must account for driver-specific limits (e.g. the MySQL `cache.value` column size limit for the DB cache driver). The PostgreSQL assumption applies **only** to the SimpleStats app itself, never to the client package.
 
 ### Migrations: No `down()` / No Rollbacks
 

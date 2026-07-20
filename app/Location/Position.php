@@ -17,4 +17,11 @@ class Position extends BasePosition
      * the resolving driver does not provide the flag.
      */
     public ?bool $isHosting = null;
+
+    /**
+     * The autonomous system number the IP is announced from (e.g. 16509 for
+     * AWS). Used to keep consumer-VPN exits, which sit on datacenter IPs but
+     * carry real people. Null when the resolving driver does not provide it.
+     */
+    public ?int $asn = null;
 }
