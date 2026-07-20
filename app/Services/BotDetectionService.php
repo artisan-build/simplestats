@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Cache\DeviceDetectorCache;
 use App\Location\Position;
 use DeviceDetector\DeviceDetector;
 use Illuminate\Support\Facades\Cache;
@@ -87,6 +88,7 @@ class BotDetectionService
 
         $detector = new DeviceDetector($userAgent);
         $detector->discardBotInformation();
+        $detector->setCache(new DeviceDetectorCache);
         $detector->parse();
 
         if ($detector->isBot()) {
