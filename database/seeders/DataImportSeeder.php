@@ -27,8 +27,6 @@ class DataImportSeeder extends Seeder
             'type' => DataImportType::USERS,
             'rows_max' => 8921,
             'rows_imported' => 8921,
-            'id_from' => 1,
-            'id_to' => 8921,
             'created_at' => now()->subHours(10),
         ])->trackedJob()->create([
             'name' => ProcessDataImportJob::class,
@@ -43,8 +41,6 @@ class DataImportSeeder extends Seeder
             'type' => DataImportType::PAYMENTS,
             'rows_max' => 2132,
             'rows_imported' => 698,
-            'id_from' => 1,
-            'id_to' => 698,
             'created_at' => now()->subHours(7),
         ])->trackedJob()->create([
             'name' => ProcessDataImportJob::class,
@@ -59,8 +55,6 @@ class DataImportSeeder extends Seeder
             'type' => DataImportType::PAYMENTS,
             'rows_max' => 2132,
             'rows_imported' => 1587,
-            'id_from' => 1,
-            'id_to' => 1587,
             'created_at' => now()->subHours(5),
         ])->trackedJob()->create([
             'name' => ProcessDataImportJob::class,

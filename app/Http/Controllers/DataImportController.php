@@ -73,7 +73,7 @@ class DataImportController extends Controller
 
         $model = $dataImport->type->getImporter($dataImport)->getModelClass();
 
-        $model::whereBetween('id', [$dataImport->id_from, $dataImport->id_to])->delete();
+        $model::where('data_import_id', $dataImport->id)->delete();
 
         $dataImport->trackedJob->update([
             'status' => TrackedJobStatus::Finished->value,

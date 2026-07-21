@@ -132,12 +132,6 @@ const getTrackedJobStatusOptions = (trackedJob) => {
         {{ dataImport.rows_imported ?? 0 }}
     </td>
     <td class="border-t px-2 py-1 focus:text-indigo-500">
-        {{ dataImport.id_from ?? 0 }}
-    </td>
-    <td class="border-t px-2 py-1 focus:text-indigo-500">
-        {{ dataImport.id_to ?? 0 }}
-    </td>
-    <td class="border-t px-2 py-1 focus:text-indigo-500">
         <PrimaryButton v-if="! dataImport.tracked_job?.finished_at" v-tooltip="'Cancel'" @click="confirmDataImportAction('cancel')">
             <XMarkIcon class="size-4" />
         </PrimaryButton>
@@ -163,7 +157,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                     <strong>Project:</strong> {{ projects.filter((project) => project.id == dataImport.project_id)[0].name }}<br>
                     <strong>Import Type:</strong> {{ dataImport.type }}<br>
                     <span v-if="dataImport.rows_imported > 0">
-                        <strong>Rows:</strong> {{ dataImport.rows_imported }} rows - from id {{ dataImport.id_from }} to {{ dataImport.id_to }}<br>
+                        <strong>Rows:</strong> {{ dataImport.rows_imported }} rows<br>
                     </span>
                 </template>
 

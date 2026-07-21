@@ -86,8 +86,6 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
 <!--                                    <th class="pb-2 pt-3 px-3">Type</th>-->
                                     <th class="pb-2 pt-3 px-3">Creator</th>
                                     <th class="pb-2 pt-3 px-3">Rows</th>
-                                    <th class="pb-2 pt-3 px-3">From Id</th>
-                                    <th class="pb-2 pt-3 px-3">To Id</th>
                                     <th class="pb-2 pt-3 px-3">Action</th>
                                 </tr>
                                 <tr v-if="dataImports.data[0].tracked_job?.status === 'failed'">

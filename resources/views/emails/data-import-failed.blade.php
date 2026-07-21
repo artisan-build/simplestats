@@ -4,8 +4,7 @@
     <br>
     Please fix the issues and start a new import!<br>
     @if ($dataImport->rows_imported > 0)
-    So far we already imported <strong>{{ $dataImport->rows_imported }}</strong> rows
-    from id <strong>{{ $dataImport->id_from }}</strong> to id <strong>{{ $dataImport->id_to }}</strong>.<br>
+    So far we already imported <strong>{{ $dataImport->rows_imported }}</strong> rows.<br>
     <br>
     If you want to speed things up, you may remove all rows that we've already imported from your data import file.
     But it is also safe to just run it again...<br>

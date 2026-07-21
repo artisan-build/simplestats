@@ -34,6 +34,20 @@ function makeSnlbImporter($team, $project, int $rowsMax = 10): StatsUserImport
     return new StatsUserImport($dataImport);
 }
 
+function makeSnlbDataImport($team, $project, int $rowsMax = 10): DataImport
+{
+    $dataImport = new DataImport;
+    $dataImport->type = DataImportType::USERS;
+    $dataImport->rows_max = $rowsMax;
+    $dataImport->team_id = $team->id;
+    $dataImport->project_id = $project->id;
+    $dataImport->created_by = auth()->id();
+    $dataImport->save();
+    $dataImport->setRelation('team', $team);
+
+    return $dataImport;
+}
+
 function buildSnlbRows($test, CarbonImmutable $registeredAt, CarbonImmutable $lastKnownActivity): array
 {
     return app(SimulatedLoginService::class)->buildLoginRows(
@@ -185,7 +199,8 @@ test('a full user import generates logins and rollback removes them via cascade'
     $path = tempnam(sys_get_temp_dir(), 'snlb_').'.csv';
     file_put_contents($path, $csv);
 
-    $importer = makeSnlbImporter($this->team, $this->project, rowsMax: 2);
+    $dataImport = makeSnlbDataImport($this->team, $this->project, rowsMax: 2);
+    $importer = new StatsUserImport($dataImport);
 
     try {
         Excel::import($importer, $path);
@@ -201,8 +216,36 @@ test('a full user import generates logins and rollback removes them via cascade'
         ->and($firstUserLogins->count())->toBeGreaterThanOrEqual(9)
         ->and(StatsLogin::where('stats_user_id', 2)->count())->toBe(0);
 
-    // same range delete as DataImportController::rollback()
-    StatsUser::whereBetween('id', [$importer->idFrom, $importer->idTo])->delete();
+    // same delete as DataImportController::rollback()
+    StatsUser::where('data_import_id', $dataImport->id)->delete();
 
-    expect(StatsLogin::count())->toBe(0);
+    expect(StatsUser::count())->toBe(0)
+        ->and(StatsLogin::count())->toBe(0);
+});
+
+test('imports users with uuid ids and rolls back exactly this import', function () {
+    $uuid = '550e8400-e29b-41d4-a716-446655440000';
+
+    // a pre-existing user (e.g. live-tracked) that must survive the rollback
+    StatsUser::create(['id' => 'aaaaaaaa-0000-0000-0000-000000000000', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'time' => '2025-01-01 10:00:00']);
+
+    $csv = "id,time\n{$uuid},2025-01-02 10:00:00\n";
+    $path = tempnam(sys_get_temp_dir(), 'uuid_').'.csv';
+    file_put_contents($path, $csv);
+
+    $dataImport = makeSnlbDataImport($this->team, $this->project, rowsMax: 1);
+    $importer = new StatsUserImport($dataImport);
+
+    try {
+        Excel::import($importer, $path);
+    } finally {
+        unlink($path);
+    }
+
+    expect(StatsUser::where('id', $uuid)->where('project_id', $this->project->id)->exists())->toBeTrue();
+
+    StatsUser::where('data_import_id', $dataImport->id)->delete();
+
+    expect(StatsUser::where('id', $uuid)->exists())->toBeFalse()
+        ->and(StatsUser::where('id', 'aaaaaaaa-0000-0000-0000-000000000000')->exists())->toBeTrue();
 });

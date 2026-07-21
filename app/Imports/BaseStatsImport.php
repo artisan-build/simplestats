@@ -25,10 +25,6 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
 
     public int $counter = 0;
 
-    public int $idFrom = 0;
-
-    public int $idTo = 0;
-
     // we need to take track of the lowest imported data (for aggregation invalidation)
     private CarbonInterface $lowestImportedDate;
 
@@ -84,21 +80,6 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
 
         $this->counter++;
 
-        // make from/to work also if the order is not correct...
-        if (empty($this->idFrom)) {
-            $this->idFrom = $row['id'];
-        }
-        if (empty($this->idTo)) {
-            $this->idTo = $row['id'];
-        }
-
-        if ($row['id'] < $this->idFrom) {
-            $this->idFrom = $row['id'];
-        }
-        if ($row['id'] > $this->idTo) {
-            $this->idTo = $row['id'];
-        }
-
         $time = CarbonImmutable::parse($row['time']);
         if ($this->lowestImportedDate->gt($time)) {
             $this->lowestImportedDate = $time;
@@ -119,8 +100,14 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
                 'project_id' => $this->dataImport->project_id,
             ];
 
-            // prepare validation tweaks data as we need/want it here
-            $data = array_merge($this->validator->prepareForValidation($row), $uniqueProject);
+            // prepare validation tweaks data as we need/want it here.
+            // data_import_id tags the imported row so rollback deletes exactly this import's rows,
+            // regardless of whether the customer uses integer or UUID ids. It is intentionally not
+            // part of $uniqueProject, so placeholder users created by ensureStatsUser() stay untagged
+            // and a payment rollback never cascades away a user's live-tracked payments.
+            $data = array_merge($this->validator->prepareForValidation($row), $uniqueProject, [
+                'data_import_id' => $this->dataImport->id,
+            ]);
 
             $model = new $this->modelClass($data);
 
@@ -141,8 +128,6 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
     {
         $this->dataImport->update([
             'rows_imported' => $this->counter,
-            'id_from' => $this->idFrom,
-            'id_to' => $this->idTo,
         ]);
     }
 

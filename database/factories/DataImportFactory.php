@@ -28,8 +28,6 @@ class DataImportFactory extends Factory
             'project_id' => Project::factory(),
             'job_id' => Job::factory(),
             'user_id' => User::factory(),
-            'id_from' => $this->faker->numberBetween(-10000, 10000),
-            'id_to' => $this->faker->numberBetween(-10000, 10000),
             'type' => $this->faker->word(),
             'rows_imported' => $this->faker->numberBetween(-10000, 10000),
         ];
