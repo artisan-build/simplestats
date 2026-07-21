@@ -224,6 +224,34 @@ Keep the comment blocks and defaults identical across all three so customers see
 // Stored in session: session('simplestats.visitor_hash')
 ```
 
+### Duplicated / Mirrored Surface Between Backend and Clients (Keep in Sync)
+
+Several pieces of logic are **deliberately duplicated** across three independent codebases rather than extracted into a shared package:
+
+- **(A) backend** — the SimpleStats app (`app/`), Laravel 12, PostgreSQL only.
+- **(B) laravel-client** — `packages/simplestats-io/laravel-client/`, runs inside customer apps, must stay DB-agnostic, lightweight, and Laravel-version-spanning.
+- **(C) php-client** — `packages/simplestats-io/php-client/`, framework-agnostic plain PHP (no Laravel).
+
+**Why no shared package (decision, 2026-07):** once you subtract the parts that legitimately diverge (B needs the inbound `Request` for Sec-Fetch/prefetch/`except`; A needs `LocationService` for datacenter-IP/VPN filtering; the `DeviceDetectorCache` store differs; "own domain" resolves from DB in A vs `config('app.url')` in B vs an argument in C; B must run on Laravel 8-13 and any DB), the truly shareable surface is small. A shared dependency pulled into the customer-facing B would force a coordinated B release + customer `composer update` for every shared-code change, against B's lightweight/minimal-deps constraint. The cost outweighs the churn. **If this shared surface keeps growing or a 4th consumer appears, do NOT create a new package** — promote the pure-PHP primitives into the existing framework-agnostic **php-client (C)** and have A and B depend on it.
+
+Because it is kept in sync by hand, **treat every item below as a contract: change one side, change all listed sides in the same PR.**
+
+| Concern | A (backend) | B (laravel-client) | C (php-client) | Sync obligation |
+|---------|-------------|--------------------|--------------------|-----------------|
+| **Visitor hash** (load-bearing) | `AppHelper::createVisitorHash()` | `SimplestatsClient::createVisitorHash()` | – | Must be **byte-identical**: `hash('sha256', $ip.$userAgent.$time->format('Y-m-d').config('app.key'))`, `substr(…,0,32)`. A regenerates it as a server-side fallback when a client omits it, so any divergence silently splits visitors. |
+| **Bot classification** | `BotDetectionService::isBot()` | `CheckTracking::isBot()` | – | Same DeviceDetector sequence + headless-UA match + `!isBrowser() && !isMobileApp()`. Comments are copy-pasted. B adds request-header checks (Sec-Fetch/prefetch) A cannot do; A adds datacenter-IP/VPN B cannot do. |
+| **DeviceDetector cache** | `app/Cache/DeviceDetectorCache.php` | `src/Cache/DeviceDetectorCache.php` | – | Near-identical fail-open `CacheInterface`. B is store-configurable (default `'file'`, must dodge the customer's often-`database` default that overflows on the 1.7 MB blob); A uses the app default store. |
+| **Host extraction** | `HasStatsTracking::normalizeHost()` / `isOwnProjectDomain()` | `CheckTracking::extractHost()` / `isOwnDomain()` | `TrackingData::extractHost()` / `isOwnDomain()` | Strip scheme → bare host → drop leading `www.` → exact compare (subdomains kept). All three carry the "kept in sync" comment. |
+| **Time format** (implicit contract) | `date_format:Y-m-d H:i:s P` rule + `->tz('UTC')` in `BaseStatsValidator` | `SimplestatsClient::TIME_FORMAT` + `->tz('UTC')` | same `TIME_FORMAT` | Clients emit UTC in `Y-m-d H:i:s P`; A hard-validates that literal. No comment ties them — the most fragile link. |
+| **IP resolution / CIDR** | – (receives `ip` in payload) | `CheckTracking::resolveIp/normalizeIp/isPublicIp/ipInCidrRange` | `TrackingData::resolveIp/isPublicIp` | B is a superset of C (header priority `CF-Connecting-IP → True-Client-IP → X-Forwarded-For → X-Real-IP`, first public IP). The `FILTER_FLAG_NO_PRIV_RANGE \| FILTER_FLAG_NO_RES_RANGE` idiom also recurs in A. |
+| **`SubscriptionInterval`** | `app/Enums/SubscriptionInterval.php` | `src/Enums/SubscriptionInterval.php` | – | Backing **string values** (`month`/`year`) must match; A validates `Rule::enum(...)` against what B sends. |
+| **Payload key contract** | `HasStatsTrackingValidation` + `Stats*Validator` | `SimplestatsClient::trackVisitor/trackUser/…` | client payloads | Field names (`visitor_hash`, `track_source`, `page_entry`, …) are an unversioned wire contract across the API boundary. |
+| **tracking_codes config** | `config/simplestats-client.php` (app's own dogfood copy) | `config/simplestats-client.php` (package default) | – | See also "Keep Client Config in Sync (Three Places)". |
+
+**Known current drifts (fix opportunistically, don't let them grow):**
+- **Host extraction:** B's `extractHost()` does **not** lowercase the host, while A/C do. Mixed-case referers can compare differently.
+- **tracking_codes `source`:** the app copy still lists `['utm_source', 'ref', 'referer', 'referrer']`; the package (correct current design) is `['utm_source', 'ref']` (URL `?referer=` params are intentionally no longer tracked). The app dogfood copy is stale.
+
 ## KPIs Provided
 
 The dashboard displays these key performance indicators:

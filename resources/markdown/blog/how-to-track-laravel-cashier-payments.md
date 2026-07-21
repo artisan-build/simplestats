@@ -25,7 +25,7 @@ No matter which payment provider you use, the integration always follows the sam
 1. Implement the `TrackablePayment` contract on your payment model
 2. Register that model in your `simplestats-client.php` config
 
-The contract defines five methods:
+The contract defines six methods:
 
 ```php
 interface TrackablePayment
@@ -35,6 +35,7 @@ interface TrackablePayment
     public function getTrackingGross(): float;
     public function getTrackingNet(): float;
     public function getTrackingCurrency(): string;
+    public function getTrackingSubscription(): ?TrackingSubscription;
 }
 ```
 
@@ -43,6 +44,7 @@ interface TrackablePayment
 - **`getTrackingGross()`** returns the gross amount in **cents** ($1 = 100)
 - **`getTrackingNet()`** returns the net amount in **cents**
 - **`getTrackingCurrency()`** returns the ISO-4217 currency code (EUR, USD, GBP, etc.)
+- **`getTrackingSubscription()`** returns a `TrackingSubscription` (plan + billing interval) for recurring payments, or `null` for one-time payments. If you only take one-time payments, just return `null`. We cover recurring subscriptions in detail [further down](#tracking-subscriptions).
 
 Once your model implements this contract, register it in your config:
 
@@ -81,6 +83,7 @@ use Carbon\CarbonInterface;
 use Laravel\Paddle\Transaction as PaddleTransaction;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePaymentWithCondition;
+use SimpleStatsIo\LaravelClient\Data\TrackingSubscription;
 
 class Transaction extends PaddleTransaction implements TrackablePaymentWithCondition
 {
@@ -107,6 +110,11 @@ class Transaction extends PaddleTransaction implements TrackablePaymentWithCondi
     public function getTrackingCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function getTrackingSubscription(): ?TrackingSubscription
+    {
+        return null; // one-time payment, see "Tracking Subscriptions" below
     }
 
     public function passTrackingCondition(): bool
@@ -188,6 +196,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePayment;
+use SimpleStatsIo\LaravelClient\Data\TrackingSubscription;
 
 class Payment extends Model implements TrackablePayment
 {
@@ -227,6 +236,11 @@ class Payment extends Model implements TrackablePayment
     public function getTrackingCurrency(): string
     {
         return strtoupper($this->currency);
+    }
+
+    public function getTrackingSubscription(): ?TrackingSubscription
+    {
+        return null; // one-time payment, see "Tracking Subscriptions" below
     }
 }
 ```
@@ -299,6 +313,106 @@ protected $listen = [
 Cashier automatically registers the `/stripe/webhook` route, but you need to make sure `charge.succeeded` is enabled in your Stripe Dashboard under Developers > Webhooks.
 
 Now every Stripe payment (subscriptions, one-time charges, Checkout sessions, everything) gets tracked through SimpleStats.
+
+---
+
+## Tracking Subscriptions
+
+Everything above tracks one-time charges. If you run a subscription business, you also want SimpleStats to know which payments are recurring and on what interval, because that is what powers your **MRR, ARR, churn, and retention**.
+
+The key thing to understand: **in SimpleStats a subscription is not a separate object, it is an attribute of a payment.** That is what the sixth contract method is for:
+
+```php
+public function getTrackingSubscription(): ?TrackingSubscription;
+```
+
+Return a `TrackingSubscription` (plan + billing interval) for recurring payments, or `null` for one-time payments. Because the subscription rides along on the payment, you keep tracking on the exact same `charge.succeeded` event. Every renewal is a new Charge in Stripe, so every renewal is a new payment that carries its interval. That means one event still covers everything: signups, renewals, and one-time purchases.
+
+### Why not `customer.subscription.updated`?
+
+A natural instinct is to move subscription tracking onto `customer.subscription.updated`, since that event fires when a subscription is created and again on each renewal. It's the wrong trigger here, for two reasons:
+
+- **It carries no money.** `subscription.updated` has no charge and no amount attached, so there is nothing concrete to record as a payment. SimpleStats is payment-centric, it counts payments and reads the subscription off them, not the other way around.
+- **It fires for lots of non-billing reasons:** plan changes, quantity changes, a scheduled cancellation, a trial ending, a new default card. Creating a payment on each of those would produce spurious and duplicate entries.
+
+So keep `charge.succeeded` as your single trigger. The only extra work is determining the interval and plan for that charge.
+
+### Read the interval from the charge, not from the user
+
+A tempting shortcut is to look at the user's current subscription, for example `$user->onPrice(config('custom.stripe.price_monthly'))`. That works for renewals, but it has a race on the very first payment: `charge.succeeded` can arrive before Cashier has finished syncing the brand-new subscription into your local tables, so `onPrice()` may still be empty or point at the previous plan.
+
+The reliable source of truth is the charge itself. A subscription charge always belongs to an invoice, and the invoice line references the price that was billed. Read the interval and plan straight from there, so it never depends on sync timing.
+
+First, add two nullable columns to your payments table:
+
+```php
+Schema::table('payments', function (Blueprint $table) {
+    $table->string('billing_interval')->nullable();
+    $table->string('plan')->nullable();
+});
+```
+
+Then populate them in the listener from Step 3, right before `updateOrCreate`:
+
+```php
+use Laravel\Cashier\Cashier;
+
+// ... existing $charge and $user lookup ...
+
+$billingInterval = null;
+$plan = null;
+
+if ($charge['invoice']) {
+    $invoice = Cashier::stripe()->invoices->retrieve(
+        $charge['invoice'],
+        ['expand' => ['lines.data.price']]
+    );
+
+    $priceId = $invoice->lines->data[0]->price->id ?? null;
+
+    [$billingInterval, $plan] = match ($priceId) {
+        config('custom.stripe.price_monthly') => ['month', 'pro'],
+        config('custom.stripe.price_annually') => ['year', 'pro'],
+        default => [null, null],
+    };
+}
+
+Payment::updateOrCreate(
+    ['stripe_charge_id' => $charge['id']],
+    [
+        'user_id' => $user->id,
+        'amount' => $charge['amount'],
+        'tax' => $charge['amount'] - ($charge['amount_captured'] ?? $charge['amount']),
+        'currency' => $charge['currency'],
+        'billing_interval' => $billingInterval,
+        'plan' => $plan,
+    ]
+);
+```
+
+Finally, implement `getTrackingSubscription()` on the Payment model from the stored columns:
+
+```php
+use SimpleStatsIo\LaravelClient\Data\TrackingSubscription;
+use SimpleStatsIo\LaravelClient\Enums\SubscriptionInterval;
+
+public function getTrackingSubscription(): ?TrackingSubscription
+{
+    return match ($this->billing_interval) {
+        'month' => new TrackingSubscription($this->plan, SubscriptionInterval::Month),
+        'year' => new TrackingSubscription($this->plan, SubscriptionInterval::Year),
+        default => null, // one-time payment
+    };
+}
+```
+
+The `plan` is a free-form string (`pro`, `team`, `enterprise`), used to segment your recurring metrics by plan later. Pass `null` if you don't track plans. The `interval` (`Month` or `Year`) is what lets SimpleStats normalize every subscription into a monthly figure: a €120/year plan and a €10/month plan both contribute €10 to MRR.
+
+> **Stripe API versions:** the shape of invoice line items has changed across Stripe API versions (`price`, `plan`, or `pricing`). Check the payload your pinned Cashier/Stripe API version actually sends and adjust the `$invoice->lines->data[0]->price->id` path accordingly.
+
+### Paddle and Lemon Squeezy
+
+Same idea, less plumbing. Their transaction/order models already carry the billing details locally, so you can implement `getTrackingSubscription()` directly on the model (matching on the price or billing period you already store) without an extra API call.
 
 ---
 
