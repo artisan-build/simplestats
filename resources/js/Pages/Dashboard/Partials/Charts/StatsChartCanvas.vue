@@ -71,6 +71,12 @@ const visibleXLabels = () => {
 
 const xLabels = props.maxXLabels ? visibleXLabels() : null;
 
+// ApexCharts resolves annotation x values by matching them against the *formatted*
+// axis labels, so a label blanked to '' can never anchor the current-period
+// annotation. Hidden categories therefore format to a unique invisible stand-in
+// (zero-width spaces) that the annotation below can reference.
+const hiddenXLabel = (value) => '\u200b'.repeat(props.categories.indexOf(value) + 1);
+
 const page = usePage();
 
 const chartInstance = ref(null);
@@ -236,7 +242,7 @@ const chartOptions = ref({
         labels: {
             rotate: 0,
             formatter: props.maxXLabels
-                ? (value) => xLabels.has(value) ? value : ''
+                ? (value) => xLabels.has(value) ? value : hiddenXLabel(value)
                 : undefined,
         },
         axisTicks: {
@@ -357,7 +363,7 @@ if (hasCurrentPeriod) {
     chartOptions.value.annotations = {
         xaxis: [
             {
-                x: previousPeriod,
+                x: xLabels && ! xLabels.has(previousPeriod) ? hiddenXLabel(previousPeriod) : previousPeriod,
                 x2: latestPeriod,
                 fillColor: isDarkMode.value ? '#444444' : '#DDDDDD',
             }
