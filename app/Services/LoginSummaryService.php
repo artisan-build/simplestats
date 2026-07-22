@@ -9,9 +9,9 @@ use App\Models\User;
 
 class LoginSummaryService
 {
-    const MIN_HOURS_SINCE_PREVIOUS_LOGIN = 12;
-
-    const HOUR_RANGE_MAX_HOURS = 48;
+    // High on purpose: daily users know their numbers, the summary only has
+    // value (and its wow effect) for someone returning after a real absence.
+    const MIN_DAYS_SINCE_PREVIOUS_LOGIN = 3;
 
     const SESSION_KEY = 'loginSummaryPending';
 
@@ -26,7 +26,7 @@ class LoginSummaryService
             && ($user->settings['loginSummaryEnabled'] ?? true)
             && $user->current_team_id
             && $user->previous_login_at
-            && $user->previous_login_at->lte(now()->subHours(self::MIN_HOURS_SINCE_PREVIOUS_LOGIN));
+            && $user->previous_login_at->lte(now()->subDays(self::MIN_DAYS_SINCE_PREVIOUS_LOGIN));
     }
 
     public function consumePending(): void
@@ -64,16 +64,12 @@ class LoginSummaryService
 
     private function getFilter(User $user): StatsFilterDto
     {
-        $hours = (int) ceil($user->previous_login_at->diffInHours(now(), absolute: true));
-
-        [$rangeType, $rangeAmount] = $hours <= self::HOUR_RANGE_MAX_HOURS
-            ? [StatsRangeType::HOUR, max(1, $hours)]
-            : [StatsRangeType::DAY, max(1, (int) ceil($hours / 24))];
+        $days = (int) ceil($user->previous_login_at->diffInDays(now(), absolute: true));
 
         return new StatsFilterDto(
             projectId: StatsFilterDto::TRACK_ALL,
-            rangeAmount: $rangeAmount,
-            rangeType: $rangeType,
+            rangeAmount: max(1, $days),
+            rangeType: StatsRangeType::DAY,
             rangeStart: now(),
             comparison: '0',
         );

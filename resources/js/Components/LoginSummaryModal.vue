@@ -30,9 +30,9 @@ const gridColsClass = computed(() => ({1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'g
 const sinceLabel = computed(() => {
     if (!summary.value) return '';
 
-    const hours = Math.round((Date.now() - new Date(summary.value.since).getTime()) / 3600000);
+    const days = Math.round((Date.now() - new Date(summary.value.since).getTime()) / 86400000);
 
-    return hours < 48 ? `${hours} hours` : `${Math.round(hours / 24)} days`;
+    return `${days} days`;
 });
 
 onMounted(async () => {

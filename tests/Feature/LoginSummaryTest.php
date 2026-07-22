@@ -33,7 +33,7 @@ test('login captures previous login and marks the summary pending', function () 
 });
 
 test('summary is eligible after a login when the previous login is old enough', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(13)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     $this->withSession([LoginSummaryService::SESSION_KEY => true])
         ->get(route('dashboard'))
@@ -41,7 +41,7 @@ test('summary is eligible after a login when the previous login is old enough', 
 });
 
 test('summary is not eligible when the previous login is too recent', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(2)]);
+    $this->user->update(['previous_login_at' => now()->subDays(2)]);
 
     $this->withSession([LoginSummaryService::SESSION_KEY => true])
         ->get(route('dashboard'))
@@ -49,14 +49,14 @@ test('summary is not eligible when the previous login is too recent', function (
 });
 
 test('summary is not eligible without a fresh login event', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(13)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', false));
 });
 
 test('summary is not eligible when disabled in the user settings', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(13)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
     $this->user->updateSettings('loginSummaryEnabled', false);
 
     $this->withSession([LoginSummaryService::SESSION_KEY => true])
@@ -73,7 +73,7 @@ test('summary is not eligible when there is no previous login', function () {
 });
 
 test('summary endpoint returns the stats since the previous login', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -105,12 +105,12 @@ test('summary endpoint returns the stats since the previous login', function () 
 });
 
 test('summary endpoint ignores stats from before the previous login', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
         'project_id' => $this->project->id,
-        'time' => now()->subDays(3)->format('Y-m-d H:i:s'),
+        'time' => now()->subDays(5)->format('Y-m-d H:i:s'),
     ]);
 
     $this->withSession([LoginSummaryService::SESSION_KEY => true])
@@ -120,7 +120,7 @@ test('summary endpoint ignores stats from before the previous login', function (
 });
 
 test('summary is null when there is nothing to celebrate and the pending flag is still consumed', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     $this->withSession([LoginSummaryService::SESSION_KEY => true])
         ->getJson(route('login-summary'))
@@ -132,7 +132,7 @@ test('summary is null when there is nothing to celebrate and the pending flag is
 });
 
 test('summary can only be fetched once per login', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -166,7 +166,7 @@ test('summary can only be fetched once per login', function () {
 
 test('summary only contains metrics the team tracks', function () {
     $this->project->update(['usage' => Project::USAGE_VISITORS]);
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -182,7 +182,7 @@ test('summary only contains metrics the team tracks', function () {
 });
 
 test('summary omits metrics with zero values', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -204,7 +204,7 @@ test('summary omits metrics with zero values', function () {
 });
 
 test('summary is null when only one of several tracked metrics is non-zero', function () {
-    $this->user->update(['previous_login_at' => now()->subHours(24)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4)]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,

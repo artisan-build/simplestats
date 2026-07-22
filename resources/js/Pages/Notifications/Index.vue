@@ -65,7 +65,7 @@ const trigger = (notification) => {
                 <template #form>
                     <div class="col-span-6">
                         <div>
-                            <h3>Login Summary</h3>
+                            <h3>Welcome Back Summary</h3>
                             <p class="mt-1 text-sm text-gray-600 dark:text-dark-400 text-justify">
                                 Shows a small summary across all your projects when you return after being away for a while.
                             </p>
