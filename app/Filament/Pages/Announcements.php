@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Jobs\SendAnnouncementToUser;
+use App\Models\Announcement;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -13,14 +15,23 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Spatie\DeletedModels\Models\DeletedModel;
 
-class Announcements extends Page
+class Announcements extends Page implements HasTable
 {
+    use InteractsWithTable;
+
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-megaphone';
 
     protected static ?string $navigationLabel = 'Announcements';
@@ -32,6 +43,8 @@ class Announcements extends Page
     protected string $view = 'filament.pages.announcements';
 
     public ?array $data = [];
+
+    public ?int $loadedAnnouncementId = null;
 
     public function mount(): void
     {
@@ -48,6 +61,16 @@ class Announcements extends Page
                     ->placeholder('e.g. What\'s new in SimpleStats'),
                 MarkdownEditor::make('body')
                     ->required()
+                    ->live(debounce: 1000)
+                    ->afterStateUpdated(function (Set $set, Get $get, ?string $state): void {
+                        if (filled($get('subject'))) {
+                            return;
+                        }
+
+                        if (preg_match('/^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/m', (string) $state, $matches)) {
+                            $set('subject', Str::limit(trim($matches[1]), 255, ''));
+                        }
+                    })
                     ->columnSpanFull()
                     ->fileAttachmentsDisk('public')
                     ->fileAttachmentsDirectory('announcements'),
@@ -89,13 +112,53 @@ class Announcements extends Page
                     ->footer([
                         Actions::make($this->getFormActions()),
                     ]),
+                EmbeddedTable::make(),
             ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Announcement::query())
+            ->heading('History')
+            ->description('Load a previous announcement to edit and re-send it.')
+            ->defaultSort('last_sent_at', 'desc')
+            ->columns([
+                TextColumn::make('subject')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('last_sent_at')
+                    ->label('Last sent')
+                    ->dateTime('M d, Y H:i')
+                    ->sortable(),
+            ])
+            ->recordActions([
+                Action::make('load')
+                    ->icon('heroicon-o-pencil-square')
+                    ->action(function (Announcement $record): void {
+                        $this->form->fill([
+                            'subject' => $record->subject,
+                            'body' => $record->body,
+                        ]);
+                        $this->loadedAnnouncementId = $record->id;
+                    }),
+                DeleteAction::make()
+                    ->after(function (Announcement $record): void {
+                        if ($this->loadedAnnouncementId === $record->id) {
+                            $this->loadedAnnouncementId = null;
+                        }
+                    }),
+            ])
+            ->emptyStateHeading('No announcements sent yet')
+            ->paginated([10, 25]);
     }
 
     public function send(): void
     {
         $data = $this->form->getState();
         $recipientCount = 0;
+
+        Announcement::recordSend($data['subject'], $data['body'], $this->loadedAnnouncementId);
 
         $customEmails = collect($data['custom_emails'] ?? [])
             ->map(fn (string $email) => strtolower(trim($email)))
@@ -108,7 +171,7 @@ class Announcements extends Page
                 $recipientCount++;
             }
 
-            $this->form->fill();
+            $this->resetAnnouncementForm();
 
             Notification::make()
                 ->title('Announcement queued')
@@ -153,13 +216,19 @@ class Announcements extends Page
             }
         }
 
-        $this->form->fill();
+        $this->resetAnnouncementForm();
 
         Notification::make()
             ->title('Announcement queued')
             ->body("Sending to {$recipientCount} user(s).")
             ->success()
             ->send();
+    }
+
+    protected function resetAnnouncementForm(): void
+    {
+        $this->form->fill();
+        $this->loadedAnnouncementId = null;
     }
 
     /**
