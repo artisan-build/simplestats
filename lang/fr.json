@@ -11,6 +11,12 @@
     "Analytics for :laravel": "Analytics pour :laravel",
     "Loved by the Laravel community": "Adoré par la communauté Laravel",
     "Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.": "Suis tes visiteurs, inscriptions et paiements. Découvre quels canaux génèrent vraiment du chiffre d'affaires, pas seulement du trafic. Côté serveur, conforme RGPD, 100 % précis.",
+    "From :visitor to :revenue.": "Du :visitor au :revenue.",
+    "visitor": "visiteur",
+    "revenue": "chiffre d'affaires",
+    "See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.": "Aie une vue d'ensemble : chaque visite, inscription et paiement est attribué au canal qui l'a généré. Fonctionne côté serveur et résiste aux bloqueurs de pub, conçu pour Laravel.",
+    "Know which channels :break drive your :revenue.": "Découvre quels canaux :break génèrent ton :revenue.",
+    "SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.": "SimpleStats suit l'ensemble du parcours client, de la première visite au paiement, et associe chaque résultat au canal qui l'a généré. Côté serveur, conforme au RGPD, résistant aux bloqueurs de pub.",
     "Get started for free": "Commence gratuitement",
     "Live demo": "Live demo",
     "What makes us": "Ce qui nous rend",
@@ -38,7 +44,6 @@
     "Ask AI": "Ask AI",
     "Chat & MCP": "Chat & MCP",
     "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.": "Posez des questions sur vos statistiques en langage naturel et obtenez des réponses fondées sur vos chiffres réels. Discutez directement dans votre dashboard ou connectez Claude, Cursor et d’autres outils d’IA à vos données via le serveur MCP intégré.",
-
     "Subscribe at your": "Abonne-toi selon ton",
     "scale": "besoin",
     "monthly": "mensuel",
@@ -162,7 +167,7 @@
     "Profile": "Profil",
     "Sign out": "Se déconnecter",
     "Save :percent%": "Économise :percent%",
-    "Save :amount/year": "Économise :amount/an",
+    "Save :amount\/year": "Économise :amount\/an",
     "2 months free": "2 mois offerts",
     "Starter": "Starter",
     "Plus": "Plus",
@@ -195,5 +200,9 @@
     "Laravel-native": "Laravel-native",
     "Ad-blocker proof": "Résistant aux bloqueurs de publicité",
     "Self-hosting option": "Option d'auto-hébergement",
-    "Open API": "API ouverte"
+    "Open API": "API ouverte",
+    "Blog": "Blog",
+    "Latest from": "Les dernières nouvelles de",
+    "our blog": "notre blog",
+    "View all posts": "Voir tous les articles"
 }

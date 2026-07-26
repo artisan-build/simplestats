@@ -11,6 +11,12 @@
     "Analytics for :laravel": "Analítica para :laravel",
     "Loved by the Laravel community": "Adorado por la comunidad Laravel",
     "Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.": "Rastrea visitantes, registros y pagos. Descubre qué canales realmente generan ingresos, no solo tráfico. Del lado del servidor, conforme al RGPD, 100% precisa.",
+    "From :visitor to :revenue.": "De :visitor a :revenue.",
+    "visitor": "visitante",
+    "revenue": "ingresos",
+    "See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.": "Ten una visión completa: cada visita, registro y pago, atribuidos al canal que los ha generado. Funciona en el lado del servidor y es a prueba de bloqueadores de anuncios, creado para Laravel.",
+    "Know which channels :break drive your :revenue.": "Averigua qué canales :break generan tus :revenue.",
+    "SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.": "SimpleStats hace un seguimiento de todo el embudo de conversión, desde la primera visita hasta el pago, y vincula cada resultado con el canal que lo ha generado. Funciona del lado del servidor, cumple con el RGPD y es a prueba de bloqueadores de anuncios.",
     "Get started for free": "Empieza gratis",
     "Live demo": "Live demo",
     "What makes us": "Qué nos hace",
@@ -38,7 +44,6 @@
     "Ask AI": "Ask AI",
     "Chat & MCP": "Chat & MCP",
     "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.": "Haz preguntas sobre tus estadísticas en lenguaje natural y obtén respuestas basadas en tus datos reales. Chatea directamente en tu dashboard o conecta Claude, Cursor y otras herramientas de IA a tus datos a través del servidor MCP integrado.",
-
     "Subscribe at your": "Suscríbete según tu",
     "scale": "necesidad",
     "monthly": "mensual",
@@ -162,7 +167,7 @@
     "Profile": "Perfil",
     "Sign out": "Cerrar sesión",
     "Save :percent%": "Ahorra :percent%",
-    "Save :amount/year": "Ahorra :amount/año",
+    "Save :amount\/year": "Ahorra :amount\/año",
     "2 months free": "2 meses gratis",
     "Starter": "Starter",
     "Plus": "Plus",
@@ -195,5 +200,9 @@
     "Laravel-native": "Laravel-native",
     "Ad-blocker proof": "A prueba de bloqueadores de anuncios",
     "Self-hosting option": "Opción de autoalojamiento",
-    "Open API": "API abierta"
+    "Open API": "API abierta",
+    "Blog": "Blog",
+    "Latest from": "Últimas noticias de",
+    "our blog": "nuestro blog",
+    "View all posts": "Ver todas las entradas"
 }

@@ -13,6 +13,12 @@
     "Analytics for :laravel": "Analytics for :laravel",
     "Loved by the Laravel community": "Loved by the Laravel community",
     "Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.": "Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.",
+    "From :visitor to :revenue.": "From :visitor to :revenue.",
+    "visitor": "visitor",
+    "revenue": "revenue",
+    "See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.": "See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.",
+    "Know which channels :break drive your :revenue.": "Know which channels :break drive your :revenue.",
+    "SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.": "SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.",
     "Get started for free": "Get started for free",
     "Live demo": "Live demo",
 

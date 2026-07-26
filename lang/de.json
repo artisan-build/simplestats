@@ -11,6 +11,12 @@
     "Analytics for :laravel": "Analytics für :laravel",
     "Loved by the Laravel community": "Geliebt von der Laravel-Community",
     "Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.": "Tracke Besucher, Registrierungen und Zahlungen. Entdecke, welche Kanäle wirklich Umsatz bringen, nicht nur Traffic. Serverseitig, DSGVO-konform, 100% genau.",
+    "From :visitor to :revenue.": "Vom :visitor zum :revenue.",
+    "visitor": "Besucher",
+    "revenue": "Umsatz",
+    "See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.": "Verschaffe dir einen umfassenden Überblick: Jeder Besuch, jede Anmeldung und jede Zahlung wird dem Kanal zugeordnet, der sie generiert hat. Serverseitig und adblocker-sicher, speziell für Laravel entwickelt.",
+    "Know which channels :break drive your :revenue.": "Finde heraus, welche Kanäle :break deinen :revenue ankurbeln.",
+    "SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.": "SimpleStats verfolgt den gesamten Trichter vom ersten Besuch bis zur Zahlung und ordnet jedes Ergebnis dem Kanal zu, der dazu geführt hat. Serverseitig, DSGVO-konform, adblocker-sicher.",
     "Get started for free": "Jetzt kostenlos starten",
     "Live demo": "Live-Demo",
     "What makes us": "Was uns",
@@ -38,7 +44,6 @@
     "Ask AI": "Ask AI",
     "Chat & MCP": "Chat & MCP",
     "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.": "Stelle Fragen zu deinen Stats in natürlicher Sprache und erhalte Antworten auf Basis deiner echten Zahlen. Chatte direkt im Dashboard oder verbinde Claude, Cursor und andere KI-Tools über den integrierten MCP-Server mit deinen Daten.",
-
     "Subscribe at your": "Abonniere nach deinem",
     "scale": "Bedarf",
     "monthly": "monatlich",
@@ -162,7 +167,7 @@
     "Profile": "Profil",
     "Sign out": "Abmelden",
     "Save :percent%": ":percent% sparen",
-    "Save :amount/year": ":amount/Jahr sparen",
+    "Save :amount\/year": ":amount\/Jahr sparen",
     "2 months free": "2 Monate gratis",
     "Starter": "Starter",
     "Plus": "Plus",
@@ -195,5 +200,9 @@
     "Laravel-native": "Laravel-native",
     "Ad-blocker proof": "Ad-Blocker-sicher",
     "Self-hosting option": "Selbst-Hosting-Option",
-    "Open API": "Offene API"
+    "Open API": "Offene API",
+    "Blog": "Blog",
+    "Latest from": "Das Neueste von",
+    "our blog": "Unser Blog",
+    "View all posts": "Alle Beiträge anzeigen"
 }

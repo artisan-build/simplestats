@@ -38,7 +38,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        if (! $this->shouldEnableSsr($request)) {
+        $isSsrPage = $this->shouldEnableSsr($request);
+
+        if (! $isSsrPage) {
             config(['inertia.ssr.enabled' => false]);
         }
 
@@ -46,14 +48,21 @@ class HandleInertiaRequests extends Middleware
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'), // this gets deactived through the fortify-config
             'branding' => config('app.branding'),
-            'ziggy' => (new Ziggy)->toArray(),
             'locale' => app()->getLocale(),
-            'translations' => fn () => $this->getTranslations(),
-            'supportedLocales' => array_keys(config('locales.supported', [])),
-            'localeConfig' => config('locales.supported'),
-            'defaultLocale' => config('locales.default'),
-            'localeUrls' => $this->buildLocaleUrls($request),
         ];
+
+        // Ziggy + translations are ~30 KB per response and only needed on public pages:
+        // the SSR render reads the ziggy prop (the browser uses the @routes global from
+        // app.blade.php instead), and only public pages are translated. In-app pages get
+        // fresh routes after a deploy via Inertia's asset-version reload.
+        if ($isSsrPage || $request->is('blog', 'blog/*')) {
+            $merge['ziggy'] = (new Ziggy)->toArray();
+            $merge['translations'] = fn () => $this->getTranslations();
+            $merge['supportedLocales'] = array_keys(config('locales.supported', []));
+            $merge['localeConfig'] = config('locales.supported');
+            $merge['defaultLocale'] = config('locales.default');
+            $merge['localeUrls'] = $this->buildLocaleUrls($request);
+        }
 
         if (auth()->user()) {
             $merge['isAdmin'] = auth()->user()->isAdmin();

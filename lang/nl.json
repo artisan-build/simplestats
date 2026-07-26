@@ -11,6 +11,12 @@
     "Analytics for :laravel": "Analytics voor :laravel",
     "Loved by the Laravel community": "Geliefd door de Laravel-community",
     "Track visitors, registrations, and payments. Discover which channels actually drive revenue, not just traffic. Server-side, GDPR compliant, 100% accurate.": "Track bezoekers, registraties en betalingen. Ontdek welke kanalen echt omzet opleveren, niet alleen verkeer. Server-side, AVG-conform, 100% nauwkeurig.",
+    "From :visitor to :revenue.": "Van :visitor naar :revenue.",
+    "visitor": "bezoeker",
+    "revenue": "omzet",
+    "See the full picture: every visit, signup and payment, attributed to the channel that drove it. Server-side and ad-blocker proof, built for Laravel.": "Krijg het volledige beeld: elk bezoek, elke aanmelding en elke betaling wordt toegeschreven aan het kanaal dat daarvoor gezorgd heeft. Werkt ook op de server en is bestand tegen adblockers, gebouwd voor Laravel.",
+    "Know which channels :break drive your :revenue.": "Ontdek welke kanalen :break je :revenue stimuleren.",
+    "SimpleStats tracks the full funnel, from first visit to payment, and ties every result back to the channel that caused it. Server-side, GDPR compliant, ad-blocker proof.": "SimpleStats volgt de hele funnel, van het eerste bezoek tot de betaling, en koppelt elk resultaat terug aan het kanaal dat ervoor gezorgd heeft. Server-side, voldoet aan de AVG, werkt ook als je een adblocker gebruikt.",
     "Get started for free": "Start gratis",
     "Live demo": "Live demo",
     "What makes us": "Wat ons",
@@ -38,7 +44,6 @@
     "Ask AI": "Ask AI",
     "Chat & MCP": "Chat & MCP",
     "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.": "Stel vragen over je statistieken in gewone taal en krijg antwoorden op basis van je echte cijfers. Chat direct in je dashboard of koppel Claude, Cursor en andere AI-tools via de ingebouwde MCP-server aan je data.",
-
     "Subscribe at your": "Abonneer je naar",
     "scale": "behoefte",
     "monthly": "maandelijks",
@@ -162,7 +167,7 @@
     "Profile": "Profiel",
     "Sign out": "Uitloggen",
     "Save :percent%": "Bespaar :percent%",
-    "Save :amount/year": "Bespaar :amount/jaar",
+    "Save :amount\/year": "Bespaar :amount\/jaar",
     "2 months free": "2 maanden gratis",
     "Starter": "Starter",
     "Plus": "Plus",
@@ -195,5 +200,9 @@
     "Laravel-native": "Laravel-native",
     "Ad-blocker proof": "Ad-blocker-bestendig",
     "Self-hosting option": "Optie voor zelf hosten",
-    "Open API": "Open API"
+    "Open API": "Open API",
+    "Blog": "Blog",
+    "Latest from": "Het laatste nieuws van",
+    "our blog": "onze blog",
+    "View all posts": "Bekijk alle berichten"
 }
