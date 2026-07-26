@@ -5,6 +5,7 @@ use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 function campaignFor(Project $project, string $name = 'Summer Sale'): Campaign
 {
@@ -61,6 +62,7 @@ test('store rejects an end date before the start date', function () {
 test('store rejects a campaign from another team', function () {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
     $foreignCampaignId = DB::table('campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $otherTeam->id,
         'project_id' => $this->project->id,
         'name' => 'Foreign',
@@ -110,6 +112,7 @@ test('destroy deletes an ad spend', function () {
 test('cannot delete an ad spend of another team', function () {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
     $foreignCampaignId = DB::table('campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $otherTeam->id,
         'project_id' => $this->project->id,
         'name' => 'Foreign',
@@ -117,7 +120,9 @@ test('cannot delete an ad spend of another team', function () {
         'updated_at' => now(),
     ]);
 
+    $foreignUuid = (string) Str::uuid();
     $foreignId = DB::table('ad_spends')->insertGetId([
+        'uuid' => $foreignUuid,
         'team_id' => $otherTeam->id,
         'campaign_id' => $foreignCampaignId,
         'amount' => 5000,
@@ -128,7 +133,7 @@ test('cannot delete an ad spend of another team', function () {
         'updated_at' => now(),
     ]);
 
-    $this->delete(route('ad-spends.destroy', $foreignId))->assertNotFound();
+    $this->delete(route('ad-spends.destroy', $foreignUuid))->assertNotFound();
 
     $this->assertDatabaseHas('ad_spends', ['id' => $foreignId]);
 });

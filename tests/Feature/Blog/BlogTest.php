@@ -67,7 +67,7 @@ test('blog index hydrates posts with author data', function () {
         ->assertInertia(fn ($page) => $page
             ->component('Blog/Index')
             ->has('posts.data', 2)
-            ->where('posts.data.0.author.id', $author->id)
+            ->missing('posts.data.0.author.id')
             ->where('posts.data.0.author.name', $author->name)
             ->where('posts.data.1.author', null)
         );
@@ -87,7 +87,8 @@ test('landing page shows the latest three blog posts without full content', func
             ->component('Home/LandingPage')
             ->has('latestPosts', 3)
             ->where('latestPosts.0.slug', 'newest-post')
-            ->where('latestPosts.0.author.id', $author->id)
+            ->missing('latestPosts.0.author.id')
+            ->where('latestPosts.0.author.name', $author->name)
             ->where('latestPosts.1.slug', 'newer-post')
             ->where('latestPosts.2.slug', 'middle-post')
             ->missing('latestPosts.0.html')

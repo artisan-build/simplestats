@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ComparisonType;
 use App\Enums\StatsRangePreset;
 use App\Enums\StatsRangeType;
+use App\Helpers\AppHelper;
 use App\Models\Campaign;
 use App\Models\CustomStatsRangePreset;
 use App\Models\Project;
@@ -44,6 +45,14 @@ class StatsFilterRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // The frontend filters carry public uuids; everything behind this
+        // boundary (validation, DTO, aggregation cache) works on internal ids.
+        foreach (['project_id' => Project::class, 'campaign' => Campaign::class] as $key => $modelClass) {
+            if (is_string($this->input($key)) && Str::isUuid($this->input($key))) {
+                $this->merge([$key => AppHelper::resolvePublicId($modelClass, $this->input($key))]);
+            }
+        }
+
         $projects = $this->user()->currentTeam->projects();
 
         // make the tracking filter work and set the projectId manually if only one project exists...

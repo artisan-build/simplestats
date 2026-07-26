@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasPublicUuid;
 use App\Jobs\QueuedVerifyEmailJob;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -32,6 +33,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     use HasProfilePhoto {
         HasProfilePhoto::profilePhotoUrl as getPhotoUrl;
     }
+    use HasPublicUuid;
     use HasTeams;
     use Impersonate;
 
@@ -53,10 +55,22 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $hidden = [
+        'id',
         'password',
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
+        // Internal state that must not leak when users are serialized as team
+        // members/owners; the curated auth.user share exposes what the frontend
+        // needs (see App\Http\Middleware\ShareInertiaData).
+        'settings',
+        'is_admin',
+        'current_team_id',
+        'email_verified_at',
+        'last_login_at',
+        'previous_login_at',
+        'inactive_since',
+        'deleted_at',
     ];
 
     /**

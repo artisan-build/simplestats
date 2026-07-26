@@ -5,6 +5,7 @@ use App\Models\Project;
 use App\Models\StatsTrackCampaign;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 const USAGE_WITHOUT_PAYMENTS = Project::USAGE_VISITORS | Project::USAGE_USERS;
 
@@ -122,6 +123,7 @@ test('linking an already tracked utm value attaches the existing row', function 
     ]);
 
     $utmId = DB::table('stats_track_campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
         'name' => 'existing_utm',
         'created_at' => now(),
@@ -140,6 +142,7 @@ test('linking a utm value already owned by another campaign is rejected', functi
     $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
 
     DB::table('stats_track_campaigns')->insert([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
         'name' => 'taken_utm',
         'campaign_id' => $other->id,
@@ -179,6 +182,7 @@ test('unlinking detaches the tracked dimension', function () {
     $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
 
     $utmId = DB::table('stats_track_campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
         'name' => 'linked_utm',
         'campaign_id' => $campaign->id,
@@ -186,7 +190,7 @@ test('unlinking detaches the tracked dimension', function () {
         'updated_at' => now(),
     ]);
 
-    $this->delete(route('campaigns.track-campaigns.unlink', ['campaign' => $campaign->id, 'trackCampaign' => $utmId]))
+    $this->delete(route('campaigns.track-campaigns.unlink', [$campaign, StatsTrackCampaign::find($utmId)]))
         ->assertRedirect();
 
     expect(StatsTrackCampaign::find($utmId)->campaign_id)->toBeNull();

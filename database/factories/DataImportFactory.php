@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\DataImportType;
 use App\Models\DataImport;
-use App\Models\Job;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
@@ -26,10 +26,10 @@ class DataImportFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'project_id' => Project::factory(),
-            'job_id' => Job::factory(),
-            'user_id' => User::factory(),
-            'type' => $this->faker->word(),
-            'rows_imported' => $this->faker->numberBetween(-10000, 10000),
+            'created_by' => User::factory(),
+            'type' => $this->faker->randomElement(DataImportType::cases()),
+            'rows_max' => $this->faker->numberBetween(100, 10000),
+            'rows_imported' => $this->faker->numberBetween(0, 100),
         ];
     }
 }

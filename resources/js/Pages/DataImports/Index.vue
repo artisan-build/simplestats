@@ -100,7 +100,7 @@ watch(() => props.dataImports.data, (newVal, oldVal) => {
                                         <div class="h-1 bg-indigo-400 transition-all" :style="`width: ${dataImports.data[0].rows_progress}%;`"></div>
                                     </td>
                                 </tr>
-                                <tr v-for="dataImport in dataImports.data" :key="dataImport.id">
+                                <tr v-for="dataImport in dataImports.data" :key="dataImport.uuid">
                                     <DataImportListRow :projects="projects" :dataImport="dataImport" />
                                 </tr>
                             </template>

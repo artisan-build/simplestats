@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasPublicUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Jetstream\Events\TeamCreated;
@@ -12,6 +13,7 @@ use Laravel\Jetstream\Team as JetstreamTeam;
 class Team extends JetstreamTeam
 {
     use HasFactory;
+    use HasPublicUuid;
 
     /**
      * The attributes that should be cast.
@@ -32,6 +34,8 @@ class Team extends JetstreamTeam
      */
     protected $hidden = [
         'ai_api_key',
+        'id',
+        'user_id',
     ];
 
     /**

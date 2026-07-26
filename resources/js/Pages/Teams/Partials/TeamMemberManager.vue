@@ -236,7 +236,7 @@ const displayableRole = (role) => {
                 <!-- Team Member List -->
                 <template #content>
                     <div class="space-y-6">
-                        <div v-for="user in team.users" :key="user.id" class="flex items-center justify-between">
+                        <div v-for="user in team.users" :key="user.uuid" class="flex items-center justify-between">
                             <div class="flex items-center">
                                 <img class="w-8 h-8 rounded-full object-cover" :src="user.profile_photo_url" :alt="user.name">
                                 <div class="ms-4 dark:text-white">
@@ -260,7 +260,7 @@ const displayableRole = (role) => {
 
                                 <!-- Leave Team -->
                                 <button
-                                    v-if="$page.props.auth.user.id === user.id"
+                                    v-if="$page.props.auth.user.uuid === user.uuid"
                                     class="cursor-pointer ms-6 text-sm text-red-500"
                                     @click="confirmLeavingTeam"
                                 >

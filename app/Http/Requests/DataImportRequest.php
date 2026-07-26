@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Enums\DataImportType;
+use App\Helpers\AppHelper;
 use App\Models\Project;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
@@ -20,10 +22,18 @@ class DataImportRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        // The frontend passes the project's public uuid (from the stats filters).
+        $this->merge([
+            'project_id' => AppHelper::resolvePublicId(Project::class, $this->input('project_id') ?? 0),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {

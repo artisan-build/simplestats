@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasPublicUuid;
 use App\Enums\UserNotificationFrequency;
 use App\Enums\UserNotificationType;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,16 @@ use Illuminate\Support\Arr;
 
 class UserNotification extends Model
 {
+    use HasPublicUuid;
+
     protected $guarded = false;
+
+    protected $hidden = [
+        'id',
+        'user_id',
+        'notifiable_id',
+        'notifiable_type',
+    ];
 
     protected $casts = [
         'frequency' => UserNotificationFrequency::class,

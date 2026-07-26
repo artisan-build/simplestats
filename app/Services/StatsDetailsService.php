@@ -197,6 +197,7 @@ class StatsDetailsService
     {
         return [
             'id' => StatsFilterDto::TRACK_ALL,
+            'uuid' => StatsFilterDto::TRACK_ALL,
             'name' => 'All',
             'usage' => $usage ?? Project::getUsageBitsCount(),
             'flags' => $flags ?? 0,

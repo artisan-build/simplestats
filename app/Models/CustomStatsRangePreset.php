@@ -2,21 +2,30 @@
 
 namespace App\Models;
 
+use App\Concerns\HasPublicUuid;
 use App\Enums\StatsRangeType;
+use Database\Factories\CustomStatsRangePresetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CustomStatsRangePreset extends Model
 {
-    /** @use HasFactory<\Database\Factories\CustomStatsRangePresetFactory> */
+    /** @use HasFactory<CustomStatsRangePresetFactory> */
     use HasFactory;
+
+    use HasPublicUuid;
 
     protected $fillable = [
         'name',
         'range_amount',
         'range_type',
         'sort_order',
+    ];
+
+    protected $hidden = [
+        'id',
+        'user_id',
     ];
 
     protected function casts(): array

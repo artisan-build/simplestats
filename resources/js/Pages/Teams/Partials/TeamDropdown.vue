@@ -18,7 +18,7 @@ const props = defineProps({
 const switchToTeam = (team) => {
     router.visit(route('current-team.update'), {
         method: 'put',
-        data: {team_id: team.id},
+        data: {team_id: team.uuid},
         onFinish: () => emit('switched-team', team),
     });
 };
@@ -63,11 +63,11 @@ const highligtTeam = true;//route().current().includes('teams') || (route().curr
                         Switch Teams
                     </div>
 
-                    <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
+                    <template v-for="team in $page.props.auth.user.all_teams" :key="team.uuid">
                         <form @submit.prevent="switchToTeam(team)">
                             <DropdownLink as="button">
                                 <div class="flex items-center">
-                                    <CheckCircleIcon v-if="team.id == $page.props.auth.user.current_team_id" class="me-2 size-5 text-green-400" />
+                                    <CheckCircleIcon v-if="team.uuid == $page.props.auth.user.current_team_uuid" class="me-2 size-5 text-green-400" />
 
                                     <div>{{ team.name }}</div>
                                 </div>

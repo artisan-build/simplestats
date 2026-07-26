@@ -9,6 +9,7 @@ use App\Services\AdSpendService;
 use App\Services\RefererService;
 use App\Services\StatsDetailsService;
 use App\Services\SubscriptionService;
+use Illuminate\Support\Arr;
 
 class CampaignsDataProvider extends AbstractStatsDataProvider
 {
@@ -32,19 +33,22 @@ class CampaignsDataProvider extends AbstractStatsDataProvider
         $teamStats = $this->loadTeamStats($user, $filters);
 
         return array_merge($this->commonProps($user, $filters, $teamStats), [
-            'campaigns' => $this->adSpendService->getCampaignProfitability($filters),
+            // The internal ids in the profitability rows are for the AI tool
+            // consuming the same service; the page works with the uuids.
+            'campaigns' => $this->adSpendService->getCampaignProfitability($filters)
+                ->through(fn (array $row) => Arr::except($row, ['campaign_id', 'project_id'])),
             'projects' => $this->projectOptions($teamStats),
         ]);
     }
 
     /**
-     * @return array<int, array{id: int, name: string}>
+     * @return array<int, array{uuid: string, name: string}>
      */
     private function projectOptions(Team $teamStats): array
     {
         return $teamStats->projects
             ->reject(fn ($project) => $project['id'] === StatsFilterDto::TRACK_ALL)
-            ->map(fn ($project) => ['id' => $project['id'], 'name' => $project['name']])
+            ->map(fn ($project) => ['uuid' => $project['uuid'], 'name' => $project['name']])
             ->values()
             ->toArray();
     }

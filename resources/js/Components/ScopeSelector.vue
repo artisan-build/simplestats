@@ -14,7 +14,7 @@ const emit = defineEmits(['update:projectId', 'project-changed']);
 
 const page = usePage();
 
-const currentTeamId = ref(page.props.auth.user.current_team_id);
+const currentTeamId = ref(page.props.auth.user.current_team_uuid);
 
 const teamChanged = () => {
     router.put(route('current-team.update'), {
@@ -32,6 +32,7 @@ const teamChanged = () => {
             <SelectInput
                 id="teamId"
                 v-model="currentTeamId"
+                track-by="uuid"
                 class="block w-full sm:w-40 dark:!bg-dark-800"
                 :options="page.props.auth.user.all_teams"
                 @change="teamChanged"
@@ -42,6 +43,7 @@ const teamChanged = () => {
             <SelectInput
                 id="project_id"
                 :model-value="projectId"
+                track-by="uuid"
                 class="block w-full sm:w-48 dark:!bg-dark-800"
                 :options="projects"
                 @update:model-value="emit('update:projectId', $event)"

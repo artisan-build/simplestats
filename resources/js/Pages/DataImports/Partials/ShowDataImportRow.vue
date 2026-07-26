@@ -154,7 +154,7 @@ const getTrackedJobStatusOptions = (trackedJob) => {
                     <br>
                     Are you sure you want to <strong>{{ dataImportBeeingHandled }}</strong> the following data import?<br>
                     <br>
-                    <strong>Project:</strong> {{ projects.filter((project) => project.id == dataImport.project_id)[0].name }}<br>
+                    <strong>Project:</strong> {{ dataImport.project?.name }}<br>
                     <strong>Import Type:</strong> {{ dataImport.type }}<br>
                     <span v-if="dataImport.rows_imported > 0">
                         <strong>Rows:</strong> {{ dataImport.rows_imported }} rows<br>

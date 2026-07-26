@@ -96,6 +96,7 @@ trait ResolvesStatsFilters
 
         $projects = Project::query()
             ->when($usageBit !== null, fn ($query) => $query->whereRaw('(usage & ?) > 0', [$usageBit]))
+            ->orderBy('id')
             ->get(['id', 'name']);
 
         if ($projects->count() < 2 || $projects->count() > 10) {

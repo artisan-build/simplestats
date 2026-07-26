@@ -59,7 +59,7 @@ test('campaigns lists a campaign with its spend as a profitability row', functio
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Index')
             ->has('campaigns.data', 1, fn ($row) => $row
-                ->where('campaign_id', $campaign->id)
+                ->where('campaign_uuid', $campaign->uuid)
                 ->where('name', 'Google Ads')
                 ->where('spend', 5000)
                 ->where('net', 0)

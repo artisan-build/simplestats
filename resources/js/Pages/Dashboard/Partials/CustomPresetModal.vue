@@ -43,7 +43,7 @@ const editingPreset = ref(null);
 const editingPresetName = ref(null);
 
 const startEditing = (preset) => {
-    editingPreset.value = preset.id;
+    editingPreset.value = preset;
     editingPresetName.value = preset.name;
     form.name = preset.name;
     form.range_amount = preset.range_amount.toString();
@@ -84,7 +84,7 @@ const confirmDelete = (preset) => {
 };
 
 const deletePreset = () => {
-    router.delete(route('custom-presets.destroy', deletingPreset.value.id), {
+    router.delete(route('custom-presets.destroy', deletingPreset.value), {
         preserveScroll: true,
         onSuccess: () => {
             deletingPreset.value = null;
@@ -142,7 +142,7 @@ const updateBuiltinVisibility = ({value}) => {
                     <div v-if="customPresets.length > 0" class="space-y-1 mb-4">
                         <div
                             v-for="preset in customPresets"
-                            :key="preset.id"
+                            :key="preset.uuid"
                             class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-dark-700"
                         >
                             <span class="text-sm">

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\ShareInertiaData;
 use App\Models\PersonalAccessToken;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
@@ -48,6 +49,12 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(ResolvesUsers::class, PulseUsers::class);
+
+        // Curated auth.user payload instead of Jetstream's full-model share.
+        $this->app->bind(
+            \Laravel\Jetstream\Http\Middleware\ShareInertiaData::class,
+            ShareInertiaData::class,
+        );
 
         // Singleton so the datacenter check and the geo mutator share one
         // memoized lookup per IP within a worker process.

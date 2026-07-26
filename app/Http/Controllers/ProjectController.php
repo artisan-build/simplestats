@@ -42,7 +42,7 @@ class ProjectController extends Controller
 
         $token = $project->tokens()->first();
 
-        return redirect()->route('projects.show', $project->id)
+        return redirect()->route('projects.show', $project)
             ->banner('Project created: '.$project->name)
             ->with('flash', [
                 'token' => $token->token_plain_part,

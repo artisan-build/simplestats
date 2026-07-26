@@ -18,7 +18,7 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const form = useForm({
-    campaign_id: props.campaign.id,
+    campaign_id: props.campaign.uuid,
     amount: '',
     currency: props.teamCurrency,
     starts_on: '',
@@ -38,7 +38,7 @@ const initForm = () => {
         form.ends_on = '';
     }
 
-    form.campaign_id = props.campaign.id;
+    form.campaign_id = props.campaign.uuid;
     form.clearErrors();
 };
 
@@ -52,7 +52,7 @@ const save = () => {
     const onSuccess = () => emit('close');
 
     if (props.editSpend) {
-        form.put(route('ad-spends.update', props.editSpend.id), {preserveScroll: true, onSuccess});
+        form.put(route('ad-spends.update', props.editSpend), {preserveScroll: true, onSuccess});
     } else {
         form.post(route('ad-spends.store'), {preserveScroll: true, onSuccess});
     }

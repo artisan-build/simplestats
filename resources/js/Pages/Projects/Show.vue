@@ -35,7 +35,7 @@ watchEffect(() => {
 const viewApiTokenForm = useForm({});
 
 const viewApiToken = (project) => {
-    viewApiTokenForm.get(route('projects.token-view', [project.id]), {
+    viewApiTokenForm.get(route('projects.token-view', [project]), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
@@ -54,7 +54,7 @@ const confirmApiTokenRegeneration = (project) => {
 };
 
 const regenerateApiToken = () => {
-    regenerateApiTokenForm.get(route('projects.token-regenerate', [apiTokenBeingRegenerated.value.id]), {
+    regenerateApiTokenForm.get(route('projects.token-regenerate', [apiTokenBeingRegenerated.value]), {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {

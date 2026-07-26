@@ -13,6 +13,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
@@ -42,6 +43,7 @@ afterEach(function () {
 function makeCampaign(int $teamId, int $projectId, string $name): int
 {
     return DB::table('campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $teamId,
         'project_id' => $projectId,
         'name' => $name,
@@ -53,6 +55,7 @@ function makeCampaign(int $teamId, int $projectId, string $name): int
 function makeTrackCampaign(int $teamId, string $name, ?int $campaignId = null): int
 {
     return DB::table('stats_track_campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $teamId,
         'name' => $name,
         'campaign_id' => $campaignId,

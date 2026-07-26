@@ -134,7 +134,7 @@ const saveUserLinkUrl = () => {
         return;
     }
     lastSavedUrl.value = userLinkForm.user_link_base_url;
-    userLinkForm.put(route('projects.user-link-url.update', props.filters.project_id), {
+    userLinkForm.put(route('projects.user-link-url.update', currentProject), {
         preserveScroll: true,
         preserveState: true,
     });

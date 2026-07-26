@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Helpers\AppHelper;
+use App\Models\Campaign;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,12 +16,17 @@ class AdSpendRequest extends FormRequest
 
     /**
      * Stored amounts are integer cents; the form sends a major-unit value.
+     * The campaign reference arrives as the campaign's public uuid.
      */
     protected function prepareForValidation(): void
     {
         if ($this->has('amount')) {
             $this->merge(['amount' => (int) round(((float) $this->amount) * 100)]);
         }
+
+        $this->merge([
+            'campaign_id' => AppHelper::resolvePublicId(Campaign::class, $this->input('campaign_id') ?? 0),
+        ]);
     }
 
     /**

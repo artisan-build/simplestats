@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
@@ -40,7 +41,7 @@ test('campaign show renders Campaigns/Show with campaign, summary, paginated spe
         'ends_on' => '2026-06-21',
     ]);
 
-    $this->get(route('campaigns.show', ['campaign' => $this->campaign->id, 'range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21']))
+    $this->get(route('campaigns.show', ['campaign' => $this->campaign->uuid, 'range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21']))
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Show')
             ->where('campaign.id', $this->campaign->id)
@@ -61,6 +62,7 @@ test('campaign show renders Campaigns/Show with campaign, summary, paginated spe
 
 test('campaign show lists linked utm campaigns', function () {
     DB::table('stats_track_campaigns')->insert([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
         'name' => 'google_ads_brand',
         'campaign_id' => $this->campaign->id,
@@ -112,7 +114,7 @@ test('campaign show summary matches the matching index row', function () {
     $query = ['range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21'];
 
     $summary = null;
-    $this->get(route('campaigns.show', ['campaign' => $this->campaign->id, ...$query]))
+    $this->get(route('campaigns.show', ['campaign' => $this->campaign->uuid, ...$query]))
         ->assertInertia(function ($page) use (&$summary) {
             $summary = $page->toArray()['props']['summary'];
         });
@@ -124,7 +126,7 @@ test('campaign show summary matches the matching index row', function () {
         });
 
     expect($row)->toMatchArray([
-        'campaign_id' => $summary['campaign_id'],
+        'campaign_uuid' => $summary['campaign_uuid'],
         'spend' => $summary['spend'],
         'net_profit' => $summary['net_profit'],
         'ltv_cac' => $summary['ltv_cac'],
@@ -135,6 +137,7 @@ test('campaign show summary matches the matching index row', function () {
 test('campaign show 404s for another team campaign', function () {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
     $foreignId = DB::table('campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $otherTeam->id,
         'project_id' => $this->project->id,
         'name' => 'Foreign',

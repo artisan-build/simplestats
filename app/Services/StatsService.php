@@ -208,6 +208,15 @@ class StatsService
             $formatted['comparison'] = 0;
         }
 
+        // The frontend/url side of the filters speaks public uuids, only the
+        // backend works with the internal ids.
+        if ($formatted['project_id'] !== 0) {
+            $formatted['project_id'] = Project::whereKey($formatted['project_id'])->value('uuid') ?? 0;
+        }
+        if (! empty($formatted['campaign'])) {
+            $formatted['campaign'] = Campaign::whereKey($formatted['campaign'])->value('uuid') ?? 0;
+        }
+
         return $formatted;
     }
 

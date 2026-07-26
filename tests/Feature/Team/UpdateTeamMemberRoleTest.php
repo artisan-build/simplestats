@@ -9,7 +9,7 @@ test('team member roles can be updated', function () {
         $otherUser = User::factory()->create(), ['role' => 'admin']
     );
 
-    $response = $this->put('/teams/'.$user->currentTeam->id.'/members/'.$otherUser->id, [
+    $response = $this->put('/teams/'.$user->currentTeam->uuid.'/members/'.$otherUser->uuid, [
         'role' => 'editor',
     ]);
 
@@ -18,7 +18,7 @@ test('team member roles can be updated', function () {
     ))->toBeTrue();
 });
 
-//test('only team owner can update team member roles', function () {
+// test('only team owner can update team member roles', function () {
 //    $user = User::factory()->withPersonalTeam()->create();
 //
 //    $user->currentTeam->users()->attach(
@@ -27,11 +27,11 @@ test('team member roles can be updated', function () {
 //
 //    $this->actingAs($otherUser);
 //
-//    $response = $this->put('/teams/'.$user->currentTeam->id.'/members/'.$otherUser->id, [
+//    $response = $this->put('/teams/'.$user->currentTeam->uuid.'/members/'.$otherUser->uuid, [
 //        'role' => 'editor',
 //    ]);
 //
 //    expect($otherUser->fresh()->hasTeamRole(
 //        $user->currentTeam->fresh(), 'admin'
 //    ))->toBeTrue();
-//});
+// });

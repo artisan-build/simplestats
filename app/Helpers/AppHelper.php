@@ -4,8 +4,10 @@ namespace App\Helpers;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Str;
 
 class AppHelper
 {
@@ -23,6 +25,22 @@ class AppHelper
         return Context::get('team_id')
             ?? auth()->user()?->team_id
             ?? auth()->user()?->current_team_id;
+    }
+
+    /**
+     * Maps a public uuid route/filter value back to the internal id. Accepts
+     * legacy numeric values as-is; unknown uuids resolve to 0 (= "all"), and
+     * team scoping applies through the model's global scope.
+     *
+     * @param  class-string<Model>  $modelClass
+     */
+    public static function resolvePublicId(string $modelClass, mixed $value): int
+    {
+        if (is_string($value) && Str::isUuid($value)) {
+            return (int) ($modelClass::where('uuid', $value)->value('id') ?? 0);
+        }
+
+        return (int) $value;
     }
 
     public static function ensureTeamTimezone(): void

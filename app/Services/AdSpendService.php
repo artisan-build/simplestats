@@ -57,7 +57,7 @@ class AdSpendService
     {
         [$windowStart, $windowEnd] = $this->resolveWindow($filters);
 
-        $campaign->loadMissing(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name,usage']);
+        $campaign->loadMissing(['statsTrackCampaigns:id,uuid,campaign_id,name', 'adSpends', 'project:id,uuid,name,usage']);
 
         return $this->buildRow($campaign, $this->revenueByUtm($filters), $windowStart, $windowEnd, $filters);
     }
@@ -72,7 +72,7 @@ class AdSpendService
             ->orderByDesc('starts_on')
             ->paginate($perPage)
             ->through(fn (AdSpend $spend) => [
-                'id' => $spend->id,
+                'uuid' => $spend->uuid,
                 'amount' => $spend->amount,
                 'currency' => $spend->currency,
                 'starts_on' => $spend->starts_on->toDateString(),
@@ -81,26 +81,30 @@ class AdSpendService
     }
 
     /**
-     * @return array<int, array{id: int, name: string}>
+     * The numeric id stays exposed here on purpose: it feeds the numeric
+     * track_campaign dimension filter link on the campaign page.
+     *
+     * @return array<int, array{id: int, uuid: string, name: string}>
      */
     public function linkedTrackCampaigns(Campaign $campaign): array
     {
         return StatsTrackCampaign::query()
             ->where('campaign_id', $campaign->id)
             ->orderBy('name')
-            ->get(['id', 'name'])
-            ->toArray();
+            ->get(['id', 'uuid', 'name'])
+            ->map(fn (StatsTrackCampaign $utm) => ['id' => $utm->id, 'uuid' => $utm->uuid, 'name' => $utm->name])
+            ->all();
     }
 
     /**
-     * @return array<int, array{id: int, name: string}>
+     * @return array<int, array{uuid: string, name: string}>
      */
     public function linkableTrackCampaigns(): array
     {
         return StatsTrackCampaign::query()
             ->whereNull('campaign_id')
             ->orderBy('name')
-            ->get(['id', 'name'])
+            ->get(['uuid', 'name'])
             ->toArray();
     }
 
@@ -110,7 +114,7 @@ class AdSpendService
     private function campaignsForFilter(StatsFilterDto $filters): Builder
     {
         return Campaign::query()
-            ->with(['statsTrackCampaigns:id,campaign_id,name', 'adSpends', 'project:id,name,usage'])
+            ->with(['statsTrackCampaigns:id,uuid,campaign_id,name', 'adSpends', 'project:id,uuid,name,usage'])
             ->when(
                 $filters->projectId !== StatsFilterDto::TRACK_ALL,
                 fn ($query) => $query->where('project_id', $filters->projectId),
@@ -157,8 +161,10 @@ class AdSpendService
 
         return [
             'campaign_id' => $campaign->id,
+            'campaign_uuid' => $campaign->uuid,
             'name' => $campaign->name,
             'project_id' => $campaign->project_id,
+            'project_uuid' => $campaign->project?->uuid,
             'project_name' => $campaign->project?->name ?? '–',
             'visitors' => $visitors,
             'reg' => $reg,

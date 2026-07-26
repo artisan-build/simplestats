@@ -212,7 +212,7 @@ test('changing the project with a preset persists it and a bare visit restores i
 
     $this->get(route('power-users'))
         ->assertInertia(fn ($page) => $page
-            ->where('filters.project_id', $this->project->id)
+            ->where('filters.project_id', $this->project->uuid)
         );
 });
 

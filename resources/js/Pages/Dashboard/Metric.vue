@@ -128,7 +128,7 @@ onMounted(() => {
                         Missing a metric?
                     </p>
                     <Link
-                        :href="route('projects.show', currentProject.id)"
+                        :href="currentProject.uuid ? route('projects.show', currentProject) : route('projects.index')"
                         class="flex items-center gap-2 px-3 py-1.5 text-sm rounded-md text-gray-600 dark:text-dark-300 hover:bg-gray-50 dark:hover:bg-dark-900/30 hover:text-gray-900 dark:hover:text-white"
                     >
                         <SlidersIcon class="size-4 shrink-0" />

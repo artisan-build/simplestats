@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\HasApiPlainTokens;
+use App\Concerns\HasPublicUuid;
 use App\Concerns\HasTeamScope;
 use App\Contracts\NotifiableToUser;
 use App\Enums\UserNotificationFrequency;
@@ -26,6 +27,7 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
     use Authenticatable;
     use HasApiPlainTokens;
     use HasFactory;
+    use HasPublicUuid;
     use HasTeamScope;
 
     const TOKEN_NAME = 'API Token';
@@ -41,6 +43,11 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
     const USAGE_SUBSCRIPTION = 8;
 
     const FLAG_PAID_ONLY = 1;
+
+    protected $hidden = [
+        'id',
+        'team_id',
+    ];
 
     protected $casts = [
         'stats_starting_at' => 'date',

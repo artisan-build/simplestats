@@ -87,6 +87,7 @@ const currentImportNotFinishedYet = computed(() => {
                 <SelectInput
                     id="project_id"
                     v-model="createDataImportForm.project_id"
+                    track-by="uuid"
                     class="mt-1 block w-full"
                     :options="projects"
                 />
@@ -142,7 +143,7 @@ const currentImportNotFinishedYet = computed(() => {
         <template #content>
             Do you really want to import this file with the following settings?<br>
             <br>
-            <strong>Project:</strong> {{ projects.filter((project) => project.id == createDataImportForm.project_id)[0].name }}<br>
+            <strong>Project:</strong> {{ projects.filter((project) => project.uuid == createDataImportForm.project_id)[0].name }}<br>
             <strong>Import Type:</strong> {{ createDataImportForm.type }}<br>
             <strong>Import File:</strong> {{ createDataImportForm.file.name }}<br>
         </template>

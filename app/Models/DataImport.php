@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasPublicUuid;
 use App\Concerns\HasTeamScope;
 use App\Enums\DataImportType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -14,7 +15,15 @@ use Junges\TrackableJobs\Models\TrackedJob;
 class DataImport extends Model
 {
     use HasFactory;
+    use HasPublicUuid;
     use HasTeamScope;
+
+    protected $hidden = [
+        'id',
+        'team_id',
+        'project_id',
+        'created_by',
+    ];
 
     protected $casts = [
         'type' => DataImportType::class,

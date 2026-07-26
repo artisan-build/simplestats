@@ -38,7 +38,6 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
         $hiddenPresets = $user->settings['hiddenPresets'] ?? [];
 
         return [
-            'teams' => $user->allTeams(),
             'teamStats' => $teamStats,
             'presets' => $this->buildPresets($user, $hiddenPresets),
             'allPresets' => StatsRangePreset::toOptions(),
@@ -103,11 +102,13 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
         $mergedFlags = $teamStats->projects->reduce(fn ($carry, $project) => $carry & $project['flags'], Project::getFlagBitsCount());
         $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects', $mergedUsageBits, $mergedFlags));
 
-        // we can't just do: $teamStats->projects = $teamStats->projects->keyBy('id');
+        // we can't just do: $teamStats->projects = $teamStats->projects->keyBy(...);
         // this would not update $teamStats cause of laravel intern relation management...
-        $teamStats->setRelation('projects', $teamStats->projects->keyBy('id'));
+        // Keyed by the public uuid (the "All" entry by 0), matching the uuid the
+        // frontend carries in filters.project_id.
+        $teamStats->setRelation('projects', $teamStats->projects->keyBy('uuid'));
 
-        if ($filters->projectId !== StatsFilterDto::TRACK_ALL && ! $teamStats->projects->has($filters->projectId)) {
+        if ($filters->projectId !== StatsFilterDto::TRACK_ALL && ! $teamStats->projects->contains('id', $filters->projectId)) {
             $filters->projectId = StatsFilterDto::TRACK_ALL;
         }
 
@@ -130,7 +131,7 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
 
     protected function projectTracksBit(Team $teamStats, StatsFilterDto $filters, int $bit): bool
     {
-        $project = $teamStats->projects[$filters->projectId] ?? null;
+        $project = $teamStats->projects->firstWhere('id', $filters->projectId);
 
         if ($project === null) {
             return false;

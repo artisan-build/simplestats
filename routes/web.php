@@ -22,6 +22,7 @@ use App\Http\Controllers\SetupTeamController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\TeamAiSettingsController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\UserNotificationController;
@@ -111,7 +112,14 @@ Route::middleware([
     Route::resource('setup/installation', SetupInstallController::class)->only(['index'])->names('setup.installation');
 
     Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
+    // The {team} routes override their Jetstream counterparts, which cannot
+    // resolve the public uuid route key (see TeamController/TeamMemberController).
     Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+    Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+    Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    Route::post('/teams/{team}/members', [TeamMemberController::class, 'store'])->name('team-members.store');
+    Route::put('/teams/{team}/members/{user}', [TeamMemberController::class, 'update'])->name('team-members.update');
+    Route::delete('/teams/{team}/members/{user}', [TeamMemberController::class, 'destroy'])->name('team-members.destroy');
     Route::put('/teams/{team}/ai-settings', [TeamAiSettingsController::class, 'update'])->name('teams.ai-settings.update');
 
     Route::get('dashboard', [StatsController::class, 'index'])->name('dashboard');

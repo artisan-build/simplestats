@@ -4,7 +4,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 test('password can be updated', function () {
-    $this->actingAs($user = User::factory()->create());
+    $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
     $response = $this->put('/user/password', [
         'current_password' => 'password',
@@ -16,7 +16,7 @@ test('password can be updated', function () {
 });
 
 test('current password must be correct', function () {
-    $this->actingAs($user = User::factory()->create());
+    $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
     $response = $this->put('/user/password', [
         'current_password' => 'wrong-password',
@@ -30,7 +30,7 @@ test('current password must be correct', function () {
 });
 
 test('new passwords must match', function () {
-    $this->actingAs($user = User::factory()->create());
+    $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
     $response = $this->put('/user/password', [
         'current_password' => 'password',

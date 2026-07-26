@@ -31,7 +31,7 @@ class PowerUsersDataProvider extends AbstractStatsDataProvider
         $teamStats = $this->loadTeamStats($user, $filters);
 
         $selectedProject = $filters->projectId !== StatsFilterDto::TRACK_ALL
-            ? $teamStats->projects[$filters->projectId] ?? null
+            ? $teamStats->projects->firstWhere('id', $filters->projectId)
             : null;
 
         // Mirror ProjectPolicy::update without touching $selectedProject->team, which is

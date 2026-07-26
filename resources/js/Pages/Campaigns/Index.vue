@@ -44,7 +44,7 @@ const showsRevenue = currentProjectHasUsages(['payments']);
 const showsRegistrations = currentProjectHasUsages(['users']);
 const showsSubscription = currentProjectHasUsages(['subscription']);
 const showProjectColumn = props.projects.length > 1 && (props.filters.project_id ?? 0) === 0;
-const defaultProjectId = props.projects.find(project => project.id === props.filters.project_id)?.id ?? props.projects[0]?.id;
+const defaultProjectId = props.projects.find(project => project.uuid === props.filters.project_id)?.uuid ?? props.projects[0]?.uuid;
 
 const columnCount = 2 + (showProjectColumn ? 1 : 0) + (showsRevenue ? 3 : 0) + (showsRegistrations ? 1 : 0) + (showsSubscription ? 2 : 0);
 
@@ -53,11 +53,11 @@ const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(c
 const showCampaignModal = ref(false);
 
 const manageCampaign = (row) => {
-    router.get(route('campaigns.show', {campaign: row.campaign_id, ...props.filters}));
+    router.get(route('campaigns.show', {campaign: row.campaign_uuid, ...props.filters}));
 };
 
 const analyzeCampaign = (row) => {
-    router.get(route('dashboard', {...props.filters, project_id: row.project_id, campaign: row.campaign_id}));
+    router.get(route('dashboard', {...props.filters, project_id: row.project_uuid, campaign: row.campaign_uuid}));
 };
 
 // Only projects that track subscriptions have a revenue view to drill into.
@@ -68,11 +68,11 @@ const usersBit = props.usageBits.users;
 const tracksUsers = (projectId) => !! ((props.teamStats.projects[projectId]?.usage ?? 0) & usersBit);
 
 const analyzeCampaignRevenue = (row) => {
-    router.get(route('revenue', {...props.filters, project_id: row.project_id, campaign: row.campaign_id}));
+    router.get(route('revenue', {...props.filters, project_id: row.project_uuid, campaign: row.campaign_uuid}));
 };
 
 const analyzeCampaignRetention = (row) => {
-    router.get(route('retention', {...props.filters, project_id: row.project_id, campaign: row.campaign_id}));
+    router.get(route('retention', {...props.filters, project_id: row.project_uuid, campaign: row.campaign_uuid}));
 };
 </script>
 
@@ -138,7 +138,7 @@ const analyzeCampaignRetention = (row) => {
                     </tr>
                     <tr
                         v-for="row in campaigns.data"
-                        :key="row.campaign_id + '-' + row.name"
+                        :key="row.campaign_uuid + '-' + row.name"
                         class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
                     >
                         <td class="border-t px-6 py-4 font-medium">
@@ -165,10 +165,10 @@ const analyzeCampaignRetention = (row) => {
                                 <button type="button" aria-label="Analyze in dashboard" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze in dashboard'" @click="analyzeCampaign(row)">
                                     <DashboardIcon class="size-5" />
                                 </button>
-                                <button v-if="tracksSubscription(row.project_id)" type="button" aria-label="Analyze revenue" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze revenue'" @click="analyzeCampaignRevenue(row)">
+                                <button v-if="tracksSubscription(row.project_uuid)" type="button" aria-label="Analyze revenue" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze revenue'" @click="analyzeCampaignRevenue(row)">
                                     <Wallet2Icon class="size-5" />
                                 </button>
-                                <button v-if="tracksUsers(row.project_id)" type="button" aria-label="Analyze retention" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze retention'" @click="analyzeCampaignRetention(row)">
+                                <button v-if="tracksUsers(row.project_uuid)" type="button" aria-label="Analyze retention" class="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400" v-tooltip="'Analyze retention'" @click="analyzeCampaignRetention(row)">
                                     <RetentionIcon class="size-5" />
                                 </button>
                             </div>

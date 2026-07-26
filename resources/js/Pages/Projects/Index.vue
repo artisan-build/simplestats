@@ -127,16 +127,16 @@ const appName = import.meta.env.VITE_APP_NAME;
                                 <tr class="text-left font-bold">
                                     <th class="pb-4 pt-6 px-6">Name</th>
                                 </tr>
-                                <tr class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300" v-for="project in projects.data" :key="project.id">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300" v-for="project in projects.data" :key="project.uuid">
                                     <td class="border-t">
-                                        <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('projects.show', project.id)">
+                                        <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="route('projects.show', project)">
                                             <ProjectFavicon :domain="project.domain" size="size-7" class="mr-2" />
                                             {{ project.name }}
                                         </Link>
                                     </td>
 
                                     <td class="w-px border-t">
-                                        <Link class="flex items-center px-4" :href="route('projects.show', project.id)">
+                                        <Link class="flex items-center px-4" :href="route('projects.show', project)">
                                             <ChevronRightIcon class="size-6" />
                                         </Link>
                                     </td>

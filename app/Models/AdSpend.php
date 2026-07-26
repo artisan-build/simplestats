@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\HasPublicUuid;
 use App\Concerns\HasTeamScope;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AdSpend extends Model
 {
     use HasFactory;
+    use HasPublicUuid;
     use HasTeamScope;
 
     protected $fillable = [
@@ -20,6 +22,12 @@ class AdSpend extends Model
         'currency',
         'starts_on',
         'ends_on',
+    ];
+
+    protected $hidden = [
+        'id',
+        'team_id',
+        'campaign_id',
     ];
 
     protected function casts(): array

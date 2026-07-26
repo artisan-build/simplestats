@@ -12,4 +12,11 @@ class Membership extends JetstreamMembership
      * @var bool
      */
     public $incrementing = true;
+
+    protected $hidden = [
+        'user_id',
+        'team_id',
+        'created_at',
+        'updated_at',
+    ];
 }

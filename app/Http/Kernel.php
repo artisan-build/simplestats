@@ -19,6 +19,7 @@ use App\Http\Middleware\ForwardToOnboarding;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RedirectLegacyIdUrls;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SetTeamContext;
 use App\Http\Middleware\TrimStrings;
@@ -76,6 +77,7 @@ class Kernel extends HttpKernel
             StartSession::class,
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
+            RedirectLegacyIdUrls::class, // Must run before SubstituteBindings (numeric ids would 404 there)
             SubstituteBindings::class,
             SetLocale::class,
             EnsureUserHasTeam::class, // Logs out users without any team access (mainly self-hosted)

@@ -150,6 +150,8 @@ class CampaignSeeder extends Seeder
             $period = now()->subMonths($month);
 
             $rows[] = [
+                // Bulk insert skips model events, so the uuid must be set here.
+                'uuid' => (string) Str::uuid(),
                 'team_id' => $campaign->team_id,
                 'campaign_id' => $campaign->id,
                 'amount' => $perMonth + ($month === 0 ? $remainder : 0),

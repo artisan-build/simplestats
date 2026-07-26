@@ -10,7 +10,7 @@ test('team members can be invited to team', function () {
 
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
-    $response = $this->post('/teams/'.$user->currentTeam->id.'/members', [
+    $response = $this->post('/teams/'.$user->currentTeam->uuid.'/members', [
         'email' => 'test@example.com',
         'role' => 'admin',
     ]);

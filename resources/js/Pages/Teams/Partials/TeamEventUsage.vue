@@ -64,7 +64,7 @@ const getProjectPercentage = (projectCount) => {
                             </div>
 
                             <div class="space-y-3">
-                                <div v-for="project in projects" :key="project.id">
+                                <div v-for="project in projects" :key="project.uuid">
                                     <div class="flex justify-between text-sm">
                                         <div class="flex items-center gap-1.5">
                                             <ProjectFavicon :domain="project.domain" />

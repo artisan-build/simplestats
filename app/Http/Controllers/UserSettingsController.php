@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\DashboardPreset;
+use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserSettingsController extends Controller
@@ -41,7 +43,13 @@ class UserSettingsController extends Controller
     public function setPropertyLifetime(Request $request): JsonResponse
     {
         $request->validate([
-            'project_id' => ['nullable', 'integer'],
+            // The frontend sends the project's public uuid (or 0 for all
+            // projects); the value is only used as a settings key.
+            'project_id' => ['nullable', function (string $attribute, mixed $value, Closure $fail) {
+                if (! is_numeric($value) && ! Str::isUuid($value)) {
+                    $fail('Invalid project.');
+                }
+            }],
             'lifetime' => ['required', 'boolean'],
         ]);
 

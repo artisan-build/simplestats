@@ -48,7 +48,7 @@ const props = defineProps({
 
 const page = usePage();
 
-const currentProject = props.teamStats.projects[props.campaign.project_id] ?? props.teamStats.projects[0];
+const currentProject = props.teamStats.projects[props.summary?.project_uuid] ?? props.teamStats.projects[0];
 const {currentProjectHasUsages} = useUsage(currentProject, props.usageBits);
 
 const showsRevenue = currentProjectHasUsages(['payments']);
@@ -64,7 +64,7 @@ const ltvCacClass = (value) => ltvCacClassBase(value, neutral);
 const paybackClass = (value) => paybackClassBase(value, neutral);
 
 const analyzeIn = (routeName) => {
-    router.get(route(routeName, {...props.filters, project_id: props.campaign.project_id, campaign: props.campaign.id}));
+    router.get(route(routeName, {...props.filters, project_id: props.summary?.project_uuid, campaign: props.campaign.uuid}));
 };
 
 const showModal = ref(false);
@@ -82,7 +82,7 @@ const openEdit = (spend) => {
 };
 
 const remove = () => {
-    router.delete(route('ad-spends.destroy', deleting.value.id), {
+    router.delete(route('ad-spends.destroy', deleting.value), {
         preserveScroll: true,
         onSuccess: () => {
             deleting.value = null;
@@ -106,7 +106,7 @@ const cancelEditName = () => {
 };
 
 const saveName = () => {
-    nameForm.patch(route('campaigns.update', {campaign: props.campaign.id}), {
+    nameForm.patch(route('campaigns.update', props.campaign), {
         preserveScroll: true,
         onSuccess: () => {
             editingName.value = false;
@@ -117,14 +117,14 @@ const saveName = () => {
 const linkForm = useForm({name: ''});
 
 const link = () => {
-    linkForm.post(route('campaigns.track-campaigns.link', {campaign: props.campaign.id}), {
+    linkForm.post(route('campaigns.track-campaigns.link', props.campaign), {
         preserveScroll: true,
         onSuccess: () => linkForm.reset(),
     });
 };
 
 const unlink = (trackCampaign) => {
-    router.delete(route('campaigns.track-campaigns.unlink', {campaign: props.campaign.id, trackCampaign: trackCampaign.id}), {
+    router.delete(route('campaigns.track-campaigns.unlink', [props.campaign, trackCampaign]), {
         preserveScroll: true,
     });
 };
@@ -174,7 +174,7 @@ const unlink = (trackCampaign) => {
                     :presets="presets"
                     :rangeTypes="rangeTypes"
                     submitRoute="campaigns.show"
-                    :submitRouteParams="{campaign: campaign.id}"
+                    :submitRouteParams="{campaign: campaign.uuid}"
                 />
             </div>
 
@@ -251,7 +251,7 @@ const unlink = (trackCampaign) => {
                         <Link
                             v-for="utm in linkedTrackCampaigns"
                             :key="utm.id"
-                            :href="route('dashboard', {...filters, project_id: campaign.project_id, track_campaign: utm.id})"
+                            :href="route('dashboard', {...filters, project_id: summary?.project_uuid, track_campaign: utm.id})"
                             class="inline-flex items-center gap-1 bg-indigo-100 dark:bg-indigo-500 dark:text-dark-100 hover:bg-indigo-200 dark:hover:bg-indigo-400 border rounded-md px-2 py-1 text-sm font-mono"
                             v-tooltip="'Analyse this utm_campaign in the dashboard'"
                         >
@@ -275,7 +275,7 @@ const unlink = (trackCampaign) => {
                                 placeholder="exact utm_campaign value"
                             />
                             <datalist id="linkable-utms">
-                                <option v-for="utm in linkableTrackCampaigns" :key="utm.id" :value="utm.name" />
+                                <option v-for="utm in linkableTrackCampaigns" :key="utm.uuid" :value="utm.name" />
                             </datalist>
                         </div>
                         <SecondaryButton type="submit" :class="{ 'opacity-25': linkForm.processing }" :disabled="linkForm.processing">
@@ -303,7 +303,7 @@ const unlink = (trackCampaign) => {
                     </tr>
                     <tr
                         v-for="spend in adSpends.data"
-                        :key="spend.id"
+                        :key="spend.uuid"
                         class="cursor-pointer hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
                         @click="openEdit(spend)"
                     >

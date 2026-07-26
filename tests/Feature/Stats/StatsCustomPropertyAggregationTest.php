@@ -121,7 +121,7 @@ test('changing the property dimension persists the selection in the user setting
         'group_type' => 'property',
     ]))->assertOk();
 
-    expect($this->user->refresh()->settings['selectedGroupTypes'][$this->project->id]['property'])->toBe($nameId);
+    expect($this->user->refresh()->settings['selectedGroupTypes'][$this->project->uuid]['property'])->toBe($nameId);
 });
 
 test('the grouped endpoint rejects a property name from another team', function () {

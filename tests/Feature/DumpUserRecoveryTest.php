@@ -4,6 +4,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 function seedRecoverableUser(): array
 {
@@ -66,12 +67,14 @@ function seedRecoverableUser(): array
     ]);
 
     DB::table('user_notifications')->insert([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id, 'notifiable_type' => 'App\\Models\\Project', 'notifiable_id' => $project->id,
         'frequency' => 'weekly', 'type' => 'report', 'settings' => json_encode(['tracking' => ['registrations' => true]]),
         'created_at' => $now, 'updated_at' => $now,
     ]);
 
     DB::table('custom_stats_range_presets')->insert([
+        'uuid' => (string) Str::uuid(),
         'user_id' => $user->id, 'name' => 'Last 14 days', 'range_amount' => 14, 'range_type' => 'day',
         'created_at' => $now, 'updated_at' => $now,
     ]);

@@ -27,6 +27,7 @@ beforeEach(function () {
 
 it('returns campaign profitability with money converted from cents', function () {
     $campaignId = DB::table('campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
         'name' => 'Summer Sale',
@@ -35,6 +36,7 @@ it('returns campaign profitability with money converted from cents', function ()
     ]);
 
     $trackCampaignId = DB::table('stats_track_campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
         'name' => 'summer_sale',
         'campaign_id' => $campaignId,

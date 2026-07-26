@@ -35,9 +35,11 @@ class StatsCustomPropertySeeder extends Seeder
             $lookups = $this->seedPropertyLookups($project, [...$userSchema, ...$visitorSchema]);
 
             $rows = [];
+            // Every second user (deterministic, not rand): guarantees user-bound demo
+            // rows exist even with few seeded users.
             StatsUser::where('project_id', $project->id)->pluck('id')
-                ->each(function ($entityId) use (&$rows, $project, $userSchema, $lookups, $now) {
-                    if (rand(0, 1) === 1) {
+                ->each(function ($entityId, $index) use (&$rows, $project, $userSchema, $lookups, $now) {
+                    if ($index % 2 === 0) {
                         $rows[] = $this->propertyRow($project, 'stats_user', $entityId, 'company', Arr::random($userSchema['company']), $lookups, $now);
                     }
                 });

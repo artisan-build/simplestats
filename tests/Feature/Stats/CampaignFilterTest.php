@@ -37,6 +37,7 @@ afterEach(function () {
 function makeFilterTrackCampaign(int $teamId, string $name, ?int $campaignId): int
 {
     return DB::table('stats_track_campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $teamId,
         'name' => $name,
         'campaign_id' => $campaignId,
@@ -173,6 +174,7 @@ it('has no campaign summary on the unfiltered dashboard', function () {
 it('rejects a campaign filter referencing another team', function () {
     $otherTeamId = User::factory()->withPersonalTeam()->create()->currentTeam->id;
     $foreignCampaignId = DB::table('campaigns')->insertGetId([
+        'uuid' => (string) Str::uuid(),
         'team_id' => $otherTeamId,
         'project_id' => $this->pid,
         'name' => 'Foreign',

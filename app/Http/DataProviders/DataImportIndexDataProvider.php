@@ -62,7 +62,7 @@ class DataImportIndexDataProvider extends AbstractDataProvider
 
     private function loadProjects(): Collection
     {
-        return Project::orderBy('created_at', 'desc')->get()->prepend(['id' => 0, 'name' => 'Please Select']);
+        return Project::orderBy('created_at', 'desc')->get()->prepend(['uuid' => 0, 'name' => 'Please Select']);
     }
 
     private function buildImportTypes(): Collection

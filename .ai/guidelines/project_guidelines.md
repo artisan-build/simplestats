@@ -280,11 +280,11 @@ The dashboard displays these key performance indicators:
 
 ### Team Switching Redirect
 
-`CurrentTeamController::update()` handles the redirect after a team switch. URLs with team-scoped IDs must not redirect back to the same path, because the ID belongs to the old team. Current rules:
+`CurrentTeamController::update()` handles the redirect after a team switch. URLs with team-scoped ids must not redirect back to the same path, because the id belongs to the old team. Current rules (ids are public uuids, legacy numeric segments are matched too):
 
-- `/teams/{id}...` redirects to `/teams/{newId}...`
+- `/teams/{uuid}...` redirects to `/teams/{newTeamUuid}...`
 - `/setup/...` redirects to `RouteServiceProvider::HOME`
-- `/{entity}/{id}...` (default) strips the ID and redirects to `/{entity}`
+- `/{entity}/{uuid-or-numeric-id}...` (default) strips the id segment and redirects to `/{entity}`; non-id segments like `/dashboard/metric/{kpi}` stay untouched
 - All other paths redirect back unchanged (safe, since `HasTeamScope` re-filters automatically)
 
 ### Multi-Currency
@@ -345,6 +345,33 @@ Jobs include automatic retry logic for fault tolerance.
 - IPs and User-Agents are processed but **never stored**
 - Visitor hashes are anonymized (daily salt rotation)
 - GDPR-compliant by design
+
+### Public UUIDs Instead of Internal IDs
+
+Auto-increment ids are **internal only**. Anything a user can see (URLs, query-string filters, Inertia props / JSON payloads) uses a public uuid instead: customers read numeric ids as a security problem and they leak business intel (row counts, growth, enumeration).
+
+**The design is deliberately hybrid, do NOT swap primary keys to uuid/ULID.** Bigint PKs and all FKs stay internal: `team_id`/`project_id` lead nearly every composite index on the huge stats tables, so 16-byte keys would permanently bloat every index, and ordered uuids (v7/ULID) would leak creation timestamps while random v4 PKs would wreck insert locality. The public key is a separate `uuid` column (native Postgres type, NOT NULL, unique) generated as **random v4** by `App\Concerns\HasPublicUuid`.
+
+Checklist for making a model user-facing:
+
+1. Migration: add `uuid` (nullable → backfill `gen_random_uuid()` → not null + unique).
+2. `use HasPublicUuid;` on the model (uuid becomes the route key; non-uuid URL values 404 automatically).
+3. `$hidden = ['id', ...internal FK columns]`.
+4. Frontend: pass model objects to `route()` (Ziggy resolves the uuid via the `@routes` bindings). Column selects (`->get(['id', 'name'])`) and hand-built row arrays must include `uuid` wherever the frontend needs a reference.
+5. Request bodies referencing the model send the uuid; map it back in the FormRequest's `prepareForValidation()` via `AppHelper::resolvePublicId()` (accepts legacy numeric values as-is).
+
+Boundary rule: everything behind the request boundary (validation rules, DTOs, `StatsService` aggregation cache / `filter_hash`) keeps working on internal ids. `StatsService::formatFilters()` converts ids back to uuids toward the frontend; `teamStats.projects` is keyed by uuid (the "All" pseudo entry at key `0`). User-settings keys written per project (`selectedGroupTypes`, `propertyLifetime`) are uuid-keyed.
+
+Gotchas:
+
+- Bulk inserts (`Model::insert()`, `DB::table()->insert()`) skip model events, so the uuid must be set manually (see `CampaignSeeder::monthlySpendRows`).
+- `$hidden` applies to `toArray()` serialization even for explicitly selected columns. Hand-built arrays and attribute access bypass it — that is how the AI/MCP tools keep their numeric `project_id` contract.
+- Jetstream's vendor controllers `findOrFail()` the raw `{team}` parameter, which cannot resolve a uuid route key (`findOrFail($model)` is no workaround, its Arrayable cast breaks). All `{team}` routes are therefore overridden in `routes/web.php` with app controllers (`TeamController`, `TeamMemberController`) mirroring the vendor actions.
+- The curated `auth.user` payload lives in `App\Http\Middleware\ShareInertiaData` (container-bound over the vendor class). Never share full user/team models to Inertia; whitelist fields.
+
+Deliberate exceptions where numeric ids stay: the stats dimension filters (`track_referer`, `location_country`, ...), the `id` inside `linkedTrackCampaigns` (feeds the numeric `track_campaign` dimension link), AI tool responses, `preset=custom_<id>`, and the Filament admin (`/admin/users/{record}` resolves by primary key, admin-only). Users themselves are uuid-routed too (the `{user}` param of the Jetstream member routes binds `App\Models\User` by uuid).
+
+Legacy compatibility: the `RedirectLegacyIdUrls` middleware 301-redirects old numeric GET urls (`/projects/5`) to the uuid url, team-scoped so foreign ids still 404. Numeric filter/body values keep working through `resolvePublicId()`.
 
 ## Coding Conventions
 

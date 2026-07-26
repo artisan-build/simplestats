@@ -4,6 +4,7 @@ namespace App\Http\DataProviders;
 
 use App\DTOs\StatsFilterDto;
 use App\Http\Requests\StatsFilterRequest;
+use App\Models\Project;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 
@@ -39,8 +40,14 @@ class StatsGroupsDataProvider extends AbstractDataProvider
             return;
         }
 
+        // Keyed by the project's public uuid ("0" for all projects), because the
+        // frontend reads these settings via filters.project_id, which is the uuid.
+        $projectKey = $this->request->project_id
+            ? Project::whereKey($this->request->project_id)->value('uuid') ?? 0
+            : 0;
+
         $this->request->user()->updateSettings(
-            "selectedGroupTypes.{$this->request->project_id}.{$this->request->group_type}",
+            "selectedGroupTypes.{$projectKey}.{$this->request->group_type}",
             $this->request->stats_type === 'property' ? (int) $this->request->property_name_id : $this->request->stats_type,
         );
     }

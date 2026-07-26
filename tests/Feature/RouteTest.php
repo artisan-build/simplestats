@@ -25,6 +25,8 @@ $exclude = [
     'og-image/*', // requires a generated og-image filename
     'livewire*',
     'filament/*',
+    'mcp', // MCP streamable-http transport, GET without a session correctly returns 405
+
     '{locale}', // localized routes, tested in LocalizationTest
     '{locale}/*',
 ];

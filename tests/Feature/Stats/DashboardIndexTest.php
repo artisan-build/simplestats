@@ -21,7 +21,6 @@ test('dashboard renders Dashboard/Index with expected props', function () {
     $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard/Index')
-            ->has('teams')
             ->has('teamStats')
             ->has('presets')
             ->has('allPresets')
