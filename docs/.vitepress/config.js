@@ -47,27 +47,28 @@ export default defineConfig({
                 text: 'Tracking',
                 collapsed: false,
                 items: [
-                    {text: 'How to track a new visitor', link: '/how-to-track-a-new-visitor'},
-                    {text: 'How to track a new user', link: '/how-to-track-a-new-user'},
-                    {text: 'How to track a new login', link: '/how-to-track-a-new-login'},
-                    {text: 'How to track a new payment', link: '/how-to-track-a-new-payment'},
-                    {text: 'From Visitor to User to Revenue', link: '/from-visitor-to-user-to-revenue'},
-                    {text: 'Tracking Codes', link: '/tracking-codes'},
+                    {text: 'Visitors', link: '/how-to-track-a-new-visitor'},
+                    {text: 'Users', link: '/how-to-track-a-new-user'},
+                    {text: 'Logins', link: '/how-to-track-a-new-login'},
+                    {text: 'Payments', link: '/how-to-track-a-new-payment'},
+                    {text: 'Funnel Attribution', link: '/from-visitor-to-user-to-revenue'},
                 ]
             },
             {
                 text: 'Advanced Tracking',
-                collapsed: true,
+                collapsed: false,
                 items: [
-                    {text: 'How to track a custom event', link: '/how-to-track-a-custom-event'},
-                    {text: 'How to track a custom prop', link: '/how-to-track-custom-properties'},
-                    {text: 'How to update a payment', link: '/how-to-update-a-payment'},
-                    {text: 'How to import existing data', link: '/how-to-import-existing-data'},
+                    {text: 'Custom Events', link: '/how-to-track-a-custom-event'},
+                    {text: 'Custom Properties', link: '/how-to-track-custom-properties'},
+                    {text: 'Update a Payment', link: '/how-to-update-a-payment'},
+                    {text: 'Stripe Without a Payment Model', link: '/how-to-track-stripe-payments-without-a-model'},
+                    {text: 'Import Existing Data', link: '/how-to-import-existing-data'},
+                    {text: 'Tracking Codes', link: '/tracking-codes'},
                 ]
             },
             {
                 text: 'Configuration',
-                collapsed: true,
+                collapsed: false,
                 items: [
                     {text: 'Queue', link: '/queue'},
                     {text: 'Bot Detection', link: '/bot-detection'},
@@ -76,7 +77,7 @@ export default defineConfig({
             },
             {
                 text: 'Integrations',
-                collapsed: true,
+                collapsed: false,
                 items: [
                     {text: 'Filament', link: '/filament-plugin'},
                     {text: 'Statamic', link: '/statamic-addon'},
@@ -85,14 +86,14 @@ export default defineConfig({
             },
             {
                 text: 'Self-Hosted',
-                collapsed: true,
+                collapsed: false,
                 items: [
                     {text: 'Overview', link: '/self-hosted'},
                 ]
             },
             {
                 text: 'Resources',
-                collapsed: true,
+                collapsed: false,
                 items: [
                     {text: 'KPIs Reference', link: '/kpis'},
                     {text: 'Plans and Limits', link: '/plans-and-limits'},
@@ -103,7 +104,7 @@ export default defineConfig({
             },
             {
                 text: 'API',
-                collapsed: true,
+                collapsed: false,
                 items: [
                     {text: 'Ingest API', link: '/ingest-api'},
                     {text: 'Query API', link: '/query-api'},

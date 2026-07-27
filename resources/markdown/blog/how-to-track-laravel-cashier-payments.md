@@ -147,6 +147,8 @@ public function boot(): void
 
 Done. Every completed Paddle transaction now gets tracked automatically.
 
+By the way, this is the same setup we use ourselves: SimpleStats runs on Cashier Paddle and tracks its own payments this way. We like our own dogfood.
+
 > **Using Lemon Squeezy?** The same approach works. The `lmsqueezy/laravel` package ships with an `Order` model you can extend the same way. Just extend `LemonSqueezy\Laravel\Order`, implement the contract, and register it via `LemonSqueezy::useOrderModel()`.
 
 ---
@@ -155,7 +157,7 @@ Done. Every completed Paddle transaction now gets tracked automatically.
 
 Stripe requires a bit more work. Unlike Paddle and Lemon Squeezy, Cashier Stripe does **not** ship with an Eloquent model for individual payments. It stores subscriptions locally (in the `subscriptions` table), but individual charges, invoices, and checkout payments live entirely in Stripe's API. The `Laravel\Cashier\Payment` class you might have seen in the docs is just a wrapper around Stripe's PaymentIntent object, not an Eloquent model.
 
-That means you need to create your own payment model and populate it from Stripe webhooks.
+If your app already records payments in a table of its own (for invoices, order history, etc.), you're in luck: just implement the contract on that model as shown above, and you're done. The rest of this section is for apps that keep no local payment records at all. In that case, you need to create your own payment model and populate it from Stripe webhooks.
 
 ### Understanding Stripe's Webhook Events
 
@@ -446,4 +448,4 @@ You can use any logic you want here. Check multiple fields, combine conditions, 
 
 While this guide focuses on Laravel Cashier (Stripe and Paddle), the pattern works with any payment provider. If you use a different gateway, the approach is the same: create or extend a model, implement the contract, register it in the config.
 
-For the full payment tracking documentation, including visitor-based payment tracking for guest checkouts and multi-currency support, check out our [payment tracking guide](/docs/how-to-track-a-new-payment.html).
+For the full payment tracking documentation, including the Cashier Paddle and Lemon Squeezy setup, visitor-based payment tracking for guest checkouts and multi-currency support, check out our [payment tracking guide](/docs/how-to-track-a-new-payment.html). The Stripe webhook setup is also documented in [How to track Stripe payments without a payment model](/docs/how-to-track-stripe-payments-without-a-model.html).

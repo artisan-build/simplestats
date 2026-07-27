@@ -21,5 +21,5 @@ This privacy-first hashing approach is similar to what other analytics tools lik
 :::
 
 ::: info
-Want to understand how visitor data flows into registrations and revenue? Check out [From Visitor to User to Revenue](from-visitor-to-user-to-revenue.md).
+Want to understand how visitor data flows into registrations and revenue? Check out [From Visitor to User to Payment](from-visitor-to-user-to-revenue.md).
 :::
