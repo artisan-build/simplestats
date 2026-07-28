@@ -42,6 +42,23 @@ test('store creates an ad spend and converts the amount to cents', function () {
     ]);
 });
 
+test('store accepts the campaign as a public uuid', function () {
+    $campaign = campaignFor($this->project);
+
+    $this->post(route('ad-spends.store'), [
+        'campaign_id' => $campaign->uuid,
+        'amount' => '10',
+        'currency' => 'EUR',
+        'starts_on' => '2026-06-01',
+        'ends_on' => '2026-06-30',
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    $this->assertDatabaseHas('ad_spends', [
+        'campaign_id' => $campaign->id,
+        'amount' => 1000,
+    ]);
+});
+
 test('store validates required fields', function () {
     $this->post(route('ad-spends.store'), [])
         ->assertSessionHasErrors(['campaign_id', 'amount', 'currency', 'starts_on', 'ends_on']);

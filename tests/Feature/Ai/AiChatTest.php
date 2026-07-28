@@ -85,6 +85,18 @@ it('injects the current project and range into the agent instructions', function
         ->toContain('default to the last_30_days preset');
 });
 
+it('accepts the project as a public uuid', function () {
+    StatsAssistant::fake(['Answer.']);
+
+    $response = $this->actingAs($this->user)->post(route('ai.chat.store'), [
+        'message' => 'How many registrations did I get last month?',
+        'project_id' => $this->project->uuid,
+        'context_preset' => 'last_7_days',
+    ]);
+
+    $response->assertSuccessful()->assertHeader('X-Conversation-Id');
+});
+
 it('validates the message', function () {
     $this->actingAs($this->user)->postJson(route('ai.chat.store'), [
         'message' => '',

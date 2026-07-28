@@ -44,7 +44,8 @@ test('campaign show renders Campaigns/Show with campaign, summary, paginated spe
     $this->get(route('campaigns.show', ['campaign' => $this->campaign->uuid, 'range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21']))
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Show')
-            ->where('campaign.id', $this->campaign->id)
+            // The page builds route params and the ad spend payload from this uuid.
+            ->where('campaign.uuid', $this->campaign->uuid)
             ->where('campaign.name', 'Google Ads')
             ->where('summary.campaign_id', $this->campaign->id)
             ->where('summary.spend', 5000)

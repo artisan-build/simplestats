@@ -6,7 +6,6 @@ use App\Ai\Agents\StatsAssistant;
 use App\Enums\StatsRangePreset;
 use App\Helpers\AppHelper;
 use App\Http\Requests\AiChatRequest;
-use App\Models\Project;
 use App\Services\Ai\AiChatStreamer;
 use App\Services\Ai\AiConversationService;
 use App\Services\Ai\TeamAiConfig;
@@ -41,7 +40,7 @@ class AiChatController extends Controller
         );
 
         $agent = new StatsAssistant(
-            currentProjectId: AppHelper::resolvePublicId(Project::class, $request->input('project_id') ?? 0) ?: null,
+            currentProjectId: $request->integer('project_id') ?: null,
             currentPreset: StatsRangePreset::tryFrom((string) $request->input('context_preset'))?->value,
         );
 

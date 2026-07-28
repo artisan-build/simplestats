@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\AppHelper;
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AiChatRequest extends FormRequest
@@ -9,6 +11,14 @@ class AiChatRequest extends FormRequest
     public function authorize(): bool
     {
         return (bool) ($this->user()?->currentTeam?->owner?->sparkPlan()->options['AiAssistant'] ?? false);
+    }
+
+    protected function prepareForValidation(): void
+    {
+        // The frontend sends the project's public uuid.
+        $this->merge([
+            'project_id' => AppHelper::resolvePublicId(Project::class, $this->input('project_id') ?? 0),
+        ]);
     }
 
     /**
