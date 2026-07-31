@@ -23,6 +23,10 @@ _SimpleStats_ tracks you as a new [Unique Visitor](how-to-track-a-new-visitor.ht
 - **`session`** (default): clear your session cookies via **Browser Console** > **Application** > **Cookies**, then revisit your site.
 - **`cache`** (headless / SPA setups, see [Headless, SPA & Stateless](headless-stateless-spa.html)): the visit is identified by a daily hash of IP + User-Agent, so a new tab or incognito window won't trigger a new visit. Either drop the entry for your visitor hash from the cache, run `php artisan cache:clear`, or wait for the next day.
 
+## Check Whether Requests Reach PHP at All
+
+If no visits are recorded even though you have traffic, your pages may be served from a cache that bypasses your application (Statamic `full` measure static caching, nginx/Varnish page caching, Cloudflare "Cache Everything"). The tracking middleware never runs in that case. See [Static Caching & CDNs](static-caching.html).
+
 ## Fix Your Queue
 
 Check your `QUEUE_CONNECTION` setting in the `.env` file:

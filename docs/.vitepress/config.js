@@ -73,6 +73,7 @@ export default defineConfig({
                     {text: 'Queue', link: '/queue'},
                     {text: 'Bot Detection', link: '/bot-detection'},
                     {text: 'Headless, SPA & Stateless', link: '/headless-stateless-spa'},
+                    {text: 'Static Caching & CDNs', link: '/static-caching'},
                 ]
             },
             {

@@ -30,6 +30,10 @@ SIMPLESTATS_API_TOKEN=your-api-token-here
 
 That's it. A new **SimpleStats** entry appears under the **Tools** section of the Control Panel navigation. Open it to see your dashboard.
 
+::: warning Using full measure static caching?
+The addon only displays your stats, the tracking itself is done by the [Laravel client](/installation). With Statamic's `full` measure static caching, pages are served without booting Laravel, so visits go untracked. See [Static Caching & CDNs](/static-caching) for the fix.
+:::
+
 ## Configuration
 
 All configuration is optional. The addon works out of the box with just an API token.
