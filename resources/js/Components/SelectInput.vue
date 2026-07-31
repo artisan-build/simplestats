@@ -11,6 +11,7 @@ const props = defineProps({
     trackBy: { type: String, default: 'id' },
     labelBy: { type: String, default: 'name' },
     class: { type: String, default: '' },
+    optionsClass: { type: String, default: '' },
     name: { type: String, default: '' },
     id: { type: String, default: '' },
 })
@@ -97,7 +98,7 @@ watch(open, (val) => {
                 </span>
             </ListboxButton>
 
-            <ListboxOptions :class="(normalizedOptions.length > 20 ? 'max-h-60' : '')" class="absolute z-10 mt-1 w-full overflow-auto rounded-md bg-white dark:bg-dark-800 py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
+            <ListboxOptions :class="[normalizedOptions.length > 20 ? 'max-h-60' : '', props.optionsClass]" class="absolute z-10 mt-1 w-full overflow-auto rounded-md bg-white dark:bg-dark-800 py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
                 <ListboxOption
                     v-for="option in normalizedOptions"
                     :key="option[trackBy]"

@@ -34,6 +34,7 @@ const teamChanged = () => {
                 v-model="currentTeamId"
                 track-by="uuid"
                 class="block w-full sm:w-40 dark:!bg-dark-800"
+                options-class="!w-max min-w-full max-w-[min(28rem,calc(100vw-2rem))]"
                 :options="page.props.auth.user.all_teams"
                 @change="teamChanged"
             />
@@ -45,6 +46,7 @@ const teamChanged = () => {
                 :model-value="projectId"
                 track-by="uuid"
                 class="block w-full sm:w-48 dark:!bg-dark-800"
+                options-class="!w-max min-w-full max-w-[min(28rem,calc(100vw-2rem))]"
                 :options="projects"
                 @update:model-value="emit('update:projectId', $event)"
                 @change="emit('project-changed')"
