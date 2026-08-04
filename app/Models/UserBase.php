@@ -69,6 +69,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
         'email_verified_at',
         'last_login_at',
         'previous_login_at',
+        'login_summary_pending',
         'inactive_since',
         'deleted_at',
     ];
@@ -81,6 +82,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'previous_login_at' => 'immutable_datetime',
+        'login_summary_pending' => 'boolean',
         'settings' => 'array',
     ];
 

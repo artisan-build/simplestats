@@ -20,7 +20,7 @@ class LoginSummaryDataProvider extends AbstractDataProvider
             return ['summary' => null];
         }
 
-        $this->loginSummaryService->consumePending();
+        $this->loginSummaryService->consumePending($user);
 
         return ['summary' => $this->loginSummaryService->getSummary($user)];
     }

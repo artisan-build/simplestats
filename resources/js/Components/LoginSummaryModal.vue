@@ -1,3 +1,9 @@
+<script>
+// AppLayout remounts on every Inertia navigation, so this module-level flag keeps
+// the endpoint to one call per page load.
+let fetched = false;
+</script>
+
 <script setup>
 import {computed, onMounted, ref} from 'vue';
 import {Link, usePage} from '@inertiajs/vue3';
@@ -36,7 +42,9 @@ const sinceLabel = computed(() => {
 });
 
 onMounted(async () => {
-    if (!page.props.loginSummaryEligible) return;
+    if (fetched || !page.props.loginSummaryEligible) return;
+
+    fetched = true;
 
     const {data} = await axios.get(route('login-summary'));
 

@@ -13,15 +13,13 @@ class LoginSummaryService
     // value (and its wow effect) for someone returning after a real absence.
     const MIN_DAYS_SINCE_PREVIOUS_LOGIN = 3;
 
-    const SESSION_KEY = 'loginSummaryPending';
-
     public function __construct(
         private StatsDetailsService $statsDetailsService,
     ) {}
 
     public function isEligible(User $user): bool
     {
-        return session()->has(self::SESSION_KEY)
+        return $user->login_summary_pending
             && ! app('impersonate')->isImpersonating()
             && ($user->settings['loginSummaryEnabled'] ?? true)
             && $user->current_team_id
@@ -29,9 +27,14 @@ class LoginSummaryService
             && $user->previous_login_at->lte(now()->subDays(self::MIN_DAYS_SINCE_PREVIOUS_LOGIN));
     }
 
-    public function consumePending(): void
+    /**
+     * The pending state lives on the user, not in the session: the dashboard fires
+     * several requests in parallel, and a slower one writing back its stale session
+     * copy resurrected the consumed session flag, so the modal reappeared.
+     */
+    public function consumePending(User $user): void
     {
-        session()->pull(self::SESSION_KEY);
+        $user->update(['login_summary_pending' => false]);
     }
 
     /**

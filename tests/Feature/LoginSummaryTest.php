@@ -5,7 +5,6 @@ use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
-use App\Services\LoginSummaryService;
 
 beforeEach(function () {
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -29,51 +28,47 @@ test('login captures previous login and marks the summary pending', function () 
 
     expect($this->user->previous_login_at->format('Y-m-d H:i:s'))->toBe($oldLogin->format('Y-m-d H:i:s'));
     expect($this->user->last_login_at)->not->toBe($oldLogin->format('Y-m-d H:i:s'));
-    expect(session()->has(LoginSummaryService::SESSION_KEY))->toBeTrue();
+    expect($this->user->login_summary_pending)->toBeTrue();
 });
 
 test('summary is eligible after a login when the previous login is old enough', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->get(route('dashboard'))
+    $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', true));
 });
 
 test('summary is not eligible when the previous login is too recent', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(2)]);
+    $this->user->update(['previous_login_at' => now()->subDays(2), 'login_summary_pending' => true]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->get(route('dashboard'))
+    $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', false));
 });
 
 test('summary is not eligible without a fresh login event', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => false]);
 
     $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', false));
 });
 
 test('summary is not eligible when disabled in the user settings', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
     $this->user->updateSettings('loginSummaryEnabled', false);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->get(route('dashboard'))
+    $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', false));
 });
 
 test('summary is not eligible when there is no previous login', function () {
-    $this->user->update(['previous_login_at' => null]);
+    $this->user->update(['previous_login_at' => null, 'login_summary_pending' => true]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->get(route('dashboard'))
+    $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', false));
 });
 
 test('summary endpoint returns the stats since the previous login', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -96,8 +91,7 @@ test('summary endpoint returns the stats since the previous login', function () 
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $this->getJson(route('login-summary'))
         ->assertSuccessful()
         ->assertJsonPath('summary.metrics.visitors', 1)
         ->assertJsonPath('summary.metrics.reg', 1)
@@ -105,7 +99,7 @@ test('summary endpoint returns the stats since the previous login', function () 
 });
 
 test('summary endpoint ignores stats from before the previous login', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -113,17 +107,15 @@ test('summary endpoint ignores stats from before the previous login', function (
         'time' => now()->subDays(5)->format('Y-m-d H:i:s'),
     ]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $this->getJson(route('login-summary'))
         ->assertSuccessful()
         ->assertJsonPath('summary', null);
 });
 
 test('summary is null when there is nothing to celebrate and the pending flag is still consumed', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $this->getJson(route('login-summary'))
         ->assertSuccessful()
         ->assertJsonPath('summary', null);
 
@@ -132,7 +124,7 @@ test('summary is null when there is nothing to celebrate and the pending flag is
 });
 
 test('summary can only be fetched once per login', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -146,8 +138,7 @@ test('summary can only be fetched once per login', function () {
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $this->getJson(route('login-summary'))
         ->assertJsonPath('summary.metrics.visitors', 1);
 
     // new stats arriving mid-session must not retrigger the modal
@@ -164,9 +155,22 @@ test('summary can only be fetched once per login', function () {
         ->assertJsonPath('summary', null);
 });
 
+test('consuming the summary survives a session that is written back afterwards', function () {
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
+
+    $this->getJson(route('login-summary'))->assertSuccessful();
+
+    expect($this->user->refresh()->login_summary_pending)->toBeFalse();
+
+    $this->flushSession();
+
+    $this->get(route('dashboard'))
+        ->assertInertia(fn ($page) => $page->where('loginSummaryEligible', false));
+});
+
 test('summary only contains metrics the team tracks', function () {
     $this->project->update(['usage' => Project::USAGE_VISITORS]);
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -174,15 +178,14 @@ test('summary only contains metrics the team tracks', function () {
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
-    $response = $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $response = $this->getJson(route('login-summary'))
         ->assertSuccessful();
 
     expect($response->json('summary.metrics'))->toBe(['visitors' => 1]);
 });
 
 test('summary omits metrics with zero values', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -196,15 +199,14 @@ test('summary omits metrics with zero values', function () {
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
-    $response = $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $response = $this->getJson(route('login-summary'))
         ->assertSuccessful();
 
     expect($response->json('summary.metrics'))->toBe(['reg' => 1, 'visitors' => 1]);
 });
 
 test('summary is null when only one of several tracked metrics is non-zero', function () {
-    $this->user->update(['previous_login_at' => now()->subDays(4)]);
+    $this->user->update(['previous_login_at' => now()->subDays(4), 'login_summary_pending' => true]);
 
     StatsVisitor::factory()->create([
         'team_id' => $this->user->currentTeam->id,
@@ -212,8 +214,7 @@ test('summary is null when only one of several tracked metrics is non-zero', fun
         'time' => now()->subHour()->format('Y-m-d H:i:s'),
     ]);
 
-    $this->withSession([LoginSummaryService::SESSION_KEY => true])
-        ->getJson(route('login-summary'))
+    $this->getJson(route('login-summary'))
         ->assertSuccessful()
         ->assertJsonPath('summary', null);
 });
