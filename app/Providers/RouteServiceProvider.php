@@ -36,8 +36,8 @@ class RouteServiceProvider extends ServiceProvider
             $project = $request->user();
 
             if ($project instanceof Project) {
-                $plan = $project->team->owner->sparkPlan();
-                $limit = $plan->options['ApiRateLimit'] ?? self::API_RATE_LIMIT_DEFAULT;
+                $plan = $project->team?->billingOwner?->sparkPlan();
+                $limit = $plan?->options['ApiRateLimit'] ?? self::API_RATE_LIMIT_DEFAULT;
                 $key = 'project:'.$project->id;
             }
 

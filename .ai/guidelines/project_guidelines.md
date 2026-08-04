@@ -278,6 +278,29 @@ The dashboard displays these key performance indicators:
 - Team members have roles: Administrator, Editor, Viewer
 - Stats can be viewed per-project or aggregated at team level
 
+### The Team Owner Can Be Soft-Deleted (`billingOwner` vs `owner`)
+
+`app:check-inactive-users` **soft-deletes** inactive owners, and `app:purge-pending-deleted-users` only hard-deletes them (cascading into teams, projects and stats) **two months later**. Throughout that grace window the team, its projects and its API tokens keep working normally, but `Team::owner()` is a plain `belongsTo(User::class)` and `User` uses `SoftDeletes`, so **`$team->owner` is `null` while the account is fully alive**. Never assume a live team has a non-null `owner`.
+
+This is not a theoretical edge case: it took down every API request of an affected team for the entire grace window, because the `api` rate limiter resolved the plan through `$project->team->owner->sparkPlan()` (SIMPLESTATS-7F).
+
+Rules:
+
+- **Plan / limit / option lookups use `Team::billingOwner`**, never `owner`. It is the same relation `->withTrashed()`, so it keeps resolving during the grace window and a restored account never loses its plan. Being a real relation (not a helper method), it is memoized and eager-loadable.
+- **Anything that touches the owner outside the web session must be null-safe anyway** and degrade instead of throwing. The API rate limiter falls back to `RouteServiceProvider::API_RATE_LIMIT_DEFAULT`; a scheduled command skips the row (see the `empty($team->owner)` guards in `ResetEventsCounter`, `UnifyTrackReferer`, ...). A 500 in a rate limiter or a queued job is always worse than a degraded value.
+- The **web session path** is covered separately by the `EnsureValidTeamOwner` middleware, which switches the user to a team that still has an owner. That is why `ProjectPolicy` / `DataImportPolicy` / `HandleInertiaRequests` may use `currentTeam->owner` directly. Do not copy that pattern into API, console or queue code.
+- The same dangling-reference class affects **any row pointing at a user**, not just teams (e.g. `UserNotification::user` in `SendProjectReports`). When a relation targets `User`, ask whether a soft-deleted user must still resolve.
+
+### Deleting an Owner Deletes Their Whole Team
+
+Deleting a user is never scoped to that user: `DeleteUser::deleteTeams()` runs `Team::purge()` on every team they own, which detaches all members and deletes the team, taking its projects and stats with it. Only the owner is ever warned by `CheckInactiveUsers`, so an owner who left the company would silently take a team down that colleagues use daily.
+
+`CheckInactiveUsers::inactiveCandidates()` therefore excludes owners whose team still has a member that logged in within `INACTIVE_AFTER_DAYS`. Keep that guard in place, and apply the same reasoning to anything else that deletes a user.
+
+A soft-deleted user is blocked from logging back in (`FortifyServiceProvider`), and the password broker cannot find them either. They are told so explicitly, but **only once they have proven ownership with the correct password** — the generic "credentials do not match" would otherwise read as a forgotten password and lose a still restorable account, while an unconditional message would be an account enumeration oracle. Keep both halves of that condition when touching the login closure.
+
+Ongoing traffic is deliberately **not** part of that check. Paying customers are already excluded by the active-subscription clause, so what is left is free accounts, and a free account that ignores both warning mails is exactly the abandoned installation the cleanup is meant to remove, no matter how much data its client package still sends. Do not reintroduce an `events_count_monthly` based exemption here.
+
 ### Team Switching Redirect
 
 `CurrentTeamController::update()` handles the redirect after a team switch. URLs with team-scoped ids must not redirect back to the same path, because the id belongs to the old team. Current rules (ids are public uuids, legacy numeric segments are matched too):

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasPublicUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
@@ -48,6 +49,19 @@ class Team extends JetstreamTeam
         'updated' => TeamUpdated::class,
         'deleted' => TeamDeleted::class,
     ];
+
+    /**
+     * The owner used to resolve plan limits and options.
+     *
+     * Inactive owners are soft-deleted for a two month grace window while their
+     * team, projects and API tokens keep running, so the plain `owner` relation
+     * is null there. Plan resolution must survive that, otherwise every API
+     * request of an otherwise healthy team fails.
+     */
+    public function billingOwner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
+    }
 
     public function projects(): HasMany
     {

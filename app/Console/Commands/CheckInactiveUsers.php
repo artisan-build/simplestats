@@ -6,12 +6,15 @@ use App\Models\User;
 use App\Notifications\UserDeletedNotification;
 use App\Notifications\UserInactiveNotification;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 
 class CheckInactiveUsers extends Command
 {
     protected $signature = 'app:check-inactive-users';
 
     protected $description = 'Marks inactive users for deletion after the warning period';
+
+    private const INACTIVE_AFTER_DAYS = 50;
 
     public function handle(): void
     {
@@ -28,10 +31,7 @@ class CheckInactiveUsers extends Command
         // grace window so a wrongly-flagged account can be restored without a backup.
         // The SoftDeletes scope hides already-marked users from these queries; the
         // real cascading delete runs later in app:purge-pending-deleted-users.
-        User::query()
-            ->whereDoesntHave('subscriptions', function ($query) {
-                $query->where('status', 'active');
-            })
+        $this->inactiveCandidates()
             ->where('inactive_since', '<', now()->subDays(10))
             ->each(function (User $user) {
                 $user->notify(new UserDeletedNotification($user));
@@ -41,24 +41,38 @@ class CheckInactiveUsers extends Command
 
     private function notifyInactiveUsers(): void
     {
-        User::query()
-            ->whereDoesntHave('subscriptions', function ($query) {
-                $query->where('status', 'active');
-            })
-            ->where('last_login_at', '<', now()->subDays(50))
+        $this->inactiveCandidates()
+            ->where('last_login_at', '<', now()->subDays(self::INACTIVE_AFTER_DAYS))
             ->whereNull('inactive_since')
             ->each(function (User $user) {
                 $user->notify(new UserInactiveNotification($user, 10));
                 $user->update(['inactive_since' => now()]);
             });
 
-        User::query()
-            ->whereDoesntHave('subscriptions', function ($query) {
-                $query->where('status', 'active');
-            })
+        $this->inactiveCandidates()
             ->where('inactive_since', '<', now()->subDays(9))
             ->each(function (User $user) {
                 $user->notify(new UserInactiveNotification($user, 1));
+            });
+    }
+
+    /**
+     * Users that may be inactive: no paid subscription, and no owned team that
+     * someone else is still using.
+     *
+     * Deleting an owner is never limited to that owner: DeleteUser purges every
+     * team they own, which detaches all members and takes the projects and stats
+     * with it. Only the owner is ever warned, so an owner who left the company
+     * would silently take an actively used team down with them.
+     */
+    private function inactiveCandidates(): Builder
+    {
+        return User::query()
+            ->whereDoesntHave('subscriptions', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->whereDoesntHave('ownedTeams.users', function ($query) {
+                $query->where('users.last_login_at', '>', now()->subDays(self::INACTIVE_AFTER_DAYS));
             });
     }
 }

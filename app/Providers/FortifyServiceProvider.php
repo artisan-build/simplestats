@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Fortify;
 
@@ -46,11 +47,22 @@ class FortifyServiceProvider extends ServiceProvider
                 ->where(Fortify::username(), $request->input(Fortify::username()))
                 ->first();
 
-            if ($user && ! $user->trashed() && Hash::check($request->input('password'), $user->password)) {
-                return $user;
+            if (! $user || ! Hash::check($request->input('password'), $user->password)) {
+                return null;
             }
 
-            return null;
+            // Say why the account is blocked, but only to someone who proved they own
+            // it. The generic "credentials do not match" reads as a forgotten password,
+            // so returning users gave up on a still restorable account instead of
+            // asking for it back. Password reset cannot help them either, the broker
+            // does not find soft-deleted users.
+            if ($user->trashed()) {
+                throw ValidationException::withMessages([
+                    Fortify::username() => __('This account was deactivated because it was unused for a long time. Its data can still be restored, please contact :email.', ['email' => config('app.app_mail')]),
+                ]);
+            }
+
+            return $user;
         });
 
         RateLimiter::for('login', function (Request $request) {

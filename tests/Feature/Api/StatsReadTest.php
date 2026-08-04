@@ -192,3 +192,23 @@ test('stats groups without auth returns 401', function () {
 
     $response->assertUnauthorized();
 });
+
+test('stats grouped still works while the team owner is soft deleted', function () {
+    // Inactive owners are soft-deleted for a two month grace window while their
+    // team, projects and API tokens keep running (SIMPLESTATS-7F).
+    $this->project->team->owner->delete();
+    auth()->forgetGuards();
+
+    $response = $this->getJson('/api/v1/stats/grouped?stats_type=track_source', apiHeaders($this->token));
+
+    $response->assertOk();
+});
+
+test('the api rate limit still resolves the plan of a soft deleted owner', function () {
+    $team = $this->project->team;
+    $owner = $team->owner;
+    $owner->delete();
+
+    expect($team->fresh()->owner)->toBeNull();
+    expect($team->fresh()->billingOwner->id)->toBe($owner->id);
+});

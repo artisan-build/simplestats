@@ -204,5 +204,7 @@
     "Blog": "Blog",
     "Latest from": "Het laatste nieuws van",
     "our blog": "onze blog",
-    "View all posts": "Bekijk alle berichten"
+    "View all posts": "Bekijk alle berichten",
+
+    "This account was deactivated because it was unused for a long time. Its data can still be restored, please contact :email.": "Dit account is gedeactiveerd omdat het lange tijd niet is gebruikt. De gegevens kunnen nog worden hersteld, neem contact op met :email."
 }

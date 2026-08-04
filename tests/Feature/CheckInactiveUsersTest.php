@@ -178,3 +178,85 @@ it('middleware switches user to personal team when current team owner is missing
 
     expect($member->fresh()->current_team_id)->toBe($personalTeam->id);
 });
+
+it('does not mark an owner whose team is still used by another member', function () {
+    Notification::fake();
+
+    // Deleting the owner purges the whole team, and only the owner is warned.
+    $owner = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(11),
+        'last_login_at' => now()->subDays(61),
+    ]);
+    $sharedTeam = Team::factory()->create([
+        'user_id' => $owner->id,
+        'personal_team' => false,
+    ]);
+
+    $member = User::factory()->withPersonalTeam()->create(['last_login_at' => now()->subDay()]);
+    $sharedTeam->users()->attach($member, ['role' => 'editor']);
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($owner->fresh()->deleted_at)->toBeNull();
+    expect($sharedTeam->fresh())->not->toBeNull();
+    Notification::assertNotSentTo($owner, UserDeletedNotification::class);
+});
+
+it('marks an owner whose team members went inactive as well', function () {
+    Notification::fake();
+
+    $owner = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(11),
+        'last_login_at' => now()->subDays(61),
+    ]);
+    $sharedTeam = Team::factory()->create([
+        'user_id' => $owner->id,
+        'personal_team' => false,
+    ]);
+
+    $member = User::factory()->withPersonalTeam()->create(['last_login_at' => now()->subDays(61)]);
+    $sharedTeam->users()->attach($member, ['role' => 'editor']);
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($owner->fresh()->deleted_at)->not->toBeNull();
+    Notification::assertSentTo($owner, UserDeletedNotification::class);
+});
+
+it('does not warn an owner whose team is still used by another member', function () {
+    Notification::fake();
+
+    $owner = User::factory()->withPersonalTeam()->create([
+        'last_login_at' => now()->subDays(51),
+        'inactive_since' => null,
+    ]);
+    $sharedTeam = Team::factory()->create([
+        'user_id' => $owner->id,
+        'personal_team' => false,
+    ]);
+
+    $member = User::factory()->withPersonalTeam()->create(['last_login_at' => now()->subDay()]);
+    $sharedTeam->users()->attach($member, ['role' => 'editor']);
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($owner->fresh()->inactive_since)->toBeNull();
+    Notification::assertNotSentTo($owner, UserInactiveNotification::class);
+});
+
+it('still marks a forgotten account whose app keeps sending data', function () {
+    Notification::fake();
+
+    // Traffic alone is not engagement: a free account that ignores both warning
+    // mails gets cleaned up even while its client package keeps tracking.
+    $user = User::factory()->withPersonalTeam()->create([
+        'inactive_since' => now()->subDays(11),
+        'last_login_at' => now()->subDays(61),
+    ]);
+    $user->personalTeam()->update(['events_count_monthly' => 5000]);
+
+    $this->artisan('app:check-inactive-users');
+
+    expect($user->fresh()->deleted_at)->not->toBeNull();
+    Notification::assertSentTo($user, UserDeletedNotification::class);
+});

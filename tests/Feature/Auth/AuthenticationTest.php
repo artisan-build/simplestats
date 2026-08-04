@@ -44,3 +44,32 @@ test('users marked for deletion cannot authenticate', function () {
 
     $this->assertGuest();
 });
+
+test('users marked for deletion learn that their account is restorable', function () {
+    $user = User::factory()->create();
+    $user->delete();
+
+    $response = $this->from('/login')->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+    expect(session('errors')->first('email'))
+        ->toContain('deactivated')
+        ->toContain(config('app.app_mail'));
+});
+
+test('the deactivation notice is not exposed to someone without the password', function () {
+    // Otherwise the message turns into an account enumeration oracle.
+    $user = User::factory()->create();
+    $user->delete();
+
+    $response = $this->from('/login')->post('/login', [
+        'email' => $user->email,
+        'password' => 'wrong-password',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+    expect(session('errors')->first('email'))->not->toContain('deactivated');
+});

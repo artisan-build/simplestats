@@ -29,7 +29,7 @@ class StatsPaymentValidator extends BaseStatsValidator
             return $input;
         }
 
-        if (! $team->owner->sparkPlan()->options['MultiCurrency']) {
+        if (! ($team->billingOwner?->sparkPlan()->options['MultiCurrency'] ?? false)) {
             Validator::make(
                 ['currency' => $input['currency']],
                 ['currency' => 'in:'.$team->currency]
