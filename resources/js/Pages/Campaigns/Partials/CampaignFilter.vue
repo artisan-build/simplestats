@@ -56,7 +56,7 @@ const filterChanged = () => {
                     <TextInput type="date" id="range_start" v-model="form.range_start" class="block w-36 dark:!bg-dark-800" @change="filterChanged" />
                     <span class="text-sm text-gray-500 dark:text-dark-400">last</span>
                     <InputLabel class="hidden" for="range_amount" value="Last" />
-                    <SelectInput id="range_amount" v-model="form.range_amount" class="block w-20 dark:!bg-dark-800" :options="rangeAmounts" @change="filterChanged" />
+                    <SelectInput id="range_amount" v-model="form.range_amount" class="block w-20 dark:!bg-dark-800" :options="rangeAmounts" :searchable="false" @change="filterChanged" />
                     <InputLabel class="hidden" for="range_type" value="&nbsp;" />
                     <SelectInput id="range_type" v-model="form.range_type" class="block w-28 dark:!bg-dark-800" :options="rangeTypes" @change="filterChanged" />
                     <DotIcon class="size-4 text-gray-400" />

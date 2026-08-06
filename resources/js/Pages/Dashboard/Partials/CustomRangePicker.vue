@@ -118,6 +118,7 @@ defineExpose({open});
                                     v-model="amount"
                                     class="block w-full"
                                     :options="rangeAmounts"
+                                    :searchable="false"
                                 />
                             </div>
                             <div class="min-w-0 flex-1">

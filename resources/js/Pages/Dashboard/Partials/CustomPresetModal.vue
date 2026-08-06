@@ -194,6 +194,7 @@ const updateBuiltinVisibility = ({value}) => {
                                         id="presetAmount"
                                         v-model="form.range_amount"
                                         :options="rangeAmounts"
+                                        :searchable="false"
                                         class="mt-1 block w-full text-sm"
                                     />
                                     <InputError :message="form.errors.range_amount" class="mt-1" />

@@ -48,14 +48,12 @@ const teamChanged = () => {
                 class="block w-full sm:w-48 dark:!bg-dark-800"
                 options-class="!w-max min-w-full max-w-[min(28rem,calc(100vw-2rem))]"
                 :options="projects"
+                :search-by="['name', 'domain']"
                 @update:model-value="emit('update:projectId', $event)"
                 @change="emit('project-changed')"
             >
-                <template #selected="{ option }">
-                    <span class="flex items-center gap-2">
-                        <ProjectFavicon :domain="option?.domain" />
-                        <span class="truncate">{{ option?.name ?? 'Select...' }}</span>
-                    </span>
+                <template #prefix="{ option }">
+                    <ProjectFavicon :domain="option?.domain" />
                 </template>
                 <template #option="{ option }">
                     <span class="flex items-center gap-2">

@@ -1,8 +1,16 @@
 <script setup>
 import {computed, ref, watch} from 'vue'
 import {Listbox, ListboxButton, ListboxOption, ListboxOptions} from '@headlessui/vue'
+import SearchableSelectInput from '@/Components/SearchableSelectInput.vue'
 import ChevronUpDownIcon from 'bootstrap-icons/icons/chevron-expand.svg?component'
 import CheckIcon from 'bootstrap-icons/icons/check2.svg?component'
+
+const SEARCH_THRESHOLD = 15
+
+// The searchable variant turns the trigger into a text field, which would pop
+// the on-screen keyboard on every tap, so touch devices keep the plain listbox.
+const isCoarsePointer = typeof window !== 'undefined'
+    && window.matchMedia?.('(hover: none) and (pointer: coarse)').matches === true
 
 const props = defineProps({
     modelValue: [Array, Object, String, Number, null],
@@ -10,6 +18,8 @@ const props = defineProps({
     multiple: { type: Boolean, default: false },
     trackBy: { type: String, default: 'id' },
     labelBy: { type: String, default: 'name' },
+    searchable: { type: [Boolean, String], default: 'auto' },
+    searchBy: { type: Array, default: null },
     class: { type: String, default: '' },
     optionsClass: { type: String, default: '' },
     name: { type: String, default: '' },
@@ -28,6 +38,12 @@ const normalizedOptions = computed(() => {
         return Object.values(props.options)
     }
     return []
+})
+
+const useSearch = computed(() => {
+    if (props.searchable !== 'auto') return props.searchable === true
+
+    return !isCoarsePointer && normalizedOptions.value.length > SEARCH_THRESHOLD
 })
 
 const selected = computed({
@@ -74,7 +90,31 @@ watch(open, (val) => {
 </script>
 
 <template>
+    <SearchableSelectInput
+        v-if="useSearch"
+        :modelValue="modelValue"
+        :options="options"
+        :multiple="multiple"
+        :trackBy="trackBy"
+        :labelBy="labelBy"
+        :searchBy="searchBy"
+        :class="props.class"
+        :optionsClass="optionsClass"
+        :name="name"
+        :id="id"
+        @update:modelValue="emit('update:modelValue', $event)"
+        @change="emit('change', $event)"
+    >
+        <template #prefix="slotProps">
+            <slot name="prefix" v-bind="slotProps" />
+        </template>
+        <template #option="slotProps">
+            <slot name="option" v-bind="slotProps">{{ slotProps.option[labelBy] }}</slot>
+        </template>
+    </SearchableSelectInput>
+
     <Listbox
+        v-else
         :modelValue="selected"
         @update:modelValue="selected = $event"
         :multiple="multiple"
@@ -82,19 +122,18 @@ watch(open, (val) => {
         v-slot="{ open: isOpen }"
     >
         <div class="relative">
-            <ListboxButton :class="['relative cursor-default rounded-md border bg-white dark:bg-dark-900 py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 dark:border-dark-700 text-gray-900 dark:text-dark-200', props.class]">
-                <span class="block truncate">
+            <ListboxButton :class="['relative flex items-center gap-2 cursor-default rounded-md border bg-white dark:bg-dark-900 py-2 pl-3 pr-10 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 border-gray-300 dark:border-dark-700 text-gray-900 dark:text-dark-200', props.class]">
+                <slot name="prefix" :option="selected" />
+                <span class="min-w-0 flex-1 truncate">
                   <template v-if="multiple">
                     {{ selected.length ? selected.map(o => o[labelBy]).join(', ') : 'Select...' }}
                   </template>
                   <template v-else>
-                    <slot name="selected" :option="selected">
-                      {{ selected?.[labelBy] ?? 'Select...' }}
-                    </slot>
+                    {{ selected?.[labelBy] ?? 'Select...' }}
                   </template>
                 </span>
                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                  <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                  <ChevronUpDownIcon class="size-5 text-gray-400" aria-hidden="true" />
                 </span>
             </ListboxButton>
 
