@@ -129,9 +129,12 @@ class SubscriptionService
      */
     public function hasReachedMonthlyEventLimit(Team $team, int $delta = 0): bool
     {
-        $allowedEvents = $team->owner->sparkPlan()->options['Events'];
+        $allowedEvents = $team->billingOwner?->sparkPlan()->options['Events'];
 
-        if ($allowedEvents === self::UNLIMITED_AMOUNT) {
+        // A team whose owner row is gone entirely has no resolvable plan. Dropping
+        // its ingest would silently lose customer data for a dangling reference on
+        // our side, so we let it through instead.
+        if ($allowedEvents === null || $allowedEvents === self::UNLIMITED_AMOUNT) {
             return false;
         }
 
@@ -140,8 +143,11 @@ class SubscriptionService
 
     public function getPlanAlarm(Team $team): array
     {
-        $teamOwner = $team->owner;
-        $teamPlan = $teamOwner->sparkPlan();
+        $teamPlan = $team->billingOwner?->sparkPlan();
+
+        if (! $teamPlan) {
+            return [];
+        }
 
         $alarms = [];
 

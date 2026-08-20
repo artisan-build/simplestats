@@ -29,12 +29,10 @@ class CheckSubscriptionPlanAlarm extends Command
      */
     public function handle()
     {
-        Team::with('owner')->get()->each(function (Team $team) {
+        Team::with('owner', 'billingOwner.subscriptions')->get()->each(function (Team $team) {
             if (empty($team->owner)) {
                 return;
             }
-
-            $team->owner->load('subscriptions');
 
             if ($alarms = app(SubscriptionService::class)->getPlanAlarm($team)) {
                 Mail::to($team->owner->email)->send(new SubscriptionPlanAlarm($team->owner, $alarms));

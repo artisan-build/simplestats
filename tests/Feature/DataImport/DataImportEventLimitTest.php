@@ -59,3 +59,30 @@ test('import builds the model when the team is under the event limit', function 
     expect($model)->toBeInstanceOf(StatsUser::class)
         ->and($importer->counter)->toBe(1);
 });
+
+test('hasReachedMonthlyEventLimit resolves the plan of a soft deleted owner', function () {
+    $limit = $this->team->owner->sparkPlan()->options['Events'];
+    $this->team->update(['events_count_monthly' => $limit]);
+    $this->team->owner->delete();
+    $this->team->refresh();
+
+    expect($this->team->owner)->toBeNull()
+        ->and(app(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->team))->toBeTrue();
+});
+
+test('hasReachedMonthlyEventLimit does not block ingest when no owner is resolvable', function () {
+    $this->team->update(['events_count_monthly' => 999999999]);
+    $this->team->owner->forceDelete();
+    $this->team->refresh();
+
+    expect($this->team->billingOwner)->toBeNull()
+        ->and(app(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->team))->toBeFalse();
+});
+
+test('getPlanAlarm returns no alarms when no owner is resolvable', function () {
+    $this->team->update(['events_count_monthly' => 999999999]);
+    $this->team->owner->forceDelete();
+    $this->team->refresh();
+
+    expect(app(SubscriptionService::class)->getPlanAlarm($this->team))->toBe([]);
+});

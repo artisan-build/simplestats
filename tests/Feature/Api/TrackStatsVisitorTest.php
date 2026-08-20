@@ -328,3 +328,19 @@ test('visitors are tracked when the location lookup fails', function () {
 
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });
+
+test('visitor ingest still works while the team owner is soft deleted', function () {
+    // Inactive owners are soft-deleted for a two month grace window while their
+    // team, projects and API tokens keep running, so the event limit check must
+    // resolve the plan through billingOwner (SIMPLESTATS-7G).
+    $this->project->team->owner->delete();
+    auth()->forgetGuards();
+
+    $payload = validVisitorPayload(['visitor_hash' => 'soft-deleted-owner-'.fake()->uuid()]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
+});
