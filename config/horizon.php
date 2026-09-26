@@ -1,5 +1,10 @@
 <?php
 
+use App\Jobs\TrackStatsCustomEvent;
+use App\Jobs\TrackStatsCustomProperties;
+use App\Jobs\TrackStatsPayment;
+use App\Jobs\TrackStatsUser;
+use App\Jobs\TrackStatsVisitor;
 use Illuminate\Support\Str;
 
 return [
@@ -101,12 +106,12 @@ return [
     */
 
     'trim' => [
-        'recent' => 1440,
-        'pending' => 1440,
-        'completed' => 1440,
-        'recent_failed' => 10080,
-        'failed' => 10080,
-        'monitored' => 10080,
+        'recent' => 60,
+        'pending' => 60,
+        'completed' => 60,
+        'recent_failed' => 1440,
+        'failed' => 1440,
+        'monitored' => 1440,
     ],
 
     /*
@@ -121,7 +126,11 @@ return [
     */
 
     'silenced' => [
-        // App\Jobs\ExampleJob::class,
+        TrackStatsUser::class,
+        TrackStatsVisitor::class,
+        TrackStatsPayment::class,
+        TrackStatsCustomEvent::class,
+        TrackStatsCustomProperties::class,
     ],
 
     /*
