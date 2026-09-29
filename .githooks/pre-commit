@@ -3,10 +3,18 @@
 # Regenerate CLAUDE.md via Laravel Boost whenever the guidelines change.
 # CLAUDE.md is auto-generated from .ai/guidelines/ and must never be edited directly.
 
+# Git hooks do not see the shell's `php` alias, and the bare Herd shim resolves
+# to the global PHP instead of the site-isolated one, so Boost would record the
+# wrong PHP version in CLAUDE.md.
+PHP="php"
+if command -v herd >/dev/null 2>&1; then
+    PHP="herd php"
+fi
+
 if git diff --cached --name-only | grep -q '^\.ai/guidelines/'; then
     echo "Guidelines changed, running 'php artisan boost:update'..."
 
-    if ! php artisan boost:update; then
+    if ! $PHP artisan boost:update; then
         echo "boost:update failed, aborting commit." >&2
         exit 1
     fi
