@@ -7,6 +7,7 @@
     "Docs": "Docs",
     "Dashboard": "Dashboard",
     "Sign in": "Inloggen",
+    "Passkey": "Passkey",
     "Get started": "Aan de slag",
     "Analytics for :laravel": "Analytics voor :laravel",
     "Loved by the Laravel community": "Geliefd door de Laravel-community",
@@ -152,6 +153,7 @@
     "Password Confirmation": "Wachtwoord bevestigen",
     "This is a secure area of the application. Please confirm your password before continuing.": "Dit is een beveiligd gedeelte van de applicatie. Bevestig je wachtwoord voordat je doorgaat.",
     "Confirm": "Bevestigen",
+    "Confirm with passkey": "Bevestigen met een passkey",
     "Two-factor Confirmation": "Tweefactor-bevestiging",
     "Account Confirmation": "Account-bevestiging",
     "Please confirm access to your account by entering the authentication code provided by your authenticator application.": "Bevestig de toegang tot je account door de authenticatiecode in te voeren die door je authenticator-applicatie is aangemaakt.",
@@ -205,6 +207,5 @@
     "Latest from": "Het laatste nieuws van",
     "our blog": "onze blog",
     "View all posts": "Bekijk alle berichten",
-
     "This account was deactivated because it was unused for a long time. Its data can still be restored, please contact :email.": "Dit account is gedeactiveerd omdat het lange tijd niet is gebruikt. De gegevens kunnen nog worden hersteld, neem contact op met :email."
 }

@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\Passkey;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Fortify;
+use Laravel\Passkeys\Passkeys;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -57,12 +59,27 @@ class FortifyServiceProvider extends ServiceProvider
             // asking for it back. Password reset cannot help them either, the broker
             // does not find soft-deleted users.
             if ($user->trashed()) {
-                throw ValidationException::withMessages([
-                    Fortify::username() => __('This account was deactivated because it was unused for a long time. Its data can still be restored, please contact :email.', ['email' => config('app.app_mail')]),
-                ]);
+                throw $this->deactivatedAccountException(Fortify::username());
             }
 
             return $user;
+        });
+
+        Passkeys::usePasskeyModel(Passkey::class);
+
+        // Passkey logins bypass authenticateUsing(), so the soft-delete block is
+        // repeated here. A verified passkey proves ownership just like the
+        // password does, which is why the deactivation notice may be shown.
+        Passkeys::authorizeLoginUsing(function (Request $request, ?User $user) {
+            if (! $user) {
+                return false;
+            }
+
+            if ($user->trashed()) {
+                throw $this->deactivatedAccountException('credential');
+            }
+
+            return true;
         });
 
         RateLimiter::for('login', function (Request $request) {
@@ -73,6 +90,10 @@ class FortifyServiceProvider extends ServiceProvider
 
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        });
+
+        RateLimiter::for('passkeys', function (Request $request) {
+            return Limit::perMinute(10)->by($request->user() ? 'user:'.$request->user()->id : 'ip:'.$request->ip());
         });
 
         Fortify::registerView(function (Request $request) {
@@ -102,5 +123,12 @@ class FortifyServiceProvider extends ServiceProvider
 
             return Inertia::render('Auth/Login', $data);
         });
+    }
+
+    private function deactivatedAccountException(string $field): ValidationException
+    {
+        return ValidationException::withMessages([
+            $field => __('This account was deactivated because it was unused for a long time. Its data can still be restored, please contact :email.', ['email' => config('app.app_mail')]),
+        ]);
     }
 }

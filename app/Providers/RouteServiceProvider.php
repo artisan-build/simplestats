@@ -8,6 +8,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -50,6 +51,16 @@ class RouteServiceProvider extends ServiceProvider
             return $project instanceof Project
                 ? Limit::perMinute(self::MCP_RATE_LIMIT)->by('mcp:'.$project->id)
                 : Limit::perMinute(10)->by($request->ip());
+        });
+
+        // The vendor passkey controller type-hints the package model, whose implicit
+        // binding resolves by numeric id and answers a foreign passkey with 403.
+        Route::bind('passkey', function (string $value) {
+            $user = auth()->user();
+
+            abort_unless($user && Str::isUuid($value), 404);
+
+            return $user->passkeys()->where('uuid', $value)->firstOrFail();
         });
 
         $this->routes(function () {

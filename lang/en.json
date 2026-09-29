@@ -8,6 +8,7 @@
     "Docs": "Docs",
     "Dashboard": "Dashboard",
     "Sign in": "Sign in",
+    "Passkey": "Passkey",
     "Get started": "Get started",
 
     "Analytics for :laravel": "Analytics for :laravel",
@@ -172,6 +173,7 @@
     "Password Confirmation": "Password Confirmation",
     "This is a secure area of the application. Please confirm your password before continuing.": "This is a secure area of the application. Please confirm your password before continuing.",
     "Confirm": "Confirm",
+    "Confirm with passkey": "Confirm with passkey",
 
     "Two-factor Confirmation": "Two-factor Confirmation",
     "Account Confirmation": "Account Confirmation",

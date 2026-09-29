@@ -58,6 +58,7 @@ class ShareInertiaData extends JetstreamShareInertiaData
                 : [],
             'two_factor_enabled' => Features::enabled(Features::twoFactorAuthentication())
                 && ! is_null($user->two_factor_secret),
+            'has_passkeys' => Features::canManagePasskeys() && $user->hasPasskeysEnabled(),
         ];
     }
 }

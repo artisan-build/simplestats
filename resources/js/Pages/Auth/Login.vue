@@ -1,5 +1,9 @@
 <script setup>
-import {Head, Link, useForm} from '@inertiajs/vue3';
+import {Head, Link, router, useForm, usePage} from '@inertiajs/vue3';
+import {computed, onMounted, onUnmounted} from 'vue';
+import {Passkeys} from '@laravel/passkeys';
+import {usePasskeyVerify} from '@laravel/passkeys/vue';
+import FingerprintIcon from 'bootstrap-icons/icons/fingerprint.svg?component';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
@@ -37,6 +41,33 @@ const submit = () => {
     });
 };
 
+const page = usePage();
+
+const socialProviders = computed(() => page.props.socialstream.show && page.props.canRegister
+    ? page.props.socialstream.providers
+    : []);
+
+const {
+    verify: signInWithPasskey,
+    isLoading: passkeyLoading,
+    error: passkeyError,
+    isSupported: passkeySupported,
+} = usePasskeyVerify({
+    remember: () => form.remember,
+    onSuccess: (response) => router.visit(response.redirect),
+});
+
+// Not via the hook's autofill option: it shares isLoading/error with the button,
+// which kept the button disabled while the picker waited and surfaced
+// best-effort autofill failures as errors.
+onMounted(() => {
+    Passkeys.autofill({remember: () => form.remember})
+        .then((response) => response && router.visit(response.redirect))
+        .catch(() => {});
+});
+
+onUnmounted(() => Passkeys.cancel());
+
 const appName = import.meta.env.VITE_APP_NAME;
 </script>
 
@@ -56,9 +87,19 @@ const appName = import.meta.env.VITE_APP_NAME;
             {{ status }}
         </div>
 
-        <Socialstream v-if="$page.props.socialstream.show && $page.props.socialstream.providers.length && $page.props.canRegister"
-                      :error="$page.props?.errors?.socialstream || null" :prompt="$page.props.socialstream.prompt"
-                      :labels="$page.props.socialstream.labels" :providers="$page.props.socialstream.providers"/>
+        <Socialstream :error="$page.props?.errors?.socialstream || passkeyError" :prompt="$page.props.socialstream.prompt"
+                      :labels="$page.props.socialstream.labels" :providers="socialProviders">
+            <template v-if="passkeySupported" #default>
+                <button type="button"
+                        class="flex gap-2 items-center justify-center transition duration-200 border border-gray-400 dark:border-dark-600 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md dark:hover:border-dark-400 font-normal"
+                        :class="{ 'opacity-25': passkeyLoading }"
+                        :disabled="passkeyLoading"
+                        @click="signInWithPasskey">
+                    <FingerprintIcon class="size-6 mx-2 text-gray-700 dark:text-dark-300" />
+                    <span class="block font-medium text-sm text-gray-700 dark:text-dark-300">{{ $t('Passkey') }}</span>
+                </button>
+            </template>
+        </Socialstream>
 
         <form @submit.prevent="submit">
             <div>
@@ -69,7 +110,7 @@ const appName = import.meta.env.VITE_APP_NAME;
                     class="mt-1 block w-full"
                     required
                     autofocus
-                    autocomplete="username"
+                    autocomplete="username webauthn"
                     :placeholder="$t('Email')"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />

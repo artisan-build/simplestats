@@ -22,6 +22,8 @@ _**SimpleStats**_ Self-hosted requires:
 
 Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
 
+Passkey sign-in only works over HTTPS, and `APP_URL` must be the exact URL your users open (e.g. `https://stats.example.com`). Passkeys are bound to that domain, so changing it later invalidates all registered passkeys.
+
 ## Architecture
 
 SimpleStats self-hosted is a standard Laravel application. The ingest API is intentionally thin: every endpoint validates the payload and immediately dispatches a queued job, the actual database write happens in the queue worker. This separation keeps request latency low and lets you scale ingestion throughput independently of web capacity. Beyond that, deployment is up to you, run it however you run other Laravel apps.

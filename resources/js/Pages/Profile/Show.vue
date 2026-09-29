@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ConnectedAccountsForm from '@/Pages/Profile/Partials/ConnectedAccountsForm.vue';
 import DeleteUserForm from '@/Pages/Profile/Partials/DeleteUserForm.vue';
+import PasskeysForm from '@/Pages/Profile/Partials/PasskeysForm.vue';
 import LogoutOtherBrowserSessionsForm from '@/Pages/Profile/Partials/LogoutOtherBrowserSessionsForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
 import SetPasswordForm from '@/Pages/Profile/Partials/SetPasswordForm.vue';
@@ -13,6 +14,8 @@ import AppearanceSettingsForm from "@/Pages/Profile/Partials/AppearanceSettingsF
 defineProps({
     confirmsTwoFactorAuthentication: Boolean,
     sessions: Array,
+    canManagePasskeys: Boolean,
+    passkeys: Array,
 });
 
 const appEnv = import.meta.env.VITE_APP_ENV;
@@ -56,6 +59,12 @@ const appEnv = import.meta.env.VITE_APP_ENV;
                     :requires-confirmation="confirmsTwoFactorAuthentication"
                     class="mt-10 sm:mt-0"
                 />
+
+                <SectionBorder />
+            </div>
+
+            <div v-if="canManagePasskeys && $page.props.socialstream.hasPassword">
+                <PasskeysForm :passkeys="passkeys" class="mt-10 sm:mt-0" />
 
                 <SectionBorder />
             </div>

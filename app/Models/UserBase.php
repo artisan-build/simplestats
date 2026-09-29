@@ -17,6 +17,8 @@ use JoelButcher\Socialstream\HasConnectedAccounts;
 use JoelButcher\Socialstream\SetsProfilePhotoFromUrl;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Ai\Concerns\HasConversations;
+use Laravel\Fortify\Contracts\PasskeyUser;
+use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
@@ -24,7 +26,7 @@ use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\DeletedModels\Models\Concerns\KeepsDeletedModels;
 
-abstract class UserBase extends Authenticatable implements MustVerifyEmail
+abstract class UserBase extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     use HasApiTokens;
     use HasConnectedAccounts;
@@ -46,6 +48,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
         KeepsDeletedModels::restoreQuietly as restoreQuietlyFromArchive;
     }
     use Notifiable;
+    use PasskeyAuthenticatable;
     use SetsProfilePhotoFromUrl;
     use TwoFactorAuthenticatable;
 
@@ -91,6 +94,14 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail
     public function shouldKeep(): bool
     {
         return $this->isForceDeleting();
+    }
+
+    // Hex instead of the package's raw binary HMAC: iOS Safari mangles binary
+    // user handles as UTF-8 and every later login fails (laravel/passkeys-server#41).
+    // Never change this value, it is stored with every registered passkey.
+    public function getPasskeyUserHandle(): string
+    {
+        return hash_hmac('sha256', $this->getTable().'|'.$this->getKey(), config('passkeys.user_handle_secret'));
     }
 
     const SESSION_SETTINGS_KEY = 'temp_user_settings_';

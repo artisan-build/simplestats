@@ -21,17 +21,19 @@ defineProps({
 </script>
 
 <template>
-    <div v-if="providers.length" class="space-y-6 mt-6 mb-2">
+    <div v-if="providers.length || $slots.default" class="space-y-6 mt-6 mb-2">
         <InputError v-if="error" :message="error" class="text-center"/>
 
-        <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3"></div>
-        <div class="grid gap-4" :class="'grid-cols-'+providers.length">
+        <div class="hidden grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4"></div>
+        <div class="grid gap-4" :class="'grid-cols-' + (providers.length + ($slots.default ? 1 : 0))">
             <a v-for="provider in providers" :key="provider.id"
                class="flex gap-2 items-center justify-center transition duration-200 border border-gray-400 dark:border-dark-600 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md dark:hover:border-dark-400 font-normal text-center"
                :href="route('oauth.redirect', provider.id)">
                 <ProviderIcon :provider="provider" classes="h-6 w-6 mx-2"/>
                 <span class="block font-medium text-sm text-gray-700 dark:text-dark-300">{{ provider.buttonLabel || provider.name }}</span>
             </a>
+
+            <slot />
         </div>
 
         <div class="relative flex items-center pb-5 pt-3">

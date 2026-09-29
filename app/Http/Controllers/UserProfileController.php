@@ -6,10 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Inertia\Response;
+use Laravel\Fortify\Features;
 use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController as JetstreamUserProfileController;
 
 class UserProfileController extends JetstreamUserProfileController
 {
+    public function show(Request $request): Response
+    {
+        return parent::show($request)->with([
+            'canManagePasskeys' => Features::canManagePasskeys(),
+            'passkeys' => $request->user()->passkeys()->latest()->get(),
+        ]);
+    }
+
     public function sessions(Request $request): Collection
     {
         if (config('session.driver') !== 'database') {

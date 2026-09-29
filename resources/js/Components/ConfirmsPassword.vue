@@ -1,10 +1,13 @@
 <script setup>
 import { ref, reactive, nextTick } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { usePasskeyVerify } from '@laravel/passkeys/vue';
 import DialogModal from './DialogModal.vue';
 import InputError from './InputError.vue';
 import PrimaryButton from './PrimaryButton.vue';
 import SecondaryButton from './SecondaryButton.vue';
 import TextInput from './TextInput.vue';
+import FingerprintIcon from 'bootstrap-icons/icons/fingerprint.svg?component';
 
 const emit = defineEmits(['confirmed']);
 
@@ -32,6 +35,24 @@ const form = reactive({
 });
 
 const passwordInput = ref(null);
+
+const page = usePage();
+
+const {
+    verify: confirmWithPasskey,
+    isLoading: passkeyLoading,
+    error: passkeyError,
+    isSupported: passkeySupported,
+} = usePasskeyVerify({
+    routes: {
+        options: route('passkey.confirm-options'),
+        submit: route('passkey.confirm'),
+    },
+    onSuccess: () => {
+        closeModal();
+        nextTick().then(() => emit('confirmed'));
+    },
+});
 
 const startConfirmingPassword = () => {
     axios.get(route('password.confirmation')).then(response => {
@@ -96,6 +117,15 @@ const closeModal = () => {
                     />
 
                     <InputError :message="form.error" class="mt-2" />
+                </div>
+
+                <div v-if="passkeySupported && page.props.auth.user?.has_passkeys" class="mt-4">
+                    <SecondaryButton :disabled="passkeyLoading" @click="confirmWithPasskey">
+                        <FingerprintIcon class="size-4 me-2" />
+                        Use passkey instead
+                    </SecondaryButton>
+
+                    <InputError :message="passkeyError" class="mt-2" />
                 </div>
             </template>
 

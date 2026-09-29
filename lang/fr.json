@@ -7,6 +7,7 @@
     "Docs": "Docs",
     "Dashboard": "Tableau de bord",
     "Sign in": "Se connecter",
+    "Passkey": "Clé d'accès",
     "Get started": "Commencer",
     "Analytics for :laravel": "Analytics pour :laravel",
     "Loved by the Laravel community": "Adoré par la communauté Laravel",
@@ -152,6 +153,7 @@
     "Password Confirmation": "Confirmation du mot de passe",
     "This is a secure area of the application. Please confirm your password before continuing.": "Ceci est une zone sécurisée de l'application. Veuillez confirmer votre mot de passe avant de continuer.",
     "Confirm": "Confirmer",
+    "Confirm with passkey": "Confirmer avec une clé d'accès",
     "Two-factor Confirmation": "Confirmation à deux facteurs",
     "Account Confirmation": "Confirmation du compte",
     "Please confirm access to your account by entering the authentication code provided by your authenticator application.": "Veuillez confirmer l'accès à votre compte en entrant le code d'authentification fourni par votre application d'authentification.",
@@ -205,6 +207,5 @@
     "Latest from": "Les dernières nouvelles de",
     "our blog": "notre blog",
     "View all posts": "Voir tous les articles",
-
     "This account was deactivated because it was unused for a long time. Its data can still be restored, please contact :email.": "Ce compte a été désactivé car il n'a pas été utilisé pendant une longue période. Les données peuvent encore être restaurées, veuillez contacter :email."
 }

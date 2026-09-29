@@ -369,6 +369,16 @@ Jobs include automatic retry logic for fault tolerance.
 - Visitor hashes are anonymized (daily salt rotation)
 - GDPR-compliant by design
 
+### Passkeys (Fortify + `laravel/passkeys`)
+
+Passkeys use Fortify's built-in feature (`Features::passkeys()`), backed by `laravel/passkeys` (a Fortify dependency, 0.x) and the `@laravel/passkeys` npm client. Chosen over `spatie/laravel-passkeys` because it ships the Fortify routes, throttling and password confirmation via passkey. Three app-side deviations from the package defaults, keep them:
+
+- **Hex user handle:** `UserBase::getPasskeyUserHandle()` returns a hex HMAC instead of the package's raw binary one, because iOS Safari corrupts binary handles (laravel/passkeys-server#41). The handle is stored with every passkey: **never change it**, or all registered passkeys stop working.
+- **404 binding:** the vendor `destroy` controller type-hints the package model (numeric id, 403 for foreign rows), so `RouteServiceProvider` binds `{passkey}` explicitly by uuid, scoped to the authenticated user. `App\Models\Passkey` adds `HasPublicUuid` and hides `id`/`credential`.
+- **Soft-deleted users:** passkey logins bypass `Fortify::authenticateUsing()`, so `Passkeys::authorizeLoginUsing()` in `FortifyServiceProvider` repeats the soft-delete block (a verified passkey proves ownership, so the deactivation notice is shown). `Passkey::user()` is `withTrashed()` for that reason.
+
+The table comes from our own migration (no vendor publish, no `down()`). Passkey management is only shown to users with a password (`socialstream.hasPassword`), because it sits behind `password.confirm`.
+
 ### Public UUIDs Instead of Internal IDs
 
 Auto-increment ids are **internal only**. Anything a user can see (URLs, query-string filters, Inertia props / JSON payloads) uses a public uuid instead: customers read numeric ids as a security problem and they leak business intel (row counts, growth, enumeration).

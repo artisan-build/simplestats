@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
+import { usePasskeyVerify } from '@laravel/passkeys/vue';
+import FingerprintIcon from 'bootstrap-icons/icons/fingerprint.svg?component';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import InputError from '@/Components/InputError.vue';
@@ -13,6 +15,19 @@ const form = useForm({
 });
 
 const passwordInput = ref(null);
+
+const {
+    verify: confirmWithPasskey,
+    isLoading: passkeyLoading,
+    error: passkeyError,
+    isSupported: passkeySupported,
+} = usePasskeyVerify({
+    routes: {
+        options: route('passkey.confirm-options'),
+        submit: route('passkey.confirm'),
+    },
+    onSuccess: (response) => router.visit(response.redirect),
+});
 
 const submit = () => {
     form.post(route('password.confirm'), {
@@ -63,6 +78,18 @@ const submit = () => {
                         {{ $t('Confirm') }}
                     </div>
                 </PrimaryButton>
+
+                <template v-if="passkeySupported && $page.props.auth.user?.has_passkeys">
+                    <button type="button"
+                            class="flex gap-2 items-center justify-center transition duration-200 border border-gray-400 dark:border-dark-600 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md dark:hover:border-dark-400 font-medium text-gray-700 dark:text-dark-300"
+                            :class="{ 'opacity-25': passkeyLoading }"
+                            :disabled="passkeyLoading"
+                            @click="confirmWithPasskey">
+                        <FingerprintIcon class="size-5" />
+                        {{ $t('Confirm with passkey') }}
+                    </button>
+                    <InputError class="mt-2 text-center" :message="passkeyError" />
+                </template>
             </div>
         </form>
     </AuthenticationCard>
