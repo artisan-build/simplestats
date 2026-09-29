@@ -1,4 +1,5 @@
 <script setup>
+import PasskeyConfirmButton from '@/Components/PasskeyConfirmButton.vue';
 import { ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import ActionMessage from '@/Components/ActionMessage.vue';
@@ -104,12 +105,14 @@ const closeModal = () => {
                 <template #content>
                     Please enter your password to confirm you would like to log out of your other browser sessions across all of your devices.
 
+                    <PasskeyConfirmButton @confirmed="form.password = ''; logoutOtherBrowserSessions()" />
+
                     <div class="mt-4">
                         <TextInput
                             ref="passwordInput"
                             v-model="form.password"
                             type="password"
-                            class="mt-1 block w-3/4"
+                            class="mt-1 block w-full"
                             placeholder="Password"
                             autocomplete="current-password"
                             @keyup.enter="logoutOtherBrowserSessions"

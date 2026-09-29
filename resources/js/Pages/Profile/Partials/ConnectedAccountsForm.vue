@@ -1,4 +1,5 @@
 <script setup>
+import PasskeyConfirmButton from '@/Components/PasskeyConfirmButton.vue';
 import {ref} from 'vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import ActionLink from '@/Components/ActionLink.vue';
@@ -113,12 +114,14 @@ const closeModal = () => {
                 <template #content>
                     Please enter your password to confirm you would like to remove this account.
 
+                    <PasskeyConfirmButton @confirmed="form.password = ''; removeAccount()" />
+
                     <div class="mt-4">
                         <TextInput
                             ref="passwordInput"
                             v-model="form.password"
                             type="password"
-                            class="mt-1 block w-3/4"
+                            class="mt-1 block w-full"
                             placeholder="Password"
                             autocomplete="current-password"
                             @keyup.enter="removeAccount"

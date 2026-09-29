@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\ConfirmPasswordOrPasskey;
 use App\Models\Passkey;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -163,4 +164,39 @@ test('passkey endpoints are rate limited', function () {
     }
 
     $this->getJson(route('passkey.login-options'))->assertTooManyRequests();
+});
+
+test('a passkey confirmation replaces the password in inline confirmation dialogs exactly once', function () {
+    $user = User::factory()->withPersonalTeam()->create();
+    fakePasskeyVerification(createPasskey($user));
+
+    $this->actingAs($user)->getJson(route('passkey.confirm-options'))->assertOk();
+    $this->postJson(route('passkey.confirm'), assertionPayload())->assertOk();
+
+    $this->delete('/user/other-browser-sessions', ['password' => ''])->assertSessionHasNoErrors();
+
+    $this->delete('/user/other-browser-sessions', ['password' => ''])->assertSessionHasErrors('password');
+});
+
+test('an empty password is rejected without a passkey confirmation', function () {
+    $this->actingAs(User::factory()->withPersonalTeam()->create())
+        ->delete('/user/other-browser-sessions', ['password' => ''])
+        ->assertSessionHasErrors('password');
+});
+
+test('an expired passkey confirmation is rejected', function () {
+    $this->actingAs(User::factory()->withPersonalTeam()->create())
+        ->withSession([ConfirmPasswordOrPasskey::SESSION_KEY => time() - ConfirmPasswordOrPasskey::VALID_FOR_SECONDS - 1])
+        ->delete('/user/other-browser-sessions', ['password' => ''])
+        ->assertSessionHasErrors('password');
+});
+
+test('a passkey login does not count as a confirmation', function () {
+    $user = User::factory()->withPersonalTeam()->create();
+    fakePasskeyVerification(createPasskey($user));
+
+    $this->getJson(route('passkey.login-options'))->assertOk();
+    $this->postJson(route('passkey.login'), assertionPayload())->assertOk();
+
+    $this->delete('/user/other-browser-sessions', ['password' => ''])->assertSessionHasErrors('password');
 });

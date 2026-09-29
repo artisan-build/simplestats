@@ -1,4 +1,5 @@
 <script setup>
+import PasskeyConfirmButton from '@/Components/PasskeyConfirmButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import DeleteProjectForm from '@/Pages/Projects/Partials/DeleteProjectForm.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
@@ -168,12 +169,14 @@ const regenerateApiToken = () => {
                     If you already used this token, make sure to replace it afterwards in the corresponding project!
                     Please enter your password to confirm this action.
 
+                    <PasskeyConfirmButton @confirmed="regenerateApiTokenForm.password = ''; regenerateApiToken()" />
+
                     <div class="mt-4">
                         <TextInput
                             ref="passwordInput"
                             v-model="regenerateApiTokenForm.password"
                             type="password"
-                            class="mt-1 block w-3/4"
+                            class="mt-1 block w-full"
                             placeholder="Password"
                             autocomplete="current-password"
                             @keyup.enter="regenerateApiToken"

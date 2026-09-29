@@ -1,13 +1,11 @@
 <script setup>
 import { ref, reactive, nextTick } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import { usePasskeyVerify } from '@laravel/passkeys/vue';
 import DialogModal from './DialogModal.vue';
 import InputError from './InputError.vue';
 import PrimaryButton from './PrimaryButton.vue';
 import SecondaryButton from './SecondaryButton.vue';
 import TextInput from './TextInput.vue';
-import FingerprintIcon from 'bootstrap-icons/icons/fingerprint.svg?component';
+import PasskeyConfirmButton from './PasskeyConfirmButton.vue';
 
 const emit = defineEmits(['confirmed']);
 
@@ -35,24 +33,6 @@ const form = reactive({
 });
 
 const passwordInput = ref(null);
-
-const page = usePage();
-
-const {
-    verify: confirmWithPasskey,
-    isLoading: passkeyLoading,
-    error: passkeyError,
-    isSupported: passkeySupported,
-} = usePasskeyVerify({
-    routes: {
-        options: route('passkey.confirm-options'),
-        submit: route('passkey.confirm'),
-    },
-    onSuccess: () => {
-        closeModal();
-        nextTick().then(() => emit('confirmed'));
-    },
-});
 
 const startConfirmingPassword = () => {
     axios.get(route('password.confirmation')).then(response => {
@@ -84,6 +64,11 @@ const confirmPassword = () => {
     });
 };
 
+const passkeyConfirmed = () => {
+    closeModal();
+    nextTick().then(() => emit('confirmed'));
+};
+
 const closeModal = () => {
     confirmingPassword.value = false;
     form.password = '';
@@ -105,27 +90,20 @@ const closeModal = () => {
             <template #content>
                 {{ content }}
 
+                <PasskeyConfirmButton @confirmed="passkeyConfirmed" />
+
                 <div class="mt-4">
                     <TextInput
                         ref="passwordInput"
                         v-model="form.password"
                         type="password"
-                        class="mt-1 block w-3/4"
+                        class="mt-1 block w-full"
                         placeholder="Password"
                         autocomplete="current-password"
                         @keyup.enter="confirmPassword"
                     />
 
                     <InputError :message="form.error" class="mt-2" />
-                </div>
-
-                <div v-if="passkeySupported && page.props.auth.user?.has_passkeys" class="mt-4">
-                    <SecondaryButton :disabled="passkeyLoading" @click="confirmWithPasskey">
-                        <FingerprintIcon class="size-4 me-2" />
-                        Use passkey instead
-                    </SecondaryButton>
-
-                    <InputError :message="passkeyError" class="mt-2" />
                 </div>
             </template>
 

@@ -25,6 +25,7 @@ $exclude = [
     'og-image/*', // requires a generated og-image filename
     'livewire*',
     'filament/*',
+    'user/passkeys/*', // behind password.confirm, covered in PasskeyTest
     'mcp', // MCP streamable-http transport, GET without a session correctly returns 405
 
     '{locale}', // localized routes, tested in LocalizationTest

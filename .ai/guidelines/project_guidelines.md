@@ -515,6 +515,13 @@ Legacy compatibility: the `RedirectLegacyIdUrls` middleware 301-redirects old nu
 - Test API rate limiting behavior
 - Ensure tracking works across Laravel versions
 
+## Announcements
+
+Announcement drafts live in `notes/announcements/*.md` and are sent via the Filament Announcements page (`App\Mail\AnnouncementMail`). The mail already opens with "Hey {name}," (`resources/views/emails/announcement.blade.php`) and the title is sent as the mail subject. Therefore:
+
+- No `#` heading at the top of the body: it would duplicate the subject and read awkwardly right after the greeting. Put the subject into an HTML comment on the first line instead (`<!-- Subject: ... -->`).
+- The first sentence must continue naturally after "Hey {name}," (e.g. "good news: you can now ..."). `##` section headings further down are fine.
+
 ## Blog
 
 - Blog posts are managed as markdown files with YAML front matter in `resources/markdown/blog/`, using the `jcfrane/laravel-md-blog` package.
