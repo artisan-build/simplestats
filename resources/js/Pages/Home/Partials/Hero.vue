@@ -1,12 +1,14 @@
 <script setup>
 import {router, usePage} from "@inertiajs/vue3";
 import {useLocale} from "@/Composables/useLocale.js";
-import {trans} from 'laravel-vue-i18n';
+import {useTrans} from '@/Composables/useTrans.js';
 import {computed} from 'vue';
 import {testimonials} from "@/Data/testimonials.js";
 // eslint-disable-next-line no-unused-vars -- used by the paused "Can't be blocked" badge below
 import BanIcon from "bootstrap-icons/icons/shield-x.svg?component";
 import ArrowRightIcon from "bootstrap-icons/icons/arrow-right.svg?component";
+
+const trans = useTrans();
 
 const { localizedPath } = useLocale();
 const page = usePage();

@@ -2,7 +2,9 @@
 import {Link} from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import LanguageSwitcher from "@/Components/LanguageSwitcher.vue";
-import { trans } from 'laravel-vue-i18n';
+import {useTrans} from '@/Composables/useTrans.js';
+
+const trans = useTrans();
 
 let appName = import.meta.env.VITE_APP_NAME;
 

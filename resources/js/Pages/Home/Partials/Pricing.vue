@@ -4,10 +4,12 @@ import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import RangeSlider from "@/Components/RangeSlider.vue";
 import {computed, ref} from "vue";
 import {useLocale} from "@/Composables/useLocale.js";
-import {trans} from 'laravel-vue-i18n';
+import {useTrans} from '@/Composables/useTrans.js';
 import CreditCardIcon from 'bootstrap-icons/icons/credit-card-fill.svg?component';
 import CheckCircleFillIcon from 'bootstrap-icons/icons/check-circle-fill.svg?component';
 import XCircleIcon from 'bootstrap-icons/icons/x-circle.svg?component';
+
+const trans = useTrans();
 
 const { localizedPath } = useLocale();
 

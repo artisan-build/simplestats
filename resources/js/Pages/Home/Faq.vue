@@ -1,9 +1,11 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 import {onMounted, ref} from "vue";
-import {trans} from 'laravel-vue-i18n';
+import {useTrans} from '@/Composables/useTrans.js';
 import DashLgIcon from "bootstrap-icons/icons/dash-lg.svg?component";
 import PlusLgIcon from "bootstrap-icons/icons/plus-lg.svg?component";
+
+const trans = useTrans();
 
 const questions = ref([
     {

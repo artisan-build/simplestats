@@ -1,7 +1,9 @@
 <script setup>
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
-import {trans} from 'laravel-vue-i18n';
+import {useTrans} from '@/Composables/useTrans.js';
 import CheckCircleFillIcon from "bootstrap-icons/icons/check-circle-fill.svg?component";
+
+const trans = useTrans();
 
 const props = defineProps({
     discount: Number,

@@ -1,5 +1,3 @@
-import {trans} from 'laravel-vue-i18n';
-
 export const competitors = [
     {key: 'simplestats', name: 'SimpleStats'},
     {key: 'plausible', name: 'Plausible'},
@@ -11,7 +9,7 @@ export const competitors = [
 // true = fully supported, 'partial' = limited/manual support, false = not supported
 export const comparisonFeatures = [
     {
-        label: () => trans('Marketing attribution'),
+        label: 'Marketing attribution',
         simplestats: true,
         plausible: 'partial',
         fathom: false,
@@ -19,7 +17,7 @@ export const comparisonFeatures = [
         ga: true,
     },
     {
-        label: () => trans('Revenue per channel'),
+        label: 'Revenue per channel',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -27,7 +25,7 @@ export const comparisonFeatures = [
         ga: 'partial',
     },
     {
-        label: () => trans('User & Payment tracking'),
+        label: 'User & Payment tracking',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -35,7 +33,7 @@ export const comparisonFeatures = [
         ga: 'partial',
     },
     {
-        label: () => trans('MRR, churn & retention'),
+        label: 'MRR, churn & retention',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -43,7 +41,7 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
-        label: () => trans('AI analytics assistant'),
+        label: 'AI analytics assistant',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -51,7 +49,7 @@ export const comparisonFeatures = [
         ga: 'partial',
     },
     {
-        label: () => trans('Ad spend & ROAS / CAC'),
+        label: 'Ad spend & ROAS / CAC',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -59,7 +57,7 @@ export const comparisonFeatures = [
         ga: 'partial',
     },
     {
-        label: () => trans('Server-side tracking'),
+        label: 'Server-side tracking',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -67,7 +65,7 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
-        label: () => trans('Ad-blocker proof'),
+        label: 'Ad-blocker proof',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -75,7 +73,7 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
-        label: () => trans('No JavaScript required'),
+        label: 'No JavaScript required',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -83,7 +81,7 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
-        label: () => trans('Laravel-native'),
+        label: 'Laravel-native',
         simplestats: true,
         plausible: false,
         fathom: false,
@@ -91,7 +89,7 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
-        label: () => trans('No cookie banner required'),
+        label: 'No cookie banner required',
         simplestats: true,
         plausible: true,
         fathom: true,
@@ -99,7 +97,7 @@ export const comparisonFeatures = [
         ga: false,
     },
     {
-        label: () => trans('Self-hosting option'),
+        label: 'Self-hosting option',
         simplestats: true,
         plausible: true,
         fathom: false,

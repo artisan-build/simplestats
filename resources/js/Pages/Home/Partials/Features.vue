@@ -16,7 +16,9 @@ import StarsIcon from "bootstrap-icons/icons/stars.svg?component";
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
-import {trans} from 'laravel-vue-i18n';
+import {useTrans} from '@/Composables/useTrans.js';
+
+const trans = useTrans();
 
 const f = {
     different: {

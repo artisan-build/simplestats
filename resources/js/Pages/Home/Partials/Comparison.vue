@@ -36,7 +36,7 @@ import {comparisonFeatures, competitors} from "@/Data/comparison.js";
                             class="border-b border-gray-200 dark:border-dark-700 last:border-0"
                         >
                             <td class="py-4 px-4 text-sm font-medium text-gray-700 dark:text-dark-300">
-                                {{ feature.label() }}
+                                {{ $t(feature.label) }}
                             </td>
                             <td v-for="competitor in competitors"
                                 :key="competitor.key"
@@ -76,7 +76,7 @@ import {comparisonFeatures, competitors} from "@/Data/comparison.js";
                             <CheckCircleIcon v-if="feature[competitor.key] === true" class="w-5 h-5 text-indigo-500 shrink-0" />
                             <MinusCircleIcon v-else-if="feature[competitor.key] === 'partial'" class="w-5 h-5 text-indigo-300 dark:text-indigo-500/40 shrink-0" />
                             <XCircleIcon v-else class="w-5 h-5 text-gray-300 dark:text-dark-600 shrink-0" />
-                            <span class="text-sm text-gray-700 dark:text-dark-300">{{ feature.label() }}</span>
+                            <span class="text-sm text-gray-700 dark:text-dark-300">{{ $t(feature.label) }}</span>
                         </li>
                     </ul>
                 </div>
