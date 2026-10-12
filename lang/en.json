@@ -55,6 +55,7 @@
 
     "AI Assistant": "AI Assistant",
     "AI analytics assistant": "AI analytics assistant",
+    "Ad spend & ROAS \/ CAC": "Ad spend & ROAS \/ CAC",
     "Ask AI": "Ask AI",
     "Chat & MCP": "Chat & MCP",
     "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.": "Ask questions about your stats in plain language and get answers backed by your real numbers. Chat right in your dashboard, or connect Claude, Cursor and other AI tools to your data via the built-in MCP server.",
@@ -231,7 +232,10 @@
     "Server-side tracking": "Server-side tracking",
     "No JavaScript required": "No JavaScript required",
     "Revenue Attribution": "Revenue Attribution",
+    "Marketing attribution": "Marketing attribution",
+    "Revenue per channel": "Revenue per channel",
     "User & Payment tracking": "User & Payment tracking",
+    "MRR, churn & retention": "MRR, churn & retention",
     "No cookie banner required": "No cookie banner required",
     "Laravel-native": "Laravel-native",
     "Ad-blocker proof": "Ad-blocker proof",
