@@ -11,23 +11,29 @@ use Illuminate\Support\Str;
 class BotDetectionService
 {
     /**
-     * Autonomous systems of the datacenters that consumer VPN providers
-     * (NordVPN, ExpressVPN, ...) run their exit nodes on. Traffic from these
-     * carries real people, so it is kept even though the IP is a datacenter
-     * IP. M247 and Datacamp/CDN77 host the vast majority of commercial VPN
-     * exits; every other datacenter AS (AWS, GCP, Hetzner, ...) is filtered.
+     * Autonomous systems flagged as hosting that carry real people, so their
+     * traffic is kept even though the IP is a datacenter IP:
+     * - consumer VPN exits (NordVPN, ExpressVPN, ...): M247 and Datacamp/CDN77
+     *   host the vast majority of them.
+     * - iCloud Private Relay and WARP egress: Apple publishes its egress ranges
+     *   on Akamai, Fastly and Cloudflare, and ip-api flags Akamai/Fastly as hosting.
+     * Every other datacenter AS (AWS, GCP, Hetzner, Linode, ...) is filtered.
      */
-    private const VPN_HOSTER_ASNS = [
+    private const CONSUMER_EXIT_ASNS = [
         9009,   // M247
         60068,  // Datacamp / CDN77
         212238, // Datacamp (NordVPN exits)
+        36183,  // Akamai (Private Relay)
+        20940,  // Akamai International (Private Relay)
+        54113,  // Fastly (Private Relay)
+        13335,  // Cloudflare (Private Relay, WARP)
     ];
 
     /**
      * Datacenter/hosting IPs (AWS, GCP, Hetzner, ...) are practically always
      * bots faking a real browser User-Agent, so they are dropped. The only
-     * exception are the datacenters that host consumer VPN exits, which carry
-     * real people (same approach as Plausible/Fathom). Fails open: unknown
+     * exception are the networks that host consumer VPN and Private Relay exits,
+     * which carry real people (same approach as Plausible/Fathom). Fails open: unknown
      * hosting flags (fallback drivers, throttled lookups, failed lookups)
      * never drop a visitor.
      */
@@ -55,7 +61,7 @@ class BotDetectionService
             return false;
         }
 
-        if (in_array($position->asn, self::VPN_HOSTER_ASNS, true)) {
+        if (in_array($position->asn, self::CONSUMER_EXIT_ASNS, true)) {
             self::recordFilterOutcome('vpn_passed');
 
             return false;
@@ -70,7 +76,7 @@ class BotDetectionService
      * Daily counters (no IPs stored) so the filter yield can be measured
      * instead of estimated. `dropped` is the real yield, `null_flags_passed`
      * exposes how often ip-api throttling forces a fail-open (justifies the
-     * pro key), `vpn_passed` is the VPN-exception blast radius.
+     * pro key), `vpn_passed` is the blast radius of the consumer exit exception.
      */
     protected static function recordFilterOutcome(string $outcome): void
     {

@@ -8,4 +8,4 @@ A request is **skipped** (no visitor recorded, no API call dispatched) when:
 - the User-Agent is **not a real browser or mobile app**: HTTP libraries (curl, python-requests, ...), headless browsers, and scripted clients faking a browser User-Agent
 - the request is a speculative browser **prefetch/prerender**, since the visitor may never actually see the page
 
-On top of that, visits from **datacenter IPs** (AWS, GCP, Hetzner, and the like) are filtered server-side, since they are practically always bots hiding behind a real browser User-Agent. VPN users are not affected.
+On top of that, visits from **datacenter IPs** (AWS, GCP, Hetzner, and the like) are filtered server-side, since they are practically always bots hiding behind a real browser User-Agent. VPN and iCloud Private Relay users are not affected.

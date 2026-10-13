@@ -295,6 +295,28 @@ test('visitors from consumer VPN exits are tracked', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });
 
+test('visitors from iCloud Private Relay exits are tracked', function () {
+    config(['location.datacenter_ip_filter' => true]);
+
+    // Private Relay egress on Akamai (AS36183), which ip-api flags as hosting.
+    $position = new Position;
+    $position->isHosting = true;
+    $position->isProxy = false;
+    $position->asn = 36183;
+    Location::fake(['172.224.226.1' => $position]);
+
+    $payload = validVisitorPayload([
+        'ip' => '172.224.226.1',
+        'visitor_hash' => 'relay-hash-'.fake()->uuid(),
+    ]);
+
+    $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
+
+    setVisitorProjectContext($this->project);
+
+    expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
+});
+
 test('visitors are tracked when the hosting flag is unknown', function () {
     config(['location.datacenter_ip_filter' => true]);
 
