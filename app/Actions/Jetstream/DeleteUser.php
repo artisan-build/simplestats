@@ -36,7 +36,7 @@ class DeleteUser implements DeletesUsers
             $user->connectedAccounts->each->delete();
             $user->tokens->each->delete();
 
-            if (optional($user->subscription())->recurring()) {
+            if (config('app.app_type') === 'saas' && optional($user->subscription())->recurring()) {
                 $user->subscription()->cancelNow();
             }
 

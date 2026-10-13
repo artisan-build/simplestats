@@ -54,6 +54,11 @@ it('disables SSR for dashboard and other app pages', function (string $path) {
 ]);
 
 it('shares ziggy, translations and locale props on public pages', function (string $path) {
+    // the landing page and the blog only exist in the saas build
+    if ($path !== '/login') {
+        $this->skipUnlessSaas();
+    }
+
     $this->get($path)->assertInertia(fn ($page) => $page
         ->has('ziggy.routes')
         ->has('translations')

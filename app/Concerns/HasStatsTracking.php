@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Helpers\AppHelper;
 use App\Helpers\FileHelper;
 use App\Models\BaseStat;
 use App\Models\Project;
@@ -56,6 +57,11 @@ trait HasStatsTracking
 
     private static function handleStatsTypes(BaseStat $statsModel): void
     {
+        // Eloquent boots trait hooks in reflection method order, which is not stable
+        // across class hierarchies, so HasTeamScope's saving hook may not have set
+        // team_id yet. Without it the lookup rows below are created team-less.
+        $statsModel->team_id ??= AppHelper::getTeamId();
+
         foreach (StatsService::getStatsTypes() as $statsTypes) {
             foreach ($statsTypes as $item) {
                 $property = $item['type'];

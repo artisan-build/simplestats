@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\File;
 use JCFrane\MdBlog\Facades\MdBlog;
 
 beforeEach(function () {
+    $this->skipUnlessSaas();
+
     $this->blogPath = storage_path('app/testing/blog-warm-cache');
     File::ensureDirectoryExists($this->blogPath);
     config(['md-blog.path' => $this->blogPath]);
@@ -17,6 +19,10 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    if (! isset($this->blogPath)) {
+        return;
+    }
+
     File::deleteDirectory($this->blogPath);
 });
 

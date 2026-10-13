@@ -7,6 +7,8 @@ use App\Notifications\UserInactiveNotification;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Notification;
 
+beforeEach(fn () => $this->skipUnlessSaas());
+
 it('marks inactive users for deletion after the 10 day warning period', function () {
     Notification::fake();
 

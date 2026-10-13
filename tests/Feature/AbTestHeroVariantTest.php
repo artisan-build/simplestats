@@ -3,6 +3,8 @@
 use App\Analytics\VisitorCustomPropertiesResolver;
 use Illuminate\Http\Request;
 
+beforeEach(fn () => $this->skipUnlessSaas());
+
 const ACTIVE_HERO_VARIANTS = ['control', 'visitor_to_revenue', 'outcome_rotation'];
 
 test('production landing assigns a hero variant, shares and persists it', function () {

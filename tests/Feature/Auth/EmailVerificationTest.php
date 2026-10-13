@@ -44,6 +44,8 @@ test('email can be verified', function () {
 }, 'Email verification not enabled.');
 
 test('verifying email in your own session tracks the registration and recovers the skipped login', function () {
+    $this->skipUnlessSaas();
+
     $user = User::factory()->withPersonalTeam()->create([
         'email_verified_at' => null,
     ]);

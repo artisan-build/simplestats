@@ -9,6 +9,8 @@ use App\Models\User;
 use Livewire\Livewire;
 
 beforeEach(function () {
+    $this->skipUnlessSaas();
+
     $this->admin = User::factory()->create(['is_admin' => true]);
     $this->actingAs($this->admin);
 

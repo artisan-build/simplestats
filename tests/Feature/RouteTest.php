@@ -37,6 +37,11 @@ routeTesting('all GET routes')
     ->setUp(function (string $method, string $uri) {
         // if ($uri !== 'user/confirm-password') return; // only for tests
 
+        // public marketing pages redirect to the login on self-hosted
+        if (in_array($uri, ['/', 'blog', 'imprint']) || str_starts_with($uri, 'docs/')) {
+            $this->skipUnlessSaas();
+        }
+
         $route = app('router')->getRoutes()->match(request()->create($uri, $method));
 
         if (in_array('auth:sanctum', $route->middleware()) || in_array('auth:web', $route->middleware())) {

@@ -1,5 +1,7 @@
 <?php
 
+beforeEach(fn () => $this->skipUnlessSaas());
+
 it('returns a successful response', function () {
     $response = $this->get('/');
 

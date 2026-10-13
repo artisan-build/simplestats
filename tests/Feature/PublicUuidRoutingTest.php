@@ -115,22 +115,22 @@ test('switching teams maps a team url onto the new team uuid', function () {
     $newTeam = Team::factory()->create(['user_id' => $this->user->id, 'personal_team' => false]);
 
     $this->put(route('current-team.update'), ['team_id' => $newTeam->id], [
-        'referer' => 'https://simplestats.test/teams/'.$this->team->uuid,
-    ])->assertRedirect('https://simplestats.test/teams/'.$newTeam->uuid);
+        'referer' => url('/teams/'.$this->team->uuid),
+    ])->assertRedirect(url('/teams/'.$newTeam->uuid));
 });
 
 test('switching teams strips a uuid id segment from entity urls', function () {
     $newTeam = Team::factory()->create(['user_id' => $this->user->id, 'personal_team' => false]);
 
     $this->put(route('current-team.update'), ['team_id' => $newTeam->id], [
-        'referer' => 'https://simplestats.test/campaigns/'.Str::uuid(),
-    ])->assertRedirect('https://simplestats.test/campaigns');
+        'referer' => url('/campaigns/'.Str::uuid()),
+    ])->assertRedirect(url('/campaigns'));
 });
 
 test('switching teams keeps non-id path segments like the metric kpi', function () {
     $newTeam = Team::factory()->create(['user_id' => $this->user->id, 'personal_team' => false]);
 
     $this->put(route('current-team.update'), ['team_id' => $newTeam->id], [
-        'referer' => 'https://simplestats.test/dashboard/metric/pd_visitor',
-    ])->assertRedirect('https://simplestats.test/dashboard/metric/pd_visitor');
+        'referer' => url('/dashboard/metric/pd_visitor'),
+    ])->assertRedirect(url('/dashboard/metric/pd_visitor'));
 });

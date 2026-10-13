@@ -175,6 +175,8 @@ it('does not persist conversations while impersonating', function () {
 });
 
 it('blocks the chat for plans without the AI assistant', function () {
+    $this->skipUnlessSaas();
+
     // Outside production sparkPlan() falls back to the highest configured
     // plan, so shrinking the list to the Free plan simulates a free user.
     config()->set('spark.billables.user.plans', [config('spark.billables.user.plans')[0]]);

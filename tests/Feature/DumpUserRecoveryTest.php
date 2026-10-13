@@ -148,6 +148,8 @@ it('keeps the composite (id, project_id) key on stats inserts', function () {
 });
 
 it('excludes billing by default and includes it with --with-billing', function () {
+    $this->skipUnlessSaas();
+
     ['user' => $user] = seedRecoverableUser();
     $user->subscriptions()->create([
         'type' => 'default', 'paddle_id' => 'sub_recover', 'status' => 'active',

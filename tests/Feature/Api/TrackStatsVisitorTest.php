@@ -176,6 +176,8 @@ test('events_count_monthly is incremented on project via StatsObserver', functio
 });
 
 test('reaching the monthly event limit returns a terminal 200 and does not dispatch the tracking job', function () {
+    $this->skipUnlessSaas();
+
     Bus::fake();
 
     $team = $this->project->team;

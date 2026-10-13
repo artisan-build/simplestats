@@ -2,11 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Helpers\AppHelper;
 use App\Models\Project;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 
 class StatsVisitorFactory extends Factory
 {
@@ -51,7 +51,7 @@ class StatsVisitorFactory extends Factory
             ]);
         }
 
-        $data['visitor_hash'] = SimplestatsClient::createVisitorHash($data['time'], $this->faker->ipv4, $this->faker->userAgent);
+        $data['visitor_hash'] = AppHelper::createVisitorHash($data['time'], $this->faker->ipv4, $this->faker->userAgent);
 
         return $data;
     }

@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
+    $this->skipUnlessSaas();
+
     $this->blogPath = storage_path('app/testing/sitemap-blog');
     $this->publicPath = storage_path('app/testing/sitemap-public');
     File::ensureDirectoryExists($this->blogPath);
@@ -19,6 +21,10 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    if (! isset($this->blogPath)) {
+        return;
+    }
+
     File::deleteDirectory($this->blogPath);
     File::deleteDirectory($this->publicPath);
 });

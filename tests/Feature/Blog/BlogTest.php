@@ -4,6 +4,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\File;
 
 beforeEach(function () {
+    $this->skipUnlessSaas();
+
     $this->blogPath = storage_path('app/testing/blog');
     File::ensureDirectoryExists($this->blogPath);
     config(['md-blog.path' => $this->blogPath]);
@@ -11,6 +13,10 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    if (! isset($this->blogPath)) {
+        return;
+    }
+
     File::deleteDirectory($this->blogPath);
 });
 

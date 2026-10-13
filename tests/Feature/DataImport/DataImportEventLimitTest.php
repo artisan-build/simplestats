@@ -10,6 +10,8 @@ use App\Services\SubscriptionService;
 use Illuminate\Auth\Access\AuthorizationException;
 
 beforeEach(function () {
+    $this->skipUnlessSaas();
+
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->team = $this->user->currentTeam;
     $this->team->update(['timezone' => 'UTC']);

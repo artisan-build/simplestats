@@ -4,6 +4,8 @@ use App\Services\CustomEventTrackingService;
 use SimpleStatsIo\LaravelClient\Facades\SimplestatsClient;
 use SimpleStatsIo\LaravelClient\SimplestatsClient as SimplestatsClientClass;
 
+beforeEach(fn () => $this->skipUnlessSaas());
+
 it('tracks a custom event and returns success', function () {
     $this->partialMock(SimplestatsClientClass::class)
         ->shouldReceive('trackCustomEvent')

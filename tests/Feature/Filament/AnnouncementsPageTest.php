@@ -11,6 +11,8 @@ use Livewire\Livewire;
 use Spatie\DeletedModels\Models\DeletedModel;
 
 beforeEach(function () {
+    $this->skipUnlessSaas();
+
     $this->admin = User::factory()->create(['is_admin' => true]);
     $this->actingAs($this->admin);
 });

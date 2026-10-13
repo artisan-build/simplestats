@@ -4,6 +4,8 @@ use App\Http\Middleware\SetLocale;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+beforeEach(fn () => $this->skipUnlessSaas());
+
 // SetLocale middleware tests
 
 test('SetLocale middleware sets locale for supported non-default locale', function () {

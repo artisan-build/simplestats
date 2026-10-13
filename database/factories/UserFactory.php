@@ -34,6 +34,14 @@ class UserFactory extends Factory
         ];
     }
 
+    public function configure(): static
+    {
+        // Spark refreshes every new user when it creates the Paddle customer, so
+        // saas code relies on DB column defaults being loaded. Mirror that for the
+        // self-hosted build, otherwise strict mode throws on missing attributes.
+        return $this->afterCreating(fn (User $user) => $user->refresh());
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */
