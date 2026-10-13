@@ -1,0 +1,40 @@
+name: Security Audit
+
+# Dependabot only scans composer.lock, composer.saas.lock (production) is invisible to it.
+# Scheduled instead of on push, so new advisories do not turn unrelated pushes red.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  composer:
+    name: Composer (${{ matrix.build }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build: self-hosted
+            manifest: composer.json
+          - build: saas
+            manifest: composer.saas.json
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      # --locked reads the lock file only, so the saas build needs no Spark credentials
+      - name: Run composer audit
+        run: composer audit --locked --abandoned=report
+        env:
+          COMPOSER: ${{ matrix.manifest }}
