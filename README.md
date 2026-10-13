@@ -54,7 +54,7 @@ composer install
 ```
 
 ```bash
-npm install
+npm ci
 ```
 
 ### Branding and Environment
