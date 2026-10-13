@@ -28,15 +28,15 @@ Self-hosted installations should always run a tagged [release](https://github.co
 
 Releases follow [semantic versioning](https://semver.org):
 
-- **Major** (`2.0.0`): you have to act before or after updating, e.g. a new required environment variable or a raised PHP or PostgreSQL requirement. The release notes describe what to do.
-- **Minor** (`1.1.0`): new features, may include database migrations.
-- **Patch** (`1.0.1`): bug fixes.
+- **Major** (`7.0.0`): you have to act before or after updating, e.g. a new required environment variable or a raised PHP or PostgreSQL requirement. The release notes describe what to do.
+- **Minor** (`6.1.0`): new features, may include database migrations.
+- **Patch** (`6.0.1`): bug fixes.
 
 To update, read the release notes of every version between yours and the target, then:
 
 ```bash
 git fetch --tags
-git checkout v1.1.0
+git checkout v6.1.0
 
 composer install --no-dev --optimize-autoloader
 npm ci
