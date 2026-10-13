@@ -8,13 +8,20 @@
             <meta name="robots" content="noindex, nofollow">
         @endif
 
-        <title inertia>{{ config('app.name', 'Laravel') }} - {{ __('Revenue attribution analytics tool for Laravel apps') }}</title>
-        <meta name="description" content="{{ __('Discover which channels actually drive revenue, not just traffic. Server-side analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
+        @php
+            $blogPost = $page['component'] === 'Blog/Show' ? $page['props']['post'] : null;
+            $metaTitle = config('app.name', 'Laravel').' - '.($blogPost['title'] ?? __('Revenue attribution analytics tool for Laravel apps'));
+            $ogTitle = $blogPost['title'] ?? $metaTitle;
+            $metaDescription = $blogPost['excerpt'] ?? __('Discover which channels actually drive revenue, not just traffic. Server-side analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.');
+        @endphp
 
-        <meta property="og:title" content="{{ config('app.name', 'Laravel') }} - {{ __('Revenue attribution analytics tool for Laravel apps') }}">
-        <meta property="og:description" content="{{ __('Discover which channels actually drive revenue, not just traffic. Server-side analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.') }}">
+        <title inertia>{{ $metaTitle }}</title>
+        <meta name="description" content="{{ $metaDescription }}">
+
+        <meta property="og:title" content="{{ $ogTitle }}">
+        <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:url" content="{{ rtrim(config('app.url'), '/') }}{{ request()->getPathInfo() }}">
-        <meta property="og:type" content="website">
+        <meta property="og:type" content="{{ $blogPost ? 'article' : 'website' }}">
 
         @if ($page['component'] === 'Blog/Show' && config('app.app_type') === 'saas')
             @include('partials.og-image-blog-post')

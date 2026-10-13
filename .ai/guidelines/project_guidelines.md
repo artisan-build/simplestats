@@ -60,6 +60,7 @@ The repo is public. Its default build is the self-hosted one, the SaaS is the sp
 - `composer.saas.json` / `composer.saas.lock`: **SaaS** (adds Spark, Filament, og-image, blog/landing/translation tooling, path repos for the client packages). Locally always run Composer through `scripts/composer-saas.sh` (wraps `COMPOSER=composer.saas.json composer ...`, defaults to `install`); a plain `composer install` would swap the local `vendor/` to the self-hosted build. `scripts/deploy.sh` sets the same env var.
 - `APP_TYPE` defaults to self-hosted; only `APP_TYPE=saas` enables SaaS code paths.
 - External contributions require the signed CLA (`CLA.md`, `.github/workflows/cla.yml`). It is what allows combining contributed AGPL code with proprietary Spark in the SaaS. Never merge an external PR without a signed CLA.
+- Issues in the public `simplestats-io/app` repo are visible to everyone (GitHub has no private issues in public repos), so they are reserved for external bug reports and feature requests. Internal ideas, roadmap items and maintainer-only tasks live as issues in the **private repo `simplestats-io/internal`** (all pre-launch issues were transferred there on 2026-10-13, so old `#123` references in commit messages point to that repo, not to `app`). Never put customer names, domains, dashboard screenshots or other internal details into public issues, PRs or commit messages. Internal notes stay in `notes/` (gitignored).
 
 ### Keep `composer.json` and `composer.saas.json` in Sync
 

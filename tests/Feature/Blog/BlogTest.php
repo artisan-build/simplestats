@@ -118,6 +118,16 @@ test('blog show page returns successful response for published post', function (
         );
 });
 
+test('blog show page uses the post title and excerpt for meta tags', function () {
+    createMarkdownPost($this->blogPath, 'meta-post', extra: ['title' => 'Meta Post Title', 'excerpt' => 'Meta post excerpt']);
+
+    $this->get(route('blog.show', 'meta-post'))
+        ->assertOk()
+        ->assertSee('<meta property="og:title" content="Meta Post Title">', false)
+        ->assertSee('<meta property="og:description" content="Meta post excerpt">', false)
+        ->assertSee('<meta property="og:type" content="article">', false);
+});
+
 test('blog show page returns 404 for draft post', function () {
     createMarkdownPost($this->blogPath, 'draft-post', published: false);
 

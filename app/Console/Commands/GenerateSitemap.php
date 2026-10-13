@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use JCFrane\MdBlog\Facades\MdBlog;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 
@@ -19,6 +21,15 @@ class GenerateSitemap extends Command
         '/register',
         '/forgot-password',
         '/imprint',
+    ];
+
+    /**
+     * VitePress demo page that is built but not linked from the docs navigation.
+     *
+     * @var string[]
+     */
+    private array $excludedDocs = [
+        'markdown-examples',
     ];
 
     public function handle(): int
@@ -74,10 +85,48 @@ class GenerateSitemap extends Command
             }
         }
 
+        $sitemap->add(
+            Url::create($baseUrl.'/blog')
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                ->setPriority(0.8)
+        );
+
+        foreach (MdBlog::latest() as $post) {
+            $sitemap->add(
+                Url::create($baseUrl.'/blog/'.$post->slug)
+                    ->setLastModificationDate($post->date)
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                    ->setPriority(0.7)
+            );
+        }
+
+        foreach ($this->docsPaths() as $path) {
+            $sitemap->add(
+                Url::create($baseUrl.$path)
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                    ->setPriority($path === '/docs' ? 0.8 : 0.6)
+            );
+        }
+
         $sitemap->writeToFile(public_path('sitemap.xml'));
 
         $this->info('Sitemap generated at public/sitemap.xml');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function docsPaths(): array
+    {
+        return collect(File::files(base_path('docs')))
+            ->filter(fn ($file) => $file->getExtension() === 'md')
+            ->map(fn ($file) => $file->getFilenameWithoutExtension())
+            ->reject(fn (string $name) => in_array($name, $this->excludedDocs, true))
+            ->map(fn (string $name) => $name === 'index' ? '/docs' : '/docs/'.$name)
+            ->sort()
+            ->values()
+            ->all();
     }
 }
