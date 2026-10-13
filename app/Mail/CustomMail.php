@@ -18,8 +18,7 @@ class CustomMail extends Mailable
         public User $user,
         public string $title,
         public string $message,
-    ) {
-    }
+    ) {}
 
     /**
      * Build the message.

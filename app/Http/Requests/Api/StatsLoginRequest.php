@@ -17,7 +17,7 @@ class StatsLoginRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge((new StatsLoginValidator())->prepareForValidation($this->all()));
+        $this->merge((new StatsLoginValidator)->prepareForValidation($this->all()));
     }
 
     /**
@@ -25,6 +25,6 @@ class StatsLoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        return (new StatsLoginValidator())->rules();
+        return (new StatsLoginValidator)->rules();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Filament\Resources\Users\Actions\ImpersonateAction;
 use App\Models\User;
 use App\Services\SubscriptionService;
 use Filament\Actions\BulkActionGroup;
@@ -128,7 +129,7 @@ class UsersTable
                 //
             ])
             ->recordActions([
-                \App\Filament\Resources\Users\Actions\ImpersonateAction::make(),
+                ImpersonateAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

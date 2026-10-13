@@ -17,7 +17,7 @@ class StatsCustomEventRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge((new StatsCustomEventValidator())->prepareForValidation($this->all()));
+        $this->merge((new StatsCustomEventValidator)->prepareForValidation($this->all()));
     }
 
     /**
@@ -25,6 +25,6 @@ class StatsCustomEventRequest extends FormRequest
      */
     public function rules(): array
     {
-        return (new StatsCustomEventValidator())->rules();
+        return (new StatsCustomEventValidator)->rules();
     }
 }

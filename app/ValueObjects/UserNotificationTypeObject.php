@@ -11,6 +11,5 @@ readonly class UserNotificationTypeObject
         public UserNotificationType $type,
         public ?UserNotificationFrequency $frequency,
         public array $settings,
-    ) {
-    }
+    ) {}
 }

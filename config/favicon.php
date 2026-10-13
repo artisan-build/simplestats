@@ -1,5 +1,7 @@
 <?php
 
+use BeyondCode\LaravelFavicon\Generators\EnvironmentGenerator;
+
 return [
 
     /*
@@ -64,6 +66,6 @@ return [
      * makes use of the environment settings defined in this file.
      * But you can create your own favicon generator if you want.
      */
-    'generator' => \BeyondCode\LaravelFavicon\Generators\EnvironmentGenerator::class,
+    'generator' => EnvironmentGenerator::class,
 
 ];

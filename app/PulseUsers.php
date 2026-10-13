@@ -11,14 +11,14 @@ class PulseUsers implements ResolvesUsers
     /**
      * The resolved users.
      *
-     * @var Collection<int, \Illuminate\Contracts\Auth\Authenticatable>
+     * @var Collection<int, Authenticatable>
      */
     protected Collection $resolvedUsers;
 
     /**
      * The field resolver.
      *
-     * @var ?callable(\Illuminate\Contracts\Auth\Authenticatable): object{name: string, extra?: string, avatar?: string}
+     * @var ?callable(Authenticatable): object{name: string, extra?: string, avatar?: string}
      */
     protected $fieldResolver = null;
 
@@ -37,7 +37,7 @@ class PulseUsers implements ResolvesUsers
      */
     public function load(Collection $keys): self
     {
-        $this->resolvedUsers = new Collection();
+        $this->resolvedUsers = new Collection;
 
         $groupedKeys = $keys->mapToGroups(function ($key) {
             [$model, $id] = explode(':', $key);
@@ -82,7 +82,7 @@ class PulseUsers implements ResolvesUsers
     /**
      * Override the field resolver.
      *
-     * @param  callable(\Illuminate\Contracts\Auth\Authenticatable): object{name: string, extra?: string, avatar?: string}  $resolver
+     * @param  callable(Authenticatable): object{name: string, extra?: string, avatar?: string}  $resolver
      */
     public function setFieldResolver(callable $resolver): self
     {

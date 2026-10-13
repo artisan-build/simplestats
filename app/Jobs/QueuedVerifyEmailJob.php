@@ -19,8 +19,7 @@ class QueuedVerifyEmailJob implements ShouldQueue
      */
     public function __construct(
         protected User $user
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.

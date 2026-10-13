@@ -30,6 +30,6 @@ class ImportHelper
 
     public static function getImportFields(string|UploadedFile $file): array
     {
-        return Excel::toArray(new HeadingRowImport(), $file)[0][0];
+        return Excel::toArray(new HeadingRowImport, $file)[0][0];
     }
 }

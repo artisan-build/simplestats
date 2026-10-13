@@ -18,7 +18,7 @@ class ExchangeRateService
     {
         $validator = Validator::make(
             ['fromCurrency' => $fromCurrency, 'toCurrency' => $toCurrency],
-            ['fromCurrency' => new Currency(), 'toCurrency' => new Currency()]
+            ['fromCurrency' => new Currency, 'toCurrency' => new Currency]
         );
 
         if ($validator->fails()) {

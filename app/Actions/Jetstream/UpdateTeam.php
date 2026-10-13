@@ -23,7 +23,7 @@ class UpdateTeam implements UpdatesTeamNames
 
         Validator::make($input, [
             'name' => ['required', 'string', 'min:1', 'max:30'],
-            'currency' => ['required', new Currency()],
+            'currency' => ['required', new Currency],
             'timezone' => ['required', Rule::in(timezone_identifiers_list())],
         ])->validateWithBag('updateTeam');
 

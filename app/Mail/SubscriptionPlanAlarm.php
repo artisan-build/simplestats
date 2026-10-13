@@ -17,8 +17,7 @@ class SubscriptionPlanAlarm extends Mailable
     public function __construct(
         public User $teamOwner,
         public array $alarms,
-    ) {
-    }
+    ) {}
 
     /**
      * Build the message.

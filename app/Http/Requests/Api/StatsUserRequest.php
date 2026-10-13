@@ -17,7 +17,7 @@ class StatsUserRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge((new StatsUserValidator())->prepareForValidation($this->all()));
+        $this->merge((new StatsUserValidator)->prepareForValidation($this->all()));
     }
 
     /**
@@ -25,6 +25,6 @@ class StatsUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return (new StatsUserValidator())->rules();
+        return (new StatsUserValidator)->rules();
     }
 }

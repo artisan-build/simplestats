@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\StatsRangePreset;
 use App\Models\CustomStatsRangePreset;
 use App\Models\User;
 
@@ -130,7 +131,7 @@ test('user can update builtin preset visibility', function () {
 test('user can show all builtin presets', function () {
     $this->user->updateSettings('hiddenPresets', ['yesterday', 'today']);
 
-    $allValues = array_column(\App\Enums\StatsRangePreset::cases(), 'value');
+    $allValues = array_column(StatsRangePreset::cases(), 'value');
     $response = $this->post(route('custom-presets.builtin-visibility'), [
         'visible' => $allValues,
     ]);

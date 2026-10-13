@@ -16,8 +16,7 @@ class DataImportCompleted extends Mailable
      */
     public function __construct(
         public DataImport $dataImport
-    ) {
-    }
+    ) {}
 
     /**
      * Build the message.

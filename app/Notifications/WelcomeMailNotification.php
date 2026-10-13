@@ -15,8 +15,7 @@ class WelcomeMailNotification extends Notification implements ShouldQueue
 
     public function __construct(
         public User $user
-    ) {
-    }
+    ) {}
 
     /**
      * Get the notification's delivery channels.
@@ -33,7 +32,7 @@ class WelcomeMailNotification extends Notification implements ShouldQueue
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {

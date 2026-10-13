@@ -8,7 +8,6 @@ use App\Models\StatsUser;
 use App\Models\Team;
 use App\Services\RefererService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class ExtractReferersFromSources extends Command

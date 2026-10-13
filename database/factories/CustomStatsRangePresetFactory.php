@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use App\Enums\StatsRangeType;
+use App\Models\CustomStatsRangePreset;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CustomStatsRangePreset>
+ * @extends Factory<CustomStatsRangePreset>
  */
 class CustomStatsRangePresetFactory extends Factory
 {

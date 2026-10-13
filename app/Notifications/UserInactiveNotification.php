@@ -12,8 +12,7 @@ class UserInactiveNotification extends Notification
     public function __construct(
         public User $user,
         public int $daysLeft,
-    ) {
-    }
+    ) {}
 
     public function via($notifiable): array
     {

@@ -16,8 +16,7 @@ class FeedbackMail extends Mailable
         public User $user,
         public FeedbackType $type,
         public string $feedbackMessage,
-    ) {
-    }
+    ) {}
 
     public function build()
     {

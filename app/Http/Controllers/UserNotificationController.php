@@ -9,6 +9,7 @@ use App\Models\UserNotification;
 use App\Notifications\ProjectReportNotification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+
 use function Illuminate\Support\defer;
 
 class UserNotificationController extends Controller

@@ -17,7 +17,7 @@ class StatsPaymentRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge((new StatsPaymentValidator())->prepareForValidation($this->all()));
+        $this->merge((new StatsPaymentValidator)->prepareForValidation($this->all()));
     }
 
     /**
@@ -25,6 +25,6 @@ class StatsPaymentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return (new StatsPaymentValidator())->rules();
+        return (new StatsPaymentValidator)->rules();
     }
 }
