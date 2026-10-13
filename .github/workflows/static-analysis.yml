@@ -57,6 +57,15 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
+      - name: Cache phpstan results
+        uses: actions/cache@v4
+        with:
+          path: /tmp/phpstan
+          key: phpstan-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            phpstan-${{ github.ref }}-
+            phpstan-refs/heads/main-
+
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=2G --error-format=github
 
@@ -76,6 +85,15 @@ jobs:
 
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
+
+      - name: Cache rector results
+        uses: actions/cache@v4
+        with:
+          path: /tmp/rector
+          key: rector-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            rector-${{ github.ref }}-
+            rector-refs/heads/main-
 
       - name: Run Rector
         run: vendor/bin/rector --dry-run --output-format=github

@@ -6,6 +6,8 @@ parameters:
     level: 6
     # casts() methods (instead of $casts) are only typed when Larastan parses them
     parseModelCastsMethod: true
+    # fixed path so CI can cache it between runs
+    tmpDir: /tmp/phpstan
     paths:
         - app
         - bootstrap/app.php

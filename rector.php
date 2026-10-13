@@ -1,5 +1,6 @@
 <?php
 
+use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\CodeQuality\Rector\Empty_\SimplifyEmptyCheckOnEmptyArrayRector;
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector;
@@ -11,6 +12,8 @@ use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
 use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
+    // fixed path so CI can cache it between runs
+    ->withCache(cacheDirectory: '/tmp/rector', cacheClass: FileCacheStorage::class)
     ->withPaths([
         __DIR__.'/app',
         __DIR__.'/bootstrap/app.php',
