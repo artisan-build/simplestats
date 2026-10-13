@@ -15,6 +15,9 @@ use Tests\TestCase;
 |
 */
 
+// Arch tests load app classes (e.g. App\Models\User reads config at load time).
+uses(TestCase::class)->in('ArchTest.php');
+
 uses(TestCase::class, RefreshDatabase::class)
     ->beforeEach(function () {
         // All stats ingest API endpoints use defer() to dispatch jobs after

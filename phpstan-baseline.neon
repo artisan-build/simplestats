@@ -1,0 +1,3961 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Actions\\CreateProject\:\:__invoke\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/CreateProject.php
+
+		-
+			message: '#^Access to an undefined property App\\Contracts\\NotifiableToUser\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/CreateUserNotification.php
+
+		-
+			message: '#^Method App\\Actions\\Fortify\\CreateNewUser\:\:passwordRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/Fortify/CreateNewUser.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: app/Actions/Fortify/CreateNewUser.php
+
+		-
+			message: '#^Method App\\Actions\\Fortify\\ResetUserPassword\:\:passwordRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/Fortify/ResetUserPassword.php
+
+		-
+			message: '#^Method App\\Actions\\Fortify\\UpdateUserPassword\:\:passwordRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/Fortify/UpdateUserPassword.php
+
+		-
+			message: '#^Instanceof between App\\Models\\User and Illuminate\\Contracts\\Auth\\MustVerifyEmail will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: app/Actions/Fortify/UpdateUserProfileInformation.php
+
+		-
+			message: '#^Parameter \#1 \$photo of method App\\Models\\UserBase\:\:updateProfilePhoto\(\) expects Illuminate\\Http\\UploadedFile, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Fortify/UpdateUserProfileInformation.php
+
+		-
+			message: '#^Method App\\Actions\\Jetstream\\AddTeamMember\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/Jetstream/AddTeamMember.php
+
+		-
+			message: '#^Method App\\Actions\\Jetstream\\CreateTeam\:\:create\(\) should return App\\Models\\Team but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Actions/Jetstream/CreateTeam.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\:\:subscription\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Actions/Jetstream/DeleteUser.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\Team\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Jetstream/DeleteUser.php
+
+		-
+			message: '#^Method App\\Actions\\Jetstream\\InviteTeamMember\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/Jetstream/InviteTeamMember.php
+
+		-
+			message: '#^Parameter \#1 \$invitation of class App\\Mail\\TeamInvitation constructor expects Laravel\\Jetstream\\TeamInvitation, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Jetstream/InviteTeamMember.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Jetstream/RemoveTeamMember.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/CreateConnectedAccount.php
+
+		-
+			message: '#^Parameter \#1 \$input of method App\\Actions\\Fortify\\CreateNewUser\:\:create\(\) expects array\<string, string\>, array\<string, string\|true\|null\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Actions/Socialstream/CreateUserFromProvider.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/ResolveSocialiteUser.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/ResolveSocialiteUser.php
+
+		-
+			message: '#^Method App\\Actions\\Socialstream\\SetUserPassword\:\:set\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/Socialstream/SetUserPassword.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Socialite\\Contracts\\User\:\:\$token\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Actions/Socialstream/UpdateConnectedAccount.php
+
+		-
+			message: '#^Method App\\Actions\\UpdateProject\:\:__invoke\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Actions/UpdateProject.php
+
+		-
+			message: '#^Method App\\Ai\\Agents\\StatsAssistant\:\:tools\(\) should return iterable\<Laravel\\Ai\\Contracts\\Tool\> but returns array\<int, App\\Mcp\\Tools\\GetCampaignPerformance\|App\\Mcp\\Tools\\GetGroupedBreakdown\|App\\Mcp\\Tools\\GetKpiStats\|App\\Mcp\\Tools\\GetRecurringRevenueStats\|App\\Mcp\\Tools\\GetRetentionCohorts\|App\\Mcp\\Tools\\ListAppPages\|App\\Mcp\\Tools\\ListStatsCapabilities\|App\\Mcp\\Tools\\SearchDocs\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Ai/Agents/StatsAssistant.php
+
+		-
+			message: '#^Method App\\Builder\\BaseSqlBuilder\:\:activeSubscriptionsFrom\(\) has parameter \$extraColumns with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Builder/BaseSqlBuilder.php
+
+		-
+			message: '#^Method App\\Builder\\BaseSqlBuilder\:\:getDistinctFields\(\) has parameter \$fields with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Builder/BaseSqlBuilder.php
+
+		-
+			message: '#^Instanceof between App\\Models\\User\|null and App\\Models\\Project will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
+			count: 1
+			path: app/Concerns/HasStatsTracking.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\CheckInactiveUsers\:\:inactiveCandidates\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Console/Commands/CheckInactiveUsers.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\User\)\: void given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Console/Commands/CheckInactiveUsers.php
+
+		-
+			message: '#^Relation ''subscriptions'' is not found in App\\Models\\User model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Console/Commands/CheckInactiveUsers.php
+
+		-
+			message: '#^Property App\\Console\\Commands\\CheckLoginsAndPaymentsCounter\:\:\$tables type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Console/Commands/CheckLoginsAndPaymentsCounter.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Console/Commands/CheckSubscriptionPlanAlarm.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\CheckSubscriptionPlanAlarm\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/CheckSubscriptionPlanAlarm.php
+
+		-
+			message: '#^Parameter \#1 \$teamOwner of class App\\Mail\\SubscriptionPlanAlarm constructor expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/CheckSubscriptionPlanAlarm.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\CreateNewUser\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/CreateNewUser.php
+
+		-
+			message: '#^Parameter \#1 \$input of method App\\Actions\\Fortify\\CreateNewUser\:\:create\(\) expects array\<string, string\>, array\<string, string\|true\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/CreateNewUser.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\StatsTrackSource\:\:\$project_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Console/Commands/ExtractReferersFromSources.php
+
+		-
+			message: '#^Access to constant CHANGE_FREQUENCY_MONTHLY on an unknown class Spatie\\Sitemap\\Tags\\Url\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/GenerateSitemap.php
+
+		-
+			message: '#^Access to constant CHANGE_FREQUENCY_WEEKLY on an unknown class Spatie\\Sitemap\\Tags\\Url\.$#'
+			identifier: class.notFound
+			count: 4
+			path: app/Console/Commands/GenerateSitemap.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class Spatie\\Sitemap\\Sitemap\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/GenerateSitemap.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class Spatie\\Sitemap\\Tags\\Url\.$#'
+			identifier: class.notFound
+			count: 5
+			path: app/Console/Commands/GenerateSitemap.php
+
+		-
+			message: '#^Call to static method latest\(\) on an unknown class JCFrane\\MdBlog\\Facades\\MdBlog\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/GenerateSitemap.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Console/Commands/MergeStatsTypes.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Console/Commands/MergeStatsTypes.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Console/Commands/MigrateSettingsToSnakeCase.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Console/Commands/MigrateSettingsToSnakeCase.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\ResetOwnDomainReferers\:\:affectedQuery\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Console/Commands/ResetOwnDomainReferers.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\SendCustomMail\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/SendCustomMail.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Console/Commands/SendProjectReports.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\UserNotification\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/SendProjectReports.php
+
+		-
+			message: '#^Parameter \#3 \$team of class App\\Notifications\\ProjectReportNotification constructor expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/SendProjectReports.php
+
+		-
+			message: '#^Call to method translateText\(\) on an unknown class DeepL\\Translator\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/TranslateLanguageFiles.php
+
+		-
+			message: '#^Instantiated class DeepL\\Translator not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/TranslateLanguageFiles.php
+
+		-
+			message: '#^Parameter \$translator of method App\\Console\\Commands\\TranslateLanguageFiles\:\:translateLocale\(\) has invalid type DeepL\\Translator\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/TranslateLanguageFiles.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\StatsPageEntry\:\:\$project_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Console/Commands/UnifyPageEntries.php
+
+		-
+			message: '#^Access to property \$slug on an unknown class JCFrane\\MdBlog\\Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/WarmBlogCacheCommand.php
+
+		-
+			message: '#^Call to static method latest\(\) on an unknown class JCFrane\\MdBlog\\Facades\\MdBlog\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/WarmBlogCacheCommand.php
+
+		-
+			message: '#^Parameter \$post of anonymous function has invalid type JCFrane\\MdBlog\\Post\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Console/Commands/WarmBlogCacheCommand.php
+
+		-
+			message: '#^Method App\\Contracts\\NotifiableToUser\:\:getDefaultUserNotificationTypes\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Contracts/NotifiableToUser.php
+
+		-
+			message: '#^Method App\\Contracts\\NotifiableToUser\:\:userNotifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Contracts/NotifiableToUser.php
+
+		-
+			message: '#^Method App\\Contracts\\Propertyable\:\:customProperties\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Contracts/Propertyable.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and ''0'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/DTOs/StatsFilterDto.php
+
+		-
+			message: '#^Method App\\Enums\\DashboardPreset\:\:toOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/DashboardPreset.php
+
+		-
+			message: '#^Method App\\Enums\\FeedbackType\:\:toOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/FeedbackType.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Enums/StatsRangePreset.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Enums/StatsRangePreset.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangePreset\:\:getAllTimeRange\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangePreset.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangePreset\:\:range\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangePreset.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangePreset\:\:toOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangePreset.php
+
+		-
+			message: '#^Match arm comparison between \$this\(App\\Enums\\StatsRangeType\)&App\\Enums\\StatsRangeType\:\:YEAR and App\\Enums\\StatsRangeType\:\:YEAR is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 5
+			path: app/Enums/StatsRangeType.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangeType\:\:conditions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangeType.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangeType\:\:dateFormat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangeType.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangeType\:\:dateFormatClear\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangeType.php
+
+		-
+			message: '#^Method App\\Enums\\StatsRangeType\:\:getDAUDates\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/StatsRangeType.php
+
+		-
+			message: '#^Method Carbon\\CarbonInterface\:\:subYear\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: app/Enums/StatsRangeType.php
+
+		-
+			message: '#^Method App\\Enums\\SubscriptionInterval\:\:toOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/SubscriptionInterval.php
+
+		-
+			message: '#^Method App\\Enums\\UserNotificationFrequency\:\:toOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/UserNotificationFrequency.php
+
+		-
+			message: '#^Method App\\Enums\\UserNotificationType\:\:sorting\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/UserNotificationType.php
+
+		-
+			message: '#^Method App\\Enums\\UserNotificationType\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Enums/UserNotificationType.php
+
+		-
+			message: '#^Constructor of class App\\Exceptions\\ImportCanceledException has an unused parameter \$message\.$#'
+			identifier: constructor.unusedParameter
+			count: 1
+			path: app/Exceptions/ImportCanceledException.php
+
+		-
+			message: '#^Parameter \#3 \$previous of method Exception\:\:__construct\(\) expects Throwable\|null, App\\Exceptions\\Throwable\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Exceptions/ImportCanceledException.php
+
+		-
+			message: '#^Parameter \$previous of method App\\Exceptions\\ImportCanceledException\:\:__construct\(\) has invalid type App\\Exceptions\\Throwable\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Exceptions/ImportCanceledException.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Helpers/AppHelper.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$current_team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Helpers/AppHelper.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$timezone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Helpers/AppHelper.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>team_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Helpers/AppHelper.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Helpers/CacheHelper.php
+
+		-
+			message: '#^Method App\\Helpers\\FileHelper\:\:getFileExtensions4NonWebExecutables\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Helpers/FileHelper.php
+
+		-
+			message: '#^Method App\\Helpers\\ImportHelper\:\:getImportFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Helpers/ImportHelper.php
+
+		-
+			message: '#^Method Maatwebsite\\Excel\\Concerns\\ToCollection@anonymous/app/Helpers/ImportHelper\.php\:16\:\:collection\(\) has parameter \$rows with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Helpers/ImportHelper.php
+
+		-
+			message: '#^Parameter \#1 \$team of method App\\Services\\Ai\\TeamAiConfig\:\:activate\(\) expects App\\Models\\Team\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/AiChatController.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Ai\\Models\\Conversation\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/AiConversationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\StatsReadController\:\:buildMeta\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/StatsReadController.php
+
+		-
+			message: '#^Call to static method find\(\) on an unknown class JCFrane\\MdBlog\\Facades\\MdBlog\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/BlogController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CurrentTeamController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/CurrentTeamController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Support\\HigherOrderCollectionProxy\<string, Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\>\:\:toOption\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/CustomStatsRangePresetController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\DocsController\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/DocsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\DocsController\:\:__invoke\(\) has parameter \$path with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/DocsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\HomeController\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/HomeController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ImprintController\:\:show\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ImprintController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:tracksUsage\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/PowerUserController.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Sanctum\\PersonalAccessToken\:\:\$token_plain_part\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/ProjectController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProjectController\:\:tokenRegenerate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProjectController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ProjectController\:\:tokenView\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/ProjectController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:projects\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/SetupInstallController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SetupInstallController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/SetupInstallController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:projects\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/SetupProjectController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SetupProjectController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/SetupProjectController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SetupProjectController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/SetupProjectController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SetupTeamController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/SetupTeamController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\SetupTeamController\:\:store\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/SetupTeamController.php
+
+		-
+			message: '#^Parameter \#2 \$team of method App\\Actions\\Jetstream\\UpdateTeam\:\:update\(\) expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/SetupTeamController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StatsController\:\:groups\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/StatsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StatsController\:\:hideFreePlanWarning\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/StatsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StatsController\:\:hideReadDocsWarning\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/StatsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StatsController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/StatsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StatsController\:\:metric\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/StatsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\StatsController\:\:revenue\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/StatsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\TeamController\:\:destroy\(\) should return Illuminate\\Http\\RedirectResponse but returns Illuminate\\Http\\Response\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Controllers/TeamController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\TimezoneController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/TimezoneController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/UserNotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserNotificationController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/UserNotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserNotificationController\:\:trigger\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/UserNotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserNotificationController\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/UserNotificationController.php
+
+		-
+			message: '#^Parameter \#3 \$team of class App\\Notifications\\ProjectReportNotification constructor expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/UserNotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserProfileController\:\:sessions\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/UserProfileController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserSettingsController\:\:setDashboardPreset\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/UserSettingsController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\UserSettingsController\:\:setLoginSummary\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/UserSettingsController.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\AbstractDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/AbstractDataProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$projects\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/DataProviders/AbstractStatsDataProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$totalProjectsCount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/DataProviders/AbstractStatsDataProvider.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Support\\HigherOrderCollectionProxy\<string, Illuminate\\Database\\Eloquent\\Model, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\>\:\:toOption\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/DataProviders/AbstractStatsDataProvider.php
+
+		-
+			message: '#^Called ''first'' on Laravel collection, but could have been retrieved as a query\.$#'
+			identifier: larastan.noUnnecessaryCollectionCall
+			count: 1
+			path: app/Http/DataProviders/AbstractStatsDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\AbstractStatsDataProvider\:\:loadTeamStats\(\) should return App\\Models\\Team but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/DataProviders/AbstractStatsDataProvider.php
+
+		-
+			message: '#^Parameter \#1 \$team of method App\\Services\\SubscriptionService\:\:getPlanAlarm\(\) expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/DataProviders/AbstractStatsDataProvider.php
+
+		-
+			message: '#^Call to static method latest\(\) on an unknown class JCFrane\\MdBlog\\Facades\\MdBlog\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/DataProviders/BlogIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\BlogIndexDataProvider\:\:buildPaginator\(\) has parameter \$postCards with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/BlogIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\BlogIndexDataProvider\:\:buildPaginator\(\) return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/BlogIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\BlogIndexDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/BlogIndexDataProvider.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Campaign\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/DataProviders/CampaignShowDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\CampaignShowDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/CampaignShowDataProvider.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\LengthAwarePaginator\<int, array\<string, mixed\>\>\:\:through\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/DataProviders/CampaignsDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\CampaignsDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/CampaignsDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:buildImportTypes\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:buildMimeTypes\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:buildPermissions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:ensureTrackedJobFallback\(\) has parameter \$imports with generic class Illuminate\\Pagination\\LengthAwarePaginator but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:ensureTrackedJobFallback\(\) return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:loadImports\(\) return type with generic class Illuminate\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:loadProjects\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\DataImportIndexDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Illuminate\\Support\\Collection\<int,App\\Models\\Project\>\:\:prepend\(\) expects App\\Models\\Project, array\<string, int\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/DataProviders/DataImportIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\LoginSummaryDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/LoginSummaryDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\PowerUsersDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/PowerUsersDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\RevenueDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/RevenueDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\StatsGroupsDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/StatsGroupsDataProvider.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Team\:\:\$stats\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/DataProviders/StatsIndexDataProvider.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Team\:\:\$statsPrev\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/DataProviders/StatsIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\StatsIndexDataProvider\:\:campaignSummary\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/StatsIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\StatsIndexDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/StatsIndexDataProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/DataProviders/UserNotificationIndexDataProvider.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$projects\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/DataProviders/UserNotificationIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\UserNotificationIndexDataProvider\:\:loadNotifications\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/DataProviders/UserNotificationIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\DataProviders\\UserNotificationIndexDataProvider\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/DataProviders/UserNotificationIndexDataProvider.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\AllowIframeEmbedding\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Middleware/AllowIframeEmbedding.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\AllowIframeEmbedding\:\:handle\(\) has parameter \$request with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Middleware/AllowIframeEmbedding.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$client_version\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/Api/CheckClientVersion.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\Api\\CheckClientVersion\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Middleware/Api/CheckClientVersion.php
+
+		-
+			message: '#^Parameter \#1 \$team of method App\\Services\\SubscriptionService\:\:hasReachedMonthlyEventLimit\(\) expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Middleware/Api/EnsureWithinEventLimit.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/EnsureValidTeamOwner.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Http/Middleware/EnsureValidTeamOwner.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Http/Middleware/EnsureValidTeamOwner.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/ForwardToOnboarding.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:projects\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Middleware/ForwardToOnboarding.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:projects\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:tracksUsage\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Instanceof between App\\Models\\User\|null and App\\Models\\Project will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
+			count: 1
+			path: app/Http/Middleware/Mcp/EnsureMcpProjectToken.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Http/Middleware/Mcp/EnsureMcpProjectToken.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Team\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$profile_photo_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Parameter \#1 \$team of closure expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<\(int\|string\),array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Http/Middleware/ShareInertiaData.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/AiChatRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\Api\\StatsCustomEventRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/Api/StatsCustomEventRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\Api\\StatsCustomPropertyRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/Api/StatsCustomPropertyRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\Api\\StatsLoginRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/Api/StatsLoginRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\Api\\StatsPaymentRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/Api/StatsPaymentRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\Api\\StatsUserRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/Api/StatsUserRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\Api\\StatsVisitorRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/Api/StatsVisitorRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\FeedbackRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/FeedbackRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\ProjectRequest\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/ProjectRequest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:projects\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Requests/StatsFilterRequest.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\StatsFilterRequest\:\:sharedFilterRules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Requests/StatsFilterRequest.php
+
+		-
+			message: '#^Method App\\Imports\\BaseStatsImport\:\:getLowestImportedDate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Method App\\Imports\\BaseStatsImport\:\:model\(\) has parameter \$row with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Method App\\Imports\\BaseStatsImport\:\:prepareForValidation\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Method App\\Imports\\BaseStatsImport\:\:prepareForValidation\(\) has parameter \$index with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Method App\\Imports\\BaseStatsImport\:\:prepareForValidation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Method App\\Imports\\BaseStatsImport\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^PHPDoc tag @return with type Illuminate\\Database\\Eloquent\\Model\|null is incompatible with native type string\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Parameter \#1 \$team of method App\\Services\\SubscriptionService\:\:hasReachedMonthlyEventLimit\(\) expects App\\Models\\Team, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Imports/BaseStatsImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsPaymentsImport\:\:uniqueBy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/StatsPaymentsImport.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$timezone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsUserImport\:\:model\(\) has parameter \$row with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsUserImport\:\:prepareForValidation\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsUserImport\:\:prepareForValidation\(\) has parameter \$index with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsUserImport\:\:prepareForValidation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsUserImport\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Imports\\StatsUserImport\:\:uniqueBy\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Imports/StatsUserImport.php
+
+		-
+			message: '#^Method App\\Jobs\\BaseStatsTrack\:\:__construct\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/BaseStatsTrack.php
+
+		-
+			message: '#^Method App\\Jobs\\BaseStatsTrack\:\:tags\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/BaseStatsTrack.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Jobs/BaseStatsTrack.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Jobs/ProcessDataImportJob.php
+
+		-
+			message: '#^Parameter \#1 \$user of method Illuminate\\Contracts\\Auth\\Guard\:\:setUser\(\) expects Illuminate\\Contracts\\Auth\\Authenticatable, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Jobs/ProcessDataImportJob.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Jobs/TrackStatsCustomEvent.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\MustVerifyEmail\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Listeners/EmailVerificationListener.php
+
+		-
+			message: '#^Parameter \#1 \$user of class App\\Notifications\\WelcomeMailNotification constructor expects App\\Models\\User, Illuminate\\Contracts\\Auth\\MustVerifyEmail given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Listeners/EmailVerificationListener.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Support\\Fluent\:\:\$as\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Location/IpApiDriver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Support\\Fluent\:\:\$hosting\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Location/IpApiDriver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Support\\Fluent\:\:\$proxy\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Location/IpApiDriver.php
+
+		-
+			message: '#^Method App\\Location\\IpApiDriver\:\:hydrate\(\) has parameter \$location with generic class Illuminate\\Support\\Fluent but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Location/IpApiDriver.php
+
+		-
+			message: '#^Parameter \#1 \$value of static method Illuminate\\Support\\Facades\\Crypt\:\:encryptString\(\) expects string, int\<0, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mail/DataImportError.php
+
+		-
+			message: '#^Method App\\Mail\\FeedbackMail\:\:build\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Mail/FeedbackMail.php
+
+		-
+			message: '#^Method App\\Mail\\SubscriptionPlanAlarm\:\:__construct\(\) has parameter \$alarms with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Mail/SubscriptionPlanAlarm.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>currency" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Mcp/Tools/Concerns/ResolvesStatsFilters.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Mcp/Tools/Concerns/ResolvesStatsFilters.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/GetCampaignPerformance.php
+
+		-
+			message: '#^Method App\\Mcp\\Tools\\GetCampaignPerformance\:\:rangeSchema\(\) should return array\<string, Illuminate\\Contracts\\JsonSchema\\JsonSchema\> but returns array\<string, Illuminate\\JsonSchema\\Types\\IntegerType\|Illuminate\\JsonSchema\\Types\\StringType\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Mcp/Tools/GetCampaignPerformance.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/GetGroupedBreakdown.php
+
+		-
+			message: '#^Method App\\Mcp\\Tools\\GetGroupedBreakdown\:\:rangeSchema\(\) should return array\<string, Illuminate\\Contracts\\JsonSchema\\JsonSchema\> but returns array\<string, Illuminate\\JsonSchema\\Types\\IntegerType\|Illuminate\\JsonSchema\\Types\\StringType\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Mcp/Tools/GetGroupedBreakdown.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/GetKpiStats.php
+
+		-
+			message: '#^Method App\\Mcp\\Tools\\GetKpiStats\:\:rangeSchema\(\) should return array\<string, Illuminate\\Contracts\\JsonSchema\\JsonSchema\> but returns array\<string, Illuminate\\JsonSchema\\Types\\IntegerType\|Illuminate\\JsonSchema\\Types\\StringType\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Mcp/Tools/GetKpiStats.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/GetRecurringRevenueStats.php
+
+		-
+			message: '#^Method App\\Mcp\\Tools\\GetRecurringRevenueStats\:\:rangeSchema\(\) should return array\<string, Illuminate\\Contracts\\JsonSchema\\JsonSchema\> but returns array\<string, Illuminate\\JsonSchema\\Types\\IntegerType\|Illuminate\\JsonSchema\\Types\\StringType\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Mcp/Tools/GetRecurringRevenueStats.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/GetRetentionCohorts.php
+
+		-
+			message: '#^Method App\\Mcp\\Tools\\GetRetentionCohorts\:\:rangeSchema\(\) should return array\<string, Illuminate\\Contracts\\JsonSchema\\JsonSchema\> but returns array\<string, Illuminate\\JsonSchema\\Types\\IntegerType\|Illuminate\\JsonSchema\\Types\\StringType\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Mcp/Tools/GetRetentionCohorts.php
+
+		-
+			message: '#^Method App\\Mcp\\Tools\\SearchDocs\:\:schema\(\) should return array\<string, Illuminate\\Contracts\\JsonSchema\\JsonSchema\> but returns array\<string, Illuminate\\JsonSchema\\Types\\StringType\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Mcp/Tools/SearchDocs.php
+
+		-
+			message: '#^Cannot call method startOfDay\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Models/AdSpend.php
+
+		-
+			message: '#^Class App\\Models\\AdSpend uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/AdSpend.php
+
+		-
+			message: '#^Method App\\Models\\AdSpend\:\:campaign\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/AdSpend.php
+
+		-
+			message: '#^Method App\\Models\\AdSpend\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/AdSpend.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: app/Models/Announcement.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$project_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$timezone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Class App\\Models\\BaseStat uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Method App\\Models\\BaseStat\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Method App\\Models\\BaseStat\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Method App\\Models\\BaseStat\:\:time\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\BaseStat\:\:\$casts is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$casts\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Property App\\Models\\BaseStat\:\:\$casts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Property App\\Models\\BaseStat\:\:\$guarded \(array\<string\>\) does not accept default value of type false\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Models/BaseStat.php
+
+		-
+			message: '#^Class App\\Models\\Campaign uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Campaign.php
+
+		-
+			message: '#^Method App\\Models\\Campaign\:\:adSpends\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Campaign.php
+
+		-
+			message: '#^Method App\\Models\\Campaign\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Campaign.php
+
+		-
+			message: '#^Method App\\Models\\Campaign\:\:statsTrackCampaigns\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Campaign.php
+
+		-
+			message: '#^Method App\\Models\\Campaign\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Campaign.php
+
+		-
+			message: '#^Method App\\Models\\Campaign\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Campaign.php
+
+		-
+			message: '#^Class App\\Models\\ConnectedAccount uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ConnectedAccount.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\ConnectedAccount\:\:\$casts is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$casts\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ConnectedAccount.php
+
+		-
+			message: '#^Property App\\Models\\ConnectedAccount\:\:\$casts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/ConnectedAccount.php
+
+		-
+			message: '#^Property App\\Models\\ConnectedAccount\:\:\$dispatchesEvents type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/ConnectedAccount.php
+
+		-
+			message: '#^Property App\\Models\\ConnectedAccount\:\:\$fillable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/ConnectedAccount.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/CustomStatsRangePreset.php
+
+		-
+			message: '#^Cannot call method toSortWeight\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/CustomStatsRangePreset.php
+
+		-
+			message: '#^Method App\\Models\\CustomStatsRangePreset\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/CustomStatsRangePreset.php
+
+		-
+			message: '#^Method App\\Models\\CustomStatsRangePreset\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CustomStatsRangePreset.php
+
+		-
+			message: '#^Class App\\Models\\DataImport uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\DataImport\:\:createdBy\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\DataImport\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\DataImport\:\:rowsProgress\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\DataImport\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\DataImport\:\:trackedJob\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\DataImport\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Property ''rows_progress'' does not exist in model\.$#'
+			identifier: rules.modelAppends
+			count: 1
+			path: app/Models/DataImport.php
+
+		-
+			message: '#^Method App\\Models\\Passkey\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Passkey.php
+
+		-
+			message: '#^Method App\\Models\\Passkey\:\:user\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(App\\Models\\Passkey\)\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\Passkey\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Passkey.php
+
+		-
+			message: '#^Method App\\Models\\PersonalAccessToken\:\:tokenPlainPart\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PersonalAccessToken.php
+
+		-
+			message: '#^Class App\\Models\\Project uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:createTokenPlain\(\) has parameter \$abilities with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:getDefaultUserNotificationTypes\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:getUsages\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:hasFlags\(\) has parameter \$bits with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:hasUsages\(\) has parameter \$bits with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:userAlertNotifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:userNotifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\Project\:\:userReportNotifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Project.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomEvent\:\:ensureStatsUser\(\) has parameter \$uniqueProject with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsCustomEvent.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomEvent\:\:statsCustomEventName\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomEvent.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomEvent\:\:statsUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomEvent.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomEvent\:\:statsVisitor\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomEvent.php
+
+		-
+			message: '#^Class App\\Models\\StatsCustomEventName uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomEventName.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomEventName\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomEventName.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomEventName\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomEventName.php
+
+		-
+			message: '#^Property App\\Models\\StatsCustomEventName\:\:\$guarded \(array\<string\>\) does not accept default value of type false\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Models/StatsCustomEventName.php
+
+		-
+			message: '#^Class App\\Models\\StatsCustomProperty uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomProperty\:\:name\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomProperty\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomProperty\:\:propertyable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomProperty\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomProperty\:\:value\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Property App\\Models\\StatsCustomProperty\:\:\$guarded \(array\<string\>\) does not accept default value of type false\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Models/StatsCustomProperty.php
+
+		-
+			message: '#^Class App\\Models\\StatsCustomPropertyName uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyName.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyName\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyName.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyName\:\:properties\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyName.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyName\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyName.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyName\:\:values\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyName.php
+
+		-
+			message: '#^Property App\\Models\\StatsCustomPropertyName\:\:\$guarded \(array\<string\>\) does not accept default value of type false\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Models/StatsCustomPropertyName.php
+
+		-
+			message: '#^Class App\\Models\\StatsCustomPropertyValue uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyValue.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyValue\:\:name\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyValue.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyValue\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyValue.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyValue\:\:properties\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyValue.php
+
+		-
+			message: '#^Method App\\Models\\StatsCustomPropertyValue\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsCustomPropertyValue.php
+
+		-
+			message: '#^Property App\\Models\\StatsCustomPropertyValue\:\:\$guarded \(array\<string\>\) does not accept default value of type false\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Models/StatsCustomPropertyValue.php
+
+		-
+			message: '#^Method App\\Models\\StatsDeviceBrowser\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsDeviceBrowser.php
+
+		-
+			message: '#^Method App\\Models\\StatsDeviceBrowser\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsDeviceBrowser.php
+
+		-
+			message: '#^Method App\\Models\\StatsDevicePlatform\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsDevicePlatform.php
+
+		-
+			message: '#^Method App\\Models\\StatsDevicePlatform\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsDevicePlatform.php
+
+		-
+			message: '#^Method App\\Models\\StatsDeviceType\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsDeviceType.php
+
+		-
+			message: '#^Method App\\Models\\StatsDeviceType\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsDeviceType.php
+
+		-
+			message: '#^Method App\\Models\\StatsLocationCity\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLocationCity.php
+
+		-
+			message: '#^Method App\\Models\\StatsLocationCity\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLocationCity.php
+
+		-
+			message: '#^Method App\\Models\\StatsLocationCountry\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLocationCountry.php
+
+		-
+			message: '#^Method App\\Models\\StatsLocationCountry\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLocationCountry.php
+
+		-
+			message: '#^Method App\\Models\\StatsLocationRegion\:\:project\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLocationRegion.php
+
+		-
+			message: '#^Method App\\Models\\StatsLocationRegion\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLocationRegion.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ip\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_device_type_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_location_country_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_agent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Method App\\Models\\StatsLogin\:\:ensureStatsUser\(\) has parameter \$uniqueProject with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Method App\\Models\\StatsLogin\:\:ip\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Method App\\Models\\StatsLogin\:\:statsUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Method App\\Models\\StatsLogin\:\:userAgent\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsLogin.php
+
+		-
+			message: '#^Class App\\Models\\StatsPageEntry uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsPageEntry.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/StatsPayment.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:userAlertNotifications\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/StatsPayment.php
+
+		-
+			message: '#^Method App\\Models\\StatsPayment\:\:ensureStatsUser\(\) has parameter \$uniqueProject with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsPayment.php
+
+		-
+			message: '#^Method App\\Models\\StatsPayment\:\:statsUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsPayment.php
+
+		-
+			message: '#^Method App\\Models\\StatsPayment\:\:statsVisitor\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsPayment.php
+
+		-
+			message: '#^Property App\\Models\\StatsPayment\:\:\$casts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsPayment.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackCampaign\:\:campaign\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackCampaign.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackCampaign\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackCampaign.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackCampaign\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsTrackCampaign.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackContent\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackContent.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackMedium\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackMedium.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackReferer\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackReferer.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackSource\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackSource.php
+
+		-
+			message: '#^Method App\\Models\\StatsTrackTerm\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsTrackTerm.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:userAlertNotifications\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:customProperties\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:getStatsAttribute\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:ip\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:pageEntry\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:setReferer\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsDeviceBrowser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsDevicePlatform\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsDeviceType\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsLocationCity\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsLocationCountry\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsLocationRegion\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsLogins\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsPageEntry\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsPayments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsRelations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsTrackCampaign\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsTrackContent\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsTrackMedium\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsTrackReferer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsTrackSource\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:statsTrackTerm\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:trackReferer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:trackSource\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Method App\\Models\\StatsUser\:\:userAgent\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Unsafe call to private method App\\Models\\StatsUser\:\:handleStatsTypes\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 3
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Unsafe call to private method App\\Models\\StatsUser\:\:resolveTrackingLookupId\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: app/Models/StatsUser.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:customProperties\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:getStatsAttribute\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:ip\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:pageEntry\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:setReferer\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsDeviceBrowser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsDevicePlatform\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsDeviceType\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsLocationCity\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsLocationCountry\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsLocationRegion\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsPageEntry\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsRelations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsTrackCampaign\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsTrackContent\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsTrackMedium\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsTrackReferer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsTrackSource\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:statsTrackTerm\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:trackReferer\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:trackSource\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Method App\\Models\\StatsVisitor\:\:userAgent\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Unsafe call to private method App\\Models\\StatsVisitor\:\:handleStatsTypes\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 3
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Unsafe call to private method App\\Models\\StatsVisitor\:\:resolveTrackingLookupId\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: app/Models/StatsVisitor.php
+
+		-
+			message: '#^Class App\\Models\\Team uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:billingOwner\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:projects\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:statsLogins\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:statsPayments\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:statsUsers\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\TeamInvitation\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamInvitation.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Models/TeamInvitation.php
+
+		-
+			message: '#^Class App\\Models\\UserBase uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:canAccessPanel\(\) has parameter \$panel with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:canImpersonate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:customStatsRangePresets\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:getPlanConfig\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:makeAdmin\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:profilePhotoUrl\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:settings\(\) return type with generic class Illuminate\\Database\\Eloquent\\Casts\\Attribute does not specify its types\: TGet, TSet$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:updateSettings\(\) has parameter \$key with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserBase\:\:updateSettings\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\UserBase\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\UserBase\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Parameter \#1 \$user of job class App\\Jobs\\QueuedVerifyEmailJob constructor expects App\\Models\\User in App\\Jobs\\QueuedVerifyEmailJob\:\:dispatch\(\), \$this\(App\\Models\\UserBase\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Property ''profile_photo_url'' does not exist in model\.$#'
+			identifier: rules.modelAppends
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Unable to resolve the template type T in call to static method Illuminate\\Database\\Eloquent\\Casts\\Attribute\<mixed,mixed\>\:\:get\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Models/UserBase.php
+
+		-
+			message: '#^Method App\\Models\\UserNotification\:\:notifiable\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserNotification.php
+
+		-
+			message: '#^Method App\\Models\\UserNotification\:\:uniqueIds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/UserNotification.php
+
+		-
+			message: '#^Method App\\Models\\UserNotification\:\:updateSettings\(\) has parameter \$key with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserNotification.php
+
+		-
+			message: '#^Method App\\Models\\UserNotification\:\:updateSettings\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/UserNotification.php
+
+		-
+			message: '#^Method App\\Models\\UserNotification\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/UserNotification.php
+
+		-
+			message: '#^Property App\\Models\\UserNotification\:\:\$guarded \(array\<string\>\) does not accept default value of type false\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: app/Models/UserNotification.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/ProjectAlertPaymentNotification.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/ProjectAlertRegistrationNotification.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ProjectReportNotification\:\:getRange\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ProjectReportNotification\:\:getStats\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ProjectReportNotification\:\:getStatsGroups\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Parameter \#1 \$user of method Illuminate\\Contracts\\Auth\\Guard\:\:setUser\(\) expects Illuminate\\Contracts\\Auth\\Authenticatable, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: app/Notifications/ProjectReportNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\UserDeletedNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/UserDeletedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\UserDeletedNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/UserDeletedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\UserDeletedNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/UserDeletedNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\UserInactiveNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/UserInactiveNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\UserInactiveNotification\:\:via\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/UserInactiveNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\UserInactiveNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/UserInactiveNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\WelcomeMailNotification\:\:via\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/WelcomeMailNotification.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:allUsers\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Observers/ProjectObserver.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\UserNotification\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Observers/ProjectObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$project_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Observers/StatsObserver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Observers/StatsObserver.php
+
+		-
+			message: '#^Call to function method_exists\(\) with App\\Models\\UserBase and ''connectedAccounts'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Observers/UserObserver.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasUsages\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Policies/CampaignPolicy.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:tracksUsage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Policies/CampaignPolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Policies/DataImportPolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Policies/ProjectPolicy.php
+
+		-
+			message: '#^Call to static method fallbackUsing\(\) on an unknown class Spatie\\OgImage\\Facades\\OgImage\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 2
+			path: app/Providers/FortifyServiceProvider.php
+
+		-
+			message: '#^Parameter \#1 \$callback of static method Laravel\\Passkeys\\Passkeys\:\:authorizeLoginUsing\(\) expects \(callable\(Illuminate\\Http\\Request, Laravel\\Passkeys\\Contracts\\PasskeyUser, Laravel\\Passkeys\\Passkey\)\: bool\)\|null, Closure\(Illuminate\\Http\\Request, App\\Models\\User\|null\)\: bool given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Providers/FortifyServiceProvider.php
+
+		-
+			message: '#^Instanceof between App\\Models\\User\|null and App\\Models\\Project will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
+			count: 2
+			path: app/Providers/RouteServiceProvider.php
+
+		-
+			message: '#^Call to static method billable\(\) on an unknown class Spark\\Spark\.$#'
+			identifier: class.notFound
+			count: 2
+			path: app/Providers/SparkServiceProvider.php
+
+		-
+			message: '#^Call to static method useTransactionModel\(\) on an unknown class Laravel\\Paddle\\Cashier\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Providers/SparkServiceProvider.php
+
+		-
+			message: '#^Cannot assign offset string to Illuminate\\Support\\Collection\<\*NEVER\*, \*NEVER\*\>\.$#'
+			identifier: offsetAssign.dimType
+			count: 1
+			path: app/PulseUsers.php
+
+		-
+			message: '#^Offset string does not exist on Illuminate\\Support\\Collection\<int, Illuminate\\Contracts\\Auth\\Authenticatable\>\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: app/PulseUsers.php
+
+		-
+			message: '#^Parameter \#1 \$columns of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\User\>\:\:first\(\) expects array\<int, Illuminate\\Contracts\\Database\\Query\\Expression\|string\>\|Illuminate\\Contracts\\Database\\Query\\Expression\|string, Closure given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/PulseUsers.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\AdSpend\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Campaign\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\StatsTrackCampaign\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasUsages\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Cannot call method toDateString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Method App\\Services\\AdSpendService\:\:paginatedForCampaign\(\) should return Illuminate\\Contracts\\Pagination\\LengthAwarePaginator\<int, array\<string, mixed\>\> but returns Illuminate\\Pagination\\LengthAwarePaginator\<int, array\{uuid\: mixed, amount\: int, currency\: string, starts_on\: mixed, ends_on\: mixed\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\StatsTrackCampaign\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\AdSpend\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\) expects \(callable\(Illuminate\\Database\\Eloquent\\Model\)\: int\)\|string\|null, Closure\(App\\Models\\AdSpend\)\: int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\StatsTrackCampaign\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\AdSpend\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/AdSpendService.php
+
+		-
+			message: '#^Method App\\Services\\Ai\\AiChatStreamer\:\:response\(\) has parameter \$events with no value type specified in iterable type iterable\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/Ai/AiChatStreamer.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Ai\\Models\\Conversation\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Ai\\Models\\ConversationMessage\:\:\$content\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Ai\\Models\\ConversationMessage\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Access to an undefined property Laravel\\Ai\\Models\\ConversationMessage\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Laravel\\Ai\\Models\\ConversationMessage\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,Laravel\\Ai\\Models\\ConversationMessage\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AiConversationService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:tracksUsage\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,array\<string, \(Closure\)\|string\>\>\:\:filter\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 2
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Return type of call to function collect contains unresolvable type\.$#'
+			identifier: function.unresolvableReturnType
+			count: 2
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, \(Closure\)\|string\>\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, \(Closure\)\|string\>\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, \(Closure\)\|string\>\>\:\:values\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<string,\(Closure\)\|string\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Services/Ai/AppPageCatalog.php
+
+		-
+			message: '#^Parameter \#2 \$terms of method App\\Services\\Ai\\DocsSearchService\:\:scoreFile\(\) expects Illuminate\\Support\\Collection\<int, string\>, Illuminate\\Support\\Collection\<int, string\|false\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Ai/DocsSearchService.php
+
+		-
+			message: '#^Call to static method highlight\(\) on an unknown class Spatie\\ShikiPhp\\Shiki\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/CodeHighlightService.php
+
+		-
+			message: '#^Call to static method getVisitorHash\(\) on an unknown class SimpleStatsIo\\LaravelClient\\Facades\\SimplestatsClient\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/CustomEventTrackingService.php
+
+		-
+			message: '#^Call to static method trackCustomEvent\(\) on an unknown class SimpleStatsIo\\LaravelClient\\Facades\\SimplestatsClient\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/CustomEventTrackingService.php
+
+		-
+			message: '#^Instantiated class SimpleStatsIo\\LaravelClient\\Visitor not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/CustomEventTrackingService.php
+
+		-
+			message: '#^Method App\\Services\\LocationService\:\:hydrate\(\) has parameter \$cached with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/LocationService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:tracksUsage\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Services/LoginSummaryService.php
+
+		-
+			message: '#^Method App\\Services\\RefererService\:\:getTopReferers\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/RefererService.php
+
+		-
+			message: '#^Property App\\Services\\RefererService\:\:\$topReferers with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/RefererService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$project_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$time\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$timezone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Call to an undefined method Stringable\:\:toString\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:applyContinuousLTAggregation\(\) has parameter \$dataArray with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:formatAggregatedData\(\) has parameter \$aggregatedData with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:formatAggregatedData\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getAggregatedData\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getAggregatedGroupedData\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getAggregatedPropertyData\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getCarryForwardBaseline\(\) has parameter \$filterConditions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getFilterConditions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getMissingAggregatedData\(\) has parameter \$aggregatedData with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getMissingAggregatedData\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getRawData\(\) has parameter \$filterConditions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:getRawData\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:refreshSelectedAt\(\) has parameter \$ids with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsAggregationsService\:\:storeAggregatedData\(\) has parameter \$data with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>timezone" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/StatsAggregationsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsCustomPropertyService\:\:getPropertyDimensions\(\) should return Illuminate\\Support\\Collection\<int, array\{id\: int, name\: string\}\> but returns Illuminate\\Support\\Collection\<int, array\{id\: int\<0, max\>, name\: string\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/StatsCustomPropertyService.php
+
+		-
+			message: '#^Parameter \#1 \$name of static method App\\Services\\StatsCustomPropertyService\:\:equivalentNameIds\(\) expects App\\Models\\StatsCustomPropertyName, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/StatsCustomPropertyService.php
+
+		-
+			message: '#^Method App\\Services\\StatsDetailsService\:\:applyStatsDetails\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsDetailsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsDetailsService\:\:getAllFilterFor\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsDetailsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsDetailsService\:\:getRangeTypes\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsDetailsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsDetailsService\:\:getRaw\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsDetailsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsDetailsService\:\:getStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsDetailsService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$project_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$team_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\BaseStat\:\:\$time\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_device_browser_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_device_platform_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_device_type_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_location_city_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_location_country_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_location_region_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_page_entry_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_track_campaign_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_track_content_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_track_medium_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_track_referer_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_track_source_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$stats_track_term_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Method App\\Services\\StatsIncrementService\:\:openBucketRows\(\) should return Illuminate\\Support\\Collection\<int, App\\Models\\StatsAggregation\> but returns Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Method App\\Services\\StatsIncrementService\:\:withinBucket\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Method App\\Services\\StatsIncrementService\:\:withinBucket\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsIncrementService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$events_count_overall\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:asOptions\(\) has parameter \$skip with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:asOptions\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:formatFilters\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getComparisonTypes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getFilterStatsTypeNames\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsModels\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsStartingAt\(\) has parameter \$filter with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsTypes\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsTypesFlat\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsTypesFlatMap\(\) has parameter \$skip with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsTypesFlatMap\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsTypesFormatted\(\) has parameter \$skip with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:getStatsTypesFormatted\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:safeDivision\(\) has parameter \$denominator with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsService\:\:safeDivision\(\) has parameter \$numerator with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Property App\\Services\\StatsService\:\:\$statsModels type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Property App\\Services\\StatsService\:\:\$statsTypes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Unable to resolve the template type TFlatMapKey in call to method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:flatMap\(\)$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Unable to resolve the template type TFlatMapValue in call to method Illuminate\\Support\\Collection\<\(int\|string\),mixed\>\:\:flatMap\(\)$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 2
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/StatsService.php
+
+		-
+			message: '#^Method App\\Services\\StatsUserService\:\:powerUsers\(\) return type with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/StatsUserService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:sparkPlan\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Call to static method previewPrices\(\) on an unknown class Laravel\\Paddle\\Cashier\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:getDiscount\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:getFrontendPlans\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:getPlanAlarm\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:getPlanIdToPrices\(\) has parameter \$planIds with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Method App\\Services\\SubscriptionService\:\:getPlanIdToPrices\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 3
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 3
+			path: app/Services/SubscriptionService.php
+
+		-
+			message: '#^Parameter \#2 \$rows of method App\\Services\\UserRecoveryDumpService\:\:section\(\) expects Illuminate\\Support\\Collection\<int, object\>, Illuminate\\Support\\Collection\<int, stdClass\> given\.$#'
+			identifier: argument.type
+			count: 23
+			path: app/Services/UserRecoveryDumpService.php
+
+		-
+			message: '#^Method App\\Validators\\BaseStatsValidator\:\:prepareForValidation\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/BaseStatsValidator.php
+
+		-
+			message: '#^Method App\\Validators\\BaseStatsValidator\:\:prepareForValidation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/BaseStatsValidator.php
+
+		-
+			message: '#^Method App\\Validators\\BaseStatsValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/BaseStatsValidator.php
+
+		-
+			message: '#^Method App\\Validators\\BaseStatsValidator\:\:validate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Validators/BaseStatsValidator.php
+
+		-
+			message: '#^Method App\\Validators\\BaseStatsValidator\:\:validate\(\) has parameter \$input with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Validators/BaseStatsValidator.php
+
+		-
+			message: '#^Method App\\Validators\\BaseStatsValidator\:\:validateImportFields\(\) has parameter \$importFields with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/BaseStatsValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsCustomEventValidator\:\:prepareForValidation\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsCustomEventValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsCustomEventValidator\:\:prepareForValidation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsCustomEventValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsCustomEventValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsCustomEventValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsCustomPropertyValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsCustomPropertyValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsLoginValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsLoginValidator.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$currency\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Validators/StatsPaymentValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsPaymentValidator\:\:prepareForValidation\(\) has parameter \$input with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsPaymentValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsPaymentValidator\:\:prepareForValidation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsPaymentValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsPaymentValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsPaymentValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsUserValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsUserValidator.php
+
+		-
+			message: '#^Property App\\Validators\\StatsUserValidator\:\:\$trackingValidation type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsUserValidator.php
+
+		-
+			message: '#^Method App\\Validators\\StatsVisitorValidator\:\:rules\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsVisitorValidator.php
+
+		-
+			message: '#^Property App\\Validators\\StatsVisitorValidator\:\:\$trackingValidation type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Validators/StatsVisitorValidator.php
+
+		-
+			message: '#^Method App\\ValueObjects\\UserNotificationTypeObject\:\:__construct\(\) has parameter \$settings with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/ValueObjects/UserNotificationTypeObject.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>team_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: database/factories/AdSpendFactory.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>team_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: database/factories/CampaignFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\DataImportFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/DataImportFactory.php
+
+		-
+			message: '#^PHPDoc type string of property Database\\Factories\\DataImportFactory\:\:\$model is not covariant with PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<Illuminate\\Database\\Eloquent\\Model\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/DataImportFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\ProjectFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/ProjectFactory.php
+
+		-
+			message: '#^PHPDoc type string of property Database\\Factories\\ProjectFactory\:\:\$model is not covariant with PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<Illuminate\\Database\\Eloquent\\Model\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/ProjectFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\StatsCustomEventFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/StatsCustomEventFactory.php
+
+		-
+			message: '#^Method Database\\Factories\\StatsCustomEventFactory\:\:initialize\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: database/factories/StatsCustomEventFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\StatsCustomEventNameFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/StatsCustomEventNameFactory.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: database/factories/StatsCustomPropertyFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\StatsLoginFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/StatsLoginFactory.php
+
+		-
+			message: '#^PHPDoc type string of property Database\\Factories\\StatsLoginFactory\:\:\$model is not covariant with PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<Illuminate\\Database\\Eloquent\\Model\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/StatsLoginFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\StatsPaymentFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/StatsPaymentFactory.php
+
+		-
+			message: '#^Method Database\\Factories\\StatsPaymentFactory\:\:initialize\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: database/factories/StatsPaymentFactory.php
+
+		-
+			message: '#^PHPDoc type string of property Database\\Factories\\StatsPaymentFactory\:\:\$model is not covariant with PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<Illuminate\\Database\\Eloquent\\Model\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/StatsPaymentFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\StatsUserFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/StatsUserFactory.php
+
+		-
+			message: '#^Method Database\\Factories\\StatsUserFactory\:\:initialize\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: database/factories/StatsUserFactory.php
+
+		-
+			message: '#^PHPDoc type string of property Database\\Factories\\StatsUserFactory\:\:\$model is not covariant with PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<Illuminate\\Database\\Eloquent\\Model\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/StatsUserFactory.php
+
+		-
+			message: '#^Class Database\\Factories\\StatsVisitorFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/StatsVisitorFactory.php
+
+		-
+			message: '#^PHPDoc type string of property Database\\Factories\\StatsVisitorFactory\:\:\$model is not covariant with PHPDoc type class\-string\<Illuminate\\Database\\Eloquent\\Model\> of overridden property Illuminate\\Database\\Eloquent\\Factories\\Factory\<Illuminate\\Database\\Eloquent\\Model\>\:\:\$model\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: database/factories/StatsVisitorFactory.php
+
+		-
+			message: '#^Call to static method enabled\(\) on an unknown class Database\\Factories\\Providers\.$#'
+			identifier: class.notFound
+			count: 1
+			path: database/factories/UserFactory.php
+
+		-
+			message: '#^Parameter \#1 \$state of method Illuminate\\Database\\Eloquent\\Factories\\Factory\<App\\Models\\ConnectedAccount\>\:\:state\(\) expects array\<string, mixed\>\|\(callable\(array\<string, mixed\>, Illuminate\\Database\\Eloquent\\Model\|null\)\: array\<string, mixed\>\), Closure\(array, App\\Models\\User\)\: array\{provider\: string, user_id\: int\<0, max\>\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/factories/UserFactory.php
+
+		-
+			message: '#^Parameter \#1 \$state of method Illuminate\\Database\\Eloquent\\Factories\\Factory\<App\\Models\\Team\>\:\:state\(\) expects array\<string, mixed\>\|\(callable\(array\<string, mixed\>, Illuminate\\Database\\Eloquent\\Model\|null\)\: array\<string, mixed\>\), Closure\(array, App\\Models\\User\)\: array\{name\: non\-falsy\-string, user_id\: int\<0, max\>, personal_team\: true\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/factories/UserFactory.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: database/seeders/DatabaseSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: database/seeders/FutureStatsSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$time\.$#'
+			identifier: property.notFound
+			count: 5
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$timezone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Method Database\\Seeders\\HistoricalStatsSeeder\:\:getUserSeedCount\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Support\\Collection\<int, array\<string, mixed\>\>\>\:\:each\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Parameter \#2 \$statsUser of method Database\\Seeders\\HistoricalStatsSeeder\:\:seedSubscription\(\) expects App\\Models\\StatsUser, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Return type of call to function collect contains unresolvable type\.$#'
+			identifier: function.unresolvableReturnType
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Support\\Collection\<int,array\<string, mixed\>\>\:\:all\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: database/seeders/HistoricalStatsSeeder.php
+
+		-
+			message: '#^Parameter \#1 \$input of method App\\Actions\\Fortify\\CreateNewUser\:\:create\(\) expects array\<string, string\>, array\<string, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: database/seeders/TestUserSeeder.php

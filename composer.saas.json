@@ -50,6 +50,8 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
+        "driftingly/rector-laravel": "^2.0",
+        "larastan/larastan": "^3.0",
         "laravel/boost": "^2.0",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
@@ -58,6 +60,7 @@
         "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^3.0",
         "pestphp/pest-plugin-laravel": "^3.0",
+        "rector/rector": "^2.0",
         "spatie/laravel-ignition": "^2.0",
         "spatie/pest-plugin-route-testing": "^1.0"
     },
@@ -88,7 +91,24 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "check": [
+            "@test:lint",
+            "@test:types",
+            "@test:refactor",
+            "@test:arch"
+        ],
+        "lint": "pint",
+        "refactor": "rector",
+        "test": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan test --compact"
+        ],
+        "test:arch": "pest --testsuite=Arch",
+        "test:lint": "pint --test",
+        "test:refactor": "rector --dry-run",
+        "test:types": "phpstan analyse --memory-limit=2G",
+        "types:generate-baseline": "@test:types --generate-baseline"
     },
     "extra": {
         "laravel": {
