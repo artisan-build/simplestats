@@ -1,6 +1,9 @@
-# Welcome to SimpleStats.io!
+# SimpleStats
 
-This is the official SimpleStats.io application repository.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+Open source, server-side analytics for Laravel. Self-host it for free, or use the hosted version at [simplestats.io](https://simplestats.io).
 
 ![screenshot](https://simplestats.io/images/screenshot.png)
 
@@ -27,7 +30,7 @@ SimpleStats is a regular Laravel application; it's build on top of Laravel 11 an
 ### Repository
 
 ```bash
-git clone git@github.com:simplestats-io/app.git ./simplestats
+git clone https://github.com/simplestats-io/app.git ./simplestats
 
 cd simplestats
 
@@ -38,17 +41,15 @@ mkdir -p storage/framework/views
 
 ### Dependencies
 
-Next, install the dependencies for the self-hosted version using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
+Next, install the dependencies using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
 
 ```bash
-COMPOSER=composer.self-hosted.json composer install
+composer install
 ```
 
 ```bash
 npm install
 ```
-
-**Note:** for self-hosted you always have to use the self-hosted composer json file!
 
 ### Branding and Environment
 
@@ -116,20 +117,17 @@ In your application you want to track, make sure to install the SimpleStats [cli
 
 ## Deployment
 
-The project includes a zero-downtime deploy script at `scripts/deploy.sh`. It handles cloning, linking shared resources (.env, storage, packages), installing dependencies, running migrations, and rotating old releases.
+SimpleStats is a standard Laravel application, so deploy it the way you deploy your other Laravel apps (Forge, Cloud, Docker, plain servers, ...). Make sure the queue workers and the scheduler are running. See the [self-hosted docs](https://simplestats.io/docs/self-hosted.html) for queue, scaling and database notes.
 
-```bash
-bash <base-dir>/current/scripts/deploy.sh \
-  --keep-releases=10 \
-  --restart-horizon \
-  --restart-fpm
-```
-
-All flags are optional. See `scripts/deploy.sh` for details.
+`scripts/deploy.sh` and `composer.saas.json` belong to the hosted version at simplestats.io. You don't need them for self-hosting.
 
 ## Contributing
 
-If you have feature ideas or bug fixes, feel free to create a pull request. For larger changes, please discuss them with me first. You can email your idea to zacharias@laracraft.tech or create a new issue describing it in detail.
+Bug fixes, features and docs improvements are welcome. Please read the [contribution guide](CONTRIBUTING.md) first. For larger changes, open an issue to discuss the idea before you start.
+
+## Security
+
+Please don't report security issues in public issues. See [SECURITY.md](SECURITY.md).
 
 ## Credits
 

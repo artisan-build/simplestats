@@ -118,7 +118,7 @@ fi
 # --- Install dependencies ----------------------------------------------------
 
 printf '\nℹ️ Install Composer Dependency Updates\n'
-$FORGE_COMPOSER install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+COMPOSER=composer.saas.json $FORGE_COMPOSER install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 printf '\nℹ️ Installing NPM dependencies based on "./package-lock.json"\n'
 npm ci

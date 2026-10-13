@@ -13,6 +13,7 @@ import CashCoinIcon from "bootstrap-icons/icons/cash-coin.svg?component";
 import BarChartStepsIcon from "bootstrap-icons/icons/bar-chart-steps.svg?component";
 import CurrencyExchangeIcon from "bootstrap-icons/icons/currency-exchange.svg?component";
 import StarsIcon from "bootstrap-icons/icons/stars.svg?component";
+import GithubIcon from "bootstrap-icons/icons/github.svg?component";
 
 import SectionHeader from "@/Pages/Home/Partials/SectionHeader.vue";
 
@@ -139,6 +140,14 @@ const f = {
                     <h3 class="text-2xl font-bold tracking-tight">{{ f.privacy.title() }}</h3>
                     <div class="text-sm font-semibold uppercase tracking-widest text-indigo-200">{{ $t('GDPR compliant') }}</div>
                     <p class="text-base leading-relaxed text-indigo-100">{{ f.privacy.descr() }}</p>
+                    <div class="mt-auto border-t border-white/15 pt-4">
+                        <div class="text-sm font-semibold uppercase tracking-widest text-indigo-200">{{ $t('Open source') }}</div>
+                        <p class="mt-2 text-sm leading-relaxed text-indigo-100">{{ $t('The code is public, so you can verify exactly what we collect.') }}</p>
+                        <a href="https://github.com/simplestats-io/app" target="_blank" class="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-indigo-200">
+                            <GithubIcon class="size-4" />
+                            {{ $t('View on GitHub') }}
+                        </a>
+                    </div>
                 </li>
 
                 <!-- Row: Reporting wide + UTMs -->

@@ -44,3 +44,4 @@ boost.json
 .mcp.json
 .agents/skills/
 .claude/skills/
+.claude/launch.json

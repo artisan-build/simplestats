@@ -31,7 +31,6 @@ onUnmounted(() => {
             <div class="flex items-center gap-6">
                 <a :href="localizedPath('/') + '#features'" class="hidden lg:block hover:text-indigo-600">{{ $t('Features') }}</a>
                 <a :href="localizedPath('/') + '#pricing'" class="hidden lg:block hover:text-indigo-600">{{ $t('Pricing') }}</a>
-                <a :href="localizedPath('/') + '#self-hosted'" class="hidden lg:block hover:text-indigo-600">{{ $t('Self-Hosted') }}</a>
 
                 <a href="/docs" class="px-3 hover:text-indigo-600">{{ $t('Docs') }}</a>
 

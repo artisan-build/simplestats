@@ -1,14 +1,26 @@
 # Overview (Self-hosted)
 
-_**SimpleStats**_ is also available as a Self-hosted version.
+_**SimpleStats**_ is open source. The code is available on [GitHub](https://github.com/simplestats-io/app) under the [AGPL-3.0 license](https://github.com/simplestats-io/app/blob/main/LICENSE), and technical teams can run it on their own infrastructure.
 
 ## SaaS or Self‑hosted?
 
-The **SaaS version** is our recommended solution - no installation required, automatic updates, and dedicated support. It's ideal if you want a seamless experience and quick results.
+Both run the same code with the same features. The difference is who takes care of running it.
 
-The **Self‑hosted version** gives you total control over your data and deployment. It's great for teams with technical expertise, but keep in mind that setup, maintenance, and troubleshooting are your responsibility. It doesn't include dedicated support.
+| | SaaS | Self‑hosted |
+|---|---|---|
+| **Setup** | Sign up and add your API token, done in minutes | Server, PHP, PostgreSQL, Redis/queue workers, scheduler, web server and TLS |
+| **Updates** | Automatic, new features as soon as they ship | You pull, migrate and deploy every release yourself |
+| **Backups** | Daily, handled by us | Your responsibility |
+| **Uptime & scaling** | Monitored and scaled by us | Your responsibility, including queue sizing under load |
+| **Security** | Patches applied by us | You keep PHP, the OS and all dependencies up to date |
+| **Support** | Dedicated support by the team | Community support via [GitHub issues](https://github.com/simplestats-io/app/issues) |
+| **Cost** | Free plan, paid plans by monthly events | Free license, you pay for and run the infrastructure |
 
-We recommend the SaaS version for anyone looking for a smooth, worry‑free analytics experience.
+For most teams, including larger organizations, the **SaaS version** is the better fit: it's the fastest way to reliable numbers, your data is hosted in the EU, and you can focus on your product instead of your analytics servers. If you need full control over your infrastructure and have the experience to run a production Laravel application, you can self-host SimpleStats instead.
+
+## Installation
+
+SimpleStats is a regular Laravel application. Clone the [repository](https://github.com/simplestats-io/app) and follow the installation steps in its [README](https://github.com/simplestats-io/app#installation).
 
 ## Requirements
 
@@ -70,8 +82,8 @@ If you run a headless SPA in front of your Laravel API, or use stateless auth (J
 
 ## License
 
-To use _**SimpleStats**_, a valid license is required.
+_**SimpleStats**_ is free and open source software, licensed under the [GNU Affero General Public License v3.0](https://github.com/simplestats-io/app/blob/main/LICENSE). You can use it for free, including commercially. If you modify SimpleStats and make it available to others over a network, you have to publish your changes under the same license.
 
-Please get in touch with our sales team to learn more:
-<a href="/#self-hosted" target="_blank">Contact Sales</a>
+## Contributing
 
+Bug fixes, features and docs improvements are welcome. See the [contribution guide](https://github.com/simplestats-io/app/blob/main/CONTRIBUTING.md) to get started.

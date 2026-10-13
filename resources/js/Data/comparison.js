@@ -104,4 +104,12 @@ export const comparisonFeatures = [
         baremetrics: false,
         ga: false,
     },
+    {
+        label: 'Open source',
+        simplestats: true,
+        plausible: true,
+        fathom: false,
+        baremetrics: false,
+        ga: false,
+    },
 ];

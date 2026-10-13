@@ -27,6 +27,8 @@ class SubscriptionService
 
     const PLAN_ENTERPRISE = 'Enterprise';
 
+    const PLAN_SELF_HOSTED = 'Self-Hosted';
+
     const UNLIMITED_AMOUNT = -1;
 
     const ALARM_PERCENTAGE = 70;

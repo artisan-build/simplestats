@@ -98,4 +98,4 @@ Building SimpleStats taught us a few things:
 
 3. **Laravel's architecture is perfect for this.** Middleware, observers, event listeners: these primitives were designed for exactly this kind of cross-cutting concern. Building analytics on top of them feels natural, not forced.
 
-SimpleStats is available as a SaaS and as a self-hosted option, with a free tier including 5K events/month.
+SimpleStats is [open source](https://github.com/simplestats-io/app) and available as a hosted version with a free tier including 5K events/month, or self-hosted.

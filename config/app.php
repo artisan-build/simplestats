@@ -51,10 +51,33 @@ return [
     |--------------------------------------------------------------------------
     |
     | A comma separated list of user ids how automatically will get an enterprise subscription plan.
+    | SaaS only, self-hosted installations always run on the unlimited Self-Hosted plan.
     |
     */
 
     'plan_auto_max_users' => explode(',', env('PLAN_AUTO_MAX_USERS', '')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Self-Hosted API Rate Limit
+    |--------------------------------------------------------------------------
+    |
+    | Requests per minute and project on the ingest/query API of a self-hosted installation.
+    |
+    */
+
+    'self_hosted_api_rate_limit' => env('SELF_HOSTED_API_RATE_LIMIT', 10000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Docs URL
+    |--------------------------------------------------------------------------
+    |
+    | Self-hosted installations don't serve the docs themselves and redirect /docs here.
+    |
+    */
+
+    'public_docs_url' => env('PUBLIC_DOCS_URL', 'https://simplestats.io/docs'),
 
     /*
     |--------------------------------------------------------------------------

@@ -12,6 +12,7 @@ const props = defineProps({
 const page = usePage();
 const used = props.team.events_count_monthly || 0;
 const total = page.props.currentPlanOptions?.Events || 0;
+const isUnlimited = total === -1;
 const projects = page.props.projectsEventUsage || [];
 
 const dateRange = `${format(new Date(), 'MMMM yyyy')}`;
@@ -40,19 +41,23 @@ const getProjectPercentage = (projectCount) => {
                 <template #description>
                     Here you can see your team's event usage for the <strong>current month</strong>.<br>
                     This helps you keep track and plan ahead.
-                    We'll notify you when you're getting close to your plan limit.
+                    <template v-if="!isUnlimited">We'll notify you when you're getting close to your plan limit.</template>
                 </template>
 
                 <template #content>
                     <div class="text-gray-600 dark:text-dark-400">
                         <div class="w-full text-sm font-medium flex justify-between">
                             <div>Total usage - {{ dateRange }}</div>
-                            <div>
+                            <div v-if="isUnlimited">
+                                {{ used.toLocaleString() }} events
+                                <span class="text-gray-500 dark:text-dark-500">(unlimited)</span>
+                            </div>
+                            <div v-else>
                                 {{ used.toLocaleString() }} / {{ total.toLocaleString() }} events
                                 <span class="text-gray-500 dark:text-dark-500">({{ getUsagePercentage() }}%)</span>
                             </div>
                         </div>
-                        <div class="mt-3" aria-hidden="true">
+                        <div v-if="!isUnlimited" class="mt-3" aria-hidden="true">
                             <div class="overflow-hidden rounded-full bg-gray-200 dark:bg-dark-300">
                                 <div class="h-2 rounded-full bg-indigo-500" :style="`width: ${getUsagePercentage()}%`" />
                             </div>

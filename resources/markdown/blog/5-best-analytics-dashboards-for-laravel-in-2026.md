@@ -159,7 +159,7 @@ SimplestatsClient::trackCustomEvent('plan_upgraded', $user);
 - 21+ KPIs including ARPU, ARPPU, DAU/WAU/MAU
 - Multi-currency support with automatic conversion
 - Custom event tracking
-- Self-hosted option available
+- Open source (AGPL-3.0), self-hosting possible
 - GDPR compliant without extra effort
 - Data import from CSV/XLS for historical data
 
@@ -424,6 +424,7 @@ Free up to 1M events/month. Paid plans based on usage. [posthog.com](https://pos
 | **Custom Events** | Yes | Yes (JS) | Yes (JS) | Yes | Yes |
 | **Multi-Currency** | Yes (auto-conversion) | No | No | No | No |
 | **Self-Hosted Option** | Yes | No | Yes | No | Yes |
+| **Open Source** | Yes (AGPL-3.0) | No | Yes (AGPL-3.0) | Partial (core library) | Yes (MIT core) |
 | **Data Import** | Yes (CSV/XLS) | No | No | No | Yes |
 
 ---

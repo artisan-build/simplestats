@@ -32,6 +32,12 @@ const questions = ref([
         'answer': () => trans('Yes! You can track custom events to measure any activity that matters to your application. Check out our <a href="/docs/how-to-track-a-custom-event.html" target="_blank" class="simpleLink">documentation</a> to get started.'),
         'active': false,
     },
+    {
+        'id': 'open-source',
+        'title': () => trans('Is SimpleStats open source?'),
+        'answer': () => trans('Yes! SimpleStats is open source under the AGPL-3.0 license. The code is on <a href="https://github.com/simplestats-io/app" target="_blank" class="simpleLink">GitHub</a>, so you can verify exactly how your data is handled. Technical teams can also run it on their own servers, see the <a href="/docs/self-hosted.html" target="_blank" class="simpleLink">self-hosting docs</a>.'),
+        'active': false,
+    },
 ]);
 
 const handleHash = () => {

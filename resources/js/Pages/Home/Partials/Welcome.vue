@@ -10,7 +10,6 @@ import Features from "@/Pages/Home/Partials/Features.vue";
 import Comparison from "@/Pages/Home/Partials/Comparison.vue";
 import Testimonials from "@/Pages/Home/Partials/Testimonials.vue";
 import Pricing from "@/Pages/Home/Partials/Pricing.vue";
-import SelfHosted from "@/Pages/Home/Partials/SelfHosted.vue";
 import Faq from "@/Pages/Home/Faq.vue";
 import BlogPosts from "@/Pages/Home/Partials/BlogPosts.vue";
 import Bottom from "@/Pages/Home/Partials/Bottom.vue";
@@ -46,8 +45,6 @@ defineProps({
         <Testimonials />
 
         <Pricing :plans="plans" />
-
-        <SelfHosted :discount="discount" />
 
         <Faq />
 

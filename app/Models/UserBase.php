@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Concerns\HasPublicUuid;
 use App\Jobs\QueuedVerifyEmailJob;
+use App\Services\SubscriptionService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -140,6 +141,10 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Pass
 
     protected function getPlanConfig()
     {
+        if (config('app.app_type') !== 'saas') {
+            return self::selfHostedPlanConfig();
+        }
+
         $plans = config('spark.billables.user.plans', []);
 
         if (empty($plans)) {
@@ -148,6 +153,32 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Pass
 
         // local every user gets the highest plan by default :D
         return (! app()->isProduction() || in_array($this->id, config('app.plan_auto_max_users'))) ? $plans[count($plans) - 1] : $plans[0];
+    }
+
+    /**
+     * @return array{name: string, short_description: string, features: array<string, string>, options: array<string, int|bool>}
+     */
+    public static function selfHostedPlanConfig(): array
+    {
+        return [
+            'name' => SubscriptionService::PLAN_SELF_HOSTED,
+            'short_description' => 'Analytics without any limits.',
+            'features' => [
+                Project::class => 'Unlimited Projects',
+                'Events' => 'Unlimited Monthly Events',
+                'MultiCurrency' => 'Multi Currency Support',
+                DataImport::class => 'Data Import',
+                'AiAssistant' => 'AI Assistant',
+            ],
+            'options' => [
+                Project::class => SubscriptionService::UNLIMITED_AMOUNT,
+                'Events' => SubscriptionService::UNLIMITED_AMOUNT,
+                'ApiRateLimit' => (int) config('app.self_hosted_api_rate_limit'),
+                'MultiCurrency' => true,
+                DataImport::class => true,
+                'AiAssistant' => true,
+            ],
+        ];
     }
 
     /**

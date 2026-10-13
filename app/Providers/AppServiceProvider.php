@@ -114,8 +114,8 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::usePrefetchStrategy('aggressive');
 
-        // spatie/laravel-og-image is not installed in the self-hosted build
-        // (composer.self-hosted.json), so OgImage must never be called outside
+        // spatie/laravel-og-image is only installed in the SaaS build
+        // (composer.saas.json), so OgImage must never be called outside
         // this guard. The import above is harmless (use statements don't autoload).
         if (config('app.app_type') === 'saas') {
             OgImage::fallbackUsing(function (Request $request) {

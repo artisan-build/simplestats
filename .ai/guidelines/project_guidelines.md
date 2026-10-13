@@ -46,19 +46,30 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
 ### Deployment Options
 
 1. **SaaS** (recommended): Hosted at https://simplestats.io with automatic updates and dedicated support
-2. **Self-hosted**: Full control over data and deployment, requires valid license
-   - Setup, maintenance, and troubleshooting are the customer's responsibility
-   - Uses `composer.self-hosted.json` for dependencies
+2. **Self-hosted**: Free and open source (AGPL-3.0, public repo `simplestats-io/app`), full control over data and deployment
+   - Runs on the fixed, unlimited `Self-Hosted` plan (`UserBase::selfHostedPlanConfig()`): no event/project limits, all features. Spark plans and `PLAN_AUTO_MAX_USERS` only apply to the SaaS.
+   - SaaS-only scheduled chores (plan alarm, inactive-user cleanup) are not scheduled on self-hosted (`app/Console/Kernel.php`)
+   - Setup, maintenance, and troubleshooting are the operator's responsibility
    - Requires: PHP 8.3+, Laravel 12+, PostgreSQL 14+, Node.js 21.6+
 
-### Keep `composer.self-hosted.json` in Sync
+### Open Source Repo: Self-Hosted Is the Default Build
 
-`composer.self-hosted.json` (plus its `composer.self-hosted.lock`) is the dependency manifest for the self-hosted build and is **not** generated from `composer.json`. Whenever `composer.json` changes, decide explicitly and mirror where needed:
+The repo is public. Its default build is the self-hosted one, the SaaS is the special case:
 
-- **New package for a shared feature** (available self-hosted, e.g. `laravel/ai` + `laravel/mcp` for the AI assistant): add it to `composer.self-hosted.json` too, with the same version constraint.
-- **New saas-only package** (e.g. Spark, Filament, og-image, blog/landing/translation tooling): do NOT add it, but guard every call site behind `config('app.app_type') === 'saas'` (see `AppServiceProvider`, `app/Models/User.php`).
-- **PHP requirement or `config.platform` changes**: mirror them (self-hosted is on `php: ^8.3` + platform pin `8.3.32` since `laravel/ai` requires `^8.3`). Also update the requirements lists in `README.md`, `docs/self-hosted.md`, and this file.
-- After editing, regenerate the lock without touching the local `vendor/` (which belongs to `composer.json`): `COMPOSER=composer.self-hosted.json composer update <packages> --with-all-dependencies --no-install --no-scripts`. Verify the resolved versions match `composer.lock`.
+- `composer.json` / `composer.lock`: **self-hosted** (default, what contributors and self-hosters install with a plain `composer install`).
+- `composer.saas.json` / `composer.saas.lock`: **SaaS** (adds Spark, Filament, og-image, blog/landing/translation tooling, path repos for the client packages). Locally always run Composer through `scripts/composer-saas.sh` (wraps `COMPOSER=composer.saas.json composer ...`, defaults to `install`); a plain `composer install` would swap the local `vendor/` to the self-hosted build. `scripts/deploy.sh` sets the same env var.
+- `APP_TYPE` defaults to self-hosted; only `APP_TYPE=saas` enables SaaS code paths.
+- External contributions require the signed CLA (`CLA.md`, `.github/workflows/cla.yml`). It is what allows combining contributed AGPL code with proprietary Spark in the SaaS. Never merge an external PR without a signed CLA.
+
+### Keep `composer.json` and `composer.saas.json` in Sync
+
+The two manifests are maintained by hand, neither is generated from the other. Whenever one changes, decide explicitly and mirror where needed:
+
+- **New package for a shared feature** (available self-hosted, e.g. `laravel/ai` + `laravel/mcp` for the AI assistant): add it to both files with the same version constraint.
+- **New saas-only package** (e.g. Spark, Filament, og-image, blog/landing/translation tooling): add it to `composer.saas.json` only, and guard every call site behind `config('app.app_type') === 'saas'` (see `AppServiceProvider`, `app/Models/User.php`).
+- **Version bumps of shared packages** (especially security fixes): bump in both files.
+- **PHP requirement or `config.platform` changes**: mirror them (both are on `php: ^8.3` + platform pin `8.3.32` since `laravel/ai` requires `^8.3`). Also update the requirements lists in `README.md`, `docs/self-hosted.md`, and this file.
+- After editing, regenerate the lock that does not belong to your local `vendor/` with `--no-install`, e.g. `composer update <packages> --with-all-dependencies --no-install --no-scripts` for the self-hosted lock while working on the SaaS vendor. Verify the resolved versions of shared packages match between `composer.lock` and `composer.saas.lock`.
 
 ## Laravel Boost
 
