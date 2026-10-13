@@ -1,14 +1,14 @@
 ---
 title: "SimpleStats Is Now Open Source"
 slug: "simplestats-is-now-open-source"
-date: "2026-10-12"
+date: "2026-10-13"
 excerpt: "The complete SimpleStats app, the same code that runs simplestats.io, is now open source under the AGPL-3.0. Here's why we did it, what it means for your data, and what stays the same."
 tags:
   - Laravel
   - Open Source
   - Analytics
   - Privacy
-published: false
+published: true
 author_id: 1
 ---
 
