@@ -3,6 +3,7 @@
 use Rector\CodeQuality\Rector\Empty_\SimplifyEmptyCheckOnEmptyArrayRector;
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector;
+use Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveDuplicatedReturnSelfDocblockRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
@@ -37,6 +38,8 @@ return RectorConfig::configure()
         // Date is bound to CarbonImmutable, so this would silently turn mutable Carbon immutable
         CarbonToDateFacadeRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
+        // isset() also null-checks and sees Eloquent magic attributes, property_exists() does neither
+        IssetOnPropertyObjectToPropertyExistsRector::class,
         RemoveDuplicatedReturnSelfDocblockRector::class,
         SafeDeclareStrictTypesRector::class,
         SimplifyBoolIdenticalTrueRector::class,
