@@ -1,5 +1,8 @@
 # SimpleStats
 
+[![Tests](https://github.com/simplestats-io/app/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/simplestats-io/app/actions/workflows/tests.yml)
+[![Static Analysis](https://github.com/simplestats-io/app/actions/workflows/static-analysis.yml/badge.svg?branch=main)](https://github.com/simplestats-io/app/actions/workflows/static-analysis.yml)
+[![Latest Release](https://img.shields.io/github/v/release/simplestats-io/app)](https://github.com/simplestats-io/app/releases)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -33,6 +36,9 @@ SimpleStats is a regular Laravel application; it's build on top of Laravel 11 an
 git clone https://github.com/simplestats-io/app.git ./simplestats
 
 cd simplestats
+
+# use the latest release, main is the rolling state of the hosted version
+git checkout $(git describe --tags --abbrev=0)
 
 mkdir -p storage/framework/cache
 mkdir -p storage/framework/sessions
@@ -118,6 +124,8 @@ In your application you want to track, make sure to install the SimpleStats [cli
 ## Deployment
 
 SimpleStats is a standard Laravel application, so deploy it the way you deploy your other Laravel apps (Forge, Cloud, Docker, plain servers, ...). Make sure the queue workers and the scheduler are running. See the [self-hosted docs](https://simplestats.io/docs/self-hosted.html) for queue, scaling and database notes.
+
+To update, check out the next [release](https://github.com/simplestats-io/app/releases) and redeploy. See [Updating](https://simplestats.io/docs/self-hosted.html#updating) for the steps.
 
 `scripts/deploy.sh` and `composer.saas.json` belong to the hosted version at simplestats.io. You don't need them for self-hosting.
 

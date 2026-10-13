@@ -21,14 +21,24 @@ npm run dev
 The tests run against a PostgreSQL database called `simplestats_test` (see `phpunit.xml.dist`):
 
 ```bash
-php artisan test
+composer test
 ```
+
+Before you push, run the same checks as CI (Pint, PHPStan, Rector and the architecture tests):
+
+```bash
+composer check
+```
+
+`composer lint` and `composer refactor` fix the Pint and Rector findings for you.
+
+CI runs on the self-hosted build (`composer.json`). Tests for SaaS-only features call `$this->skipUnlessSaas()` and are skipped there.
 
 ## Pull requests
 
 - Keep a pull request focused on one change.
 - Add or update tests for behavior changes.
-- Format PHP code with Pint before you push: `vendor/bin/pint`.
+- Make sure `composer check` and `composer test` pass.
 - Follow the conventions of the surrounding code (naming, structure, comments only where they explain a non-obvious why).
 - Write a short description of what changed and why.
 

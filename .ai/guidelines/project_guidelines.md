@@ -72,6 +72,17 @@ The two manifests are maintained by hand, neither is generated from the other. W
 - **PHP requirement or `config.platform` changes**: mirror them (both are on `php: ^8.3` + platform pin `8.3.32` since `laravel/ai` requires `^8.3`). Also update the requirements lists in `README.md`, `docs/self-hosted.md`, and this file.
 - After editing, regenerate the lock that does not belong to your local `vendor/` with `--no-install`, e.g. `composer update <packages> --with-all-dependencies --no-install --no-scripts` for the self-hosted lock while working on the SaaS vendor. Verify the resolved versions of shared packages match between `composer.lock` and `composer.saas.lock`.
 
+### CI, Code Quality and Releases
+
+GitHub Actions run on every push to `main` and every PR: `tests.yml` (Pest incl. the `Arch` suite, PostgreSQL service) and `static-analysis.yml` (Pint, Larastan, Rector dry-run). Locally the same checks are `composer check` and `composer test`; `composer lint` / `composer refactor` apply the fixes.
+
+- **CI installs the self-hosted build (`composer.json`)**, never the SaaS one: no Spark credentials needed and fork PRs work. Every test that needs saas-only packages or code paths must call `$this->skipUnlessSaas()` (in `beforeEach` for whole files). Locally (`APP_TYPE=saas`) these tests still run.
+- **Larastan** runs on level 6 with `phpstan-baseline.neon`. The baseline must be generated on the self-hosted build (otherwise its "class not found" entries are missing and CI fails): a temporary checkout with a plain `composer install`, then `composer types:generate-baseline`. Files that declare classes on top of saas-only packages are listed under `excludePaths.analyse` in `phpstan.neon`. `tests/` is not analysed until Pest 5 makes `pestphp/pest-plugin-phpstan` available.
+- **Rector** runs with prepared sets plus rector-laravel. `CarbonToDateFacadeRector` and `IssetOnPropertyObjectToPropertyExistsRector` are skipped on purpose (semantic changes). Run Rector before Pint; Rector sometimes needs a second pass.
+- **Arch tests** (`tests/ArchTest.php`) encode project conventions (no private controller helpers, no mutable Carbon, enums/concerns/requests shapes, Pest php/security presets). Existing violations are listed via `->ignoring()`; do not add new ones.
+- **Dependabot** only updates GitHub Actions and npm. Composer updates stay manual because both manifests must be bumped together.
+- **Releases:** the SaaS deploys continuously from `main`. Self-hosters use tags. Create a GitHub release (`gh release create vX.Y.Z --generate-notes`), `update-changelog.yml` then writes the notes into `CHANGELOG.md` on `main` (never edit it by hand). SemVer: **major** = self-hosters must act (new required env var, raised PHP/PostgreSQL requirement, breaking config), **minor** = features and migrations, **patch** = fixes. Breaking steps go into the release notes.
+
 ## Laravel Boost
 
 This project uses **Laravel Boost**, an MCP server that auto-generates `CLAUDE.md` from the files in `.ai/guidelines/`.

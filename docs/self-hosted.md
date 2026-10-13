@@ -9,7 +9,7 @@ Both run the same code with the same features. The difference is who takes care 
 | | SaaS | Self‑hosted |
 |---|---|---|
 | **Setup** | Sign up and add your API token, done in minutes | Server, PHP, PostgreSQL, Redis/queue workers, scheduler, web server and TLS |
-| **Updates** | Automatic, new features as soon as they ship | You pull, migrate and deploy every release yourself |
+| **Updates** | Automatic, new features as soon as they ship | You update to each tagged release and deploy it yourself |
 | **Backups** | Daily, handled by us | Your responsibility |
 | **Uptime & scaling** | Monitored and scaled by us | Your responsibility, including queue sizing under load |
 | **Security** | Patches applied by us | You keep PHP, the OS and all dependencies up to date |
@@ -21,6 +21,31 @@ For most teams, including larger organizations, the **SaaS version** is the bett
 ## Installation
 
 SimpleStats is a regular Laravel application. Clone the [repository](https://github.com/simplestats-io/app) and follow the installation steps in its [README](https://github.com/simplestats-io/app#installation).
+
+## Updating
+
+Self-hosted installations should always run a tagged [release](https://github.com/simplestats-io/app/releases). The `main` branch is the rolling state of the hosted version and can change at any time.
+
+Releases follow [semantic versioning](https://semver.org):
+
+- **Major** (`2.0.0`): you have to act before or after updating, e.g. a new required environment variable or a raised PHP or PostgreSQL requirement. The release notes describe what to do.
+- **Minor** (`1.1.0`): new features, may include database migrations.
+- **Patch** (`1.0.1`): bug fixes.
+
+To update, read the release notes of every version between yours and the target, then:
+
+```bash
+git fetch --tags
+git checkout v1.1.0
+
+composer install --no-dev --optimize-autoloader
+npm ci
+npm run build
+
+php artisan migrate --force
+php artisan optimize
+php artisan queue:restart # or: php artisan horizon:terminate
+```
 
 ## Requirements
 
