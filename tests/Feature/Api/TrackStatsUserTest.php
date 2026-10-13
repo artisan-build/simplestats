@@ -8,11 +8,12 @@ use App\Models\StatsUser;
 use App\Models\User;
 use App\Notifications\ProjectAlertRegistrationNotification;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -33,7 +34,7 @@ function validUserPayload(array $overrides = []): array
     ], $overrides);
 }
 
-function setUserProjectContext($project): void
+function setUserProjectContext(?Authenticatable $project): void
 {
     auth()->setUser($project);
     AppHelper::setTeamContextFromAuth($project);
@@ -52,7 +53,7 @@ function insertConflictingStatsUserRowOnCreating(string $userId, Project $projec
 {
     $fired = false;
 
-    StatsUser::creating(function (StatsUser $statsUser) use ($userId, $project, &$fired) {
+    StatsUser::creating(function (StatsUser $statsUser) use ($userId, $project, &$fired): void {
         if ($fired || (string) $statsUser->id !== $userId) {
             return;
         }
@@ -80,7 +81,7 @@ function enableRegistrationAlerts($project, $user): void
     ]);
 }
 
-test('store user with auth and required fields returns 200', function () {
+test('store user with auth and required fields returns 200', function (): void {
     $payload = validUserPayload();
 
     $response = $this->postJson(
@@ -96,7 +97,7 @@ test('store user with auth and required fields returns 200', function () {
         ]);
 });
 
-test('store user without auth returns 401', function () {
+test('store user without auth returns 401', function (): void {
     auth()->forgetGuards();
 
     $response = $this->postJson(
@@ -111,7 +112,7 @@ test('store user without auth returns 401', function () {
     $response->assertUnauthorized();
 });
 
-test('validation fails when id is missing', function () {
+test('validation fails when id is missing', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-user',
         validUserPayload(['id' => null]),
@@ -122,7 +123,7 @@ test('validation fails when id is missing', function () {
         ->assertJsonValidationErrors('id');
 });
 
-test('validation fails when time is missing', function () {
+test('validation fails when time is missing', function (): void {
     $payload = validUserPayload();
     unset($payload['time']);
 
@@ -136,7 +137,7 @@ test('validation fails when time is missing', function () {
         ->assertJsonValidationErrors('time');
 });
 
-test('user is created with correct id', function () {
+test('user is created with correct id', function (): void {
     $payload = validUserPayload();
 
     $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
@@ -147,7 +148,7 @@ test('user is created with correct id', function () {
     expect($statsUser)->not->toBeNull();
 });
 
-test('duplicate id performs updateOrCreate update', function () {
+test('duplicate id performs updateOrCreate update', function (): void {
     $userId = (string) fake()->unique()->randomNumber(5);
 
     $payload1 = validUserPayload(['id' => $userId]);
@@ -162,7 +163,7 @@ test('duplicate id performs updateOrCreate update', function () {
     expect($users)->toHaveCount(1);
 });
 
-test('add_login flag creates a login record', function () {
+test('add_login flag creates a login record', function (): void {
     $payload = validUserPayload(['add_login' => true]);
 
     $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
@@ -173,7 +174,7 @@ test('add_login flag creates a login record', function () {
     expect($login)->not->toBeNull();
 });
 
-test('without add_login flag no login record is created', function () {
+test('without add_login flag no login record is created', function (): void {
     $payload = validUserPayload();
 
     $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
@@ -184,7 +185,7 @@ test('without add_login flag no login record is created', function () {
     expect($login)->toBeNull();
 });
 
-test('a concurrent insert between firstOrNew and save is retried instead of failing', function () {
+test('a concurrent insert between firstOrNew and save is retried instead of failing', function (): void {
     Notification::fake();
     enableRegistrationAlerts($this->project, $this->user);
 
@@ -203,7 +204,7 @@ test('a concurrent insert between firstOrNew and save is retried instead of fail
     Notification::assertSentToTimes($this->user, ProjectAlertRegistrationNotification::class, 1);
 });
 
-test('a duplicate registration for an already registered user sends no second alert', function () {
+test('a duplicate registration for an already registered user sends no second alert', function (): void {
     Notification::fake();
     enableRegistrationAlerts($this->project, $this->user);
 
@@ -219,7 +220,7 @@ test('a duplicate registration for an already registered user sends no second al
     Notification::assertSentToTimes($this->user, ProjectAlertRegistrationNotification::class, 1);
 });
 
-test('bot user agents are rejected with 200', function () {
+test('bot user agents are rejected with 200', function (): void {
     $payload = validUserPayload([
         'user_agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     ]);
@@ -230,7 +231,7 @@ test('bot user agents are rejected with 200', function () {
         ->assertJson(['message' => 'Bots are not allowed.']);
 });
 
-test('tracking fields are accepted', function () {
+test('tracking fields are accepted', function (): void {
     $payload = validUserPayload([
         'track_source' => 'google',
         'track_medium' => 'cpc',
@@ -250,7 +251,7 @@ test('tracking fields are accepted', function () {
     expect($statsUser)->not->toBeNull();
 });
 
-test('visitor_hash links the registration to its visitor', function () {
+test('visitor_hash links the registration to its visitor', function (): void {
     $visitorId = DB::table('stats_visitors')->insertGetId([
         'team_id' => $this->project->team_id,
         'project_id' => $this->project->id,
@@ -268,7 +269,7 @@ test('visitor_hash links the registration to its visitor', function () {
     expect((int) $statsUser->stats_visitor_id)->toBe($visitorId);
 });
 
-test('unknown visitor_hash leaves the registration unlinked', function () {
+test('unknown visitor_hash leaves the registration unlinked', function (): void {
     $payload = validUserPayload(['visitor_hash' => 'does-not-exist']);
     $this->postJson('/api/v1/stats-user', $payload, apiHeaders($this->token))->assertOk();
 
@@ -278,7 +279,7 @@ test('unknown visitor_hash leaves the registration unlinked', function () {
     expect($statsUser->stats_visitor_id)->toBeNull();
 });
 
-test('events_count_monthly is incremented on team via StatsObserver', function () {
+test('events_count_monthly is incremented on team via StatsObserver', function (): void {
     $team = $this->project->team;
     $initialCount = $team->events_count_monthly;
 

@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 class StatsIncrementService
 {
     // whitelist of metric keys that may be incremented
-    private const INCREMENTABLE_KEYS = [
+    private const array INCREMENTABLE_KEYS = [
         'pd_visitor', 'lt_visitor',
         'pd_reg', 'lt_reg',
         'pd_tau', 'pd_nau', 'lt_tau', 'pd_dau',
@@ -203,10 +203,10 @@ class StatsIncrementService
         return $this->withinBucket(StatsAggregation::query(), $case, $bucketStart)
             ->where('type', $case->value)
             ->where('kind', 'period')
-            ->where(function ($query) use ($stat) {
-                $query->where(function ($query) use ($stat) {
+            ->where(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($stat): void {
+                $query->where(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($stat): void {
                     $query->where('team_id', $stat->team_id)->whereNull('project_id');
-                })->orWhere(function ($query) use ($stat) {
+                })->orWhere(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($stat): void {
                     $query->where('team_id', $stat->team_id)->where('project_id', $stat->project_id);
                 });
             })

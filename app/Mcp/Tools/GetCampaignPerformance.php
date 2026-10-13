@@ -19,13 +19,13 @@ class GetCampaignPerformance extends Tool
 {
     use ResolvesStatsFilters;
 
-    private const MONEY_KEYS = ['net', 'spend', 'net_profit', 'cac'];
+    private const array MONEY_KEYS = ['net', 'spend', 'net_profit', 'cac'];
 
     /**
      * Mirrors campaignMetricInfo in resources/js/Data/CampaignMetricInfo.js,
      * so the assistant explains the metrics the same way the UI tooltips do.
      */
-    private const LEGEND = [
+    private const array LEGEND = [
         'visitors' => 'Unique visitors the campaign brought in during the range',
         'reg' => 'New registrations attributed to the campaign during the range',
         'net' => 'Net revenue (after fees) from customers this campaign brought in, during the range',

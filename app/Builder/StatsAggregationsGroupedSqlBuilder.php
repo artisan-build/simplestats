@@ -82,7 +82,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
             $nonZeroColumns[] = 'nau';
         }
 
-        return 'WHERE '.collect($nonZeroColumns)->map(fn (string $column) => "$column <> 0")->implode(' OR ');
+        return 'WHERE '.collect($nonZeroColumns)->map(fn (string $column): string => "$column <> 0")->implode(' OR ');
     }
 
     protected function getCTE(): string
@@ -221,7 +221,7 @@ class StatsAggregationsGroupedSqlBuilder extends BaseSqlBuilder
      */
     protected function getLT_RETENTION(): string
     {
-        $pairs = collect($this->retentionCheckpoints)->map(function (int $days, int $index) {
+        $pairs = collect($this->retentionCheckpoints)->map(function (int $days, int $index): string {
             $checkpoint = $index + 1;
 
             return "COUNT(*) FILTER (WHERE stats.time <= ':nowCap'::timestamp - INTERVAL '$days days') AS observable_c$checkpoint,

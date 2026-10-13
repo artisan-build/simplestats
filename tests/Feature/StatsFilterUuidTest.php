@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 use function Pest\Laravel\actingAs;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     actingAs($this->user);
 
@@ -18,7 +18,7 @@ beforeEach(function () {
     Project::factory()->create(['team_id' => $this->team->id]);
 });
 
-test('the dashboard accepts a project uuid filter and echoes it back', function () {
+test('the dashboard accepts a project uuid filter and echoes it back', function (): void {
     $this->get(route('dashboard', ['project_id' => $this->project->uuid]))
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
@@ -26,7 +26,7 @@ test('the dashboard accepts a project uuid filter and echoes it back', function 
             ->etc());
 });
 
-test('a legacy numeric project filter still works and self-heals to the uuid', function () {
+test('a legacy numeric project filter still works and self-heals to the uuid', function (): void {
     $this->get(route('dashboard', ['project_id' => $this->project->id]))
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
@@ -34,7 +34,7 @@ test('a legacy numeric project filter still works and self-heals to the uuid', f
             ->etc());
 });
 
-test('an unknown project uuid falls back to all projects', function () {
+test('an unknown project uuid falls back to all projects', function (): void {
     $this->get(route('dashboard', ['project_id' => (string) Str::uuid()]))
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
@@ -42,7 +42,7 @@ test('an unknown project uuid falls back to all projects', function () {
             ->etc());
 });
 
-test('the campaign filter accepts and echoes the campaign uuid', function () {
+test('the campaign filter accepts and echoes the campaign uuid', function (): void {
     $campaign = Campaign::factory()->create(['project_id' => $this->project->id]);
 
     $this->get(route('dashboard', ['project_id' => $this->project->uuid, 'campaign' => $campaign->uuid]))
@@ -52,7 +52,7 @@ test('the campaign filter accepts and echoes the campaign uuid', function () {
             ->etc());
 });
 
-test('the shared projects map is keyed by uuid with the all entry at 0', function () {
+test('the shared projects map is keyed by uuid with the all entry at 0', function (): void {
     $this->get(route('dashboard'))
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page

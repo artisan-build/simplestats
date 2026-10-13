@@ -20,11 +20,17 @@ class StatsUser extends BaseStat implements Propertyable
 
     public $incrementing = false;
 
+    /**
+     * @return HasMany<StatsLogin, $this>
+     */
     public function statsLogins(): HasMany
     {
         return $this->hasMany(StatsLogin::class);
     }
 
+    /**
+     * @return HasMany<StatsPayment, $this>
+     */
     public function statsPayments(): HasMany
     {
         return $this->hasMany(StatsPayment::class);
@@ -34,7 +40,7 @@ class StatsUser extends BaseStat implements Propertyable
     {
         $this->project->userAlertNotifications()->with('user')
             ->where('settings->tracking->registrations', true)
-            ->each(function (UserNotification $notification) {
+            ->each(function (UserNotification $notification): void {
                 $notification->user->notify(new ProjectAlertRegistrationNotification($this, $notification));
             });
     }

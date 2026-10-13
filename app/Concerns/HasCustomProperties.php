@@ -26,6 +26,8 @@ trait HasCustomProperties
      * morph match on id alone could cross projects within a team. Because the
      * constraint reads $this->project_id, eager loading this relation is only
      * safe for single-project model sets.
+     *
+     * @return MorphMany<StatsCustomProperty, $this>
      */
     public function customProperties(): MorphMany
     {
@@ -76,7 +78,7 @@ trait HasCustomProperties
             // retried once because a parallel ingest worker can win the insert between
             // firstOrNew and save; the second attempt then finds the winner's row and
             // takes the update path (savepoint rationale: see TrackStatsUser)
-            retry(2, function () use ($propertyName, $propertyValue, $time) {
+            retry(2, function () use ($propertyName, $propertyValue, $time): void {
                 $property = StatsCustomProperty::firstOrNew([
                     'project_id' => $this->project_id,
                     'propertyable_type' => $this->getMorphClass(),
@@ -94,7 +96,7 @@ trait HasCustomProperties
                 ]);
 
                 $property->newModelQuery()->withSavepointIfNeeded(fn () => $property->save());
-            }, 0, fn ($e) => $e instanceof UniqueConstraintViolationException);
+            }, 0, fn ($e): bool => $e instanceof UniqueConstraintViolationException);
         }
     }
 

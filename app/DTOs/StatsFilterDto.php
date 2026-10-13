@@ -9,6 +9,7 @@ use App\Http\Requests\StatsFilterRequest;
 use App\Models\CustomStatsRangePreset;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
 class StatsFilterDto
@@ -86,7 +87,7 @@ class StatsFilterDto
             $request->merge($customPreset->toRange());
         } elseif ($request->preset && $request->preset !== StatsRangePreset::CUSTOM->value) {
             $request->merge(StatsRangePreset::from($request->preset)->range($effectiveProjectId));
-        } elseif (! $request->hasAny(['range_type', 'range_amount', 'range_start', 'preset']) && empty($_GET)) {
+        } elseif (! $request->hasAny(['range_type', 'range_amount', 'range_start', 'preset']) && empty(Request::query())) {
             $request->merge([
                 ...StatsRangePreset::LAST_7_DAYS->range($effectiveProjectId),
                 'preset' => StatsRangePreset::LAST_7_DAYS->value,

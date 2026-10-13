@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use Spatie\ShikiPhp\Shiki;
+use Throwable;
 
 class CodeHighlightService
 {
-    private const UNSUPPORTED_LANGUAGES = ['env', 'txt', 'text', 'plain'];
+    private const array UNSUPPORTED_LANGUAGES = ['env', 'txt', 'text', 'plain'];
 
     public function highlightCodeBlocks(string $html): string
     {
@@ -27,7 +28,7 @@ class CodeHighlightService
                         language: $language,
                         theme: 'github-dark',
                     );
-                } catch (\Throwable) {
+                } catch (Throwable) {
                     return $matches[0];
                 }
             },

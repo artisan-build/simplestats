@@ -25,7 +25,7 @@ class MrrAggregationService
 {
     use RunsFilteredStatsQueries;
 
-    private const DAYS_PER_MONTH = 30.44;
+    private const float DAYS_PER_MONTH = 30.44;
 
     /**
      * Per-request memo for getMrrMovements. The per-user-per-bucket pivot is the
@@ -143,8 +143,9 @@ class MrrAggregationService
         $everActive = array_fill_keys(array_keys($userMrrByBucket[0] ?? []), true);
 
         $movements = [];
+        $counter = count($buckets);
 
-        for ($i = 1; $i < count($buckets); $i++) {
+        for ($i = 1; $i < $counter; $i++) {
             $prev = $userMrrByBucket[$i - 1];
             $curr = $userMrrByBucket[$i];
 

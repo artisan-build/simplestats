@@ -21,7 +21,7 @@ trait ResolvesStatsFilters
     {
         return [
             'preset' => $schema->string()
-                ->enum(collect(StatsRangePreset::cases())->reject(fn (StatsRangePreset $preset) => $preset === StatsRangePreset::CUSTOM)->pluck('value')->all())
+                ->enum(collect(StatsRangePreset::cases())->reject(fn (StatsRangePreset $preset): bool => $preset === StatsRangePreset::CUSTOM)->pluck('value')->all())
                 ->description('Named date range preset. Prefer this for relative ranges like "last month". Either preset or start_date/end_date must be given.'),
             'start_date' => $schema->string()
                 ->description('Range start date (YYYY-MM-DD), only when no preset fits.'),
@@ -50,7 +50,7 @@ trait ResolvesStatsFilters
         // Context project_id is only set on the web MCP endpoint (project API
         // token): an omitted project_id then defaults to the token's project,
         // while an explicit 0 still means all team projects.
-        return app(AiStatsFilterFactory::class)->make(
+        return resolve(AiStatsFilterFactory::class)->make(
             preset: $request->get('preset'),
             startDate: $request->get('start_date'),
             endDate: $request->get('end_date'),
@@ -104,7 +104,7 @@ trait ResolvesStatsFilters
         }
 
         return $projects
-            ->map(fn (Project $project) => ['project' => $project->name, ...$resolve($project->id)])
+            ->map(fn (Project $project): array => ['project' => $project->name, ...$resolve($project->id)])
             ->all();
     }
 

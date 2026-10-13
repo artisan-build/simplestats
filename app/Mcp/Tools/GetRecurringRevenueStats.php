@@ -23,7 +23,7 @@ class GetRecurringRevenueStats extends Tool
     /**
      * @var array<string, array{method: string, money: list<string>, scalar: bool}>
      */
-    private const SECTIONS = [
+    private const array SECTIONS = [
         'snapshot' => ['method' => 'getMrrSnapshot', 'money' => ['mrr', 'arr', 'mrr_prev'], 'scalar' => true],
         'by_plan' => ['method' => 'getMrrByPlan', 'money' => ['mrr'], 'scalar' => false],
         'time_series' => ['method' => 'getMrrTimeSeries', 'money' => ['mrr'], 'scalar' => false],
@@ -33,7 +33,7 @@ class GetRecurringRevenueStats extends Tool
         'economics' => ['method' => 'getSubscriptionEconomics', 'money' => ['arps', 'ltv'], 'scalar' => true],
     ];
 
-    private const SECTION_NOTES = [
+    private const array SECTION_NOTES = [
         'snapshot' => 'mrr is the point-in-time MRR at range end, mrr_prev at range start, arr = mrr * 12.',
         'by_plan' => 'MRR and subscriber count per subscription plan at range end.',
         'time_series' => 'Rows are ordered newest first.',
@@ -76,7 +76,7 @@ class GetRecurringRevenueStats extends Tool
             $perProject = $section === 'snapshot'
                 ? $this->perProjectBreakdown(
                     $filters,
-                    fn (int $projectId) => $this->centsToCurrency(
+                    fn (int $projectId): array => $this->centsToCurrency(
                         [$this->statsDetailsService->getMrrSnapshot($this->resolveFilters($request, $projectId))],
                         self::SECTIONS['snapshot']['money'],
                     )[0],
@@ -92,7 +92,7 @@ class GetRecurringRevenueStats extends Tool
                 'note' => ($data === null || $data === []
                     ? 'No subscription data for this range/filter. '
                     : '').self::SECTION_NOTES[$section].' Monetary values are in the scope currency.',
-            ], fn ($value) => $value !== null));
+            ], fn ($value): bool => $value !== null));
         } catch (ValidationException $e) {
             return Response::error('Invalid arguments: '.collect($e->errors())->flatten()->implode(' '));
         } catch (Throwable $e) {

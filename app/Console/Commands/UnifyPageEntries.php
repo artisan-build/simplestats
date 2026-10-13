@@ -7,6 +7,7 @@ use App\Models\StatsPageEntry;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class UnifyPageEntries extends Command
      */
     public function handle(): void
     {
-        Team::with('owner')->get()->each(function ($team) {
+        Team::with('owner')->get()->each(function ($team): void {
             if (empty($team->owner)) {
                 return;
             }
@@ -39,7 +40,7 @@ class UnifyPageEntries extends Command
             DB::beginTransaction();
 
             try {
-                StatsPageEntry::where('team_id', $team->id)->get()->each(function (StatsPageEntry $page) {
+                StatsPageEntry::where('team_id', $team->id)->get()->each(function (StatsPageEntry $page): void {
                     $pageName = $page->name;
 
                     $pageWithSlash = StatsPageEntry::where([
@@ -68,7 +69,7 @@ class UnifyPageEntries extends Command
                         $pageWithSlash->delete();
                     }
                 });
-            } catch (\Exception $e) {
+            } catch (Exception) {
                 DB::rollBack();
             }
 

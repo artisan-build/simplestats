@@ -4,12 +4,12 @@ use App\Enums\StatsRangePreset;
 use App\Models\CustomStatsRangePreset;
 use App\Models\User;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->actingAs($this->user);
 });
 
-test('user can create a custom preset', function () {
+test('user can create a custom preset', function (): void {
     $response = $this->post(route('custom-presets.store'), [
         'name' => 'Last 14 Days',
         'range_amount' => 14,
@@ -21,7 +21,7 @@ test('user can create a custom preset', function () {
     expect($this->user->customStatsRangePresets->first()->name)->toBe('Last 14 Days');
 });
 
-test('user cannot exceed 10 custom presets', function () {
+test('user cannot exceed 10 custom presets', function (): void {
     CustomStatsRangePreset::factory()->count(10)->create(['user_id' => $this->user->id]);
 
     $response = $this->post(route('custom-presets.store'), [
@@ -34,7 +34,7 @@ test('user cannot exceed 10 custom presets', function () {
     $response->assertSessionHasErrors('name');
 });
 
-test('user can update their own preset', function () {
+test('user can update their own preset', function (): void {
     $preset = CustomStatsRangePreset::factory()->create(['user_id' => $this->user->id]);
 
     $response = $this->put(route('custom-presets.update', $preset), [
@@ -48,7 +48,7 @@ test('user can update their own preset', function () {
     expect($preset->fresh()->range_amount)->toBe(30);
 });
 
-test('user cannot update another users preset', function () {
+test('user cannot update another users preset', function (): void {
     $otherUser = User::factory()->withPersonalTeam()->create();
     $preset = CustomStatsRangePreset::factory()->create(['user_id' => $otherUser->id]);
 
@@ -61,7 +61,7 @@ test('user cannot update another users preset', function () {
     $response->assertForbidden();
 });
 
-test('user can delete their own preset', function () {
+test('user can delete their own preset', function (): void {
     $preset = CustomStatsRangePreset::factory()->create(['user_id' => $this->user->id]);
 
     $response = $this->delete(route('custom-presets.destroy', $preset));
@@ -70,7 +70,7 @@ test('user can delete their own preset', function () {
     expect(CustomStatsRangePreset::find($preset->id))->toBeNull();
 });
 
-test('user cannot delete another users preset', function () {
+test('user cannot delete another users preset', function (): void {
     $otherUser = User::factory()->withPersonalTeam()->create();
     $preset = CustomStatsRangePreset::factory()->create(['user_id' => $otherUser->id]);
 
@@ -79,7 +79,7 @@ test('user cannot delete another users preset', function () {
     $response->assertForbidden();
 });
 
-test('validation requires name', function () {
+test('validation requires name', function (): void {
     $response = $this->post(route('custom-presets.store'), [
         'range_amount' => 7,
         'range_type' => 'days',
@@ -88,7 +88,7 @@ test('validation requires name', function () {
     $response->assertSessionHasErrors('name');
 });
 
-test('validation requires valid range_type', function () {
+test('validation requires valid range_type', function (): void {
     $response = $this->post(route('custom-presets.store'), [
         'name' => 'Test',
         'range_amount' => 7,
@@ -98,7 +98,7 @@ test('validation requires valid range_type', function () {
     $response->assertSessionHasErrors('range_type');
 });
 
-test('validation requires range_amount between 1 and 60', function () {
+test('validation requires range_amount between 1 and 60', function (): void {
     $response = $this->post(route('custom-presets.store'), [
         'name' => 'Test',
         'range_amount' => 0,
@@ -116,7 +116,7 @@ test('validation requires range_amount between 1 and 60', function () {
     $response->assertSessionHasErrors('range_amount');
 });
 
-test('user can update builtin preset visibility', function () {
+test('user can update builtin preset visibility', function (): void {
     $response = $this->post(route('custom-presets.builtin-visibility'), [
         'visible' => ['today', 'last_7_days'],
     ]);
@@ -128,7 +128,7 @@ test('user can update builtin preset visibility', function () {
     expect($hiddenPresets)->not->toContain('last_7_days');
 });
 
-test('user can show all builtin presets', function () {
+test('user can show all builtin presets', function (): void {
     $this->user->updateSettings('hiddenPresets', ['yesterday', 'today']);
 
     $allValues = array_column(StatsRangePreset::cases(), 'value');
@@ -140,7 +140,7 @@ test('user can show all builtin presets', function () {
     expect($this->user->fresh()->settings['hiddenPresets'])->toBeEmpty();
 });
 
-test('builtin visibility rejects invalid preset', function () {
+test('builtin visibility rejects invalid preset', function (): void {
     $response = $this->post(route('custom-presets.builtin-visibility'), [
         'visible' => ['nonexistent'],
     ]);
@@ -148,7 +148,7 @@ test('builtin visibility rejects invalid preset', function () {
     $response->assertSessionHasErrors('visible.0');
 });
 
-test('user can list their custom presets', function () {
+test('user can list their custom presets', function (): void {
     CustomStatsRangePreset::factory()->count(3)->create(['user_id' => $this->user->id]);
 
     $response = $this->getJson(route('custom-presets.index'));
@@ -157,7 +157,7 @@ test('user can list their custom presets', function () {
     $response->assertJsonCount(3);
 });
 
-test('custom preset toOption returns correct format', function () {
+test('custom preset toOption returns correct format', function (): void {
     $preset = CustomStatsRangePreset::factory()->create([
         'user_id' => $this->user->id,
         'name' => 'Last 14 Days',
@@ -172,7 +172,7 @@ test('custom preset toOption returns correct format', function () {
     expect($option['sortWeight'])->toBe(1400);
 });
 
-test('custom preset toRange returns correct format', function () {
+test('custom preset toRange returns correct format', function (): void {
     $preset = CustomStatsRangePreset::factory()->create([
         'user_id' => $this->user->id,
         'range_amount' => 14,

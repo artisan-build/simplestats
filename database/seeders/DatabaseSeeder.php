@@ -83,7 +83,7 @@ class DatabaseSeeder extends Seeder
     {
         $statModels = [StatsVisitor::class, StatsUser::class, StatsLogin::class, StatsPayment::class, StatsCustomEvent::class];
 
-        Team::with('projects')->get()->each(function (Team $team) use ($statModels) {
+        Team::with('projects')->get()->each(function (Team $team) use ($statModels): void {
             $now = now()->setTimezone($team->timezone ?? config('app.timezone'));
             $monthRange = [$now->startOfMonth(), $now->endOfMonth()];
 
@@ -128,7 +128,7 @@ class DatabaseSeeder extends Seeder
 
         Project::factory()->count(1)->state(['name' => 'SimpleStats', 'usage' => $usage])
             ->for(Team::find($user->current_team_id))
-            ->afterCreating(function ($project) {
+            ->afterCreating(function ($project): void {
                 StatsUser::factory()->create([
                     'id' => User::find(1)->id,
                     'project_id' => $project->id,

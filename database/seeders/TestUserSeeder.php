@@ -21,7 +21,7 @@ class TestUserSeeder extends Seeder
         $user = User::withoutEvents(function () {
             $isDemo = app()->environment('demo');
             $testUser = config('app.test.user');
-            $user = app(CreateNewUser::class)->create([
+            $user = resolve(CreateNewUser::class)->create([
                 'name' => $testUser['name'],
                 'email' => $testUser['email'],
                 'password' => $testUser['password'],

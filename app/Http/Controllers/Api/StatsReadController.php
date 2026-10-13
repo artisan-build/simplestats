@@ -64,7 +64,7 @@ class StatsReadController extends Controller
         $hiddenKeys = $this->getHiddenKeysForProject($project);
 
         if (! empty($hiddenKeys)) {
-            $data = array_map(fn (array $item) => array_diff_key($item, array_flip($hiddenKeys)), $data);
+            $data = array_map(fn (array $item): array => array_diff_key($item, array_flip($hiddenKeys)), $data);
         }
 
         $response = [
@@ -81,7 +81,7 @@ class StatsReadController extends Controller
             )->values()->toArray();
 
             if (! empty($hiddenKeys)) {
-                $previousData = array_map(fn (array $item) => array_diff_key($item, array_flip($hiddenKeys)), $previousData);
+                $previousData = array_map(fn (array $item): array => array_diff_key($item, array_flip($hiddenKeys)), $previousData);
             }
 
             $response['data_previous'] = $previousData;
@@ -117,7 +117,7 @@ class StatsReadController extends Controller
     {
         return collect((array) $filters)
             ->except('customPresetId')
-            ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => match (true) {
+            ->mapWithKeys(fn ($value, $key): array => [Str::snake($key) => match (true) {
                 $value instanceof StatsRangeType => $value->value,
                 $value instanceof CarbonInterface => $value->format('Y-m-d'),
                 $value instanceof StatsRangePreset => $value->value,
@@ -131,14 +131,16 @@ class StatsReadController extends Controller
      */
     private function getHiddenKeysForProject(?Project $project): array
     {
-        if (! $project) {
+        if (! $project instanceof Project) {
             return [];
         }
 
         $hidden = [];
 
         if (! $project->hasUsages([Project::USAGE_USERS])) {
-            array_push($hidden, 'reg', 'cr', 'dau');
+            $hidden[] = 'reg';
+            $hidden[] = 'cr';
+            $hidden[] = 'dau';
         }
 
         if (! $project->hasUsages([Project::USAGE_PAYMENTS])) {

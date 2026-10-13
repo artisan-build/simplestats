@@ -23,7 +23,7 @@ class ListStatsCapabilities extends Tool
             return Response::structured([
                 'projects' => [
                     ['id' => StatsFilterDto::TRACK_ALL, 'name' => 'All projects'],
-                    ...Project::query()->get(['id', 'name', 'usage'])->map(fn (Project $project) => [
+                    ...Project::query()->get(['id', 'name', 'usage'])->map(fn (Project $project): array => [
                         'id' => $project->id,
                         'name' => $project->name,
                         'tracks_registrations' => $project->hasUsages([Project::USAGE_USERS]),
@@ -31,12 +31,12 @@ class ListStatsCapabilities extends Tool
                     ])->all(),
                 ],
                 'dimensions' => StatsService::getStatsTypesFlatMap(['model', 'icon'])
-                    ->map(fn (array $type) => ['dimension' => $type['type'], 'title' => $type['title']])
+                    ->map(fn (array $type): array => ['dimension' => $type['type'], 'title' => $type['title']])
                     ->values()
                     ->all(),
                 'presets' => collect(StatsRangePreset::cases())
-                    ->reject(fn (StatsRangePreset $preset) => $preset === StatsRangePreset::CUSTOM)
-                    ->map(fn (StatsRangePreset $preset) => ['preset' => $preset->value, 'title' => $preset->title()])
+                    ->reject(fn (StatsRangePreset $preset): bool => $preset === StatsRangePreset::CUSTOM)
+                    ->map(fn (StatsRangePreset $preset): array => ['preset' => $preset->value, 'title' => $preset->title()])
                     ->values()
                     ->all(),
                 'kpis' => [

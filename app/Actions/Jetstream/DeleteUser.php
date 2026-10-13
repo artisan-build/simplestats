@@ -30,13 +30,13 @@ class DeleteUser implements DeletesUsers
      */
     public function delete(User $user): void
     {
-        DB::transaction(function () use ($user) {
+        DB::transaction(function () use ($user): void {
             $this->deleteTeams($user);
             $user->deleteProfilePhoto();
             $user->connectedAccounts->each->delete();
             $user->tokens->each->delete();
 
-            if (config('app.app_type') === 'saas' && optional($user->subscription())->recurring()) {
+            if (config('app.app_type') === 'saas' && $user->subscription()?->recurring()) {
                 $user->subscription()->cancelNow();
             }
 
@@ -54,7 +54,7 @@ class DeleteUser implements DeletesUsers
     {
         $user->teams()->detach();
 
-        $user->ownedTeams->each(function (Team $team) {
+        $user->ownedTeams->each(function (Team $team): void {
             $this->deletesTeams->delete($team);
         });
     }

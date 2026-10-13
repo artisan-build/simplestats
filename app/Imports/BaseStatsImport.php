@@ -28,7 +28,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
     // we need to take track of the lowest imported data (for aggregation invalidation)
     private CarbonInterface $lowestImportedDate;
 
-    private int $counterUpdateStep = 0;
+    private readonly int $counterUpdateStep;
 
     public function __construct(
         protected DataImport $dataImport,
@@ -51,9 +51,6 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
         return $this->lowestImportedDate;
     }
 
-    /**
-     * @return Model|null
-     */
     public function getModelClass(): string
     {
         return $this->modelClass;
@@ -74,7 +71,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
         // check if the users team plan has the rights to create more stats records;
         // counterpart of the EnsureWithinEventLimit middleware on the API ingest routes
         // (the counter delta is needed because batch inserts bypass the StatsObserver increments)
-        if (app(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->dataImport->team, $this->counter)) {
+        if (resolve(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->dataImport->team, $this->counter)) {
             throw new AuthorizationException('Monthly event limit reached.');
         }
 
@@ -86,7 +83,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
         }
 
         // limit the interval of the rows_imported value, so that we do not need to make thousands of queries here.
-        if ($this->counter % $this->counterUpdateStep == 0 || $this->counter == $this->dataImport->rows_max) {
+        if ($this->counter % $this->counterUpdateStep === 0 || $this->counter == $this->dataImport->rows_max) {
             $this->updateProgress();
         }
 
@@ -94,7 +91,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
 
         // team and project id are normally set dynamically
         // this is safe, as we've validated the rows/cols before...
-        return $this->modelClass::unguarded(function () use ($row, $modelConcerns) {
+        return $this->modelClass::unguarded(function () use ($row, $modelConcerns): object {
             $uniqueProject = [
                 'team_id' => $this->dataImport->team_id,
                 'project_id' => $this->dataImport->project_id,
@@ -131,7 +128,7 @@ abstract class BaseStatsImport implements ToModel, WithBatchInserts, WithChunkRe
         ]);
     }
 
-    public function prepareForValidation($data, $index): array
+    public function prepareForValidation(array $data, $index): array
     {
         return $this->validator->prepareForValidation($data);
     }

@@ -7,7 +7,7 @@ use App\Models\StatsUser;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -20,7 +20,7 @@ beforeEach(function () {
     $this->actingAs($this->user);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -33,7 +33,7 @@ function makePowerUser(string $id, Project $project, array $attributes = []): St
     ], $attributes));
 }
 
-test('power-users route returns 200 and renders the page with shared props', function () {
+test('power-users route returns 200 and renders the page with shared props', function (): void {
     $this->get(route('power-users'))
         ->assertStatus(200)
         ->assertInertia(fn ($page) => $page
@@ -48,7 +48,7 @@ test('power-users route returns 200 and renders the page with shared props', fun
         );
 });
 
-test('a whitelisted sort column reorders the power users and is echoed back', function () {
+test('a whitelisted sort column reorders the power users and is echoed back', function (): void {
     $whale = makePowerUser('whale', $this->project);
     $active = makePowerUser('active', $this->project);
 
@@ -64,7 +64,7 @@ test('a whitelisted sort column reorders the power users and is echoed back', fu
         );
 });
 
-test('sorting by last login orders by recency and sinks users without a login', function () {
+test('sorting by last login orders by recency and sinks users without a login', function (): void {
     makePowerUser('recent', $this->project);
     makePowerUser('older', $this->project);
     makePowerUser('never', $this->project);
@@ -81,7 +81,7 @@ test('sorting by last login orders by recency and sinks users without a login', 
         );
 });
 
-test('power users can be sorted alphabetically by their current plan', function () {
+test('power users can be sorted alphabetically by their current plan', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     makePowerUser('starter-user', $this->project);
@@ -98,7 +98,7 @@ test('power users can be sorted alphabetically by their current plan', function 
         );
 });
 
-test('an unknown sort column falls back to the default lifetime-value ranking', function () {
+test('an unknown sort column falls back to the default lifetime-value ranking', function (): void {
     $whale = makePowerUser('whale', $this->project);
     $active = makePowerUser('active', $this->project);
 
@@ -113,13 +113,13 @@ test('an unknown sort column falls back to the default lifetime-value ranking', 
         );
 });
 
-test('power-users redirects to dashboard when the team does not track registrations', function () {
+test('power-users redirects to dashboard when the team does not track registrations', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS]);
 
     $this->get(route('power-users'))->assertRedirect(route('dashboard'));
 });
 
-test('power users are ranked by total gross revenue, then by login count', function () {
+test('power users are ranked by total gross revenue, then by login count', function (): void {
     $whale = makePowerUser('whale', $this->project);
     $active = makePowerUser('active', $this->project);
     $quiet = makePowerUser('quiet', $this->project);
@@ -142,7 +142,7 @@ test('power users are ranked by total gross revenue, then by login count', funct
         );
 });
 
-test('power users aggregate login count, last login and total gross per user', function () {
+test('power users aggregate login count, last login and total gross per user', function (): void {
     makePowerUser('u1', $this->project);
 
     StatsLogin::factory()->create(['stats_user_id' => 'u1', 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'time' => '2026-06-01 08:00:00']);
@@ -157,13 +157,13 @@ test('power users aggregate login count, last login and total gross per user', f
                 ->where('id', 'u1')
                 ->where('logins_count', 2)
                 ->where('total_gross', 2000)
-                ->where('last_login_at', fn ($value) => str_contains($value, '2026-06-10'))
+                ->where('last_login_at', fn ($value): bool => str_contains($value, '2026-06-10'))
                 ->etc()
             )
         );
 });
 
-test('aggregates do not leak across projects that share the same external user id', function () {
+test('aggregates do not leak across projects that share the same external user id', function (): void {
     $other = Project::factory()->create([
         'team_id' => $this->team->id,
         'usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS,
@@ -185,7 +185,7 @@ test('aggregates do not leak across projects that share the same external user i
         );
 });
 
-test('selecting all projects shows users team-wide, a specific project filters them', function () {
+test('selecting all projects shows users team-wide, a specific project filters them', function (): void {
     $other = Project::factory()->create([
         'team_id' => $this->team->id,
         'usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS,
@@ -204,7 +204,7 @@ test('selecting all projects shows users team-wide, a specific project filters t
         );
 });
 
-test('changing the project with a preset persists it and a bare visit restores it', function () {
+test('changing the project with a preset persists it and a bare visit restores it', function (): void {
     $this->get(route('power-users', ['project_id' => $this->project->id, 'preset' => 'last_30_days']));
 
     expect($this->user->fresh()->settings['statsFilters'][$this->team->id]['project_id'])
@@ -216,7 +216,7 @@ test('changing the project with a preset persists it and a bare visit restores i
         );
 });
 
-test('current plan is the latest subscription payment plan when subscriptions are tracked', function () {
+test('current plan is the latest subscription payment plan when subscriptions are tracked', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     makePowerUser('sub', $this->project);
@@ -234,7 +234,7 @@ test('current plan is the latest subscription payment plan when subscriptions ar
         );
 });
 
-test('a churned monthly subscriber whose last payment is older than the interval has no current plan', function () {
+test('a churned monthly subscriber whose last payment is older than the interval has no current plan', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     makePowerUser('churned', $this->project);
@@ -252,7 +252,7 @@ test('a churned monthly subscriber whose last payment is older than the interval
         );
 });
 
-test('a yearly subscriber stays on their plan even when the last payment is months ago', function () {
+test('a yearly subscriber stays on their plan even when the last payment is months ago', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     makePowerUser('yearly', $this->project);
@@ -269,7 +269,7 @@ test('a yearly subscriber stays on their plan even when the last payment is mont
         );
 });
 
-test('only the latest recurring payment decides activity, an older in-window yearly does not resurrect a churned monthly', function () {
+test('only the latest recurring payment decides activity, an older in-window yearly does not resurrect a churned monthly', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     makePowerUser('switcher', $this->project);
@@ -289,7 +289,7 @@ test('only the latest recurring payment decides activity, an older in-window yea
         );
 });
 
-test('each row exposes the location, device and referer dimensions for icons', function () {
+test('each row exposes the location, device and referer dimensions for icons', function (): void {
     makePowerUser('dim', $this->project, [
         'location_country' => 'Germany (DE)',
         'device_type' => 'Desktop',
@@ -312,7 +312,7 @@ test('each row exposes the location, device and referer dimensions for icons', f
         );
 });
 
-test('the selected project user link base url is exposed on each row for building links', function () {
+test('the selected project user link base url is exposed on each row for building links', function (): void {
     $this->project->update(['user_link_base_url' => 'https://app.example.com/admin/users']);
 
     makePowerUser('imp', $this->project);
@@ -327,7 +327,7 @@ test('the selected project user link base url is exposed on each row for buildin
         );
 });
 
-test('updating the user link base url stores it trimmed of a trailing slash', function () {
+test('updating the user link base url stores it trimmed of a trailing slash', function (): void {
     $this->put(route('projects.user-link-url.update', $this->project), [
         'user_link_base_url' => 'https://app.example.com/admin/users/',
     ])->assertRedirect();
@@ -335,7 +335,7 @@ test('updating the user link base url stores it trimmed of a trailing slash', fu
     expect($this->project->fresh()->user_link_base_url)->toBe('https://app.example.com/admin/users');
 });
 
-test('a user link url with an {id} token is accepted and stored verbatim', function () {
+test('a user link url with an {id} token is accepted and stored verbatim', function (): void {
     $this->put(route('projects.user-link-url.update', $this->project), [
         'user_link_base_url' => 'https://app.example.com/admin/users/{id}/details',
     ])->assertRedirect()->assertSessionHasNoErrors();
@@ -343,13 +343,13 @@ test('a user link url with an {id} token is accepted and stored verbatim', funct
     expect($this->project->fresh()->user_link_base_url)->toBe('https://app.example.com/admin/users/{id}/details');
 });
 
-test('the user link base url must be a valid url', function () {
+test('the user link base url must be a valid url', function (): void {
     $this->put(route('projects.user-link-url.update', $this->project), [
         'user_link_base_url' => 'not-a-url',
     ])->assertSessionHasErrors('user_link_base_url');
 });
 
-test('a null user link base url clears the setting', function () {
+test('a null user link base url clears the setting', function (): void {
     $this->project->update(['user_link_base_url' => 'https://app.example.com/admin/users']);
 
     $this->put(route('projects.user-link-url.update', $this->project), [
@@ -359,7 +359,7 @@ test('a null user link base url clears the setting', function () {
     expect($this->project->fresh()->user_link_base_url)->toBeNull();
 });
 
-test('a user cannot set the user link base url on another teams project', function () {
+test('a user cannot set the user link base url on another teams project', function (): void {
     // Create the foreign project while acting as its owner so the HasTeamScope saving
     // hook stamps the stranger's team_id (otherwise it would inherit our team).
     $stranger = User::factory()->withPersonalTeam()->create();

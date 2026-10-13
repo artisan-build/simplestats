@@ -12,9 +12,7 @@ trait RunsFilteredStatsQueries
      */
     protected function formatFilter(array $filterConditions): array
     {
-        return collect($filterConditions)->mapWithKeys(function ($value, $key) {
-            return [':'.$key => $value];
-        })->toArray();
+        return collect($filterConditions)->mapWithKeys(fn ($value, $key): array => [':'.$key => $value])->toArray();
     }
 
     /**

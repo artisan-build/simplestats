@@ -3,11 +3,11 @@
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config(['session.driver' => 'database']);
 });
 
-test('profile sessions exclude impersonation sessions and re-index correctly', function () {
+test('profile sessions exclude impersonation sessions and re-index correctly', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
 
     $normalPayload = base64_encode(serialize(['foo' => 'bar']));
@@ -44,7 +44,7 @@ test('profile sessions exclude impersonation sessions and re-index correctly', f
         );
 });
 
-test('profile sessions show all sessions when none are impersonating', function () {
+test('profile sessions show all sessions when none are impersonating', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
 
     $payload = base64_encode(serialize(['foo' => 'bar']));

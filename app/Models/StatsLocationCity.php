@@ -10,11 +10,17 @@ class StatsLocationCity extends Model
 {
     use HasTeamScope;
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);

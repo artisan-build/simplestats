@@ -33,8 +33,8 @@ class DumpUserRecovery extends Command
         $this->newLine();
 
         $this->table(['Table', 'Rows'], collect($result['summary'])
-            ->filter(fn (int $count) => $count > 0)
-            ->map(fn (int $count, string $table) => [$table, $count])
+            ->filter(fn (int $count): bool => $count > 0)
+            ->map(fn (int $count, string $table): array => [$table, $count])
             ->values()
             ->all());
 

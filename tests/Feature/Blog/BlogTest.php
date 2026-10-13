@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->skipUnlessSaas();
 
     $this->blogPath = storage_path('app/testing/blog');
@@ -12,7 +12,7 @@ beforeEach(function () {
     config(['md-blog.cache.enabled' => false]);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     if (! isset($this->blogPath)) {
         return;
     }
@@ -38,13 +38,13 @@ function createMarkdownPost(string $path, string $slug, bool $published = true, 
     file_put_contents("{$path}/{$slug}.md", $frontMatter);
 }
 
-test('blog index page returns successful response', function () {
+test('blog index page returns successful response', function (): void {
     $this->get(route('blog.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page->component('Blog/Index'));
 });
 
-test('blog index page displays published posts', function () {
+test('blog index page displays published posts', function (): void {
     createMarkdownPost($this->blogPath, 'published-post-one');
     createMarkdownPost($this->blogPath, 'published-post-two');
     createMarkdownPost($this->blogPath, 'published-post-three');
@@ -58,7 +58,7 @@ test('blog index page displays published posts', function () {
         );
 });
 
-test('blog index hydrates posts with author data', function () {
+test('blog index hydrates posts with author data', function (): void {
     $author = User::factory()->create();
     createMarkdownPost($this->blogPath, 'post-with-author', extra: [
         'author_id' => $author->id,
@@ -79,7 +79,7 @@ test('blog index hydrates posts with author data', function () {
         );
 });
 
-test('landing page shows the latest three blog posts without full content', function () {
+test('landing page shows the latest three blog posts without full content', function (): void {
     $author = User::factory()->create();
     createMarkdownPost($this->blogPath, 'oldest-post', extra: ['date' => '2026-01-01']);
     createMarkdownPost($this->blogPath, 'middle-post', extra: ['date' => '2026-02-01']);
@@ -102,7 +102,7 @@ test('landing page shows the latest three blog posts without full content', func
         );
 });
 
-test('landing page latest posts are empty when no posts exist', function () {
+test('landing page latest posts are empty when no posts exist', function (): void {
     $this->get(route('home'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -111,7 +111,7 @@ test('landing page latest posts are empty when no posts exist', function () {
         );
 });
 
-test('blog show page returns successful response for published post', function () {
+test('blog show page returns successful response for published post', function (): void {
     $author = User::factory()->create();
     createMarkdownPost($this->blogPath, 'test-published-post', extra: ['author_id' => $author->id]);
 
@@ -124,7 +124,7 @@ test('blog show page returns successful response for published post', function (
         );
 });
 
-test('blog show page uses the post title and excerpt for meta tags', function () {
+test('blog show page uses the post title and excerpt for meta tags', function (): void {
     createMarkdownPost($this->blogPath, 'meta-post', extra: ['title' => 'Meta Post Title', 'excerpt' => 'Meta post excerpt']);
 
     $this->get(route('blog.show', 'meta-post'))
@@ -134,14 +134,14 @@ test('blog show page uses the post title and excerpt for meta tags', function ()
         ->assertSee('<meta property="og:type" content="article">', false);
 });
 
-test('blog show page returns 404 for draft post', function () {
+test('blog show page returns 404 for draft post', function (): void {
     createMarkdownPost($this->blogPath, 'draft-post', published: false);
 
     $this->get(route('blog.show', 'draft-post'))
         ->assertNotFound();
 });
 
-test('blog show page returns 404 for non-existent slug', function () {
+test('blog show page returns 404 for non-existent slug', function (): void {
     $this->get(route('blog.show', 'non-existent-slug'))
         ->assertNotFound();
 });

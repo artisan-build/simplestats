@@ -8,8 +8,11 @@ class ExchangeRate extends Model
 {
     public $timestamps = false;
 
-    protected $casts = [
-        'date' => 'date',
-        'rates' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+            'rates' => 'array',
+        ];
+    }
 }

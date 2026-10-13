@@ -7,6 +7,7 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Services\StatsService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class MergeStatsTypes extends Command
      */
     public function handle(): void
     {
-        Team::with('owner')->get()->each(function ($team) {
+        Team::with('owner')->get()->each(function ($team): void {
             if (empty($team->owner)) {
                 return;
             }
@@ -39,16 +40,16 @@ class MergeStatsTypes extends Command
             DB::beginTransaction();
 
             try {
-                StatsService::getStatsTypes()->each(function ($types) use ($team) {
-                    collect($types)->each(function ($statsType) use ($team) {
+                StatsService::getStatsTypes()->each(function ($types) use ($team): void {
+                    collect($types)->each(function (array $statsType) use ($team): void {
                         $statsTypeModel = $statsType['model'];
 
                         $statsTypeModel::where('team_id', $team->id)
-                            ->get()->unique('name')->each(function ($statsModel) use ($statsTypeModel, $statsType) {
+                            ->get()->unique('name')->each(function ($statsModel) use ($statsTypeModel, $statsType): void {
                                 $statsTypeModel::where([
                                     'team_id' => $statsModel->team_id,
                                     'name' => $statsModel->name,
-                                ])->get()->each(function ($statsModelWithSameName) use ($statsModel, $statsType) {
+                                ])->get()->each(function ($statsModelWithSameName) use ($statsModel, $statsType): void {
                                     if ($statsModel->id != $statsModelWithSameName->id) {
                                         $statsTrackIdColumn = 'stats_'.$statsType['type'].'_id';
 
@@ -74,7 +75,7 @@ class MergeStatsTypes extends Command
                 });
 
                 DB::commit();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 DB::rollBack();
                 throw $e;
             }

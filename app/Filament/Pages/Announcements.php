@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Jobs\SendAnnouncementToUser;
 use App\Models\Announcement;
 use App\Models\User;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\MarkdownEditor;
@@ -32,7 +33,7 @@ class Announcements extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-megaphone';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-megaphone';
 
     protected static ?string $navigationLabel = 'Announcements';
 
@@ -161,13 +162,13 @@ class Announcements extends Page implements HasTable
         Announcement::recordSend($data['subject'], $data['body'], $this->loadedAnnouncementId);
 
         $customEmails = collect($data['custom_emails'] ?? [])
-            ->map(fn (string $email) => strtolower(trim($email)))
+            ->map(fn (string $email): string => strtolower(trim($email)))
             ->filter()
             ->unique();
 
         if ($customEmails->isNotEmpty()) {
             foreach ($customEmails as $email) {
-                SendAnnouncementToUser::dispatch('', $email, $data['subject'], $data['body']);
+                dispatch(new SendAnnouncementToUser('', $email, $data['subject'], $data['body']));
                 $recipientCount++;
             }
 
@@ -186,15 +187,15 @@ class Announcements extends Page implements HasTable
 
         if ($data['admins_only'] ?? false) {
             $query->where('is_admin', true);
-        } elseif (app()->environment() !== 'production') {
+        } elseif (! app()->isProduction()) {
             $query->where('id', auth()->id());
         }
 
         $users = $query->get();
-        $activeEmails = $users->pluck('email')->map(fn (string $email) => strtolower($email))->toArray();
+        $activeEmails = $users->pluck('email')->map(fn (string $email): string => strtolower($email))->toArray();
 
         foreach ($users as $user) {
-            SendAnnouncementToUser::dispatch($user->name, $user->email, $data['subject'], $data['body']);
+            dispatch(new SendAnnouncementToUser($user->name, $user->email, $data['subject'], $data['body']));
             $recipientCount++;
         }
 
@@ -211,7 +212,7 @@ class Announcements extends Page implements HasTable
                     continue;
                 }
 
-                SendAnnouncementToUser::dispatch($name, $email, $data['subject'], $data['body']);
+                dispatch(new SendAnnouncementToUser($name, $email, $data['subject'], $data['body']));
                 $recipientCount++;
             }
         }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 
 class DocsController extends Controller
 {
-    public function __invoke($path = 'index.html')
+    public function __invoke($path = 'index.html'): Response
     {
         $filePath = base_path('docs/.vitepress/dist/'.$path);
 

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('telescope_monitoring', function (Blueprint $table) {
+        Schema::create('telescope_monitoring', function (Blueprint $table): void {
             $table->string('tag');
 
             $table->primary('tag');

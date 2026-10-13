@@ -14,7 +14,7 @@ class StatsPaymentsImport extends BaseStatsImport implements WithUpserts
         parent::__construct(
             $dataImport,
             StatsPayment::class,
-            app(StatsPaymentValidator::class)
+            resolve(StatsPaymentValidator::class)
         );
     }
 

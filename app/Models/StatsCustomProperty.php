@@ -15,11 +15,17 @@ class StatsCustomProperty extends Model
 
     protected $guarded = false;
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
@@ -37,11 +43,17 @@ class StatsCustomProperty extends Model
         return $this->morphTo();
     }
 
+    /**
+     * @return BelongsTo<StatsCustomPropertyName, $this>
+     */
     public function name(): BelongsTo
     {
         return $this->belongsTo(StatsCustomPropertyName::class, 'stats_custom_property_name_id');
     }
 
+    /**
+     * @return BelongsTo<StatsCustomPropertyValue, $this>
+     */
     public function value(): BelongsTo
     {
         return $this->belongsTo(StatsCustomPropertyValue::class, 'stats_custom_property_value_id');

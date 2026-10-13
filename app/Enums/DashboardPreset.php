@@ -14,12 +14,10 @@ enum DashboardPreset: string
 
     public static function toOptions(): array
     {
-        return collect(self::cases())->map(function (DashboardPreset $preset) {
-            return [
-                'id' => $preset->value,
-                'name' => $preset->title(),
-            ];
-        })->values()->toArray();
+        return collect(self::cases())->map(fn (DashboardPreset $preset): array => [
+            'id' => $preset->value,
+            'name' => $preset->title(),
+        ])->values()->all();
     }
 
     public function title(): string

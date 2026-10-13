@@ -26,7 +26,7 @@ class SendCustomMail extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $user = User::findOrFail($this->argument('userId'));
 

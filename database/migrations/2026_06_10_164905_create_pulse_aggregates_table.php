@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pulse_aggregates', function (Blueprint $table) {
+        Schema::create('pulse_aggregates', function (Blueprint $table): void {
             $table->id();
             $table->integer('bucket');
             $table->integer('period');

@@ -17,7 +17,7 @@ use Inertia\Response;
 class CampaignController extends Controller
 {
     public function __construct(
-        private CampaignService $campaignService,
+        private readonly CampaignService $campaignService,
     ) {
         $this->authorizeResource(Campaign::class, 'campaign');
     }
@@ -39,14 +39,14 @@ class CampaignController extends Controller
             $request->validated('name'),
         );
 
-        return redirect()->route('campaigns.show', $campaign);
+        return to_route('campaigns.show', $campaign);
     }
 
     public function update(CampaignUpdateRequest $request, Campaign $campaign): RedirectResponse
     {
         $this->campaignService->rename($campaign, $request->validated('name'));
 
-        return redirect()->back();
+        return back();
     }
 
     public function linkTrackCampaign(CampaignLinkRequest $request, Campaign $campaign): RedirectResponse
@@ -55,7 +55,7 @@ class CampaignController extends Controller
 
         $this->campaignService->linkTrackCampaign($campaign, $request->validated('name'));
 
-        return redirect()->back();
+        return back();
     }
 
     public function unlinkTrackCampaign(Campaign $campaign, StatsTrackCampaign $trackCampaign): RedirectResponse
@@ -64,6 +64,6 @@ class CampaignController extends Controller
 
         $this->campaignService->unlinkTrackCampaign($campaign, $trackCampaign);
 
-        return redirect()->back();
+        return back();
     }
 }

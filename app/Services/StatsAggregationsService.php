@@ -21,8 +21,10 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Stringable;
 
 class StatsAggregationsService
 {
@@ -42,21 +44,19 @@ class StatsAggregationsService
         $filterHash = $filters->makeHash();
         $filterJson = json_encode($filters->toFilterArray());
 
-        $upsertData = $data->map(function ($item) use ($filters, $teamId, $filterHash, $filterJson, $kind) {
-            return [
-                'team_id' => $teamId,
-                'project_id' => $filters->projectId ?: null,
-                'filter_hash' => $filterHash,
-                'kind' => $kind,
-                'filter' => $filterJson,
-                'type' => $filters->rangeType,
-                'time' => $item['date_clear'],
-                'data' => json_encode($item),
-                'selected_at' => now(),
-            ];
-        });
+        $upsertData = $data->map(fn ($item): array => [
+            'team_id' => $teamId,
+            'project_id' => $filters->projectId ?: null,
+            'filter_hash' => $filterHash,
+            'kind' => $kind,
+            'filter' => $filterJson,
+            'type' => $filters->rangeType,
+            'time' => $item['date_clear'],
+            'data' => json_encode($item),
+            'selected_at' => now(),
+        ]);
 
-        StatsAggregation::upsert($upsertData->toArray(), uniqueBy: ['filter_hash', 'time', 'kind'], update: ['data', 'filter']);
+        StatsAggregation::upsert($upsertData->all(), uniqueBy: ['filter_hash', 'time', 'kind'], update: ['data', 'filter']);
     }
 
     /**
@@ -195,7 +195,7 @@ class StatsAggregationsService
      */
     private function castNumericValues(array $rows): array
     {
-        return array_map(function ($item) {
+        return array_map(function (array $item): array {
             foreach (['net', 'mrr'] as $money) {
                 if (isset($item[$money])) {
                     $item[$money] = round((float) $item[$money], 2);
@@ -294,7 +294,7 @@ class StatsAggregationsService
 
         $this->refreshSelectedAt($cachedById->keys());
 
-        $byKey = $cachedById->keyBy(fn ($data) => trim($data['date_clear']));
+        $byKey = $cachedById->keyBy(fn ($data): string => trim($data['date_clear']));
 
         $missingDates = [];
         $rangeIncludesOpen = false;
@@ -317,7 +317,7 @@ class StatsAggregationsService
 
                 // A sub-range can surface the open bucket at its edge; it is only ever recomputed live, never persisted.
                 $fresh = $fresh->merge(
-                    collect($compute($rangeFilters))->reject(fn (array $row) => trim($row['date_clear']) === $openKey)
+                    collect($compute($rangeFilters))->reject(fn (array $row): bool => trim($row['date_clear']) === $openKey)
                 );
             }
 
@@ -412,14 +412,15 @@ class StatsAggregationsService
      * @param  CarbonImmutable[]  $dates
      * @return CarbonImmutable[][]
      */
-    private function groupContiguousDates(array $dates, \Stringable $intervalType): array
+    private function groupContiguousDates(array $dates, Stringable $intervalType): array
     {
-        usort($dates, fn (CarbonImmutable $a, CarbonImmutable $b) => $a <=> $b);
+        usort($dates, fn (CarbonImmutable $a, CarbonImmutable $b): int => $a <=> $b);
 
         $ranges = [];
         $currentRange = [$dates[0]];
+        $counter = count($dates);
 
-        for ($i = 1; $i < count($dates); $i++) {
+        for ($i = 1; $i < $counter; $i++) {
             $expected = $currentRange[count($currentRange) - 1]->add(1, $intervalType->toString());
 
             if ($dates[$i]->equalTo($expected)) {
@@ -567,13 +568,13 @@ class StatsAggregationsService
         StatsAggregation::where([
             ['time', '>=', $start],
             ['type', '=', $case->value],
-        ])->where(function ($query) use ($stat) {
+        ])->where(function ($query) use ($stat): void {
             // stats must be re-aggregated on a team basis
-            $query->where(function ($query) use ($stat) {
+            $query->where(function ($query) use ($stat): void {
                 $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null);
             })
             // stats must be re-aggregated on project basis
-                ->orWhere(function ($query) use ($stat) {
+                ->orWhere(function ($query) use ($stat): void {
                     $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id);
                 });
         })->delete();
@@ -581,13 +582,13 @@ class StatsAggregationsService
 
     public function clearByProject(Project $project): void
     {
-        StatsAggregation::where(function ($query) use ($project) {
+        StatsAggregation::where(function (Builder $query) use ($project): void {
             // stats must be re-aggregated on a team basis
-            $query->where(function ($query) use ($project) {
+            $query->where(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($project): void {
                 $query->where('team_id', '=', $project->team_id)->where('project_id', '=', null);
             })
             // stats must be re-aggregated on a project basis
-                ->orWhere(function ($query) use ($project) {
+                ->orWhere(function (\Illuminate\Contracts\Database\Query\Builder $query) use ($project): void {
                     $query->where('team_id', '=', $project->team_id)->where('project_id', '=', $project->id);
                 });
         })->delete();
@@ -595,13 +596,11 @@ class StatsAggregationsService
 
     private function getTrackablePersonByProject(?Project $project): TrackablePerson
     {
-        $trackablePerson = TrackablePerson::VISITOR;
-
-        if (! $project || $project->hasUsages([Project::USAGE_USERS])) {
-            $trackablePerson = TrackablePerson::USER;
+        if (! $project instanceof Project || $project->hasUsages([Project::USAGE_USERS])) {
+            return TrackablePerson::USER;
         }
 
-        return $trackablePerson;
+        return TrackablePerson::VISITOR;
     }
 
     /**

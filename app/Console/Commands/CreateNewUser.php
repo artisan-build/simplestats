@@ -24,9 +24,9 @@ class CreateNewUser extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): int
     {
-        $user = app(CreateNewUserAction::class)->create([
+        $user = resolve(CreateNewUserAction::class)->create([
             'name' => $this->argument('name'),
             'email' => $this->argument('email'),
             'password' => $this->argument('password'),

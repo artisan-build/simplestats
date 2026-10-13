@@ -38,11 +38,11 @@ class ProjectController extends Controller
 
     public function store(ProjectRequest $request): RedirectResponse
     {
-        $project = app(CreateProject::class)($request->user(), $request->validated());
+        $project = resolve(CreateProject::class)($request->user(), $request->validated());
 
         $token = $project->tokens()->first();
 
-        return redirect()->route('projects.show', $project)
+        return to_route('projects.show', $project)
             ->banner('Project created: '.$project->name)
             ->with('flash', [
                 'token' => $token->token_plain_part,
@@ -73,13 +73,13 @@ class ProjectController extends Controller
         $validated = $request->validated();
 
         if ($validated['usage'] != $project->usage) {
-            app(StatsAggregationsService::class)->clearByProject($project);
+            resolve(StatsAggregationsService::class)->clearByProject($project);
             $request->user()->updateSettings('dashboardPreset', DashboardPreset::ADVANCED->value);
         }
 
-        app(UpdateProject::class)($request->user(), $project, $validated);
+        resolve(UpdateProject::class)($request->user(), $project, $validated);
 
-        return redirect()->back();
+        return back();
     }
 
     public function updateUserLinkUrl(Request $request, Project $project): RedirectResponse
@@ -93,7 +93,7 @@ class ProjectController extends Controller
         ]);
 
         $validated = $request->validate([
-            'user_link_base_url' => ['nullable', 'string', 'max:255', function (string $attribute, mixed $value, Closure $fail) {
+            'user_link_base_url' => ['nullable', 'string', 'max:255', function (string $attribute, mixed $value, Closure $fail): void {
                 // {id} is a placeholder for the tracked user id and is not a valid URL
                 // character, so validate the URL with a stand-in in its place.
                 if (! filter_var(str_replace('{id}', '1', $value), FILTER_VALIDATE_URL)) {
@@ -112,25 +112,25 @@ class ProjectController extends Controller
 
         $project->update(['user_link_base_url' => $url]);
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(Request $request, Project $project, StatefulGuard $guard): RedirectResponse
     {
-        app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+        resolve(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
 
-        app(StatsAggregationsService::class)->clearByProject($project);
+        resolve(StatsAggregationsService::class)->clearByProject($project);
 
         $project->delete();
 
-        return redirect()->route('projects.index')->banner('Project deleted: '.$project->name);
+        return to_route('projects.index')->banner('Project deleted: '.$project->name);
     }
 
     public function tokenRegenerate(Request $request, Project $project, StatefulGuard $guard)
     {
         $this->authorize('regenerateProjectToken', $project);
 
-        app(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
+        resolve(CheckPasswordConfirmation::class)($guard, $request->user(), $request->password);
 
         $project->tokens()->delete();
 
@@ -148,7 +148,7 @@ class ProjectController extends Controller
 
         $token = $project->tokens()->first();
 
-        return redirect()->route('projects.show', [$project])->with('flash', [
+        return to_route('projects.show', [$project])->with('flash', [
             'token' => $token->token_plain_part,
         ]);
     }

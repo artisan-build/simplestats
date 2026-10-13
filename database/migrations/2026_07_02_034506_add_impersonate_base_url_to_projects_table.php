@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        Schema::table('projects', function (Blueprint $table): void {
             $table->string('impersonate_base_url')->nullable()->after('domain');
         });
     }

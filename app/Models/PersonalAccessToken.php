@@ -18,7 +18,7 @@ class PersonalAccessToken extends SanctumPersonalAccessToken
     protected function tokenPlainPart(): Attribute
     {
         return Attribute::make(
-            get: fn () => explode('|', $this->token_plain, 2)[1],
+            get: fn (): string => explode('|', $this->token_plain, 2)[1],
         );
     }
 }

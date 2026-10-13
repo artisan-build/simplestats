@@ -18,8 +18,8 @@ class AnnouncementFactory extends Factory
     public function definition(): array
     {
         return [
-            'subject' => $this->faker->unique()->sentence(4),
-            'body' => "# {$this->faker->sentence(3)}\n\n{$this->faker->paragraph()}",
+            'subject' => fake()->unique()->sentence(4),
+            'body' => '# '.fake()->sentence(3)."\n\n".fake()->paragraph(),
             'last_sent_at' => now(),
         ];
     }

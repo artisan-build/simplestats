@@ -20,9 +20,9 @@ class GetKpiStats extends Tool
 {
     use ResolvesStatsFilters;
 
-    private const TOTAL_KEYS = ['pd_visitor', 'pd_reg', 'pd_net', 'pd_gross', 'pd_fee'];
+    private const array TOTAL_KEYS = ['pd_visitor', 'pd_reg', 'pd_net', 'pd_gross', 'pd_fee'];
 
-    private const MONEY_KEYS = ['pd_net', 'pd_gross', 'pd_fee', 'pd_arpdau', 'lt_net', 'lt_arpu', 'lt_arppu', 'lt_arpv'];
+    private const array MONEY_KEYS = ['pd_net', 'pd_gross', 'pd_fee', 'pd_arpdau', 'lt_net', 'lt_arpu', 'lt_arppu', 'lt_arpv'];
 
     public function __construct(protected StatsDetailsService $statsDetailsService) {}
 
@@ -43,7 +43,7 @@ class GetKpiStats extends Tool
                 'note' => $rows === []
                     ? 'No data for this range/filter.'
                     : 'Rows are ordered newest first (date_clear). pd_* = value within the bucket, lt_* = lifetime value up to and including the bucket. Monetary values are in the scope currency.',
-            ], fn ($value) => $value !== null));
+            ], fn (array|null|string $value): bool => $value !== null));
         } catch (ValidationException $e) {
             return Response::error('Invalid arguments: '.collect($e->errors())->flatten()->implode(' '));
         } catch (Throwable $e) {
@@ -66,7 +66,7 @@ class GetKpiStats extends Tool
      */
     private function perProjectTotals(Request $request, StatsFilterDto $filters): ?array
     {
-        return $this->perProjectBreakdown($filters, function (int $projectId) use ($request) {
+        return $this->perProjectBreakdown($filters, function (int $projectId) use ($request): array {
             $rows = $this->centsToCurrency(
                 $this->statsDetailsService->getStats($this->resolveFilters($request, $projectId)),
                 self::MONEY_KEYS,
@@ -104,6 +104,6 @@ class GetKpiStats extends Tool
     {
         $latest = collect($rows)->first() ?? [];
 
-        return array_filter($latest, fn ($key) => str_starts_with($key, 'lt_'), ARRAY_FILTER_USE_KEY);
+        return array_filter($latest, fn ($key): bool => str_starts_with($key, 'lt_'), ARRAY_FILTER_USE_KEY);
     }
 }

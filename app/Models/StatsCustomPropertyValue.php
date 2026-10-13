@@ -15,21 +15,33 @@ class StatsCustomPropertyValue extends Model
 
     protected $guarded = false;
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * @return BelongsTo<StatsCustomPropertyName, $this>
+     */
     public function name(): BelongsTo
     {
         return $this->belongsTo(StatsCustomPropertyName::class, 'stats_custom_property_name_id');
     }
 
+    /**
+     * @return HasMany<StatsCustomProperty, $this>
+     */
     public function properties(): HasMany
     {
         return $this->hasMany(StatsCustomProperty::class);

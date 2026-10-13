@@ -8,7 +8,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -24,15 +24,15 @@ beforeEach(function () {
     ]);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
-test('campaign show route returns 200', function () {
+test('campaign show route returns 200', function (): void {
     $this->get(route('campaigns.show', $this->campaign))->assertStatus(200);
 });
 
-test('campaign show renders Campaigns/Show with campaign, summary, paginated spends and links', function () {
+test('campaign show renders Campaigns/Show with campaign, summary, paginated spends and links', function (): void {
     AdSpend::factory()->create([
         'team_id' => $this->team->id,
         'campaign_id' => $this->campaign->id,
@@ -61,7 +61,7 @@ test('campaign show renders Campaigns/Show with campaign, summary, paginated spe
         );
 });
 
-test('campaign show lists linked utm campaigns', function () {
+test('campaign show lists linked utm campaigns', function (): void {
     DB::table('stats_track_campaigns')->insert([
         'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
@@ -80,7 +80,7 @@ test('campaign show lists linked utm campaigns', function () {
         );
 });
 
-test('campaign show returns a zero summary when the campaign has no spend or revenue', function () {
+test('campaign show returns a zero summary when the campaign has no spend or revenue', function (): void {
     $this->get(route('campaigns.show', $this->campaign))
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Show')
@@ -93,7 +93,7 @@ test('campaign show returns a zero summary when the campaign has no spend or rev
         );
 });
 
-test('campaign show summary carries ltv:cac and cac payback keys', function () {
+test('campaign show summary carries ltv:cac and cac payback keys', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     $this->get(route('campaigns.show', $this->campaign))
@@ -103,7 +103,7 @@ test('campaign show summary carries ltv:cac and cac payback keys', function () {
         );
 });
 
-test('campaign show summary matches the matching index row', function () {
+test('campaign show summary matches the matching index row', function (): void {
     AdSpend::factory()->create([
         'team_id' => $this->team->id,
         'campaign_id' => $this->campaign->id,
@@ -116,13 +116,13 @@ test('campaign show summary matches the matching index row', function () {
 
     $summary = null;
     $this->get(route('campaigns.show', ['campaign' => $this->campaign->uuid, ...$query]))
-        ->assertInertia(function ($page) use (&$summary) {
+        ->assertInertia(function ($page) use (&$summary): void {
             $summary = $page->toArray()['props']['summary'];
         });
 
     $row = null;
     $this->get(route('campaigns', $query))
-        ->assertInertia(function ($page) use (&$row) {
+        ->assertInertia(function ($page) use (&$row): void {
             $row = $page->toArray()['props']['campaigns']['data'][0];
         });
 
@@ -135,7 +135,7 @@ test('campaign show summary matches the matching index row', function () {
     ]);
 });
 
-test('campaign show 404s for another team campaign', function () {
+test('campaign show 404s for another team campaign', function (): void {
     $otherTeam = User::factory()->withPersonalTeam()->create()->currentTeam;
     $foreignId = DB::table('campaigns')->insertGetId([
         'uuid' => (string) Str::uuid(),

@@ -9,11 +9,9 @@ class TimezoneController extends Controller
      */
     public function index()
     {
-        return collect(timezone_identifiers_list())->map(function ($timezone, $key) {
-            return [
-                'id' => $timezone,
-                'name' => $timezone,
-            ];
-        });
+        return collect(timezone_identifiers_list())->map(fn ($timezone, $key): array => [
+            'id' => $timezone,
+            'name' => $timezone,
+        ]);
     }
 }

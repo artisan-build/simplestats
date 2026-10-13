@@ -16,7 +16,7 @@ class PowerUsersDataProvider extends AbstractStatsDataProvider
         StatsDetailsService $statsDetailsService,
         SubscriptionService $subscriptionService,
         RefererService $refererService,
-        private StatsUserService $statsUserService,
+        private readonly StatsUserService $statsUserService,
     ) {
         parent::__construct($request, $statsDetailsService, $subscriptionService, $refererService);
     }

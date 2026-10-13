@@ -6,9 +6,10 @@ use App\Models\StatsLogin;
 use App\Models\StatsUser;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Context;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -30,7 +31,7 @@ function validLoginPayload(array $overrides = []): array
     ], $overrides);
 }
 
-function setLoginProjectContext($project): void
+function setLoginProjectContext(?Authenticatable $project): void
 {
     auth()->setUser($project);
     AppHelper::setTeamContextFromAuth($project);
@@ -38,7 +39,7 @@ function setLoginProjectContext($project): void
     Context::add('request_url', '/api/v1/stats-login');
 }
 
-test('store login with auth and required fields returns 200', function () {
+test('store login with auth and required fields returns 200', function (): void {
     $payload = validLoginPayload();
 
     $response = $this->postJson(
@@ -54,7 +55,7 @@ test('store login with auth and required fields returns 200', function () {
         ]);
 });
 
-test('store login without auth returns 401', function () {
+test('store login without auth returns 401', function (): void {
     auth()->forgetGuards();
 
     $response = $this->postJson(
@@ -69,7 +70,7 @@ test('store login without auth returns 401', function () {
     $response->assertUnauthorized();
 });
 
-test('validation fails when stats_user_id is missing', function () {
+test('validation fails when stats_user_id is missing', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-login',
         validLoginPayload(['stats_user_id' => null]),
@@ -80,7 +81,7 @@ test('validation fails when stats_user_id is missing', function () {
         ->assertJsonValidationErrors('stats_user_id');
 });
 
-test('validation fails when time is missing', function () {
+test('validation fails when time is missing', function (): void {
     $payload = validLoginPayload();
     unset($payload['time']);
 
@@ -94,7 +95,7 @@ test('validation fails when time is missing', function () {
         ->assertJsonValidationErrors('time');
 });
 
-test('login is created and StatsUser is auto-created', function () {
+test('login is created and StatsUser is auto-created', function (): void {
     $statsUserId = (string) fake()->unique()->randomNumber(5);
 
     $payload = validLoginPayload([
@@ -113,7 +114,7 @@ test('login is created and StatsUser is auto-created', function () {
     expect($statsUser)->not->toBeNull();
 });
 
-test('counter increments per user', function () {
+test('counter increments per user', function (): void {
     setLoginProjectContext($this->project);
 
     $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
@@ -133,7 +134,7 @@ test('counter increments per user', function () {
     expect($login1->counter)->toBeGreaterThan($initialLoginCount);
 });
 
-test('duplicate login on same day is not created', function () {
+test('duplicate login on same day is not created', function (): void {
     setLoginProjectContext($this->project);
 
     $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
@@ -158,7 +159,7 @@ test('duplicate login on same day is not created', function () {
     expect($countAfterSecond)->toBeLessThanOrEqual($countAfterFirst + 1);
 });
 
-test('events_count_monthly is incremented on team via StatsObserver', function () {
+test('events_count_monthly is incremented on team via StatsObserver', function (): void {
     $team = $this->project->team;
     $initialCount = $team->events_count_monthly;
 

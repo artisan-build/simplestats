@@ -5,7 +5,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed();
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -34,12 +34,12 @@ function mcpHeaders(?string $token): array
     ]);
 }
 
-it('rejects unauthenticated requests', function () {
+it('rejects unauthenticated requests', function (): void {
     $this->postJson('/mcp', mcpRequest('initialize'), mcpHeaders(null))
         ->assertUnauthorized();
 });
 
-it('rejects user tokens, only project tokens are allowed', function () {
+it('rejects user tokens, only project tokens are allowed', function (): void {
     $userToken = $this->user->createToken('user-token')->plainTextToken;
     auth()->forgetGuards();
 
@@ -47,7 +47,7 @@ it('rejects user tokens, only project tokens are allowed', function () {
         ->assertForbidden();
 });
 
-it('initializes with a project token', function () {
+it('initializes with a project token', function (): void {
     $response = $this->postJson('/mcp', mcpRequest('initialize', [
         'protocolVersion' => '2025-03-26',
         'capabilities' => [],
@@ -58,7 +58,7 @@ it('initializes with a project token', function () {
     expect($response->getContent())->toContain('SimpleStats');
 });
 
-it('serves team-scoped kpi stats defaulting to the token project', function () {
+it('serves team-scoped kpi stats defaulting to the token project', function (): void {
     DB::table('stats_visitors')->delete();
 
     $time = now()->subDay()->format('Y-m-d').' 12:00:00';

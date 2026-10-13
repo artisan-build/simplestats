@@ -39,10 +39,10 @@ trait HasStatsRelations
         ];
     }
 
-    public function getStatsAttribute(): Collection
+    protected function getStatsAttribute(): Collection
     {
         return collect(self::statsRelations())
-            ->mapWithKeys(function ($relation) {
+            ->mapWithKeys(function ($relation): array {
                 $key = explode(':', $relation)[0];
                 $related = $this->{$key};
 
@@ -50,66 +50,105 @@ trait HasStatsRelations
             })->filter();
     }
 
+    /**
+     * @return BelongsTo<StatsTrackReferer, $this>
+     */
     public function statsTrackReferer(): BelongsTo
     {
         return $this->belongsTo(StatsTrackReferer::class);
     }
 
+    /**
+     * @return BelongsTo<StatsTrackSource, $this>
+     */
     public function statsTrackSource(): BelongsTo
     {
         return $this->belongsTo(StatsTrackSource::class);
     }
 
+    /**
+     * @return BelongsTo<StatsTrackMedium, $this>
+     */
     public function statsTrackMedium(): BelongsTo
     {
         return $this->belongsTo(StatsTrackMedium::class);
     }
 
+    /**
+     * @return BelongsTo<StatsTrackCampaign, $this>
+     */
     public function statsTrackCampaign(): BelongsTo
     {
         return $this->belongsTo(StatsTrackCampaign::class);
     }
 
+    /**
+     * @return BelongsTo<StatsTrackTerm, $this>
+     */
     public function statsTrackTerm(): BelongsTo
     {
         return $this->belongsTo(StatsTrackTerm::class);
     }
 
+    /**
+     * @return BelongsTo<StatsTrackContent, $this>
+     */
     public function statsTrackContent(): BelongsTo
     {
         return $this->belongsTo(StatsTrackContent::class);
     }
 
+    /**
+     * @return BelongsTo<StatsPageEntry, $this>
+     */
     public function statsPageEntry(): BelongsTo
     {
         return $this->belongsTo(StatsPageEntry::class);
     }
 
+    /**
+     * @return BelongsTo<StatsLocationCountry, $this>
+     */
     public function statsLocationCountry(): BelongsTo
     {
         return $this->belongsTo(StatsLocationCountry::class);
     }
 
+    /**
+     * @return BelongsTo<StatsLocationRegion, $this>
+     */
     public function statsLocationRegion(): BelongsTo
     {
         return $this->belongsTo(StatsLocationRegion::class);
     }
 
+    /**
+     * @return BelongsTo<StatsLocationCity, $this>
+     */
     public function statsLocationCity(): BelongsTo
     {
         return $this->belongsTo(StatsLocationCity::class);
     }
 
+    /**
+     * @return BelongsTo<StatsDevicePlatform, $this>
+     */
     public function statsDevicePlatform(): BelongsTo
     {
         return $this->belongsTo(StatsDevicePlatform::class);
     }
 
+    /**
+     * @return BelongsTo<StatsDeviceBrowser, $this>
+     */
     public function statsDeviceBrowser(): BelongsTo
     {
         return $this->belongsTo(StatsDeviceBrowser::class);
     }
 
+    /**
+     * @return BelongsTo<StatsDeviceType, $this>
+     */
     public function statsDeviceType(): BelongsTo
     {
         return $this->belongsTo(StatsDeviceType::class);

@@ -42,15 +42,15 @@ trait HasStatsTracking
 
     public static function bootHasStatsTracking(): void
     {
-        static::creating(function (BaseStat $statsModel) {
+        static::creating(function (BaseStat $statsModel): void {
             static::handleStatsTypes($statsModel);
         });
 
-        static::saving(function (BaseStat $statsModel) {
+        static::saving(function (BaseStat $statsModel): void {
             static::handleStatsTypes($statsModel);
         });
 
-        static::updating(function (BaseStat $statsModel) {
+        static::updating(function (BaseStat $statsModel): void {
             static::handleStatsTypes($statsModel);
         });
     }
@@ -100,11 +100,11 @@ trait HasStatsTracking
         return static::$trackingLookupCache[$key] ??= $model::firstOrCreate($track)->id;
     }
 
-    public function ip(): Attribute
+    protected function ip(): Attribute
     {
         return Attribute::make(
             // if the ip is set, we set the location data corresponding to it
-            set: function (?string $value) {
+            set: function (?string $value): array {
                 if (is_null($value)) {
                     return [];
                 }
@@ -125,7 +125,7 @@ trait HasStatsTracking
                     ];
                 }
 
-                if ($position = app(LocationService::class)->get($value)) {
+                if ($position = resolve(LocationService::class)->get($value)) {
                     return [
                         'location_country' => "$position->countryName ($position->countryCode)",
                         'location_region' => "$position->regionName ($position->countryCode)",
@@ -138,16 +138,14 @@ trait HasStatsTracking
         );
     }
 
-    public function trackReferer(): Attribute
+    protected function trackReferer(): Attribute
     {
         return Attribute::make(
-            set: function (?string $value) {
-                return $this->setReferer($value);
-            },
+            set: fn (?string $value) => $this->setReferer($value),
         );
     }
 
-    public function trackSource(): Attribute
+    protected function trackSource(): Attribute
     {
         return Attribute::make(
             set: function (?string $value) {
@@ -175,7 +173,7 @@ trait HasStatsTracking
             return ['track_referer' => null];
         }
 
-        $value = app(RefererService::class)->getTopReferer($value);
+        $value = resolve(RefererService::class)->getTopReferer($value);
 
         // never record the project's own domain as a referer either (e.g. an older
         // client that did not yet strip in-app navigation from the document referrer).
@@ -247,11 +245,11 @@ trait HasStatsTracking
             ->value('domain');
     }
 
-    public function userAgent(): Attribute
+    protected function userAgent(): Attribute
     {
         return Attribute::make(
             // if the user agent is set, we set the device data corresponding to it
-            set: function (?string $value) {
+            set: function (?string $value): array {
                 if (! is_string($value) || $value === '') {
                     return [];
                 }
@@ -295,7 +293,7 @@ trait HasStatsTracking
         );
     }
 
-    public function pageEntry(): Attribute
+    protected function pageEntry(): Attribute
     {
         return Attribute::make(
             set: function (?string $value) {

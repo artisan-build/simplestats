@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\DataProviders\RevenueDataProvider;
 use App\Http\DataProviders\StatsGroupsDataProvider;
 use App\Http\DataProviders\StatsIndexDataProvider;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -32,14 +33,14 @@ class StatsController extends Controller
         return $dataProvider->toArray();
     }
 
-    public function hideFreePlanWarning(Request $request)
+    public function hideFreePlanWarning(Request $request): RedirectResponse
     {
         $request->user()->updateSettings('hideFreePlanWarning', true);
 
         return back();
     }
 
-    public function hideReadDocsWarning(Request $request)
+    public function hideReadDocsWarning(Request $request): RedirectResponse
     {
         $request->user()->updateSettings('hideReadDocsWarning', true);
 

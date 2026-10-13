@@ -10,12 +10,12 @@ use Illuminate\Support\Collection;
 class StatsDetailsService
 {
     public function __construct(
-        private StatsService $statsService,
-        private StatsAggregationsService $statsAggregationsService,
-        private MrrAggregationService $mrrAggregationService,
-        private RetentionAggregationService $retentionAggregationService,
-        private EngagementAggregationService $engagementAggregationService,
-        private FunnelTimingService $funnelTimingService,
+        private readonly StatsService $statsService,
+        private readonly StatsAggregationsService $statsAggregationsService,
+        private readonly MrrAggregationService $mrrAggregationService,
+        private readonly RetentionAggregationService $retentionAggregationService,
+        private readonly EngagementAggregationService $engagementAggregationService,
+        private readonly FunnelTimingService $funnelTimingService,
     ) {}
 
     public function getStats(StatsFilterDto $filters): array
@@ -187,7 +187,7 @@ class StatsDetailsService
 
     public function getRangeTypes(): Collection
     {
-        return collect(StatsRangeType::values())->transform(fn ($name, $key) => [
+        return collect(StatsRangeType::values())->transform(fn ($name, $key): array => [
             'id' => $name,
             'name' => ucfirst($name),
         ]);

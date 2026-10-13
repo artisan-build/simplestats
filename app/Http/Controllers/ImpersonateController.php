@@ -27,6 +27,6 @@ class ImpersonateController extends Controller
             return redirect()->to($leaveRedirect);
         }
 
-        return redirect()->back();
+        return back();
     }
 }

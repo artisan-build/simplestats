@@ -55,7 +55,7 @@ class Transaction extends PaddleTransaction implements TrackablePaymentWithCondi
             return null;
         }
 
-        $subscriptionService = app(SubscriptionService::class);
+        $subscriptionService = resolve(SubscriptionService::class);
 
         foreach ($subscription->items as $item) {
             $interval = $subscriptionService->intervalForPriceId($item->price_id);

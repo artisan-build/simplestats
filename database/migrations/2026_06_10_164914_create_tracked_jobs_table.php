@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tracked_jobs', function (Blueprint $table) {
+        Schema::create('tracked_jobs', function (Blueprint $table): void {
             $table->id();
             $table->integer('trackable_id');
             $table->string('trackable_type');

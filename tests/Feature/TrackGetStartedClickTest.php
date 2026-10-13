@@ -6,16 +6,14 @@ use SimpleStatsIo\LaravelClient\SimplestatsClient as SimplestatsClientClass;
 
 beforeEach(fn () => $this->skipUnlessSaas());
 
-it('tracks a custom event and returns success', function () {
+it('tracks a custom event and returns success', function (): void {
     $this->partialMock(SimplestatsClientClass::class)
         ->shouldReceive('trackCustomEvent')
         ->once()
-        ->withArgs(function (string $id, string $name, $user) {
-            return str_starts_with($id, 'get-started-click-')
-                && $name === 'Get Started Clicked'
-                && is_string($user->getKey())
-                && $user->getKey() !== '';
-        });
+        ->withArgs(fn (string $id, string $name, $user): bool => str_starts_with($id, 'get-started-click-')
+            && $name === 'Get Started Clicked'
+            && is_string($user->getKey())
+            && $user->getKey() !== '');
 
     $response = $this->post(route('tracking.get-started-click'));
 
@@ -23,10 +21,10 @@ it('tracks a custom event and returns success', function () {
         ->assertJson(['tracked' => true]);
 });
 
-it('does not track when no visitor hash is available (e.g. CLI / queue context)', function () {
+it('does not track when no visitor hash is available (e.g. CLI / queue context)', function (): void {
     SimplestatsClient::spy();
 
-    app(CustomEventTrackingService::class)->trackGetStartedClick();
+    resolve(CustomEventTrackingService::class)->trackGetStartedClick();
 
     SimplestatsClient::shouldNotHaveReceived('trackCustomEvent');
 });

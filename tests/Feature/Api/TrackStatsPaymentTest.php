@@ -8,9 +8,10 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Context;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -42,7 +43,7 @@ function subscriptionPaymentPayload(array $overrides = []): array
     ], $overrides));
 }
 
-function setPaymentProjectContext($project): void
+function setPaymentProjectContext(?Authenticatable $project): void
 {
     auth()->setUser($project);
     AppHelper::setTeamContextFromAuth($project);
@@ -50,7 +51,7 @@ function setPaymentProjectContext($project): void
     Context::add('request_url', '/api/v1/stats-payment');
 }
 
-test('store payment with auth and required fields returns 200', function () {
+test('store payment with auth and required fields returns 200', function (): void {
     $payload = validPaymentPayload();
 
     $response = $this->postJson(
@@ -66,7 +67,7 @@ test('store payment with auth and required fields returns 200', function () {
         ]);
 });
 
-test('store payment without auth returns 401', function () {
+test('store payment without auth returns 401', function (): void {
     auth()->forgetGuards();
 
     $response = $this->postJson(
@@ -81,7 +82,7 @@ test('store payment without auth returns 401', function () {
     $response->assertUnauthorized();
 });
 
-test('validation fails when id is missing', function () {
+test('validation fails when id is missing', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         validPaymentPayload(['id' => null]),
@@ -92,7 +93,7 @@ test('validation fails when id is missing', function () {
         ->assertJsonValidationErrors('id');
 });
 
-test('validation fails when gross is missing', function () {
+test('validation fails when gross is missing', function (): void {
     $payload = validPaymentPayload();
     unset($payload['gross']);
 
@@ -106,7 +107,7 @@ test('validation fails when gross is missing', function () {
         ->assertJsonValidationErrors('gross');
 });
 
-test('validation fails when net is missing', function () {
+test('validation fails when net is missing', function (): void {
     $payload = validPaymentPayload();
     unset($payload['net']);
 
@@ -120,7 +121,7 @@ test('validation fails when net is missing', function () {
         ->assertJsonValidationErrors('net');
 });
 
-test('validation fails when currency is missing', function () {
+test('validation fails when currency is missing', function (): void {
     $payload = validPaymentPayload();
     unset($payload['currency']);
 
@@ -134,7 +135,7 @@ test('validation fails when currency is missing', function () {
         ->assertJsonValidationErrors('currency');
 });
 
-test('validation fails when currency is invalid', function () {
+test('validation fails when currency is invalid', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         validPaymentPayload(['currency' => 'INVALID']),
@@ -145,7 +146,7 @@ test('validation fails when currency is invalid', function () {
         ->assertJsonValidationErrors('currency');
 });
 
-test('validation fails when time is missing', function () {
+test('validation fails when time is missing', function (): void {
     $payload = validPaymentPayload();
     unset($payload['time']);
 
@@ -159,7 +160,7 @@ test('validation fails when time is missing', function () {
         ->assertJsonValidationErrors('time');
 });
 
-test('payment is created with correct amounts', function () {
+test('payment is created with correct amounts', function (): void {
     $payload = validPaymentPayload([
         'gross' => 5000,
         'net' => 4200,
@@ -175,7 +176,7 @@ test('payment is created with correct amounts', function () {
         ->and($payment->net)->toBe(4200.0);
 });
 
-test('payment alert does not crash for a payment without an attributed person', function () {
+test('payment alert does not crash for a payment without an attributed person', function (): void {
     // The project's default payment alert fires on creation; a payment with
     // neither a stats user nor a visitor must still render the alert (amount
     // and time only) instead of dereferencing a null person.
@@ -193,7 +194,7 @@ test('payment alert does not crash for a payment without an attributed person', 
         ->and($payment->stats_visitor_id)->toBeNull();
 });
 
-test('subscription_interval is stored when provided', function () {
+test('subscription_interval is stored when provided', function (): void {
     $payload = subscriptionPaymentPayload(['subscription_interval' => 'month']);
 
     $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
@@ -205,7 +206,7 @@ test('subscription_interval is stored when provided', function () {
         ->and($payment->subscription_interval)->toBe(SubscriptionInterval::MONTH);
 });
 
-test('subscription_plan is stored when provided', function () {
+test('subscription_plan is stored when provided', function (): void {
     $payload = subscriptionPaymentPayload(['subscription_interval' => 'month', 'subscription_plan' => 'Business']);
 
     $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
@@ -217,7 +218,7 @@ test('subscription_plan is stored when provided', function () {
         ->and($payment->subscription_plan)->toBe('Business');
 });
 
-test('subscription_interval defaults to null for one-time payments', function () {
+test('subscription_interval defaults to null for one-time payments', function (): void {
     $payload = subscriptionPaymentPayload();
 
     $this->postJson('/api/v1/stats-payment', $payload, apiHeaders($this->token))->assertOk();
@@ -230,7 +231,7 @@ test('subscription_interval defaults to null for one-time payments', function ()
         ->and($payment->subscription_plan)->toBeNull();
 });
 
-test('validation fails when subscription_interval is invalid', function () {
+test('validation fails when subscription_interval is invalid', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-payment',
         validPaymentPayload(['subscription_interval' => 'weekly']),
@@ -241,7 +242,7 @@ test('validation fails when subscription_interval is invalid', function () {
         ->assertJsonValidationErrors('subscription_interval');
 });
 
-test('payment with stats_user_id is stored correctly and StatsUser is auto-created', function () {
+test('payment with stats_user_id is stored correctly and StatsUser is auto-created', function (): void {
     $statsUserId = (string) fake()->unique()->randomNumber(5);
 
     $payload = validPaymentPayload([
@@ -261,7 +262,7 @@ test('payment with stats_user_id is stored correctly and StatsUser is auto-creat
     expect($statsUser)->not->toBeNull();
 });
 
-test('payment with visitor_hash resolves to stats_visitor_id', function () {
+test('payment with visitor_hash resolves to stats_visitor_id', function (): void {
     setPaymentProjectContext($this->project);
 
     $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
@@ -277,7 +278,7 @@ test('payment with visitor_hash resolves to stats_visitor_id', function () {
         ->and($payment->stats_visitor_id)->toBe($visitor->id);
 });
 
-test('duplicate id performs updateOrCreate update', function () {
+test('duplicate id performs updateOrCreate update', function (): void {
     $paymentId = fake()->uuid();
 
     $payload1 = validPaymentPayload(['id' => $paymentId, 'gross' => 1000, 'net' => 800]);
@@ -292,7 +293,7 @@ test('duplicate id performs updateOrCreate update', function () {
     expect($payments)->toHaveCount(1);
 });
 
-test('counter increments per user', function () {
+test('counter increments per user', function (): void {
     setPaymentProjectContext($this->project);
 
     $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
@@ -320,7 +321,7 @@ test('counter increments per user', function () {
     expect($payment2->counter)->toBe(2);
 });
 
-test('events_count_monthly is incremented on team via StatsObserver', function () {
+test('events_count_monthly is incremented on team via StatsObserver', function (): void {
     $team = $this->project->team;
     $initialCount = $team->events_count_monthly;
 

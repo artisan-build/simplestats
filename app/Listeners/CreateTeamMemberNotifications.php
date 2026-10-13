@@ -9,8 +9,8 @@ class CreateTeamMemberNotifications
 {
     public function handle(TeamMemberAdded $event): void
     {
-        $event->team->projects->each(function ($project) use ($event) {
-            app(CreateUserNotification::class)($event->user, $project);
+        $event->team->projects->each(function ($project) use ($event): void {
+            resolve(CreateUserNotification::class)($event->user, $project);
         });
     }
 }

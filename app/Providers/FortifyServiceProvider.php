@@ -75,8 +75,8 @@ class FortifyServiceProvider extends ServiceProvider
         // Passkey logins bypass authenticateUsing(), so the soft-delete block is
         // repeated here. A verified passkey proves ownership just like the
         // password does, which is why the deactivation notice may be shown.
-        Passkeys::authorizeLoginUsing(function (Request $request, ?User $user) {
-            if (! $user) {
+        Passkeys::authorizeLoginUsing(function (Request $request, ?User $user): bool {
+            if (! $user instanceof User) {
                 return false;
             }
 
@@ -93,13 +93,9 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
-        });
+        RateLimiter::for('two-factor', fn (Request $request) => Limit::perMinute(5)->by($request->session()->get('login.id')));
 
-        RateLimiter::for('passkeys', function (Request $request) {
-            return Limit::perMinute(10)->by($request->user() ? 'user:'.$request->user()->id : 'ip:'.$request->ip());
-        });
+        RateLimiter::for('passkeys', fn (Request $request) => Limit::perMinute(10)->by($request->user() ? 'user:'.$request->user()->id : 'ip:'.$request->ip()));
 
         Fortify::registerView(function (Request $request) {
             if ($request->has('invitation_mail')) {

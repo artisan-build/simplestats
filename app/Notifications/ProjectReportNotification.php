@@ -130,7 +130,7 @@ class ProjectReportNotification extends Notification
 
     private function getStats(bool $previous = false)
     {
-        return current(app(StatsDetailsService::class)->getStats($this->getFilter($previous))) ?: [];
+        return current(resolve(StatsDetailsService::class)->getStats($this->getFilter($previous))) ?: [];
     }
 
     public function getStatsGroups(bool $previous = false): Collection
@@ -143,12 +143,12 @@ class ProjectReportNotification extends Notification
             default => 'visitors',
         };
 
-        return collect($this->notification->settings['types'])->map(function ($type) use ($filter, $sort) {
+        return collect($this->notification->settings['types'])->map(function ($type) use ($filter, $sort): array {
             $typeData = StatsService::getStatsTypesFlatMap()->keyBy('model')[$type];
 
             return [
                 'title' => $typeData['title'],
-                'stats' => app(StatsAggregationsService::class)
+                'stats' => resolve(StatsAggregationsService::class)
                     ->getAggregatedGroupedData($filter, $typeData['type'], $sort, 5)
                     ->values()->toArray(),
             ];

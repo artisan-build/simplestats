@@ -23,13 +23,9 @@ class UserNotification extends Model
         'notifiable_type',
     ];
 
-    protected $casts = [
-        'frequency' => UserNotificationFrequency::class,
-        'type' => UserNotificationType::class,
-        'settings' => 'array',
-        'sent_at' => 'datetime',
-    ];
-
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -45,5 +41,15 @@ class UserNotification extends Model
         $settings = $this->settings;
         Arr::set($settings, $key, $value);
         $this->update(['settings' => $settings]);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'frequency' => UserNotificationFrequency::class,
+            'type' => UserNotificationType::class,
+            'settings' => 'array',
+            'sent_at' => 'datetime',
+        ];
     }
 }

@@ -16,7 +16,7 @@ use Junges\TrackableJobs\Models\TrackedJob;
 class DataImportIndexDataProvider extends AbstractDataProvider
 {
     public function __construct(
-        private Request $request,
+        private readonly Request $request,
     ) {}
 
     public function toArray(): array
@@ -37,7 +37,7 @@ class DataImportIndexDataProvider extends AbstractDataProvider
             'project',
             'createdBy',
             'trackedJob',
-        ])->orderBy('created_at', 'desc')->paginate(10);
+        ])->latest()->paginate(10);
 
         return $this->ensureTrackedJobFallback($imports);
     }
@@ -47,7 +47,7 @@ class DataImportIndexDataProvider extends AbstractDataProvider
         // if for some reason the import has no tracked job (shouldn't happen) and one, so that FE/Vue parses...
         $items = collect($imports->items());
         if ($items->isNotEmpty() && ! $items->first()->getRelation('trackedJob')) {
-            TrackedJob::unguarded(function () use ($items) {
+            TrackedJob::unguarded(function () use ($items): void {
                 $items->first()->setRelation('trackedJob', new TrackedJob([
                     'status' => TrackedJobStatus::Created,
                     'created_at' => $items->first()->created_at,
@@ -68,14 +68,14 @@ class DataImportIndexDataProvider extends AbstractDataProvider
     private function buildImportTypes(): Collection
     {
         return collect(DataImportType::values())
-            ->map(fn ($item) => ['id' => $item, 'name' => ucfirst($item)])
+            ->map(fn ($item): array => ['id' => $item, 'name' => ucfirst($item)])
             ->prepend(['id' => null, 'name' => 'Please Select']);
     }
 
     private function buildMimeTypes(): Collection
     {
         // csv geht irgendwie nur mit txt, aber das soll im FE nicht angezeigt werden...
-        return collect(DataImportRequest::MIMETYPES)->filter(fn ($type) => $type !== 'txt');
+        return collect(DataImportRequest::MIMETYPES)->filter(fn ($type): bool => $type !== 'txt');
     }
 
     private function buildPermissions(): array

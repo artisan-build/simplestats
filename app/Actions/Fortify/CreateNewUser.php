@@ -71,7 +71,7 @@ class CreateNewUser implements CreatesNewUsers
                 $createUser['password'] = Hash::make($input['password']);
             }
 
-            return tap(User::create($createUser), function (User $user) use ($invitationRequest, $invitation) {
+            return tap(User::create($createUser), function (User $user) use ($invitationRequest, $invitation): void {
                 // In self-hosted, invited users only get the invited team (no personal team).
                 // SaaS users always get a personal team. Self-hosted initial admin (no invitation)
                 // also gets a team so they have something to put data in.
@@ -92,7 +92,7 @@ class CreateNewUser implements CreatesNewUsers
      */
     protected function acceptTeamInvitation(Request $request, TeamInvitation $invitation, User $user): void
     {
-        $teamInvitation = app(TeamInvitationController::class);
+        $teamInvitation = resolve(TeamInvitationController::class);
         $teamInvitation->accept($request, $invitation->id);
     }
 

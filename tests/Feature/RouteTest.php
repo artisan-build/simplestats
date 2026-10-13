@@ -34,7 +34,7 @@ $exclude = [
 
 routeTesting('all GET routes')
     ->exclude($exclude)
-    ->setUp(function (string $method, string $uri) {
+    ->setUp(function (string $method, string $uri): void {
         // if ($uri !== 'user/confirm-password') return; // only for tests
 
         // public marketing pages redirect to the login on self-hosted
@@ -42,7 +42,7 @@ routeTesting('all GET routes')
             $this->skipUnlessSaas();
         }
 
-        $route = app('router')->getRoutes()->match(request()->create($uri, $method));
+        $route = resolve('router')->getRoutes()->match(request()->create($uri, $method));
 
         if (in_array('auth:sanctum', $route->middleware()) || in_array('auth:web', $route->middleware())) {
             $this->seed(TestUserSeeder::class);

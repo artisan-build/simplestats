@@ -12,7 +12,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Schema;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->project = Project::first();
 
@@ -40,7 +40,7 @@ function makeValue(StatsCustomPropertyName $name, string $value): StatsCustomPro
     ]);
 }
 
-test('property tables have the expected schema', function () {
+test('property tables have the expected schema', function (): void {
     expect(Schema::hasColumns('stats_custom_property_names', ['id', 'team_id', 'project_id', 'name']))->toBeTrue();
     expect(Schema::hasColumns('stats_custom_property_values', ['id', 'team_id', 'project_id', 'stats_custom_property_name_id', 'value']))->toBeTrue();
     expect(Schema::hasColumns('stats_custom_properties', [
@@ -49,13 +49,13 @@ test('property tables have the expected schema', function () {
     ]))->toBeTrue();
 });
 
-test('team_id is set automatically via HasTeamScope on save', function () {
+test('team_id is set automatically via HasTeamScope on save', function (): void {
     $name = makeName($this->project, 'ab_test');
 
     expect($name->team_id)->toBe($this->project->team_id);
 });
 
-test('a property keeps exactly one current value per entity and name', function () {
+test('a property keeps exactly one current value per entity and name', function (): void {
     $user = StatsUser::factory()->create(['project_id' => $this->project->id]);
     $name = makeName($this->project, 'ab_test');
     $free = makeValue($name, 'A');
@@ -78,7 +78,7 @@ test('a property keeps exactly one current value per entity and name', function 
         ->and($properties->first()->stats_custom_property_value_id)->toBe($pro->id);
 });
 
-test('the unique constraint blocks a duplicate entity-name row', function () {
+test('the unique constraint blocks a duplicate entity-name row', function (): void {
     $user = StatsUser::factory()->create(['project_id' => $this->project->id]);
     $name = makeName($this->project, 'ab_test');
     $free = makeValue($name, 'A');
@@ -97,7 +97,7 @@ test('the unique constraint blocks a duplicate entity-name row', function () {
         ->toThrow(QueryException::class);
 });
 
-test('the same property name can hold one value per user and per visitor independently', function () {
+test('the same property name can hold one value per user and per visitor independently', function (): void {
     $user = StatsUser::factory()->create(['project_id' => $this->project->id]);
     $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
     $name = makeName($this->project, 'ab_test');
@@ -126,7 +126,7 @@ test('the same property name can hold one value per user and per visitor indepen
     expect(StatsCustomProperty::where('stats_custom_property_name_id', $name->id)->count())->toBe(2);
 });
 
-test('the morph relation resolves the owning entity', function () {
+test('the morph relation resolves the owning entity', function (): void {
     $user = StatsUser::factory()->create(['project_id' => $this->project->id]);
     $name = makeName($this->project, 'plan');
     $value = makeValue($name, 'enterprise');

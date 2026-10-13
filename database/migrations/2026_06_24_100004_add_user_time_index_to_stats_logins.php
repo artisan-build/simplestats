@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('stats_logins', function (Blueprint $table) {
+        Schema::table('stats_logins', function (Blueprint $table): void {
             $table->index(['stats_user_id', 'project_id', 'time']);
         });
     }

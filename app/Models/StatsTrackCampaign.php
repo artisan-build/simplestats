@@ -24,11 +24,17 @@ class StatsTrackCampaign extends Model
         'campaign_id',
     ];
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Campaign, $this>
+     */
     public function campaign(): BelongsTo
     {
         return $this->belongsTo(Campaign::class);

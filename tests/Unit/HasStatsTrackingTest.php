@@ -77,7 +77,7 @@ dataset('user_agents', [
     ],
 ]);
 
-test('parses user agent into device data', function (string $userAgent, array $expected) {
+test('parses user agent into device data', function (string $userAgent, array $expected): void {
     $stat = makeStat();
     $stat->user_agent = $userAgent;
 
@@ -86,7 +86,7 @@ test('parses user agent into device data', function (string $userAgent, array $e
         ->and($stat->device_browser)->toBe($expected['device_browser']);
 })->with('user_agents');
 
-test('matomo still exposes the browser family names we map to', function () {
+test('matomo still exposes the browser family names we map to', function (): void {
     // The userAgent attribute relies on these five family strings being present
     // in matomo's $browserFamilies array. If matomo ever renames one, this test
     // fails so we know to update the mapping before stats_device_browsers gets duplicates.

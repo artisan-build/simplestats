@@ -10,19 +10,19 @@ use Illuminate\Support\Facades\Bus;
 use Livewire\Livewire;
 use Spatie\DeletedModels\Models\DeletedModel;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->skipUnlessSaas();
 
     $this->admin = User::factory()->create(['is_admin' => true]);
     $this->actingAs($this->admin);
 });
 
-test('send announcement page loads for admin users', function () {
+test('send announcement page loads for admin users', function (): void {
     Livewire::test(Announcements::class)
         ->assertOk();
 });
 
-test('send announcement page requires subject and body', function () {
+test('send announcement page requires subject and body', function (): void {
     Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => '',
@@ -32,7 +32,7 @@ test('send announcement page requires subject and body', function () {
         ->assertHasFormErrors(['subject' => 'required', 'body' => 'required']);
 });
 
-test('send announcement dispatches jobs for verified users', function () {
+test('send announcement dispatches jobs for verified users', function (): void {
     Bus::fake();
 
     Livewire::test(Announcements::class)
@@ -43,15 +43,13 @@ test('send announcement dispatches jobs for verified users', function () {
         ->call('send')
         ->assertNotified();
 
-    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) {
-        return $job->recipientEmail === $this->admin->email
-            && $job->recipientName === $this->admin->name
-            && $job->subject === 'Test Announcement'
-            && $job->markdownContent === 'This is a test announcement.';
-    });
+    Bus::assertDispatched(SendAnnouncementToUser::class, fn ($job): bool => $job->recipientEmail === $this->admin->email
+        && $job->recipientName === $this->admin->name
+        && $job->subject === 'Test Announcement'
+        && $job->markdownContent === 'This is a test announcement.');
 });
 
-test('send announcement includes deleted users when toggle is enabled', function () {
+test('send announcement includes deleted users when toggle is enabled', function (): void {
     Bus::fake();
 
     DeletedModel::create([
@@ -69,13 +67,11 @@ test('send announcement includes deleted users when toggle is enabled', function
         ->call('send')
         ->assertNotified();
 
-    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) {
-        return $job->recipientEmail === 'deleted@example.com'
-            && $job->recipientName === 'Deleted User';
-    });
+    Bus::assertDispatched(SendAnnouncementToUser::class, fn ($job): bool => $job->recipientEmail === 'deleted@example.com'
+        && $job->recipientName === 'Deleted User');
 });
 
-test('send announcement skips deleted users whose email matches an active user', function () {
+test('send announcement skips deleted users whose email matches an active user', function (): void {
     Bus::fake();
 
     $activeUser = User::factory()->create(['email_verified_at' => now()]);
@@ -96,16 +92,16 @@ test('send announcement skips deleted users whose email matches an active user',
         ->assertNotified();
 
     $dispatched = collect();
-    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched) {
+    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched): true {
         $dispatched->push($job->recipientEmail);
 
         return true;
     });
 
-    expect($dispatched->filter(fn ($email) => $email === $activeUser->email)->count())->toBe(1);
+    expect($dispatched->filter(fn ($email): bool => $email === $activeUser->email)->count())->toBe(1);
 });
 
-test('send announcement with admins_only toggle only dispatches to admin users', function () {
+test('send announcement with admins_only toggle only dispatches to admin users', function (): void {
     Bus::fake();
 
     $regularUser = User::factory()->create(['email_verified_at' => now(), 'is_admin' => false]);
@@ -120,7 +116,7 @@ test('send announcement with admins_only toggle only dispatches to admin users',
         ->assertNotified();
 
     $dispatched = collect();
-    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched) {
+    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched): true {
         $dispatched->push($job->recipientEmail);
 
         return true;
@@ -130,7 +126,7 @@ test('send announcement with admins_only toggle only dispatches to admin users',
     expect($dispatched)->not->toContain($regularUser->email);
 });
 
-test('send announcement dispatches only to custom emails when provided', function () {
+test('send announcement dispatches only to custom emails when provided', function (): void {
     Bus::fake();
 
     $regularUser = User::factory()->create(['email_verified_at' => now(), 'is_admin' => false]);
@@ -145,7 +141,7 @@ test('send announcement dispatches only to custom emails when provided', functio
         ->assertNotified();
 
     $dispatched = collect();
-    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched) {
+    Bus::assertDispatched(SendAnnouncementToUser::class, function ($job) use ($dispatched): true {
         $dispatched->push($job->recipientEmail);
 
         return true;
@@ -156,7 +152,7 @@ test('send announcement dispatches only to custom emails when provided', functio
     expect($dispatched)->not->toContain($regularUser->email);
 });
 
-test('send announcement validates custom email addresses', function () {
+test('send announcement validates custom email addresses', function (): void {
     Livewire::test(Announcements::class)
         ->fillForm([
             'subject' => 'Test',
@@ -167,19 +163,19 @@ test('send announcement validates custom email addresses', function () {
         ->assertHasFormErrors(['custom_emails.0']);
 });
 
-test('announcement email greets with there when recipient name is empty', function () {
+test('announcement email greets with there when recipient name is empty', function (): void {
     $rendered = (new AnnouncementMail('', 'Subject', 'Body'))->render();
 
     expect($rendered)->toContain('Hey there,');
 });
 
-test('announcement email greets with the recipient name when present', function () {
+test('announcement email greets with the recipient name when present', function (): void {
     $rendered = (new AnnouncementMail('Jane', 'Subject', 'Body'))->render();
 
     expect($rendered)->toContain('Hey Jane,');
 });
 
-test('sending an announcement persists it to history', function () {
+test('sending an announcement persists it to history', function (): void {
     Bus::fake();
 
     Livewire::test(Announcements::class)
@@ -195,7 +191,7 @@ test('sending an announcement persists it to history', function () {
         ->and($announcement->last_sent_at)->not->toBeNull();
 });
 
-test('re-sending with an identical subject updates the existing announcement', function () {
+test('re-sending with an identical subject updates the existing announcement', function (): void {
     Bus::fake();
 
     $component = Livewire::test(Announcements::class);
@@ -206,7 +202,7 @@ test('re-sending with an identical subject updates the existing announcement', f
         ->and(Announcement::first()->body)->toBe('v2');
 });
 
-test('sending with a different subject creates a new announcement', function () {
+test('sending with a different subject creates a new announcement', function (): void {
     Bus::fake();
 
     $component = Livewire::test(Announcements::class);
@@ -216,7 +212,7 @@ test('sending with a different subject creates a new announcement', function () 
     expect(Announcement::count())->toBe(2);
 });
 
-test('loading an announcement fills the form and re-sending updates it even with a changed subject', function () {
+test('loading an announcement fills the form and re-sending updates it even with a changed subject', function (): void {
     Bus::fake();
 
     $announcement = Announcement::factory()->create(['subject' => 'Old title', 'body' => 'Old body']);
@@ -231,7 +227,7 @@ test('loading an announcement fills the form and re-sending updates it even with
         ->and($announcement->refresh()->subject)->toBe('New title');
 });
 
-test('an announcement can be deleted from history', function () {
+test('an announcement can be deleted from history', function (): void {
     $announcement = Announcement::factory()->create();
 
     Livewire::test(Announcements::class)
@@ -240,20 +236,20 @@ test('an announcement can be deleted from history', function () {
     expect(Announcement::count())->toBe(0);
 });
 
-test('the first markdown header auto-fills an empty subject', function () {
+test('the first markdown header auto-fills an empty subject', function (): void {
     Livewire::test(Announcements::class)
         ->fillForm(['body' => "# What's new in July\n\nSome content"])
         ->assertSchemaStateSet(['subject' => "What's new in July"]);
 });
 
-test('the markdown header does not overwrite a manually entered subject', function () {
+test('the markdown header does not overwrite a manually entered subject', function (): void {
     Livewire::test(Announcements::class)
         ->fillForm(['subject' => 'My subject'])
         ->fillForm(['body' => '# Other header'])
         ->assertSchemaStateSet(['subject' => 'My subject']);
 });
 
-test('non-admin users cannot access the send announcement page', function () {
+test('non-admin users cannot access the send announcement page', function (): void {
     $user = User::factory()->create(['is_admin' => false]);
 
     $this->actingAs($user)

@@ -14,7 +14,7 @@ class PurgePendingDeletedUsers extends Command
 
     // Grace window between the soft mark (CheckInactiveUsers) and the irreversible,
     // cascading deletion. Long enough to notice and restore a wrongly-flagged account.
-    private const PURGE_AFTER_MONTHS = 2;
+    private const int PURGE_AFTER_MONTHS = 2;
 
     public function handle(DeletesUsers $deletesUsers): void
     {

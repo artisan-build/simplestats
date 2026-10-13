@@ -49,8 +49,7 @@ class ExchangeRateService
 
         if ($dateRate->rates[$rateKey]) {
             return $dateRate->rates[$rateKey];
-        } else {
-            throw new Exception("can't find exchange rate conversion for $fromCurrency to $toCurrency");
         }
+        throw new Exception("can't find exchange rate conversion for $fromCurrency to $toCurrency");
     }
 }

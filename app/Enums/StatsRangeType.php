@@ -3,6 +3,7 @@
 namespace App\Enums;
 
 use Carbon\CarbonInterface;
+use Exception;
 use LaracraftTech\LaravelUsefulAdditions\Traits\UsefulEnums;
 
 enum StatsRangeType: string
@@ -73,7 +74,7 @@ enum StatsRangeType: string
             self::WEEK => ['db' => 'IYYY-IW', 'php' => 'o-W'],
             self::MONTH => ['db' => 'YYYY-MM', 'php' => 'Y-m'],
             self::YEAR => ['db' => 'YYYY', 'php' => 'Y'],
-            default => throw new \Exception('Unexpected match value'),
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
@@ -85,7 +86,7 @@ enum StatsRangeType: string
             self::WEEK => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d '],
             self::MONTH => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d '],
             self::YEAR => ['db' => 'YYYY-MM-DD', 'php' => 'Y-m-d '],
-            default => throw new \Exception('Unexpected match value'),
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
@@ -97,7 +98,7 @@ enum StatsRangeType: string
             self::WEEK => $date->startOfWeek(),
             self::MONTH => $date->startOfMonth(),
             self::YEAR => $date->startOfYear(),
-            default => throw new \Exception('Unexpected match value'),
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
@@ -120,7 +121,7 @@ enum StatsRangeType: string
             self::WEEK => 4,
             self::MONTH => 6,
             self::YEAR => 3,
-            default => throw new \Exception('Unexpected match value'),
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
@@ -132,7 +133,7 @@ enum StatsRangeType: string
             self::WEEK => $rangeStart->subMonth(),
             self::MONTH => $rangeStart->subYear(),
             //            self::YEAR => $date->startOfYear(),
-            default => throw new \Exception('Unexpected match value'),
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
@@ -144,7 +145,7 @@ enum StatsRangeType: string
             self::WEEK => $rangeStart->copy()->subWeeks($rangeAmount),
             self::MONTH => $rangeStart->copy()->subMonthsNoOverflow($rangeAmount),
             self::YEAR => $rangeStart->copy()->subYearsNoOverflow($rangeAmount),
-            default => throw new \Exception('Unexpected match value'),
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
@@ -185,7 +186,7 @@ enum StatsRangeType: string
                 'start' => now()->subHour()->startOfHour()->format(self::DATE_FORMAT),
                 'end' => now()->subHour()->endOfHour()->format(self::DATE_FORMAT),
             ] : [],
-            self::DAY => $endDateStart->greaterThanOrEqualTo(now()->startOfDay()) ? [
+            self::DAY => $endDateStart->greaterThanOrEqualTo(today()) ? [
                 'start' => now()->subDay()->startOfDay()->format(self::DATE_FORMAT),
                 'end' => now()->subDay()->endOfDay()->format(self::DATE_FORMAT),
             ] : [],

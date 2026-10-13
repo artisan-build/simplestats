@@ -11,7 +11,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -27,10 +27,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(MrrAggregationService::class);
+    $this->service = resolve(MrrAggregationService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -75,7 +75,7 @@ function dayFilter(int $projectId, string $rangeStart, int $trackSource = 0): St
     );
 }
 
-it('counts a monthly subscription in full and a yearly one as net/12', function () {
+it('counts a monthly subscription in full and a yearly one as net/12', function (): void {
     insertStatsUser('u-month', $this->team->id, $this->pid);
     insertStatsUser('u-year', $this->team->id, $this->pid);
     insertPayment('p-month', 'u-month', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
@@ -87,7 +87,7 @@ it('counts a monthly subscription in full and a yearly one as net/12', function 
         ->and($snapshot['arr'])->toBe(1800.0);
 });
 
-it('deduplicates per user and only counts the latest recurring payment', function () {
+it('deduplicates per user and only counts the latest recurring payment', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-old', 'u-1', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-06-01 10:00:00');
     insertPayment('p-new', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
@@ -97,7 +97,7 @@ it('deduplicates per user and only counts the latest recurring payment', functio
     expect($snapshot['mrr'])->toBe(50.0);
 });
 
-it('drops a subscription whose last payment falls outside the interval window (churn)', function () {
+it('drops a subscription whose last payment falls outside the interval window (churn)', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // Last monthly payment in April, snapshot in June -> well past month + grace.
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-04-01 10:00:00');
@@ -107,7 +107,7 @@ it('drops a subscription whose last payment falls outside the interval window (c
     expect($snapshot['mrr'])->toBe(0.0);
 });
 
-it('ignores one-time payments', function () {
+it('ignores one-time payments', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 500, null, '2026-06-20 10:00:00');
 
@@ -117,7 +117,7 @@ it('ignores one-time payments', function () {
         ->and($snapshot['arr'])->toBe(0.0);
 });
 
-it('reflects subscription growth between range start and range end', function () {
+it('reflects subscription growth between range start and range end', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // First payment lands inside the month range (after start, before end).
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 40, SubscriptionInterval::MONTH, '2026-06-10 10:00:00');
@@ -134,7 +134,7 @@ it('reflects subscription growth between range start and range end', function ()
         ->and($snapshot['mrr_prev'])->toBe(0.0);
 });
 
-it('attributes MRR per channel via the source filter', function () {
+it('attributes MRR per channel via the source filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',
@@ -143,7 +143,7 @@ it('attributes MRR per channel via the source filter', function () {
     ]);
 
     insertStatsUser('u-newsletter', $this->team->id, $this->pid, $sourceId);
-    insertStatsUser('u-direct', $this->team->id, $this->pid, null);
+    insertStatsUser('u-direct', $this->team->id, $this->pid);
     insertPayment('p-newsletter', 'u-newsletter', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
     insertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
@@ -154,7 +154,7 @@ it('attributes MRR per channel via the source filter', function () {
         ->and($filtered['mrr'])->toBe(50.0);
 });
 
-it('reports the same current MRR for day and month ranges (as-of now, not the future bucket end)', function () {
+it('reports the same current MRR for day and month ranges (as-of now, not the future bucket end)', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // Last monthly payment on May 20: still active today (June 21, within grace),
     // but already lapsed relative to the month-end (June 30) bucket boundary.
@@ -171,7 +171,7 @@ it('reports the same current MRR for day and month ranges (as-of now, not the fu
         ->and($month['mrr'])->toBe(60.0);
 });
 
-it('caps the latest time-series bucket at now so it matches the day snapshot', function () {
+it('caps the latest time-series bucket at now so it matches the day snapshot', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 60, SubscriptionInterval::MONTH, '2026-05-20 10:00:00');
 
@@ -183,7 +183,7 @@ it('caps the latest time-series bucket at now so it matches the day snapshot', f
     expect(collect($series)->first()['mrr'])->toBe(60.0);
 });
 
-it('returns zero when there are no recurring payments', function () {
+it('returns zero when there are no recurring payments', function (): void {
     $snapshot = $this->service->getMrrSnapshot(dayFilter($this->pid, '2026-06-21'));
 
     expect($snapshot['mrr'])->toBe(0.0)
@@ -200,7 +200,7 @@ function monthFilter(int $projectId, string $rangeStart, int $rangeAmount, int $
     );
 }
 
-it('builds one MRR snapshot per bucket and reflects churn over time', function () {
+it('builds one MRR snapshot per bucket and reflects churn over time', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // One monthly payment in March that is never renewed -> active only in its window.
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-03-10 10:00:00');
@@ -211,7 +211,7 @@ it('builds one MRR snapshot per bucket and reflects churn over time', function (
     expect(collect($series)->pluck('mrr')->all())->toBe([0.0, 0.0, 0.0, 30.0, 0.0, 0.0]);
 });
 
-it('normalises yearly to net/12 and counts monthly in full per bucket', function () {
+it('normalises yearly to net/12 and counts monthly in full per bucket', function (): void {
     insertStatsUser('u-month', $this->team->id, $this->pid);
     insertStatsUser('u-year', $this->team->id, $this->pid);
     insertPayment('p-month', 'u-month', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
@@ -222,7 +222,7 @@ it('normalises yearly to net/12 and counts monthly in full per bucket', function
     expect(collect($series)->pluck('mrr')->all())->toBe([150.0]);
 });
 
-it('attributes the MRR line per channel via the source filter', function () {
+it('attributes the MRR line per channel via the source filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',
@@ -231,7 +231,7 @@ it('attributes the MRR line per channel via the source filter', function () {
     ]);
 
     insertStatsUser('u-newsletter', $this->team->id, $this->pid, $sourceId);
-    insertStatsUser('u-direct', $this->team->id, $this->pid, null);
+    insertStatsUser('u-direct', $this->team->id, $this->pid);
     insertPayment('p-newsletter', 'u-newsletter', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
     insertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
@@ -242,14 +242,14 @@ it('attributes the MRR line per channel via the source filter', function () {
         ->and(collect($filtered)->first()['mrr'])->toBe(50.0);
 });
 
-it('returns a zero line when there are no recurring payments', function () {
+it('returns a zero line when there are no recurring payments', function (): void {
     $series = $this->service->getMrrTimeSeries(dayFilter($this->pid, '2026-06-21'));
 
     expect($series)->toHaveCount(1)
         ->and(collect($series)->pluck('mrr')->all())->toBe([0.0]);
 });
 
-it('matches the headline snapshot on the latest bucket', function () {
+it('matches the headline snapshot on the latest bucket', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
@@ -261,7 +261,7 @@ it('matches the headline snapshot on the latest bucket', function () {
     expect(collect($series)->first()['mrr'])->toBe($snapshot['mrr']);
 });
 
-it('counts active subscribers per bucket and drops them on churn', function () {
+it('counts active subscribers per bucket and drops them on churn', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertStatsUser('u-2', $this->team->id, $this->pid);
     // u-1 active in June, u-2 only paid in March -> churned by June, active in March.
@@ -274,13 +274,13 @@ it('counts active subscribers per bucket and drops them on churn', function () {
     expect(collect($series)->pluck('subscribers')->all())->toBe([1, 0, 0, 1, 0, 0]);
 });
 
-it('reports a zero subscriber count when there are no recurring payments', function () {
+it('reports a zero subscriber count when there are no recurring payments', function (): void {
     $series = $this->service->getMrrTimeSeries(dayFilter($this->pid, '2026-06-21'));
 
     expect(collect($series)->pluck('subscribers')->all())->toBe([0]);
 });
 
-it('classifies a new subscription and its later churn as movements', function () {
+it('classifies a new subscription and its later churn as movements', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 30, SubscriptionInterval::MONTH, '2026-03-10 10:00:00');
 
@@ -294,7 +294,7 @@ it('classifies a new subscription and its later churn as movements', function ()
         ->and(collect($movements)->firstWhere('new', 30.0)['ending_mrr'])->toBe(30.0);
 });
 
-it('classifies plan changes as expansion and contraction', function () {
+it('classifies plan changes as expansion and contraction', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-03-05 10:00:00');
     insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, '2026-04-05 10:00:00');
@@ -309,7 +309,7 @@ it('classifies plan changes as expansion and contraction', function () {
         ->and(collect($movements)->sum('reactivation'))->toBe(0.0);
 });
 
-it('distinguishes reactivation from new when a user returns after churn', function () {
+it('distinguishes reactivation from new when a user returns after churn', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-02-05 10:00:00');
     insertPayment('p-2', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-05-05 10:00:00');
@@ -322,7 +322,7 @@ it('distinguishes reactivation from new when a user returns after churn', functi
         ->and(collect($movements)->sum('expansion'))->toBe(0.0);
 });
 
-it('keeps starting + movements = ending per bucket', function () {
+it('keeps starting + movements = ending per bucket', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertStatsUser('u-2', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-03-05 10:00:00');
@@ -338,7 +338,7 @@ it('keeps starting + movements = ending per bucket', function () {
     }
 });
 
-it('returns no movements when there are no recurring payments', function () {
+it('returns no movements when there are no recurring payments', function (): void {
     $movements = $this->service->getMrrMovements(monthFilter($this->pid, '2026-06-21', 6));
 
     expect($movements)->toHaveCount(6)
@@ -346,7 +346,7 @@ it('returns no movements when there are no recurring payments', function () {
         ->and(collect($movements)->sum('ending_mrr'))->toBe(0.0);
 });
 
-it('derives nrr, grr and quick ratio from the movement totals', function () {
+it('derives nrr, grr and quick ratio from the movement totals', function (): void {
     insertStatsUser('u-stable', $this->team->id, $this->pid);
     insertStatsUser('u-expand', $this->team->id, $this->pid);
     insertStatsUser('u-churn', $this->team->id, $this->pid);
@@ -376,7 +376,7 @@ it('derives nrr, grr and quick ratio from the movement totals', function () {
         ->and($retention['quick_ratio'])->toBe(0.75);
 });
 
-it('returns null retention ratios when there is no starting mrr', function () {
+it('returns null retention ratios when there is no starting mrr', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     insertPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-05-20 10:00:00');
 
@@ -387,7 +387,7 @@ it('returns null retention ratios when there is no starting mrr', function () {
         ->and($retention['grr'])->toBeNull();
 });
 
-it('treats FX conversion jitter between renewals as unchanged instead of expansion or contraction', function () {
+it('treats FX conversion jitter between renewals as unchanged instead of expansion or contraction', function (): void {
     insertStatsUser('u-1', $this->team->id, $this->pid);
     // Same 20 USD subscription converting to a different EUR amount each renewal
     // (2000 -> 2015, daily exchange rates), then a real upgrade to 21.50 USD.

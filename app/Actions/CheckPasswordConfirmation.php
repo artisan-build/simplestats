@@ -11,11 +11,11 @@ class CheckPasswordConfirmation
 {
     public function __invoke(StatefulGuard $guard, User $user, ?string $passwordInput): void
     {
-        if (app('impersonate')->isImpersonating()) {
+        if (resolve('impersonate')->isImpersonating()) {
             return;
         }
 
-        $confirmed = app(ConfirmPassword::class)(
+        $confirmed = resolve(ConfirmPassword::class)(
             $guard, $user, $passwordInput
         );
 

@@ -5,7 +5,7 @@ use App\Services\CodeHighlightService;
 use Illuminate\Support\Facades\File;
 use JCFrane\MdBlog\Facades\MdBlog;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->skipUnlessSaas();
 
     $this->blogPath = storage_path('app/testing/blog-warm-cache');
@@ -15,10 +15,10 @@ beforeEach(function () {
 
     $this->mock(CodeHighlightService::class)
         ->shouldReceive('highlightCodeBlocks')
-        ->andReturnUsing(fn (string $html) => "<!--highlighted-->{$html}");
+        ->andReturnUsing(fn (string $html): string => "<!--highlighted-->{$html}");
 });
 
-afterEach(function () {
+afterEach(function (): void {
     if (! isset($this->blogPath)) {
         return;
     }
@@ -34,7 +34,7 @@ function createWarmablePost(string $path, string $slug, string $content = 'Some 
     );
 }
 
-test('warms all posts when called without arguments', function () {
+test('warms all posts when called without arguments', function (): void {
     createWarmablePost($this->blogPath, 'post-a');
     createWarmablePost($this->blogPath, 'post-b');
 
@@ -42,7 +42,7 @@ test('warms all posts when called without arguments', function () {
         ->expectsOutputToContain('Warmed cache for 2 blog posts.')
         ->assertSuccessful();
 
-    $blogService = app(BlogService::class);
+    $blogService = resolve(BlogService::class);
 
     foreach (MdBlog::latest() as $post) {
         expect($blogService->hasWarmHighlightCache($post))->toBeTrue()
@@ -50,7 +50,7 @@ test('warms all posts when called without arguments', function () {
     }
 });
 
-test('warms only the given slugs', function () {
+test('warms only the given slugs', function (): void {
     createWarmablePost($this->blogPath, 'post-a');
     createWarmablePost($this->blogPath, 'post-b');
 
@@ -58,13 +58,13 @@ test('warms only the given slugs', function () {
         ->expectsOutputToContain('Warmed cache for 1 blog posts.')
         ->assertSuccessful();
 
-    $blogService = app(BlogService::class);
+    $blogService = resolve(BlogService::class);
 
     expect($blogService->hasWarmHighlightCache(MdBlog::find('post-a')))->toBeTrue()
         ->and($blogService->hasWarmHighlightCache(MdBlog::find('post-b')))->toBeFalse();
 });
 
-test('warns about unknown or unpublished slugs', function () {
+test('warns about unknown or unpublished slugs', function (): void {
     createWarmablePost($this->blogPath, 'post-a');
 
     $this->artisan('blog:warm-cache', ['slugs' => ['does-not-exist']])
@@ -73,7 +73,7 @@ test('warns about unknown or unpublished slugs', function () {
         ->assertSuccessful();
 });
 
-test('the missing option warms only posts with a cold cache', function () {
+test('the missing option warms only posts with a cold cache', function (): void {
     createWarmablePost($this->blogPath, 'post-a');
     createWarmablePost($this->blogPath, 'post-b');
 
@@ -83,23 +83,23 @@ test('the missing option warms only posts with a cold cache', function () {
         ->expectsOutputToContain('Warmed cache for 1 blog posts.')
         ->assertSuccessful();
 
-    expect(app(BlogService::class)->hasWarmHighlightCache(MdBlog::find('post-b')))->toBeTrue();
+    expect(resolve(BlogService::class)->hasWarmHighlightCache(MdBlog::find('post-b')))->toBeTrue();
 });
 
-test('cache stays warm when only the file mtime changes, like after a fresh deploy clone', function () {
+test('cache stays warm when only the file mtime changes, like after a fresh deploy clone', function (): void {
     createWarmablePost($this->blogPath, 'post-a');
     $this->artisan('blog:warm-cache');
 
     touch("{$this->blogPath}/post-a.md", time() + 60);
 
-    expect(app(BlogService::class)->hasWarmHighlightCache(MdBlog::find('post-a')))->toBeTrue();
+    expect(resolve(BlogService::class)->hasWarmHighlightCache(MdBlog::find('post-a')))->toBeTrue();
 });
 
-test('a content change makes the cache entry cold', function () {
+test('a content change makes the cache entry cold', function (): void {
     createWarmablePost($this->blogPath, 'post-a');
     $this->artisan('blog:warm-cache');
 
     createWarmablePost($this->blogPath, 'post-a', 'Updated content.');
 
-    expect(app(BlogService::class)->hasWarmHighlightCache(MdBlog::find('post-a')))->toBeFalse();
+    expect(resolve(BlogService::class)->hasWarmHighlightCache(MdBlog::find('post-a')))->toBeFalse();
 });

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stats_custom_events', function (Blueprint $table) {
+        Schema::create('stats_custom_events', function (Blueprint $table): void {
             $table->string('id');
             $table->string('stats_user_id', 36)->nullable();
             $table->unsignedBigInteger('stats_visitor_id')->nullable();

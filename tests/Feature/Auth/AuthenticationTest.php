@@ -3,13 +3,13 @@
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 
-test('login screen can be rendered', function () {
+test('login screen can be rendered', function (): void {
     $response = $this->get('/login');
 
     $response->assertStatus(200);
 });
 
-test('users can authenticate using the login screen', function () {
+test('users can authenticate using the login screen', function (): void {
     $user = User::factory()->create();
 
     $response = $this->post('/login', [
@@ -21,7 +21,7 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(RouteServiceProvider::HOME);
 });
 
-test('users cannot authenticate with invalid password', function () {
+test('users cannot authenticate with invalid password', function (): void {
     $user = User::factory()->create();
 
     $this->post('/login', [
@@ -32,7 +32,7 @@ test('users cannot authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('users marked for deletion cannot authenticate', function () {
+test('users marked for deletion cannot authenticate', function (): void {
     $user = User::factory()->create([
         'deleted_at' => now(),
     ]);
@@ -45,7 +45,7 @@ test('users marked for deletion cannot authenticate', function () {
     $this->assertGuest();
 });
 
-test('users marked for deletion learn that their account is restorable', function () {
+test('users marked for deletion learn that their account is restorable', function (): void {
     $user = User::factory()->create();
     $user->delete();
 
@@ -60,7 +60,7 @@ test('users marked for deletion learn that their account is restorable', functio
         ->toContain(config('app.app_mail'));
 });
 
-test('the deactivation notice is not exposed to someone without the password', function () {
+test('the deactivation notice is not exposed to someone without the password', function (): void {
     // Otherwise the message turns into an account enumeration oracle.
     $user = User::factory()->create();
     $user->delete();

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -25,7 +25,7 @@ beforeEach(function () {
     Context::add('team_id', $this->team->id);
 });
 
-it('returns campaign profitability with money converted from cents', function () {
+it('returns campaign profitability with money converted from cents', function (): void {
     $campaignId = DB::table('campaigns')->insertGetId([
         'uuid' => (string) Str::uuid(),
         'team_id' => $this->team->id,
@@ -74,23 +74,23 @@ it('returns campaign profitability with money converted from cents', function ()
         ->tool(GetCampaignPerformance::class, ['preset' => 'last_7_days', 'project_id' => $this->project->id])
         ->assertOk()
         ->assertSee('Summer Sale')
-        ->assertStructuredContent(function ($json) {
+        ->assertStructuredContent(function ($json): void {
             $json->where('campaigns.0.name', 'Summer Sale')
-                ->where('campaigns.0.net', fn ($net) => (float) $net === 100.0)
-                ->where('campaigns.0.reg', fn ($reg) => (int) $reg === 1)
+                ->where('campaigns.0.net', fn ($net): bool => (float) $net === 100.0)
+                ->where('campaigns.0.reg', fn ($reg): bool => (int) $reg === 1)
                 ->has('legend.roas')
                 ->etc();
         });
 });
 
-it('notes when no campaigns exist', function () {
+it('notes when no campaigns exist', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(GetCampaignPerformance::class, ['preset' => 'last_7_days'])
         ->assertOk()
         ->assertSee('No campaigns exist yet');
 });
 
-it('notes when the project does not track payments', function () {
+it('notes when the project does not track payments', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS]);
 
     SimpleStatsServer::actingAs($this->user)

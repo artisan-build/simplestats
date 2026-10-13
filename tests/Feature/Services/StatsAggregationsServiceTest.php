@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -35,7 +35,7 @@ beforeEach(function () {
     config(['app.stats_aggregation_enabled' => true]);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     StatsObserver::$enabled = true;
     Carbon::setTestNow();
 });
@@ -56,7 +56,7 @@ function insertVisitors(int $teamId, int $projectId, array $visitorCounts): void
     }
 }
 
-it('builds cache from raw data when no cache exists', function () {
+it('builds cache from raw data when no cache exists', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-28' => 10,
         '2026-03-29' => 20,
@@ -68,7 +68,7 @@ it('builds cache from raw data when no cache exists', function () {
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
     $data = $service->getAggregatedData($filters);
 
     expect($data)->toHaveCount(3)
@@ -83,7 +83,7 @@ it('builds cache from raw data when no cache exists', function () {
     expect($cachedCount)->toBe(3);
 });
 
-it('returns cached data without re-querying when cache is complete', function () {
+it('returns cached data without re-querying when cache is complete', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-28' => 10,
         '2026-03-29' => 20,
@@ -95,7 +95,7 @@ it('returns cached data without re-querying when cache is complete', function ()
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Build cache
     $service->getAggregatedData($filters);
@@ -109,7 +109,7 @@ it('returns cached data without re-querying when cache is complete', function ()
         ->and($data['2026-03-29']['pd_visitor'])->toBe(20);
 });
 
-it('fills missing dates at the start of the cache range', function () {
+it('fills missing dates at the start of the cache range', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-24' => 5,
         '2026-03-25' => 10,
@@ -120,7 +120,7 @@ it('fills missing dates at the start of the cache range', function () {
         '2026-03-30' => 18,
     ]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Cache only the last 3 days
     $filtersSmall = new StatsFilterDto(
@@ -142,7 +142,7 @@ it('fills missing dates at the start of the cache range', function () {
         ->and($data['2026-03-25']['pd_visitor'])->toBe(10);
 });
 
-it('fills missing dates at the end of the cache range', function () {
+it('fills missing dates at the end of the cache range', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-24' => 5,
         '2026-03-25' => 10,
@@ -151,7 +151,7 @@ it('fills missing dates at the end of the cache range', function () {
         '2026-03-28' => 8,
     ]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Cache days 24-26
     $filtersSmall = new StatsFilterDto(
@@ -173,7 +173,7 @@ it('fills missing dates at the end of the cache range', function () {
         ->and($data['2026-03-28']['pd_visitor'])->toBe(8);
 });
 
-it('detects and fills a single internal gap in cached data', function () {
+it('detects and fills a single internal gap in cached data', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-24' => 10,
         '2026-03-25' => 15,
@@ -189,7 +189,7 @@ it('detects and fills a single internal gap in cached data', function () {
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Build full cache
     $service->getAggregatedData($filters);
@@ -211,7 +211,7 @@ it('detects and fills a single internal gap in cached data', function () {
         ->where('type', 'days')->count())->toBe(7);
 });
 
-it('detects and fills multiple non-contiguous gaps in cached data', function () {
+it('detects and fills multiple non-contiguous gaps in cached data', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-24' => 10,
         '2026-03-25' => 15,
@@ -227,7 +227,7 @@ it('detects and fills multiple non-contiguous gaps in cached data', function () 
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Build full cache
     $service->getAggregatedData($filters);
@@ -251,7 +251,7 @@ it('detects and fills multiple non-contiguous gaps in cached data', function () 
         ->and($data['2026-03-29']['pd_visitor'])->toBe(25);
 });
 
-it('detects and fills gaps in weekly aggregation data', function () {
+it('detects and fills gaps in weekly aggregation data', function (): void {
     // Insert visitors across 4 weeks
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-02' => 10, // Week of March 2
@@ -265,7 +265,7 @@ it('detects and fills gaps in weekly aggregation data', function () {
         rangeStart: CarbonImmutable::parse('2026-03-23'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Build full cache
     $data = $service->getAggregatedData($filters);
@@ -284,7 +284,7 @@ it('detects and fills gaps in weekly aggregation data', function () {
         ->and($data->sum('pd_visitor'))->toBe(70);
 });
 
-it('detects and fills gaps in hourly aggregation data', function () {
+it('detects and fills gaps in hourly aggregation data', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-30 10:00:00' => 5,
         '2026-03-30 11:00:00' => 8,
@@ -297,7 +297,7 @@ it('detects and fills gaps in hourly aggregation data', function () {
         rangeStart: CarbonImmutable::parse('2026-03-30 13:30:00'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $data = $service->getAggregatedData($filters);
     expect($data)->toHaveCount(4)
@@ -315,7 +315,7 @@ it('detects and fills gaps in hourly aggregation data', function () {
         ->and($data->sum('pd_visitor'))->toBe(31);
 });
 
-it('detects and fills gaps in monthly aggregation data', function () {
+it('detects and fills gaps in monthly aggregation data', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-01-15' => 10,
         '2026-02-15' => 15,
@@ -328,7 +328,7 @@ it('detects and fills gaps in monthly aggregation data', function () {
         rangeStart: CarbonImmutable::parse('2026-04-15'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $data = $service->getAggregatedData($filters);
     expect($data)->toHaveCount(4)
@@ -346,7 +346,7 @@ it('detects and fills gaps in monthly aggregation data', function () {
         ->and($data->sum('pd_visitor'))->toBe(70);
 });
 
-it('detects and fills gaps in yearly aggregation data', function () {
+it('detects and fills gaps in yearly aggregation data', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2024-06-15' => 10,
         '2025-06-15' => 15,
@@ -358,7 +358,7 @@ it('detects and fills gaps in yearly aggregation data', function () {
         rangeStart: CarbonImmutable::parse('2026-06-15'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $data = $service->getAggregatedData($filters);
     expect($data)->toHaveCount(3)
@@ -376,7 +376,7 @@ it('detects and fills gaps in yearly aggregation data', function () {
         ->and($data->sum('pd_visitor'))->toBe(45);
 });
 
-it('grouped DAU uses correct date range when report runs at timezone boundary', function () {
+it('grouped DAU uses correct date range when report runs at timezone boundary', function (): void {
     $team = $this->project->team;
     $team->update(['timezone' => 'Europe/Berlin']);
 
@@ -424,10 +424,10 @@ it('grouped DAU uses correct date range when report runs at timezone boundary', 
         rangeStart: $targetWeekStart, comparison: '0'
     );
 
-    $statsAll = current(app(StatsDetailsService::class)->getStats($filter));
+    $statsAll = current(resolve(StatsDetailsService::class)->getStats($filter));
     $globalDau = $statsAll['pd_dau'];
 
-    $groupedStats = app(StatsAggregationsService::class)
+    $groupedStats = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_referer', 'visitors', 10);
     $groupedDauTotal = $groupedStats->sum('dau');
 
@@ -437,7 +437,7 @@ it('grouped DAU uses correct date range when report runs at timezone boundary', 
         ->and($globalDau)->toBe($groupedDauTotal);
 });
 
-it('narrows the events group to the selected event when a custom event filter is active', function () {
+it('narrows the events group to the selected event when a custom event filter is active', function (): void {
     insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 2]);
 
     $eventIds = [];
@@ -466,14 +466,14 @@ it('narrows the events group to the selected event when a custom event filter is
         customEventName: $eventIds['Event A'],
     );
 
-    $grouped = app(StatsAggregationsService::class)
+    $grouped = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'custom_event_name', 'name', 10);
 
     // like the standard groups: filtering by an event leaves only that event in its own group
     expect($grouped->pluck('name')->all())->toBe(['Event A']);
 });
 
-it('grouped custom events do not leak across projects in the same team', function () {
+it('grouped custom events do not leak across projects in the same team', function (): void {
     $otherProject = Project::factory()->create(['team_id' => $this->team->id]);
 
     insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 3]);
@@ -508,7 +508,7 @@ it('grouped custom events do not leak across projects in the same team', functio
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $grouped = app(StatsAggregationsService::class)
+    $grouped = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'custom_event_name', 'name', 10);
 
     $names = $grouped->pluck('name')->all();
@@ -517,14 +517,14 @@ it('grouped custom events do not leak across projects in the same team', functio
         ->and($names)->not->toContain('Event B (other project)');
 });
 
-it('carries the lifetime baseline forward from the cached predecessor bucket instead of rescanning history', function () {
+it('carries the lifetime baseline forward from the cached predecessor bucket instead of rescanning history', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-27' => 5,
         '2026-03-28' => 10,
         '2026-03-29' => 20,
     ]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Cache the three days up to and including the predecessor (2026-03-29).
     $predecessorFilters = new StatsFilterDto(
@@ -553,14 +553,14 @@ it('carries the lifetime baseline forward from the cached predecessor bucket ins
         ->and($data['2026-03-30']['lt_visitor'])->toBe(36);
 });
 
-it('falls back to a full history scan when the predecessor bucket is not cached', function () {
+it('falls back to a full history scan when the predecessor bucket is not cached', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-27' => 5,
         '2026-03-28' => 10,
         '2026-03-30' => 3,
     ]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Query the 03-30 bucket cold, without ever caching its predecessor (03-29).
     $filters = new StatsFilterDto(
@@ -575,10 +575,10 @@ it('falls back to a full history scan when the predecessor bucket is not cached'
         ->and($data['2026-03-30']['lt_visitor'])->toBe(18);
 });
 
-it('uses a zero baseline for the very first bucket of history (no predecessor)', function () {
+it('uses a zero baseline for the very first bucket of history (no predecessor)', function (): void {
     insertVisitors($this->team->id, $this->pid, ['2026-03-30' => 7]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $filters = new StatsFilterDto(
         projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,
@@ -591,7 +591,7 @@ it('uses a zero baseline for the very first bucket of history (no predecessor)',
         ->and($data['2026-03-30']['lt_visitor'])->toBe(7);
 });
 
-it('invalidates the carried-forward baseline when a late event lands in a past bucket', function () {
+it('invalidates the carried-forward baseline when a late event lands in a past bucket', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     insertVisitors($this->team->id, $this->pid, [
@@ -600,7 +600,7 @@ it('invalidates the carried-forward baseline when a late event lands in a past b
         '2026-03-30' => 4,
     ]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Cache 03-28/03-29, then roll over into 03-30 via carry-forward.
     $service->getAggregatedData(new StatsFilterDto(
@@ -632,13 +632,13 @@ it('invalidates the carried-forward baseline when a late event lands in a past b
     expect($data['2026-03-30']['lt_visitor'])->toBe(35);
 });
 
-it('carries the baseline forward on the team aggregation (project_id null) chain', function () {
+it('carries the baseline forward on the team aggregation (project_id null) chain', function (): void {
     insertVisitors($this->team->id, $this->pid, [
         '2026-03-28' => 10,
         '2026-03-29' => 20,
     ]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // projectId 0 -> team-wide aggregation, stored with project_id = null.
     $predecessorFilters = new StatsFilterDto(
@@ -663,7 +663,7 @@ it('carries the baseline forward on the team aggregation (project_id null) chain
         ->and($data['2026-03-30']['lt_visitor'])->toBe(31);
 });
 
-it('carries the baseline forward on a filtered (dimension) hash', function () {
+it('carries the baseline forward on a filtered (dimension) hash', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',
@@ -671,7 +671,7 @@ it('carries the baseline forward on a filtered (dimension) hash', function () {
         'updated_at' => '2026-03-28 12:00:00',
     ]);
 
-    $insert = function (string $date, int $count, ?int $srcId) {
+    $insert = function (string $date, int $count, ?int $srcId): void {
         for ($i = 0; $i < $count; $i++) {
             DB::table('stats_visitors')->insert([
                 'team_id' => $this->team->id,
@@ -691,7 +691,7 @@ it('carries the baseline forward on a filtered (dimension) hash', function () {
     $insert('2026-03-29', 8, $sourceId);
     $insert('2026-03-29', 2, null);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     // Cache the FILTERED range up to the predecessor (03-29). The filtered
     // lifetime total counts only newsletter visitors: 4 + 8 = 12.
@@ -724,12 +724,12 @@ it('carries the baseline forward on a filtered (dimension) hash', function () {
         ->and($data['2026-03-30']['lt_visitor'])->toBe(13);
 });
 
-it('reconstructs a multi-bucket gap in one shot, seeding from the last cached bucket', function () {
+it('reconstructs a multi-bucket gap in one shot, seeding from the last cached bucket', function (): void {
     // Last time the dashboard was opened: a single cached day holding the whole
     // history up to that point (lt_visitor = 15).
     insertVisitors($this->team->id, $this->pid, ['2026-03-07' => 15]);
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $service->getAggregatedData(new StatsFilterDto(
         projectId: $this->pid, rangeAmount: 1, rangeType: StatsRangeType::DAY,

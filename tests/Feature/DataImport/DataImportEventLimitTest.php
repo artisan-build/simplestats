@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Services\SubscriptionService;
 use Illuminate\Auth\Access\AuthorizationException;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->skipUnlessSaas();
 
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -30,19 +30,19 @@ function makeImporter($team, $project): BaseStatsImport
     return DataImportType::USERS->getImporter($dataImport);
 }
 
-test('hasReachedMonthlyEventLimit accounts for a delta of pending events', function () {
+test('hasReachedMonthlyEventLimit accounts for a delta of pending events', function (): void {
     $limit = $this->team->owner->sparkPlan()->options['Events'];
     $this->team->update(['events_count_monthly' => $limit - 5]);
     $this->team->refresh();
 
-    $service = app(SubscriptionService::class);
+    $service = resolve(SubscriptionService::class);
 
     expect($service->hasReachedMonthlyEventLimit($this->team))->toBeFalse()
         ->and($service->hasReachedMonthlyEventLimit($this->team, 4))->toBeFalse()
         ->and($service->hasReachedMonthlyEventLimit($this->team, 5))->toBeTrue();
 });
 
-test('import throws when the monthly event limit is reached', function () {
+test('import throws when the monthly event limit is reached', function (): void {
     $limit = $this->team->owner->sparkPlan()->options['Events'];
     $this->team->update(['events_count_monthly' => $limit]);
     $this->team->refresh();
@@ -53,7 +53,7 @@ test('import throws when the monthly event limit is reached', function () {
         ->toThrow(AuthorizationException::class, 'Monthly event limit reached.');
 });
 
-test('import builds the model when the team is under the event limit', function () {
+test('import builds the model when the team is under the event limit', function (): void {
     $importer = makeImporter($this->team, $this->project);
 
     $model = $importer->model(['id' => 1, 'time' => now()->format('Y-m-d H:i:s')]);
@@ -62,29 +62,29 @@ test('import builds the model when the team is under the event limit', function 
         ->and($importer->counter)->toBe(1);
 });
 
-test('hasReachedMonthlyEventLimit resolves the plan of a soft deleted owner', function () {
+test('hasReachedMonthlyEventLimit resolves the plan of a soft deleted owner', function (): void {
     $limit = $this->team->owner->sparkPlan()->options['Events'];
     $this->team->update(['events_count_monthly' => $limit]);
     $this->team->owner->delete();
     $this->team->refresh();
 
     expect($this->team->owner)->toBeNull()
-        ->and(app(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->team))->toBeTrue();
+        ->and(resolve(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->team))->toBeTrue();
 });
 
-test('hasReachedMonthlyEventLimit does not block ingest when no owner is resolvable', function () {
+test('hasReachedMonthlyEventLimit does not block ingest when no owner is resolvable', function (): void {
     $this->team->update(['events_count_monthly' => 999999999]);
     $this->team->owner->forceDelete();
     $this->team->refresh();
 
     expect($this->team->billingOwner)->toBeNull()
-        ->and(app(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->team))->toBeFalse();
+        ->and(resolve(SubscriptionService::class)->hasReachedMonthlyEventLimit($this->team))->toBeFalse();
 });
 
-test('getPlanAlarm returns no alarms when no owner is resolvable', function () {
+test('getPlanAlarm returns no alarms when no owner is resolvable', function (): void {
     $this->team->update(['events_count_monthly' => 999999999]);
     $this->team->owner->forceDelete();
     $this->team->refresh();
 
-    expect(app(SubscriptionService::class)->getPlanAlarm($this->team))->toBe([]);
+    expect(resolve(SubscriptionService::class)->getPlanAlarm($this->team))->toBe([]);
 });

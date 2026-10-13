@@ -18,6 +18,6 @@ class FeedbackController extends Controller
             feedbackMessage: $request->validated('message'),
         ));
 
-        return redirect()->back()->banner('Thank you for your feedback!');
+        return back()->banner('Thank you for your feedback!');
     }
 }

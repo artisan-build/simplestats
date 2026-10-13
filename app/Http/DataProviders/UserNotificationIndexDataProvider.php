@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 class UserNotificationIndexDataProvider extends AbstractDataProvider
 {
     public function __construct(
-        private Request $request,
+        private readonly Request $request,
     ) {}
 
     public function toArray(): array
@@ -30,8 +30,8 @@ class UserNotificationIndexDataProvider extends AbstractDataProvider
 
     private function loadNotifications(User $user): Collection
     {
-        $user->currentTeam->projects->each(function ($project) use ($user) {
-            app(CreateUserNotification::class)($user, $project);
+        $user->currentTeam->projects->each(function ($project) use ($user): void {
+            resolve(CreateUserNotification::class)($user, $project);
         });
 
         return UserNotification::withWhereHas(
@@ -40,8 +40,8 @@ class UserNotificationIndexDataProvider extends AbstractDataProvider
         )
             ->where('user_id', $user->id)
             ->get()
-            ->sortBy(fn ($n) => optional($n->notifiable)->created_at)
+            ->sortBy(fn ($n) => $n->notifiable?->created_at)
             ->groupBy('type')
-            ->sortBy(fn ($group, $key) => array_search($key, UserNotificationType::sorting()));
+            ->sortBy(fn ($group, $key): int|string|false => array_search($key, UserNotificationType::sorting()));
     }
 }

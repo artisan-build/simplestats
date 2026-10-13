@@ -12,20 +12,20 @@ class AdSpendController extends Controller
     {
         AdSpend::create($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function update(AdSpendRequest $request, AdSpend $adSpend): RedirectResponse
     {
         $adSpend->update($request->validated());
 
-        return redirect()->back();
+        return back();
     }
 
     public function destroy(AdSpend $adSpend): RedirectResponse
     {
         $adSpend->delete();
 
-        return redirect()->back();
+        return back();
     }
 }

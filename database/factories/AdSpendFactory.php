@@ -22,7 +22,7 @@ class AdSpendFactory extends Factory
         return [
             'campaign_id' => fn () => Campaign::factory(),
             'team_id' => fn (array $attributes) => Campaign::find($attributes['campaign_id'])?->team_id ?? throw new RuntimeException('AdSpend needs a campaign'),
-            'amount' => $this->faker->numberBetween(1000, 500000),
+            'amount' => fake()->numberBetween(1000, 500000),
             'currency' => 'EUR',
             'starts_on' => now()->subDays(30)->format('Y-m-d'),
             'ends_on' => now()->format('Y-m-d'),

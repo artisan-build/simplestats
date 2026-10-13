@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RedirectLegacyIdUrls
 {
-    private const PARAMS = [
+    private const array PARAMS = [
         'project' => Project::class,
         'team' => Team::class,
         'campaign' => Campaign::class,
@@ -45,11 +45,7 @@ class RedirectLegacyIdUrls
             }
 
             if ($model !== null) {
-                return redirect()->route(
-                    $route->getName(),
-                    [...$route->parameters(), $param => $model, ...$request->query()],
-                    301,
-                );
+                return to_route($route->getName(), [...$route->parameters(), $param => $model, ...$request->query()], 301);
             }
         }
 

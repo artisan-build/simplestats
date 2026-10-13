@@ -6,6 +6,7 @@ use App\Helpers\CountryHelper;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\ManualRevenueTracker;
+use BackedEnum;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -21,6 +22,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Str;
 
 class TrackRevenue extends Page
@@ -38,7 +40,7 @@ class TrackRevenue extends Page
         'TRY', 'USD', 'ZAR',
     ];
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-banknotes';
+    protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $navigationLabel = 'Track Revenue';
 
@@ -94,13 +96,13 @@ class TrackRevenue extends Page
                             ->label('User')
                             ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => User::query()
-                                ->where(fn ($query) => $query
+                                ->where(fn (Builder $query) => $query
                                     ->where('name', 'like', "%{$search}%")
                                     ->orWhere('email', 'like', "%{$search}%"))
                                 ->limit(50)
                                 ->get()
                                 ->mapWithKeys(fn (User $user): array => [$user->id => "{$user->name} ({$user->email})"])
-                                ->toArray())
+                                ->all())
                             ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->email)
                             ->required(fn (Get $get): bool => $get('user_type') === 'existing')
                             ->visible(fn (Get $get): bool => $get('user_type') === 'existing')
@@ -199,7 +201,7 @@ class TrackRevenue extends Page
             'track_content' => $data['track_content'] ?? null,
             'page_entry' => $data['page_entry'] ?? null,
             'ip' => $data['ip'] ?? null,
-        ], fn ($value) => $value !== null && $value !== '');
+        ], fn ($value): bool => $value !== null && $value !== '');
 
         $paymentData = [
             'id' => (string) Str::uuid(),
@@ -210,7 +212,7 @@ class TrackRevenue extends Page
             'time' => CarbonImmutable::parse($data['payment_time'])->format('Y-m-d H:i:s P'),
         ];
 
-        app(ManualRevenueTracker::class)->track($project, $userData, $paymentData);
+        resolve(ManualRevenueTracker::class)->track($project, $userData, $paymentData);
 
         $this->form->fill([
             'project_id' => $data['project_id'],
@@ -275,7 +277,7 @@ class TrackRevenue extends Page
             $codes->push($teamCurrency);
         }
 
-        return $codes->unique()->sort()->mapWithKeys(fn (string $code): array => [$code => $code])->toArray();
+        return $codes->unique()->sort()->mapWithKeys(fn (string $code): array => [$code => $code])->all();
     }
 
     protected function defaultCurrency(?int $projectId): ?string

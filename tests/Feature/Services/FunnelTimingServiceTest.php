@@ -10,7 +10,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -27,10 +27,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(FunnelTimingService::class);
+    $this->service = resolve(FunnelTimingService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -84,7 +84,7 @@ function ftMonthFilter(int $projectId, string $rangeStart, int $rangeAmount, int
     );
 }
 
-it('returns the median days from registration to first payment', function () {
+it('returns the median days from registration to first payment', function (): void {
     insertFtUser('u1', $this->team->id, $this->pid, '2026-06-01 10:00:00');
     insertFtUser('u2', $this->team->id, $this->pid, '2026-06-02 10:00:00');
     insertFtUser('u3', $this->team->id, $this->pid, '2026-06-03 10:00:00');
@@ -97,7 +97,7 @@ it('returns the median days from registration to first payment', function () {
     expect($this->service->getTimeToPay(ftMonthFilter($this->pid, '2026-06-21', 1)))->toBe(5.0);
 });
 
-it('only counts the first payment (counter = 1) for time to pay', function () {
+it('only counts the first payment (counter = 1) for time to pay', function (): void {
     insertFtUser('u1', $this->team->id, $this->pid, '2026-06-01 10:00:00');
 
     insertFtPayment('p1', 'u1', $this->team->id, $this->pid, 1, '2026-06-05 10:00:00'); // first: 4 days
@@ -106,13 +106,13 @@ it('only counts the first payment (counter = 1) for time to pay', function () {
     expect($this->service->getTimeToPay(ftMonthFilter($this->pid, '2026-06-21', 1)))->toBe(4.0);
 });
 
-it('returns null for time to pay when no first payment falls in the range', function () {
+it('returns null for time to pay when no first payment falls in the range', function (): void {
     insertFtUser('u1', $this->team->id, $this->pid, '2026-06-01 10:00:00');
 
     expect($this->service->getTimeToPay(ftMonthFilter($this->pid, '2026-06-21', 1)))->toBeNull();
 });
 
-it('attributes time to pay per channel via the source filter', function () {
+it('attributes time to pay per channel via the source filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',
@@ -131,7 +131,7 @@ it('attributes time to pay per channel via the source filter', function () {
         ->and($this->service->getTimeToPay(ftMonthFilter($this->pid, '2026-06-21', 1, $sourceId)))->toBe(10.0);
 });
 
-it('returns the per-bucket median days from first visit to registration', function () {
+it('returns the per-bucket median days from first visit to registration', function (): void {
     $v1 = insertFtVisitor($this->team->id, $this->pid, 'h1', '2026-06-01 10:00:00');
     $v2 = insertFtVisitor($this->team->id, $this->pid, 'h2', '2026-06-01 10:00:00');
 
@@ -145,13 +145,13 @@ it('returns the per-bucket median days from first visit to registration', functi
         ->and($series[0]['time_to_convert'])->toBe(5.0);
 });
 
-it('returns an empty time to convert series when registrations have no linked visitor', function () {
+it('returns an empty time to convert series when registrations have no linked visitor', function (): void {
     insertFtUser('u1', $this->team->id, $this->pid, '2026-06-04 10:00:00');
 
     expect($this->service->getTimeToConvertSeries(ftMonthFilter($this->pid, '2026-06-21', 1)))->toBe([]);
 });
 
-it('attributes time to convert per channel via the source filter', function () {
+it('attributes time to convert per channel via the source filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',

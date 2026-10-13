@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-test('profile information can be updated', function () {
+test('profile information can be updated', function (): void {
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
     $response = $this->put('/user/profile-information', [

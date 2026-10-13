@@ -14,6 +14,7 @@ use App\Services\StatsCustomPropertyService;
 use App\Services\StatsDetailsService;
 use App\Services\StatsService;
 use App\Services\SubscriptionService;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Shared base for the stats pages that render the StatsFilter (dashboard,
@@ -54,12 +55,8 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
             'freePlanWarning' => ['show' => StatsService::showFreePlanWarning($user)],
             'readDocsWarning' => ['show' => StatsService::showReadDocsWarning($user)],
             'subscriptionPlanAlarm' => $this->subscriptionService->getPlanAlarm($user->team),
-            'usageBits' => Project::getUsages()->mapWithKeys(function ($item, $key) {
-                return [$key => $item['bit']];
-            }),
-            'flagBits' => Project::getFlags()->mapWithKeys(function ($item, $key) {
-                return [$key => $item['bit']];
-            }),
+            'usageBits' => Project::getUsages()->mapWithKeys(fn ($item, $key): array => [$key => $item['bit']]),
+            'flagBits' => Project::getFlags()->mapWithKeys(fn ($item, $key): array => [$key => $item['bit']]),
             'comparisonTypes' => StatsService::getComparisonTypes(),
         ];
     }
@@ -67,7 +64,7 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
     protected function resolveEffectiveRequest(User $user): StatsFilterRequest
     {
         // hack: as project_id may be set within the request class, we need to check $_GET
-        $hasFilterRequest = ! empty($_GET);
+        $hasFilterRequest = ! empty(Request::query());
 
         $userFilterSettings = $user->settings['statsFilters'][$user->current_team_id] ?? [];
 
@@ -95,11 +92,11 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
         $teamStats->totalProjectsCount = $teamStats->projects->count();
 
         // we need to do prepend before keyBy('id')
-        $mergedUsageBits = $teamStats->projects->reduce(fn ($carry, $project) => $carry | $project['usage'], 0);
+        $mergedUsageBits = $teamStats->projects->reduce(fn ($carry, $project): int|string => $carry | $project['usage'], 0);
         // flags merge with AND (not OR like usage): a business-model property applies to the
         // "All Projects" view only when every project has it, so KPIs are hidden across all
         // projects only if they are redundant for all of them.
-        $mergedFlags = $teamStats->projects->reduce(fn ($carry, $project) => $carry & $project['flags'], Project::getFlagBitsCount());
+        $mergedFlags = $teamStats->projects->reduce(fn ($carry, $project): int|string => $carry & $project['flags'], Project::getFlagBitsCount());
         $teamStats->projects->prepend($this->statsDetailsService->getAllFilterFor('Projects', $mergedUsageBits, $mergedFlags));
 
         // we can't just do: $teamStats->projects = $teamStats->projects->keyBy(...);
@@ -122,7 +119,7 @@ abstract class AbstractStatsDataProvider extends AbstractDataProvider
     protected function buildPresets(User $user, array $hiddenPresets): array
     {
         return collect(StatsRangePreset::toOptions())
-            ->reject(fn ($p) => in_array($p['id'], $hiddenPresets))
+            ->reject(fn ($p): bool => in_array($p['id'], $hiddenPresets))
             ->merge($user->customStatsRangePresets->map->toOption())
             ->sortBy('sortWeight')
             ->values()

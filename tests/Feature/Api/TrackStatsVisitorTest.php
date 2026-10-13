@@ -7,11 +7,12 @@ use App\Models\Project;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Context;
 use Stevebauman\Location\Facades\Location;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -31,7 +32,7 @@ function validVisitorPayload(array $overrides = []): array
     ], $overrides);
 }
 
-function setVisitorProjectContext($project): void
+function setVisitorProjectContext(?Authenticatable $project): void
 {
     auth()->setUser($project);
     AppHelper::setTeamContextFromAuth($project);
@@ -39,7 +40,7 @@ function setVisitorProjectContext($project): void
     Context::add('request_url', '/api/v1/stats-visitor');
 }
 
-test('store visitor with auth and required fields returns 200', function () {
+test('store visitor with auth and required fields returns 200', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-visitor',
         validVisitorPayload(),
@@ -48,10 +49,10 @@ test('store visitor with auth and required fields returns 200', function () {
 
     $response->assertOk()
         ->assertJson(['message' => 'Stats Visitor Request accepted.'])
-        ->assertJsonPath('visitor_hash', fn (mixed $hash) => is_string($hash) && $hash !== '');
+        ->assertJsonPath('visitor_hash', fn (mixed $hash): bool => is_string($hash) && $hash !== '');
 });
 
-test('store visitor without auth returns 401', function () {
+test('store visitor without auth returns 401', function (): void {
     auth()->forgetGuards();
 
     $response = $this->postJson(
@@ -66,7 +67,7 @@ test('store visitor without auth returns 401', function () {
     $response->assertUnauthorized();
 });
 
-test('validation fails when time is missing', function () {
+test('validation fails when time is missing', function (): void {
     $payload = validVisitorPayload();
     unset($payload['time']);
 
@@ -80,7 +81,7 @@ test('validation fails when time is missing', function () {
         ->assertJsonValidationErrors('time');
 });
 
-test('visitor is created via firstOrCreate using visitor_hash', function () {
+test('visitor is created via firstOrCreate using visitor_hash', function (): void {
     $payload = validVisitorPayload([
         'visitor_hash' => 'test-hash-'.fake()->uuid(),
     ]);
@@ -95,7 +96,7 @@ test('visitor is created via firstOrCreate using visitor_hash', function () {
     expect($visitor)->not->toBeNull();
 });
 
-test('duplicate visitor_hash does not create a second record', function () {
+test('duplicate visitor_hash does not create a second record', function (): void {
     $visitorHash = 'duplicate-hash-'.fake()->uuid();
 
     $payload1 = validVisitorPayload(['visitor_hash' => $visitorHash]);
@@ -110,7 +111,7 @@ test('duplicate visitor_hash does not create a second record', function () {
     expect($visitors)->toHaveCount(1);
 });
 
-test('bot user agents are rejected with 200', function () {
+test('bot user agents are rejected with 200', function (): void {
     $payload = validVisitorPayload([
         'user_agent' => 'Googlebot/2.1 (+http://www.google.com/bot.html)',
     ]);
@@ -121,7 +122,7 @@ test('bot user agents are rejected with 200', function () {
         ->assertJson(['message' => 'Bots are not allowed']);
 });
 
-test('headless browser user agents are rejected with 200', function () {
+test('headless browser user agents are rejected with 200', function (): void {
     $payload = validVisitorPayload([
         'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/126.0.0.0 Safari/537.36',
     ]);
@@ -132,7 +133,7 @@ test('headless browser user agents are rejected with 200', function () {
         ->assertJson(['message' => 'Bots are not allowed']);
 });
 
-test('tracking fields are accepted', function () {
+test('tracking fields are accepted', function (): void {
     $payload = validVisitorPayload([
         'visitor_hash' => 'tracking-hash-'.fake()->uuid(),
         'track_source' => 'google',
@@ -153,7 +154,7 @@ test('tracking fields are accepted', function () {
     expect($visitor)->not->toBeNull();
 });
 
-test('events_count_monthly is incremented on team via StatsObserver', function () {
+test('events_count_monthly is incremented on team via StatsObserver', function (): void {
     $team = $this->project->team;
     $initialCount = $team->events_count_monthly;
 
@@ -164,7 +165,7 @@ test('events_count_monthly is incremented on team via StatsObserver', function (
     expect($team->events_count_monthly)->toBeGreaterThan($initialCount);
 });
 
-test('events_count_monthly is incremented on project via StatsObserver', function () {
+test('events_count_monthly is incremented on project via StatsObserver', function (): void {
     $project = $this->project;
     $initialCount = $project->events_count_monthly;
 
@@ -175,7 +176,7 @@ test('events_count_monthly is incremented on project via StatsObserver', functio
     expect($project->events_count_monthly)->toBeGreaterThan($initialCount);
 });
 
-test('reaching the monthly event limit returns a terminal 200 and does not dispatch the tracking job', function () {
+test('reaching the monthly event limit returns a terminal 200 and does not dispatch the tracking job', function (): void {
     $this->skipUnlessSaas();
 
     Bus::fake();
@@ -190,7 +191,7 @@ test('reaching the monthly event limit returns a terminal 200 and does not dispa
     Bus::assertNotDispatched(TrackStatsVisitor::class);
 });
 
-test('deleting a stat decrements the event counters', function () {
+test('deleting a stat decrements the event counters', function (): void {
     $payload = validVisitorPayload(['visitor_hash' => 'delete-hash-'.fake()->uuid()]);
     $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
 
@@ -213,7 +214,7 @@ test('deleting a stat decrements the event counters', function () {
     expect($project->events_count_monthly)->toBe($projectMonthlyBefore - 1);
 });
 
-test('deleting a stat never pushes a counter below zero', function () {
+test('deleting a stat never pushes a counter below zero', function (): void {
     $payload = validVisitorPayload(['visitor_hash' => 'floor-hash-'.fake()->uuid()]);
     $this->postJson('/api/v1/stats-visitor', $payload, apiHeaders($this->token))->assertOk();
 
@@ -231,7 +232,7 @@ test('deleting a stat never pushes a counter below zero', function () {
     expect($this->project->fresh()->events_count_monthly)->toBe(0);
 });
 
-test('visitors from datacenter IPs are not tracked', function () {
+test('visitors from datacenter IPs are not tracked', function (): void {
     config(['location.datacenter_ip_filter' => true]);
 
     $position = new Position;
@@ -252,7 +253,7 @@ test('visitors from datacenter IPs are not tracked', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeFalse();
 });
 
-test('visitors from datacenter IPs flagged as proxy are still not tracked', function () {
+test('visitors from datacenter IPs flagged as proxy are still not tracked', function (): void {
     config(['location.datacenter_ip_filter' => true]);
 
     // AWS IP that ip-api also flags as proxy: under the old `hosting && !proxy`
@@ -275,7 +276,7 @@ test('visitors from datacenter IPs flagged as proxy are still not tracked', func
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeFalse();
 });
 
-test('visitors from consumer VPN exits are tracked', function () {
+test('visitors from consumer VPN exits are tracked', function (): void {
     config(['location.datacenter_ip_filter' => true]);
 
     // Hosted on M247 (AS9009), where consumer VPN providers run their exits.
@@ -297,7 +298,7 @@ test('visitors from consumer VPN exits are tracked', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });
 
-test('visitors from iCloud Private Relay exits are tracked', function () {
+test('visitors from iCloud Private Relay exits are tracked', function (): void {
     config(['location.datacenter_ip_filter' => true]);
 
     // Private Relay egress on Akamai (AS36183), which ip-api flags as hosting.
@@ -319,7 +320,7 @@ test('visitors from iCloud Private Relay exits are tracked', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });
 
-test('visitors are tracked when the hosting flag is unknown', function () {
+test('visitors are tracked when the hosting flag is unknown', function (): void {
     config(['location.datacenter_ip_filter' => true]);
 
     Location::fake(['198.51.100.7' => new Position]);
@@ -336,7 +337,7 @@ test('visitors are tracked when the hosting flag is unknown', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });
 
-test('visitors are tracked when the location lookup fails', function () {
+test('visitors are tracked when the location lookup fails', function (): void {
     config(['location.datacenter_ip_filter' => true]);
 
     Location::fake([]);
@@ -353,7 +354,7 @@ test('visitors are tracked when the location lookup fails', function () {
     expect(StatsVisitor::where('visitor_hash', $payload['visitor_hash'])->exists())->toBeTrue();
 });
 
-test('visitor ingest still works while the team owner is soft deleted', function () {
+test('visitor ingest still works while the team owner is soft deleted', function (): void {
     // Inactive owners are soft-deleted for a two month grace window while their
     // team, projects and API tokens keep running, so the event limit check must
     // resolve the plan through billingOwner (SIMPLESTATS-7G).

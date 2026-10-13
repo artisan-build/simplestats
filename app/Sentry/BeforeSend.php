@@ -2,6 +2,7 @@
 
 namespace App\Sentry;
 
+use Filament\Notifications\Collection;
 use Sentry\Event;
 use Sentry\EventHint;
 use TypeError;
@@ -24,7 +25,7 @@ class BeforeSend
         // probing as CannotUpdateLockedPropertyException (handled, no users affected), so we drop
         // it rather than report it. The validation gap is in Filament vendor code we don't control.
         if ($exception instanceof TypeError
-            && str_contains($exception->getMessage(), 'Filament\Notifications\Collection')) {
+            && str_contains($exception->getMessage(), Collection::class)) {
             return null;
         }
 

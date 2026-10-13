@@ -23,7 +23,7 @@ class AiChatStreamer
 
             try {
                 foreach ($events as $event) {
-                    yield 'data: '.((string) $event)."\n\n";
+                    yield 'data: '.($event)."\n\n";
                 }
             } catch (RateLimitedException) {
                 yield $this->errorEvent('The AI provider\'s rate limit is reached. Please wait a minute and try again.'.$teamKeyHint);

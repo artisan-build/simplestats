@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckAppType
 {
-    private const MARKETING_CONTROLLERS = [
+    private const array MARKETING_CONTROLLERS = [
         HomeController::class,
         ImprintController::class,
         BlogController::class,
@@ -38,7 +38,7 @@ class CheckAppType
         }
 
         if (in_array($controller, self::MARKETING_CONTROLLERS, true)) {
-            return redirect()->route('login');
+            return to_route('login');
         }
 
         return $next($request);

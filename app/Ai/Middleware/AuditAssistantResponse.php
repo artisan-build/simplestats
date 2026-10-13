@@ -19,7 +19,7 @@ class AuditAssistantResponse
      */
     public function handle(AgentPrompt $prompt, Closure $next): mixed
     {
-        return $next($prompt)->then(function ($response) use ($prompt) {
+        return $next($prompt)->then(function ($response) use ($prompt): void {
             $text = (string) ($response->text ?? $response);
             $findings = $this->findings($text);
 
@@ -50,7 +50,7 @@ class AuditAssistantResponse
             $foreignHosts = collect($matches[1])
                 ->map(fn (string $host) => Str::lower($host))
                 ->unique()
-                ->reject(fn (string $host) => $host === $appHost)
+                ->reject(fn (string $host): bool => $host === $appHost)
                 ->values();
 
             if ($foreignHosts->isNotEmpty()) {

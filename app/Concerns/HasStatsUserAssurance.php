@@ -3,7 +3,6 @@
 namespace App\Concerns;
 
 use App\Models\StatsUser;
-use Illuminate\Support\Facades\Context;
 
 trait HasStatsUserAssurance
 {
@@ -12,11 +11,11 @@ trait HasStatsUserAssurance
      */
     public static function bootHasStatsUserAssurance(): void
     {
-        static::creating(function ($statsModel) {
+        static::creating(function ($statsModel): void {
             $statsModel->ensureStatsUser();
         });
 
-        static::updating(function ($statsModel) {
+        static::updating(function ($statsModel): void {
             $statsModel->ensureStatsUser();
         });
     }

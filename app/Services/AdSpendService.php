@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
 
 class AdSpendService
 {
-    private const CAMPAIGN_LIMIT = 100;
+    private const int CAMPAIGN_LIMIT = 100;
 
     /**
      * Trailing window over which the subscription economics (ARPS, churn -> LTV)
@@ -24,10 +24,10 @@ class AdSpendService
      * the churn rate divides by the window's starting MRR, so a window reaching
      * back before a project's first subscriptions would yield a null lifetime.
      */
-    private const ECONOMICS_TRAILING_MONTHS = 3;
+    private const int ECONOMICS_TRAILING_MONTHS = 3;
 
     public function __construct(
-        private StatsDetailsService $statsDetailsService,
+        private readonly StatsDetailsService $statsDetailsService,
     ) {}
 
     /**
@@ -47,7 +47,7 @@ class AdSpendService
 
         return $this->campaignsForFilter($filters)
             ->paginate($perPage)
-            ->through(fn (Campaign $campaign) => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd, $filters));
+            ->through(fn (Campaign $campaign): array => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd, $filters));
     }
 
     /**
@@ -69,9 +69,9 @@ class AdSpendService
     {
         return AdSpend::query()
             ->where('campaign_id', $campaign->id)
-            ->orderByDesc('starts_on')
+            ->latest('starts_on')
             ->paginate($perPage)
-            ->through(fn (AdSpend $spend) => [
+            ->through(fn (AdSpend $spend): array => [
                 'uuid' => $spend->uuid,
                 'amount' => $spend->amount,
                 'currency' => $spend->currency,
@@ -92,7 +92,7 @@ class AdSpendService
             ->where('campaign_id', $campaign->id)
             ->orderBy('name')
             ->get(['id', 'uuid', 'name'])
-            ->map(fn (StatsTrackCampaign $utm) => ['id' => $utm->id, 'uuid' => $utm->uuid, 'name' => $utm->name])
+            ->map(fn (StatsTrackCampaign $utm): array => ['id' => $utm->id, 'uuid' => $utm->uuid, 'name' => $utm->name])
             ->all();
     }
 
@@ -118,8 +118,7 @@ class AdSpendService
             ->when(
                 $filters->projectId !== StatsFilterDto::TRACK_ALL,
                 fn ($query) => $query->where('project_id', $filters->projectId),
-            )
-            ->orderByDesc('created_at');
+            )->latest();
     }
 
     /**
@@ -131,7 +130,7 @@ class AdSpendService
     private function revenueByUtm(StatsFilterDto $filters): Collection
     {
         return collect($this->statsDetailsService->getGroupedData($filters, 'track_campaign', self::CAMPAIGN_LIMIT, 'net'))
-            ->keyBy(fn (array $row) => (int) ($row['type_id'] ?? 0));
+            ->keyBy(fn (array $row): int => (int) ($row['type_id'] ?? 0));
     }
 
     /**
@@ -156,7 +155,7 @@ class AdSpendService
             $visitors += (int) ($revenue['visitors'] ?? 0);
         }
 
-        $spend = (int) $campaign->adSpends->sum(fn (AdSpend $adSpend) => $adSpend->allocatedFor($windowStart, $windowEnd));
+        $spend = (int) $campaign->adSpends->sum(fn (AdSpend $adSpend): int => $adSpend->allocatedFor($windowStart, $windowEnd));
         $cac = $reg > 0 ? (int) round($spend / $reg) : null;
 
         return [

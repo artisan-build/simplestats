@@ -28,7 +28,7 @@ class FutureStatsSeeder extends Seeder
         // One transaction per project so the thousands of individual inserts are
         // committed in a single batch instead of one fsync per row.
         foreach ($projects as $project) {
-            DB::transaction(function () use ($project) {
+            DB::transaction(function () use ($project): void {
                 $this->seedProjectFutureData($project);
             });
         }
@@ -48,10 +48,10 @@ class FutureStatsSeeder extends Seeder
             $dayEnd = now()->addDays($day)->endOfDay();
 
             // Each metric increases by 0-2 per day (guaranteed not to decrease)
-            $dailyRegistrations = $lastDayRegs + rand(0, 2);
-            $extraVisitors = $lastDayVisitors + rand(0, 3);
-            $loginCount = $lastDayLogins + rand(0, 2);
-            $paymentCount = $lastDayPayments + rand(0, 1);
+            $dailyRegistrations = $lastDayRegs + random_int(0, 2);
+            $extraVisitors = $lastDayVisitors + random_int(0, 3);
+            $loginCount = $lastDayLogins + random_int(0, 2);
+            $paymentCount = $lastDayPayments + random_int(0, 1);
 
             // Update for next iteration
             $lastDayRegs = $dailyRegistrations;
@@ -70,14 +70,14 @@ class FutureStatsSeeder extends Seeder
                 ]);
 
                 // Create 2-4 visitors for each registration
-                StatsVisitor::factory(rand(2, 4))->create([
+                StatsVisitor::factory(random_int(2, 4))->create([
                     'team_id' => $project->team_id,
                     'project_id' => $project->id,
                     'time' => $registrationTime,
                 ]);
 
                 // Each new user has 1-2 logins
-                for ($j = 0; $j < rand(1, 2); $j++) {
+                for ($j = 0; $j < random_int(1, 2); $j++) {
                     StatsLogin::factory()->create([
                         'team_id' => $project->team_id,
                         'project_id' => $project->id,
@@ -87,7 +87,7 @@ class FutureStatsSeeder extends Seeder
                 }
 
                 // 20% chance of payment for new users
-                if (rand(0, 4) === 0) {
+                if (random_int(0, 4) === 0) {
                     StatsPayment::factory()->create([
                         'team_id' => $project->team_id,
                         'project_id' => $project->id,
@@ -146,7 +146,7 @@ class FutureStatsSeeder extends Seeder
                 $eventUsers = StatsUser::query()
                     ->where('project_id', $project->id)
                     ->inRandomOrder()
-                    ->limit(rand(3, 8))
+                    ->limit(random_int(3, 8))
                     ->get();
 
                 foreach ($eventUsers as $user) {

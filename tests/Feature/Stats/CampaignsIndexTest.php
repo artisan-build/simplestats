@@ -6,7 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->user = User::factory()->withPersonalTeam()->create();
@@ -16,15 +16,15 @@ beforeEach(function () {
     $this->actingAs($this->user);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
-test('campaigns route returns 200', function () {
+test('campaigns route returns 200', function (): void {
     $this->get(route('campaigns'))->assertStatus(200);
 });
 
-test('campaigns renders Campaigns/Index with the shared filter and profitability props', function () {
+test('campaigns renders Campaigns/Index with the shared filter and profitability props', function (): void {
     $this->get(route('campaigns'))
         ->assertInertia(fn ($page) => $page
             ->component('Campaigns/Index')
@@ -40,7 +40,7 @@ test('campaigns renders Campaigns/Index with the shared filter and profitability
         );
 });
 
-test('campaigns lists a campaign with its spend as a profitability row', function () {
+test('campaigns lists a campaign with its spend as a profitability row', function (): void {
     $campaign = Campaign::factory()->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -70,7 +70,7 @@ test('campaigns lists a campaign with its spend as a profitability row', functio
         );
 });
 
-test('campaigns lists a freshly created campaign even without spend', function () {
+test('campaigns lists a freshly created campaign even without spend', function (): void {
     Campaign::factory()->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -87,7 +87,7 @@ test('campaigns lists a freshly created campaign even without spend', function (
         );
 });
 
-test('campaigns paginates the profitability list at 20 per page', function () {
+test('campaigns paginates the profitability list at 20 per page', function (): void {
     Campaign::factory()->count(25)->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -107,7 +107,7 @@ test('campaigns paginates the profitability list at 20 per page', function () {
         );
 });
 
-test('campaigns exposes ltv:cac and cac payback keys on each row', function () {
+test('campaigns exposes ltv:cac and cac payback keys on each row', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
 
     Campaign::factory()->create([

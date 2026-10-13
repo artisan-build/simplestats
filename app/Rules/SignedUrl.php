@@ -4,13 +4,12 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
+use TypeError;
 
 class SignedUrl implements Rule
 {
     /**
      * Create a new rule instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -30,7 +29,7 @@ class SignedUrl implements Rule
             $request = Request::create($value);
 
             return $request->hasValidSignature();
-        } catch (\TypeError $e) {
+        } catch (TypeError) {
         }
 
         return false;

@@ -19,7 +19,7 @@ class StatsIndexDataProvider extends AbstractStatsDataProvider
 {
     use BuildsMrrProps;
 
-    private const CHURN_KPIS = ['gross_churn', 'net_churn', 'quick_ratio'];
+    private const array CHURN_KPIS = ['gross_churn', 'net_churn', 'quick_ratio'];
 
     public function __construct(
         StatsFilterRequest $request,

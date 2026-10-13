@@ -6,17 +6,17 @@ use App\Models\User;
 use App\Services\Ai\DocsSearchService;
 use Database\Seeders\TestUserSeeder;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
 });
 
-it('finds the payment tracking docs page', function () {
+it('finds the payment tracking docs page', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(SearchDocs::class, ['query' => 'track a new payment'])
         ->assertOk()
         ->assertSee('how-to-track-a-new-payment')
-        ->assertStructuredContent(function ($json) {
+        ->assertStructuredContent(function ($json): void {
             $json->has('results.0.title')
                 ->has('results.0.url')
                 ->has('results.0.excerpt')
@@ -24,21 +24,21 @@ it('finds the payment tracking docs page', function () {
         });
 });
 
-it('notes when nothing matches', function () {
+it('notes when nothing matches', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(SearchDocs::class, ['query' => 'xyzzyplugh'])
         ->assertOk()
         ->assertSee('No documentation pages matched');
 });
 
-it('rejects an empty query', function () {
+it('rejects an empty query', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(SearchDocs::class, [])
         ->assertHasErrors();
 });
 
-it('never returns the excluded starter pages', function () {
-    $results = app(DocsSearchService::class)->search('markdown examples table', 10);
+it('never returns the excluded starter pages', function (): void {
+    $results = resolve(DocsSearchService::class)->search('markdown examples table', 10);
 
     expect(collect($results)->pluck('page')->all())
         ->not->toContain('markdown-examples')

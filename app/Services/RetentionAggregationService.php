@@ -67,22 +67,20 @@ class RetentionAggregationService
         foreach ($rows as $row) {
             $idx = (int) $row['cohort_idx'];
 
-            if (! isset($byCohort[$idx])) {
-                $byCohort[$idx] = [
-                    'cohort' => $row['cohort_label'],
-                    'cohort_start' => $row['cohort_start'],
-                    'cohort_end' => $row['cohort_end'],
-                    'size' => (int) $row['cohort_size'],
-                    'periods' => [],
-                ];
-            }
+            $byCohort[$idx] ??= [
+                'cohort' => $row['cohort_label'],
+                'cohort_start' => $row['cohort_start'],
+                'cohort_end' => $row['cohort_end'],
+                'size' => (int) $row['cohort_size'],
+                'periods' => [],
+            ];
 
             if ($row['period_offset'] !== null) {
                 $byCohort[$idx]['periods'][(int) $row['period_offset']] = (int) $row['retained'];
             }
         }
 
-        $hasRegistrations = collect($byCohort)->contains(fn ($cohort) => $cohort['size'] > 0);
+        $hasRegistrations = collect($byCohort)->contains(fn ($cohort): bool => $cohort['size'] > 0);
 
         if (! $hasRegistrations) {
             return [

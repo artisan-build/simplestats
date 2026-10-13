@@ -37,26 +37,16 @@ class StatsPaymentValidator extends BaseStatsValidator
         }
 
         // these fields need to exist for the batch import upsert
-        if (! isset($input['orig_gross'])) {
-            $input['orig_gross'] = null;
-        }
-        if (! isset($input['orig_net'])) {
-            $input['orig_net'] = null;
-        }
-        if (! isset($input['orig_currency'])) {
-            $input['orig_currency'] = null;
-        }
-        if (! isset($input['subscription_interval'])) {
-            $input['subscription_interval'] = null;
-        }
-        if (! isset($input['subscription_plan'])) {
-            $input['subscription_plan'] = null;
-        }
+        $input['orig_gross'] ??= null;
+        $input['orig_net'] ??= null;
+        $input['orig_currency'] ??= null;
+        $input['subscription_interval'] ??= null;
+        $input['subscription_plan'] ??= null;
 
         // check if we have to convert currencies
         $teamCurrency = $team->currency;
         if ($input['currency'] != $teamCurrency) {
-            $exchangeRate = app(ExchangeRateService::class)->getFor(CarbonImmutable::parse($input['time']), $input['currency'], $team->currency);
+            $exchangeRate = resolve(ExchangeRateService::class)->getFor(CarbonImmutable::parse($input['time']), $input['currency'], $team->currency);
             $input = array_merge($input, [
                 'orig_gross' => $input['gross'],
                 'orig_net' => $input['net'],

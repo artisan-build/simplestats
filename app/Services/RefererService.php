@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 class RefererService
 {
-    private Collection $topReferers;
+    private readonly Collection $topReferers;
 
     /**
      * Top referers whose subdomains should fold back to the canonical domain.
@@ -162,7 +162,7 @@ class RefererService
             ->before('/')
             ->toString();
 
-        $key = $this->topReferers->search(function ($topRefererName, $topReferer) use ($normalized) {
+        $key = $this->topReferers->search(function ($topRefererName, $topReferer) use ($normalized): bool {
             // google.co.uk, google.ch, google.de all become google.com
             $topRefererMain = str($topReferer)->beforeLast('.').'.';
 
@@ -171,12 +171,8 @@ class RefererService
             }
 
             // m.facebook.com, new.reddit.com, r.search.yahoo.com fold to canonical
-            if (in_array($topReferer, $this->foldSubdomainsFor, true)
-                && str($normalized)->endsWith('.'.$topReferer)) {
-                return true;
-            }
-
-            return false;
+            return in_array($topReferer, $this->foldSubdomainsFor, true)
+                && str($normalized)->endsWith('.'.$topReferer);
         });
 
         $canonical = $key !== false ? $key : $normalized;

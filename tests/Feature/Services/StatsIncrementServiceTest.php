@@ -14,10 +14,11 @@ use App\Services\StatsAggregationsService;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -38,8 +39,8 @@ beforeEach(function () {
     $this->now = '2026-06-14 12:00:00';
     Carbon::setTestNow(Carbon::parse($this->now));
 
-    $this->service = app(StatsAggregationsService::class);
-    $this->dayFilter = fn (array $extra = []) => new StatsFilterDto(...array_merge([
+    $this->service = resolve(StatsAggregationsService::class);
+    $this->dayFilter = fn (array $extra = []): StatsFilterDto => new StatsFilterDto(...array_merge([
         'projectId' => $this->pid,
         'rangeAmount' => 1,
         'rangeType' => StatsRangeType::DAY,
@@ -48,7 +49,7 @@ beforeEach(function () {
     ], $extra));
 });
 
-afterEach(function () {
+afterEach(function (): void {
     StatsObserver::$enabled = true;
     Carbon::setTestNow();
 });
@@ -71,14 +72,14 @@ function browserId(string $name): int
 }
 
 /** Build aggregation cache for the given filters without recomputing afterwards. */
-function freshlyRecomputed(StatsAggregationsService $service, StatsFilterDto $filters)
+function freshlyRecomputed(StatsAggregationsService $service, StatsFilterDto $filters): Collection
 {
     StatsAggregation::query()->delete();
 
     return $service->getAggregatedData($filters);
 }
 
-it('increments the open day bucket for a new visitor, unfiltered and filtered, leaving non-matching filters untouched', function () {
+it('increments the open day bucket for a new visitor, unfiltered and filtered, leaving non-matching filters untouched', function (): void {
     StatsObserver::$enabled = false;
     StatsVisitor::factory()->count(5)->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'device_browser' => 'Chrome', 'time' => $this->now,
@@ -122,7 +123,7 @@ it('increments the open day bucket for a new visitor, unfiltered and filtered, l
         ->and(freshlyRecomputed($this->service, $chromeFilter)['2026-06-14']['pd_visitor'])->toBe(6);
 });
 
-it('increments the organic (-1) filtered bucket for a visitor without that dimension', function () {
+it('increments the organic (-1) filtered bucket for a visitor without that dimension', function (): void {
     StatsObserver::$enabled = false;
     StatsVisitor::factory()->count(2)->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'device_browser' => null, 'time' => $this->now,
@@ -140,7 +141,7 @@ it('increments the organic (-1) filtered bucket for a visitor without that dimen
         ->and(freshlyRecomputed($this->service, $organicFilter)['2026-06-14']['pd_visitor'])->toBe(3);
 });
 
-it('increments registrations on the open bucket', function () {
+it('increments registrations on the open bucket', function (): void {
     StatsObserver::$enabled = false;
     StatsUser::factory()->count(4)->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -158,7 +159,7 @@ it('increments registrations on the open bucket', function () {
         ->and(freshlyRecomputed($this->service, $filter)['2026-06-14']['pd_reg'])->toBe(5);
 });
 
-it('increments active-user metrics for a login by a non-paying user', function () {
+it('increments active-user metrics for a login by a non-paying user', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -189,7 +190,7 @@ it('increments active-user metrics for a login by a non-paying user', function (
         ->and($data['lt_tau'])->toBe($fresh['lt_tau']);
 });
 
-it('does not double-count dau for a second login of the same user in the bucket', function () {
+it('does not double-count dau for a second login of the same user in the bucket', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -222,7 +223,7 @@ it('does not double-count dau for a second login of the same user in the bucket'
         ->and($data['pd_tau'])->toBe($fresh['pd_tau']);
 });
 
-it('invalidates instead of incrementing for a login by a paying user', function () {
+it('invalidates instead of incrementing for a login by a paying user', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -246,7 +247,7 @@ it('invalidates instead of incrementing for a login by a paying user', function 
     expect(StatsAggregation::where('filter_hash', $filter->makeHash())->where('time', '2026-06-14')->count())->toBe(0);
 });
 
-it('increments revenue for a repeat payment and matches a full recompute', function () {
+it('increments revenue for a repeat payment and matches a full recompute', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'device_browser' => 'Chrome', 'time' => $this->now,
@@ -280,7 +281,7 @@ it('increments revenue for a repeat payment and matches a full recompute', funct
         ->and((float) freshlyRecomputed($this->service, $chromeFilter)['2026-06-14']['pd_net'])->toBe(120.0);
 });
 
-it('invalidates instead of incrementing a repeat payment that reopens the daapu window', function () {
+it('invalidates instead of incrementing a repeat payment that reopens the daapu window', function (): void {
     // The user logged in today, but their only prior payment is 25 days ago, outside
     // the 20-day daapu window, so today's pd_daapu starts at 0. A second payment today
     // moves the user back into the window, so pd_daapu must become 1. The increment
@@ -316,7 +317,7 @@ it('invalidates instead of incrementing a repeat payment that reopens the daapu 
         ->and((float) $row['pd_net'])->toBe(40.0);
 });
 
-it('counts a payment via both the user and the visitor path (cross-entity double path)', function () {
+it('counts a payment via both the user and the visitor path (cross-entity double path)', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'device_browser' => 'Chrome', 'time' => $this->now,
@@ -358,7 +359,7 @@ it('counts a payment via both the user and the visitor path (cross-entity double
         ->toBe((float) freshlyRecomputed($this->service, $unfiltered)['2026-06-14']['pd_net']);
 });
 
-it('invalidates instead of incrementing for a first payment (counter = 1)', function () {
+it('invalidates instead of incrementing for a first payment (counter = 1)', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -376,7 +377,7 @@ it('invalidates instead of incrementing for a first payment (counter = 1)', func
     expect(StatsAggregation::where('filter_hash', $filter->makeHash())->where('time', '2026-06-14')->count())->toBe(0);
 });
 
-it('invalidates the open bucket for an out-of-order (past) event', function () {
+it('invalidates the open bucket for an out-of-order (past) event', function (): void {
     StatsObserver::$enabled = false;
     StatsVisitor::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -395,7 +396,7 @@ it('invalidates the open bucket for an out-of-order (past) event', function () {
     expect(StatsAggregation::where('filter_hash', $filter->makeHash())->where('time', '2026-06-14')->count())->toBe(0);
 });
 
-it('invalidates custom-property filtered rows instead of incrementing them', function () {
+it('invalidates custom-property filtered rows instead of incrementing them', function (): void {
     // a custom-property filtered aggregation cannot be safely incremented, so it
     // must be invalidated when any event lands in its bucket
     StatsObserver::$enabled = false;
@@ -423,7 +424,7 @@ it('invalidates custom-property filtered rows instead of incrementing them', fun
     expect(StatsAggregation::where('filter_hash', 'prop-filter-hash')->count())->toBe(0);
 });
 
-it('does nothing when the aggregation cache is disabled entirely', function () {
+it('does nothing when the aggregation cache is disabled entirely', function (): void {
     config(['app.stats_aggregation_enabled' => false]);
 
     StatsAggregation::create([
@@ -445,7 +446,7 @@ it('does nothing when the aggregation cache is disabled entirely', function () {
     expect((int) StatsAggregation::where('filter_hash', 'untouched-hash')->value('data')['pd_visitor'])->toBe(7);
 });
 
-it('increments the team-level (project_id null) aggregation', function () {
+it('increments the team-level (project_id null) aggregation', function (): void {
     StatsObserver::$enabled = false;
     StatsVisitor::factory()->count(3)->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
@@ -468,7 +469,7 @@ it('increments the team-level (project_id null) aggregation', function () {
         ->and(freshlyRecomputed($this->service, $teamFilter)['2026-06-14']['pd_visitor'])->toBe(4);
 });
 
-it('invalidates legacy rows without a stored filter', function () {
+it('invalidates legacy rows without a stored filter', function (): void {
     // a row with a null filter cannot be matched, so it is invalidated on any event
     StatsAggregation::create([
         'team_id' => $this->team->id,
@@ -488,7 +489,7 @@ it('invalidates legacy rows without a stored filter', function () {
     expect(StatsAggregation::where('filter_hash', 'legacy-hash')->count())->toBe(0);
 });
 
-it('increments the open weekly bucket', function () {
+it('increments the open weekly bucket', function (): void {
     StatsObserver::$enabled = false;
     StatsVisitor::factory()->count(5)->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,

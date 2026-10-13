@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 use function Pest\Laravel\actingAs;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     actingAs($this->user);
 
@@ -20,7 +20,7 @@ beforeEach(function () {
     $this->project = Project::factory()->create(['team_id' => $this->team->id]);
 });
 
-test('all user-facing models get a v4 uuid on creation', function () {
+test('all user-facing models get a v4 uuid on creation', function (): void {
     $campaign = Campaign::factory()->create(['project_id' => $this->project->id]);
     $adSpend = AdSpend::factory()->create(['campaign_id' => $campaign->id]);
     $preset = CustomStatsRangePreset::factory()->for($this->user)->create();
@@ -33,12 +33,12 @@ test('all user-facing models get a v4 uuid on creation', function () {
     }
 });
 
-test('a team resolves via its uuid and its numeric id redirects', function () {
+test('a team resolves via its uuid and its numeric id redirects', function (): void {
     $this->get(route('teams.show', $this->team))->assertSuccessful();
     $this->get('/teams/'.$this->team->id)->assertStatus(301);
 });
 
-test('the overridden jetstream team update route resolves the uuid', function () {
+test('the overridden jetstream team update route resolves the uuid', function (): void {
     $this->put(route('teams.update', $this->team), [
         'name' => 'Renamed Team',
         'currency' => 'EUR',
@@ -49,14 +49,14 @@ test('the overridden jetstream team update route resolves the uuid', function ()
     expect($this->team->fresh()->name)->toBe('Renamed Team');
 });
 
-test('a campaign resolves via its uuid and its numeric id redirects', function () {
+test('a campaign resolves via its uuid and its numeric id redirects', function (): void {
     $campaign = Campaign::factory()->create(['project_id' => $this->project->id]);
 
     $this->get(route('campaigns.show', $campaign))->assertSuccessful();
     $this->get('/campaigns/'.$campaign->id)->assertStatus(301);
 });
 
-test('a track campaign unlinks via its uuid', function () {
+test('a track campaign unlinks via its uuid', function (): void {
     $campaign = Campaign::factory()->create(['project_id' => $this->project->id]);
     $trackCampaign = StatsTrackCampaign::create(['name' => 'summer_sale', 'campaign_id' => $campaign->id]);
 
@@ -66,7 +66,7 @@ test('a track campaign unlinks via its uuid', function () {
     expect($trackCampaign->fresh()->campaign_id)->toBeNull();
 });
 
-test('an ad spend deletes via its uuid but not via its numeric id', function () {
+test('an ad spend deletes via its uuid but not via its numeric id', function (): void {
     $campaign = Campaign::factory()->create(['project_id' => $this->project->id]);
     $adSpend = AdSpend::factory()->create(['campaign_id' => $campaign->id]);
 
@@ -76,7 +76,7 @@ test('an ad spend deletes via its uuid but not via its numeric id', function () 
     expect(AdSpend::whereKey($adSpend)->exists())->toBeFalse();
 });
 
-test('a custom preset deletes via its uuid but not via its numeric id', function () {
+test('a custom preset deletes via its uuid but not via its numeric id', function (): void {
     $preset = CustomStatsRangePreset::factory()->for($this->user)->create();
 
     $this->delete('/custom-presets/'.$preset->id)->assertNotFound();
@@ -85,7 +85,7 @@ test('a custom preset deletes via its uuid but not via its numeric id', function
     expect(CustomStatsRangePreset::whereKey($preset)->exists())->toBeFalse();
 });
 
-test('data import action urls use the uuid and reject numeric ids', function () {
+test('data import action urls use the uuid and reject numeric ids', function (): void {
     $dataImport = DataImport::factory()->create([
         'project_id' => $this->project->id,
         'created_by' => $this->user->id,
@@ -96,11 +96,11 @@ test('data import action urls use the uuid and reject numeric ids', function () 
     $this->post('/data-import/'.$dataImport->id.'/cancel')->assertNotFound();
 });
 
-test('users get a random v4 uuid', function () {
+test('users get a random v4 uuid', function (): void {
     expect(Str::isUuid($this->user->uuid, version: 4))->toBeTrue();
 });
 
-test('team member routes resolve the member via uuid but not via the numeric id', function () {
+test('team member routes resolve the member via uuid but not via the numeric id', function (): void {
     $member = User::factory()->withPersonalTeam()->create();
     $this->team->users()->attach($member, ['role' => 'editor']);
 
@@ -111,7 +111,7 @@ test('team member routes resolve the member via uuid but not via the numeric id'
     expect($member->fresh()->belongsToTeam($this->team))->toBeFalse();
 });
 
-test('switching teams maps a team url onto the new team uuid', function () {
+test('switching teams maps a team url onto the new team uuid', function (): void {
     $newTeam = Team::factory()->create(['user_id' => $this->user->id, 'personal_team' => false]);
 
     $this->put(route('current-team.update'), ['team_id' => $newTeam->id], [
@@ -119,7 +119,7 @@ test('switching teams maps a team url onto the new team uuid', function () {
     ])->assertRedirect(url('/teams/'.$newTeam->uuid));
 });
 
-test('switching teams strips a uuid id segment from entity urls', function () {
+test('switching teams strips a uuid id segment from entity urls', function (): void {
     $newTeam = Team::factory()->create(['user_id' => $this->user->id, 'personal_team' => false]);
 
     $this->put(route('current-team.update'), ['team_id' => $newTeam->id], [
@@ -127,7 +127,7 @@ test('switching teams strips a uuid id segment from entity urls', function () {
     ])->assertRedirect(url('/campaigns'));
 });
 
-test('switching teams keeps non-id path segments like the metric kpi', function () {
+test('switching teams keeps non-id path segments like the metric kpi', function (): void {
     $newTeam = Team::factory()->create(['user_id' => $this->user->id, 'personal_team' => false]);
 
     $this->put(route('current-team.update'), ['team_id' => $newTeam->id], [

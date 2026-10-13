@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Support\Carbon;
 
-it('restores a marked user and resets the inactivity fields', function () {
+it('restores a marked user and resets the inactivity fields', function (): void {
     $user = User::factory()->create([
         'deleted_at' => now()->subDay(),
         'inactive_since' => now()->subDays(20),
@@ -19,7 +19,7 @@ it('restores a marked user and resets the inactivity fields', function () {
     expect(Carbon::parse($fresh->last_login_at)->isToday())->toBeTrue();
 });
 
-it('resolves the marked user by numeric id too', function () {
+it('resolves the marked user by numeric id too', function (): void {
     $user = User::factory()->create(['deleted_at' => now()->subDay()]);
 
     $this->artisan('app:restore-user', ['user' => (string) $user->id])
@@ -28,7 +28,7 @@ it('resolves the marked user by numeric id too', function () {
     expect($user->fresh()->deleted_at)->toBeNull();
 });
 
-it('fails when no marked user matches', function () {
+it('fails when no marked user matches', function (): void {
     User::factory()->create(['deleted_at' => null, 'email' => 'active@example.com']);
 
     $this->artisan('app:restore-user', ['user' => 'active@example.com'])

@@ -24,13 +24,11 @@ enum StatsRangePreset: string
 
     public static function toOptions(): array
     {
-        return collect(self::cases())->map(function (StatsRangePreset $preset) {
-            return [
-                'id' => $preset->value,
-                'name' => $preset->title(),
-                'sortWeight' => $preset->sortWeight(),
-            ];
-        })->values()->toArray();
+        return collect(self::cases())->map(fn (StatsRangePreset $preset): array => [
+            'id' => $preset->value,
+            'name' => $preset->title(),
+            'sortWeight' => $preset->sortWeight(),
+        ])->values()->all();
     }
 
     public function sortWeight(): int
@@ -73,8 +71,8 @@ enum StatsRangePreset: string
     {
         return match ($this) {
             self::TODAY => [
-                'range_start' => now()->startOfDay()->format(StatsRangeType::DATE_FORMAT),
-                'range_amount' => now()->startOfDay()->diffInHours(now()) + 1,
+                'range_start' => today()->format(StatsRangeType::DATE_FORMAT),
+                'range_amount' => today()->diffInHours(now()) + 1,
                 'range_type' => StatsRangeType::HOUR->value,
             ],
             self::YESTERDAY => [
@@ -135,7 +133,7 @@ enum StatsRangePreset: string
     {
         $user = auth()->user();
 
-        $statsStartingAt = app(StatsService::class)->getStatsStartingAt([
+        $statsStartingAt = resolve(StatsService::class)->getStatsStartingAt([
             'team_id' => $user->team->id,
             'id' => $projectId,
         ]) ?? now()->subYears(1)->startOfYear();

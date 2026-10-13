@@ -5,7 +5,7 @@ use App\Models\StatsCustomPropertyName;
 use App\Models\StatsCustomPropertyValue;
 use Database\Seeders\DatabaseSeeder;
 
-test('the database seeder produces custom property demo data', function () {
+test('the database seeder produces custom property demo data', function (): void {
     $this->seed(DatabaseSeeder::class);
 
     // Lookup tables are populated for both user- and visitor-bound properties.

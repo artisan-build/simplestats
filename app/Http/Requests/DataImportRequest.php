@@ -41,7 +41,7 @@ class DataImportRequest extends FormRequest
             'project_id' => [
                 'required',
                 'integer',
-                Rule::exists(Project::class, 'id')->where(function ($query) {
+                Rule::exists(Project::class, 'id')->where(function ($query): void {
                     $query->where([
                         'team_id' => $this->user()->current_team_id,
                     ]);

@@ -8,10 +8,11 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -22,7 +23,7 @@ beforeEach(function () {
     auth()->forgetGuards();
 });
 
-function ctx($project): void
+function ctx(?Authenticatable $project): void
 {
     auth()->setUser($project);
     AppHelper::setTeamContextFromAuth($project);
@@ -40,7 +41,7 @@ function userPayload(array $overrides = []): array
     ], $overrides);
 }
 
-test('tracking a user with properties stores normalised name, value and pivot', function () {
+test('tracking a user with properties stores normalised name, value and pivot', function (): void {
     $this->postJson('/api/v1/stats-user', userPayload([
         'properties' => ['ab_test' => 'B', 'company' => 'Acme Inc'],
     ]), apiHeaders($this->token))->assertOk();
@@ -60,7 +61,7 @@ test('tracking a user with properties stores normalised name, value and pivot', 
         ->toBe(['ab_test' => 'B', 'company' => 'Acme Inc']);
 });
 
-test('re-tracking a user overwrites the property value (current-value semantics)', function () {
+test('re-tracking a user overwrites the property value (current-value semantics)', function (): void {
     $this->postJson('/api/v1/stats-user', userPayload([
         'properties' => ['ab_test' => 'A'],
     ]), apiHeaders($this->token))->assertOk();
@@ -81,7 +82,7 @@ test('re-tracking a user overwrites the property value (current-value semantics)
         ->and($properties->first()->value->value)->toBe('B');
 });
 
-test('tracking a visitor with properties stores a visitor-bound pivot row', function () {
+test('tracking a visitor with properties stores a visitor-bound pivot row', function (): void {
     $hash = str()->random(32);
 
     $this->postJson('/api/v1/stats-visitor', [
@@ -107,7 +108,7 @@ test('tracking a visitor with properties stores a visitor-bound pivot row', func
         ->and($property->value->value)->toBe('B');
 });
 
-test('the property endpoint records properties for an existing user', function () {
+test('the property endpoint records properties for an existing user', function (): void {
     $this->postJson('/api/v1/stats-user', userPayload(), apiHeaders($this->token))->assertOk();
 
     $this->postJson('/api/v1/stats-custom-properties', [
@@ -132,7 +133,7 @@ test('the property endpoint records properties for an existing user', function (
         ->and($property->value->value)->toBe('B');
 });
 
-test('the property endpoint records properties for an existing visitor', function () {
+test('the property endpoint records properties for an existing visitor', function (): void {
     $hash = str()->random(32);
 
     $this->postJson('/api/v1/stats-visitor', [
@@ -164,7 +165,7 @@ test('the property endpoint records properties for an existing visitor', functio
         ->and($property->value->value)->toBe('B');
 });
 
-test('the property endpoint drops properties for an unknown visitor', function () {
+test('the property endpoint drops properties for an unknown visitor', function (): void {
     $this->postJson('/api/v1/stats-custom-properties', [
         'visitor_hash' => str()->random(32),
         'time' => now()->format('Y-m-d H:i:s P'),
@@ -177,14 +178,14 @@ test('the property endpoint drops properties for an unknown visitor', function (
         ->and(StatsCustomProperty::count())->toBe(0);
 });
 
-test('the property endpoint requires a user id or a visitor hash', function () {
+test('the property endpoint requires a user id or a visitor hash', function (): void {
     $this->postJson('/api/v1/stats-custom-properties', [
         'time' => now()->format('Y-m-d H:i:s P'),
         'properties' => ['ab_test' => 'B'],
     ], apiHeaders($this->token))->assertStatus(422);
 });
 
-test('the property endpoint requires time', function () {
+test('the property endpoint requires time', function (): void {
     $this->postJson('/api/v1/stats-custom-properties', [
         'stats_user_id' => '4242',
         'properties' => ['ab_test' => 'B'],
@@ -193,7 +194,7 @@ test('the property endpoint requires time', function () {
         ->assertJsonValidationErrors('time');
 });
 
-test('an out-of-order update with an older time does not overwrite a newer value', function () {
+test('an out-of-order update with an older time does not overwrite a newer value', function (): void {
     $this->postJson('/api/v1/stats-user', userPayload(), apiHeaders($this->token))->assertOk();
 
     $this->postJson('/api/v1/stats-custom-properties', [
@@ -221,7 +222,7 @@ test('an out-of-order update with an older time does not overwrite a newer value
         ->and($properties->first()->value->value)->toBe('C');
 });
 
-test('an update with a newer time overwrites an older value', function () {
+test('an update with a newer time overwrites an older value', function (): void {
     $this->postJson('/api/v1/stats-user', userPayload(), apiHeaders($this->token))->assertOk();
 
     $this->postJson('/api/v1/stats-custom-properties', [
@@ -248,7 +249,7 @@ test('an update with a newer time overwrites an older value', function () {
         ->and($properties->first()->value->value)->toBe('B');
 });
 
-test('distinct property names are not capped per project', function () {
+test('distinct property names are not capped per project', function (): void {
     ctx($this->project);
 
     $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);
@@ -274,7 +275,7 @@ function insertConflictingCustomPropertyRowOnCreating(): void
 {
     $fired = false;
 
-    StatsCustomProperty::creating(function (StatsCustomProperty $property) use (&$fired) {
+    StatsCustomProperty::creating(function (StatsCustomProperty $property) use (&$fired): void {
         if ($fired) {
             return;
         }
@@ -295,7 +296,7 @@ function insertConflictingCustomPropertyRowOnCreating(): void
     });
 }
 
-test('a parallel worker winning the pivot insert race does not fail the property update', function () {
+test('a parallel worker winning the pivot insert race does not fail the property update', function (): void {
     ctx($this->project);
 
     $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
@@ -314,7 +315,7 @@ test('a parallel worker winning the pivot insert race does not fail the property
         ->and($properties->first()->value->value)->toBe('B');
 });
 
-test('non-scalar and empty property values are skipped', function () {
+test('non-scalar and empty property values are skipped', function (): void {
     ctx($this->project);
 
     $statsUser = StatsUser::factory()->create(['project_id' => $this->project->id]);

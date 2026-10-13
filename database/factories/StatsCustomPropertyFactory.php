@@ -40,7 +40,7 @@ class StatsCustomPropertyFactory extends Factory
      */
     public function forVisitor(): static
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes): array {
             $visitor = StatsVisitor::factory()->create([
                 'team_id' => $attributes['team_id'],
                 'project_id' => $attributes['project_id'],

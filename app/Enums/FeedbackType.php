@@ -19,11 +19,9 @@ enum FeedbackType: string
 
     public static function toOptions(): array
     {
-        return collect(self::cases())->map(function (FeedbackType $type) {
-            return [
-                'id' => $type->value,
-                'name' => $type->title(),
-            ];
-        })->values()->toArray();
+        return collect(self::cases())->map(fn (FeedbackType $type): array => [
+            'id' => $type->value,
+            'name' => $type->title(),
+        ])->values()->all();
     }
 }

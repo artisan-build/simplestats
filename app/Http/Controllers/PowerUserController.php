@@ -14,7 +14,7 @@ class PowerUserController extends Controller
     public function index(Request $request, PowerUsersDataProvider $dataProvider): Response|RedirectResponse
     {
         if (! $request->user()->currentTeam->tracksUsage(Project::USAGE_USERS)) {
-            return redirect()->route('dashboard');
+            return to_route('dashboard');
         }
 
         return Inertia::render('PowerUsers/Index', $dataProvider->toArray());

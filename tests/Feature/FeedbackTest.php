@@ -5,7 +5,7 @@ use App\Mail\FeedbackMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
-test('guests cannot submit feedback', function () {
+test('guests cannot submit feedback', function (): void {
     $response = $this->post('/feedback', [
         'type' => 'idea',
         'message' => 'A great idea',
@@ -14,7 +14,7 @@ test('guests cannot submit feedback', function () {
     $response->assertRedirect('/login');
 });
 
-test('feedback can be submitted', function () {
+test('feedback can be submitted', function (): void {
     Mail::fake();
 
     $user = User::factory()->withPersonalTeam()->create();
@@ -27,14 +27,12 @@ test('feedback can be submitted', function () {
     $response->assertRedirect();
     $response->assertSessionMissing('errors');
 
-    Mail::assertSent(FeedbackMail::class, function (FeedbackMail $mail) use ($user) {
-        return $mail->type === FeedbackType::IDEA
-            && $mail->feedbackMessage === 'It would be great to have dark mode charts.'
-            && $mail->user->is($user);
-    });
+    Mail::assertSent(FeedbackMail::class, fn (FeedbackMail $mail): bool => $mail->type === FeedbackType::IDEA
+        && $mail->feedbackMessage === 'It would be great to have dark mode charts.'
+        && $mail->user->is($user));
 });
 
-test('validation rejects missing fields', function () {
+test('validation rejects missing fields', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
 
     $response = $this->actingAs($user)->post('/feedback', []);
@@ -42,7 +40,7 @@ test('validation rejects missing fields', function () {
     $response->assertSessionHasErrors(['type', 'message']);
 });
 
-test('validation rejects invalid type', function () {
+test('validation rejects invalid type', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
 
     $response = $this->actingAs($user)->post('/feedback', [

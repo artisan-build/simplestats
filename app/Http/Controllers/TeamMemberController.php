@@ -11,7 +11,6 @@ use Laravel\Jetstream\Contracts\AddsTeamMembers;
 use Laravel\Jetstream\Contracts\InvitesTeamMembers;
 use Laravel\Jetstream\Contracts\RemovesTeamMembers;
 use Laravel\Jetstream\Features;
-use Laravel\Jetstream\Jetstream;
 
 /**
  * Replaces Jetstream's vendor routes for {team}: the vendor controllers
@@ -24,14 +23,14 @@ class TeamMemberController extends Controller
     public function store(Request $request, Team $team): RedirectResponse
     {
         if (Features::sendsTeamInvitations()) {
-            app(InvitesTeamMembers::class)->invite(
+            resolve(InvitesTeamMembers::class)->invite(
                 $request->user(),
                 $team,
                 $request->email ?: '',
                 $request->role
             );
         } else {
-            app(AddsTeamMembers::class)->add(
+            resolve(AddsTeamMembers::class)->add(
                 $request->user(),
                 $team,
                 $request->email ?: '',
@@ -44,7 +43,7 @@ class TeamMemberController extends Controller
 
     public function update(Request $request, Team $team, User $user): RedirectResponse
     {
-        app(UpdateTeamMemberRole::class)->update(
+        resolve(UpdateTeamMemberRole::class)->update(
             $request->user(),
             $team,
             $user->id,
@@ -56,7 +55,7 @@ class TeamMemberController extends Controller
 
     public function destroy(Request $request, Team $team, User $user): RedirectResponse
     {
-        app(RemovesTeamMembers::class)->remove(
+        resolve(RemovesTeamMembers::class)->remove(
             $request->user(),
             $team,
             $user

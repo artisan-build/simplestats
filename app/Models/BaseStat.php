@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Concerns\HasProjectScope;
 use App\Concerns\HasTeamScope;
 use App\Enums\StatsRangeType;
+use Carbon\Month;
+use Carbon\WeekDay;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,19 +25,16 @@ abstract class BaseStat extends Model
     protected $guarded = false;
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
+     * @return BelongsTo<Team, $this>
      */
-    protected $casts = [
-        'time' => 'datetime',
-    ];
-
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
@@ -51,15 +51,23 @@ abstract class BaseStat extends Model
             ->where('project_id', $this->project_id);
     }
 
-    public function time(): Attribute
+    protected function time(): Attribute
     {
         return Attribute::make(
-            set: function ($value) {
-                return [
-                    'time' => Carbon::parse($value)->tz(auth()->user()->team->timezone)->format(StatsRangeType::DATE_FORMAT),
-                    'time_utc' => Carbon::parse($value)->tz('UTC')->format(StatsRangeType::DATE_FORMAT),
-                ];
-            },
+            set: fn (DateTimeInterface|WeekDay|Month|string|int|float|null $value): array => [
+                'time' => Carbon::parse($value)->tz(auth()->user()->team->timezone)->format(StatsRangeType::DATE_FORMAT),
+                'time_utc' => Carbon::parse($value)->tz('UTC')->format(StatsRangeType::DATE_FORMAT),
+            ],
         );
+    }
+
+    /**
+     * The attributes that should be cast to native types.
+     */
+    protected function casts(): array
+    {
+        return [
+            'time' => 'datetime',
+        ];
     }
 }

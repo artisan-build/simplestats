@@ -9,6 +9,9 @@ use App\Models\StatsUser;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<StatsPayment>
+ */
 class StatsPaymentFactory extends Factory
 {
     /**
@@ -20,7 +23,7 @@ class StatsPaymentFactory extends Factory
 
     public static int $id = 1;
 
-    public function initialize()
+    public function initialize(): static
     {
         self::$id = 1;
 
@@ -32,8 +35,8 @@ class StatsPaymentFactory extends Factory
      */
     public function definition(): array
     {
-        $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
-        $gross = $this->faker->randomFloat(2, 1, 2000);
+        $date = fake()->dateTimeBetween(now()->subYears(1), 'now');
+        $gross = fake()->randomFloat(2, 1, 2000);
 
         return [
             'id' => self::$id++,
@@ -52,11 +55,11 @@ class StatsPaymentFactory extends Factory
 
     public function subscriptionMonthly(): static
     {
-        return $this->state(fn () => ['subscription_interval' => SubscriptionInterval::MONTH]);
+        return $this->state(fn (): array => ['subscription_interval' => SubscriptionInterval::MONTH]);
     }
 
     public function subscriptionYearly(): static
     {
-        return $this->state(fn () => ['subscription_interval' => SubscriptionInterval::YEAR]);
+        return $this->state(fn (): array => ['subscription_interval' => SubscriptionInterval::YEAR]);
     }
 }

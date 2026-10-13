@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             // Managed manually (no SoftDeletes trait): the Laravel SoftDeletes
             // trait collides with KeepsDeletedModels (duplicate restore()/
             // restoreQuietly(), and the deleted event would archive on soft

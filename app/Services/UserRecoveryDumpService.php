@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -25,10 +26,10 @@ use RuntimeException;
  */
 class UserRecoveryDumpService
 {
-    private const CHUNK = 1000;
+    private const int CHUNK = 1000;
 
     /** Lookup/dimension tables (team-scoped only), inserted before the projects that reference them. */
-    private const DIMENSION_TABLES = [
+    private const array DIMENSION_TABLES = [
         'stats_device_browsers',
         'stats_device_platforms',
         'stats_device_types',
@@ -99,7 +100,7 @@ class UserRecoveryDumpService
         // memberships on foreign teams. Referenced foreign users/teams must already
         // exist on production.
         $sections[] = $this->section('team_user', DB::table('team_user')
-            ->where(function ($query) use ($teamIds, $user) {
+            ->where(function (Builder $query) use ($teamIds, $user): void {
                 $query->whereIn('team_id', $teamIds)->orWhere('user_id', $user->id);
             })->get());
 
@@ -130,9 +131,9 @@ class UserRecoveryDumpService
         $userMorph = (new User)->getMorphClass();
         $projectMorph = (new Project)->getMorphClass();
         $sections[] = $this->section('personal_access_tokens', DB::table('personal_access_tokens')
-            ->where(function ($query) use ($userMorph, $user, $projectMorph, $projectIds) {
-                $query->where(fn ($q) => $q->where('tokenable_type', $userMorph)->where('tokenable_id', $user->id))
-                    ->orWhere(fn ($q) => $q->where('tokenable_type', $projectMorph)->whereIn('tokenable_id', $projectIds));
+            ->where(function (Builder $query) use ($userMorph, $user, $projectMorph, $projectIds): void {
+                $query->where(fn (Builder $q) => $q->where('tokenable_type', $userMorph)->where('tokenable_id', $user->id))
+                    ->orWhere(fn (Builder $q) => $q->where('tokenable_type', $projectMorph)->whereIn('tokenable_id', $projectIds));
             })->get());
 
         if ($withBilling) {
@@ -222,16 +223,14 @@ class UserRecoveryDumpService
     private function buildTableInserts(string $table, Collection $rows, array $overrides, bool $onConflictDoNothing): string
     {
         $columns = Schema::getColumnListing($table);
-        $columnSql = collect($columns)->map(fn ($c) => $this->quoteIdentifier($c))->implode(', ');
+        $columnSql = collect($columns)->map(fn ($c): string => $this->quoteIdentifier($c))->implode(', ');
         $suffix = $onConflictDoNothing ? ' ON CONFLICT DO NOTHING' : '';
 
         $statements = ["-- {$table} ({$rows->count()} rows)"];
 
         foreach ($rows->chunk(self::CHUNK) as $chunk) {
-            $valueRows = $chunk->map(function (object $row) use ($columns, $overrides) {
-                $values = collect($columns)->map(function (string $column) use ($row, $overrides) {
-                    return $this->literal($row->{$column} ?? null, $overrides[$column] ?? null);
-                })->implode(', ');
+            $valueRows = $chunk->map(function (object $row) use ($columns, $overrides): string {
+                $values = collect($columns)->map(fn (string $column): string => $this->literal($row->{$column} ?? null, $overrides[$column] ?? null))->implode(', ');
 
                 return '    ('.$values.')';
             })->implode(",\n");

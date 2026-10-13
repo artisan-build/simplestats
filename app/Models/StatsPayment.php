@@ -18,20 +18,17 @@ class StatsPayment extends BaseStat
 
     public $incrementing = false;
 
-    protected $casts = [
-        'time' => 'datetime',
-        'gross' => 'float',
-        'net' => 'float',
-        'orig_gross' => 'float',
-        'orig_net' => 'float',
-        'subscription_interval' => SubscriptionInterval::class,
-    ];
-
+    /**
+     * @return BelongsTo<StatsUser, $this>
+     */
     public function statsUser(): BelongsTo
     {
         return $this->belongsTo(StatsUser::class);
     }
 
+    /**
+     * @return BelongsTo<StatsVisitor, $this>
+     */
     public function statsVisitor(): BelongsTo
     {
         return $this->belongsTo(StatsVisitor::class);
@@ -41,8 +38,20 @@ class StatsPayment extends BaseStat
     {
         $this->project->userAlertNotifications()->with('user')
             ->where('settings->tracking->payments', true)
-            ->each(function (UserNotification $notification) {
+            ->each(function (UserNotification $notification): void {
                 $notification->user->notify(new ProjectAlertPaymentNotification($this, $notification));
             });
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'time' => 'datetime',
+            'gross' => 'float',
+            'net' => 'float',
+            'orig_gross' => 'float',
+            'orig_net' => 'float',
+            'subscription_interval' => SubscriptionInterval::class,
+        ];
     }
 }

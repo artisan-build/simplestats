@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsUserRequest;
 use App\Jobs\TrackStatsUser;
 use App\Services\BotDetectionService;
+use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\JsonResponse;
 
 use function Illuminate\Support\defer;
@@ -19,9 +20,7 @@ class StatsUserController extends Controller
             return response()->json(['message' => 'Bots are not allowed.']);
         }
 
-        defer(fn () => TrackStatsUser::dispatch(
-            input: $request->validated(),
-        ));
+        defer(fn (): PendingDispatch => dispatch(new TrackStatsUser(input: $request->validated())));
 
         return response()->json([
             'message' => 'Stats User Request accepted.',

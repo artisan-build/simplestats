@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\File;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->skipUnlessSaas();
 
     $this->blogPath = storage_path('app/testing/sitemap-blog');
@@ -20,7 +20,7 @@ beforeEach(function () {
     }
 });
 
-afterEach(function () {
+afterEach(function (): void {
     if (! isset($this->blogPath)) {
         return;
     }
@@ -29,7 +29,7 @@ afterEach(function () {
     File::deleteDirectory($this->publicPath);
 });
 
-test('sitemap contains published blog posts and docs pages', function () {
+test('sitemap contains published blog posts and docs pages', function (): void {
     $this->artisan('app:generate-sitemap')->assertSuccessful();
 
     $sitemap = File::get($this->publicPath.'/sitemap.xml');

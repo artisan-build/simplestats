@@ -111,17 +111,13 @@ class StatsService
 
     public static function getStatsTypesFormatted(array $skip = []): Collection
     {
-        return collect(self::$statsTypes)->map(function ($types) use ($skip) {
-            return collect($types)->map(function ($item) use ($skip) {
-                if (! empty($skip)) {
-                    foreach ($skip as $key) {
-                        unset($item[$key]);
-                    }
-                }
+        return collect(self::$statsTypes)->map(fn ($types) => collect($types)->map(function (array $item) use ($skip): array {
+            foreach ($skip as $key) {
+                unset($item[$key]);
+            }
 
-                return $item;
-            });
-        });
+            return $item;
+        }));
     }
 
     public static function getStatsTypesFlatMap(array $skip = []): Collection
@@ -131,26 +127,20 @@ class StatsService
 
     public static function asOptions(array $skip = []): Collection
     {
-        return collect(self::getStatsTypesFlatMap($skip))->map(function ($type) {
-            return [
-                'id' => $type['model'],
-                'name' => ucfirst($type['title']),
-            ];
-        })->values();
+        return collect(self::getStatsTypesFlatMap($skip))->map(fn ($type): array => [
+            'id' => $type['model'],
+            'name' => ucfirst($type['title']),
+        ])->values();
     }
 
     public static function getStatsTypesFlat(): Collection
     {
-        return collect(self::getStatsTypesFormatted())->flatMap(function ($item) {
-            return $item->pluck('type');
-        });
+        return collect(self::getStatsTypesFormatted())->flatMap(fn ($item) => $item->pluck('type'));
     }
 
     public static function getFilterStatsTypeNames(StatsFilterDto $filters): Collection
     {
-        $names = collect(self::getStatsTypesFormatted())->flatMap(function ($item) {
-            return collect($item)->pluck('model', 'type');
-        })->mapWithKeys(function ($model, $type) use ($filters) {
+        $names = collect(self::getStatsTypesFormatted())->flatMap(fn ($item) => collect($item)->pluck('model', 'type'))->mapWithKeys(function ($model, $type) use ($filters): array {
             $camelType = Str::camel($type);
             if (! empty($filters->$camelType)) {
                 return [$type => $model::find($filters->$camelType)?->name ?? 'Direct / Unknown'];
@@ -185,7 +175,7 @@ class StatsService
     public static function formatFilters(StatsFilterDto $filters): array
     {
         $formatted = collect((array) $filters)
-            ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => $value])
+            ->mapWithKeys(fn ($value, $key): array => [Str::snake($key) => $value])
             ->merge(['range_start' => $filters->rangeStart->format('Y-m-d')])
             // Carbon instances must reach the frontend as naive strings, not objects.
             ->merge([
@@ -201,12 +191,8 @@ class StatsService
         }
 
         // project must have a default value...
-        if (! isset($formatted['project_id'])) {
-            $formatted['project_id'] = 0;
-        }
-        if (! isset($formatted['comparison'])) {
-            $formatted['comparison'] = 0;
-        }
+        $formatted['project_id'] ??= 0;
+        $formatted['comparison'] ??= 0;
 
         // The frontend/url side of the filters speaks public uuids, only the
         // backend works with the internal ids.
@@ -239,7 +225,7 @@ class StatsService
      */
     public function recalculateStatsStartingAt(): void
     {
-        Project::all()->each(function (Project $project) {
+        Project::all()->each(function (Project $project): void {
             $start = collect(StatsService::getStatsModels())->map(
                 fn ($statsModel) => $statsModel::where(['project_id' => $project->id])->min('time')
             )->filter()->min();
@@ -252,12 +238,10 @@ class StatsService
 
     public static function getComparisonTypes(): array
     {
-        return collect(ComparisonType::cases())->map(function ($type) {
-            return [
-                'id' => $type->value,
-                'name' => $type->getTitle(),
-            ];
-        })->toArray();
+        return collect(ComparisonType::cases())->map(fn ($type): array => [
+            'id' => $type->value,
+            'name' => $type->getTitle(),
+        ])->all();
     }
 
     public static function showFreePlanWarning(User $user): bool

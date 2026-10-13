@@ -10,7 +10,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-24 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -26,10 +26,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(RetentionAggregationService::class);
+    $this->service = resolve(RetentionAggregationService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -71,7 +71,7 @@ function retentionWeekFilter(int $projectId, int $trackSource = 0): StatsFilterD
     );
 }
 
-it('builds the triangular cohort matrix, oldest cohort first, with later periods null', function () {
+it('builds the triangular cohort matrix, oldest cohort first, with later periods null', function (): void {
     // Cohort idx0: returns in week 1 and week 2.
     insertRetentionUser('a', $this->team->id, $this->pid, '2026-06-09 10:00:00');
     insertRetentionLogin('a', $this->team->id, $this->pid, '2026-06-16 10:00:00', 2);
@@ -101,7 +101,7 @@ it('builds the triangular cohort matrix, oldest cohort first, with later periods
         ->and($result['cohorts'][2]['retention'])->toBe([100.0, null, null]);
 });
 
-it('shows every bucket of the range, including empty edges, as 0-user rows', function () {
+it('shows every bucket of the range, including empty edges, as 0-user rows', function (): void {
     // Only idx1 (w/c 06-15) has a cohort; idx0 and idx2 stay empty.
     insertRetentionUser('b', $this->team->id, $this->pid, '2026-06-16 10:00:00');
 
@@ -115,13 +115,13 @@ it('shows every bucket of the range, including empty edges, as 0-user rows', fun
         ->and($result['cohorts'][2]['size'])->toBe(0);
 });
 
-it('returns no cohorts when the whole range has no registrations', function () {
+it('returns no cohorts when the whole range has no registrations', function (): void {
     $result = $this->service->getRetentionCohorts(retentionWeekFilter($this->pid));
 
     expect($result['cohorts'])->toBe([]);
 });
 
-it('counts only return logins (counter >= 2), not the registration login', function () {
+it('counts only return logins (counter >= 2), not the registration login', function (): void {
     insertRetentionUser('a', $this->team->id, $this->pid, '2026-06-09 10:00:00');
     insertRetentionUser('b', $this->team->id, $this->pid, '2026-06-09 10:00:00');
 
@@ -139,7 +139,7 @@ it('counts only return logins (counter >= 2), not the registration login', funct
         ->and($oldest['retention'][1])->toBe(50.0);
 });
 
-it('excludes non-registered users from the cohort', function () {
+it('excludes non-registered users from the cohort', function (): void {
     insertRetentionUser('a', $this->team->id, $this->pid, '2026-06-09 10:00:00', registered: true);
     insertRetentionUser('ghost', $this->team->id, $this->pid, '2026-06-09 10:00:00', registered: false);
     insertRetentionLogin('a', $this->team->id, $this->pid, '2026-06-16 10:00:00', 2);
@@ -152,7 +152,7 @@ it('excludes non-registered users from the cohort', function () {
         ->and($oldest['retention'][1])->toBe(100.0);
 });
 
-it('narrows the cohorts by the channel filter', function () {
+it('narrows the cohorts by the channel filter', function (): void {
     $paidSource = DB::table('stats_track_sources')->insertGetId(['team_id' => $this->team->id, 'name' => 'google']);
     $organicSource = DB::table('stats_track_sources')->insertGetId(['team_id' => $this->team->id, 'name' => 'newsletter']);
 

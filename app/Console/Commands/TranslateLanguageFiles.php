@@ -55,10 +55,10 @@ class TranslateLanguageFiles extends Command
 
         $supported = array_keys(config('locales.supported', []));
         $default = config('locales.default', 'en');
-        $targetLocales = collect($supported)->reject(fn ($l) => $l === $default);
+        $targetLocales = collect($supported)->reject(fn ($l): bool => $l === $default);
 
         if ($this->option('locale')) {
-            $targetLocales = $targetLocales->filter(fn ($l) => $l === $this->option('locale'));
+            $targetLocales = $targetLocales->filter(fn ($l): bool => $l === $this->option('locale'));
 
             if ($targetLocales->isEmpty()) {
                 $this->error("Locale '{$this->option('locale')}' is not a supported non-default locale.");

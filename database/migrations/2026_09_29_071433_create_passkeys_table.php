@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('passkeys', function (Blueprint $table) {
+        Schema::create('passkeys', function (Blueprint $table): void {
             $table->id();
             $table->uuid()->unique();
             $table->foreignId('user_id')->index()->constrained()->cascadeOnDelete();

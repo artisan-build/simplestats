@@ -7,6 +7,9 @@ use App\Models\StatsCustomEventName;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<StatsCustomEventName>
+ */
 class StatsCustomEventNameFactory extends Factory
 {
     protected $model = StatsCustomEventName::class;
@@ -16,7 +19,7 @@ class StatsCustomEventNameFactory extends Factory
         return [
             'team_id' => Team::inRandomOrder()->first()->id,
             'project_id' => Project::inRandomOrder()->first()->id,
-            'name' => $this->faker->word(),
+            'name' => fake()->word(),
         ];
     }
 }

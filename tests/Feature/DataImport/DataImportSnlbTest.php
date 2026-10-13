@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException as ExcelValidationException;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->team = $this->user->currentTeam;
     $this->team->update(['timezone' => 'UTC']);
@@ -50,12 +50,12 @@ function makeSnlbDataImport($team, $project, int $rowsMax = 10): DataImport
 
 function buildSnlbRows($test, CarbonImmutable $registeredAt, CarbonImmutable $lastKnownActivity): array
 {
-    return app(SimulatedLoginService::class)->buildLoginRows(
+    return resolve(SimulatedLoginService::class)->buildLoginRows(
         '1', $test->team->id, $test->project->id, $registeredAt, $lastKnownActivity, 'UTC'
     );
 }
 
-test('generates a natural weekly login series from registration to last known activity', function () {
+test('generates a natural weekly login series from registration to last known activity', function (): void {
     $registeredAt = CarbonImmutable::parse('2025-01-01 10:00:00', 'UTC');
     $lastKnownActivity = CarbonImmutable::parse('2025-03-12 15:30:00', 'UTC'); // 70 days later
 
@@ -80,7 +80,7 @@ test('generates a natural weekly login series from registration to last known ac
     }
 });
 
-test('generates a single registration-day login when last known activity is not after registration', function () {
+test('generates a single registration-day login when last known activity is not after registration', function (): void {
     $registeredAt = CarbonImmutable::parse('2025-01-01 10:00:00', 'UTC');
 
     $rows = buildSnlbRows($this, $registeredAt, $registeredAt->subDay());
@@ -90,7 +90,7 @@ test('generates a single registration-day login when last known activity is not 
         ->and($rows[0]['time'])->toBe('2025-01-01 10:00:00');
 });
 
-test('clamps a future last known activity to now', function () {
+test('clamps a future last known activity to now', function (): void {
     $this->travelTo(CarbonImmutable::parse('2025-06-01 12:00:00', 'UTC'));
 
     $rows = buildSnlbRows(
@@ -102,7 +102,7 @@ test('clamps a future last known activity to now', function () {
     expect(end($rows)['time'])->toBe('2025-06-01 12:00:00');
 });
 
-test('caps the generated series for absurd activity spans', function () {
+test('caps the generated series for absurd activity spans', function (): void {
     $rows = buildSnlbRows(
         $this,
         CarbonImmutable::parse('1970-01-01 00:00:00', 'UTC'),
@@ -112,7 +112,7 @@ test('caps the generated series for absurd activity spans', function () {
     expect($rows)->toHaveCount(SimulatedLoginService::MAX_LOGINS_PER_USER);
 });
 
-test('import strips last_known_activity from the user model and buffers logins', function () {
+test('import strips last_known_activity from the user model and buffers logins', function (): void {
     $importer = makeSnlbImporter($this->team, $this->project);
 
     $model = $importer->model([
@@ -126,7 +126,7 @@ test('import strips last_known_activity from the user model and buffers logins',
         ->and($importer->generatedLoginsCount)->toBeGreaterThan(0);
 });
 
-test('import buffers nothing without a last_known_activity value', function () {
+test('import buffers nothing without a last_known_activity value', function (): void {
     $importer = makeSnlbImporter($this->team, $this->project);
 
     $importer->model(['id' => 1, 'time' => '2025-01-01 10:00:00']);
@@ -135,7 +135,7 @@ test('import buffers nothing without a last_known_activity value', function () {
     expect($importer->generatedLoginsCount)->toBe(0);
 });
 
-test('flush skips users that already have logins and inserts for fresh ones', function () {
+test('flush skips users that already have logins and inserts for fresh ones', function (): void {
     StatsUser::create(['id' => 1, 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'time' => '2025-01-01 10:00:00']);
     StatsUser::create(['id' => 2, 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'time' => '2025-01-01 10:00:00']);
     StatsLogin::create(['stats_user_id' => 1, 'team_id' => $this->team->id, 'project_id' => $this->project->id, 'time' => '2025-01-02 10:00:00']);
@@ -153,7 +153,7 @@ test('flush skips users that already have logins and inserts for fresh ones', fu
         ->and($importer->generatedLoginsCount)->toBe($freshUserLogins);
 });
 
-test('generated logins do not count against the monthly event limit', function () {
+test('generated logins do not count against the monthly event limit', function (): void {
     $limit = $this->team->owner->sparkPlan()->options['Events'];
     $this->team->update(['events_count_monthly' => $limit - 2]);
     $this->team->refresh();
@@ -167,20 +167,20 @@ test('generated logins do not count against the monthly event limit', function (
     expect($importer->generatedLoginsCount)->toBeGreaterThan(2);
 });
 
-test('validateImportFields accepts the last_known_activity header for user imports', function () {
+test('validateImportFields accepts the last_known_activity header for user imports', function (): void {
     $dataImport = new DataImport;
     $dataImport->type = DataImportType::USERS;
     $dataImport->team_id = $this->team->id;
     $dataImport->project_id = $this->project->id;
     $dataImport->setRelation('team', $this->team);
 
-    app(BaseStatsValidator::class)->validateImportFields($dataImport, ['id', 'time', 'last_known_activity']);
+    resolve(BaseStatsValidator::class)->validateImportFields($dataImport, ['id', 'time', 'last_known_activity']);
 
-    expect(fn () => app(BaseStatsValidator::class)->validateImportFields($dataImport, ['id', 'time', 'not_a_field']))
+    expect(fn () => resolve(BaseStatsValidator::class)->validateImportFields($dataImport, ['id', 'time', 'not_a_field']))
         ->toThrow(ValidationException::class);
 });
 
-test('a last_known_activity before the registration time fails row validation', function () {
+test('a last_known_activity before the registration time fails row validation', function (): void {
     $csv = "id,time,last_known_activity\n1,2025-02-01 10:00:00,2025-01-01 10:00:00\n";
     $path = tempnam(sys_get_temp_dir(), 'snlb_').'.csv';
     file_put_contents($path, $csv);
@@ -194,7 +194,7 @@ test('a last_known_activity before the registration time fails row validation', 
     }
 });
 
-test('a full user import generates logins and rollback removes them via cascade', function () {
+test('a full user import generates logins and rollback removes them via cascade', function (): void {
     $csv = "id,time,last_known_activity\n1,2025-01-01 10:00:00,2025-03-01 10:00:00\n2,2025-01-05 08:00:00,\n";
     $path = tempnam(sys_get_temp_dir(), 'snlb_').'.csv';
     file_put_contents($path, $csv);
@@ -223,7 +223,7 @@ test('a full user import generates logins and rollback removes them via cascade'
         ->and(StatsLogin::count())->toBe(0);
 });
 
-test('imports users with uuid ids and rolls back exactly this import', function () {
+test('imports users with uuid ids and rolls back exactly this import', function (): void {
     $uuid = '550e8400-e29b-41d4-a716-446655440000';
 
     // a pre-existing user (e.g. live-tracked) that must survive the rollback

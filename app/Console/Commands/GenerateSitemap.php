@@ -121,10 +121,10 @@ class GenerateSitemap extends Command
     private function docsPaths(): array
     {
         return collect(File::files(base_path('docs')))
-            ->filter(fn ($file) => $file->getExtension() === 'md')
+            ->filter(fn ($file): bool => $file->getExtension() === 'md')
             ->map(fn ($file) => $file->getFilenameWithoutExtension())
-            ->reject(fn (string $name) => in_array($name, $this->excludedDocs, true))
-            ->map(fn (string $name) => $name === 'index' ? '/docs' : '/docs/'.$name)
+            ->reject(fn (string $name): bool => in_array($name, $this->excludedDocs, true))
+            ->map(fn (string $name): string => $name === 'index' ? '/docs' : '/docs/'.$name)
             ->sort()
             ->values()
             ->all();

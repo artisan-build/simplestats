@@ -14,7 +14,7 @@ class CheckInactiveUsers extends Command
 
     protected $description = 'Marks inactive users for deletion after the warning period';
 
-    private const INACTIVE_AFTER_DAYS = 50;
+    private const int INACTIVE_AFTER_DAYS = 50;
 
     public function handle(): void
     {
@@ -33,7 +33,7 @@ class CheckInactiveUsers extends Command
         // real cascading delete runs later in app:purge-pending-deleted-users.
         $this->inactiveCandidates()
             ->where('inactive_since', '<', now()->subDays(10))
-            ->each(function (User $user) {
+            ->each(function (User $user): void {
                 $user->notify(new UserDeletedNotification($user));
                 $user->delete();
             });
@@ -44,14 +44,14 @@ class CheckInactiveUsers extends Command
         $this->inactiveCandidates()
             ->where('last_login_at', '<', now()->subDays(self::INACTIVE_AFTER_DAYS))
             ->whereNull('inactive_since')
-            ->each(function (User $user) {
+            ->each(function (User $user): void {
                 $user->notify(new UserInactiveNotification($user, 10));
                 $user->update(['inactive_since' => now()]);
             });
 
         $this->inactiveCandidates()
             ->where('inactive_since', '<', now()->subDays(9))
-            ->each(function (User $user) {
+            ->each(function (User $user): void {
                 $user->notify(new UserInactiveNotification($user, 1));
             });
     }
@@ -68,10 +68,10 @@ class CheckInactiveUsers extends Command
     private function inactiveCandidates(): Builder
     {
         return User::query()
-            ->whereDoesntHave('subscriptions', function ($query) {
+            ->whereDoesntHave('subscriptions', function (\Illuminate\Contracts\Database\Query\Builder $query): void {
                 $query->where('status', 'active');
             })
-            ->whereDoesntHave('ownedTeams.users', function ($query) {
+            ->whereDoesntHave('ownedTeams.users', function (\Illuminate\Contracts\Database\Query\Builder $query): void {
                 $query->where('users.last_login_at', '>', now()->subDays(self::INACTIVE_AFTER_DAYS));
             });
     }

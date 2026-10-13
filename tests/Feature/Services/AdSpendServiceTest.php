@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -33,10 +33,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(AdSpendService::class);
+    $this->service = resolve(AdSpendService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -100,7 +100,7 @@ function rangeFilter(int $projectId, int $rangeAmount, string $rangeStart): Stat
     );
 }
 
-it('allocates a spend entry proportionally by day overlap', function () {
+it('allocates a spend entry proportionally by day overlap', function (): void {
     $spend = new AdSpend(['amount' => 3000, 'starts_on' => '2026-06-01', 'ends_on' => '2026-06-30']);
 
     // 30-day run, 100 cents/day; window covers 10 of those days
@@ -111,7 +111,7 @@ it('allocates a spend entry proportionally by day overlap', function () {
         ->and($spend->allocatedFor(CarbonImmutable::parse('2026-07-02'), CarbonImmutable::parse('2026-07-10')))->toBe(0);
 });
 
-it('computes roas, cac and net profit per campaign for the range', function () {
+it('computes roas, cac and net profit per campaign for the range', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'Google Ads');
     $utm = makeTrackCampaign($this->team->id, 'google_ads', $campaign);
     makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
@@ -139,7 +139,7 @@ it('computes roas, cac and net profit per campaign for the range', function () {
     ]);
 });
 
-it('lists a campaign with spend but no revenue as a pure loss', function () {
+it('lists a campaign with spend but no revenue as a pure loss', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'Wasted Budget');
 
     AdSpend::factory()->create([
@@ -163,7 +163,7 @@ it('lists a campaign with spend but no revenue as a pure loss', function () {
     ]);
 });
 
-it('lists a freshly created campaign even without spend or revenue', function () {
+it('lists a freshly created campaign even without spend or revenue', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'Pre-launch');
 
     $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'));
@@ -179,7 +179,7 @@ it('lists a freshly created campaign even without spend or revenue', function ()
     ]);
 });
 
-it('leaves roas null for revenue without recorded spend', function () {
+it('leaves roas null for revenue without recorded spend', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'Organic-ish');
     $utm = makeTrackCampaign($this->team->id, 'organic_ish', $campaign);
     makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
@@ -191,7 +191,7 @@ it('leaves roas null for revenue without recorded spend', function () {
         ->and($rows[0]['net_profit'])->toBe(8000);
 });
 
-it('bundles revenue from multiple linked utm campaigns and sums spend entries', function () {
+it('bundles revenue from multiple linked utm campaigns and sums spend entries', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'Meta Ads');
     $utmA = makeTrackCampaign($this->team->id, 'meta_ads_a', $campaign);
     $utmB = makeTrackCampaign($this->team->id, 'meta_ads_b', $campaign);
@@ -238,7 +238,7 @@ function makeSubscriptionPayment(string $id, string $userId, int $teamId, int $p
     ]);
 }
 
-it('computes ltv:cac and cac payback for a subscription campaign', function () {
+it('computes ltv:cac and cac payback for a subscription campaign', function (): void {
     enableSubscriptionTracking($this->project);
 
     $campaign = makeCampaign($this->team->id, $this->pid, 'Sub Ads');
@@ -275,13 +275,13 @@ it('computes ltv:cac and cac payback for a subscription campaign', function () {
         projectId: $this->pid, rangeAmount: 3, rangeType: StatsRangeType::MONTH,
         rangeStart: now(), comparison: '0', campaign: $campaign,
     );
-    $economics = app(MrrAggregationService::class)->getSubscriptionEconomics($economicsFilter);
+    $economics = resolve(MrrAggregationService::class)->getSubscriptionEconomics($economicsFilter);
 
     expect($row['ltv_cac'])->toBe(round($economics['ltv'] / $row['cac'], 2))
         ->and($row['cac_payback'])->toBe(round($row['cac'] / $economics['arps'], 1));
 });
 
-it('keeps the economics half of ltv:cac and payback independent of the ui range', function () {
+it('keeps the economics half of ltv:cac and payback independent of the ui range', function (): void {
     enableSubscriptionTracking($this->project);
 
     $campaign = makeCampaign($this->team->id, $this->pid, 'Stable Econ');
@@ -323,7 +323,7 @@ it('keeps the economics half of ltv:cac and payback independent of the ui range'
         ->and($short['cac_payback'])->toBe($long['cac_payback']);
 });
 
-it('leaves ltv:cac and payback null when the project does not track subscriptions', function () {
+it('leaves ltv:cac and payback null when the project does not track subscriptions', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'No Sub');
     $utm = makeTrackCampaign($this->team->id, 'no_sub', $campaign);
     makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
@@ -341,7 +341,7 @@ it('leaves ltv:cac and payback null when the project does not track subscription
         ->and($row['cac_payback'])->toBeNull();
 });
 
-it('leaves ltv:cac and payback null when the campaign has no cac', function () {
+it('leaves ltv:cac and payback null when the campaign has no cac', function (): void {
     enableSubscriptionTracking($this->project);
 
     $campaign = makeCampaign($this->team->id, $this->pid, 'Spend Only');
@@ -357,7 +357,7 @@ it('leaves ltv:cac and payback null when the campaign has no cac', function () {
         ->and($row['cac_payback'])->toBeNull();
 });
 
-it('keeps a payback while leaving ltv:cac null for a churn-free campaign', function () {
+it('keeps a payback while leaving ltv:cac null for a churn-free campaign', function (): void {
     enableSubscriptionTracking($this->project);
 
     $campaign = makeCampaign($this->team->id, $this->pid, 'Sticky Ads');
@@ -384,7 +384,7 @@ it('keeps a payback while leaving ltv:cac null for a churn-free campaign', funct
         ->and($row['cac_payback'])->not->toBeNull();
 });
 
-it('paginates campaigns and only computes kpis for the visible page', function () {
+it('paginates campaigns and only computes kpis for the visible page', function (): void {
     enableSubscriptionTracking($this->project);
 
     foreach (range(1, 25) as $i) {

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
 use SimpleStatsIo\LaravelClient\SimplestatsClient as SimplestatsClientClass;
 
-test('email verification screen can be rendered', function () {
+test('email verification screen can be rendered', function (): void {
     $user = User::factory()->withPersonalTeam()->create([
         'email_verified_at' => null,
     ]);
@@ -16,11 +16,9 @@ test('email verification screen can be rendered', function () {
     $response = $this->actingAs($user)->get('/email/verify');
 
     $response->assertStatus(200);
-})->skip(function () {
-    return ! Features::enabled(Features::emailVerification());
-}, 'Email verification not enabled.');
+})->skip(fn (): bool => ! Features::enabled(Features::emailVerification()), 'Email verification not enabled.');
 
-test('email can be verified', function () {
+test('email can be verified', function (): void {
     $user = User::factory()->withPersonalTeam()->create([
         'email_verified_at' => null,
     ]);
@@ -39,11 +37,9 @@ test('email can be verified', function () {
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
     $response->assertRedirect(RouteServiceProvider::HOME.'?verified=1');
-})->skip(function () {
-    return ! Features::enabled(Features::emailVerification());
-}, 'Email verification not enabled.');
+})->skip(fn (): bool => ! Features::enabled(Features::emailVerification()), 'Email verification not enabled.');
 
-test('verifying email in your own session tracks the registration and recovers the skipped login', function () {
+test('verifying email in your own session tracks the registration and recovers the skipped login', function (): void {
     $this->skipUnlessSaas();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -55,7 +51,7 @@ test('verifying email in your own session tracks the registration and recovers t
     $this->partialMock(SimplestatsClientClass::class)
         ->shouldReceive('trackUser')
         ->once()
-        ->withArgs(fn ($trackedUser, $addLogin = null) => $trackedUser->is($user) && $addLogin === true);
+        ->withArgs(fn ($trackedUser, $addLogin = null): bool => $trackedUser->is($user) && $addLogin === true);
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
@@ -66,11 +62,9 @@ test('verifying email in your own session tracks the registration and recovers t
     $this->actingAs($user)->get($verificationUrl);
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-})->skip(function () {
-    return ! Features::enabled(Features::emailVerification());
-}, 'Email verification not enabled.');
+})->skip(fn (): bool => ! Features::enabled(Features::emailVerification()), 'Email verification not enabled.');
 
-test('email can not verified with invalid hash', function () {
+test('email can not verified with invalid hash', function (): void {
     $user = User::factory()->create([
         'email_verified_at' => null,
     ]);
@@ -84,6 +78,4 @@ test('email can not verified with invalid hash', function () {
     $this->actingAs($user)->get($verificationUrl);
 
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
-})->skip(function () {
-    return ! Features::enabled(Features::emailVerification());
-}, 'Email verification not enabled.');
+})->skip(fn (): bool => ! Features::enabled(Features::emailVerification()), 'Email verification not enabled.');

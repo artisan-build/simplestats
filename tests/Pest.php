@@ -19,7 +19,7 @@ use Tests\TestCase;
 uses(TestCase::class)->in('ArchTest.php');
 
 uses(TestCase::class, RefreshDatabase::class)
-    ->beforeEach(function () {
+    ->beforeEach(function (): void {
         // All stats ingest API endpoints use defer() to dispatch jobs after
         // the HTTP response. Without this, deferred callbacks never run
         // before test assertions, causing false failures.
@@ -45,9 +45,7 @@ uses(TestCase::class, RefreshDatabase::class)
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+expect()->extend('toBeOne', fn () => $this->toBe(1));
 
 /*
 |--------------------------------------------------------------------------

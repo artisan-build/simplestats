@@ -8,9 +8,10 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
 use Database\Seeders\TestUserSeeder;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Context;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -30,7 +31,7 @@ function validPayload(array $overrides = []): array
     ], $overrides);
 }
 
-function setProjectContext($project): void
+function setProjectContext(?Authenticatable $project): void
 {
     auth()->setUser($project);
     AppHelper::setTeamContextFromAuth($project);
@@ -38,7 +39,7 @@ function setProjectContext($project): void
     Context::add('request_url', '/api/v1/stats-custom-event');
 }
 
-test('store custom event with auth and required fields returns 200', function () {
+test('store custom event with auth and required fields returns 200', function (): void {
     $payload = validPayload();
 
     $response = $this->postJson(
@@ -54,7 +55,7 @@ test('store custom event with auth and required fields returns 200', function ()
         ]);
 });
 
-test('store custom event without auth returns 401', function () {
+test('store custom event without auth returns 401', function (): void {
     auth()->forgetGuards();
 
     $response = $this->postJson(
@@ -69,7 +70,7 @@ test('store custom event without auth returns 401', function () {
     $response->assertUnauthorized();
 });
 
-test('validation fails when id is missing', function () {
+test('validation fails when id is missing', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-custom-event',
         validPayload(['id' => null]),
@@ -80,7 +81,7 @@ test('validation fails when id is missing', function () {
         ->assertJsonValidationErrors('id');
 });
 
-test('validation fails when name is missing', function () {
+test('validation fails when name is missing', function (): void {
     $response = $this->postJson(
         '/api/v1/stats-custom-event',
         validPayload(['name' => null]),
@@ -91,7 +92,7 @@ test('validation fails when name is missing', function () {
         ->assertJsonValidationErrors('name');
 });
 
-test('validation fails when time is missing', function () {
+test('validation fails when time is missing', function (): void {
     $payload = validPayload();
     unset($payload['time']);
 
@@ -105,7 +106,7 @@ test('validation fails when time is missing', function () {
         ->assertJsonValidationErrors('time');
 });
 
-test('event with stats_user_id is stored correctly and StatsUser is auto-created', function () {
+test('event with stats_user_id is stored correctly and StatsUser is auto-created', function (): void {
     $statsUserId = '99999';
 
     $payload = validPayload([
@@ -129,7 +130,7 @@ test('event with stats_user_id is stored correctly and StatsUser is auto-created
     expect($statsUser)->not->toBeNull();
 });
 
-test('event with visitor_hash resolves to stats_visitor_id', function () {
+test('event with visitor_hash resolves to stats_visitor_id', function (): void {
     setProjectContext($this->project);
 
     $visitor = StatsVisitor::factory()->create(['project_id' => $this->project->id]);
@@ -149,7 +150,7 @@ test('event with visitor_hash resolves to stats_visitor_id', function () {
         ->and($event->stats_visitor_id)->toBe($visitor->id);
 });
 
-test('duplicate id performs updateOrCreate update', function () {
+test('duplicate id performs updateOrCreate update', function (): void {
     $eventId = fake()->uuid();
 
     $payload1 = validPayload(['id' => $eventId, 'name' => 'First Name']);
@@ -164,7 +165,7 @@ test('duplicate id performs updateOrCreate update', function () {
     expect($events)->toHaveCount(1);
 });
 
-test('counter increments per user', function () {
+test('counter increments per user', function (): void {
     // the StatsUser factory needs the auth/team context (BaseStat time mutator)
     setProjectContext($this->project);
 
@@ -195,7 +196,7 @@ test('counter increments per user', function () {
     expect($event2->counter)->toBe(2);
 });
 
-test('event name lookup creates new entry and reuses existing', function () {
+test('event name lookup creates new entry and reuses existing', function (): void {
     $eventName = 'Unique Event '.fake()->word();
 
     $payload1 = validPayload(['id' => fake()->uuid(), 'name' => $eventName]);
@@ -217,7 +218,7 @@ test('event name lookup creates new entry and reuses existing', function () {
     expect($event1->stats_custom_event_name_id)->toBe($event2->stats_custom_event_name_id);
 });
 
-test('events_count_monthly is incremented on team via StatsObserver', function () {
+test('events_count_monthly is incremented on team via StatsObserver', function (): void {
     $team = $this->project->team;
     $initialCount = $team->events_count_monthly;
 

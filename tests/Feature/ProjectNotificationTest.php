@@ -3,7 +3,7 @@
 use App\Enums\UserNotificationType;
 use App\Models\Project;
 
-it('defaults project alert tracking settings to true for enabled tracking types', function () {
+it('defaults project alert tracking settings to true for enabled tracking types', function (): void {
     $usage = Project::USAGE_VISITORS
         | Project::USAGE_USERS
         | Project::USAGE_PAYMENTS;
@@ -18,7 +18,7 @@ it('defaults project alert tracking settings to true for enabled tracking types'
         ->toHaveKey('payments', true);
 });
 
-it('excludes disabled tracking types from project alert settings', function () {
+it('excludes disabled tracking types from project alert settings', function (): void {
     $project = new Project(['usage' => Project::USAGE_VISITORS]);
 
     $notifications = $project->getDefaultUserNotificationTypes();

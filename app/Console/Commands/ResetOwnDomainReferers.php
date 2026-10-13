@@ -48,7 +48,7 @@ class ResetOwnDomainReferers extends Command
             ->whereNotNull('domain')
             ->where('domain', '!=', '')
             ->orderBy('id')
-            ->each(function (Project $project) use ($refererService, $dryRun, &$totalReferers, &$totalSources) {
+            ->each(function (Project $project) use ($refererService, $dryRun, &$totalReferers, &$totalSources): void {
                 $canonical = $refererService->getTopReferer($project->domain);
 
                 if ($canonical === '') {
@@ -66,7 +66,7 @@ class ResetOwnDomainReferers extends Command
                     $resetReferers = $this->countAffected($project->id, 'stats_track_referer_id', $refererIds);
                     $resetSources = $this->countAffected($project->id, 'stats_track_source_id', $sourceIds);
                 } else {
-                    [$resetReferers, $resetSources] = DB::transaction(function () use ($project, $refererIds, $sourceIds) {
+                    [$resetReferers, $resetSources] = DB::transaction(function () use ($project, $refererIds, $sourceIds): array {
                         $resetReferers = $this->resetColumn($project->id, 'stats_track_referer_id', $refererIds);
                         $resetSources = $this->resetColumn($project->id, 'stats_track_source_id', $sourceIds);
 
@@ -114,7 +114,7 @@ class ResetOwnDomainReferers extends Command
         }
 
         return collect([new StatsVisitor, new StatsUser])->sum(
-            fn ($model) => $this->affectedQuery($model, $projectId, $column, $lookupIds)->update([$column => null]),
+            fn (StatsVisitor|StatsUser $model) => $this->affectedQuery($model, $projectId, $column, $lookupIds)->update([$column => null]),
         );
     }
 
@@ -130,7 +130,7 @@ class ResetOwnDomainReferers extends Command
         }
 
         return collect([new StatsVisitor, new StatsUser])->sum(
-            fn ($model) => $this->affectedQuery($model, $projectId, $column, $lookupIds)->count(),
+            fn (StatsVisitor|StatsUser $model) => $this->affectedQuery($model, $projectId, $column, $lookupIds)->count(),
         );
     }
 
@@ -154,7 +154,7 @@ class ResetOwnDomainReferers extends Command
         return $lookup->newQuery()
             ->where('team_id', $teamId)
             ->get(['id', 'name'])
-            ->filter(fn ($entry) => $refererService->getTopReferer($entry->name) === $canonical)
+            ->filter(fn ($entry): bool => $refererService->getTopReferer($entry->name) === $canonical)
             ->pluck('id');
     }
 }

@@ -15,11 +15,11 @@ function shouldEnableSsr(string $uri): bool
     return $method->invoke($middleware, $request);
 }
 
-it('enables SSR for the home page', function () {
+it('enables SSR for the home page', function (): void {
     expect(shouldEnableSsr('/'))->toBeTrue();
 });
 
-it('enables SSR for public pages', function (string $path) {
+it('enables SSR for public pages', function (string $path): void {
     expect(shouldEnableSsr($path))->toBeTrue();
 })->with([
     '/login',
@@ -29,7 +29,7 @@ it('enables SSR for public pages', function (string $path) {
     '/imprint',
 ]);
 
-it('enables SSR for localized public pages', function (string $path) {
+it('enables SSR for localized public pages', function (string $path): void {
     expect(shouldEnableSsr($path))->toBeTrue();
 })->with([
     '/de',
@@ -42,7 +42,7 @@ it('enables SSR for localized public pages', function (string $path) {
     '/es',
 ]);
 
-it('disables SSR for dashboard and other app pages', function (string $path) {
+it('disables SSR for dashboard and other app pages', function (string $path): void {
     expect(shouldEnableSsr($path))->toBeFalse();
 })->with([
     '/dashboard',
@@ -53,7 +53,7 @@ it('disables SSR for dashboard and other app pages', function (string $path) {
     '/admin',
 ]);
 
-it('shares ziggy, translations and locale props on public pages', function (string $path) {
+it('shares ziggy, translations and locale props on public pages', function (string $path): void {
     // the landing page and the blog only exist in the saas build
     if ($path !== '/login') {
         $this->skipUnlessSaas();
@@ -72,7 +72,7 @@ it('shares ziggy, translations and locale props on public pages', function (stri
     '/blog',
 ]);
 
-it('does not share ziggy, translations and locale props on app pages', function () {
+it('does not share ziggy, translations and locale props on app pages', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     $user->currentTeam->update(['currency' => 'USD', 'timezone' => 'UTC']);
     Project::factory()->create(['team_id' => $user->currentTeam->id]);

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Notification;
 // HasStatsUserAssurance pre-creates an empty StatsUser shell on which the registration alert used
 // to fire with no tracking data. Real incident: user 409 (project_id 1), StatsLogin counter=1
 // shares the exact second of the registration.
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -59,7 +59,7 @@ function runRegistrationIngest(string $statsUserId): void
     ]))->handle();
 }
 
-test('registration alert carries the tracking codes even when the login ingest wins the race', function () {
+test('registration alert carries the tracking codes even when the login ingest wins the race', function (): void {
     Notification::fake();
 
     runLoginIngest('900001');
@@ -69,7 +69,7 @@ test('registration alert carries the tracking codes even when the login ingest w
     expect($statsUser->stats_page_entry_id)->not->toBeNull()
         ->and($statsUser->stats_track_referer_id)->not->toBeNull();
 
-    Notification::assertSentTo($this->user, ProjectAlertRegistrationNotification::class, function ($notification) {
+    Notification::assertSentTo($this->user, ProjectAlertRegistrationNotification::class, function ($notification): bool {
         $notification->statsUser->load(StatsUser::statsRelations());
 
         return $notification->statsUser->stats_page_entry_id !== null
@@ -77,14 +77,14 @@ test('registration alert carries the tracking codes even when the login ingest w
     });
 });
 
-test('registration alert carries the tracking codes when the registration ingest wins the race', function () {
+test('registration alert carries the tracking codes when the registration ingest wins the race', function (): void {
     Notification::fake();
 
     // control: registration first (the non-SSO ordering, like user 408)
     runRegistrationIngest('900002');
     runLoginIngest('900002');
 
-    Notification::assertSentTo($this->user, ProjectAlertRegistrationNotification::class, function ($notification) {
+    Notification::assertSentTo($this->user, ProjectAlertRegistrationNotification::class, function ($notification): bool {
         $notification->statsUser->load(StatsUser::statsRelations());
 
         return $notification->statsUser->stats_page_entry_id !== null
@@ -92,7 +92,7 @@ test('registration alert carries the tracking codes when the registration ingest
     });
 });
 
-test('the registration alert is sent exactly once across the racing ingests', function () {
+test('the registration alert is sent exactly once across the racing ingests', function (): void {
     Notification::fake();
 
     runLoginIngest('900003');
@@ -101,7 +101,7 @@ test('the registration alert is sent exactly once across the racing ingests', fu
     Notification::assertSentToTimes($this->user, ProjectAlertRegistrationNotification::class, 1);
 });
 
-test('a login for a never-registered user does not send a registration alert', function () {
+test('a login for a never-registered user does not send a registration alert', function (): void {
     Notification::fake();
 
     runLoginIngest('900004');

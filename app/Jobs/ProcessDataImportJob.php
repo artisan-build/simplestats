@@ -12,11 +12,8 @@ use App\Mail\DataImportFailed;
 use App\Models\DataImport;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -27,21 +24,18 @@ use Throwable;
 
 class ProcessDataImportJob extends TrackableJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     // do not retry on failure
     public int $tries = 1;
 
     public int $timeout = 3600;
 
-    public string $filepath;
-
-    public function __construct(public DataImport $dataImport, string $filepath)
+    public function __construct(public DataImport $dataImport, public string $filepath)
     {
         $this->onQueue('low');
 
         parent::__construct();
-        $this->filepath = $filepath;
     }
 
     public function trackableKey(): ?string
@@ -70,7 +64,7 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
 
         // As this job uses the Trackable trait, we already track the output of these jobs,
         // and as we do not retry those, there is no need to also store it in the failed jobs table.
-        config()->set('queue.failed.driver', null);
+        config()->set('queue.failed.driver');
 
         $importer = $this->dataImport->type->getImporter($this->dataImport);
 
@@ -91,7 +85,7 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
 
             throw $e;
         } finally {
-            app(StatsService::class)->recalculateStatsStartingAt();
+            resolve(StatsService::class)->recalculateStatsStartingAt();
             $this->invalidateStatsAggregations($importer);
             Storage::disk('local')->delete($this->filepath);
         }
@@ -117,6 +111,6 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
         ]);
         $modelClass::reguard();
 
-        app(StatsAggregationsService::class)->invalidateByStatsUpdate($stat);
+        resolve(StatsAggregationsService::class)->invalidateByStatsUpdate($stat);
     }
 }

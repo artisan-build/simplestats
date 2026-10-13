@@ -23,9 +23,7 @@ class ShareInertiaData extends JetstreamShareInertiaData
         return parent::handle($request, function ($request) use ($next) {
             Inertia::share([
                 'auth' => [
-                    'user' => function () use ($request) {
-                        return $this->serializeUser($request->user());
-                    },
+                    'user' => fn (): ?array => $this->serializeUser($request->user()),
                 ],
             ]);
 
@@ -42,7 +40,7 @@ class ShareInertiaData extends JetstreamShareInertiaData
             return null;
         }
 
-        $teamFields = fn (Team $team) => ['uuid' => $team->uuid, 'name' => $team->name];
+        $teamFields = fn (Team $team): array => ['uuid' => $team->uuid, 'name' => $team->name];
 
         return [
             'uuid' => $user->uuid,

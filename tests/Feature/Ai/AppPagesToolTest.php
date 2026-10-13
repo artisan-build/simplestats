@@ -8,7 +8,7 @@ use App\Services\Ai\AppPageCatalog;
 use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -18,7 +18,7 @@ beforeEach(function () {
     Context::add('team_id', $this->team->id);
 });
 
-it('lists app pages with anchored team settings urls', function () {
+it('lists app pages with anchored team settings urls', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(ListAppPages::class)
         ->assertOk()
@@ -27,14 +27,14 @@ it('lists app pages with anchored team settings urls', function () {
         ->assertSee(route('projects.index'));
 });
 
-it('hides pages whose tracking usage the team does not have', function () {
-    $titles = collect(app(AppPageCatalog::class)->pages())->pluck('title');
+it('hides pages whose tracking usage the team does not have', function (): void {
+    $titles = collect(resolve(AppPageCatalog::class)->pages())->pluck('title');
 
     expect($titles)->toContain('Campaigns');
 
     $this->project->update(['usage' => Project::USAGE_VISITORS]);
 
-    $titles = collect(app(AppPageCatalog::class)->pages())->pluck('title');
+    $titles = collect(resolve(AppPageCatalog::class)->pages())->pluck('title');
 
     expect($titles)->not->toContain('Campaigns')
         ->not->toContain('Retention')

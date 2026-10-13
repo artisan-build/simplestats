@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deleted_models', function (Blueprint $table) {
+        Schema::create('deleted_models', function (Blueprint $table): void {
             $table->id();
             $table->string('key', 40);
             $table->string('model');

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sessions', function (Blueprint $table) {
+        Schema::create('sessions', function (Blueprint $table): void {
             $table->string('id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('ip_address', 45)->nullable();

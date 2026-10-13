@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -53,7 +53,7 @@ function revToolInsertSubscriptionPayment(string $userId, int $teamId, int $proj
     ]);
 }
 
-it('returns the mrr snapshot with money converted from cents', function () {
+it('returns the mrr snapshot with money converted from cents', function (): void {
     $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
 
     $time = now()->subDay()->format('Y-m-d').' 12:00:00';
@@ -68,15 +68,15 @@ it('returns the mrr snapshot with money converted from cents', function () {
             'project_id' => $this->project->id,
         ])
         ->assertOk()
-        ->assertStructuredContent(function ($json) {
+        ->assertStructuredContent(function ($json): void {
             $json->where('section', 'snapshot')
-                ->where('data.mrr', fn ($mrr) => (float) $mrr === 100.0)
-                ->where('data.arr', fn ($arr) => (float) $arr === 1200.0)
+                ->where('data.mrr', fn ($mrr): bool => (float) $mrr === 100.0)
+                ->where('data.arr', fn ($arr): bool => (float) $arr === 1200.0)
                 ->etc();
         });
 });
 
-it('adds per-project mrr snapshots when the scope is all projects', function () {
+it('adds per-project mrr snapshots when the scope is all projects', function (): void {
     $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
 
     $secondProject = Project::factory()
@@ -97,17 +97,17 @@ it('adds per-project mrr snapshots when the scope is all projects', function () 
             'project_id' => 0,
         ])
         ->assertOk()
-        ->assertStructuredContent(function ($json) {
-            $json->where('data.mrr', fn ($mrr) => (float) $mrr === 150.0)
+        ->assertStructuredContent(function ($json): void {
+            $json->where('data.mrr', fn ($mrr): bool => (float) $mrr === 150.0)
                 ->where('per_project.0.project', $this->project->name)
-                ->where('per_project.0.mrr', fn ($mrr) => (float) $mrr === 100.0)
+                ->where('per_project.0.mrr', fn ($mrr): bool => (float) $mrr === 100.0)
                 ->where('per_project.1.project', 'Second App')
-                ->where('per_project.1.mrr', fn ($mrr) => (float) $mrr === 50.0)
+                ->where('per_project.1.mrr', fn ($mrr): bool => (float) $mrr === 50.0)
                 ->etc();
         });
 });
 
-it('notes when the project does not track subscriptions', function () {
+it('notes when the project does not track subscriptions', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(GetRecurringRevenueStats::class, [
             'section' => 'snapshot',
@@ -118,7 +118,7 @@ it('notes when the project does not track subscriptions', function () {
         ->assertSee('does not track subscriptions');
 });
 
-it('rejects an unknown section', function () {
+it('rejects an unknown section', function (): void {
     SimpleStatsServer::actingAs($this->user)
         ->tool(GetRecurringRevenueStats::class, [
             'section' => 'not_a_section',
@@ -127,7 +127,7 @@ it('rejects an unknown section', function () {
         ->assertHasErrors();
 });
 
-it('returns retention cohorts with the baseline bucket', function () {
+it('returns retention cohorts with the baseline bucket', function (): void {
     $time = now()->subDay()->format('Y-m-d').' 12:00:00';
     revToolInsertUser('cohort-user', $this->team->id, $this->project->id, $time);
 
@@ -137,14 +137,14 @@ it('returns retention cohorts with the baseline bucket', function () {
             'project_id' => $this->project->id,
         ])
         ->assertOk()
-        ->assertStructuredContent(function ($json) {
+        ->assertStructuredContent(function ($json): void {
             $json->where('data.period_count', 7)
                 ->has('data.cohorts')
                 ->etc();
         });
 });
 
-it('notes when the project does not track registrations', function () {
+it('notes when the project does not track registrations', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS]);
 
     SimpleStatsServer::actingAs($this->user)

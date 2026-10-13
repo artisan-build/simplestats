@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 use Laravel\Passkeys\Actions\VerifyPasskey;
 use Laravel\Passkeys\Contracts\PasskeyUser;
-use Laravel\Passkeys\Passkey as BasePasskey;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use Webauthn\PublicKeyCredential;
 use Webauthn\PublicKeyCredentialRequestOptions;
@@ -29,9 +28,9 @@ function fakePasskeyVerification(Passkey $passkey): void
 {
     app()->instance(VerifyPasskey::class, new class($passkey) extends VerifyPasskey
     {
-        public function __construct(private Passkey $passkey) {}
+        public function __construct(private readonly Passkey $passkey) {}
 
-        public function __invoke(PublicKeyCredential $credential, PublicKeyCredentialRequestOptions $options, ?PasskeyUser $user = null): BasePasskey
+        public function __invoke(PublicKeyCredential $credential, PublicKeyCredentialRequestOptions $options, ?PasskeyUser $user = null): Passkey
         {
             return $this->passkey;
         }
@@ -57,7 +56,7 @@ function assertionPayload(): array
     ];
 }
 
-test('the user handle is hex encoded so iOS Safari does not corrupt it', function () {
+test('the user handle is hex encoded so iOS Safari does not corrupt it', function (): void {
     $user = User::factory()->create();
 
     expect($user->getPasskeyUserHandle())
@@ -65,13 +64,13 @@ test('the user handle is hex encoded so iOS Safari does not corrupt it', functio
         ->toMatch('/^[0-9a-f]+$/');
 });
 
-test('guests can fetch passkey login options', function () {
+test('guests can fetch passkey login options', function (): void {
     $this->getJson(route('passkey.login-options'))
         ->assertOk()
         ->assertJsonStructure(['options' => ['challenge']]);
 });
 
-test('users can log in with a passkey', function () {
+test('users can log in with a passkey', function (): void {
     $user = User::factory()->withPersonalTeam()->create(['last_login_at' => now()->subMonth()]);
     fakePasskeyVerification(createPasskey($user));
 
@@ -85,7 +84,7 @@ test('users can log in with a passkey', function () {
     expect(CarbonImmutable::parse($user->fresh()->last_login_at)->isToday())->toBeTrue();
 });
 
-test('users marked for deletion cannot log in with a passkey but learn why', function () {
+test('users marked for deletion cannot log in with a passkey but learn why', function (): void {
     $user = User::factory()->create();
     fakePasskeyVerification(createPasskey($user));
     $user->delete();
@@ -99,7 +98,7 @@ test('users marked for deletion cannot log in with a passkey but learn why', fun
     $this->assertGuest();
 });
 
-test('a passkey confirms the password', function () {
+test('a passkey confirms the password', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     fakePasskeyVerification(createPasskey($user));
 
@@ -110,7 +109,7 @@ test('a passkey confirms the password', function () {
     expect(session('auth.password_confirmed_at'))->not->toBeNull();
 });
 
-test('users can delete their own passkey', function () {
+test('users can delete their own passkey', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     $passkey = createPasskey($user);
 
@@ -122,7 +121,7 @@ test('users can delete their own passkey', function () {
     expect(Passkey::whereKey($passkey)->exists())->toBeFalse();
 });
 
-test('a foreign or numeric passkey reference answers 404', function (Closure $reference) {
+test('a foreign or numeric passkey reference answers 404', function (Closure $reference): void {
     $user = User::factory()->withPersonalTeam()->create();
     $foreignPasskey = createPasskey(User::factory()->create());
 
@@ -137,16 +136,16 @@ test('a foreign or numeric passkey reference answers 404', function (Closure $re
     'numeric id' => [fn (Passkey $passkey) => $passkey->id],
 ]);
 
-test('the profile lists passkeys without internal or credential data', function () {
+test('the profile lists passkeys without internal or credential data', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     $passkey = createPasskey($user);
 
     $this->actingAs($user)
         ->get(route('profile.show'))
-        ->assertInertia(fn (Assert $page) => $page
+        ->assertInertia(fn (Assert $page): Assert => $page
             ->where('canManagePasskeys', true)
             ->where('auth.user.has_passkeys', true)
-            ->has('passkeys', 1, fn (Assert $row) => $row
+            ->has('passkeys', 1, fn (Assert $row): Assert => $row
                 ->where('uuid', $passkey->uuid)
                 ->where('name', 'MacBook')
                 ->missing('id')
@@ -158,7 +157,7 @@ test('the profile lists passkeys without internal or credential data', function 
         );
 });
 
-test('passkey endpoints are rate limited', function () {
+test('passkey endpoints are rate limited', function (): void {
     foreach (range(1, 10) as $attempt) {
         $this->getJson(route('passkey.login-options'))->assertOk();
     }
@@ -166,7 +165,7 @@ test('passkey endpoints are rate limited', function () {
     $this->getJson(route('passkey.login-options'))->assertTooManyRequests();
 });
 
-test('a passkey confirmation replaces the password in inline confirmation dialogs exactly once', function () {
+test('a passkey confirmation replaces the password in inline confirmation dialogs exactly once', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     fakePasskeyVerification(createPasskey($user));
 
@@ -178,20 +177,20 @@ test('a passkey confirmation replaces the password in inline confirmation dialog
     $this->delete('/user/other-browser-sessions', ['password' => ''])->assertSessionHasErrors('password');
 });
 
-test('an empty password is rejected without a passkey confirmation', function () {
+test('an empty password is rejected without a passkey confirmation', function (): void {
     $this->actingAs(User::factory()->withPersonalTeam()->create())
         ->delete('/user/other-browser-sessions', ['password' => ''])
         ->assertSessionHasErrors('password');
 });
 
-test('an expired passkey confirmation is rejected', function () {
+test('an expired passkey confirmation is rejected', function (): void {
     $this->actingAs(User::factory()->withPersonalTeam()->create())
         ->withSession([ConfirmPasswordOrPasskey::SESSION_KEY => time() - ConfirmPasswordOrPasskey::VALID_FOR_SECONDS - 1])
         ->delete('/user/other-browser-sessions', ['password' => ''])
         ->assertSessionHasErrors('password');
 });
 
-test('a passkey login does not count as a confirmation', function () {
+test('a passkey login does not count as a confirmation', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     fakePasskeyVerification(createPasskey($user));
 

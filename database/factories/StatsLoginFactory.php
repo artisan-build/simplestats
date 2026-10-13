@@ -8,6 +8,9 @@ use App\Models\StatsUser;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<StatsLogin>
+ */
 class StatsLoginFactory extends Factory
 {
     /**
@@ -22,7 +25,7 @@ class StatsLoginFactory extends Factory
      */
     public function definition(): array
     {
-        $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
+        $date = fake()->dateTimeBetween(now()->subYears(1), 'now');
 
         return [
             // Lazy closures so the queries are skipped whenever the seeder/test

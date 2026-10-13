@@ -11,7 +11,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -27,10 +27,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(MrrAggregationService::class);
+    $this->service = resolve(MrrAggregationService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -73,7 +73,7 @@ function mbpFilter(int $projectId, string $rangeStart, int $trackSource = 0): St
     );
 }
 
-it('groups active MRR and subscriber count by plan, ordered by MRR desc', function () {
+it('groups active MRR and subscriber count by plan, ordered by MRR desc', function (): void {
     mbpInsertUser('u-basic-1', $this->team->id, $this->pid);
     mbpInsertUser('u-basic-2', $this->team->id, $this->pid);
     mbpInsertUser('u-pro', $this->team->id, $this->pid);
@@ -89,7 +89,7 @@ it('groups active MRR and subscriber count by plan, ordered by MRR desc', functi
         ->and($rows[1])->toBe(['plan' => 'Basic', 'subscribers' => 2, 'mrr' => 100.0]);
 });
 
-it('normalises a yearly plan to net/12', function () {
+it('normalises a yearly plan to net/12', function (): void {
     mbpInsertUser('u-year', $this->team->id, $this->pid);
     mbpInsertPayment('p-year', 'u-year', $this->team->id, $this->pid, 1200, SubscriptionInterval::YEAR, 'Annual', '2026-06-15 10:00:00');
 
@@ -99,11 +99,11 @@ it('normalises a yearly plan to net/12', function () {
         ->and($rows[0])->toBe(['plan' => 'Annual', 'subscribers' => 1, 'mrr' => 100.0]);
 });
 
-it('narrows the per-plan breakdown by channel filter', function () {
+it('narrows the per-plan breakdown by channel filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId(['team_id' => $this->team->id, 'name' => 'google']);
 
     mbpInsertUser('u-google', $this->team->id, $this->pid, $sourceId);
-    mbpInsertUser('u-direct', $this->team->id, $this->pid, null);
+    mbpInsertUser('u-direct', $this->team->id, $this->pid);
     mbpInsertPayment('p-google', 'u-google', $this->team->id, $this->pid, 80, SubscriptionInterval::MONTH, 'Pro', '2026-06-15 10:00:00');
     mbpInsertPayment('p-direct', 'u-direct', $this->team->id, $this->pid, 40, SubscriptionInterval::MONTH, 'Pro', '2026-06-15 10:00:00');
 
@@ -113,7 +113,7 @@ it('narrows the per-plan breakdown by channel filter', function () {
         ->and($rows[0])->toBe(['plan' => 'Pro', 'subscribers' => 1, 'mrr' => 80.0]);
 });
 
-it('returns an empty list when no subscription is active in the window', function () {
+it('returns an empty list when no subscription is active in the window', function (): void {
     mbpInsertUser('u-old', $this->team->id, $this->pid);
     // Last payment is older than a month + grace before the snapshot, so it churned out.
     mbpInsertPayment('p-old', 'u-old', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, 'Basic', '2026-04-01 10:00:00');

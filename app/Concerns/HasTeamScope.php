@@ -13,14 +13,14 @@ trait HasTeamScope
      */
     public static function bootHasTeamScope(): void
     {
-        parent::addGlobalScope('team', function (Builder $query) {
+        parent::addGlobalScope('team', function (Builder $query): void {
             if ($teamId = AppHelper::getTeamId()) {
                 AppHelper::ensureTeamTimezone();
                 $query->where('team_id', $teamId);
             }
         });
 
-        static::saving(function ($model) {
+        static::saving(function ($model): void {
             if ($teamId = AppHelper::getTeamId()) {
                 AppHelper::ensureTeamTimezone();
                 $model->team_id = $teamId;

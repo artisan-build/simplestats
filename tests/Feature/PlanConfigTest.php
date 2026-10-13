@@ -11,24 +11,24 @@ use App\Services\SubscriptionService;
  */
 $plans = fn () => config('spark.billables.user.plans', []);
 
-it('keeps the free plan first', function () use ($plans) {
+it('keeps the free plan first', function () use ($plans): void {
     expect($plans()[0]['name'])->toBe(SubscriptionService::PLAN_FREE);
 });
 
-it('keeps the highest event plan last', function () use ($plans) {
+it('keeps the highest event plan last', function () use ($plans): void {
     $list = $plans();
-    $maxEvents = collect($list)->max(fn ($plan) => $plan['options']['Events']);
+    $maxEvents = collect($list)->max(fn ($plan): mixed => $plan['options']['Events']);
 
     expect(end($list)['options']['Events'])->toBe($maxEvents);
 });
 
-it('orders plans by ascending monthly events', function () use ($plans) {
-    $events = collect($plans())->map(fn ($plan) => $plan['options']['Events'])->all();
+it('orders plans by ascending monthly events', function () use ($plans): void {
+    $events = collect($plans())->map(fn ($plan): mixed => $plan['options']['Events'])->all();
 
     expect($events)->toBe(collect($events)->sort()->values()->all());
 });
 
-it('exposes every key the app and pricing slider depend on', function () use ($plans) {
+it('exposes every key the app and pricing slider depend on', function () use ($plans): void {
     foreach ($plans() as $plan) {
         expect($plan)->toHaveKeys(['name', 'short_description', 'monthly_id', 'yearly_id', 'features', 'options']);
         expect($plan['options'])->toHaveKeys(['Events', 'ApiRateLimit']);

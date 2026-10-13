@@ -23,17 +23,17 @@ class ClearOldStatsAggregations extends Command
     protected $description = 'Deletes stale stats aggregations, purging filtered ones sooner than the unfiltered default view';
 
     // Kept long so year-over-year comparisons still resolve from cache.
-    private const UNFILTERED_RETENTION_DAYS = 400;
+    private const int UNFILTERED_RETENTION_DAYS = 400;
 
     // Filter combinations explode and are rarely revisited, so evict sooner. An
     // actively viewed combination keeps refreshing selected_at and survives anyway;
     // eviction only costs a one-off re-aggregation on the next view.
-    private const FILTERED_RETENTION_DAYS = 40;
+    private const int FILTERED_RETENTION_DAYS = 40;
 
     public function handle(): void
     {
         // filter IS NULL covers legacy rows from before the column existed.
-        StatsAggregation::where(function (Builder $query) {
+        StatsAggregation::where(function (Builder $query): void {
             $query->whereRaw("json_typeof(filter) = 'array'")->orWhereNull('filter');
         })->where('selected_at', '<', now()->subDays(self::UNFILTERED_RETENTION_DAYS))
             ->delete();

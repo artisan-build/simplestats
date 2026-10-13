@@ -10,13 +10,16 @@ use App\Models\StatsVisitor;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<StatsCustomEvent>
+ */
 class StatsCustomEventFactory extends Factory
 {
     protected $model = StatsCustomEvent::class;
 
     public static int $id = 1;
 
-    public function initialize()
+    public function initialize(): static
     {
         self::$id = 1;
 
@@ -25,7 +28,7 @@ class StatsCustomEventFactory extends Factory
 
     public function definition(): array
     {
-        $date = $this->faker->dateTimeBetween(now()->subYears(1), 'now');
+        $date = fake()->dateTimeBetween(now()->subYears(1), 'now');
 
         return [
             'id' => self::$id++,

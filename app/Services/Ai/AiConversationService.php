@@ -34,11 +34,10 @@ class AiConversationService
         return [
             'id' => $conversation->id,
             'title' => $conversation->title,
-            'messages' => $conversation->messages()
-                ->orderBy('created_at')
+            'messages' => $conversation->messages()->oldest()
                 ->get()
-                ->filter(fn ($message) => in_array($message->role, ['user', 'assistant']) && trim($message->content) !== '')
-                ->map(fn ($message) => [
+                ->filter(fn ($message): bool => in_array($message->role, ['user', 'assistant']) && trim($message->content) !== '')
+                ->map(fn ($message): array => [
                     'role' => $message->role,
                     'content' => $message->content,
                     'created_at' => $message->created_at?->toIso8601String(),

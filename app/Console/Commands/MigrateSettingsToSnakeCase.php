@@ -17,7 +17,7 @@ class MigrateSettingsToSnakeCase extends Command
         $updated = 0;
 
         User::whereNotNull('settings')
-            ->chunkById(100, function ($users) use (&$updated) {
+            ->chunkById(100, function ($users) use (&$updated): void {
                 foreach ($users as $user) {
                     $settings = $user->settings;
                     $changed = false;
@@ -26,7 +26,7 @@ class MigrateSettingsToSnakeCase extends Command
                     if (! empty($settings['statsFilters'])) {
                         foreach ($settings['statsFilters'] as $teamId => $filters) {
                             $converted = collect($filters)
-                                ->mapWithKeys(fn ($value, $key) => [Str::snake($key) => $value])
+                                ->mapWithKeys(fn ($value, $key): array => [Str::snake($key) => $value])
                                 ->toArray();
 
                             if ($converted !== $filters) {

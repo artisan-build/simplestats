@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\Team;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -23,8 +22,6 @@ class TeamInvitation extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @return void
      */
     public function __construct(TeamInvitationModel $invitation)
     {

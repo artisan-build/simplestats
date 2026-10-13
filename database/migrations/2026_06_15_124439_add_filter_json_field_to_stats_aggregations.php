@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('stats_aggregations', function (Blueprint $table) {
+        Schema::table('stats_aggregations', function (Blueprint $table): void {
             $table->json('filter')->nullable();
         });
     }

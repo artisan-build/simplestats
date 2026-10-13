@@ -8,6 +8,7 @@ use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Services\RefererService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -32,7 +33,7 @@ class UnifyTrackReferer extends Command
      */
     public function handle(RefererService $refererService): void
     {
-        Team::with('owner')->get()->each(function ($team) use ($refererService) {
+        Team::with('owner')->get()->each(function ($team) use ($refererService): void {
             if (empty($team->owner)) {
                 return;
             }
@@ -42,7 +43,7 @@ class UnifyTrackReferer extends Command
             try {
                 StatsTrackReferer::where('team_id', $team->id)
                     ->get()
-                    ->each(function (StatsTrackReferer $duplicate) use ($refererService) {
+                    ->each(function (StatsTrackReferer $duplicate) use ($refererService): void {
                         $canonical = $refererService->getTopReferer($duplicate->name);
 
                         if ($canonical === $duplicate->name) {
@@ -75,7 +76,7 @@ class UnifyTrackReferer extends Command
 
                         $duplicate->delete();
                     });
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 DB::rollBack();
                 $this->error("Team {$team->id}: {$e->getMessage()}");
 

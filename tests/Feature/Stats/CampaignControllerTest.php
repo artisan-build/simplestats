@@ -9,14 +9,14 @@ use Illuminate\Support\Str;
 
 const USAGE_WITHOUT_PAYMENTS = Project::USAGE_VISITORS | Project::USAGE_USERS;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->team = $this->user->currentTeam;
     $this->project = Project::factory()->create(['team_id' => $this->team->id]);
     $this->actingAs($this->user);
 });
 
-test('storing a campaign creates it and redirects to its detail page', function () {
+test('storing a campaign creates it and redirects to its detail page', function (): void {
     $response = $this->post(route('campaigns.store'), [
         'project_id' => $this->project->id,
         'name' => 'Summer Sale 2026',
@@ -31,7 +31,7 @@ test('storing a campaign creates it and redirects to its detail page', function 
     $response->assertRedirect(route('campaigns.show', $campaign));
 });
 
-test('storing an existing campaign name in the same project is idempotent', function () {
+test('storing an existing campaign name in the same project is idempotent', function (): void {
     $existing = Campaign::factory()->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -46,12 +46,12 @@ test('storing an existing campaign name in the same project is idempotent', func
     expect(Campaign::where('name', 'Black Friday')->count())->toBe(1);
 });
 
-test('campaign name and project are required', function () {
+test('campaign name and project are required', function (): void {
     $this->post(route('campaigns.store'), [])
         ->assertSessionHasErrors(['project_id', 'name']);
 });
 
-test('campaign rejects a project from another team', function () {
+test('campaign rejects a project from another team', function (): void {
     $otherUser = User::factory()->withPersonalTeam()->create();
     $this->actingAs($otherUser);
     $otherProject = Project::factory()->create(['team_id' => $otherUser->currentTeam->id]);
@@ -63,7 +63,7 @@ test('campaign rejects a project from another team', function () {
     ])->assertSessionHasErrors('project_id');
 });
 
-test('updating a campaign renames it', function () {
+test('updating a campaign renames it', function (): void {
     $campaign = Campaign::factory()->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -76,14 +76,14 @@ test('updating a campaign renames it', function () {
     expect($campaign->fresh()->name)->toBe('New name');
 });
 
-test('updating a campaign requires a name', function () {
+test('updating a campaign requires a name', function (): void {
     $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
 
     $this->patch(route('campaigns.update', $campaign), ['name' => ''])
         ->assertSessionHasErrors('name');
 });
 
-test('updating a campaign of another team is not possible', function () {
+test('updating a campaign of another team is not possible', function (): void {
     $otherUser = User::factory()->withPersonalTeam()->create();
     $this->actingAs($otherUser);
     $otherProject = Project::factory()->create(['team_id' => $otherUser->currentTeam->id]);
@@ -100,7 +100,7 @@ test('updating a campaign of another team is not possible', function () {
     expect($campaign->fresh()->name)->toBe('Orig');
 });
 
-test('linking a utm value creates and attaches the tracked dimension', function () {
+test('linking a utm value creates and attaches the tracked dimension', function (): void {
     $campaign = Campaign::factory()->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -116,7 +116,7 @@ test('linking a utm value creates and attaches the tracked dimension', function 
     ]);
 });
 
-test('linking an already tracked utm value attaches the existing row', function () {
+test('linking an already tracked utm value attaches the existing row', function (): void {
     $campaign = Campaign::factory()->create([
         'team_id' => $this->team->id,
         'project_id' => $this->project->id,
@@ -137,7 +137,7 @@ test('linking an already tracked utm value attaches the existing row', function 
         ->and(StatsTrackCampaign::find($utmId)->campaign_id)->toBe($campaign->id);
 });
 
-test('linking a utm value already owned by another campaign is rejected', function () {
+test('linking a utm value already owned by another campaign is rejected', function (): void {
     $other = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
     $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
 
@@ -156,13 +156,13 @@ test('linking a utm value already owned by another campaign is rejected', functi
     expect(StatsTrackCampaign::where('name', 'taken_utm')->first()->campaign_id)->toBe($other->id);
 });
 
-test('campaigns index is forbidden when no project tracks payments', function () {
+test('campaigns index is forbidden when no project tracks payments', function (): void {
     $this->team->projects()->update(['usage' => USAGE_WITHOUT_PAYMENTS]);
 
     $this->get(route('campaigns'))->assertForbidden();
 });
 
-test('storing a campaign is forbidden when no project tracks payments', function () {
+test('storing a campaign is forbidden when no project tracks payments', function (): void {
     $this->team->projects()->update(['usage' => USAGE_WITHOUT_PAYMENTS]);
 
     $this->post(route('campaigns.store'), [
@@ -171,14 +171,14 @@ test('storing a campaign is forbidden when no project tracks payments', function
     ])->assertForbidden();
 });
 
-test('viewing a campaign is forbidden when its project tracks no payments', function () {
+test('viewing a campaign is forbidden when its project tracks no payments', function (): void {
     $this->project->update(['usage' => USAGE_WITHOUT_PAYMENTS]);
     $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
 
     $this->get(route('campaigns.show', $campaign))->assertForbidden();
 });
 
-test('unlinking detaches the tracked dimension', function () {
+test('unlinking detaches the tracked dimension', function (): void {
     $campaign = Campaign::factory()->create(['team_id' => $this->team->id, 'project_id' => $this->project->id]);
 
     $utmId = DB::table('stats_track_campaigns')->insertGetId([

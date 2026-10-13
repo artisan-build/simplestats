@@ -12,6 +12,8 @@ use App\PulseUsers;
 use App\Services\Ai\NullConversationStore;
 use App\Services\LocationService;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -65,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
         // but nothing lands in the user's conversation history. Scoped, not
         // singleton: the decision depends on the session and must be
         // re-evaluated per request under Octane.
-        $this->app->scoped(ConversationStore::class, function () {
+        $this->app->scoped(ConversationStore::class, function (): NullConversationStore|DatabaseConversationStore {
             $ephemeral = app()->environment('demo') || auth()->user()?->isImpersonated();
 
             return $ephemeral
@@ -118,17 +120,13 @@ class AppServiceProvider extends ServiceProvider
         // (composer.saas.json), so OgImage must never be called outside
         // this guard. The import above is harmless (use statements don't autoload).
         if (config('app.app_type') === 'saas') {
-            OgImage::fallbackUsing(function (Request $request) {
-                return view('og-image.fallback', [
-                    'title' => config('app.name'),
-                    'tagline' => config('app.tagline', 'Revenue attribution analytics tool for Laravel apps'),
-                    'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
-                ]);
-            });
+            OgImage::fallbackUsing(fn (Request $request): Factory|View => view('og-image.fallback', [
+                'title' => config('app.name'),
+                'tagline' => config('app.tagline', 'Revenue attribution analytics tool for Laravel apps'),
+                'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
+            ]));
         }
 
-        Gate::define('viewPulse', function (User $user) {
-            return $user->isAdmin();
-        });
+        Gate::define('viewPulse', fn (User $user): bool => $user->isAdmin());
     }
 }

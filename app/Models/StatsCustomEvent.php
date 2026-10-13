@@ -16,16 +16,25 @@ class StatsCustomEvent extends BaseStat
 
     public $incrementing = false;
 
+    /**
+     * @return BelongsTo<StatsUser, $this>
+     */
     public function statsUser(): BelongsTo
     {
         return $this->belongsTo(StatsUser::class);
     }
 
+    /**
+     * @return BelongsTo<StatsVisitor, $this>
+     */
     public function statsVisitor(): BelongsTo
     {
         return $this->belongsTo(StatsVisitor::class);
     }
 
+    /**
+     * @return BelongsTo<StatsCustomEventName, $this>
+     */
     public function statsCustomEventName(): BelongsTo
     {
         return $this->belongsTo(StatsCustomEventName::class);

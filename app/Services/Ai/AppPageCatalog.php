@@ -78,13 +78,13 @@ class AppPageCatalog
                 'title' => 'AI settings',
                 'description' => 'Bring your own AI provider and API key for this assistant.',
                 'url' => $teamUrl.'#ai-assistant',
-                'when' => fn () => (bool) ($planOptions['AiAssistant'] ?? false),
+                'when' => fn (): bool => (bool) ($planOptions['AiAssistant'] ?? false),
             ],
             [
                 'title' => 'Data import',
                 'description' => 'Import existing visitors, users and payments from CSV files.',
                 'url' => route('data-import.index'),
-                'when' => fn () => (bool) ($planOptions[DataImport::class] ?? false),
+                'when' => fn (): bool => (bool) ($planOptions[DataImport::class] ?? false),
             ],
             [
                 'title' => 'Billing',
@@ -110,7 +110,7 @@ class AppPageCatalog
         ];
 
         return collect($pages)
-            ->filter(fn (array $page) => ! isset($page['when']) || $page['when']())
+            ->filter(fn (array $page): bool => ! isset($page['when']) || $page['when']())
             ->map(fn (array $page) => collect($page)->except('when')->all())
             ->values()
             ->all();

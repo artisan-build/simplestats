@@ -12,7 +12,7 @@ function deviceDetectorBotCacheKey(): string
 
 $realBrowser = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15';
 
-it('caches the parsed device-detection regexes across calls', function () use ($realBrowser) {
+it('caches the parsed device-detection regexes across calls', function () use ($realBrowser): void {
     config(['cache.default' => 'array']);
     Cache::store('array')->flush();
 
@@ -23,50 +23,50 @@ it('caches the parsed device-detection regexes across calls', function () use ($
     expect(Cache::has(deviceDetectorBotCacheKey()))->toBeTrue();
 });
 
-it('still detects bots correctly when the cache store fails', function () use ($realBrowser) {
+it('still detects bots correctly when the cache store fails', function () use ($realBrowser): void {
     Cache::extend('throwing', fn () => Cache::repository(new class implements Store
     {
-        public function get($key)
+        public function get($key): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function many(array $keys)
+        public function many(array $keys): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function put($key, $value, $seconds)
+        public function put($key, $value, $seconds): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function putMany(array $values, $seconds)
+        public function putMany(array $values, $seconds): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function increment($key, $value = 1)
+        public function increment($key, $value = 1): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function decrement($key, $value = 1)
+        public function decrement($key, $value = 1): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function forever($key, $value)
+        public function forever($key, $value): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function forget($key)
+        public function forget($key): void
         {
             throw new RuntimeException('cache down');
         }
 
-        public function flush()
+        public function flush(): void
         {
             throw new RuntimeException('cache down');
         }

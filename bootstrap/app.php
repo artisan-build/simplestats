@@ -4,6 +4,7 @@ use App\Exceptions\Handler;
 use App\Http\Kernel;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Env;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,7 @@ use Illuminate\Foundation\Application;
 */
 
 $app = new Application(
-    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
+    Env::get('APP_BASE_PATH', dirname(__DIR__))
 );
 
 /*

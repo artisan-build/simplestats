@@ -11,7 +11,7 @@ return new class extends Migration
     {
         // The default backfills every existing row to 'period' synchronously, so it
         // is in place before the unique key is widened to include kind below.
-        Schema::table('stats_aggregations', function (Blueprint $table) {
+        Schema::table('stats_aggregations', function (Blueprint $table): void {
             $table->string('kind')->default('period')->after('filter_hash');
         });
 
@@ -20,7 +20,7 @@ return new class extends Migration
         // unique indexes. dropUnique() would guess the conventional name, so resolve
         // the actual name and drop it as constraint or index, whichever it is.
         $uniqueIndex = collect(Schema::getIndexes('stats_aggregations'))
-            ->firstOrFail(fn (array $index) => $index['unique'] && $index['columns'] === ['filter_hash', 'time']);
+            ->firstOrFail(fn (array $index): bool => $index['unique'] && $index['columns'] === ['filter_hash', 'time']);
 
         $isConstraint = DB::selectOne('select 1 from pg_constraint where conname = ?', [$uniqueIndex['name']]) !== null;
 
@@ -28,7 +28,7 @@ return new class extends Migration
             ? 'alter table stats_aggregations drop constraint "'.$uniqueIndex['name'].'"'
             : 'drop index "'.$uniqueIndex['name'].'"');
 
-        Schema::table('stats_aggregations', function (Blueprint $table) {
+        Schema::table('stats_aggregations', function (Blueprint $table): void {
             $table->unique(['filter_hash', 'time', 'kind']);
 
             $table->index(['team_id', 'project_id', 'type', 'kind', 'time']);

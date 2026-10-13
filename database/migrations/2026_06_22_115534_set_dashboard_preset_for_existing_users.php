@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::table('users')->orderBy('id')->chunkById(500, function ($users) {
+        DB::table('users')->orderBy('id')->chunkById(500, function ($users): void {
             foreach ($users as $user) {
                 $settings = json_decode($user->settings ?? '{}', true) ?: [];
                 $settings['dashboardPreset'] = DashboardPreset::EXPERT->value;

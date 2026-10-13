@@ -21,7 +21,7 @@ class SetupTeamController extends Controller
         $user = $request->user();
 
         // the team already exists, so we update it
-        $team = app(UpdateTeam::class)->update($user, $user->currentTeam, $request->all());
+        $team = resolve(UpdateTeam::class)->update($user, $user->currentTeam, $request->all());
 
         // we create a default project for the team
         if ($team->projects()->count() <= 0) {
@@ -33,6 +33,6 @@ class SetupTeamController extends Controller
             ]);
         }
 
-        return redirect()->route('setup.project.index');
+        return to_route('setup.project.index');
     }
 }

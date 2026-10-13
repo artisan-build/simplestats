@@ -12,7 +12,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -28,10 +28,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(MrrAggregationService::class);
+    $this->service = resolve(MrrAggregationService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -79,7 +79,7 @@ function ltvMonthFilter(int $projectId, string $rangeStart, int $rangeAmount, in
  */
 function ltvRangeDays(StatsFilterDto $filter): float
 {
-    $conditions = app(StatsFilterConditionsBuilder::class)->build($filter);
+    $conditions = resolve(StatsFilterConditionsBuilder::class)->build($filter);
 
     $rangeEnd = min($conditions['endDateEnd'], CarbonImmutable::now()->format(StatsRangeType::DATE_FORMAT));
     $rangeStart = $conditions['startDateStart'];
@@ -87,7 +87,7 @@ function ltvRangeDays(StatsFilterDto $filter): float
     return max(1.0, CarbonImmutable::parse($rangeStart)->diffInDays(CarbonImmutable::parse($rangeEnd)));
 }
 
-it('computes LTV as ARPS divided by the monthly gross churn rate', function () {
+it('computes LTV as ARPS divided by the monthly gross churn rate', function (): void {
     insertLtvUser('u-stable', $this->team->id, $this->pid);
     insertLtvUser('u-expand', $this->team->id, $this->pid);
     insertLtvUser('u-churn', $this->team->id, $this->pid);
@@ -115,11 +115,11 @@ it('computes LTV as ARPS divided by the monthly gross churn rate', function () {
     expect($this->service->getLtv($filter))->toBe($expected);
 });
 
-it('returns null when there are no subscribers', function () {
+it('returns null when there are no subscribers', function (): void {
     expect($this->service->getLtv(ltvMonthFilter($this->pid, '2026-06-21', 2)))->toBeNull();
 });
 
-it('returns null when there is no churn to estimate a lifetime from', function () {
+it('returns null when there is no churn to estimate a lifetime from', function (): void {
     insertLtvUser('u-stable', $this->team->id, $this->pid);
     insertLtvPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
     insertLtvPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
@@ -128,7 +128,7 @@ it('returns null when there is no churn to estimate a lifetime from', function (
     expect($this->service->getLtv(ltvMonthFilter($this->pid, '2026-06-21', 2)))->toBeNull();
 });
 
-it('returns null when the range has no starting mrr', function () {
+it('returns null when the range has no starting mrr', function (): void {
     insertLtvUser('u-new', $this->team->id, $this->pid);
     insertLtvPayment('n-1', 'u-new', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
@@ -136,7 +136,7 @@ it('returns null when the range has no starting mrr', function () {
     expect($this->service->getLtv(ltvMonthFilter($this->pid, '2026-06-21', 2)))->toBeNull();
 });
 
-it('exposes ARPS, monthly churn and an LTV matching getLtv', function () {
+it('exposes ARPS, monthly churn and an LTV matching getLtv', function (): void {
     insertLtvUser('u-stable', $this->team->id, $this->pid);
     insertLtvUser('u-churn', $this->team->id, $this->pid);
 
@@ -158,7 +158,7 @@ it('exposes ARPS, monthly churn and an LTV matching getLtv', function () {
         ->and($economics['ltv'])->toBe($this->service->getLtv($filter));
 });
 
-it('exposes a valid ARPS but a null LTV when there is no churn', function () {
+it('exposes a valid ARPS but a null LTV when there is no churn', function (): void {
     insertLtvUser('u-stable', $this->team->id, $this->pid);
     insertLtvPayment('s-1', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
     insertLtvPayment('s-2', 'u-stable', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
@@ -171,11 +171,11 @@ it('exposes a valid ARPS but a null LTV when there is no churn', function () {
         ->and($economics['ltv'])->toBeNull();
 });
 
-it('returns null economics when there are no subscribers', function () {
+it('returns null economics when there are no subscribers', function (): void {
     expect($this->service->getSubscriptionEconomics(ltvMonthFilter($this->pid, '2026-06-21', 2)))->toBeNull();
 });
 
-it('attributes LTV per channel via the source filter', function () {
+it('attributes LTV per channel via the source filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',
@@ -185,7 +185,7 @@ it('attributes LTV per channel via the source filter', function () {
 
     insertLtvUser('u-nl-stable', $this->team->id, $this->pid, $sourceId);
     insertLtvUser('u-nl-churn', $this->team->id, $this->pid, $sourceId);
-    insertLtvUser('u-direct', $this->team->id, $this->pid, null);
+    insertLtvUser('u-direct', $this->team->id, $this->pid);
 
     // One newsletter subscriber renews through June, the other lapses after April,
     // so the newsletter segment carries a higher churn (lower LTV) than the blend.

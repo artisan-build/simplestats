@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Services\StatsCustomEventService;
 use Carbon\CarbonImmutable;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->team = $this->user->currentTeam;
     $this->team->update(['timezone' => 'UTC']);
@@ -17,7 +17,7 @@ beforeEach(function () {
     $this->actingAs($this->user);
 
     // Last 7 days, ending now.
-    $this->filters = fn (int $projectId = StatsFilterDto::TRACK_ALL) => new StatsFilterDto(
+    $this->filters = fn (int $projectId = StatsFilterDto::TRACK_ALL): StatsFilterDto => new StatsFilterDto(
         projectId: $projectId,
         rangeAmount: 7,
         rangeType: StatsRangeType::DAY,
@@ -43,18 +43,18 @@ beforeEach(function () {
     };
 });
 
-test('hasCustomEvents is false without any events', function () {
+test('hasCustomEvents is false without any events', function (): void {
     expect(StatsCustomEventService::hasCustomEvents(($this->filters)()))->toBeFalse();
 });
 
-test('hasCustomEvents is true with an event in range', function () {
+test('hasCustomEvents is true with an event in range', function (): void {
     ($this->createEvent)($this->project, now());
 
     expect(StatsCustomEventService::hasCustomEvents(($this->filters)()))->toBeTrue();
     expect(StatsCustomEventService::hasCustomEvents(($this->filters)($this->project->id)))->toBeTrue();
 });
 
-test('hasCustomEvents stays true for events outside the selected range', function () {
+test('hasCustomEvents stays true for events outside the selected range', function (): void {
     // Period-independent: an event tracked long ago still shows the group, so
     // it does not vanish when the range shifts.
     ($this->createEvent)($this->project, now()->subDays(30));
@@ -62,7 +62,7 @@ test('hasCustomEvents stays true for events outside the selected range', functio
     expect(StatsCustomEventService::hasCustomEvents(($this->filters)()))->toBeTrue();
 });
 
-test('hasCustomEvents scopes to the selected project', function () {
+test('hasCustomEvents scopes to the selected project', function (): void {
     $otherProject = Project::factory()->create(['team_id' => $this->team->id]);
     ($this->createEvent)($otherProject, now());
 

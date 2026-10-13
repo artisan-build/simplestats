@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
     config(['app.stats_aggregation_enabled' => true]);
 
@@ -31,10 +31,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(MrrAggregationService::class);
+    $this->service = resolve(MrrAggregationService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -79,7 +79,7 @@ function mrrCacheRows(): Collection
     return DB::table('stats_aggregations')->where('kind', 'mrr')->get();
 }
 
-it('persists only closed buckets and never the open bucket', function () {
+it('persists only closed buckets and never the open bucket', function (): void {
     cacheUser('u-1', $this->team->id, $this->pid);
     // Active only around March (snapshot at end of March), churned by June.
     cachePayment('p-1', 'u-1', $this->team->id, $this->pid, 30, '2026-03-10 10:00:00');
@@ -90,14 +90,14 @@ it('persists only closed buckets and never the open bucket', function () {
 
     // 6-month range = 5 closed buckets (Jan-May) cached; the open June bucket is not.
     expect($rows)->toHaveCount(5)
-        ->and($rows->pluck('time')->map(fn ($t) => substr($t, 0, 10))->all())
+        ->and($rows->pluck('time')->map(fn ($t): string => substr($t, 0, 10))->all())
         ->not->toContain('2026-06-01');
 
-    $march = collect($series)->first(fn ($r) => str_starts_with($r['date_clear'], '2026-03-01'));
+    $march = collect($series)->first(fn ($r): bool => str_starts_with($r['date_clear'], '2026-03-01'));
     expect($march['mrr'])->toBe(30.0);
 });
 
-it('recomputes the open bucket live on every read without invalidation', function () {
+it('recomputes the open bucket live on every read without invalidation', function (): void {
     cacheUser('u-old', $this->team->id, $this->pid);
     cachePayment('p-old', 'u-old', $this->team->id, $this->pid, 30, '2026-03-10 10:00:00');
 
@@ -115,7 +115,7 @@ it('recomputes the open bucket live on every read without invalidation', functio
     expect(collect($second)->first()['mrr'])->toBe(99.0);
 });
 
-it('serves a closed bucket from cache even when the underlying data changed', function () {
+it('serves a closed bucket from cache even when the underlying data changed', function (): void {
     cacheUser('u-1', $this->team->id, $this->pid);
     cachePayment('p-1', 'u-1', $this->team->id, $this->pid, 30, '2026-03-10 10:00:00');
 
@@ -127,13 +127,13 @@ it('serves a closed bucket from cache even when the underlying data changed', fu
     cachePayment('p-2', 'u-2', $this->team->id, $this->pid, 70, '2026-03-12 10:00:00');
 
     $series = $this->service->getMrrTimeSeries(cacheMonthFilter($this->pid, '2026-06-21', 6));
-    $march = collect($series)->first(fn ($r) => str_starts_with($r['date_clear'], '2026-03-01'));
+    $march = collect($series)->first(fn ($r): bool => str_starts_with($r['date_clear'], '2026-03-01'));
 
     // Stale cached value, NOT the recomputed 100 -> proves it is served from cache.
     expect($march['mrr'])->toBe(30.0);
 });
 
-it('re-backfills a closed bucket after invalidation', function () {
+it('re-backfills a closed bucket after invalidation', function (): void {
     cacheUser('u-1', $this->team->id, $this->pid);
     cachePayment('p-1', 'u-1', $this->team->id, $this->pid, 30, '2026-03-10 10:00:00');
 
@@ -148,32 +148,32 @@ it('re-backfills a closed bucket after invalidation', function () {
         'team_id' => $this->team->id,
         'project_id' => $this->pid,
     ]);
-    app(StatsAggregationsService::class)->invalidateByStatsUpdate($stat);
+    resolve(StatsAggregationsService::class)->invalidateByStatsUpdate($stat);
 
     $series = $this->service->getMrrTimeSeries(cacheMonthFilter($this->pid, '2026-06-21', 6));
-    $march = collect($series)->first(fn ($r) => str_starts_with($r['date_clear'], '2026-03-01'));
+    $march = collect($series)->first(fn ($r): bool => str_starts_with($r['date_clear'], '2026-03-01'));
 
     // Fresh value after invalidation: both March subscriptions counted.
     expect($march['mrr'])->toBe(100.0);
 });
 
-it('returns the same cached closed bucket value across different ranges', function () {
+it('returns the same cached closed bucket value across different ranges', function (): void {
     cacheUser('u-1', $this->team->id, $this->pid);
     cachePayment('p-1', 'u-1', $this->team->id, $this->pid, 30, '2026-03-10 10:00:00');
 
     $wide = $this->service->getMrrTimeSeries(cacheMonthFilter($this->pid, '2026-06-21', 6));
-    $wideMarch = collect($wide)->first(fn ($r) => str_starts_with($r['date_clear'], '2026-03-01'))['mrr'];
+    $wideMarch = collect($wide)->first(fn ($r): bool => str_starts_with($r['date_clear'], '2026-03-01'))['mrr'];
 
     // A different range (ends in the past, no open bucket) hits the same filter_hash.
     $narrow = $this->service->getMrrTimeSeries(cacheMonthFilter($this->pid, '2026-04-21', 3));
-    $narrowMarch = collect($narrow)->first(fn ($r) => str_starts_with($r['date_clear'], '2026-03-01'))['mrr'];
+    $narrowMarch = collect($narrow)->first(fn ($r): bool => str_starts_with($r['date_clear'], '2026-03-01'))['mrr'];
 
     expect($narrowMarch)->toBe($wideMarch)->toBe(30.0)
         // Only one cached March row exists (range-independent key).
-        ->and(mrrCacheRows()->filter(fn ($r) => str_starts_with($r->time, '2026-03-01')))->toHaveCount(1);
+        ->and(mrrCacheRows()->filter(fn ($r): bool => str_starts_with($r->time, '2026-03-01')))->toHaveCount(1);
 });
 
-it('caches the previously-open bucket with its frozen value once it closes', function () {
+it('caches the previously-open bucket with its frozen value once it closes', function (): void {
     cacheUser('u-1', $this->team->id, $this->pid);
     // Subscription active in June (the open bucket), lapses afterwards.
     cachePayment('p-1', 'u-1', $this->team->id, $this->pid, 40, '2026-06-10 10:00:00');
@@ -182,21 +182,21 @@ it('caches the previously-open bucket with its frozen value once it closes', fun
 
     // June is the open bucket: live value 40, not persisted.
     expect(collect($first)->first()['mrr'])->toBe(40.0)
-        ->and(mrrCacheRows()->filter(fn ($r) => str_starts_with($r->time, '2026-06-01')))->toHaveCount(0);
+        ->and(mrrCacheRows()->filter(fn ($r): bool => str_starts_with($r->time, '2026-06-01')))->toHaveCount(0);
 
     // Roll the clock forward a month: July becomes open, June closes.
     CarbonImmutable::setTestNow('2026-07-15 12:00:00');
 
     $second = $this->service->getMrrTimeSeries(cacheMonthFilter($this->pid, '2026-07-15', 6));
 
-    $june = collect($second)->first(fn ($r) => str_starts_with($r['date_clear'], '2026-06-01'));
+    $june = collect($second)->first(fn ($r): bool => str_starts_with($r['date_clear'], '2026-06-01'));
 
     // June is now a closed bucket, frozen at its real bucket end and cached.
     expect($june['mrr'])->toBe(40.0)
-        ->and(mrrCacheRows()->filter(fn ($r) => str_starts_with($r->time, '2026-06-01')))->toHaveCount(1);
+        ->and(mrrCacheRows()->filter(fn ($r): bool => str_starts_with($r->time, '2026-06-01')))->toHaveCount(1);
 });
 
-it('matches an uncached full recompute (warm equals cold)', function () {
+it('matches an uncached full recompute (warm equals cold)', function (): void {
     cacheUser('u-1', $this->team->id, $this->pid);
     cachePayment('p-1', 'u-1', $this->team->id, $this->pid, 30, '2026-03-10 10:00:00');
 

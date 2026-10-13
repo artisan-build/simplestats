@@ -48,17 +48,17 @@ use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 // Localized public routes (registered FIRST, no route names to avoid overwriting English names)
 $locales = collect(array_keys(config('locales.supported')))
-    ->reject(fn ($l) => $l === config('locales.default'))
+    ->reject(fn ($l): bool => $l === config('locales.default'))
     ->implode('|');
 
-$publicRoutes = function () {
+$publicRoutes = function (): void {
     Route::get('/', HomeController::class);
     Route::get('/imprint', [ImprintController::class, 'show']);
 };
 
 Route::prefix('{locale}')
     ->where(['locale' => $locales])
-    ->group(function () use ($publicRoutes) {
+    ->group(function () use ($publicRoutes): void {
         $publicRoutes();
     });
 
@@ -66,7 +66,7 @@ Route::prefix('{locale}')
 Route::prefix('{locale}')
     ->where(['locale' => $locales])
     ->middleware(['guest:web'])
-    ->group(function () {
+    ->group(function (): void {
         Route::get('/login', [AuthenticatedSessionController::class, 'create']);
         Route::get('/register', [RegisteredUserController::class, 'create']);
         Route::get('/forgot-password', [PasswordResetLinkController::class, 'create']);
@@ -84,14 +84,14 @@ Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 Route::resource('timezones', TimezoneController::class)->only(['index']);
 
 // Tracking
-Route::prefix('tracking')->name('tracking.')->group(function () {
+Route::prefix('tracking')->name('tracking.')->group(function (): void {
     Route::post('get-started-click', [TrackingController::class, 'getStartedClick'])->name('get-started-click');
 });
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-])->group(function () {
+])->group(function (): void {
     Route::get('/user/profile', [UserProfileController::class, 'show'])->name('profile.show');
 });
 
@@ -99,8 +99,8 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-])->group(function () {
-    Route::middleware(['admin'])->group(function () {
+])->group(function (): void {
+    Route::middleware(['admin'])->group(function (): void {
         Route::get('health', HealthCheckResultsController::class);
     });
 

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('data_imports', function (Blueprint $table) {
+        Schema::table('data_imports', function (Blueprint $table): void {
             $table->dropColumn(['id_from', 'id_to']);
         });
     }

@@ -12,7 +12,7 @@ use SimpleStatsIo\LaravelClient\SimplestatsClient as SimplestatsClientClass;
 
 use function Pest\Laravel\get;
 
-test('users get redirected correctly', function (string $provider) {
+test('users get redirected correctly', function (string $provider): void {
     if (! Providers::enabled($provider)) {
         $this->markTestSkipped("Registration support with the $provider provider is not enabled.");
     }
@@ -38,7 +38,7 @@ test('users get redirected correctly', function (string $provider) {
     [Providers::twitterOAuth2()],
 ]);
 
-test('registering via socialite tracks the registration without double counting the login', function () {
+test('registering via socialite tracks the registration without double counting the login', function (): void {
     if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
         $this->markTestSkipped('Registration support is not enabled.');
     }
@@ -55,7 +55,7 @@ test('registering via socialite tracks the registration without double counting 
     $this->partialMock(SimplestatsClientClass::class)
         ->shouldReceive('trackUser')
         ->once()
-        ->withArgs(fn ($user, $addLogin = null) => $user->email === 'janedoe@example.com' && $addLogin === false);
+        ->withArgs(fn ($user, $addLogin = null): bool => $user->email === 'janedoe@example.com' && $addLogin === false);
 
     $user = (new User)
         ->map([
@@ -82,7 +82,7 @@ test('registering via socialite tracks the registration without double counting 
     $this->assertAuthenticated();
 });
 
-test('users can register using socialite providers', function (string $socialiteProvider) {
+test('users can register using socialite providers', function (string $socialiteProvider): void {
     if (! FortifyFeatures::enabled(FortifyFeatures::registration())) {
         $this->markTestSkipped('Registration support is not enabled.');
     }

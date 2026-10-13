@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('telescope_entries', function (Blueprint $table) {
+        Schema::create('telescope_entries', function (Blueprint $table): void {
             $table->bigInteger('sequence');
             $table->uuid('uuid');
             $table->uuid('batch_id');

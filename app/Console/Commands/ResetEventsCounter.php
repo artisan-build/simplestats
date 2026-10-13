@@ -29,7 +29,7 @@ class ResetEventsCounter extends Command
         // avoid bugs if the command takes longer
         $stickyNow = now()->utc();
 
-        Team::with('owner')->get()->each(function (Team $team) use ($stickyNow) {
+        Team::with('owner')->get()->each(function (Team $team) use ($stickyNow): void {
             if (empty($team->owner)) {
                 return;
             }

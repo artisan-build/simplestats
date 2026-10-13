@@ -10,6 +10,7 @@ use App\Models\DataImport;
 use App\Validators\BaseStatsValidator;
 use Cache;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Sleep;
 use Inertia\Inertia;
 use Inertia\Response;
 use Junges\TrackableJobs\Enums\TrackedJobStatus;
@@ -37,7 +38,7 @@ class DataImportController extends Controller
             'rows_max' => ImportHelper::countImportRows($file),
         ], $validated));
 
-        $baseValidator = app(BaseStatsValidator::class);
+        $baseValidator = resolve(BaseStatsValidator::class);
         $baseValidator->validateImportFields($dataImport, ImportHelper::getImportFields($file));
 
         // only additional validation is done, we start the import...
@@ -47,9 +48,9 @@ class DataImportController extends Controller
         dispatch(new ProcessDataImportJob($dataImport, $filepath));
 
         // w8 till the dispatched job is tracked
-        sleep(1);
+        Sleep::sleep(1);
 
-        return redirect()->route('data-import.index')->banner('Import started');
+        return to_route('data-import.index')->banner('Import started');
     }
 
     public function cancel(DataImport $dataImport): RedirectResponse
@@ -64,7 +65,7 @@ class DataImportController extends Controller
             'finished_at' => now(),
         ]);
 
-        return redirect()->route('data-import.index')->banner('Import canceled');
+        return to_route('data-import.index')->banner('Import canceled');
     }
 
     public function rollback(DataImport $dataImport): RedirectResponse
@@ -82,6 +83,6 @@ class DataImportController extends Controller
 
         $dataImport->update(['rolled_back_at' => now()]);
 
-        return redirect()->route('data-import.index')->banner('Import rolled back');
+        return to_route('data-import.index')->banner('Import rolled back');
     }
 }

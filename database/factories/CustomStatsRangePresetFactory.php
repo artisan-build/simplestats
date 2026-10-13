@@ -28,9 +28,9 @@ class CustomStatsRangePresetFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'name' => 'Last '.$this->faker->numberBetween(1, 60).' '.$this->faker->randomElement($rangeTypes),
-            'range_amount' => $this->faker->numberBetween(1, 60),
-            'range_type' => $this->faker->randomElement($rangeTypes),
+            'name' => 'Last '.fake()->numberBetween(1, 60).' '.fake()->randomElement($rangeTypes),
+            'range_amount' => fake()->numberBetween(1, 60),
+            'range_type' => fake()->randomElement($rangeTypes),
             'sort_order' => 0,
         ];
     }

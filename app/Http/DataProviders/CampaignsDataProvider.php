@@ -18,7 +18,7 @@ class CampaignsDataProvider extends AbstractStatsDataProvider
         StatsDetailsService $statsDetailsService,
         SubscriptionService $subscriptionService,
         RefererService $refererService,
-        private AdSpendService $adSpendService,
+        private readonly AdSpendService $adSpendService,
     ) {
         parent::__construct($request, $statsDetailsService, $subscriptionService, $refererService);
     }
@@ -47,8 +47,8 @@ class CampaignsDataProvider extends AbstractStatsDataProvider
     private function projectOptions(Team $teamStats): array
     {
         return $teamStats->projects
-            ->reject(fn ($project) => $project['id'] === StatsFilterDto::TRACK_ALL)
-            ->map(fn ($project) => ['uuid' => $project['uuid'], 'name' => $project['name']])
+            ->reject(fn ($project): bool => $project['id'] === StatsFilterDto::TRACK_ALL)
+            ->map(fn ($project): array => ['uuid' => $project['uuid'], 'name' => $project['name']])
             ->values()
             ->toArray();
     }

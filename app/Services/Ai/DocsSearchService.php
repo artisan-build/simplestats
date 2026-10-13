@@ -9,11 +9,11 @@ use Illuminate\Support\Str;
 
 class DocsSearchService
 {
-    private const EXCLUDED_FILES = ['index.md', 'markdown-examples.md'];
+    private const array EXCLUDED_FILES = ['index.md', 'markdown-examples.md'];
 
-    private const HEADING_WEIGHT = 5;
+    private const int HEADING_WEIGHT = 5;
 
-    private const EXCERPT_CONTEXT_LINES = 10;
+    private const int EXCERPT_CONTEXT_LINES = 10;
 
     /**
      * Keyword search over the markdown sources in docs/ (the same content the
@@ -24,7 +24,7 @@ class DocsSearchService
     public function search(string $query, int $limit = 3): array
     {
         $terms = collect(preg_split('/[^\pL\pN_]+/u', Str::lower($query)))
-            ->filter(fn (string $term) => Str::length($term) >= 3)
+            ->filter(fn (string $term): bool => Str::length($term) >= 3)
             ->unique()
             ->values();
 
@@ -33,8 +33,8 @@ class DocsSearchService
         }
 
         return collect(File::files(base_path('docs')))
-            ->filter(fn ($file) => $file->getExtension() === 'md' && ! in_array($file->getFilename(), self::EXCLUDED_FILES, true))
-            ->map(fn ($file) => $this->scoreFile($file->getPathname(), $terms))
+            ->filter(fn ($file): bool => $file->getExtension() === 'md' && ! in_array($file->getFilename(), self::EXCLUDED_FILES, true))
+            ->map(fn ($file): ?array => $this->scoreFile($file->getPathname(), $terms))
             ->filter()
             ->sortByDesc('score')
             ->take($limit)
@@ -57,7 +57,7 @@ class DocsSearchService
 
         foreach ($lines as $index => $line) {
             $lower = Str::lower($line);
-            $hits = $terms->sum(fn (string $term) => substr_count($lower, $term));
+            $hits = $terms->sum(fn (string $term): int => substr_count($lower, $term));
 
             if ($hits === 0) {
                 continue;

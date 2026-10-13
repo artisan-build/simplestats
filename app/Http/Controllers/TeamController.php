@@ -55,16 +55,16 @@ class TeamController extends Controller
 
     public function update(Request $request, Team $team): RedirectResponse
     {
-        app(UpdatesTeamNames::class)->update($request->user(), $team, $request->all());
+        resolve(UpdatesTeamNames::class)->update($request->user(), $team, $request->all());
 
         return back(303);
     }
 
     public function destroy(Request $request, Team $team): RedirectResponse
     {
-        app(ValidateTeamDeletion::class)->validate($request->user(), $team);
+        resolve(ValidateTeamDeletion::class)->validate($request->user(), $team);
 
-        $deleter = app(DeletesTeams::class);
+        $deleter = resolve(DeletesTeams::class);
 
         $deleter->delete($team);
 

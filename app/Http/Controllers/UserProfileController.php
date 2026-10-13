@@ -33,7 +33,7 @@ class UserProfileController extends JetstreamUserProfileController
                 ->where('user_id', $request->user()->getAuthIdentifier())
                 ->orderBy('last_activity', 'desc')
                 ->get()
-        )->reject(function ($session) use ($sessionKey) {
+        )->reject(function ($session) use ($sessionKey): bool {
             $payload = @unserialize(base64_decode($session->payload ?? ''));
 
             return is_array($payload) && isset($payload[$sessionKey]);

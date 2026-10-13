@@ -78,18 +78,6 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Pass
         'deleted_at',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'previous_login_at' => 'immutable_datetime',
-        'login_summary_pending' => 'boolean',
-        'settings' => 'array',
-    ];
-
     // Archive into deleted_models only on the final forceDelete (the purge job),
     // not on the soft delete that opens the grace window.
     public function shouldKeep(): bool
@@ -184,7 +172,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Pass
     /**
      * Get the URL to the user's profile photo.
      */
-    public function profilePhotoUrl(): Attribute
+    protected function profilePhotoUrl(): Attribute
     {
         return filter_var($this->profile_photo_path, FILTER_VALIDATE_URL)
             ? Attribute::get(fn () => $this->profile_photo_path)
@@ -203,7 +191,7 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Pass
     public function sendEmailVerificationNotification(): void
     {
         // dispactches the job to the queue passing it this User object
-        QueuedVerifyEmailJob::dispatch($this);
+        dispatch(new QueuedVerifyEmailJob($this));
     }
 
     // Compatibility for auth()->team() checks in request/validator classes,
@@ -253,8 +241,26 @@ abstract class UserBase extends Authenticatable implements MustVerifyEmail, Pass
         $this->save();
     }
 
+    /**
+     * @return HasMany<CustomStatsRangePreset, $this>
+     */
     public function customStatsRangePresets(): HasMany
     {
         return $this->hasMany(CustomStatsRangePreset::class)->orderBy('sort_order');
+    }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'previous_login_at' => 'immutable_datetime',
+            'login_summary_pending' => 'boolean',
+            'settings' => 'array',
+        ];
     }
 }

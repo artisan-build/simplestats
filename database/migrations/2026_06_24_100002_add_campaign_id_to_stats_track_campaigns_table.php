@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('stats_track_campaigns', function (Blueprint $table) {
+        Schema::table('stats_track_campaigns', function (Blueprint $table): void {
             // Links a tracked utm_campaign dimension to a user-managed Campaign.
             // Null = not (yet) attributed to any campaign.
             $table->unsignedBigInteger('campaign_id')->nullable()->after('name');

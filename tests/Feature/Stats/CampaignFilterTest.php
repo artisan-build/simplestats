@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -30,7 +30,7 @@ beforeEach(function () {
     config(['app.stats_aggregation_enabled' => true]);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     Carbon::setTestNow();
 });
 
@@ -46,14 +46,14 @@ function makeFilterTrackCampaign(int $teamId, string $name, ?int $campaignId): i
     ]);
 }
 
-it('narrows aggregated stats to every utm dimension the campaign owns', function () {
+it('narrows aggregated stats to every utm dimension the campaign owns', function (): void {
     $campaign = Campaign::create(['team_id' => $this->team->id, 'project_id' => $this->pid, 'name' => 'Summer Sale']);
 
     $linkedA = makeFilterTrackCampaign($this->team->id, 'summer_a', $campaign->id);
     $linkedB = makeFilterTrackCampaign($this->team->id, 'summer_b', $campaign->id);
     $unrelated = makeFilterTrackCampaign($this->team->id, 'unrelated', null);
 
-    $insert = function (int $count, ?int $trackCampaignId) {
+    $insert = function (int $count, ?int $trackCampaignId): void {
         for ($i = 0; $i < $count; $i++) {
             DB::table('stats_visitors')->insert([
                 'team_id' => $this->team->id,
@@ -77,12 +77,12 @@ it('narrows aggregated stats to every utm dimension the campaign owns', function
         campaign: $campaign->id,
     );
 
-    $data = app(StatsAggregationsService::class)->getAggregatedData($filters);
+    $data = resolve(StatsAggregationsService::class)->getAggregatedData($filters);
 
     expect($data['2026-03-30']['pd_visitor'])->toBe(7);
 });
 
-it('returns zero stats for a campaign with no linked utm dimensions', function () {
+it('returns zero stats for a campaign with no linked utm dimensions', function (): void {
     $campaign = Campaign::create(['team_id' => $this->team->id, 'project_id' => $this->pid, 'name' => 'Empty']);
 
     $unrelated = makeFilterTrackCampaign($this->team->id, 'unrelated', null);
@@ -104,12 +104,12 @@ it('returns zero stats for a campaign with no linked utm dimensions', function (
         campaign: $campaign->id,
     );
 
-    $data = app(StatsAggregationsService::class)->getAggregatedData($filters);
+    $data = resolve(StatsAggregationsService::class)->getAggregatedData($filters);
 
     expect($data['2026-03-30']['pd_visitor'])->toBe(0);
 });
 
-it('drops cached campaign aggregations when a utm link is removed', function () {
+it('drops cached campaign aggregations when a utm link is removed', function (): void {
     $campaign = Campaign::create(['team_id' => $this->team->id, 'project_id' => $this->pid, 'name' => 'Cached']);
     $linkedId = makeFilterTrackCampaign($this->team->id, 'cached_utm', $campaign->id);
 
@@ -128,16 +128,16 @@ it('drops cached campaign aggregations when a utm link is removed', function () 
         campaign: $campaign->id,
     );
 
-    app(StatsAggregationsService::class)->getAggregatedData($filters);
+    resolve(StatsAggregationsService::class)->getAggregatedData($filters);
 
     expect(StatsAggregation::where('filter_hash', $filters->makeHash())->count())->toBeGreaterThan(0);
 
-    app(CampaignService::class)->unlinkTrackCampaign($campaign, StatsTrackCampaign::find($linkedId));
+    resolve(CampaignService::class)->unlinkTrackCampaign($campaign, StatsTrackCampaign::find($linkedId));
 
     expect(StatsAggregation::where('filter_hash', $filters->makeHash())->count())->toBe(0);
 });
 
-it('accepts a campaign filter on the dashboard for the current team', function () {
+it('accepts a campaign filter on the dashboard for the current team', function (): void {
     $campaign = Campaign::create(['team_id' => $this->team->id, 'project_id' => $this->pid, 'name' => 'Mine']);
 
     $this->actingAs($this->user)
@@ -145,7 +145,7 @@ it('accepts a campaign filter on the dashboard for the current team', function (
         ->assertOk();
 });
 
-it('exposes the campaign summary on the dashboard when filtered by a campaign', function () {
+it('exposes the campaign summary on the dashboard when filtered by a campaign', function (): void {
     $campaign = Campaign::create(['team_id' => $this->team->id, 'project_id' => $this->pid, 'name' => 'Summary Test']);
 
     $this->actingAs($this->user)
@@ -156,7 +156,7 @@ it('exposes the campaign summary on the dashboard when filtered by a campaign', 
         );
 });
 
-it('suppresses the campaign summary when another dimension filter is active', function () {
+it('suppresses the campaign summary when another dimension filter is active', function (): void {
     $campaign = Campaign::create(['team_id' => $this->team->id, 'project_id' => $this->pid, 'name' => 'Filtered']);
     $utmId = makeFilterTrackCampaign($this->team->id, 'filtered_utm', $campaign->id);
 
@@ -165,13 +165,13 @@ it('suppresses the campaign summary when another dimension filter is active', fu
         ->assertInertia(fn ($page) => $page->where('campaign_summary', null));
 });
 
-it('has no campaign summary on the unfiltered dashboard', function () {
+it('has no campaign summary on the unfiltered dashboard', function (): void {
     $this->actingAs($this->user)
         ->get(route('dashboard', ['project_id' => $this->pid]))
         ->assertInertia(fn ($page) => $page->where('campaign_summary', null));
 });
 
-it('rejects a campaign filter referencing another team', function () {
+it('rejects a campaign filter referencing another team', function (): void {
     $otherTeamId = User::factory()->withPersonalTeam()->create()->currentTeam->id;
     $foreignCampaignId = DB::table('campaigns')->insertGetId([
         'uuid' => (string) Str::uuid(),

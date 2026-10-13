@@ -19,7 +19,7 @@ class TeamAiConfig
      * Intersected with config('ai.providers') so only providers this app
      * actually configures are offered.
      */
-    private const TEXT_PROVIDERS = ['anthropic', 'gemini', 'openai', 'groq', 'deepseek', 'mistral', 'xai', 'openrouter'];
+    private const array TEXT_PROVIDERS = ['anthropic', 'gemini', 'openai', 'groq', 'deepseek', 'mistral', 'xai', 'openrouter'];
 
     /**
      * @return list<string>
@@ -53,7 +53,7 @@ class TeamAiConfig
         // Provider instances are cached per name inside the AiManager singleton
         // with their config baked in at construction; purge so a long-running
         // queue worker never reuses another team's key.
-        app(AiManager::class)->forgetInstance(self::PROVIDER_NAME);
+        resolve(AiManager::class)->forgetInstance(self::PROVIDER_NAME);
 
         return self::PROVIDER_NAME;
     }

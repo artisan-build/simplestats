@@ -83,14 +83,14 @@ class StatsAssistant implements Agent, Conversational, HasMiddleware, HasTools
     public function tools(): iterable
     {
         return [
-            app(ListStatsCapabilities::class),
-            app(GetKpiStats::class),
-            app(GetGroupedBreakdown::class),
-            app(GetRecurringRevenueStats::class),
-            app(GetRetentionCohorts::class),
-            app(GetCampaignPerformance::class),
-            app(SearchDocs::class),
-            app(ListAppPages::class),
+            resolve(ListStatsCapabilities::class),
+            resolve(GetKpiStats::class),
+            resolve(GetGroupedBreakdown::class),
+            resolve(GetRecurringRevenueStats::class),
+            resolve(GetRetentionCohorts::class),
+            resolve(GetCampaignPerformance::class),
+            resolve(SearchDocs::class),
+            resolve(ListAppPages::class),
         ];
     }
 
@@ -100,7 +100,7 @@ class StatsAssistant implements Agent, Conversational, HasMiddleware, HasTools
     public function middleware(): array
     {
         return [
-            app(AuditAssistantResponse::class),
+            resolve(AuditAssistantResponse::class),
         ];
     }
 }

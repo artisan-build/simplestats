@@ -23,7 +23,7 @@ class TeamAiSettingsRequest extends FormRequest
             'ai_model' => ['nullable', 'string', 'max:100'],
             'ai_api_key' => [
                 // A stored key survives provider/model edits without re-entry.
-                Rule::requiredIf(fn () => $this->filled('ai_provider') && ! $this->route('team')->ai_api_key),
+                Rule::requiredIf(fn (): bool => $this->filled('ai_provider') && ! $this->route('team')->ai_api_key),
                 'nullable',
                 'string',
                 'max:200',

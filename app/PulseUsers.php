@@ -20,14 +20,14 @@ class PulseUsers implements ResolvesUsers
      *
      * @var ?callable(Authenticatable): object{name: string, extra?: string, avatar?: string}
      */
-    protected $fieldResolver = null;
+    protected $fieldResolver;
 
     /**
      * Return a unique key identifying the user.
      */
     public function key(Authenticatable $user): int|string|null
     {
-        return get_class($user).':'.$user->getAuthIdentifier();
+        return $user::class.':'.$user->getAuthIdentifier();
     }
 
     /**
@@ -39,7 +39,7 @@ class PulseUsers implements ResolvesUsers
     {
         $this->resolvedUsers = new Collection;
 
-        $groupedKeys = $keys->mapToGroups(function ($key) {
+        $groupedKeys = $keys->mapToGroups(function ($key): array {
             [$model, $id] = explode(':', $key);
 
             return [$model => $id];
@@ -61,7 +61,7 @@ class PulseUsers implements ResolvesUsers
     {
         [$model, $id] = explode(':', $key);
 
-        $user = $this->resolvedUsers[$model]->first(fn ($user) => $user->getAuthIdentifier() == $id);
+        $user = $this->resolvedUsers[$model]->first(fn ($user): bool => $user->getAuthIdentifier() == $id);
 
         if ($this->fieldResolver !== null && $user !== null) {
             return (object) ($this->fieldResolver)($user);
@@ -74,7 +74,7 @@ class PulseUsers implements ResolvesUsers
             'extra' => explode('\\', $model)[2],
             'avatar' => $user->avatar ?? (($user->email ?? false)
                     ? sprintf('https://gravatar.com/avatar/%s?d=mp', hash('sha256', trim(strtolower($user->email)))) // @phpstan-ignore property.nonObject
-                    : sprintf('https://gravatar.com/avatar?d=mp')
+                    : 'https://gravatar.com/avatar?d=mp'
             ),
         ];
     }

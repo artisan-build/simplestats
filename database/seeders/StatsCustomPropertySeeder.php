@@ -30,7 +30,7 @@ class StatsCustomPropertySeeder extends Seeder
             'ab_test' => ['A', 'B'],
         ];
 
-        Project::all()->each(function (Project $project) use ($userSchema, $visitorSchema) {
+        Project::all()->each(function (Project $project) use ($userSchema, $visitorSchema): void {
             $now = now();
             $lookups = $this->seedPropertyLookups($project, [...$userSchema, ...$visitorSchema]);
 
@@ -38,7 +38,7 @@ class StatsCustomPropertySeeder extends Seeder
             // Every second user (deterministic, not rand): guarantees user-bound demo
             // rows exist even with few seeded users.
             StatsUser::where('project_id', $project->id)->pluck('id')
-                ->each(function ($entityId, $index) use (&$rows, $project, $userSchema, $lookups, $now) {
+                ->each(function (int|string $entityId, $index) use (&$rows, $project, $userSchema, $lookups, $now): void {
                     if ($index % 2 === 0) {
                         $rows[] = $this->propertyRow($project, 'stats_user', $entityId, 'company', Arr::random($userSchema['company']), $lookups, $now);
                     }
@@ -46,7 +46,7 @@ class StatsCustomPropertySeeder extends Seeder
 
             // Every visitor gets an A/B test variant.
             StatsVisitor::where('project_id', $project->id)->pluck('id')
-                ->each(function ($entityId) use (&$rows, $project, $visitorSchema, $lookups, $now) {
+                ->each(function (int|string $entityId) use (&$rows, $project, $visitorSchema, $lookups, $now): void {
                     $rows[] = $this->propertyRow($project, 'stats_visitor', $entityId, 'ab_test', Arr::random($visitorSchema['ab_test']), $lookups, $now);
                 });
 

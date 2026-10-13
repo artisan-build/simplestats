@@ -16,8 +16,8 @@ class ProjectObserver
     public function created(Project $project): void
     {
         Project::with(['team.users', 'team.owner'])->find($project->id)->team->allUsers()
-            ->each(function ($user) use ($project) {
-                app(CreateUserNotification::class)($user, $project);
+            ->each(function ($user) use ($project): void {
+                resolve(CreateUserNotification::class)($user, $project);
             });
     }
 
@@ -28,11 +28,11 @@ class ProjectObserver
     {
         if ($project->wasChanged('usage')) {
             $project->getDefaultUserNotificationTypes()->each(
-                function (UserNotificationTypeObject $notificationType) use ($project) {
+                function (UserNotificationTypeObject $notificationType) use ($project): void {
                     $allowedKeys = array_keys($notificationType->settings['tracking']);
 
                     $project->userNotifications()->where('type', $notificationType->type)
-                        ->each(function (UserNotification $notification) use ($allowedKeys, $notificationType) {
+                        ->each(function (UserNotification $notification) use ($allowedKeys, $notificationType): void {
                             $filteredSettings = collect($notification->settings)
                                 ->only($allowedKeys)
                                 ->toArray();
@@ -56,7 +56,7 @@ class ProjectObserver
         $teamId = $project->team_id;
         $projectId = $project->id;
 
-        $project->team->allUsers()->each(function ($user) use ($teamId, $projectId) {
+        $project->team->allUsers()->each(function ($user) use ($teamId, $projectId): void {
             $settings = $user->settings;
             $savedProjectId = $settings['statsFilters'][$teamId]['project_id'] ?? null;
 

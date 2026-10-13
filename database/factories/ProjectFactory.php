@@ -6,6 +6,9 @@ use App\Models\Project;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Project>
+ */
 class ProjectFactory extends Factory
 {
     /**
@@ -21,8 +24,8 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company(),
-            'domain' => $this->faker->domainName(),
+            'name' => fake()->company(),
+            'domain' => fake()->domainName(),
             'team_id' => Team::inRandomOrder()->first()->id,
         ];
     }

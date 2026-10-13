@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -18,14 +18,14 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->project->team_id);
 
-    $this->factory = app(AiStatsFilterFactory::class);
+    $this->factory = resolve(AiStatsFilterFactory::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     Carbon::setTestNow();
 });
 
-it('builds filters from a preset', function () {
+it('builds filters from a preset', function (): void {
     $filters = $this->factory->make('last_7_days', null, null, $this->project->id);
 
     expect($filters->preset)->toBe(StatsRangePreset::LAST_7_DAYS)
@@ -35,7 +35,7 @@ it('builds filters from a preset', function () {
         ->and($filters->comparison)->toBe('0');
 });
 
-it('builds last_month filters covering the previous month', function () {
+it('builds last_month filters covering the previous month', function (): void {
     // Explicit team timezone: setTestNow would otherwise pin the instant in UTC
     // while the factory formats in the team's timezone (Europe/Berlin).
     Carbon::setTestNow(Carbon::parse('2026-07-07 10:00:00', 'Europe/Berlin'));
@@ -47,7 +47,7 @@ it('builds last_month filters covering the previous month', function () {
         ->and($filters->rangeStart->format('Y-m-d'))->toBe('2026-06-30');
 });
 
-it('builds day buckets from short explicit date ranges', function () {
+it('builds day buckets from short explicit date ranges', function (): void {
     $filters = $this->factory->make(null, '2026-03-01', '2026-03-10', 0);
 
     expect($filters->preset)->toBeNull()
@@ -56,7 +56,7 @@ it('builds day buckets from short explicit date ranges', function () {
         ->and($filters->rangeStart->format('Y-m-d H:i:s'))->toBe('2026-03-10 23:59:59');
 });
 
-it('builds week buckets from medium explicit date ranges', function () {
+it('builds week buckets from medium explicit date ranges', function (): void {
     $filters = $this->factory->make(null, '2026-01-01', '2026-06-30', 0);
 
     expect($filters->rangeType)->toBe(StatsRangeType::WEEK)
@@ -64,14 +64,14 @@ it('builds week buckets from medium explicit date ranges', function () {
         ->and($filters->rangeAmount)->toBeLessThanOrEqual(27);
 });
 
-it('clamps very long ranges to the bucket limit', function () {
+it('clamps very long ranges to the bucket limit', function (): void {
     $filters = $this->factory->make(null, '2000-01-01', '2026-06-30', 0);
 
     expect($filters->rangeType)->toBe(StatsRangeType::MONTH)
         ->and($filters->rangeAmount)->toBe(AiStatsFilterFactory::MAX_BUCKETS);
 });
 
-it('does not extend an end date of today into the future', function () {
+it('does not extend an end date of today into the future', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-07-07 10:00:00', 'Europe/Berlin'));
 
     $filters = $this->factory->make(null, '2026-07-01', '2026-07-07', 0);
@@ -79,7 +79,7 @@ it('does not extend an end date of today into the future', function () {
     expect($filters->rangeStart->format('Y-m-d H:i:s'))->toBe('2026-07-07 10:00:00');
 });
 
-it('falls back to all projects for a foreign project id', function () {
+it('falls back to all projects for a foreign project id', function (): void {
     $filters = $this->factory->make('last_7_days', null, null, 999999);
 
     expect($filters->projectId)->toBe(StatsFilterDto::TRACK_ALL);

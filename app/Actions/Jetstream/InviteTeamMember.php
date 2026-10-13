@@ -27,7 +27,7 @@ class InviteTeamMember implements InvitesTeamMembers
 
         $this->validate($team, $email, $role);
 
-        InvitingTeamMember::dispatch($team, $email, $role);
+        event(new InvitingTeamMember($team, $email, $role));
 
         $invitation = $team->teamInvitations()->create([
             'email' => $email,
@@ -62,7 +62,7 @@ class InviteTeamMember implements InvitesTeamMembers
         return array_filter([
             'email' => [
                 'required', 'email',
-                Rule::unique('team_invitations')->where(function (Builder $query) use ($team) {
+                Rule::unique('team_invitations')->where(function (Builder $query) use ($team): void {
                     $query->where('team_id', $team->id);
                 }),
             ],
@@ -77,7 +77,7 @@ class InviteTeamMember implements InvitesTeamMembers
      */
     protected function ensureUserIsNotAlreadyOnTeam(Team $team, string $email): Closure
     {
-        return function ($validator) use ($team, $email) {
+        return function ($validator) use ($team, $email): void {
             $validator->errors()->addIf(
                 $team->hasUserWithEmail($email),
                 'email',

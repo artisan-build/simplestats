@@ -8,7 +8,7 @@ use App\Models\Team;
 use App\Models\User;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->skipUnlessSaas();
 
     $this->admin = User::factory()->create(['is_admin' => true]);
@@ -21,11 +21,11 @@ beforeEach(function () {
     $this->project = Project::factory()->create(['team_id' => $this->team->id]);
 });
 
-test('track revenue page loads for admin users', function () {
+test('track revenue page loads for admin users', function (): void {
     Livewire::test(TrackRevenue::class)->assertOk();
 });
 
-test('tracking revenue for an existing user creates a stats user and payment', function () {
+test('tracking revenue for an existing user creates a stats user and payment', function (): void {
     $targetUser = User::factory()->create();
 
     Livewire::test(TrackRevenue::class)
@@ -64,7 +64,7 @@ test('tracking revenue for an existing user creates a stats user and payment', f
         ->and($payment->team_id)->toBe($this->team->id);
 });
 
-test('tracking revenue for an external buyer uses a uuid stats user id', function () {
+test('tracking revenue for an external buyer uses a uuid stats user id', function (): void {
     Livewire::test(TrackRevenue::class)
         ->fillForm([
             'project_id' => $this->project->id,
@@ -92,7 +92,7 @@ test('tracking revenue for an external buyer uses a uuid stats user id', functio
         ->and($statsUser->project_id)->toBe($this->project->id);
 });
 
-test('non-admin users cannot access the track revenue page', function () {
+test('non-admin users cannot access the track revenue page', function (): void {
     $user = User::factory()->create(['is_admin' => false]);
 
     $this->actingAs($user)

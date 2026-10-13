@@ -27,21 +27,33 @@ class Campaign extends Model
         'project_id',
     ];
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * @return HasMany<StatsTrackCampaign, $this>
+     */
     public function statsTrackCampaigns(): HasMany
     {
         return $this->hasMany(StatsTrackCampaign::class);
     }
 
+    /**
+     * @return HasMany<AdSpend, $this>
+     */
     public function adSpends(): HasMany
     {
         return $this->hasMany(AdSpend::class);

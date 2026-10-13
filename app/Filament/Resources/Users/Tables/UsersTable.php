@@ -89,9 +89,9 @@ class UsersTable
 
                         return SubscriptionService::PLAN_FREE;
                     })
-                    ->icon(fn (string $state) => $planNameToIcon[$state] ?? 'heroicon-o-gift')
+                    ->icon(fn (string $state): mixed => $planNameToIcon[$state] ?? 'heroicon-o-gift')
                     ->badge()
-                    ->color(fn (string $state) => $planNameToColor[$state] ?? 'gray')
+                    ->color(fn (string $state): mixed => $planNameToColor[$state] ?? 'gray')
                     ->sortable(query: fn (Builder $query, string $direction) => $query->orderBy('computed_plan_rank', $direction)),
                 TextColumn::make('subscription_ends_at')
                     ->label('Ends At')

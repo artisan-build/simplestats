@@ -57,7 +57,7 @@ class HandleInertiaRequests extends Middleware
         // fresh routes after a deploy via Inertia's asset-version reload.
         if ($isSsrPage || $request->is('blog', 'blog/*')) {
             $merge['ziggy'] = (new Ziggy)->toArray();
-            $merge['translations'] = fn () => $this->getTranslations();
+            $merge['translations'] = fn (): array => $this->getTranslations();
             $merge['supportedLocales'] = array_keys(config('locales.supported', []));
             $merge['localeConfig'] = config('locales.supported');
             $merge['defaultLocale'] = config('locales.default');
@@ -67,7 +67,7 @@ class HandleInertiaRequests extends Middleware
         if (auth()->user()) {
             $merge['isAdmin'] = auth()->user()->isAdmin();
             $merge['tourCompleted'] = $request->user()->settings['tourCompleted'] ?? false;
-            $merge['loginSummaryEligible'] = app(LoginSummaryService::class)->isEligible($request->user());
+            $merge['loginSummaryEligible'] = resolve(LoginSummaryService::class)->isEligible($request->user());
             $merge['feedbackTypes'] = FeedbackType::toOptions();
 
             if ($currentTeam = auth()->user()->currentTeam) {
@@ -93,13 +93,13 @@ class HandleInertiaRequests extends Middleware
         $supportedLocales = array_keys(config('locales.supported', []));
 
         $patterns = collect($publicPaths)
-            ->map(fn (string $path) => ltrim($path, '/'))
+            ->map(fn (string $path): string => ltrim($path, '/'))
             ->flatMap(function (string $path) use ($defaultLocale, $supportedLocales) {
                 $wildcardPath = $path === '' ? '/' : "$path/*";
 
                 return collect($supportedLocales)
-                    ->reject(fn ($l) => $l === $defaultLocale)
-                    ->flatMap(fn ($l) => $path === ''
+                    ->reject(fn ($l): bool => $l === $defaultLocale)
+                    ->flatMap(fn ($l): array => $path === ''
                         ? [$l]
                         : ["$l/$path", "$l/$path/*"]
                     )

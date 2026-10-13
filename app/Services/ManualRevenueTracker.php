@@ -35,13 +35,13 @@ class ManualRevenueTracker
         auth()->setUser($project);
 
         try {
-            $userInput = app(StatsUserValidator::class)->validate($userData);
-            $paymentInput = app(StatsPaymentValidator::class)->validate($paymentData);
+            $userInput = resolve(StatsUserValidator::class)->validate($userData);
+            $paymentInput = resolve(StatsPaymentValidator::class)->validate($paymentData);
 
             // Run synchronously and in order so the stats user exists before the
             // payment that references it is persisted.
-            TrackStatsUser::dispatchSync($userInput);
-            TrackStatsPayment::dispatchSync($paymentInput);
+            dispatch_sync(new TrackStatsUser($userInput));
+            dispatch_sync(new TrackStatsPayment($paymentInput));
         } finally {
             Context::forget('team_id');
             Context::forget('project_id');

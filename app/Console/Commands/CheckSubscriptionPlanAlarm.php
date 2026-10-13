@@ -27,14 +27,14 @@ class CheckSubscriptionPlanAlarm extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        Team::with('owner', 'billingOwner.subscriptions')->get()->each(function (Team $team) {
+        Team::with('owner', 'billingOwner.subscriptions')->get()->each(function (Team $team): void {
             if (empty($team->owner)) {
                 return;
             }
 
-            if ($alarms = app(SubscriptionService::class)->getPlanAlarm($team)) {
+            if ($alarms = resolve(SubscriptionService::class)->getPlanAlarm($team)) {
                 Mail::to($team->owner->email)->send(new SubscriptionPlanAlarm($team->owner, $alarms));
                 $this->info('Alarm Mail sent to '.$team->owner->email);
             }

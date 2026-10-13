@@ -17,17 +17,6 @@ class Team extends JetstreamTeam
     use HasPublicUuid;
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'personal_team' => 'boolean',
-        'events_reset_at' => 'datetime',
-        'ai_api_key' => 'encrypted',
-    ];
-
-    /**
      * The team is serialized to the frontend on the team settings page; the
      * decrypted BYOK key must never leave the backend.
      *
@@ -57,12 +46,17 @@ class Team extends JetstreamTeam
      * team, projects and API tokens keep running, so the plain `owner` relation
      * is null there. Plan resolution must survive that, otherwise every API
      * request of an otherwise healthy team fails.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function billingOwner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
 
+    /**
+     * @return HasMany<Project, $this>
+     */
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
@@ -75,18 +69,41 @@ class Team extends JetstreamTeam
             ->exists();
     }
 
+    /**
+     * @return HasMany<StatsUser, $this>
+     */
     public function statsUsers(): HasMany
     {
         return $this->hasMany(StatsUser::class);
     }
 
+    /**
+     * @return HasMany<StatsLogin, $this>
+     */
     public function statsLogins(): HasMany
     {
         return $this->hasMany(StatsLogin::class);
     }
 
+    /**
+     * @return HasMany<StatsPayment, $this>
+     */
     public function statsPayments(): HasMany
     {
         return $this->hasMany(StatsPayment::class);
+    }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'personal_team' => 'boolean',
+            'events_reset_at' => 'datetime',
+            'ai_api_key' => 'encrypted',
+        ];
     }
 }

@@ -21,7 +21,7 @@ class StatsCustomPropertyValueFactory extends Factory
             'team_id' => $name->team_id,
             'project_id' => $name->project_id,
             'stats_custom_property_name_id' => $name->id,
-            'value' => $this->faker->word(),
+            'value' => fake()->word(),
         ];
     }
 }

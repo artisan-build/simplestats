@@ -13,12 +13,10 @@ enum SubscriptionInterval: string
 
     public static function toOptions(): array
     {
-        return collect(self::cases())->map(function (SubscriptionInterval $interval) {
-            return [
-                'id' => $interval->value,
-                'name' => $interval->title(),
-            ];
-        })->values()->toArray();
+        return collect(self::cases())->map(fn (SubscriptionInterval $interval): array => [
+            'id' => $interval->value,
+            'name' => $interval->title(),
+        ])->values()->all();
     }
 
     public function title(): string

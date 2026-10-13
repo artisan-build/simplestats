@@ -25,11 +25,11 @@ class SetupProjectController extends Controller
         $project = $request->user()->currentTeam->projects()->first();
 
         if ($project) {
-            app(UpdateProject::class)($request->user(), $project, $request->validated());
+            resolve(UpdateProject::class)($request->user(), $project, $request->validated());
         } else {
-            app(CreateProject::class)($request->user(), $request->validated());
+            resolve(CreateProject::class)($request->user(), $request->validated());
         }
 
-        return redirect()->route('setup.installation.index');
+        return to_route('setup.installation.index');
     }
 }

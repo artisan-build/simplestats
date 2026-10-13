@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        Schema::table('projects', function (Blueprint $table): void {
             $table->renameColumn('impersonate_base_url', 'user_link_base_url');
         });
     }

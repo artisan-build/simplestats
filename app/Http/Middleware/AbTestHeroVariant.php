@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AbTestHeroVariant
 {
-    private const COOKIE = 'hero_variant';
+    private const string COOKIE = 'hero_variant';
 
     /**
      * Active hero A/B variants. Must mirror the keys in Hero.vue's `variants`.
@@ -21,7 +21,7 @@ class AbTestHeroVariant
      *
      * @var list<string>
      */
-    private const VARIANTS = ['control', 'visitor_to_revenue', 'outcome_rotation'];
+    private const array VARIANTS = ['control', 'visitor_to_revenue', 'outcome_rotation'];
 
     private const TTL_MINUTES = 60 * 24 * 365;
 

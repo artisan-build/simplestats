@@ -13,24 +13,21 @@ use Laravel\Socialite\Contracts\User as ProviderUserContract;
 class CreateUserFromProvider implements CreatesUserFromProvider
 {
     /**
-     * The creates connected accounts instance.
-     */
-    public CreatesConnectedAccounts $createsConnectedAccounts;
-
-    /**
      * Create a new action instance.
      */
-    public function __construct(CreatesConnectedAccounts $createsConnectedAccounts)
-    {
-        $this->createsConnectedAccounts = $createsConnectedAccounts;
-    }
+    public function __construct(
+        /**
+         * The creates connected accounts instance.
+         */
+        public CreatesConnectedAccounts $createsConnectedAccounts
+    ) {}
 
     /**
      * Create a new user from a social provider user.
      */
     public function create(string $provider, ProviderUserContract $providerUser): User
     {
-        $user = app(CreateNewUser::class)->create([
+        $user = resolve(CreateNewUser::class)->create([
             'name' => $providerUser->getName(),
             'email' => $providerUser->getEmail(),
             'sso' => true,

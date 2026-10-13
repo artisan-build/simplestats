@@ -25,40 +25,55 @@ class DataImport extends Model
         'created_by',
     ];
 
-    protected $casts = [
-        'type' => DataImportType::class,
-        'rolled_back_at' => 'datetime',
-    ];
-
     protected $appends = [
         'rows_progress',
     ];
 
-    public function rowsProgress(): Attribute
+    protected function rowsProgress(): Attribute
     {
         return Attribute::make(
-            get: fn () => round(($this->rows_imported / $this->rows_max) * 100),
+            get: fn (): float => round(($this->rows_imported / $this->rows_max) * 100),
         );
 
     }
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
+    /**
+     * @return MorphOne<TrackedJob, $this>
+     */
     public function trackedJob(): MorphOne
     {
         return $this->morphOne(TrackedJob::class, 'trackable');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'type' => DataImportType::class,
+            'rolled_back_at' => 'datetime',
+        ];
     }
 }

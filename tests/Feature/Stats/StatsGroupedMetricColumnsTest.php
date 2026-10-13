@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -29,7 +29,7 @@ beforeEach(function () {
     Context::add('team_id', $this->team->id);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     Carbon::setTestNow();
 });
 
@@ -95,7 +95,7 @@ function insertReturnLogin(int $teamId, int $projectId, string $userId, string $
     ]);
 }
 
-it('computes per-dimension revenue ratios (arpv/arpu) in the grouped breakdown', function () {
+it('computes per-dimension revenue ratios (arpv/arpu) in the grouped breakdown', function (): void {
     $sourceId = makeSource($this->team->id, 'newsletter');
 
     insertSourceVisitors($this->team->id, $this->pid, $sourceId, '2026-03-30 12:00:00', 10);
@@ -118,7 +118,7 @@ it('computes per-dimension revenue ratios (arpv/arpu) in the grouped breakdown',
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $grouped = app(StatsAggregationsService::class)
+    $grouped = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'arpv', 10);
 
     $row = $grouped->firstWhere('name', 'newsletter');
@@ -134,7 +134,7 @@ it('computes per-dimension revenue ratios (arpv/arpu) in the grouped breakdown',
         ->and((float) $row['reg2dau'])->toBe(0.0);
 });
 
-it('counts the registration login (counter 1) in the grouped DAU, matching the headline DAU definition', function () {
+it('counts the registration login (counter 1) in the grouped DAU, matching the headline DAU definition', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-04-05 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -156,7 +156,7 @@ it('counts the registration login (counter 1) in the grouped DAU, matching the h
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'dau', 10)
         ->firstWhere('name', 'newsletter');
 
@@ -166,7 +166,7 @@ it('counts the registration login (counter 1) in the grouped DAU, matching the h
         ->and((float) $row['reg2dau'])->toBe(100.0);
 });
 
-it('computes a per-dimension MRR snapshot when withMrr is enabled', function () {
+it('computes a per-dimension MRR snapshot when withMrr is enabled', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
@@ -195,7 +195,7 @@ it('computes a per-dimension MRR snapshot when withMrr is enabled', function () 
         rangeStart: CarbonImmutable::parse('2026-06-15'), comparison: '0',
     );
 
-    $grouped = app(StatsAggregationsService::class)
+    $grouped = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'mrr', 10, withMrr: true);
 
     $row = $grouped->firstWhere('name', 'newsletter');
@@ -207,7 +207,7 @@ it('computes a per-dimension MRR snapshot when withMrr is enabled', function () 
         ->and((float) $row['arps'])->toBe(20.0);
 });
 
-it('omits MRR columns by default so the response stays backward compatible', function () {
+it('omits MRR columns by default so the response stays backward compatible', function (): void {
     $sourceId = makeSource($this->team->id, 'newsletter');
     insertSourceVisitors($this->team->id, $this->pid, $sourceId, '2026-03-30 12:00:00', 3);
 
@@ -216,7 +216,7 @@ it('omits MRR columns by default so the response stays backward compatible', fun
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'visitors', 10)
         ->firstWhere('name', 'newsletter');
 
@@ -226,7 +226,7 @@ it('omits MRR columns by default so the response stays backward compatible', fun
         ->and($row)->toHaveKey('arpv');
 });
 
-it('does not compute MRR for a project that does not track subscriptions even when requested', function () {
+it('does not compute MRR for a project that does not track subscriptions even when requested', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     // Drop the subscription bit (keep visitors+users+payments).
@@ -249,7 +249,7 @@ it('does not compute MRR for a project that does not track subscriptions even wh
         rangeStart: CarbonImmutable::parse('2026-06-15'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'net', 10, withMrr: true)
         ->firstWhere('name', 'newsletter');
 
@@ -257,7 +257,7 @@ it('does not compute MRR for a project that does not track subscriptions even wh
         ->and($row)->not->toHaveKey('mrr');
 });
 
-it('computes a per-dimension time-to-convert median when withTimeToConvert is enabled', function () {
+it('computes a per-dimension time-to-convert median when withTimeToConvert is enabled', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS]);
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -273,7 +273,7 @@ it('computes a per-dimension time-to-convert median when withTimeToConvert is en
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'time_to_convert', 10, withTimeToConvert: true)
         ->firstWhere('name', 'newsletter');
 
@@ -283,7 +283,7 @@ it('computes a per-dimension time-to-convert median when withTimeToConvert is en
         ->and((float) $row['time_to_convert'])->toBe(3.0);
 });
 
-it('omits the time-to-convert column by default', function () {
+it('omits the time-to-convert column by default', function (): void {
     $sourceId = makeSource($this->team->id, 'newsletter');
     insertSourceVisitors($this->team->id, $this->pid, $sourceId, '2026-03-30 12:00:00', 3);
 
@@ -292,7 +292,7 @@ it('omits the time-to-convert column by default', function () {
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'visitors', 10)
         ->firstWhere('name', 'newsletter');
 
@@ -300,7 +300,7 @@ it('omits the time-to-convert column by default', function () {
         ->and($row)->not->toHaveKey('time_to_convert');
 });
 
-it('serves per-dimension time-to-convert through the stats.grouped endpoint with metric=time_to_convert', function () {
+it('serves per-dimension time-to-convert through the stats.grouped endpoint with metric=time_to_convert', function (): void {
     $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS]);
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -327,7 +327,7 @@ it('serves per-dimension time-to-convert through the stats.grouped endpoint with
         ->and((float) $row['time_to_convert'])->toBe(1.0);
 });
 
-it('serves per-dimension MRR through the stats.grouped endpoint with metric=mrr', function () {
+it('serves per-dimension MRR through the stats.grouped endpoint with metric=mrr', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
@@ -362,7 +362,7 @@ it('serves per-dimension MRR through the stats.grouped endpoint with metric=mrr'
         ->and((int) $row['subscribers'])->toBe(1);
 });
 
-it('serves the per-dimension MRR breakdown for the All-projects scope sorted by mrr', function () {
+it('serves the per-dimension MRR breakdown for the All-projects scope sorted by mrr', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $this->project->update(['usage' => $this->project->usage | Project::USAGE_SUBSCRIPTION]);
@@ -400,7 +400,7 @@ it('serves the per-dimension MRR breakdown for the All-projects scope sorted by 
         ->and((int) $row['subscribers'])->toBe(1);
 });
 
-it('falls back to a present column when sorted by a column the query did not select', function () {
+it('falls back to a present column when sorted by a column the query did not select', function (): void {
     $sourceId = makeSource($this->team->id, 'newsletter');
     insertSourceVisitors($this->team->id, $this->pid, $sourceId, '2026-03-30 12:00:00', 3);
 
@@ -411,7 +411,7 @@ it('falls back to a present column when sorted by a column the query did not sel
 
     // withMrr stays false, so mrr is never selected; sorting by it must not emit an
     // ORDER BY on a missing column.
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'mrr', 10)
         ->firstWhere('name', 'newsletter');
 
@@ -420,7 +420,7 @@ it('falls back to a present column when sorted by a column the query did not sel
         ->and((int) $row['visitors'])->toBe(3);
 });
 
-it('computes unbounded per-dimension retention checkpoints when withRetention is enabled', function () {
+it('computes unbounded per-dimension retention checkpoints when withRetention is enabled', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -441,7 +441,7 @@ it('computes unbounded per-dimension retention checkpoints when withRetention is
         rangeStart: CarbonImmutable::parse('2026-05-01'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'ret_c2', 10, withRetention: true)
         ->firstWhere('name', 'newsletter');
 
@@ -452,7 +452,7 @@ it('computes unbounded per-dimension retention checkpoints when withRetention is
         ->and((float) $row['ret_c3'])->toBe(33.3);
 });
 
-it('does not count the registration login (counter 1) as retention while DAU still counts it', function () {
+it('does not count the registration login (counter 1) as retention while DAU still counts it', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -464,7 +464,7 @@ it('does not count the registration login (counter 1) as retention while DAU sti
         rangeStart: CarbonImmutable::parse('2026-05-01'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'ret_c1', 10, withRetention: true)
         ->firstWhere('name', 'newsletter');
 
@@ -474,7 +474,7 @@ it('does not count the registration login (counter 1) as retention while DAU sti
         ->and((float) $row['ret_c3'])->toBe(0.0);
 });
 
-it('right-censors retention checkpoints the cohort cannot have reached yet to null', function () {
+it('right-censors retention checkpoints the cohort cannot have reached yet to null', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -489,7 +489,7 @@ it('right-censors retention checkpoints the cohort cannot have reached yet to nu
         rangeStart: CarbonImmutable::parse('2026-06-12'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'ret_c1', 10, withRetention: true)
         ->firstWhere('name', 'newsletter');
 
@@ -499,7 +499,7 @@ it('right-censors retention checkpoints the cohort cannot have reached yet to nu
         ->and($row['ret_c3'])->toBeNull();
 });
 
-it('treats a user registered exactly N days ago as observable and a return at exactly reg+N as retained', function () {
+it('treats a user registered exactly N days ago as observable and a return at exactly reg+N as retained', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -514,7 +514,7 @@ it('treats a user registered exactly N days ago as observable and a return at ex
         rangeStart: CarbonImmutable::parse('2026-06-08'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'ret_c2', 10, withRetention: true)
         ->firstWhere('name', 'newsletter');
 
@@ -523,7 +523,7 @@ it('treats a user registered exactly N days ago as observable and a return at ex
         ->and($row['ret_c3'])->toBeNull();
 });
 
-it('scales the retention checkpoints with the range granularity and length (12 weeks use 7/21/42 days)', function () {
+it('scales the retention checkpoints with the range granularity and length (12 weeks use 7/21/42 days)', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -538,7 +538,7 @@ it('scales the retention checkpoints with the range granularity and length (12 w
         rangeStart: CarbonImmutable::parse('2026-06-15'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'ret_c1', 10, withRetention: true)
         ->firstWhere('name', 'newsletter');
 
@@ -548,7 +548,7 @@ it('scales the retention checkpoints with the range granularity and length (12 w
         ->and($row['ret_c3'])->toBeNull();
 });
 
-it('buckets users without a dimension value into the fallback row with retention values', function () {
+it('buckets users without a dimension value into the fallback row with retention values', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     // no country on the user, so the location_country grouping falls back to Direct / Unknown
@@ -560,7 +560,7 @@ it('buckets users without a dimension value into the fallback row with retention
         rangeStart: CarbonImmutable::parse('2026-05-01'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'location_country', 'ret_c1', 10, withRetention: true)
         ->firstWhere('name', 'Direct / Unknown');
 
@@ -569,7 +569,7 @@ it('buckets users without a dimension value into the fallback row with retention
         ->and((float) $row['ret_c2'])->toBe(0.0);
 });
 
-it('excludes non-registered user rows from the retention denominators but not from regs', function () {
+it('excludes non-registered user rows from the retention denominators but not from regs', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -583,7 +583,7 @@ it('excludes non-registered user rows from the retention denominators but not fr
         rangeStart: CarbonImmutable::parse('2026-05-01'), comparison: '0',
     );
 
-    $row = app(StatsAggregationsService::class)
+    $row = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'ret_c1', 10, withRetention: true)
         ->firstWhere('name', 'newsletter');
 
@@ -593,7 +593,7 @@ it('excludes non-registered user rows from the retention denominators but not fr
         ->and((float) $row['ret_c1'])->toBe(100.0);
 });
 
-it('omits the retention columns by default and for projects that do not track registrations', function () {
+it('omits the retention columns by default and for projects that do not track registrations', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -604,7 +604,7 @@ it('omits the retention columns by default and for projects that do not track re
         rangeStart: CarbonImmutable::parse('2026-05-01'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $row = $service->getAggregatedGroupedData($filter, 'track_source', 'visitors', 10)
         ->firstWhere('name', 'newsletter');
@@ -625,7 +625,7 @@ it('omits the retention columns by default and for projects that do not track re
         ->and((int) $row['visitors'])->toBe(3);
 });
 
-it('serves per-dimension retention through the stats.grouped endpoint sorted by ret_c2 with nulls last', function () {
+it('serves per-dimension retention through the stats.grouped endpoint sorted by ret_c2 with nulls last', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceA = makeSource($this->team->id, 'google');
@@ -659,7 +659,7 @@ it('serves per-dimension retention through the stats.grouped endpoint sorted by 
     expect($names->values()->all())->toBe(['google', 'twitter', 'fresh']);
 });
 
-it('respects the active dimension filter in the retention breakdown', function () {
+it('respects the active dimension filter in the retention breakdown', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceA = makeSource($this->team->id, 'google');
@@ -690,7 +690,7 @@ it('respects the active dimension filter in the retention breakdown', function (
         ->and((float) $data->firstWhere('name', 'twitter')['ret_c1'])->toBe(0.0);
 });
 
-it('keeps the events group working when retention metric and sort are requested', function () {
+it('keeps the events group working when retention metric and sort are requested', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $response = $this->actingAs($this->user)->getJson(route('stats.grouped', [
@@ -707,7 +707,7 @@ it('keeps the events group working when retention metric and sort are requested'
     $response->assertOk();
 });
 
-it('derives the retention checkpoint offsets from range unit and length', function () {
+it('derives the retention checkpoint offsets from range unit and length', function (): void {
     expect(StatsRangeType::DAY->retentionCheckpointDays(7))->toBe([1, 2, 3])
         ->and(StatsRangeType::DAY->retentionCheckpointDays(30))->toBe([1, 7, 15])
         ->and(StatsRangeType::WEEK->retentionCheckpointDays(12))->toBe([7, 21, 42])
@@ -716,7 +716,7 @@ it('derives the retention checkpoint offsets from range unit and length', functi
         ->and(StatsRangeType::HOUR->retentionCheckpointDays(24))->toBe([1, 7, 30]);
 });
 
-it('computes per-dimension NAU alongside the retention checkpoints when withNau is enabled', function () {
+it('computes per-dimension NAU alongside the retention checkpoints when withNau is enabled', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceA = makeSource($this->team->id, 'newsletter');
@@ -738,7 +738,7 @@ it('computes per-dimension NAU alongside the retention checkpoints when withNau 
         rangeStart: CarbonImmutable::parse('2026-06-15'), comparison: '0',
     );
 
-    $grouped = app(StatsAggregationsService::class)
+    $grouped = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filter, 'track_source', 'nau', 10, withRetention: true, withNau: true);
 
     $newsletter = $grouped->firstWhere('name', 'newsletter');
@@ -756,7 +756,7 @@ it('computes per-dimension NAU alongside the retention checkpoints when withNau 
         ->and($oldtimers['ret_c1'])->toBeNull();
 });
 
-it('serves per-dimension NAU with retention through the stats.grouped endpoint with metric=nau', function () {
+it('serves per-dimension NAU with retention through the stats.grouped endpoint with metric=nau', function (): void {
     Carbon::setTestNow(Carbon::parse('2026-06-15 12:00:00'));
 
     $sourceId = makeSource($this->team->id, 'newsletter');
@@ -783,7 +783,7 @@ it('serves per-dimension NAU with retention through the stats.grouped endpoint w
         ->and((float) $row['ret_c1'])->toBe(100.0);
 });
 
-it('caps the grouped breakdown at the requested limit and drops all-zero dimension rows', function () {
+it('caps the grouped breakdown at the requested limit and drops all-zero dimension rows', function (): void {
     $small = makeSource($this->team->id, 'small');
     $medium = makeSource($this->team->id, 'medium');
     $large = makeSource($this->team->id, 'large');
@@ -798,7 +798,7 @@ it('caps the grouped breakdown at the requested limit and drops all-zero dimensi
         rangeStart: CarbonImmutable::parse('2026-03-30'), comparison: '0',
     );
 
-    $service = app(StatsAggregationsService::class);
+    $service = resolve(StatsAggregationsService::class);
 
     $top = $service->getAggregatedGroupedData($filter, 'track_source', 'visitors', 2);
 

@@ -56,12 +56,12 @@ class StatsCustomPropertyService
     {
         return StatsCustomPropertyName::query()
             ->when($filters->projectId, fn ($query) => $query->where('project_id', $filters->projectId))
-            ->whereExists(fn ($exists) => self::propertyPivotExists($exists))
+            ->whereExists(fn (QueryBuilder $exists): QueryBuilder => self::propertyPivotExists($exists))
             ->selectRaw('MIN(id) as id, name')
             ->groupBy('name')
             ->orderBy('name')
             ->get()
-            ->map(fn (StatsCustomPropertyName $propertyName) => [
+            ->map(fn (StatsCustomPropertyName $propertyName): array => [
                 'id' => $propertyName->id,
                 'name' => Str::title(str_replace('_', ' ', $propertyName->name)),
             ])

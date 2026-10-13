@@ -19,9 +19,9 @@ use Illuminate\Support\Str;
 
 class CampaignSeeder extends Seeder
 {
-    private const MONTHS_BACK = 6;
+    private const int MONTHS_BACK = 6;
 
-    private const CAMPAIGNS_PER_PROJECT = 5;
+    private const int CAMPAIGNS_PER_PROJECT = 5;
 
     /**
      * Target ROAS each demo campaign is sized to, applied by campaign position so
@@ -30,7 +30,7 @@ class CampaignSeeder extends Seeder
      * means lower spend, hence lower CAC); LTV:CAC and payback then layer each
      * campaign's own subscription economics on top, so they vary independently of ROAS.
      */
-    private const TARGET_ROAS = [4.0, 2.0, 1.0, 0.6, 0.35];
+    private const array TARGET_ROAS = [4.0, 2.0, 1.0, 0.6, 0.35];
 
     /**
      * Demo marketing campaigns: for each project, wrap a few of the utm_campaign
@@ -41,9 +41,9 @@ class CampaignSeeder extends Seeder
      */
     public function run(): void
     {
-        $statsDetails = app(StatsDetailsService::class);
+        $statsDetails = resolve(StatsDetailsService::class);
 
-        Project::with('team:id,currency')->get()->each(function (Project $project) use ($statsDetails) {
+        Project::with('team:id,currency')->get()->each(function (Project $project) use ($statsDetails): void {
             $utmIds = StatsUser::where('project_id', $project->id)
                 ->whereNotNull('stats_track_campaign_id')
                 ->distinct()
@@ -68,7 +68,7 @@ class CampaignSeeder extends Seeder
                 ->whereNull('campaign_id')
                 ->get()
                 ->values()
-                ->map(function (StatsTrackCampaign $utm) use ($project) {
+                ->map(function (StatsTrackCampaign $utm) use ($project): array {
                     $campaign = Campaign::firstOrCreate([
                         'team_id' => $project->team_id,
                         'project_id' => $project->id,
@@ -111,8 +111,8 @@ class CampaignSeeder extends Seeder
         );
 
         $netByUtm = collect($statsDetails->getGroupedData($filter, 'track_campaign', self::CAMPAIGNS_PER_PROJECT * 4, 'net'))
-            ->keyBy(fn (array $row) => (int) ($row['type_id'] ?? 0))
-            ->map(fn (array $row) => (float) ($row['net'] ?? 0));
+            ->keyBy(fn (array $row): int => (int) ($row['type_id'] ?? 0))
+            ->map(fn (array $row): float => (float) ($row['net'] ?? 0));
 
         $currency = $project->team->currency ?? 'EUR';
         $rows = [];

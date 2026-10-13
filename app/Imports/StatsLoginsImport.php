@@ -13,7 +13,7 @@ class StatsLoginsImport extends BaseStatsImport
         parent::__construct(
             $dataImport,
             StatsLogin::class,
-            app(StatsLoginValidator::class)
+            resolve(StatsLoginValidator::class)
         );
     }
 }

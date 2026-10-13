@@ -29,7 +29,7 @@ class CreateTeam implements CreatesTeams
             'timezone' => ['required', Rule::in(timezone_identifiers_list())],
         ])->validateWithBag('createTeam');
 
-        AddingTeam::dispatch($user);
+        event(new AddingTeam($user));
 
         $user->switchTeam($team = $user->ownedTeams()->create([
             'name' => $input['name'],

@@ -29,7 +29,7 @@ readonly class BlogService
     {
         $authors = $this->loadAuthors($posts);
 
-        return $posts->map(fn (Post $post) => [
+        return $posts->map(fn (Post $post): array => [
             'slug' => $post->slug,
             'title' => $post->title,
             'excerpt' => $post->excerpt,
@@ -60,7 +60,7 @@ readonly class BlogService
     public function resolvePostContent(Post $post): string
     {
         return Cache::get(
-            self::highlightPostCacheKey($post),
+            $this->highlightPostCacheKey($post),
             $post->html
         );
     }
@@ -68,7 +68,7 @@ readonly class BlogService
     public function warmPostHighlightCache(Post $post): void
     {
         Cache::put(
-            self::highlightPostCacheKey($post),
+            $this->highlightPostCacheKey($post),
             $this->highlightService->highlightCodeBlocks($post->html),
             config('md-blog.cache.ttl')
         );
@@ -76,7 +76,7 @@ readonly class BlogService
 
     public function hasWarmHighlightCache(Post $post): bool
     {
-        return Cache::has(self::highlightPostCacheKey($post));
+        return Cache::has($this->highlightPostCacheKey($post));
     }
 
     /**
@@ -84,7 +84,7 @@ readonly class BlogService
      * fresh git clone, so file mtimes rotate on all posts while their content
      * stays the same. The hash keeps unchanged posts warm across deploys.
      */
-    private static function highlightPostCacheKey(Post $post): string
+    private function highlightPostCacheKey(Post $post): string
     {
         return 'blog.highlighted.'.$post->slug.'.'.md5($post->html);
     }

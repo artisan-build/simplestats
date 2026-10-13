@@ -167,8 +167,8 @@ class StatsFilterConditionsBuilder
             if ($referenceValue !== null) {
                 $propertyValueIds = StatsCustomPropertyService::equivalentValueIds($referenceValue)->implode(',');
 
-                $userPropertyCondition = fn (string $id, string $table) => "{$id} IN (SELECT sp.propertyable_id FROM stats_custom_properties sp WHERE sp.propertyable_type = 'stats_user' AND sp.stats_custom_property_value_id IN ({$propertyValueIds}) AND sp.project_id = {$table}.project_id)";
-                $visitorPropertyCondition = fn (string $id, string $table) => "CAST({$id} AS varchar) IN (SELECT sp.propertyable_id FROM stats_custom_properties sp WHERE sp.propertyable_type = 'stats_visitor' AND sp.stats_custom_property_value_id IN ({$propertyValueIds}) AND sp.project_id = {$table}.project_id)";
+                $userPropertyCondition = fn (string $id, string $table): string => "{$id} IN (SELECT sp.propertyable_id FROM stats_custom_properties sp WHERE sp.propertyable_type = 'stats_user' AND sp.stats_custom_property_value_id IN ({$propertyValueIds}) AND sp.project_id = {$table}.project_id)";
+                $visitorPropertyCondition = fn (string $id, string $table): string => "CAST({$id} AS varchar) IN (SELECT sp.propertyable_id FROM stats_custom_properties sp WHERE sp.propertyable_type = 'stats_visitor' AND sp.stats_custom_property_value_id IN ({$propertyValueIds}) AND sp.project_id = {$table}.project_id)";
 
                 $conditions['propertyConditionUser'] = ' AND '.$userPropertyCondition('stats.id', 'stats').' ';
                 $conditions['propertyConditionVisitor'] = ' AND '.$visitorPropertyCondition('stats.id', 'stats').' ';
@@ -191,8 +191,8 @@ class StatsFilterConditionsBuilder
             // events grouped query: narrow the buckets to the selected event itself
             $conditions['eventConditionGroup'] = " AND stats.id = {$eventId} ";
 
-            $userEventCondition = fn (string $id, string $table) => "{$id} IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = {$table}.project_id AND ce_f.stats_user_id IS NOT NULL)";
-            $visitorEventCondition = fn (string $id, string $table) => "{$id} IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = {$table}.project_id AND ce_f.stats_visitor_id IS NOT NULL)";
+            $userEventCondition = fn (string $id, string $table): string => "{$id} IN (SELECT DISTINCT ce_f.stats_user_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = {$table}.project_id AND ce_f.stats_user_id IS NOT NULL)";
+            $visitorEventCondition = fn (string $id, string $table): string => "{$id} IN (SELECT DISTINCT ce_f.stats_visitor_id FROM stats_custom_events ce_f WHERE ce_f.stats_custom_event_name_id = {$eventId} AND ce_f.project_id = {$table}.project_id AND ce_f.stats_visitor_id IS NOT NULL)";
 
             $conditions['eventConditionUser'] = ' AND '.$userEventCondition('stats.id', 'stats').' ';
             $conditions['eventConditionVisitor'] = ' AND '.$visitorEventCondition('stats.id', 'stats').' ';

@@ -18,7 +18,7 @@ class EnsureUserHasTeam
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')
+            return to_route('login')
                 ->withErrors(['email' => 'Your team access has been revoked. Please contact your administrator.']);
         }
 

@@ -22,7 +22,7 @@ class CampaignFactory extends Factory
         return [
             'project_id' => fn () => Project::factory(),
             'team_id' => fn (array $attributes) => Project::find($attributes['project_id'])?->team_id ?? throw new RuntimeException('Campaign needs a project'),
-            'name' => $this->faker->unique()->words(2, true),
+            'name' => fake()->unique()->words(2, true),
         ];
     }
 }

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         foreach (['stats_users', 'stats_payments'] as $table) {
-            Schema::table($table, function (Blueprint $table) {
+            Schema::table($table, function (Blueprint $table): void {
                 $table->unsignedBigInteger('data_import_id')->nullable()->index();
 
                 $table->foreign('data_import_id')

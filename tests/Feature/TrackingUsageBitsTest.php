@@ -3,14 +3,14 @@
 use App\Models\Project;
 use App\Models\User;
 
-test('custom events are no longer a tracking usage bit', function () {
+test('custom events are no longer a tracking usage bit', function (): void {
     expect(Project::getUsages()->keys()->all())
         ->toBe(['visitors', 'users', 'payments', 'subscription']);
 
     expect(Project::getUsageBitsCount())->toBe(15);
 });
 
-test('migration clears the retired events bit from project usage', function () {
+test('migration clears the retired events bit from project usage', function (): void {
     $user = User::factory()->withPersonalTeam()->create();
     $team = $user->currentTeam;
 

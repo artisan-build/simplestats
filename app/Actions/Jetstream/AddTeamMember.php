@@ -27,13 +27,13 @@ class AddTeamMember implements AddsTeamMembers
 
         $newTeamMember = Jetstream::findUserByEmailOrFail($email);
 
-        AddingTeamMember::dispatch($team, $newTeamMember);
+        event(new AddingTeamMember($team, $newTeamMember));
 
         $team->users()->attach(
             $newTeamMember, ['role' => $role]
         );
 
-        TeamMemberAdded::dispatch($team, $newTeamMember);
+        event(new TeamMemberAdded($team, $newTeamMember));
     }
 
     /**
@@ -71,7 +71,7 @@ class AddTeamMember implements AddsTeamMembers
      */
     protected function ensureUserIsNotAlreadyOnTeam(Team $team, string $email): Closure
     {
-        return function ($validator) use ($team, $email) {
+        return function ($validator) use ($team, $email): void {
             $validator->errors()->addIf(
                 $team->hasUserWithEmail($email),
                 'email',

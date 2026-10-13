@@ -17,7 +17,7 @@ use App\Services\StatsAggregationsService;
 use App\Services\StatsCustomPropertyService;
 use Database\Seeders\TestUserSeeder;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -37,7 +37,7 @@ function propertyFilters(?Project $project, int $rangeAmount = 30): StatsFilterD
     );
 }
 
-test('property aggregation groups registrations, visitors and revenue by value', function () {
+test('property aggregation groups registrations, visitors and revenue by value', function (): void {
 
     // 2 free users, 1 pro user (the pro user has a 100.00 payment)
     $freeUsers = StatsUser::factory(2)->create(['project_id' => $this->project->id, 'time' => now()->subDays(2)]);
@@ -62,7 +62,7 @@ test('property aggregation groups registrations, visitors and revenue by value',
 
     $nameId = StatsCustomPropertyName::where('name', 'ab_test')->value('id');
 
-    $data = app(StatsAggregationsService::class)
+    $data = resolve(StatsAggregationsService::class)
         ->getAggregatedPropertyData(propertyFilters($this->project), $nameId, 'reg', 10)
         ->keyBy('name');
 
@@ -73,7 +73,7 @@ test('property aggregation groups registrations, visitors and revenue by value',
         ->and((float) $data['A']['net'])->toBe(0.0);
 });
 
-test('the grouped endpoint returns property data for the dashboard', function () {
+test('the grouped endpoint returns property data for the dashboard', function (): void {
 
     $user = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $user->recordCustomProperties(['ab_test' => 'B']);
@@ -97,7 +97,7 @@ test('the grouped endpoint returns property data for the dashboard', function ()
         ->and((int) $response->json('data.0.reg'))->toBe(1);
 });
 
-test('changing the property dimension persists the selection in the user settings', function () {
+test('changing the property dimension persists the selection in the user settings', function (): void {
 
     $user = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $user->recordCustomProperties(['ab_test' => 'B']);
@@ -124,7 +124,7 @@ test('changing the property dimension persists the selection in the user setting
     expect($this->user->refresh()->settings['selectedGroupTypes'][$this->project->uuid]['property'])->toBe($nameId);
 });
 
-test('the grouped endpoint rejects a property name from another team', function () {
+test('the grouped endpoint rejects a property name from another team', function (): void {
     $response = $this->getJson(route('stats.grouped', [
         'project_id' => $this->project->id,
         'stats_type' => 'property',
@@ -134,7 +134,7 @@ test('the grouped endpoint rejects a property name from another team', function 
     $response->assertStatus(422);
 });
 
-test('property dimensions are deduplicated across projects and scoped per project', function () {
+test('property dimensions are deduplicated across projects and scoped per project', function (): void {
     $project2 = Project::factory()->create(['team_id' => $this->project->team_id]);
 
     $user1 = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
@@ -161,12 +161,12 @@ test('property dimensions are deduplicated across projects and scoped per projec
         comparison: '0',
     );
 
-    $data = app(StatsAggregationsService::class)->getAggregatedPropertyData($allFilters, $nameId, 'reg', 10);
+    $data = resolve(StatsAggregationsService::class)->getAggregatedPropertyData($allFilters, $nameId, 'reg', 10);
 
     expect($data->pluck('name')->sort()->values()->all())->toBe(['A', 'B']);
 });
 
-test('property dimensions stay visible regardless of the selected period', function () {
+test('property dimensions stay visible regardless of the selected period', function (): void {
 
     // "legacy" is only bound to a user registered 60 days ago
     $oldUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
@@ -184,7 +184,7 @@ test('property dimensions stay visible regardless of the selected period', funct
     expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project, 90))->pluck('name')->all())->toBe(['Ab Test', 'Legacy']);
 });
 
-test('property dimensions exclude names that were never recorded', function () {
+test('property dimensions exclude names that were never recorded', function (): void {
 
     // A name lookup row with no pivot entries (e.g. created, then all its
     // entities deleted) must not produce a tab.
@@ -196,7 +196,7 @@ test('property dimensions exclude names that were never recorded', function () {
     expect(StatsCustomPropertyService::getPropertyDimensions(propertyFilters($this->project))->pluck('name')->all())->toBe([]);
 });
 
-test('the property value filter narrows grouped stats to matching entities', function () {
+test('the property value filter narrows grouped stats to matching entities', function (): void {
 
     // track_source is set explicitly: the factory may randomize it to null,
     // and users without a source do not appear in any source bucket
@@ -219,13 +219,13 @@ test('the property value filter narrows grouped stats to matching entities', fun
         propertyValue: $proValueId,
     );
 
-    $data = app(StatsAggregationsService::class)->getAggregatedGroupedData($filters, 'track_source', 'reg', 10);
+    $data = resolve(StatsAggregationsService::class)->getAggregatedGroupedData($filters, 'track_source', 'reg', 10);
 
     // only the 2 "pro" users survive the filter, the "free" user is excluded
     expect((int) $data->sum('reg'))->toBe(2);
 });
 
-test('an active property value filter narrows the property group itself', function () {
+test('an active property value filter narrows the property group itself', function (): void {
 
     $proUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $freeUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
@@ -246,7 +246,7 @@ test('an active property value filter narrows the property group itself', functi
         propertyValue: $proValueId,
     );
 
-    $aggregationsService = app(StatsAggregationsService::class);
+    $aggregationsService = resolve(StatsAggregationsService::class);
 
     // same dimension: only the selected value remains
     expect($aggregationsService->getAggregatedPropertyData($filters, $abTestNameId, 'reg', 10)->pluck('name')->all())->toBe(['B']);
@@ -255,7 +255,7 @@ test('an active property value filter narrows the property group itself', functi
     expect($aggregationsService->getAggregatedPropertyData($filters, $companyNameId, 'reg', 10)->pluck('name')->all())->toBe(['acme']);
 });
 
-test('an active property value filter narrows the triggered counts of the events group', function () {
+test('an active property value filter narrows the triggered counts of the events group', function (): void {
 
     $proVisitor = StatsVisitor::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $freeVisitor = StatsVisitor::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
@@ -296,7 +296,7 @@ test('an active property value filter narrows the triggered counts of the events
         propertyValue: $proValueId,
     );
 
-    $grouped = app(StatsAggregationsService::class)
+    $grouped = resolve(StatsAggregationsService::class)
         ->getAggregatedGroupedData($filters, 'custom_event_name', 'name', 10)
         ->keyBy('name');
 
@@ -307,7 +307,7 @@ test('an active property value filter narrows the triggered counts of the events
         ->and((int) $grouped['signup_clicked']['visitors'])->toBe(1);
 });
 
-test('an active property value filter narrows the chart aggregations', function () {
+test('an active property value filter narrows the chart aggregations', function (): void {
 
     $proUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $freeUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
@@ -330,14 +330,14 @@ test('an active property value filter narrows the chart aggregations', function 
         propertyValue: $proValueId,
     );
 
-    $data = app(StatsAggregationsService::class)->getAggregatedData($filters);
+    $data = resolve(StatsAggregationsService::class)->getAggregatedData($filters);
 
     // only the "pro" visitor and the "pro" registration survive in the charts
     expect((int) $data->sum('pd_visitor'))->toBe(1)
         ->and((int) $data->sum('pd_reg'))->toBe(1);
 });
 
-test('the lifetime toggle persists per project in the user settings', function () {
+test('the lifetime toggle persists per project in the user settings', function (): void {
 
     $this->postJson(route('user-settings.property-lifetime'), [
         'project_id' => $this->project->id,
@@ -354,7 +354,7 @@ test('the lifetime toggle persists per project in the user settings', function (
     expect($this->user->refresh()->settings['propertyLifetime'][$this->project->id])->toBeFalse();
 });
 
-test('lifetime mode ignores the date range while time-range mode respects it', function () {
+test('lifetime mode ignores the date range while time-range mode respects it', function (): void {
 
     // "pro" user registered long before the selected window, "free" inside it
     $oldUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
@@ -364,7 +364,7 @@ test('lifetime mode ignores the date range while time-range mode respects it', f
     $recentUser->recordCustomProperties(['ab_test' => 'A']);
 
     $nameId = StatsCustomPropertyName::where('name', 'ab_test')->value('id');
-    $aggregationsService = app(StatsAggregationsService::class);
+    $aggregationsService = resolve(StatsAggregationsService::class);
 
     // 7-day range: time-range mode only sees the recent "free" user
     $timeRange = $aggregationsService
@@ -382,7 +382,7 @@ test('lifetime mode ignores the date range while time-range mode respects it', f
         ->and((int) $lifetime['A']['reg'])->toBe(1);
 });
 
-test('lifetime mode sums revenue across all time', function () {
+test('lifetime mode sums revenue across all time', function (): void {
 
     $proUser = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60)]);
     $proUser->recordCustomProperties(['ab_test' => 'B']);
@@ -396,7 +396,7 @@ test('lifetime mode sums revenue across all time', function () {
     ]);
 
     $nameId = StatsCustomPropertyName::where('name', 'ab_test')->value('id');
-    $aggregationsService = app(StatsAggregationsService::class);
+    $aggregationsService = resolve(StatsAggregationsService::class);
 
     // payment is out of the 7-day window: time-range mode rejects the empty bucket
     expect($aggregationsService->getAggregatedPropertyData(propertyFilters($this->project, 7), $nameId, 'reg', 10, false)->all())->toBe([]);
@@ -408,7 +408,7 @@ test('lifetime mode sums revenue across all time', function () {
     expect((float) $lifetime['B']['net'])->toBe(100.0);
 });
 
-test('cross-filters still narrow the lifetime result', function () {
+test('cross-filters still narrow the lifetime result', function (): void {
 
     // all registered outside the 7-day window so only lifetime mode returns them
     $newsletterPro = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDays(60), 'track_source' => 'newsletter']);
@@ -431,7 +431,7 @@ test('cross-filters still narrow the lifetime result', function () {
         trackSource: $newsletterSourceId,
     );
 
-    $lifetime = app(StatsAggregationsService::class)
+    $lifetime = resolve(StatsAggregationsService::class)
         ->getAggregatedPropertyData($filters, $nameId, 'reg', 10, true)
         ->keyBy('name');
 
@@ -441,7 +441,7 @@ test('cross-filters still narrow the lifetime result', function () {
         ->and((int) $lifetime['A']['reg'])->toBe(1);
 });
 
-test('values with no activity in the period are rejected', function () {
+test('values with no activity in the period are rejected', function (): void {
 
     $user = StatsUser::factory()->create(['project_id' => $this->project->id, 'time' => now()->subDay()]);
     $user->recordCustomProperties(['plan' => 'starter']);
@@ -454,7 +454,7 @@ test('values with no activity in the period are rejected', function () {
         'value' => 'enterprise',
     ]);
 
-    $data = app(StatsAggregationsService::class)
+    $data = resolve(StatsAggregationsService::class)
         ->getAggregatedPropertyData(propertyFilters($this->project), $nameId, 'reg', 10);
 
     expect($data->pluck('name')->all())->toBe(['starter']);

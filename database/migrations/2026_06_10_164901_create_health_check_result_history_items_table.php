@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('health_check_result_history_items', function (Blueprint $table) {
+        Schema::create('health_check_result_history_items', function (Blueprint $table): void {
             $table->id();
             $table->string('status');
             $table->text('notification_message')->nullable();

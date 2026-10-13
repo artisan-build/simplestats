@@ -10,6 +10,9 @@ class StatsTrackTerm extends Model
 {
     use HasTeamScope;
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);

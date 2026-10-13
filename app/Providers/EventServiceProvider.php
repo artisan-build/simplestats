@@ -41,13 +41,13 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(function (TakeImpersonation $event) {
+        Event::listen(function (TakeImpersonation $event): void {
             session()->put([
                 'password_hash_sanctum' => $event->impersonated->getAuthPassword(),
             ]);
         });
 
-        Event::listen(function (LeaveImpersonation $event) {
+        Event::listen(function (LeaveImpersonation $event): void {
             session()->remove('password_hash_web');
             session()->put([
                 'password_hash_sanctum' => $event->impersonator->getAuthPassword(),
@@ -55,7 +55,7 @@ class EventServiceProvider extends ServiceProvider
             Auth::setUser($event->impersonator);
         });
 
-        Event::listen(Login::class, function ($event) {
+        Event::listen(Login::class, function ($event): void {
             $event->user->update([
                 'previous_login_at' => $event->user->last_login_at,
                 'last_login_at' => now(),

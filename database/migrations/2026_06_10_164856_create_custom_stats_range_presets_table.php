@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('custom_stats_range_presets', function (Blueprint $table) {
+        Schema::create('custom_stats_range_presets', function (Blueprint $table): void {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('name', 50);

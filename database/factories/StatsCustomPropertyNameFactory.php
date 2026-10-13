@@ -20,7 +20,7 @@ class StatsCustomPropertyNameFactory extends Factory
         return [
             'team_id' => $project->team_id,
             'project_id' => $project->id,
-            'name' => $this->faker->unique()->word(),
+            'name' => fake()->unique()->word(),
         ];
     }
 }

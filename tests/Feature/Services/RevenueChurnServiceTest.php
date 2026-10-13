@@ -11,7 +11,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CarbonImmutable::setTestNow('2026-06-21 12:00:00');
 
     $this->seed(TestUserSeeder::class);
@@ -27,10 +27,10 @@ beforeEach(function () {
     auth()->setUser($this->user);
     Context::add('team_id', $this->team->id);
 
-    $this->service = app(MrrAggregationService::class);
+    $this->service = resolve(MrrAggregationService::class);
 });
 
-afterEach(function () {
+afterEach(function (): void {
     CarbonImmutable::setTestNow();
 });
 
@@ -72,7 +72,7 @@ function rcMonthFilter(int $projectId, string $rangeStart, int $rangeAmount, int
     );
 }
 
-it('derives gross and net churn rates from the movement breakdown per bucket', function () {
+it('derives gross and net churn rates from the movement breakdown per bucket', function (): void {
     insertRcUser('u-stable', $this->team->id, $this->pid);
     insertRcUser('u-expand', $this->team->id, $this->pid);
     insertRcUser('u-churn', $this->team->id, $this->pid);
@@ -103,7 +103,7 @@ it('derives gross and net churn rates from the movement breakdown per bucket', f
         ->and($may['net_churn_rate'])->toBe(21.1);
 });
 
-it('returns null rates for buckets with no starting mrr', function () {
+it('returns null rates for buckets with no starting mrr', function (): void {
     insertRcUser('u-1', $this->team->id, $this->pid);
     insertRcPayment('p-1', 'u-1', $this->team->id, $this->pid, 50, SubscriptionInterval::MONTH, '2026-06-15 10:00:00');
 
@@ -113,7 +113,7 @@ it('returns null rates for buckets with no starting mrr', function () {
         ->and($churn[0]['net_churn_rate'])->toBeNull();
 });
 
-it('attributes revenue churn per channel via the source filter', function () {
+it('attributes revenue churn per channel via the source filter', function (): void {
     $sourceId = DB::table('stats_track_sources')->insertGetId([
         'team_id' => $this->team->id,
         'name' => 'newsletter',
@@ -122,7 +122,7 @@ it('attributes revenue churn per channel via the source filter', function () {
     ]);
 
     insertRcUser('u-newsletter', $this->team->id, $this->pid, $sourceId);
-    insertRcUser('u-direct', $this->team->id, $this->pid, null);
+    insertRcUser('u-direct', $this->team->id, $this->pid);
 
     // Newsletter user lapses after April; direct user renews through June.
     insertRcPayment('n-1', 'u-newsletter', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-04-15 10:00:00');
@@ -139,7 +139,7 @@ it('attributes revenue churn per channel via the source filter', function () {
         ->and($filtered[1]['gross_churn_rate'])->toBe(100.0);
 });
 
-it('returns null rates when there are no recurring payments', function () {
+it('returns null rates when there are no recurring payments', function (): void {
     $churn = $this->service->getRevenueChurn(rcMonthFilter($this->pid, '2026-06-21', 2));
 
     expect($churn)->toHaveCount(2)
@@ -148,7 +148,7 @@ it('returns null rates when there are no recurring payments', function () {
         ->and($churn[0]['mrr'])->toBe(0.0);
 });
 
-it('computes the per-user-bucket movements query only once across movements, retention and churn', function () {
+it('computes the per-user-bucket movements query only once across movements, retention and churn', function (): void {
     insertRcUser('u-1', $this->team->id, $this->pid);
     insertRcPayment('p-1', 'u-1', $this->team->id, $this->pid, 100, SubscriptionInterval::MONTH, '2026-05-15 10:00:00');
 
@@ -162,7 +162,7 @@ it('computes the per-user-bucket movements query only once across movements, ret
     $this->service->getRevenueChurn($filter);
 
     $perUserBucketQueries = collect(DB::getQueryLog())
-        ->filter(fn (array $entry) => str_contains($entry['query'], 'active.stats_user_id'));
+        ->filter(fn (array $entry): bool => str_contains($entry['query'], 'active.stats_user_id'));
 
     expect($perUserBucketQueries)->toHaveCount(1);
 

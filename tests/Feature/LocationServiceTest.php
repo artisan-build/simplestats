@@ -13,7 +13,7 @@ function swapLocationFake(array $responses): void
     Location::swap(new LocationFake(new LocationManager, $responses));
 }
 
-test('successful location lookups are served from cache afterwards', function () {
+test('successful location lookups are served from cache afterwards', function (): void {
     $position = new Position;
     $position->countryName = 'Germany';
     $position->countryCode = 'DE';
@@ -21,7 +21,7 @@ test('successful location lookups are served from cache afterwards', function ()
     $position->isProxy = false;
     Location::fake(['203.0.113.9' => $position]);
 
-    expect(app(LocationService::class)->get('203.0.113.9')->isHosting)->toBeTrue();
+    expect(resolve(LocationService::class)->get('203.0.113.9')->isHosting)->toBeTrue();
 
     // A fresh service instance (empty memo) with a now-empty fake can only
     // succeed via the cache.
@@ -34,10 +34,10 @@ test('successful location lookups are served from cache afterwards', function ()
         ->and($cached->countryName)->toBe('Germany');
 });
 
-test('failed location lookups are not cached', function () {
+test('failed location lookups are not cached', function (): void {
     Location::fake([]);
 
-    expect(app(LocationService::class)->get('203.0.113.10'))->toBeFalse();
+    expect(resolve(LocationService::class)->get('203.0.113.10'))->toBeFalse();
 
     $position = new Position;
     $position->isHosting = true;
@@ -46,26 +46,26 @@ test('failed location lookups are not cached', function () {
     expect((new LocationService)->get('203.0.113.10')->isHosting)->toBeTrue();
 });
 
-test('the asn survives the cache round trip', function () {
+test('the asn survives the cache round trip', function (): void {
     $position = new Position;
     $position->isHosting = true;
     $position->asn = 16509;
     Location::fake(['203.0.113.11' => $position]);
 
-    app(LocationService::class)->get('203.0.113.11');
+    resolve(LocationService::class)->get('203.0.113.11');
 
     swapLocationFake([]);
 
     expect((new LocationService)->get('203.0.113.11')->asn)->toBe(16509);
 });
 
-test('positions without a hosting flag are only cached briefly', function () {
+test('positions without a hosting flag are only cached briefly', function (): void {
     // A fallback driver (ip-api throttled) returns geo but no hosting flag.
     // Caching that for a full day would keep the datacenter filter blind, so
     // it must expire quickly.
     Location::fake(['203.0.113.12' => new Position]);
 
-    expect(app(LocationService::class)->get('203.0.113.12'))->toBeInstanceOf(Position::class);
+    expect(resolve(LocationService::class)->get('203.0.113.12'))->toBeInstanceOf(Position::class);
 
     swapLocationFake([]);
 
@@ -74,12 +74,12 @@ test('positions without a hosting flag are only cached briefly', function () {
     expect((new LocationService)->get('203.0.113.12'))->toBeFalse();
 });
 
-test('positions with a hosting flag stay cached beyond the short window', function () {
+test('positions with a hosting flag stay cached beyond the short window', function (): void {
     $position = new Position;
     $position->isHosting = true;
     Location::fake(['203.0.113.13' => $position]);
 
-    app(LocationService::class)->get('203.0.113.13');
+    resolve(LocationService::class)->get('203.0.113.13');
 
     swapLocationFake([]);
 

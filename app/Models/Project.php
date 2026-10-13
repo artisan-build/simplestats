@@ -49,20 +49,22 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
         'team_id',
     ];
 
-    protected $casts = [
-        'stats_starting_at' => 'date',
-    ];
-
     protected $dispatchesEvents = [
         'created' => ProjectCreated::class,
         'deleted' => ProjectDeleted::class,
     ];
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
 
+    /**
+     * @return MorphMany<UserNotification, $this>
+     */
     public function userNotifications(): MorphMany
     {
         return $this->morphMany(UserNotification::class, 'notifiable');
@@ -161,7 +163,7 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
                         'visitors' => $this->hasUsages([self::USAGE_VISITORS]),
                         'users' => $this->hasUsages([self::USAGE_USERS]),
                         'payments' => $this->hasUsages([self::USAGE_PAYMENTS]),
-                    ])->filter()->toArray(),
+                    ])->filter()->all(),
                     'types' => [
                         StatsTrackReferer::class,
                         StatsPageEntry::class,
@@ -177,9 +179,16 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
                     'tracking' => collect([
                         'registrations' => $this->hasUsages([self::USAGE_USERS]),
                         'payments' => $this->hasUsages([self::USAGE_PAYMENTS]),
-                    ])->filter()->toArray(),
+                    ])->filter()->all(),
                 ]
             ),
         ]);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'stats_starting_at' => 'date',
+        ];
     }
 }

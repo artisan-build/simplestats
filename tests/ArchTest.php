@@ -5,6 +5,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Jobs\TrackStatsLogin;
 use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 arch()->preset()->php()->ignoring('SimpleStatsIo');
@@ -26,7 +27,7 @@ arch('env() is only used inside config files')
     ->not->toBeUsedIn(['App', 'Database']);
 
 arch('mutable Carbon is not used')
-    ->expect('Carbon\Carbon')
+    ->expect(Carbon::class)
     ->not->toBeUsedIn(['App', 'Database'])
     ->ignoring([StatsAggregationsService::class, StatsService::class, TrackStatsLogin::class]);
 

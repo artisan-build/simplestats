@@ -3,18 +3,18 @@
 use App\Models\Project;
 use App\Models\User;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->user->currentTeam->update(['currency' => 'USD']);
     Project::factory()->create(['team_id' => $this->user->currentTeam->id]);
     $this->actingAs($this->user);
 });
 
-test('subscription revenue route returns 200', function () {
+test('subscription revenue route returns 200', function (): void {
     $this->get(route('revenue'))->assertStatus(200);
 });
 
-test('subscription revenue renders Revenue/Index with the shared filter props', function () {
+test('subscription revenue renders Revenue/Index with the shared filter props', function (): void {
     $this->get(route('revenue'))
         ->assertInertia(fn ($page) => $page
             ->component('Revenue/Index')
@@ -27,7 +27,7 @@ test('subscription revenue renders Revenue/Index with the shared filter props', 
         );
 });
 
-test('subscription revenue exposes mrr, movements and retention when the project tracks subscriptions', function () {
+test('subscription revenue exposes mrr, movements and retention when the project tracks subscriptions', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -95,7 +95,7 @@ test('subscription revenue exposes mrr, movements and retention when the project
         );
 });
 
-test('subscription revenue mrr props are null when the project has no payments tracking', function () {
+test('subscription revenue mrr props are null when the project has no payments tracking', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -116,7 +116,7 @@ test('subscription revenue mrr props are null when the project has no payments t
         );
 });
 
-test('subscription revenue mrr props are null when the project tracks payments but not users', function () {
+test('subscription revenue mrr props are null when the project tracks payments but not users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([

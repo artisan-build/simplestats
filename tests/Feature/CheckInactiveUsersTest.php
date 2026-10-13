@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Notification;
 
 beforeEach(fn () => $this->skipUnlessSaas());
 
-it('marks inactive users for deletion after the 10 day warning period', function () {
+it('marks inactive users for deletion after the 10 day warning period', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -26,7 +26,7 @@ it('marks inactive users for deletion after the 10 day warning period', function
     Notification::assertSentTo($user, UserDeletedNotification::class);
 });
 
-it('does not re-notify users already marked for deletion', function () {
+it('does not re-notify users already marked for deletion', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -40,7 +40,7 @@ it('does not re-notify users already marked for deletion', function () {
     Notification::assertNotSentTo($user, UserInactiveNotification::class);
 });
 
-it('does not mark users with active subscriptions', function () {
+it('does not mark users with active subscriptions', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -58,7 +58,7 @@ it('does not mark users with active subscriptions', function () {
     Notification::assertNotSentTo($user, UserDeletedNotification::class);
 });
 
-it('sends 10 day warning to users inactive for 50+ days', function () {
+it('sends 10 day warning to users inactive for 50+ days', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -72,7 +72,7 @@ it('sends 10 day warning to users inactive for 50+ days', function () {
     Notification::assertSentTo($user, UserInactiveNotification::class);
 });
 
-it('sends 1 day final warning to users warned 9+ days ago', function () {
+it('sends 1 day final warning to users warned 9+ days ago', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -87,7 +87,7 @@ it('sends 1 day final warning to users warned 9+ days ago', function () {
     Notification::assertSentTo($user, UserInactiveNotification::class);
 });
 
-it('clears the warning when a warned user logs back in', function () {
+it('clears the warning when a warned user logs back in', function (): void {
     $user = User::factory()->withPersonalTeam()->create([
         'inactive_since' => now()->subDays(5),
         'last_login_at' => now()->subDays(55),
@@ -99,7 +99,7 @@ it('clears the warning when a warned user logs back in', function () {
     expect($user->fresh()->last_login_at)->not->toBeNull();
 });
 
-it('does not delete a user who logged back in after the warning', function () {
+it('does not delete a user who logged back in after the warning', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -117,7 +117,7 @@ it('does not delete a user who logged back in after the warning', function () {
     Notification::assertNotSentTo($user, UserDeletedNotification::class);
 });
 
-it('does not send a final warning to a user who logged back in after the reminder', function () {
+it('does not send a final warning to a user who logged back in after the reminder', function (): void {
     Notification::fake();
 
     // User already received the first warning 9+ days ago (final-warning window).
@@ -136,7 +136,7 @@ it('does not send a final warning to a user who logged back in after the reminde
     Notification::assertNotSentTo($user, UserDeletedNotification::class);
 });
 
-it('warns the returning user again only after a fresh inactivity period', function () {
+it('warns the returning user again only after a fresh inactivity period', function (): void {
     Notification::fake();
 
     $user = User::factory()->withPersonalTeam()->create([
@@ -159,7 +159,7 @@ it('warns the returning user again only after a fresh inactivity period', functi
     Notification::assertSentTo($user, UserInactiveNotification::class);
 });
 
-it('middleware switches user to personal team when current team owner is missing', function () {
+it('middleware switches user to personal team when current team owner is missing', function (): void {
     $owner = User::factory()->withPersonalTeam()->create();
     $sharedTeam = Team::factory()->create([
         'user_id' => $owner->id,
@@ -181,7 +181,7 @@ it('middleware switches user to personal team when current team owner is missing
     expect($member->fresh()->current_team_id)->toBe($personalTeam->id);
 });
 
-it('does not mark an owner whose team is still used by another member', function () {
+it('does not mark an owner whose team is still used by another member', function (): void {
     Notification::fake();
 
     // Deleting the owner purges the whole team, and only the owner is warned.
@@ -204,7 +204,7 @@ it('does not mark an owner whose team is still used by another member', function
     Notification::assertNotSentTo($owner, UserDeletedNotification::class);
 });
 
-it('marks an owner whose team members went inactive as well', function () {
+it('marks an owner whose team members went inactive as well', function (): void {
     Notification::fake();
 
     $owner = User::factory()->withPersonalTeam()->create([
@@ -225,7 +225,7 @@ it('marks an owner whose team members went inactive as well', function () {
     Notification::assertSentTo($owner, UserDeletedNotification::class);
 });
 
-it('does not warn an owner whose team is still used by another member', function () {
+it('does not warn an owner whose team is still used by another member', function (): void {
     Notification::fake();
 
     $owner = User::factory()->withPersonalTeam()->create([
@@ -246,7 +246,7 @@ it('does not warn an owner whose team is still used by another member', function
     Notification::assertNotSentTo($owner, UserInactiveNotification::class);
 });
 
-it('still marks a forgotten account whose app keeps sending data', function () {
+it('still marks a forgotten account whose app keeps sending data', function (): void {
     Notification::fake();
 
     // Traffic alone is not engagement: a free account that ignores both warning

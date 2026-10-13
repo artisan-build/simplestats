@@ -24,10 +24,10 @@ class AutoLoginInDemoEnv
                 if ($testUser) {
                     auth()->login($testUser);
 
-                    return redirect()->route('dashboard');
+                    return to_route('dashboard');
                 }
             } elseif ($request->is('/')) {
-                return redirect()->route('dashboard');
+                return to_route('dashboard');
             }
         }
 

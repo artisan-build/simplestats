@@ -13,7 +13,7 @@ class CreateUserNotification
     public function __invoke(User $user, NotifiableToUser|Model $notifiable): void
     {
         $notifiable->getDefaultUserNotificationTypes()
-            ->each(function (UserNotificationTypeObject $notificationType) use ($user, $notifiable) {
+            ->each(function (UserNotificationTypeObject $notificationType) use ($user, $notifiable): void {
                 UserNotification::firstOrCreate(
                     [
                         'user_id' => $user->id,

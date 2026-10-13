@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Enums\DashboardPreset;
 use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserSettingsController extends Controller
 {
-    public function setDashboardPreset(Request $request)
+    public function setDashboardPreset(Request $request): RedirectResponse
     {
         $request->validate([
             'preset' => ['required', Rule::enum(DashboardPreset::class)],
@@ -19,7 +20,7 @@ class UserSettingsController extends Controller
 
         $request->user()->updateSettings('dashboardPreset', $request->preset);
 
-        return redirect()->back();
+        return back();
     }
 
     public function completeTour(Request $request): JsonResponse
@@ -29,7 +30,7 @@ class UserSettingsController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function setLoginSummary(Request $request)
+    public function setLoginSummary(Request $request): RedirectResponse
     {
         $request->validate([
             'enabled' => ['required', 'boolean'],
@@ -37,7 +38,7 @@ class UserSettingsController extends Controller
 
         $request->user()->updateSettings('loginSummaryEnabled', $request->boolean('enabled'));
 
-        return redirect()->back();
+        return back();
     }
 
     public function setPropertyLifetime(Request $request): JsonResponse
@@ -45,7 +46,7 @@ class UserSettingsController extends Controller
         $request->validate([
             // The frontend sends the project's public uuid (or 0 for all
             // projects); the value is only used as a settings key.
-            'project_id' => ['nullable', function (string $attribute, mixed $value, Closure $fail) {
+            'project_id' => ['nullable', function (string $attribute, mixed $value, Closure $fail): void {
                 if (! is_numeric($value) && ! Str::isUuid($value)) {
                     $fail('Invalid project.');
                 }

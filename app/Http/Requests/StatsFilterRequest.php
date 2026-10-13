@@ -98,7 +98,7 @@ class StatsFilterRequest extends FormRequest
             'preset' => [
                 'sometimes',
                 'string',
-                function ($attribute, $value, $fail) {
+                function ($attribute, $value, $fail): void {
                     if (StatsRangePreset::tryFrom($value) !== null) {
                         return;
                     }

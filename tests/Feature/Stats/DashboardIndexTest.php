@@ -6,18 +6,18 @@ use App\Models\StatsPayment;
 use App\Models\StatsUser;
 use App\Models\User;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->user->currentTeam->update(['currency' => 'USD', 'timezone' => 'UTC']);
     Project::factory()->create(['team_id' => $this->user->currentTeam->id]);
     $this->actingAs($this->user);
 });
 
-test('dashboard route returns 200', function () {
+test('dashboard route returns 200', function (): void {
     $this->get(route('dashboard'))->assertStatus(200);
 });
 
-test('dashboard renders Dashboard/Index with expected props', function () {
+test('dashboard renders Dashboard/Index with expected props', function (): void {
     $this->get(route('dashboard'))
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard/Index')
@@ -41,7 +41,7 @@ test('dashboard renders Dashboard/Index with expected props', function () {
         );
 });
 
-test('all projects view merges tracking usage bits from individual projects', function () {
+test('all projects view merges tracking usage bits from individual projects', function (): void {
     // Remove default project created in beforeEach and create projects with specific usage bits
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
@@ -62,7 +62,7 @@ test('all projects view merges tracking usage bits from individual projects', fu
         );
 });
 
-test('all projects view includes payment bits when one project has payments', function () {
+test('all projects view includes payment bits when one project has payments', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     Project::factory()->create([
@@ -84,7 +84,7 @@ test('all projects view includes payment bits when one project has payments', fu
         );
 });
 
-test('dashboard exposes the mrr_series prop when the project has recurring payments', function () {
+test('dashboard exposes the mrr_series prop when the project has recurring payments', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -120,7 +120,7 @@ test('dashboard exposes the mrr_series prop when the project has recurring payme
         );
 });
 
-test('dashboard exposes mrr_series_prev when a comparison is active', function () {
+test('dashboard exposes mrr_series_prev when a comparison is active', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -156,7 +156,7 @@ test('dashboard exposes mrr_series_prev when a comparison is active', function (
         );
 });
 
-test('dashboard mrr_series_prev is null without a comparison', function () {
+test('dashboard mrr_series_prev is null without a comparison', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -185,7 +185,7 @@ test('dashboard mrr_series_prev is null without a comparison', function () {
         );
 });
 
-test('dashboard mrr_series prop is null when the project does not track recurring revenue', function () {
+test('dashboard mrr_series prop is null when the project does not track recurring revenue', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -202,7 +202,7 @@ test('dashboard mrr_series prop is null when the project does not track recurrin
         );
 });
 
-test('dashboard exposes a zeroed mrr_series when the project tracks recurring but has no payment yet', function () {
+test('dashboard exposes a zeroed mrr_series when the project tracks recurring but has no payment yet', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -227,7 +227,7 @@ test('dashboard exposes a zeroed mrr_series when the project tracks recurring bu
         );
 });
 
-test('dashboard mrr_series prop is null when the project tracks payments but not users', function () {
+test('dashboard mrr_series prop is null when the project tracks payments but not users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -254,7 +254,7 @@ test('dashboard mrr_series prop is null when the project tracks payments but not
         );
 });
 
-test('dashboard mrr_series prop is null when the project has no payments tracking', function () {
+test('dashboard mrr_series prop is null when the project has no payments tracking', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -269,7 +269,7 @@ test('dashboard mrr_series prop is null when the project has no payments trackin
         );
 });
 
-test('retention route renders Dashboard/Index in retention mode with cohorts when the project tracks users', function () {
+test('retention route renders Dashboard/Index in retention mode with cohorts when the project tracks users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -287,7 +287,7 @@ test('retention route renders Dashboard/Index in retention mode with cohorts whe
         );
 });
 
-test('dashboard route renders with retention off and no cohorts', function () {
+test('dashboard route renders with retention off and no cohorts', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -304,7 +304,7 @@ test('dashboard route renders with retention off and no cohorts', function () {
         );
 });
 
-test('retention route exposes no cohorts when the project does not track users', function () {
+test('retention route exposes no cohorts when the project does not track users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -320,7 +320,7 @@ test('retention route exposes no cohorts when the project does not track users',
         );
 });
 
-test('dashboard persists preset selection in user settings', function () {
+test('dashboard persists preset selection in user settings', function (): void {
     $this->get(route('dashboard', ['preset' => StatsRangePreset::LAST_7_DAYS->value]))
         ->assertStatus(200);
 
@@ -332,7 +332,7 @@ test('dashboard persists preset selection in user settings', function () {
         ->toBe(StatsRangePreset::LAST_7_DAYS->value);
 });
 
-test('retention route exposes engagement_series when the project tracks users', function () {
+test('retention route exposes engagement_series when the project tracks users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -348,7 +348,7 @@ test('retention route exposes engagement_series when the project tracks users', 
         );
 });
 
-test('retention engagement_series is null when the project does not track users', function () {
+test('retention engagement_series is null when the project does not track users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -363,7 +363,7 @@ test('retention engagement_series is null when the project does not track users'
         );
 });
 
-test('dashboard route does not build engagement_series', function () {
+test('dashboard route does not build engagement_series', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -379,7 +379,7 @@ test('dashboard route does not build engagement_series', function () {
         );
 });
 
-test('metric route exposes time_to_convert_series when the project tracks visitors and users', function () {
+test('metric route exposes time_to_convert_series when the project tracks visitors and users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -395,7 +395,7 @@ test('metric route exposes time_to_convert_series when the project tracks visito
         );
 });
 
-test('metric route time_to_convert_series is null when the project does not track users', function () {
+test('metric route time_to_convert_series is null when the project does not track users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -410,7 +410,7 @@ test('metric route time_to_convert_series is null when the project does not trac
         );
 });
 
-test('dashboard route does not build time_to_convert_series', function () {
+test('dashboard route does not build time_to_convert_series', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -426,7 +426,7 @@ test('dashboard route does not build time_to_convert_series', function () {
         );
 });
 
-test('metric route renders Dashboard/Metric with the kpi prop', function () {
+test('metric route renders Dashboard/Metric with the kpi prop', function (): void {
     $this->get(route('dashboard.metric', ['kpi' => 'pd_visitor']))
         ->assertInertia(fn ($page) => $page
             ->component('Dashboard/Metric')
@@ -435,7 +435,7 @@ test('metric route renders Dashboard/Metric with the kpi prop', function () {
         );
 });
 
-test('metric route exposes plan_breakdown for an MRR kpi on a subscription project', function () {
+test('metric route exposes plan_breakdown for an MRR kpi on a subscription project', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -466,7 +466,7 @@ test('metric route exposes plan_breakdown for an MRR kpi on a subscription proje
         );
 });
 
-test('metric route returns null plan_breakdown for a non-MRR kpi', function () {
+test('metric route returns null plan_breakdown for a non-MRR kpi', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -484,7 +484,7 @@ test('metric route returns null plan_breakdown for a non-MRR kpi', function () {
         );
 });
 
-test('metric route exposes engagement_series for an engagement kpi drilled into from retention', function () {
+test('metric route exposes engagement_series for an engagement kpi drilled into from retention', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -501,7 +501,7 @@ test('metric route exposes engagement_series for an engagement kpi drilled into 
         );
 });
 
-test('metric route exposes engagement_series for any kpi when the project tracks users', function () {
+test('metric route exposes engagement_series for any kpi when the project tracks users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -518,7 +518,7 @@ test('metric route exposes engagement_series for any kpi when the project tracks
         );
 });
 
-test('metric route does not build engagement_series when the project does not track users', function () {
+test('metric route does not build engagement_series when the project does not track users', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -533,7 +533,7 @@ test('metric route does not build engagement_series when the project does not tr
         );
 });
 
-test('metric route exposes revenue_churn for a churn kpi drilled into from revenue', function () {
+test('metric route exposes revenue_churn for a churn kpi drilled into from revenue', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([
@@ -552,7 +552,7 @@ test('metric route exposes revenue_churn for a churn kpi drilled into from reven
         );
 });
 
-test('metric route does not build revenue_churn for a non-churn kpi', function () {
+test('metric route does not build revenue_churn for a non-churn kpi', function (): void {
     Project::where('team_id', $this->user->currentTeam->id)->delete();
 
     $project = Project::factory()->create([

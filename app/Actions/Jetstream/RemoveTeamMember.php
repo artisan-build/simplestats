@@ -23,7 +23,7 @@ class RemoveTeamMember implements RemovesTeamMembers
 
         $team->removeUser($teamMember);
 
-        TeamMemberRemoved::dispatch($team, $teamMember);
+        event(new TeamMemberRemoved($team, $teamMember));
     }
 
     /**

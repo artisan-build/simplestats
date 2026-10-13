@@ -15,12 +15,10 @@ enum UserNotificationFrequency: string
 
     public static function toOptions(): array
     {
-        return collect(self::cases())->map(function (UserNotificationFrequency $frequency) {
-            return [
-                'id' => $frequency->value,
-                'name' => $frequency->title(),
-            ];
-        })->values()->toArray();
+        return collect(self::cases())->map(fn (UserNotificationFrequency $frequency): array => [
+            'id' => $frequency->value,
+            'name' => $frequency->title(),
+        ])->values()->all();
     }
 
     public function title(): string

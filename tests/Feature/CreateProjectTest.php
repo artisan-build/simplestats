@@ -5,19 +5,19 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     actingAs($this->user);
 });
 
-test('domain is required when creating a project', function () {
+test('domain is required when creating a project', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'My Project',
         'usage' => 1,
     ])->assertSessionHasErrors('domain');
 });
 
-test('domain is normalized to a bare host', function () {
+test('domain is normalized to a bare host', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'My Project',
         'domain' => 'https://example.com/some/path?utm=foo',
@@ -27,7 +27,7 @@ test('domain is normalized to a bare host', function () {
     expect(Project::where('name', 'My Project')->value('domain'))->toBe('example.com');
 });
 
-test('a plain domain is accepted as-is', function () {
+test('a plain domain is accepted as-is', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Plain Domain',
         'domain' => 'example.org',
@@ -37,7 +37,7 @@ test('a plain domain is accepted as-is', function () {
     expect(Project::where('name', 'Plain Domain')->value('domain'))->toBe('example.org');
 });
 
-test('a single label without a tld is rejected', function () {
+test('a single label without a tld is rejected', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'No TLD',
         'domain' => 'asdfa',
@@ -45,7 +45,7 @@ test('a single label without a tld is rejected', function () {
     ])->assertSessionHasErrors('domain');
 });
 
-test('localhost is accepted as a domain', function () {
+test('localhost is accepted as a domain', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Local Project',
         'domain' => 'http://localhost:8000',
@@ -55,7 +55,7 @@ test('localhost is accepted as a domain', function () {
     expect(Project::where('name', 'Local Project')->value('domain'))->toBe('localhost');
 });
 
-test('recurring tracking requires registrations and payments', function () {
+test('recurring tracking requires registrations and payments', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Recurring Only',
         'domain' => 'example.com',
@@ -64,7 +64,7 @@ test('recurring tracking requires registrations and payments', function () {
     ])->assertSessionHasErrors('usage');
 });
 
-test('recurring tracking is accepted together with registrations and payments', function () {
+test('recurring tracking is accepted together with registrations and payments', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Full Recurring',
         'domain' => 'example.com',
@@ -75,7 +75,7 @@ test('recurring tracking is accepted together with registrations and payments', 
     ])->assertSessionHasNoErrors();
 });
 
-test('the paid-only flag requires registrations and payments', function () {
+test('the paid-only flag requires registrations and payments', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Paywalled',
         'domain' => 'example.com',
@@ -84,7 +84,7 @@ test('the paid-only flag requires registrations and payments', function () {
     ])->assertSessionHasErrors('flags');
 });
 
-test('the paid-only flag is accepted and persisted with registrations and payments', function () {
+test('the paid-only flag is accepted and persisted with registrations and payments', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Paid Only',
         'domain' => 'example.com',
@@ -97,7 +97,7 @@ test('the paid-only flag is accepted and persisted with registrations and paymen
     expect(Project::where('name', 'Paid Only')->value('flags'))->toBe(Project::FLAG_PAID_ONLY);
 });
 
-test('flags above the supported bit count are rejected', function () {
+test('flags above the supported bit count are rejected', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'Bad Flags',
         'domain' => 'example.com',
@@ -108,7 +108,7 @@ test('flags above the supported bit count are rejected', function () {
     ])->assertSessionHasErrors('flags');
 });
 
-test('flags default to zero when omitted', function () {
+test('flags default to zero when omitted', function (): void {
     $this->post(route('projects.store'), [
         'name' => 'No Flags',
         'domain' => 'example.com',
@@ -118,7 +118,7 @@ test('flags default to zero when omitted', function () {
     expect(Project::where('name', 'No Flags')->value('flags'))->toBe(0);
 });
 
-test('hasFlags reflects the stored flags bitmask', function () {
+test('hasFlags reflects the stored flags bitmask', function (): void {
     $with = Project::factory()->create(['flags' => Project::FLAG_PAID_ONLY]);
     $without = Project::factory()->create(['flags' => 0]);
 

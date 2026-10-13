@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stats_logins', function (Blueprint $table) {
+        Schema::create('stats_logins', function (Blueprint $table): void {
             $table->id();
             $table->string('stats_user_id', 36);
             $table->unsignedBigInteger('team_id');

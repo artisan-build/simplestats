@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-test('team members can be removed from teams', function () {
+test('team members can be removed from teams', function (): void {
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
     $user->currentTeam->users()->attach(

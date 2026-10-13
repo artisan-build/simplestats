@@ -36,14 +36,14 @@ class SubscriptionService
     public function getFrontendPlans(string $billableType = 'user'): Collection
     {
         $plans = collect(config("spark.billables.$billableType.plans", []));
-        $planIds = $plans->flatMap(fn ($item) => [$item['monthly_id'], $item['yearly_id']])->filter();
+        $planIds = $plans->flatMap(fn ($item): array => [$item['monthly_id'], $item['yearly_id']])->filter();
         $planPrices = $this->getPlanIdToPrices($planIds);
 
         $discount = $this->getDiscount();
 
-        return $plans->map(function ($item) use ($planPrices, $discount) {
+        return $plans->map(
             //            if (isset($planPrices[$item['monthly_id']])) dd($planPrices[$item['yearly_id']]);
-            return [
+            fn ($item): array => [
                 'name' => $item['name'],
                 'short_description' => $item['short_description'],
                 'price_monthly' => $planPrices[$item['monthly_id']]->totals['subtotal'] ?? 0,
@@ -55,12 +55,11 @@ class SubscriptionService
                     $planPrices[$item['yearly_id']]->totals['subtotal'] ?? 0,
                 ),
                 // do not show/expose FQN to FE...
-                'features' => collect($item['features'])->mapWithKeys(fn ($item, $key) => [class_basename($key) => $item]),
-                'options' => collect($item['options'])->mapWithKeys(fn ($item, $key) => [class_basename($key) => $item]),
+                'features' => collect($item['features'])->mapWithKeys(fn ($item, $key): array => [class_basename($key) => $item]),
+                'options' => collect($item['options'])->mapWithKeys(fn ($item, $key): array => [class_basename($key) => $item]),
                 'promoted' => $item['promoted'] ?? false,
                 'discount' => $discount['percent'] ?? 0,
-            ];
-        });
+            ]);
     }
 
     public function getPlanIdToPrices(Collection $planIds): Collection
@@ -68,11 +67,9 @@ class SubscriptionService
         // sometimes when I work on it, I put the ttl in local mode to 0
         $ttl = (app()->isProduction()) ? 86400 : 86400;
 
-        return Cache::remember('paddle-prices', $ttl, function () use ($planIds) {
-            return Cashier::previewPrices($planIds, [
-                'customer_ip_address' => request()->ip(),
-            ])->mapWithKeys(fn ($item) => [$item->price['id'] => $item]);
-        });
+        return Cache::remember('paddle-prices', $ttl, fn () => Cashier::previewPrices($planIds, [
+            'customer_ip_address' => request()->ip(),
+        ])->mapWithKeys(fn ($item): array => [$item->price['id'] => $item]));
     }
 
     private function calculateYearlyIncentive(int $monthlyPrice, int $yearlyPrice): ?int

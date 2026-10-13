@@ -14,13 +14,13 @@ class LoginSummaryService
     const MIN_DAYS_SINCE_PREVIOUS_LOGIN = 3;
 
     public function __construct(
-        private StatsDetailsService $statsDetailsService,
+        private readonly StatsDetailsService $statsDetailsService,
     ) {}
 
     public function isEligible(User $user): bool
     {
         return $user->login_summary_pending
-            && ! app('impersonate')->isImpersonating()
+            && ! resolve('impersonate')->isImpersonating()
             && ($user->settings['loginSummaryEnabled'] ?? true)
             && $user->current_team_id
             && $user->previous_login_at
@@ -49,9 +49,9 @@ class LoginSummaryService
             'net' => $team->tracksUsage(Project::USAGE_PAYMENTS) ? round($rows->sum('pd_net'), 2) : null,
             'reg' => $team->tracksUsage(Project::USAGE_USERS) ? (int) $rows->sum('pd_reg') : null,
             'visitors' => $team->tracksUsage(Project::USAGE_VISITORS) ? (int) $rows->sum('pd_visitor') : null,
-        ])->reject(fn ($value) => $value === null);
+        ])->reject(fn ($value): bool => $value === null);
 
-        $metrics = $tracked->filter(fn ($value) => $value > 0);
+        $metrics = $tracked->filter(fn ($value): bool => $value > 0);
 
         // A lone non-zero metric (usually just visitors) is not worth a modal,
         // unless it is the only metric the team tracks at all.
@@ -61,7 +61,7 @@ class LoginSummaryService
 
         return [
             'since' => $user->previous_login_at->toIso8601String(),
-            'metrics' => $metrics->toArray(),
+            'metrics' => $metrics->all(),
         ];
     }
 

@@ -13,7 +13,7 @@ class AppHelper
 {
     public static function setTeamContextFromAuth(?Authenticatable $authModel): void
     {
-        if ($authModel) {
+        if ($authModel instanceof Authenticatable) {
             // important check first team_id then current_team_id
             // on api the user model is the project and else its normal user
             Context::add('team_id', $authModel->team_id ?? $authModel->current_team_id);

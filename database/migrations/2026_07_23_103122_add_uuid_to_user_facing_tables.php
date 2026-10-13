@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private const TABLES = [
+    private const array TABLES = [
         'teams',
         'campaigns',
         'stats_track_campaigns',
@@ -20,13 +20,13 @@ return new class extends Migration
     public function up(): void
     {
         foreach (self::TABLES as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
+            Schema::table($tableName, function (Blueprint $table): void {
                 $table->uuid('uuid')->nullable()->after('id');
             });
 
             DB::table($tableName)->whereNull('uuid')->update(['uuid' => DB::raw('gen_random_uuid()')]);
 
-            Schema::table($tableName, function (Blueprint $table) {
+            Schema::table($tableName, function (Blueprint $table): void {
                 $table->uuid('uuid')->nullable(false)->change();
                 $table->unique('uuid');
             });

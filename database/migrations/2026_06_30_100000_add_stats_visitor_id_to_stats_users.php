@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('stats_users', function (Blueprint $table) {
+        Schema::table('stats_users', function (Blueprint $table): void {
             $table->unsignedBigInteger('stats_visitor_id')->nullable()->after('id');
 
             $table->index('stats_visitor_id');

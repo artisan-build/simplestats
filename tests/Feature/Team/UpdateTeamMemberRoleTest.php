@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-test('team member roles can be updated', function () {
+test('team member roles can be updated', function (): void {
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
     $user->currentTeam->users()->attach(

@@ -50,7 +50,7 @@ return [
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#before-send
     // Must be an array callable (not a closure) so the config stays serializable for
     // `php artisan config:cache`. See App\Sentry\BeforeSend for the filtering logic.
-    'before_send' => [BeforeSend::class, 'handle'],
+    'before_send' => BeforeSend::handle(...),
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#ignore-transactions
     'ignore_transactions' => [

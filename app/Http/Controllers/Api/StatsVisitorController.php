@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StatsVisitorRequest;
 use App\Jobs\TrackStatsVisitor;
 use App\Services\BotDetectionService;
+use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\JsonResponse;
 
 use function Illuminate\Support\defer;
@@ -19,9 +20,7 @@ class StatsVisitorController extends Controller
             return response()->json(['message' => 'Bots are not allowed'], 200);
         }
 
-        defer(fn () => TrackStatsVisitor::dispatch(
-            input: $request->validated(),
-        ));
+        defer(fn (): PendingDispatch => dispatch(new TrackStatsVisitor(input: $request->validated())));
 
         return response()->json([
             'message' => 'Stats Visitor Request accepted.',

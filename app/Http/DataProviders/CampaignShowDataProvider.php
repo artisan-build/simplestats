@@ -17,7 +17,7 @@ class CampaignShowDataProvider extends AbstractStatsDataProvider
         StatsDetailsService $statsDetailsService,
         SubscriptionService $subscriptionService,
         RefererService $refererService,
-        private AdSpendService $adSpendService,
+        private readonly AdSpendService $adSpendService,
     ) {
         parent::__construct($request, $statsDetailsService, $subscriptionService, $refererService);
     }

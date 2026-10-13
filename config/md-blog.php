@@ -7,7 +7,7 @@ return [
 
     'cache' => [
         'enabled' => env('MD_BLOG_CACHE_ENABLED', true),
-        'store' => env('MD_BLOG_CACHE_STORE', null),
+        'store' => env('MD_BLOG_CACHE_STORE'),
         'ttl' => env('MD_BLOG_CACHE_TTL', 604800),
     ],
 
@@ -23,10 +23,10 @@ return [
 
     'mail' => [
         'enabled' => env('MD_BLOG_MAIL_ENABLED', false),
-        'recipient_model' => env('MD_BLOG_MAIL_RECIPIENT_MODEL', null),
+        'recipient_model' => env('MD_BLOG_MAIL_RECIPIENT_MODEL'),
         'queue' => env('MD_BLOG_MAIL_QUEUE', false),
-        'queue_connection' => env('MD_BLOG_MAIL_QUEUE_CONNECTION', null),
-        'queue_name' => env('MD_BLOG_MAIL_QUEUE_NAME', null),
+        'queue_connection' => env('MD_BLOG_MAIL_QUEUE_CONNECTION'),
+        'queue_name' => env('MD_BLOG_MAIL_QUEUE_NAME'),
         'chunk_size' => env('MD_BLOG_MAIL_CHUNK_SIZE', 50),
         'middleware' => ['auth'],
         'subject_prefix' => env('MD_BLOG_MAIL_SUBJECT_PREFIX', ''),

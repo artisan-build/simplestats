@@ -9,7 +9,7 @@ trait HasCounterByStatsUser
      */
     public static function bootHasCounterByStatsUser(): void
     {
-        static::creating(function ($model) {
+        static::creating(function ($model): void {
             $model->counter = $model->getCounter();
         });
     }

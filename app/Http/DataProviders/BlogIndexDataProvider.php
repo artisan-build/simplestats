@@ -10,11 +10,11 @@ use JCFrane\MdBlog\Facades\MdBlog;
 
 class BlogIndexDataProvider extends AbstractDataProvider
 {
-    private const PER_PAGE = 12;
+    private const int PER_PAGE = 12;
 
     public function __construct(
-        private Request $request,
-        private BlogService $blogService,
+        private readonly Request $request,
+        private readonly BlogService $blogService,
     ) {}
 
     public function toArray(): array

@@ -27,7 +27,7 @@ class AiChatController extends Controller
         $dailyLimit = (int) config('ai.chat.daily_message_limit');
 
         if ($byokProvider === null && $dailyLimit > 0
-            && ! RateLimiter::attempt('ai-chat-daily:'.AppHelper::getTeamId(), $dailyLimit, fn () => true, 60 * 60 * 24)) {
+            && ! RateLimiter::attempt('ai-chat-daily:'.AppHelper::getTeamId(), $dailyLimit, fn (): true => true, 60 * 60 * 24)) {
             return response()->json([
                 'message' => 'Your team reached its daily AI message limit. Please try again tomorrow, or add your own AI provider key on the team settings page.',
             ], 429);

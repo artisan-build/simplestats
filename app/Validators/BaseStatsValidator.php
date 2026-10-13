@@ -66,7 +66,7 @@ class BaseStatsValidator
         ];
     }
 
-    public function validate($input)
+    public function validate(array $input)
     {
         return Validator::make(
             $this->prepareForValidation($input),

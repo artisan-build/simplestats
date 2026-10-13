@@ -12,11 +12,14 @@ class StatsAggregation extends Model
 
     public $timestamps = false;
 
-    protected $casts = [
-        'time' => 'date',
-        'type' => StatsRangeType::class,
-        'data' => 'json',
-        'filter' => 'array',
-        'selected_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'time' => 'date',
+            'type' => StatsRangeType::class,
+            'data' => 'json',
+            'filter' => 'array',
+            'selected_at' => 'datetime',
+        ];
+    }
 }

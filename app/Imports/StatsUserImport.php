@@ -29,7 +29,7 @@ class StatsUserImport extends BaseStatsImport implements WithEvents, WithUpserts
         parent::__construct(
             $dataImport,
             StatsUser::class,
-            app(StatsUserValidator::class)
+            resolve(StatsUserValidator::class)
         );
     }
 
@@ -52,7 +52,7 @@ class StatsUserImport extends BaseStatsImport implements WithEvents, WithUpserts
         ]);
     }
 
-    public function prepareForValidation($data, $index): array
+    public function prepareForValidation(array $data, $index): array
     {
         if (! empty($data['last_known_activity'])) {
             $data['last_known_activity'] = CarbonImmutable::parse($data['last_known_activity'])->tz('UTC')->format(StatsRangeType::DATE_FORMAT.' P');
@@ -71,7 +71,7 @@ class StatsUserImport extends BaseStatsImport implements WithEvents, WithUpserts
         if (! empty($lastKnownActivity)) {
             $userId = (string) $row['id'];
 
-            $loginRows = app(SimulatedLoginService::class)->buildLoginRows(
+            $loginRows = resolve(SimulatedLoginService::class)->buildLoginRows(
                 $userId,
                 $this->dataImport->team_id,
                 $this->dataImport->project_id,

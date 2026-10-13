@@ -14,7 +14,7 @@ use Database\Seeders\TestUserSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->seed(TestUserSeeder::class);
     $this->user = User::where('email', config('app.test.user')['email'])->firstOrFail();
     $this->project = Project::first();
@@ -34,7 +34,7 @@ beforeEach(function () {
     Carbon::setTestNow('2026-06-26 12:00:00');
 });
 
-afterEach(function () {
+afterEach(function (): void {
     Carbon::setTestNow();
 });
 
@@ -51,7 +51,7 @@ function cohortFebFilter(int $projectId): StatsFilterDto
     );
 }
 
-it('scopes registrations and revenue to the cohort registration window', function () {
+it('scopes registrations and revenue to the cohort registration window', function (): void {
     $cohortFeb = StatsUser::factory()->count(3)->create([
         'team_id' => $this->team->id,
         'project_id' => $this->pid,
@@ -91,7 +91,7 @@ it('scopes registrations and revenue to the cohort registration window', functio
         'time_utc' => '2026-04-10 10:00:00',
     ]);
 
-    $data = app(StatsAggregationsService::class)->getAggregatedData(cohortFebFilter($this->pid));
+    $data = resolve(StatsAggregationsService::class)->getAggregatedData(cohortFebFilter($this->pid));
 
     $sum = fn (string $key) => collect($data)->sum($key);
 
@@ -99,7 +99,7 @@ it('scopes registrations and revenue to the cohort registration window', functio
         ->and((int) round((float) $sum('pd_net')))->toBe(300);
 });
 
-it('treats visitor metrics as not applicable for a registration cohort', function () {
+it('treats visitor metrics as not applicable for a registration cohort', function (): void {
     StatsUser::factory()->count(3)->create([
         'team_id' => $this->team->id,
         'project_id' => $this->pid,
@@ -114,12 +114,12 @@ it('treats visitor metrics as not applicable for a registration cohort', functio
         'time_utc' => '2026-02-12 10:00:00',
     ]);
 
-    $data = app(StatsAggregationsService::class)->getAggregatedData(cohortFebFilter($this->pid));
+    $data = resolve(StatsAggregationsService::class)->getAggregatedData(cohortFebFilter($this->pid));
 
     expect((int) collect($data)->sum('pd_visitor'))->toBe(0);
 });
 
-it('produces a different cache signature per cohort window', function () {
+it('produces a different cache signature per cohort window', function (): void {
     $feb = cohortFebFilter($this->pid);
 
     $mar = new StatsFilterDto(
@@ -135,7 +135,7 @@ it('produces a different cache signature per cohort window', function () {
     expect($feb->makeHash())->not->toBe($mar->makeHash());
 });
 
-it('accepts a cohort filter on the dashboard and exposes it in the filters', function () {
+it('accepts a cohort filter on the dashboard and exposes it in the filters', function (): void {
     $this->actingAs($this->user)
         ->get(route('dashboard', [
             'project_id' => $this->pid,
@@ -153,7 +153,7 @@ it('accepts a cohort filter on the dashboard and exposes it in the filters', fun
         );
 });
 
-it('scopes to an arbitrary, non-bucket-aligned registration window', function () {
+it('scopes to an arbitrary, non-bucket-aligned registration window', function (): void {
     StatsUser::factory()->count(2)->create([
         'team_id' => $this->team->id,
         'project_id' => $this->pid,
@@ -178,12 +178,12 @@ it('scopes to an arbitrary, non-bucket-aligned registration window', function ()
         cohortEnd: CarbonImmutable::parse('2026-02-16 00:00:00'),
     );
 
-    $data = app(StatsAggregationsService::class)->getAggregatedData($filters);
+    $data = resolve(StatsAggregationsService::class)->getAggregatedData($filters);
 
     expect((int) collect($data)->sum('pd_reg'))->toBe(2);
 });
 
-it('accepts a picker-style cohort with a custom observation period', function () {
+it('accepts a picker-style cohort with a custom observation period', function (): void {
     $this->actingAs($this->user)
         ->get(route('dashboard', [
             'project_id' => $this->pid,
@@ -199,7 +199,7 @@ it('accepts a picker-style cohort with a custom observation period', function ()
         ->assertInertia(fn ($page) => $page->where('filters.cohort_label', 'Feb 14 – Feb 15, 2026'));
 });
 
-it('carries the cohort display label through to the filters', function () {
+it('carries the cohort display label through to the filters', function (): void {
     $this->actingAs($this->user)
         ->get(route('dashboard', [
             'project_id' => $this->pid,
@@ -215,7 +215,7 @@ it('carries the cohort display label through to the filters', function () {
         ->assertInertia(fn ($page) => $page->where('filters.cohort_label', '2026-06'));
 });
 
-it('clears the cohort filter when the window is submitted empty', function () {
+it('clears the cohort filter when the window is submitted empty', function (): void {
     $this->actingAs($this->user)
         ->get(route('dashboard', [
             'project_id' => $this->pid,
@@ -230,7 +230,7 @@ it('clears the cohort filter when the window is submitted empty', function () {
         );
 });
 
-it('accepts a cohort filter on the recurring revenue page', function () {
+it('accepts a cohort filter on the recurring revenue page', function (): void {
     $this->actingAs($this->user)
         ->get(route('revenue', [
             'project_id' => $this->pid,

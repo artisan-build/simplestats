@@ -22,13 +22,9 @@ class SparkServiceProvider extends ServiceProvider
 
         Cashier::useTransactionModel(Transaction::class);
 
-        Spark::billable(User::class)->resolve(function (Request $request) {
-            return $request->user();
-        });
+        Spark::billable(User::class)->resolve(fn (Request $request) => $request->user());
 
-        Spark::billable(User::class)->authorize(function (User $billable, Request $request) {
-            return $request->user() &&
-                   $request->user()->id == $billable->id;
-        });
+        Spark::billable(User::class)->authorize(fn (User $billable, Request $request): bool => $request->user() &&
+               $request->user()->id == $billable->id);
     }
 }

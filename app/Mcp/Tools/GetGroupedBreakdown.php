@@ -20,9 +20,9 @@ class GetGroupedBreakdown extends Tool
 {
     use ResolvesStatsFilters;
 
-    private const SORTS = ['net', 'visitors', 'reg', 'cr', 'dau', 'arpu'];
+    private const array SORTS = ['net', 'visitors', 'reg', 'cr', 'dau', 'arpu'];
 
-    private const MONEY_KEYS = ['net', 'gross', 'arpu', 'arpv', 'arps', 'arpdau', 'mrr'];
+    private const array MONEY_KEYS = ['net', 'gross', 'arpu', 'arpv', 'arps', 'arpdau', 'mrr'];
 
     public function __construct(protected StatsDetailsService $statsDetailsService) {}
 

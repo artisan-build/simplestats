@@ -7,6 +7,7 @@ use App\Models\StatsTrackSource;
 use App\Models\StatsUser;
 use App\Models\Team;
 use App\Services\RefererService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class ExtractReferersFromSources extends Command
      */
     public function handle(RefererService $refererService): void
     {
-        Team::with('owner')->get()->each(function ($team) use ($refererService) {
+        Team::with('owner')->get()->each(function ($team) use ($refererService): void {
             if (empty($team->owner)) {
                 return;
             }
@@ -39,7 +40,7 @@ class ExtractReferersFromSources extends Command
             DB::beginTransaction();
 
             try {
-                StatsTrackSource::where('team_id', $team->id)->orderBy('id')->get()->each(function (StatsTrackSource $source) use ($refererService) {
+                StatsTrackSource::where('team_id', $team->id)->orderBy('id')->get()->each(function (StatsTrackSource $source) use ($refererService): void {
                     $sourceName = $source->name;
 
                     // if source contains a dot, we assume it's a referer...
@@ -65,7 +66,7 @@ class ExtractReferersFromSources extends Command
                         $source->delete();
                     }
                 });
-            } catch (\Exception $e) {
+            } catch (Exception) {
                 DB::rollBack();
             }
 

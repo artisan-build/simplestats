@@ -11,8 +11,8 @@ use App\Services\StatsService;
 class StatsGroupsDataProvider extends AbstractDataProvider
 {
     public function __construct(
-        private StatsFilterRequest $request,
-        private StatsDetailsService $statsDetailsService,
+        private readonly StatsFilterRequest $request,
+        private readonly StatsDetailsService $statsDetailsService,
     ) {}
 
     public function toArray(): array

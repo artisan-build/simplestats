@@ -33,14 +33,12 @@ enum UserNotificationType: string
 
     public static function toArray(): array
     {
-        return collect(self::cases())->mapWithKeys(function (UserNotificationType $type) {
-            return [
-                $type->value => [
-                    'title' => $type->title(),
-                    'description' => $type->description(),
-                ],
-            ];
-        })->toArray();
+        return collect(self::cases())->mapWithKeys(fn (UserNotificationType $type): array => [
+            $type->value => [
+                'title' => $type->title(),
+                'description' => $type->description(),
+            ],
+        ])->all();
     }
 
     public static function sorting(): array

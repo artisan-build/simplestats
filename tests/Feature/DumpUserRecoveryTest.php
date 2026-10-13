@@ -68,7 +68,7 @@ function seedRecoverableUser(): array
 
     DB::table('user_notifications')->insert([
         'uuid' => (string) Str::uuid(),
-        'user_id' => $user->id, 'notifiable_type' => 'App\\Models\\Project', 'notifiable_id' => $project->id,
+        'user_id' => $user->id, 'notifiable_type' => Project::class, 'notifiable_id' => $project->id,
         'frequency' => 'weekly', 'type' => 'report', 'settings' => json_encode(['tracking' => ['registrations' => true]]),
         'created_at' => $now, 'updated_at' => $now,
     ]);
@@ -95,7 +95,7 @@ function runDump(string $identifier, array $options = []): string
     return $sql;
 }
 
-it('dumps the full user graph as ordered INSERT statements', function () {
+it('dumps the full user graph as ordered INSERT statements', function (): void {
     seedRecoverableUser();
 
     $sql = runDump('recover@example.com');
@@ -112,12 +112,12 @@ it('dumps the full user graph as ordered INSERT statements', function () {
     expect($sql)->toContain('BEGIN;')->toContain('COMMIT;');
 });
 
-it('orders parents before their children', function () {
+it('orders parents before their children', function (): void {
     seedRecoverableUser();
 
     $sql = runDump('recover@example.com');
 
-    $pos = fn (string $table) => strpos($sql, 'INSERT INTO "'.$table.'"');
+    $pos = fn (string $table): int|false => strpos($sql, 'INSERT INTO "'.$table.'"');
 
     expect($pos('users'))->toBeLessThan($pos('teams'));
     expect($pos('teams'))->toBeLessThan($pos('projects'));
@@ -127,7 +127,7 @@ it('orders parents before their children', function () {
     expect($pos('stats_users'))->toBeLessThan($pos('stats_payments'));
 });
 
-it('resets last_login_at and inactive_since on the user insert', function () {
+it('resets last_login_at and inactive_since on the user insert', function (): void {
     seedRecoverableUser();
 
     $sql = runDump('recover@example.com');
@@ -138,7 +138,7 @@ it('resets last_login_at and inactive_since on the user insert', function () {
     expect($sql)->not->toContain('2021-02-02 00:00:00');
 });
 
-it('keeps the composite (id, project_id) key on stats inserts', function () {
+it('keeps the composite (id, project_id) key on stats inserts', function (): void {
     seedRecoverableUser();
 
     $sql = runDump('recover@example.com');
@@ -147,7 +147,7 @@ it('keeps the composite (id, project_id) key on stats inserts', function () {
     expect($sql)->toContain("'cust-user-1'");
 });
 
-it('excludes billing by default and includes it with --with-billing', function () {
+it('excludes billing by default and includes it with --with-billing', function (): void {
     $this->skipUnlessSaas();
 
     ['user' => $user] = seedRecoverableUser();
@@ -159,12 +159,12 @@ it('excludes billing by default and includes it with --with-billing', function (
     expect(runDump('recover@example.com', ['--with-billing' => true]))->toContain('INSERT INTO "subscriptions"');
 });
 
-it('resolves the user by numeric id too', function () {
+it('resolves the user by numeric id too', function (): void {
     ['user' => $user] = seedRecoverableUser();
 
     expect(runDump((string) $user->id))->toContain('recover@example.com');
 });
 
-it('fails for an unknown user', function () {
+it('fails for an unknown user', function (): void {
     $this->artisan('app:dump-user-recovery', ['user' => 'ghost@example.com'])->run();
 })->throws(RuntimeException::class);

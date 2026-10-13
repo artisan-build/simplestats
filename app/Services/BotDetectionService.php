@@ -19,7 +19,7 @@ class BotDetectionService
      *   on Akamai, Fastly and Cloudflare, and ip-api flags Akamai/Fastly as hosting.
      * Every other datacenter AS (AWS, GCP, Hetzner, Linode, ...) is filtered.
      */
-    private const CONSUMER_EXIT_ASNS = [
+    private const array CONSUMER_EXIT_ASNS = [
         9009,   // M247
         60068,  // Datacamp / CDN77
         212238, // Datacamp (NordVPN exits)
@@ -47,7 +47,7 @@ class BotDetectionService
             return false;
         }
 
-        $position = app(LocationService::class)->get($ip);
+        $position = resolve(LocationService::class)->get($ip);
 
         if (! $position instanceof Position || $position->isHosting === null) {
             if ($position instanceof Position) {

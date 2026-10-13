@@ -19,6 +19,9 @@ class Passkey extends BasePasskey
 
     // withTrashed() so a passkey login of a soft-deleted user resolves the owner
     // and can show the deactivation notice (see FortifyServiceProvider).
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class)->withTrashed();

@@ -34,7 +34,7 @@ class WarmBlogCacheCommand extends Command
         }
 
         if ($slugs->isNotEmpty() || $this->option('missing')) {
-            $posts = $posts->filter(fn (Post $post) => $slugs->contains($post->slug)
+            $posts = $posts->filter(fn (Post $post): bool => $slugs->contains($post->slug)
                 || ($this->option('missing') && ! $blogService->hasWarmHighlightCache($post)));
         }
 

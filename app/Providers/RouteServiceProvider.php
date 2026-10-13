@@ -21,9 +21,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/dashboard';
 
-    private const API_RATE_LIMIT_DEFAULT = 200;
+    private const int API_RATE_LIMIT_DEFAULT = 200;
 
-    private const MCP_RATE_LIMIT = 60;
+    private const int MCP_RATE_LIMIT = 60;
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -63,7 +63,7 @@ class RouteServiceProvider extends ServiceProvider
             return $user->passkeys()->where('uuid', $value)->firstOrFail();
         });
 
-        $this->routes(function () {
+        $this->routes(function (): void {
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));

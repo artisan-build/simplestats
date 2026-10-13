@@ -9,6 +9,9 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<DataImport>
+ */
 class DataImportFactory extends Factory
 {
     /**
@@ -27,9 +30,9 @@ class DataImportFactory extends Factory
             'team_id' => Team::factory(),
             'project_id' => Project::factory(),
             'created_by' => User::factory(),
-            'type' => $this->faker->randomElement(DataImportType::cases()),
-            'rows_max' => $this->faker->numberBetween(100, 10000),
-            'rows_imported' => $this->faker->numberBetween(0, 100),
+            'type' => fake()->randomElement(DataImportType::cases()),
+            'rows_max' => fake()->numberBetween(100, 10000),
+            'rows_imported' => fake()->numberBetween(0, 100),
         ];
     }
 }

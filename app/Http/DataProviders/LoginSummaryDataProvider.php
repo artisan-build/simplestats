@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 class LoginSummaryDataProvider extends AbstractDataProvider
 {
     public function __construct(
-        private Request $request,
-        private LoginSummaryService $loginSummaryService,
+        private readonly Request $request,
+        private readonly LoginSummaryService $loginSummaryService,
     ) {}
 
     public function toArray(): array
