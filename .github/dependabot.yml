@@ -1,0 +1,18 @@
+version: 2
+
+# composer is left out on purpose: dependabot would only bump composer.json,
+# while every shared package has to be bumped in composer.saas.json as well.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
