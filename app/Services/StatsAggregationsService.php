@@ -17,7 +17,6 @@ use App\Models\Project;
 use App\Models\StatsAggregation;
 use App\Models\StatsCustomPropertyName;
 use App\Models\Team;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
@@ -121,7 +120,7 @@ class StatsAggregationsService
 
         if ($trackablePerson === TrackablePerson::USER) {
             $tz = $project?->team?->timezone ?? config('app.timezone');
-            $dauDates = $filters->rangeType->getDAUDates(Carbon::parse($filterConditions['endDateStart'], $tz));
+            $dauDates = $filters->rangeType->getDAUDates(CarbonImmutable::parse($filterConditions['endDateStart'], $tz));
 
             if (empty($dauDates)) {
                 $filterConditions['dauEndDateStart'] = $filterConditions['endDateStart'];

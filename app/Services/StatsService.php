@@ -27,7 +27,6 @@ use App\Models\StatsTrackTerm;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -211,12 +210,12 @@ class StatsService
         return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 
-    public function getStatsStartingAt(array $filter): Carbon
+    public function getStatsStartingAt(array $filter): CarbonImmutable
     {
         // filter to remove 0 key value pairs...
         $where = collect($filter)->filter()->toArray();
 
-        return Carbon::parse(Project::where($where)->min('stats_starting_at'));
+        return CarbonImmutable::parse(Project::where($where)->min('stats_starting_at'));
     }
 
     /**

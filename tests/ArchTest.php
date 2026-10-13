@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\StatsReadController;
 use App\Http\Controllers\UserProfileController;
-use App\Jobs\TrackStatsLogin;
-use App\Services\StatsAggregationsService;
-use App\Services\StatsService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,13 +24,11 @@ arch('env() is only used inside config files')
 
 arch('mutable Carbon is not used')
     ->expect(Carbon::class)
-    ->not->toBeUsedIn(['App', 'Database'])
-    ->ignoring([StatsAggregationsService::class, StatsService::class, TrackStatsLogin::class]);
+    ->not->toBeUsedIn(['App', 'Database']);
 
 arch('controllers have no private helpers')
     ->expect('App\Http\Controllers')
-    ->not->toHavePrivateMethods()
-    ->ignoring(StatsReadController::class);
+    ->not->toHavePrivateMethods();
 
 arch('enums are enums')
     ->expect('App\Enums')
