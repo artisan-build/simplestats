@@ -4,6 +4,8 @@ includes:
 
 parameters:
     level: 6
+    # casts() methods (instead of $casts) are only typed when Larastan parses them
+    parseModelCastsMethod: true
     paths:
         - app
         - bootstrap/app.php

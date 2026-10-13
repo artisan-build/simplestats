@@ -6,6 +6,7 @@ use Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveDuplicatedReturnSelfDocblockRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
+use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
 use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
@@ -33,6 +34,8 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_TYPE_DECLARATIONS,
     ])
     ->withSkip([
+        // Date is bound to CarbonImmutable, so this would silently turn mutable Carbon immutable
+        CarbonToDateFacadeRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         RemoveDuplicatedReturnSelfDocblockRector::class,
         SafeDeclareStrictTypesRector::class,
