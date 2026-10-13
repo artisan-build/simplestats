@@ -45,3 +45,4 @@ boost.json
 .agents/skills/
 .claude/skills/
 .claude/launch.json
+polyscope.json
