@@ -6,7 +6,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-Open source analytics for Laravel that tells you which marketing channels actually make you money. Server-side, from first visit to recurring revenue. Set up in minutes.
+Open source analytics for Laravel that tells you which marketing channels actually make you money. Server-side, from first visit to paying customer. Set up in minutes.
 
 > Plausible doesn't know what you earn. Stripe doesn't know where your customers come from. SimpleStats knows both.
 
@@ -16,11 +16,11 @@ Open source analytics for Laravel that tells you which marketing channels actual
 
 Web analytics tools see your traffic but never your revenue. Billing and subscription tools see your revenue but have never heard of your `utm_campaign`. So the question that decides your marketing budget, *which campaign is actually profitable?*, is answered by nobody.
 
-_**SimpleStats**_ tracks **visitor → registration → payment → MRR** as one connected chain, directly inside your **Laravel** app:
+_**SimpleStats**_ tracks **visitor → registration → payment** as one connected chain, directly inside your **Laravel** app:
 
 - **Revenue attribution:** every signup and payment is tied back to the source, campaign and referrer that brought the user in.
 - **Campaign profit:** add your ad spend and get ROAS, CAC and LTV:CAC per channel.
-- **Subscription metrics:** MRR, ARR, churn and retention cohorts, filterable by channel.
+- **Subscription metrics:** selling subscriptions? MRR, ARR, churn and retention cohorts, filterable by channel. One-time payments work just as well.
 - **Server-side:** tracked through Laravel itself (middleware, observers, event listeners), so ad blockers can't touch it.
 - **GDPR-compliant:** no cookies, no stored IPs.
 
