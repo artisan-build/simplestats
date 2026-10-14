@@ -17,6 +17,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -81,8 +82,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Health::checks([
-            HorizonCheck::new(),
+        $checks = [
             DatabaseCheck::new(),
             CacheCheck::new(),
             RedisCheck::new(),
@@ -91,7 +91,13 @@ class AppServiceProvider extends ServiceProvider
             UsedDiskSpaceCheck::new(),
             EnvironmentCheck::new(),
             DebugModeCheck::new(),
-        ]);
+        ];
+
+        if ($this->queueRunsOnHorizon()) {
+            array_unshift($checks, HorizonCheck::new());
+        }
+
+        Health::checks($checks);
 
         User::observe(UserObserver::class);
 
@@ -128,5 +134,17 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Gate::define('viewPulse', fn (User $user): bool => $user->isAdmin());
+    }
+
+    /**
+     * Horizon only drives Redis queues, so an installation that runs its queue
+     * on any other driver has no Horizon process for the health check to find
+     * and would report an unhealthy application forever.
+     */
+    private function queueRunsOnHorizon(): bool
+    {
+        $connection = Config::string('queue.default');
+
+        return config("queue.connections.{$connection}.driver") === 'redis';
     }
 }
