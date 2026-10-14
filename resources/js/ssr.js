@@ -9,10 +9,28 @@ import { createSSRApp, h } from "vue";
 import { i18nVue } from "laravel-vue-i18n";
 import { vTooltip } from 'floating-vue';
 
-createServer((page) =>
-    createInertiaApp({
+createServer((page) => {
+    let pageApp;
+    let pageHtml;
+
+    // Inertia 2.x embeds render(pageApp) synchronously as innerHTML. Since Vue 3.5.44 stringifies
+    // innerHTML, the async renderToString would end up as "[object Promise]". So the page app is
+    // rendered upfront and its finished HTML is handed back for the inner call.
+    const render = (app) => {
+        if (app === pageApp) {
+            return pageHtml;
+        }
+
+        return renderToString(pageApp).then((html) => {
+            pageHtml = html;
+
+            return renderToString(app);
+        });
+    };
+
+    return createInertiaApp({
         page,
-        render: renderToString,
+        render,
         resolve: (name) => {
             if (name.startsWith("Home") || name.startsWith("Auth")) {
                 return resolvePageComponent(
@@ -25,7 +43,9 @@ createServer((page) =>
             return { default: { render: () => '' } };
         },
         setup({ App, props, plugin }) {
-            return createSSRApp({ render: () => h(App, props) })
+            pageApp = createSSRApp({ render: () => h(App, props) });
+
+            return pageApp
                 .use(plugin)
                 .use(ZiggyVue, props.initialPage.props.ziggy)
                 .directive('tooltip', vTooltip)
@@ -39,5 +59,5 @@ createServer((page) =>
                     fallbackLang: "en",
                 });
         },
-    })
-);
+    });
+});
