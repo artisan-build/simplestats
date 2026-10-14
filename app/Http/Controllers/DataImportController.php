@@ -10,6 +10,7 @@ use App\Models\DataImport;
 use App\Validators\BaseStatsValidator;
 use Cache;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Sleep;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -44,7 +45,9 @@ class DataImportController extends Controller
         // only additional validation is done, we start the import...
         $dataImport->save();
 
-        $filepath = $file->store('imports', 'local');
+        // The worker that processes the import may be a different container,
+        // so the upload goes on the disk both of them can read.
+        $filepath = $file->store('imports', Config::string('filesystems.shared'));
         dispatch(new ProcessDataImportJob($dataImport, $filepath));
 
         // w8 till the dispatched job is tracked
