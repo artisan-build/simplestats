@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\StorageHelper;
 use Spatie\Backup\Notifications\Notifiable;
 use Spatie\Backup\Notifications\Notifications\BackupHasFailedNotification;
 use Spatie\Backup\Notifications\Notifications\BackupWasSuccessfulNotification;
@@ -13,6 +14,17 @@ use Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes;
 use Spatie\DbDumper\Compressors\GzipCompressor;
 
 return [
+
+    /*
+     * Whether the scheduler creates and cleans up backups.
+     *
+     * On by default, so a server you run yourself keeps its daily backup. Off
+     * by default on a platform that already backs the database up for you and
+     * where the local disk does not survive a deploy anyway - Laravel Cloud is
+     * one - so turning backups on there is a decision you make, with
+     * BACKUP_ENABLED=true, rather than one you inherit.
+     */
+    'enabled' => env('BACKUP_ENABLED', ! laravel_cloud()),
 
     'backup' => [
 
@@ -157,7 +169,7 @@ return [
             /*
              * The disk names on which the backups will be stored.
              */
-            'disks' => array_map(trim(...), explode(',', env('BACKUP_DISKS', 'local'))),
+            'disks' => array_map(trim(...), explode(',', env('BACKUP_DISKS', StorageHelper::sharedDisk(env('LARAVEL_CLOUD_DISK_CONFIG'))))),
         ],
 
         /*
@@ -262,7 +274,7 @@ return [
     'monitor_backups' => [
         [
             'name' => env('APP_NAME', 'laravel-backup'),
-            'disks' => array_map(trim(...), explode(',', env('BACKUP_DISKS', 'local'))),
+            'disks' => array_map(trim(...), explode(',', env('BACKUP_DISKS', StorageHelper::sharedDisk(env('LARAVEL_CLOUD_DISK_CONFIG'))))),
             'health_checks' => [
                 MaximumAgeInDays::class => 1,
                 MaximumStorageInMegabytes::class => 5000,
