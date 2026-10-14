@@ -82,6 +82,11 @@ GitHub Actions run on every push to `main` and every PR: `tests.yml` (Pest incl.
 - **Arch tests** (`tests/ArchTest.php`) encode project conventions (no private controller helpers, no mutable Carbon, enums/concerns/requests shapes, Pest php/security presets). Existing violations are listed via `->ignoring()`; do not add new ones.
 - **Dependabot** only updates GitHub Actions and npm. Composer updates stay manual because both manifests must be bumped together. Dependabot alerts only cover `composer.lock`, never `composer.saas.lock` (production), so `security-audit.yml` runs `composer audit --locked` on both locks weekly (no install, no Spark credentials needed). Locally: `composer audit --locked` and `COMPOSER=composer.saas.json composer audit --locked`.
 - **Releases:** the SaaS deploys continuously from `main`. Self-hosters use tags. Create a GitHub release (`gh release create vX.Y.Z --generate-notes`), `update-changelog.yml` then writes the notes into `CHANGELOG.md` on `main` (never edit it by hand). SemVer: **major** = self-hosters must act (new required env var, raised PHP/PostgreSQL requirement, breaking config), **minor** = features and migrations, **patch** = fixes. Breaking steps go into the release notes.
+- **Release cadence (self-hosted):** `main` is deployed to the SaaS continuously, but self-hosters only get what is tagged, so untagged work silently never reaches them. The SaaS acts as the canary: tag once a change has run on production for a few days without new errors.
+  - **Security fix:** patch release the same day, mention it in the release notes.
+  - **Feature or migration landed:** minor release once it has soaked on the SaaS (a few days), do not batch features for months.
+  - **Safety net:** if `main` has commits that are not in the latest tag and the latest tag is older than ~4 weeks, cut a release (fix bundle → patch, anything with features or migrations → minor).
+  - When finishing a feature, a fix with user impact, or a migration, remind the maintainer that a self-hosted release is due (and whether it is patch, minor or major), instead of tagging yourself.
 
 ## Laravel Boost
 
