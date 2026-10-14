@@ -66,7 +66,7 @@ jobs:
           php artisan key:generate
 
       - name: Cache phpstan results
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/phpstan
           key: phpstan-${{ github.ref }}-${{ github.sha }}
@@ -99,7 +99,7 @@ jobs:
         uses: ramsey/composer-install@v4
 
       - name: Cache rector results
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/rector
           key: rector-${{ github.ref }}-${{ github.sha }}
