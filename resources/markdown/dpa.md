@@ -89,4 +89,4 @@ In case of conflict between this DPA and the Terms and Conditions regarding the 
 
 ## Contact
 
-For questions about this DPA or data protection, contact Our Data Protection Officer, Elisabeth Wintergerst, Rechtsanwältin, Brunnengasse 12, 87629 Füssen, or email hello@leto.games.
+For questions about this DPA or data protection, contact Our Data Protection Officer, Elisabeth Wintergerst, Rechtsanwältin, Brunnengasse 12, 87629 Füssen, or email simplestats@laracraft.tech.

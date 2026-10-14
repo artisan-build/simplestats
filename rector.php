@@ -7,6 +7,7 @@ use Rector\CodeQuality\Rector\Identical\SimplifyBoolIdenticalTrueRector;
 use Rector\CodeQuality\Rector\Isset_\IssetOnPropertyObjectToPropertyExistsRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveDuplicatedReturnSelfDocblockRector;
+use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use RectorLaravel\Rector\StaticCall\CarbonToDateFacadeRector;
 use RectorLaravel\Set\LaravelSetList;
@@ -44,6 +45,8 @@ return RectorConfig::configure()
         // isset() also null-checks and sees Eloquent magic attributes, property_exists() does neither
         IssetOnPropertyObjectToPropertyExistsRector::class,
         RemoveDuplicatedReturnSelfDocblockRector::class,
+        // config:cache cannot serialize closures, config files must keep array callables
+        ArrayToFirstClassCallableRector::class => [__DIR__.'/config'],
         SafeDeclareStrictTypesRector::class,
         SimplifyBoolIdenticalTrueRector::class,
         SimplifyEmptyCheckOnEmptyArrayRector::class,

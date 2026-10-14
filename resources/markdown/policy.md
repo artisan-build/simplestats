@@ -279,7 +279,7 @@ You are advised to review this Privacy Policy periodically for any changes. Chan
 
 For any questions related to privacy and data protection, our Data Protection Officer is available to assist you. You can contact our Data Protection Officer, Mrs. Elisabeth Wintergerst, via the following details:
 
-**Email**: hello@leto.games
+**Email**: simplestats@laracraft.tech
 
 **Mailing Address**: Elisabeth Wintergerst Rechtsanwältin - Brunnengasse 12, 87629 Füssen
 
@@ -290,4 +290,4 @@ Ms. Elisabeth Wintergerst is responsible for overseeing compliance with data pro
 If you have any questions about this Privacy Policy, You can contact us:
 
 
-- By email: hello@leto.games
+- By email: simplestats@laracraft.tech
