@@ -14,6 +14,7 @@ use App\Services\StatsAggregationsService;
 use App\Services\StatsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -69,7 +70,7 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
         $importer = $this->dataImport->type->getImporter($this->dataImport);
 
         try {
-            Excel::import($importer, $this->filepath);
+            Excel::import($importer, $this->filepath, Config::string('filesystems.shared'));
             $this->processPostImport($importer);
             Mail::to($this->dataImport->createdBy->email)->queue(new DataImportCompleted($this->dataImport));
         } catch (Throwable $e) {
@@ -87,7 +88,7 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
         } finally {
             resolve(StatsService::class)->recalculateStatsStartingAt();
             $this->invalidateStatsAggregations($importer);
-            Storage::disk('local')->delete($this->filepath);
+            Storage::disk(Config::string('filesystems.shared'))->delete($this->filepath);
         }
     }
 
