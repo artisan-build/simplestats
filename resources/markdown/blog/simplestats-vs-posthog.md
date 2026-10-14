@@ -38,11 +38,13 @@ It's built exclusively for Laravel and tracks everything server-side through a n
 
 ## 1. Setup: Minutes Instead of a Project
 
-With SimpleStats you install the client package, add a contract to your `User` model and one to your payment model, and you're done:
+With SimpleStats you install the client package:
 
 ```bash
 composer require simplestats-io/laravel-client
 ```
+
+That alone already tracks your visitors, including their UTM codes and referrer. Logins are picked up automatically from Laravel's `Login` event. To track registrations, add one contract to your `User` model:
 
 ```php
 use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
@@ -56,34 +58,33 @@ class User extends Authenticatable implements TrackablePerson
 }
 ```
 
-From then on, visitors, registrations, logins and payments are tracked automatically. Using Laravel Cashier, Paddle or Lemon Squeezy? [That works too](/docs/how-to-track-a-new-payment.html).
+Revenue works the same way: implement one more contract on your payment model, and every new payment is sent to SimpleStats. That also takes just a few minutes, see the [payment docs](/docs/how-to-track-a-new-payment.html).
 
 With PostHog you can get to a similar place, but you build it yourself: send a capture call for every signup and payment, identify users so their anonymous visits get merged with their account, connect your payment data, and then build the funnels and reports on top. Doable, but it's a project, not a coffee break.
 
 ## 2. Attribution Out of the Box
 
-This is the core difference. In SimpleStats, **every registration and every payment is linked back to the visitor's original UTM codes, referrer and campaign.** No extra code.
+This is the core difference. In SimpleStats, **every registration and every payment is linked back to the visitor's original UTM codes and referrer.** No funnels to build, no users to identify, no reports to set up.
 
-That means you see, per source, campaign or landing page:
+That means you see, per source, campaign or referrer:
 
 - visitors, registrations and conversion rate
-- net and gross revenue, ARPU, ARPV
-- MRR and ARR for subscription businesses
-- ROAS and CAC once you add your ad spend
+- the revenue each of them brought in
+- ROAS, CAC and net profit per campaign once you add your ad spend
 
 So the question *"How much revenue did last month's Google Ads campaign actually generate?"* is one click away. Read more about it in [Marketing ROI for Laravel](/blog/marketing-roi-for-laravel).
 
 ## 3. Server-Side: No Ad Blockers, No Cookie Banner
 
-Ad blockers hide 30 to 50% of client-side analytics data, and analytics snippets are often the first thing they block. You can work around that with a reverse proxy, but it's one more thing to set up.
+Ad blockers can hide up to 30 to 50% of client-side analytics data. With browser-based tools you can work around that with a reverse proxy, but it's one more thing to set up.
 
-SimpleStats tracks on your server, so there's nothing for an ad blocker to block. It's also GDPR compliant by design: no cookies, and IPs and user agents are processed but never stored. More on that in [Server-Side Analytics for Laravel](/blog/server-side-analytics-laravel).
+SimpleStats tracks on your server, so there's nothing for an ad blocker to block. It's also GDPR compliant by design: visitors are counted with a daily rotating hash instead of a cookie, so no consent banner is needed, and IPs and user agents are never stored. More on that in [Server-Side Analytics for Laravel](/blog/server-side-analytics-laravel).
 
 ## 4. A/B Tests, Measured All the Way to Revenue
 
 PostHog has a full experimentation suite: it assigns variants, splits traffic and does the statistics.
 
-SimpleStats takes a simpler approach: **you assign the variant, SimpleStats measures it.** You tag a visitor with their variant via custom properties, and that tag follows them through signup and every later payment. So you don't just see which variant got more clicks, but which one brought more **paying** users. See [A/B Testing for Laravel](/blog/ab-testing-for-laravel) for the details.
+SimpleStats takes a simpler approach: **you assign the variant, SimpleStats measures it.** You tag a visitor with their variant via custom properties, and that tag is carried over to their registration. So you don't just see which variant got more visitors, but which one brought more registrations and more revenue. See [A/B Testing for Laravel](/blog/ab-testing-for-laravel) for the details.
 
 ## 5. A Dashboard With the KPIs That Matter
 
@@ -100,7 +101,7 @@ SimpleStats gives you one dashboard with the KPIs a SaaS or online business actu
 | **Focus** | Marketing attribution, from visit to revenue | Product analytics and product tooling |
 | **Built for** | Laravel (plus a plain PHP client) | Any stack |
 | **Tracking** | Server-side | Mostly client-side, server SDKs available |
-| **Signups, logins, payments** | Tracked automatically | Instrumented manually |
+| **Signups, logins, payments** | Logins automatic, signups and payments via one contract each | Instrumented manually |
 | **UTM to revenue attribution** | Out of the box | Build it yourself |
 | **Ad blocker resistant** | Yes | With a reverse proxy |
 | **A/B tests** | Measured to revenue, you assign the variant | Full experimentation suite |
@@ -115,6 +116,6 @@ SimpleStats gives you one dashboard with the KPIs a SaaS or online business actu
 
 **Pick SimpleStats** if you run a Laravel app and want to know which marketing actually pays off, without spending days on instrumentation. That's exactly what it's built for.
 
-And they don't exclude each other: plenty of teams use PostHog for product insights and SimpleStats for attribution and revenue.
+And they don't exclude each other: you can use PostHog for product insights and SimpleStats for attribution and revenue.
 
 [Start for free](/register) and see which of your campaigns actually make money.
