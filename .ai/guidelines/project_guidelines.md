@@ -522,6 +522,10 @@ Legacy compatibility: the `RedirectLegacyIdUrls` middleware 301-redirects old nu
 - Do NOT ask if commits should be created - the user will commit when ready
 - Only commit when explicitly requested by the user
 
+### Local Browser Login
+
+- On the local login page (`https://simplestats.test/login`) email and password are prefilled with the seeded test user. Just click "Sign in", do not type into the fields (that appends to the prefilled values).
+
 ### When Working on the Main App
 
 - Prioritize query performance for high-volume data
