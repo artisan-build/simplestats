@@ -6,7 +6,8 @@
 /public/js/filament
 /public/icons/track_referer
 /public/storage
-/storage
+/storage/*.key
+/storage/debugbar
 /vendor
 .env
 .env.backup
