@@ -85,10 +85,6 @@ cd simplestats
 
 # use the latest release, main is the rolling state of the hosted version
 git checkout $(git describe --tags --abbrev=0)
-
-mkdir -p storage/framework/cache
-mkdir -p storage/framework/sessions
-mkdir -p storage/framework/views
 ```
 
 #### Dependencies
@@ -128,10 +124,6 @@ php artisan migrate
 #### Storage
 
 Link the storage to the public folder:
-
-```bash
-mkdir -p storage/app/public
-```
 
 ```bash
 php artisan storage:link
