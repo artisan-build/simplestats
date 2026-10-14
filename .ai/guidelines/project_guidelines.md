@@ -61,6 +61,7 @@ The repo is public. Its default build is the self-hosted one, the SaaS is the sp
 - `APP_TYPE` defaults to self-hosted; only `APP_TYPE=saas` enables SaaS code paths.
 - External contributions require the signed CLA (`CLA.md`, `.github/workflows/cla.yml`). It is what allows combining contributed AGPL code with proprietary Spark in the SaaS. Never merge an external PR without a signed CLA.
 - Issues in the public `simplestats-io/app` repo are visible to everyone (GitHub has no private issues in public repos), so they are reserved for external bug reports and feature requests. Internal ideas, roadmap items and maintainer-only tasks live as issues in the **private repo `simplestats-io/internal`** (all pre-launch issues were transferred there on 2026-10-13 and got new numbers; old `#123` references in commit messages do not match the `internal` numbers, but the old `github.com/simplestats-io/app/issues/123` URLs redirect to the transferred issue for maintainers). Never put customer names, domains, dashboard screenshots or other internal details into public issues, PRs or commit messages. Internal notes stay in `notes/` (gitignored).
+- **`notes/` is its own git repository**, a checkout of the private `simplestats-io/internal` repo nested inside the app working tree (not a submodule, so the private URL never appears in the public repo). Commit and push notes from inside `notes/` (`git -C notes ...`), never from the app repo, and only after the maintainer's go-ahead like any other commit. On a fresh clone of the app, restore it with `git clone git@github.com:simplestats-io/internal.git notes`.
 
 ### Keep `composer.json` and `composer.saas.json` in Sync
 
@@ -82,6 +83,11 @@ GitHub Actions run on every push to `main` and every PR: `tests.yml` (Pest incl.
 - **Arch tests** (`tests/ArchTest.php`) encode project conventions (no private controller helpers, no mutable Carbon, enums/concerns/requests shapes, Pest php/security presets). Existing violations are listed via `->ignoring()`; do not add new ones.
 - **Dependabot** only updates GitHub Actions and npm. Composer updates stay manual because both manifests must be bumped together. Dependabot alerts only cover `composer.lock`, never `composer.saas.lock` (production), so `security-audit.yml` runs `composer audit --locked` on both locks weekly (no install, no Spark credentials needed). Locally: `composer audit --locked` and `COMPOSER=composer.saas.json composer audit --locked`.
 - **Releases:** the SaaS deploys continuously from `main`. Self-hosters use tags. Create a GitHub release (`gh release create vX.Y.Z --generate-notes`), `update-changelog.yml` then writes the notes into `CHANGELOG.md` on `main` (never edit it by hand). SemVer: **major** = self-hosters must act (new required env var, raised PHP/PostgreSQL requirement, breaking config), **minor** = features and migrations, **patch** = fixes. Breaking steps go into the release notes.
+- **Release cadence (self-hosted):** `main` is deployed to the SaaS continuously, but self-hosters only get what is tagged, so untagged work silently never reaches them. The SaaS acts as the canary: tag once a change has run on production for a few days without new errors.
+  - **Security fix:** patch release the same day, mention it in the release notes.
+  - **Feature or migration landed:** minor release once it has soaked on the SaaS (a few days), do not batch features for months.
+  - **Safety net:** if `main` has commits that are not in the latest tag and the latest tag is older than ~4 weeks, cut a release (fix bundle → patch, anything with features or migrations → minor).
+  - When finishing a feature, a fix with user impact, or a migration, remind the maintainer that a self-hosted release is due (and whether it is patch, minor or major), instead of tagging yourself.
 
 ## Laravel Boost
 

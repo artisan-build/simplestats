@@ -6,17 +6,63 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-Open source, server-side analytics for Laravel. Self-host it for free, or use the hosted version at [simplestats.io](https://simplestats.io).
+Open source analytics for Laravel that tells you which marketing channels actually make you money. Server-side, from first visit to paying customer. Set up in minutes.
+
+> Plausible doesn't know what you earn. Stripe doesn't know where your customers come from. SimpleStats knows both.
 
 ![screenshot](https://simplestats.io/images/screenshot.png)
 
 ## Introduction
 
-_**SimpleStats**_ is a streamlined analytics tool tailored for **Laravel** applications, transcending mere counts of views and visits. It offers **precise insights** into user origins and behaviors. With default tracking and filtering via [UTM](https://en.wikipedia.org/wiki/UTM_parameters) codes, you gain detailed analysis of **marketing** campaigns, identifying which efforts drive **revenue**. Effortlessly evaluate campaign **ROI**, discover cost-effective user acquisition channels, and pinpoint the most effective performance channels. _SimpleStats_ ensures full **GDPR compliance** and a minimalistic and straightforward installation process.
+Web analytics tools see your traffic but never your revenue. Billing and subscription tools see your revenue but have never heard of your `utm_campaign`. So the question that decides your marketing budget, *which campaign is actually profitable?*, is answered by nobody.
+
+_**SimpleStats**_ tracks **visitor → registration → payment** as one connected chain, directly inside your **Laravel** app:
+
+- **Revenue attribution:** every signup and payment is tied back to the source, campaign and referrer that brought the user in.
+- **Campaign profit:** add your ad spend and get ROAS, CAC and LTV:CAC per channel.
+- **Subscription metrics:** selling subscriptions? MRR, ARR, churn and retention cohorts, filterable by channel. One-time payments work just as well.
+- **Server-side:** tracked through Laravel itself (middleware, observers, event listeners), so ad blockers can't touch it.
+- **GDPR-compliant:** no cookies, no stored IPs.
+
+Use the hosted version at [simplestats.io](https://simplestats.io) (free plan available), or run it on your own infrastructure with the steps below.
 
 Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 
-## Requirements
+## How it works
+
+Install the client package in the Laravel app you want to track:
+
+```bash
+composer require simplestats-io/laravel-client
+```
+
+Add your API token to the `.env` file:
+
+```bash
+SIMPLESTATS_API_TOKEN=your-api-token
+```
+
+Visitors and their UTM codes are tracked automatically from now on. To track registrations, add the `TrackablePerson` contract to your `User` model:
+
+```php
+use SimpleStatsIo\LaravelClient\Contracts\TrackablePerson;
+
+class User extends Authenticatable implements TrackablePerson
+{
+    public function getTrackingTime(): CarbonInterface
+    {
+        return $this->created_at;
+    }
+}
+```
+
+Payments work the same way with the `TrackablePayment` contract. See the [docs](https://simplestats.io/docs/installation.html) for payments, logins, custom events and the full configuration.
+
+## Self-hosting
+
+SimpleStats is a regular Laravel application. If you want to run it on your own infrastructure instead of using the hosted version, follow the steps below. The [self-hosted docs](https://simplestats.io/docs/self-hosted.html) compare both options and cover queues, scaling and database notes.
+
+### Requirements
 
 - **PHP:** 8.3 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip
@@ -26,11 +72,11 @@ Follow us on X at [@SimpleStats.io »](https://x.com/SimpleStats_io)
 
 Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
 
-## Installation
+### Installation
 
 SimpleStats is a regular Laravel application; it's build on top of Laravel 11 and uses Vue / Inertia.js / Tailwind CSS for the frontend (VILT stack). If you are familiar with Laravel, you should feel right at home.
 
-### Repository
+#### Repository
 
 ```bash
 git clone https://github.com/simplestats-io/app.git ./simplestats
@@ -45,7 +91,7 @@ mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 ```
 
-### Dependencies
+#### Dependencies
 
 Next, install the dependencies using [Composer](https://getcomposer.org) and [NPM](https://www.npmjs.com):
 
@@ -57,7 +103,7 @@ composer install
 npm ci
 ```
 
-### Branding and Environment
+#### Branding and Environment
 
 After that, set up your `.env` file.
 
@@ -71,7 +117,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-### Database
+#### Database
 
 Prepare your database and run the migrations:
 
@@ -79,7 +125,7 @@ Prepare your database and run the migrations:
 php artisan migrate
 ```
 
-### Storage
+#### Storage
 
 Link the storage to the public folder:
 
@@ -91,7 +137,7 @@ mkdir -p storage/app/public
 php artisan storage:link
 ```
 
-### Assets
+#### Assets
 
 Build the assets:
 
@@ -99,7 +145,7 @@ Build the assets:
 npm run build
 ```
 
-### Scheduler
+#### Scheduler
 
 Make sure to run the Laravel [scheduler](https://laravel.com/docs/12.x/scheduling#running-the-scheduler) it performs daily backups, updates GeoIP and executes other important commands.
 
@@ -107,7 +153,7 @@ Make sure to run the Laravel [scheduler](https://laravel.com/docs/12.x/schedulin
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-## Post Installation
+### Post Installation
 
 After the installation is finished, make sure to create the first user:
 
@@ -117,11 +163,15 @@ php artisan app:create-new-user {name} {email} {password}
 
 **Note:** in the self-hosted version, new users can only register an account with a team invitation.
 
-### Client Package
+#### Client Package
 
-In your application you want to track, make sure to install the SimpleStats [client package](https://simplestats.io/docs/installation.html) and follow the documentation.
+In your application you want to track, install the [client package](https://simplestats.io/docs/installation.html) as described in [How it works](#how-it-works), and point it to your own instance:
 
-## Deployment
+```bash
+SIMPLESTATS_API_URL=https://stats.example.com/api/v1/
+```
+
+### Deployment
 
 SimpleStats is a standard Laravel application, so deploy it the way you deploy your other Laravel apps (Forge, Cloud, Docker, plain servers, ...). Make sure the queue workers and the scheduler are running. See the [self-hosted docs](https://simplestats.io/docs/self-hosted.html) for queue, scaling and database notes.
 

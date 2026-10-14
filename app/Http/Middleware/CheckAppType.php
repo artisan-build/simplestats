@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\DocsController;
+use App\Http\Controllers\DpaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
 use Closure;
@@ -16,6 +17,7 @@ class CheckAppType
     private const array MARKETING_CONTROLLERS = [
         HomeController::class,
         ImprintController::class,
+        DpaController::class,
         BlogController::class,
     ];
 

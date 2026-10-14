@@ -35,7 +35,13 @@ const questions = ref([
     {
         'id': 'open-source',
         'title': () => trans('Is SimpleStats open source?'),
-        'answer': () => trans('Yes! SimpleStats is open source under the AGPL-3.0 license. The code is on <a href="https://github.com/simplestats-io/app" target="_blank" class="simpleLink">GitHub</a>, so you can verify exactly how your data is handled. Technical teams can also run it on their own servers, see the <a href="/docs/self-hosted.html" target="_blank" class="simpleLink">self-hosting docs</a>.'),
+        'answer': () => trans('Yes! SimpleStats is open source under the AGPL-3.0 license. The code is on <a href="https://github.com/simplestats-io/app" target="_blank" class="simpleLink">GitHub</a>, so you can verify exactly how your data is handled.'),
+        'active': false,
+    },
+    {
+        'id': 'self-hosting',
+        'title': () => trans('Can I self-host SimpleStats?'),
+        'answer': () => trans('Yes! SimpleStats is a standard Laravel application that you can run on your own servers for free, with no event or project limits. You need PHP 8.3+, PostgreSQL 14+ and some experience running Laravel in production. Check out the <a href="/docs/self-hosted.html" target="_blank" class="simpleLink">self-hosting docs</a> to get started. If you would rather focus on your product than on maintaining servers, our hosted version takes care of everything for you.'),
         'active': false,
     },
 ]);

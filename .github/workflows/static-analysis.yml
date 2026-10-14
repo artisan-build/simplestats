@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -33,7 +33,7 @@ jobs:
         run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Run Pint
         run: vendor/bin/pint --test
@@ -44,7 +44,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -57,7 +57,7 @@ jobs:
         run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       # Larastan boots the application
       - name: Prepare environment
@@ -66,7 +66,7 @@ jobs:
           php artisan key:generate
 
       - name: Cache phpstan results
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/phpstan
           key: phpstan-${{ github.ref }}-${{ github.sha }}
@@ -83,7 +83,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -96,10 +96,10 @@ jobs:
         run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Cache rector results
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/rector
           key: rector-${{ github.ref }}-${{ github.sha }}

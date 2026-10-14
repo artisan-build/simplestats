@@ -1,6 +1,6 @@
 ## Terms and Conditions
 
-Last updated: July 9, 2026
+Last updated: October 14, 2026
 
 Please read these terms and conditions carefully before using Our Service.
 
@@ -127,6 +127,10 @@ You may not use as a username the name of another person or entity or that is no
 
 
 
+## Data Processing
+
+When You use the Service to analyze the visitors and users of Your applications, We process personal data on Your behalf. This processing is governed by Our [Data Processing Agreement](/dpa), which forms part of these Terms and Conditions.
+
 ## Artificial Intelligence Features
 
 The Service includes optional artificial intelligence features, such as the "Ask AI" assistant and the MCP server (together, the "AI Features"), which allow You to ask questions about Your analytics data in natural language.
@@ -246,4 +250,4 @@ By continuing to access or use Our Service after those revisions become effectiv
 If you have any questions about these Terms and Conditions, You can contact us:
 
 
-- By email: hello@leto.games
+- By email: simplestats@laracraft.tech

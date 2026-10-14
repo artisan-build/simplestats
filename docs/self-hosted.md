@@ -97,6 +97,13 @@ A few things worth keeping in mind if you go this route:
 - The ingest job timeout is 60 seconds with a 90 second retry-after window. Make sure your driver's visibility timeout (for SQS) or job reserve time is at least as long, otherwise jobs may be redelivered while still being processed.
 - Scale your worker count based on observed queue depth and job processing latency, the same way you would for any Laravel queue worker.
 
+## Backups
+
+In production, the scheduler creates a daily backup of the database and the app directory with [spatie/laravel-backup](https://spatie.be/docs/laravel-backup). Failures are mailed to `ADMIN_MAIL`.
+
+- By default, backups are stored on the server only (`storage/app`). To keep a copy off the server, configure the `s3` disk (`S3_*` variables) and set `BACKUP_DISKS=local,s3`.
+- The archive contains your `.env`. To encrypt it with AES-256, set `BACKUP_ARCHIVE_PASSWORD` and keep the password somewhere outside the server, otherwise the backups are useless when the server is lost.
+
 ## Database growth
 
 Stats rows are small (a few hundred bytes including indexes). For typical use cases PostgreSQL handles tens of millions of rows on these tables without trouble on commodity hardware.

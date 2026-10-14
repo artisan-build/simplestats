@@ -9,10 +9,30 @@ updates:
       interval: weekly
     labels:
       - dependencies
+    groups:
+      github-actions:
+        patterns:
+          - "*"
 
+  # CI never builds the frontend, so a green run proves nothing for npm bumps.
+  # Majors (vite, tailwind, inertia, ...) are migrations and get done by hand.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
     labels:
       - dependencies
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
+      # 1.8+ requires apexcharts >= 4 as a peer, which breaks npm ci until the apexcharts major is migrated
+      - dependency-name: vue3-apexcharts
+        versions:
+          - ">= 1.8.0"
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch

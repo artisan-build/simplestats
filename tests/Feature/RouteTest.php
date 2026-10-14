@@ -38,7 +38,7 @@ routeTesting('all GET routes')
         // if ($uri !== 'user/confirm-password') return; // only for tests
 
         // public marketing pages redirect to the login on self-hosted
-        if (in_array($uri, ['/', 'blog', 'imprint']) || str_starts_with($uri, 'docs/')) {
+        if (in_array($uri, ['/', 'blog', 'imprint', 'dpa']) || str_starts_with($uri, 'docs/')) {
             $this->skipUnlessSaas();
         }
 

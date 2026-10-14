@@ -87,7 +87,7 @@ const showFeedbackModal = ref(false);
                 </NavLink>
             </li>
             <li class="flex flex-col gap-y-1" data-tour="profile-dropdown">
-                <NavLink as="button" :active="route().t.routes[route().current()].uri.includes('user')">
+                <NavLink as="button" :active="$page.url.startsWith('/user/')">
                     <template #icon>
                         <ProfileDropdown direction="up" :triggerText="$page.props.auth.user.name" @feedback="showFeedbackModal = true" />
                     </template>
