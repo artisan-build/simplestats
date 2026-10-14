@@ -26,6 +26,10 @@ updates:
       - dependency-name: "*"
         update-types:
           - version-update:semver-major
+      # 1.8+ requires apexcharts >= 4 as a peer, which breaks npm ci until the apexcharts major is migrated
+      - dependency-name: vue3-apexcharts
+        versions:
+          - ">= 1.8.0"
     groups:
       npm-minor-and-patch:
         applies-to: version-updates
