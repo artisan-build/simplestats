@@ -46,10 +46,6 @@ jobs:
           coverage: none
 
       # CI runs the self-hosted build (composer.json); saas-only tests skip themselves
-      # storage/ is not part of the repository
-      - name: Create storage directories
-        run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
-
       - name: Install composer dependencies
         uses: ramsey/composer-install@v4
 
