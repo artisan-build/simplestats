@@ -13,9 +13,12 @@ return [
     | using this caching library. This connection is used when another is
     | not explicitly specified when executing a given caching function.
     |
+    | Laravel 11 renamed CACHE_DRIVER to CACHE_STORE. The new name wins, the old
+    | one still works, so existing .env files keep doing what they did.
+    |
     */
 
-    'default' => env('CACHE_DRIVER', 'file'),
+    'default' => env('CACHE_STORE', env('CACHE_DRIVER', 'file')),
 
     /*
     |--------------------------------------------------------------------------
