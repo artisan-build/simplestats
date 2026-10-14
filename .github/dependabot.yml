@@ -9,10 +9,26 @@ updates:
       interval: weekly
     labels:
       - dependencies
+    groups:
+      github-actions:
+        patterns:
+          - "*"
 
+  # CI never builds the frontend, so a green run proves nothing for npm bumps.
+  # Majors (vite, tailwind, inertia, ...) are migrations and get done by hand.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
     labels:
       - dependencies
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
+    groups:
+      npm-minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - minor
+          - patch
