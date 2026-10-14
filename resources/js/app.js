@@ -10,7 +10,10 @@ import { i18nVue, I18n } from 'laravel-vue-i18n';
 import { initTawk } from './tawk';
 let appName = import.meta.env.VITE_APP_NAME;
 
-if (import.meta.env.VITE_APP_ENV !== 'production') {
+// VITE_APP_ENV is read at build time, and a build that does not come from a local
+// .env file does not have it. Without the first check the prefix is the string
+// "undefined" and every page title reads "undefined SimpleStats - Dashboard".
+if (import.meta.env.VITE_APP_ENV && import.meta.env.VITE_APP_ENV !== 'production') {
     appName = import.meta.env.VITE_APP_ENV +' '+import.meta.env.VITE_APP_NAME;
 }
 
