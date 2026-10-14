@@ -33,7 +33,7 @@ jobs:
         run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Run Pint
         run: vendor/bin/pint --test
@@ -57,7 +57,7 @@ jobs:
         run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       # Larastan boots the application
       - name: Prepare environment
@@ -96,7 +96,7 @@ jobs:
         run: mkdir -p storage/framework/{cache,sessions,views} storage/logs storage/app
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Cache rector results
         uses: actions/cache@v4
