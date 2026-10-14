@@ -40,8 +40,11 @@ class Kernel extends ConsoleKernel
             $schedule->command(SendProjectReports::class)->hourly();
 
             // DAILY
-            $schedule->command('backup:clean')->daily()->at('01:00');
-            $schedule->command('backup:run')->daily()->at('01:30');
+            if (config('backup.enabled')) {
+                $schedule->command('backup:clean')->daily()->at('01:00');
+                $schedule->command('backup:run')->daily()->at('01:30');
+            }
+
             $schedule->command('app:recalc-stats-starting-at')->daily()->at('01:45');
             $schedule->command('app:check-logins-and-payments-counter')->daily()->at('04:00');
             // the history model lives in the vendor package, so the default model:prune discovery never finds it
