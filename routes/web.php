@@ -9,6 +9,7 @@ use App\Http\Controllers\CurrentTeamController;
 use App\Http\Controllers\CustomStatsRangePresetController;
 use App\Http\Controllers\DataImportController;
 use App\Http\Controllers\DocsController;
+use App\Http\Controllers\DpaController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImpersonateController;
@@ -76,6 +77,7 @@ Route::prefix('{locale}')
 // English (default) public routes - registered LAST so named routes point to English
 Route::get('/', HomeController::class)->name('home');
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
+Route::get('/dpa', [DpaController::class, 'show'])->name('dpa');
 
 // Blog (not localized)
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

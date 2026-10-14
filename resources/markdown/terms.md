@@ -1,6 +1,6 @@
 ## Terms and Conditions
 
-Last updated: July 9, 2026
+Last updated: October 14, 2026
 
 Please read these terms and conditions carefully before using Our Service.
 
@@ -126,6 +126,10 @@ You may not use as a username the name of another person or entity or that is no
 
 
 
+
+## Data Processing
+
+When You use the Service to analyze the visitors and users of Your applications, We process personal data on Your behalf. This processing is governed by Our [Data Processing Agreement](/dpa), which forms part of these Terms and Conditions.
 
 ## Artificial Intelligence Features
 
