@@ -103,6 +103,9 @@ In production, the scheduler creates a daily backup of the database and the app 
 
 - By default, backups are stored on the server only (`storage/app`). To keep a copy off the server, configure the `s3` disk (`S3_*` variables) and set `BACKUP_DISKS=local,s3`.
 - The archive contains your `.env`. To encrypt it with AES-256, set `BACKUP_ARCHIVE_PASSWORD` and keep the password somewhere outside the server, otherwise the backups are useless when the server is lost.
+- `BACKUP_ENABLED=false` stops the scheduler creating and cleaning up backups, for instance when your database already has point-in-time recovery or a snapshot schedule you trust more.
+
+On a platform where the database is backed up for you and the local disk is replaced on every deploy, backups start out off. Laravel Cloud is one: a daily archive there would duplicate the cluster's own recovery and write your `.env` into object storage for nothing. If you do want them, usually because you run small Flex resources without point-in-time recovery, set `BACKUP_ENABLED=true`. The attached bucket is used without any further configuration, and `BACKUP_DISKS` still overrides it.
 
 ## Database growth
 
