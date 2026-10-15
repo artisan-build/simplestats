@@ -87,7 +87,7 @@ class ProcessDataImportJob extends TrackableJob implements ShouldQueue
         } finally {
             resolve(StatsService::class)->recalculateStatsStartingAt();
             $this->invalidateStatsAggregations($importer);
-            Storage::disk('local')->delete($this->filepath);
+            Storage::delete($this->filepath);
         }
     }
 

@@ -69,6 +69,8 @@ SimpleStats self-hosted is a standard Laravel application. The ingest API is int
 
 The ingest API is stateless and follows standard Laravel scaling patterns: multiple web replicas and queue workers behind the same database work out of the box, with no special configuration. Race-safe writes are guaranteed at the database level, so concurrent workers across replicas do not produce duplicates or lost updates.
 
+A data import is uploaded by a web request and read later by a queue worker, so when those run on separate machines or containers, set `FILESYSTEM_DISK` to a disk all of them can reach, for example `s3`.
+
 ## Queue workers
 
 All ingest endpoints push a job onto the `ingest` queue. The job code is queue-driver agnostic and works with any driver Laravel supports: Redis, Amazon SQS, database, Beanstalkd, etc. Pick the driver that fits your stack via the standard `QUEUE_CONNECTION` env var.

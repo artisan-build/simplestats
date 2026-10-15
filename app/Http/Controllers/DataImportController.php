@@ -44,7 +44,7 @@ class DataImportController extends Controller
         // only additional validation is done, we start the import...
         $dataImport->save();
 
-        $filepath = $file->store('imports', 'local');
+        $filepath = $file->store('imports');
         dispatch(new ProcessDataImportJob($dataImport, $filepath));
 
         // w8 till the dispatched job is tracked
