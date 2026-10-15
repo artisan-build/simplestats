@@ -48,8 +48,8 @@ const copyAgentSetupPrompt = async () => {
     const origin = window.location.origin;
 
     const copied = await copyToClipboard(
-        `Fetch and follow the instructions from ${origin}/docs/mcp-server.md to connect the ${appName} MCP server to this agent. `
-        + `Use the MCP endpoint ${origin}/mcp and ask me for my project API token.`,
+        `Fetch and follow the instructions from ${origin}/docs/agent-setup.md to connect the ${appName} MCP server to this agent. `
+        + `The MCP endpoint is ${origin}/mcp.`,
     );
 
     if (!copied) {
