@@ -155,15 +155,11 @@ Make sure to run the Laravel [scheduler](https://laravel.com/docs/12.x/schedulin
 
 ### Post Installation
 
-After the installation is finished, make sure to create the first user:
+After the installation is finished, make sure to create the first user (it becomes the admin user, every user created after that is a regular one):
 
 ```bash
 php artisan app:create-new-user {name} {email} {password}
 ```
-
-When the users table is still empty, that first user is created as an admin, which is what gives access to
-the Filament admin panel, Horizon, Pulse and user impersonation. Every user the command creates after that is
-a regular user.
 
 **Note:** in the self-hosted version, new users can only register an account with a team invitation.
 
