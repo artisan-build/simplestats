@@ -33,7 +33,7 @@ Authenticate with your **project API token** as a bearer token, the same token y
 You'll receive an API token after creating a new project, or you can find your existing API tokens inside the app on the project page.
 :::
 
-All data is scoped to the team the project belongs to. When you don't specify a project in your question, results default to the token's project.
+A token only grants access to the data of its own project. To analyze several projects in one agent, add the server once per project with a distinct name (e.g. `simplestats-shop` and `simplestats-blog`), each with its project's token. The **Ask AI** panel in the app covers all projects of your team.
 
 ## Let Your Agent Set It Up
 

@@ -7,13 +7,13 @@ Complete the steps yourself by running the commands or editing the config files 
 ## 1. Gather the Details
 
 - **MCP endpoint:** use the endpoint from the user's prompt. If there is none, use `https://simplestats.io/mcp`. Self-hosted installations use `https://<their-domain>/mcp`.
-- **API token:** ask the user for their project API token. They find it in the SimpleStats app on the project page. Any project token works, all projects of the team are accessible with it.
+- **API token:** ask the user for the API token of the project they want to analyze. They find it in the SimpleStats app on the project page. A token only grants access to its own project. To analyze several projects, register one server per project with distinct names (e.g. `simplestats-shop`, `simplestats-blog`).
 
 Handle the token with care:
 
 - Store it only in the user-level config of the agent, never in a file inside a project repository that could be committed.
 - Do not echo the token back in your replies.
-- If a server named `simplestats` already exists, update it instead of adding a duplicate.
+- If a SimpleStats server already exists, ask the user whether to replace it or to add the new project as a second server with a distinct name.
 
 ## 2. Register the Server
 

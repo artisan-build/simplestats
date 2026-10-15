@@ -14,22 +14,14 @@ use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 use Throwable;
 
-#[Description('List the current team\'s projects, the available breakdown dimensions, date range presets, and a legend of all KPI keys. Call this first when unsure which project, dimension, or preset to use.')]
+#[Description('List the projects you can access, the available breakdown dimensions, date range presets, and a legend of all KPI keys. Call this first when unsure which project, dimension, or preset to use.')]
 class ListStatsCapabilities extends Tool
 {
     public function handle(Request $request): Response|ResponseFactory
     {
         try {
             return Response::structured([
-                'projects' => [
-                    ['id' => StatsFilterDto::TRACK_ALL, 'name' => 'All projects'],
-                    ...Project::query()->get(['id', 'name', 'usage'])->map(fn (Project $project): array => [
-                        'id' => $project->id,
-                        'name' => $project->name,
-                        'tracks_registrations' => $project->hasUsages([Project::USAGE_USERS]),
-                        'tracks_subscriptions' => $project->hasUsages([Project::USAGE_SUBSCRIPTION]),
-                    ])->all(),
-                ],
+                'projects' => $this->projects(),
                 'dimensions' => StatsService::getStatsTypesFlatMap(['model', 'icon'])
                     ->map(fn (array $type): array => ['dimension' => $type['type'], 'title' => $type['title']])
                     ->values()
@@ -63,6 +55,31 @@ class ListStatsCapabilities extends Tool
 
             return Response::error('Could not list stats capabilities. The error was reported, tell the user to try again or rephrase.');
         }
+    }
+
+    /**
+     * A project API token only sees its own project, see ResolvesStatsFilters::resolveFilters().
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function projects(): array
+    {
+        $tokenProject = auth('sanctum')->user();
+
+        $projects = $tokenProject instanceof Project
+            ? collect([$tokenProject])
+            : Project::query()->get(['id', 'name', 'usage']);
+
+        $rows = $projects->map(fn (Project $project): array => [
+            'id' => $project->id,
+            'name' => $project->name,
+            'tracks_registrations' => $project->hasUsages([Project::USAGE_USERS]),
+            'tracks_subscriptions' => $project->hasUsages([Project::USAGE_SUBSCRIPTION]),
+        ])->all();
+
+        return $tokenProject instanceof Project
+            ? $rows
+            : [['id' => StatsFilterDto::TRACK_ALL, 'name' => 'All projects'], ...$rows];
     }
 
     /**

@@ -29,6 +29,8 @@ const currentTitle = computed(() => {
     return aiChat.messages.value.find((message) => message.role === 'user')?.content ?? 'Ask AI';
 });
 
+const placeholder = computed(() => `Ask about ${aiChat.contextProjectName.value ?? 'all projects'}…`);
+
 const input = ref('');
 const messageList = ref(null);
 const textarea = ref(null);
@@ -212,7 +214,7 @@ const onKeydown = (event) => {
                     ref="textarea"
                     v-model="input"
                     rows="1"
-                    placeholder="Ask about your stats…"
+                    :placeholder="placeholder"
                     class="max-h-40 flex-1 resize-none border-0 bg-transparent p-0 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0"
                     @input="resizeTextarea"
                     @keydown="onKeydown"

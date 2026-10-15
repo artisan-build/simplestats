@@ -84,3 +84,35 @@ it('serves team-scoped kpi stats defaulting to the token project', function (): 
         ->toContain($this->project->name)
         ->not->toContain('All projects');
 });
+
+it('limits a project token to its own project', function (int|string $projectId): void {
+    $otherProject = Project::factory()->create(['team_id' => $this->project->team_id, 'name' => 'Other Client']);
+
+    $response = $this->postJson('/mcp', mcpRequest('tools/call', [
+        'name' => 'get-kpi-stats',
+        'arguments' => ['preset' => 'last_7_days', 'project_id' => $projectId === 'other' ? $otherProject->id : $projectId],
+    ], 2), mcpHeaders($this->token));
+
+    $response->assertOk();
+
+    expect($response->getContent())
+        ->toContain('only grants access to the project')
+        ->not->toContain('Other Client')
+        ->not->toContain('All projects');
+})->with(['another team project' => 'other', 'all projects' => 0]);
+
+it('lists only the token project as capability', function (): void {
+    Project::factory()->create(['team_id' => $this->project->team_id, 'name' => 'Other Client']);
+
+    $response = $this->postJson('/mcp', mcpRequest('tools/call', [
+        'name' => 'list-stats-capabilities',
+        'arguments' => [],
+    ], 2), mcpHeaders($this->token));
+
+    $response->assertOk();
+
+    expect($response->getContent())
+        ->toContain($this->project->name)
+        ->not->toContain('Other Client')
+        ->not->toContain('All projects');
+});

@@ -10,6 +10,7 @@ const isStreaming = ref(false);
 const toolActivity = ref(null);
 const error = ref(null);
 const contextProjectId = ref(null);
+const contextProjectName = ref(null);
 const contextPreset = ref(null);
 const panelWidth = ref(384);
 
@@ -322,6 +323,7 @@ export function useAiChat() {
         toolActivity,
         error,
         contextProjectId,
+        contextProjectName,
         panelWidth,
         setPanelWidth,
         initFromStorage,
@@ -333,7 +335,10 @@ export function useAiChat() {
         newConversation,
         loadConversations,
         switchConversation,
-        setContextProjectId: (id) => contextProjectId.value = id,
+        setContextProject: (id, name) => {
+            contextProjectId.value = id;
+            contextProjectName.value = id ? name : null;
+        },
         setContextPreset: (preset) => contextPreset.value = preset,
     };
 }
