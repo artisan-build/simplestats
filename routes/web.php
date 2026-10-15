@@ -84,6 +84,7 @@ Route::get('/trademark', [TrademarkController::class, 'show'])->name('trademark'
 // Blog (not localized)
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::permanentRedirect('/docs/api-documentation.html', '/docs/ingest-api.html');
 Route::get('/docs/{path?}', DocsController::class)->where('path', '.*');
 Route::resource('timezones', TimezoneController::class)->only(['index']);
 

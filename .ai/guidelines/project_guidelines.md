@@ -578,7 +578,7 @@ Announcement drafts live in `notes/announcements/*.md` and are sent via the Fila
 
 1. Consider backwards compatibility
 2. Version new endpoints if breaking changes
-3. Update api-documentation.md
+3. Update `docs/ingest-api.md` (and `docs/query-api.md` for read endpoints)
 4. Update client package if needed
 
 ### Client Package Updates

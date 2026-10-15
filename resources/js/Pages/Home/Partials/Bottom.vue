@@ -17,7 +17,7 @@ const linkCategories = [
             {"title": () => trans("Server-side Tracking"), "url": "/docs/introduction.html#server-side-vs-client-side-tracking"},
             {"title": () => trans("Data Import"), "url": "/docs/how-to-import-existing-data.html"},
             {"title": () => trans("Live demo"), "url": "https://demo.simplestats.io/login"},
-            {"title": () => trans("API"), "url": "/docs/api-documentation.html"},
+            {"title": () => trans("API"), "url": "/docs/ingest-api.html"},
         ],
     },
     {
