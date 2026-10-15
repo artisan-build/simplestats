@@ -2,6 +2,10 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.1.1 - 2026-10-15
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.1.0...v6.1.1
+
 ## v6.1.0 - 2026-10-14
 
 ### Upgrade notes
