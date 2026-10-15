@@ -26,10 +26,10 @@ function usersCsv(string $time = '2026-10-01 10:00:00 +00:00'): string
     return "id,time\nimported-user-1,{$time}\n";
 }
 
-test('the upload lands on the shared disk, not on the local one', function (): void {
+test('the upload lands on the default disk, not on the local one', function (): void {
     Storage::fake('local');
     Storage::fake('bucket');
-    config(['filesystems.shared' => 'bucket']);
+    config(['filesystems.default' => 'bucket']);
     Queue::fake([ProcessDataImportJob::class]);
 
     $this->post(route('data-import.store'), [
@@ -46,7 +46,7 @@ test('the upload lands on the shared disk, not on the local one', function (): v
     Queue::assertPushed(ProcessDataImportJob::class, fn (ProcessDataImportJob $job): bool => $job->filepath === $onBucket[0]);
 });
 
-test('the shared disk is the local disk by default', function (): void {
+test('the default disk is the local disk unless FILESYSTEM_DISK says otherwise', function (): void {
     Storage::fake('local');
     Queue::fake([ProcessDataImportJob::class]);
 
@@ -56,13 +56,14 @@ test('the shared disk is the local disk by default', function (): void {
         'file' => UploadedFile::fake()->createWithContent('users.csv', usersCsv()),
     ])->assertRedirect(route('data-import.index'));
 
-    expect(config('filesystems.shared'))->toBe('local')
+    expect(config('filesystems.default'))->toBe('local')
         ->and(Storage::disk('local')->files('imports'))->toHaveCount(1);
 });
 
-test('the job imports the rows from the shared disk and deletes the file there', function (): void {
+test('the job imports the rows from the default disk and deletes the file there', function (): void {
+    Storage::fake('local');
     Storage::fake('bucket');
-    config(['filesystems.shared' => 'bucket']);
+    config(['filesystems.default' => 'bucket']);
 
     Storage::disk('bucket')->put('imports/users.csv', usersCsv());
 

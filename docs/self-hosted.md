@@ -69,7 +69,7 @@ SimpleStats self-hosted is a standard Laravel application. The ingest API is int
 
 The ingest API is stateless and follows standard Laravel scaling patterns: multiple web replicas and queue workers behind the same database work out of the box, with no special configuration. Race-safe writes are guaranteed at the database level, so concurrent workers across replicas do not produce duplicates or lost updates.
 
-One thing does need a shared place to live: a data import is uploaded by a web request and read later by a queue worker, so on a setup where those are separate machines or containers the file has to be somewhere both can reach. Set `SHARED_DISK` to a disk you have configured in `config/filesystems.php`, for example `s3`. On a single server you can leave it alone, and on Laravel Cloud an attached bucket is used automatically.
+A data import is uploaded by a web request and read later by a queue worker, so when those run on separate machines or containers, set `FILESYSTEM_DISK` to a disk all of them can reach, for example `s3`.
 
 ## Queue workers
 
