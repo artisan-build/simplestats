@@ -1,7 +1,5 @@
 <?php
 
-use App\Helpers\StorageHelper;
-
 return [
 
     /*
@@ -16,22 +14,6 @@ return [
     */
 
     'default' => env('FILESYSTEM_DISK', 'local'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Shared Filesystem Disk
-    |--------------------------------------------------------------------------
-    |
-    | Files that one process writes and another one reads live here. A data
-    | import is uploaded by a web request and read by a queue worker, so on a
-    | setup where those are separate containers the disk has to be reachable
-    | from both. On a single server the local disk does that and is the
-    | default; a bucket attached by the hosting platform is picked up
-    | automatically, and otherwise name a disk of your own here.
-    |
-    */
-
-    'shared' => env('SHARED_DISK', StorageHelper::sharedDisk(env('LARAVEL_CLOUD_DISK_CONFIG'))),
 
     /*
     |--------------------------------------------------------------------------
