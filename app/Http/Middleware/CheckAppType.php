@@ -7,6 +7,7 @@ use App\Http\Controllers\DocsController;
 use App\Http\Controllers\DpaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImprintController;
+use App\Http\Controllers\TrademarkController;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ class CheckAppType
         HomeController::class,
         ImprintController::class,
         DpaController::class,
+        TrademarkController::class,
         BlogController::class,
     ];
 

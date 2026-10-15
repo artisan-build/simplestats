@@ -26,6 +26,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\TimezoneController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\TrademarkController;
 use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\UserSettingsController;
@@ -78,6 +79,7 @@ Route::prefix('{locale}')
 Route::get('/', HomeController::class)->name('home');
 Route::get('/imprint', [ImprintController::class, 'show'])->name('imprint');
 Route::get('/dpa', [DpaController::class, 'show'])->name('dpa');
+Route::get('/trademark', [TrademarkController::class, 'show'])->name('trademark');
 
 // Blog (not localized)
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');

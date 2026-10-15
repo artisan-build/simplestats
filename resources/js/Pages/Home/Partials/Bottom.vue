@@ -40,6 +40,7 @@ const linkCategories = [
             {"title": () => trans("Imprint"), "url": "/imprint"},
             {"title": () => trans("Privacy"), "url": "/privacy-policy"},
             {"title": () => trans("Terms"), "url": "/terms-of-service"},
+            {"title": () => trans("Trademark"), "url": "/trademark"},
         ],
     },
 ];

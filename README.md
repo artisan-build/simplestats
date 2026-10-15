@@ -184,6 +184,8 @@ Please don't report security issues in public issues. See [SECURITY.md](SECURITY
 - [Zacharias Creutznacher](https://github.com/sairahcaz)
 - [All Contributors](../../contributors)
 
-## License
+## License & Trademarks
 
-GNU Affero General Public License v3.0 or later. Please see [License File](LICENSE) for more information.
+SimpleStats is open source under the GNU Affero General Public License v3.0 or later. Please see the [License File](LICENSE) for more information. The client packages ([Laravel](https://github.com/simplestats-io/laravel-client), [PHP](https://github.com/simplestats-io/php-client)) that run inside your application are licensed separately.
+
+Copyright (c) Laracraft GbR. The SimpleStats name and logo are trademarks of Laracraft GbR and are not covered by the AGPL. Please see our [trademark guidelines](https://simplestats.io/trademark) for acceptable usage.
