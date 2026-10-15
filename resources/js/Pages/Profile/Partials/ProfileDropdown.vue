@@ -8,6 +8,8 @@ import BellIcon from "bootstrap-icons/icons/bell.svg?component";
 import FileImportIcon from "bootstrap-icons/icons/file-arrow-up.svg?component";
 import CreditCardIcon from "bootstrap-icons/icons/credit-card.svg?component";
 import GearIcon from "bootstrap-icons/icons/gear.svg?component";
+import StackIcon from "bootstrap-icons/icons/stack.svg?component";
+import ActivityIcon from "bootstrap-icons/icons/activity.svg?component";
 import SignOutIcon from "bootstrap-icons/icons/box-arrow-right.svg?component";
 import LightBulbIcon from "bootstrap-icons/icons/lightbulb.svg?component";
 import QuestionMarkCircleIcon from "bootstrap-icons/icons/question-circle.svg?component";
@@ -30,6 +32,7 @@ const supportAction = () => {
 };
 
 const appType = import.meta.env.VITE_APP_TYPE;
+const isSelfHosted = appType !== 'saas';
 </script>
 
 <template>
@@ -92,12 +95,30 @@ const appType = import.meta.env.VITE_APP_TYPE;
                 </div>
             </DropdownLink>
 
-            <DropdownLink v-if="$page.props.isAdmin" as="a" href="/admin">
+            <DropdownLink v-if="appType === 'saas' && $page.props.isAdmin" as="a" href="/admin">
                 <div class="flex items-center gap-2">
                     <div>
                         <GearIcon class="size-4" />
                     </div>
                     <div>Admin</div>
+                </div>
+            </DropdownLink>
+
+            <DropdownLink v-if="isSelfHosted && $page.props.isAdmin" as="a" href="/horizon">
+                <div class="flex items-center gap-2">
+                    <div>
+                        <StackIcon class="size-4" />
+                    </div>
+                    <div>Horizon</div>
+                </div>
+            </DropdownLink>
+
+            <DropdownLink v-if="isSelfHosted && $page.props.isAdmin" as="a" href="/pulse">
+                <div class="flex items-center gap-2">
+                    <div>
+                        <ActivityIcon class="size-4" />
+                    </div>
+                    <div>Pulse</div>
                 </div>
             </DropdownLink>
 
