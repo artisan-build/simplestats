@@ -21,11 +21,15 @@ no more, no less. When the table is empty, that command must print nothing at al
 directory this fork is allowed to own, because it never ships to a running app.
 
 Prove it mechanically rather than by eye. Cherry-pick the carried branches onto `upstream/main` in a scratch
-worktree and compare trees; identical trees outside `.solo/` is the proof, a plausible-looking `--stat` is not:
+worktree and compare trees; identical trees outside `.solo/` is the proof, a plausible-looking `--stat` is not.
+
+Cherry-pick a RANGE per branch, not the branch tip. A tip is one commit, so a branch that answered a review
+with a second commit loses every commit but its last, and the proof silently compares the wrong tree:
 
 ```
+base=$(git merge-base origin/main upstream/main)   # after a sync, simply upstream/main
 git worktree add -b verify/union <scratch> upstream/main
-for b in <carried branches>; do git -C <scratch> cherry-pick "origin/$b"; done
+for b in <carried branches>; do git -C <scratch> cherry-pick "$base..origin/$b"; done
 git diff verify/union main -- ':!.solo'      # must be empty
 ```
 
@@ -36,17 +40,7 @@ Patches live here **temporarily**, only while the identical fix is open upstream
 
 | Branch | Upstream PR | What it fixes | Drop when |
 |---|---|---|---|
-| `fix/storage-skeleton` | simplestats-io/app#383 | Keeps `storage/` in the repo so a stock build command needs no `mkdir` | #383 merged upstream |
-| `fix/cache-store-env` | simplestats-io/app#384 | Reads the cache store from `CACHE_STORE` as well as `CACHE_DRIVER` | #384 merged upstream |
-| `fix/health-check-columns` | simplestats-io/app#385 | Adds the missing `check_name` / `check_label` health-history columns | #385 merged upstream |
-| `fix/app-title-undefined-env` | simplestats-io/app#386 | Stops page titles rendering as `undefined SimpleStats` without `VITE_APP_ENV` | #386 merged upstream |
-| `fix/import-disk-shared` | simplestats-io/app#387 | Hands data-import uploads to the queue worker on a shared disk | #387 merged upstream |
-| `fix/horizon-health-check` | simplestats-io/app#388 | Registers the Horizon health check only when the queue runs on Horizon | #388 merged upstream |
-| `fix/backups-opt-in-on-cloud` | simplestats-io/app#389 | Lets backups default to off where the platform already backs the database up | #389 merged upstream |
 | `fix/first-user-admin` | simplestats-io/app#390 | Makes the first user created by `app:create-new-user` an admin | #390 merged upstream |
-
-`#387` and `#389` both add an identical `app/Helpers/StorageHelper.php`. Identical content merges without a
-conflict; do not "resolve" it by editing the file.
 
 ## Sync procedure
 
