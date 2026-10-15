@@ -4,12 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class DocsController extends Controller
 {
     public function __invoke($path = 'index.html'): Response
     {
-        $filePath = base_path('docs/.vitepress/dist/'.$path);
+        $distPath = base_path('docs/.vitepress/dist/');
+
+        // Raw markdown for AI agents (e.g. the "set up your agent" prompt in the AI chat). Only pages
+        // that are part of the built docs are exposed, so no other markdown file in docs/ leaks.
+        if (preg_match('/^[a-z0-9-]+\.md$/', (string) $path) && File::exists($distPath.Str::replaceLast('.md', '.html', $path))) {
+            return new Response(File::get(base_path('docs/'.$path)), 200, ['Content-Type' => 'text/markdown; charset=utf-8']);
+        }
+
+        $filePath = $distPath.$path;
 
         if (File::extension($filePath) === '' && File::exists($filePath.'.html')) {
             $filePath .= '.html';

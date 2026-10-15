@@ -8,8 +8,8 @@ use App\Models\Project;
 use App\Services\Ai\AiStatsFilterFactory;
 use Closure;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
-use Illuminate\Support\Facades\Context;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Laravel\Mcp\Request;
 
 trait ResolvesStatsFilters
@@ -28,7 +28,7 @@ trait ResolvesStatsFilters
             'end_date' => $schema->string()
                 ->description('Range end date (YYYY-MM-DD), required with start_date.'),
             'project_id' => $schema->integer()
-                ->description('Project ID to scope to. Use 0 for all projects. When omitted, defaults to the authenticated project (project API token) or all projects.'),
+                ->description('Project ID to scope to. Use 0 for all projects. When omitted, defaults to the authenticated project (project API token) or all projects. A project API token is limited to its own project.'),
         ];
     }
 
@@ -47,15 +47,34 @@ trait ResolvesStatsFilters
 
     protected function resolveFilters(Request $request, ?int $overrideProjectId = null): StatsFilterDto
     {
-        // Context project_id is only set on the web MCP endpoint (project API
-        // token): an omitted project_id then defaults to the token's project,
-        // while an explicit 0 still means all team projects.
+        $requestedProjectId = $overrideProjectId ?? $request->get('project_id');
+        $tokenProject = $this->tokenProject();
+
+        // A project API token (web MCP endpoint) must not reach the other projects of its team, same as the
+        // Query API. Team-wide access is reserved for logged-in users (in-app chat).
+        if ($tokenProject instanceof Project) {
+            if ($requestedProjectId !== null && (int) $requestedProjectId !== $tokenProject->id) {
+                throw ValidationException::withMessages([
+                    'project_id' => "This API token only grants access to the project \"{$tokenProject->name}\". To query another project, the user has to connect the MCP server with that project's API token.",
+                ]);
+            }
+
+            $requestedProjectId = $tokenProject->id;
+        }
+
         return resolve(AiStatsFilterFactory::class)->make(
             preset: $request->get('preset'),
             startDate: $request->get('start_date'),
             endDate: $request->get('end_date'),
-            projectId: $overrideProjectId ?? (int) ($request->get('project_id') ?? Context::get('project_id') ?? 0),
+            projectId: (int) ($requestedProjectId ?? 0),
         );
+    }
+
+    protected function tokenProject(): ?Project
+    {
+        $user = auth('sanctum')->user();
+
+        return $user instanceof Project ? $user : null;
     }
 
     /**

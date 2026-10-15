@@ -1,6 +1,7 @@
 <script setup>
 import {computed, nextTick, onMounted, ref, watch} from 'vue';
 import {useAiChat} from '@/Composables/useAiChat.js';
+import {copyToClipboard} from '@/Helpers/ClipboardHelpers.js';
 import AiChatMessage from '@/Components/AiChat/AiChatMessage.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import StarsIcon from 'bootstrap-icons/icons/stars.svg?component';
@@ -9,6 +10,12 @@ import CloseIcon from 'bootstrap-icons/icons/x-lg.svg?component';
 import SendIcon from 'bootstrap-icons/icons/send.svg?component';
 import StopIcon from 'bootstrap-icons/icons/stop-circle.svg?component';
 import ChevronDownIcon from 'bootstrap-icons/icons/chevron-down.svg?component';
+import ClipboardIcon from 'bootstrap-icons/icons/clipboard.svg?component';
+import ClipboardCheckIcon from 'bootstrap-icons/icons/clipboard-check.svg?component';
+import ClaudeIcon from '@/Components/CustomIcons/ClaudeIcon.vue';
+import CodexIcon from '@/Components/CustomIcons/CodexIcon.vue';
+import CursorIcon from '@/Components/CustomIcons/CursorIcon.vue';
+import OpenCodeIcon from '@/Components/CustomIcons/OpenCodeIcon.vue';
 
 const aiChat = useAiChat();
 
@@ -22,6 +29,8 @@ const currentTitle = computed(() => {
     return aiChat.messages.value.find((message) => message.role === 'user')?.content ?? 'Ask AI';
 });
 
+const placeholder = computed(() => `Ask about ${aiChat.contextProjectName.value ?? 'all projects'}…`);
+
 const input = ref('');
 const messageList = ref(null);
 const textarea = ref(null);
@@ -32,6 +41,26 @@ const exampleQuestions = [
     'How did my conversion rate develop this month?',
     'How do I set up payment tracking?',
 ];
+
+const appName = import.meta.env.VITE_APP_NAME;
+const agentSetupCopied = ref(false);
+
+// The origin doubles as the MCP endpoint host for self-hosted installs, whose /docs links redirect to the public docs.
+const copyAgentSetupPrompt = async () => {
+    const origin = window.location.origin;
+
+    const copied = await copyToClipboard(
+        `Fetch and follow the instructions from ${origin}/docs/agent-setup.md to connect the ${appName} MCP server to this agent. `
+        + `The MCP endpoint is ${origin}/mcp.`,
+    );
+
+    if (!copied) {
+        return;
+    }
+
+    agentSetupCopied.value = true;
+    setTimeout(() => agentSetupCopied.value = false, 2000);
+};
 
 const scrollToBottom = () => {
     nextTick(() => {
@@ -121,6 +150,28 @@ const onKeydown = (event) => {
             </div>
         </div>
 
+        <div v-if="!aiChat.messages.value.length" class="border-b dark:border-dark-700 px-4 py-3">
+            <button
+                type="button"
+                @click="copyAgentSetupPrompt()"
+                class="group flex w-full items-center gap-3 rounded-lg border border-indigo-200 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40 px-3 py-2.5 text-start hover:border-indigo-400 dark:hover:border-indigo-600"
+            >
+                <component :is="agentSetupCopied ? ClipboardCheckIcon : ClipboardIcon" class="size-5 shrink-0 text-indigo-500" />
+                <span class="min-w-0 flex-1">
+                    <span class="block text-sm font-semibold text-gray-900 dark:text-white">
+                        {{ agentSetupCopied ? 'Copied, paste it into your agent' : 'Use it in your own AI agent' }}
+                    </span>
+                    <span class="block text-xs text-gray-500 dark:text-gray-400">Copy the MCP setup prompt</span>
+                </span>
+                <span class="flex shrink-0 items-center gap-1.5 text-gray-700 dark:text-gray-300">
+                    <ClaudeIcon class="size-4" />
+                    <CodexIcon class="size-4" />
+                    <CursorIcon class="size-4" />
+                    <OpenCodeIcon class="h-4 w-auto" />
+                </span>
+            </button>
+        </div>
+
         <div ref="messageList" class="flex-1 space-y-4 overflow-y-auto px-4 py-4">
             <div v-if="!aiChat.messages.value.length" class="flex h-full flex-col justify-center gap-3 text-center">
                 <StarsIcon class="mx-auto size-8 text-indigo-400" />
@@ -163,7 +214,7 @@ const onKeydown = (event) => {
                     ref="textarea"
                     v-model="input"
                     rows="1"
-                    placeholder="Ask about your stats…"
+                    :placeholder="placeholder"
                     class="max-h-40 flex-1 resize-none border-0 bg-transparent p-0 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-0"
                     @input="resizeTextarea"
                     @keydown="onKeydown"
