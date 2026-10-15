@@ -147,7 +147,7 @@ Make sure to run the Laravel [scheduler](https://laravel.com/docs/12.x/schedulin
 
 ### Post Installation
 
-After the installation is finished, make sure to create the first user:
+After the installation is finished, make sure to create the first user (it becomes the admin user, every user created after that is a regular one):
 
 ```bash
 php artisan app:create-new-user {name} {email} {password}
