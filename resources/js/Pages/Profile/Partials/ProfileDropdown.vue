@@ -32,7 +32,6 @@ const supportAction = () => {
 };
 
 const appType = import.meta.env.VITE_APP_TYPE;
-const isSelfHosted = appType !== 'saas';
 </script>
 
 <template>
@@ -54,9 +53,8 @@ const isSelfHosted = appType !== 'saas';
         </template>
 
         <template #content>
-            <!-- Account Management -->
-            <div class="hidden px-4 py-2 text-xs text-gray-400">
-                Manage Account
+            <div class="px-4 pt-2 pb-1 text-xs text-gray-400">
+                Account
             </div>
 
             <DropdownLink :href="route('profile.show')">
@@ -95,34 +93,46 @@ const isSelfHosted = appType !== 'saas';
                 </div>
             </DropdownLink>
 
-            <DropdownLink v-if="appType === 'saas' && $page.props.isAdmin" as="a" href="/admin">
-                <div class="flex items-center gap-2">
-                    <div>
-                        <GearIcon class="size-4" />
-                    </div>
-                    <div>Admin</div>
-                </div>
-            </DropdownLink>
+            <template v-if="$page.props.isAdmin">
+                <div class="border-t border-gray-200 dark:border-dark-600" />
 
-            <DropdownLink v-if="isSelfHosted && $page.props.isAdmin" as="a" href="/horizon">
-                <div class="flex items-center gap-2">
-                    <div>
-                        <StackIcon class="size-4" />
-                    </div>
-                    <div>Horizon</div>
+                <div class="px-4 pt-2 pb-1 text-xs text-gray-400">
+                    Administration
                 </div>
-            </DropdownLink>
 
-            <DropdownLink v-if="isSelfHosted && $page.props.isAdmin" as="a" href="/pulse">
-                <div class="flex items-center gap-2">
-                    <div>
-                        <ActivityIcon class="size-4" />
+                <DropdownLink v-if="appType === 'saas'" as="a" href="/admin">
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <GearIcon class="size-4" />
+                        </div>
+                        <div>Admin</div>
                     </div>
-                    <div>Pulse</div>
-                </div>
-            </DropdownLink>
+                </DropdownLink>
+
+                <DropdownLink as="a" href="/horizon">
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <StackIcon class="size-4" />
+                        </div>
+                        <div>Horizon</div>
+                    </div>
+                </DropdownLink>
+
+                <DropdownLink as="a" href="/pulse">
+                    <div class="flex items-center gap-2">
+                        <div>
+                            <ActivityIcon class="size-4" />
+                        </div>
+                        <div>Pulse</div>
+                    </div>
+                </DropdownLink>
+            </template>
 
             <div class="border-t border-gray-200 dark:border-dark-600" />
+
+            <div class="px-4 pt-2 pb-1 text-xs text-gray-400">
+                Help
+            </div>
 
             <DropdownLink as="button" @click="$emit('feedback')">
                 <div class="flex items-center gap-2">
