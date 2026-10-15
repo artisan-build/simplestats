@@ -104,6 +104,9 @@ In production, the scheduler creates a daily backup of the database and the app 
 
 - By default, backups are stored on the server only (`storage/app`). To keep a copy off the server, configure the `s3` disk (`S3_*` variables) and set `BACKUP_DISKS=local,s3`.
 - The archive contains your `.env`. To encrypt it with AES-256, set `BACKUP_ARCHIVE_PASSWORD` and keep the password somewhere outside the server, otherwise the backups are useless when the server is lost.
+- `BACKUP_ENABLED=false` stops the scheduler creating and cleaning up backups.
+
+On a platform that replaces the local disk on every deploy, an archive written to `storage/app` is gone by the next one, so point `BACKUP_DISKS` at a bucket instead, or set `BACKUP_ENABLED=false` if the platform already backs the database up for you.
 
 ## Database growth
 

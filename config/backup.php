@@ -14,6 +14,13 @@ use Spatie\DbDumper\Compressors\GzipCompressor;
 
 return [
 
+    /*
+     * Whether the scheduler creates and cleans up backups. Set BACKUP_ENABLED
+     * to false where something else already backs the database up, or where
+     * the disk the archives land on does not survive a deploy.
+     */
+    'enabled' => env('BACKUP_ENABLED', true),
+
     'backup' => [
 
         /*
