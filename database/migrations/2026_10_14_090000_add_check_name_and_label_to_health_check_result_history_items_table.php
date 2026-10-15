@@ -12,18 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('health_check_result_history_items', function (Blueprint $table): void {
-            $table->string('check_name')->default('');
-            $table->string('check_label')->default('');
-        });
-    }
+            if (! Schema::hasColumn('health_check_result_history_items', 'check_name')) {
+                $table->string('check_name')->default('');
+            }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('health_check_result_history_items', function (Blueprint $table): void {
-            $table->dropColumn(['check_name', 'check_label']);
+            if (! Schema::hasColumn('health_check_result_history_items', 'check_label')) {
+                $table->string('check_label')->default('');
+            }
         });
     }
 };
