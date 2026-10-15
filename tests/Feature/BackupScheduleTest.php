@@ -32,3 +32,7 @@ test('the scheduler skips backups when they are disabled', function (): void {
         // the rest of the production schedule is untouched
         ->and(scheduledCommandsMatching(false, 'app:recalc-stats-starting-at'))->toHaveCount(1);
 });
+
+test('backups are on unless BACKUP_ENABLED turns them off', function (): void {
+    expect(config('backup.enabled'))->toBeTrue();
+});
