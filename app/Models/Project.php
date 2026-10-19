@@ -70,14 +70,19 @@ class Project extends Model implements AuthenticatableContract, NotifiableToUser
         return $this->morphMany(UserNotification::class, 'notifiable');
     }
 
+    /**
+     * Report and alert relations only yield recipients with a live account: a soft-deleted
+     * user keeps their rows for a possible restore, but must not be notified (and their
+     * `user` relation resolves to null).
+     */
     public function userReportNotifications(): MorphMany
     {
-        return $this->userNotifications()->where('type', UserNotificationType::PROJECT_REPORT->value);
+        return $this->userNotifications()->where('type', UserNotificationType::PROJECT_REPORT->value)->has('user');
     }
 
     public function userAlertNotifications(): MorphMany
     {
-        return $this->userNotifications()->where('type', UserNotificationType::PROJECT_ALERT->value);
+        return $this->userNotifications()->where('type', UserNotificationType::PROJECT_ALERT->value)->has('user');
     }
 
     public function hasUsages(array $bits): bool

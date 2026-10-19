@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\CreateTeamMemberNotifications;
+use App\Listeners\DeleteTeamMemberNotifications;
 use App\Listeners\EmailVerificationListener;
 use App\Listeners\SetCurrentTeam;
 use Illuminate\Auth\Events\Login;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Event;
 use Lab404\Impersonate\Events\LeaveImpersonation;
 use Lab404\Impersonate\Events\TakeImpersonation;
 use Laravel\Jetstream\Events\TeamMemberAdded;
+use Laravel\Jetstream\Events\TeamMemberRemoved;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,9 @@ class EventServiceProvider extends ServiceProvider
         TeamMemberAdded::class => [
             SetCurrentTeam::class,
             CreateTeamMemberNotifications::class,
+        ],
+        TeamMemberRemoved::class => [
+            DeleteTeamMemberNotifications::class,
         ],
     ];
 
