@@ -128,7 +128,7 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.app_type') === 'saas') {
             OgImage::fallbackUsing(fn (Request $request): Factory|View => view('og-image.fallback', [
                 'title' => config('app.name'),
-                'tagline' => config('app.tagline', 'Revenue attribution analytics tool for Laravel apps'),
+                'tagline' => 'Revenue attribution analytics for Laravel apps',
                 'appUrl' => str_replace(['https://', 'http://'], '', config('app.url')),
             ]));
         }

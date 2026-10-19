@@ -10,7 +10,7 @@
 
         @php
             $blogPost = $page['component'] === 'Blog/Show' ? $page['props']['post'] : null;
-            $metaTitle = config('app.name', 'Laravel').' - '.($blogPost['title'] ?? __('Revenue attribution analytics tool for Laravel apps'));
+            $metaTitle = config('app.name', 'Laravel').' - '.($blogPost['title'] ?? __('Revenue attribution analytics for Laravel apps'));
             $ogTitle = $blogPost['title'] ?? $metaTitle;
             $metaDescription = $blogPost['excerpt'] ?? __('Discover which channels actually drive revenue, not just traffic. Server-side analytics built for Laravel apps. GDPR compliant, 100% accurate, ad-blocker proof.');
         @endphp

@@ -12,7 +12,7 @@ defineProps({
 </script>
 
 <template>
-    <Head :title="$t('Revenue attribution analytics tool for Laravel apps')" />
+    <Head :title="$t('Revenue attribution analytics for Laravel apps')" />
 
     <Welcome :plans="plans" :banners="banners" :discount="discount" :latest-posts="latestPosts" />
 
