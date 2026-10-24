@@ -2,6 +2,30 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.2.1 - 2026-10-24
+
+### Security
+
+- Upgrade `laravel/mcp` to 1.1.1 (fixes GHSA-m25c-38v7-94p8). The MCP endpoint now also supports the 2026-07-28 protocol revision, existing MCP clients keep working unchanged.
+- Upgrade `livewire/livewire` to 4.4.8 (fixes GHSA-mhf7-xp6r-6qrc).
+- Upgrade `vite` to 6.4.5 to fix the `launch-editor` advisories (build tooling only).
+
+### Fixed
+
+- Bump `follow-redirects` to 1.16.1 and `driver.js` to 1.10.1.
+- Update `laravel/framework` to 12.70.1 and related dependencies.
+
+### Upgrade notes
+
+No action required. Run `composer install` and `npm ci && npm run build` as usual.
+
+### What's Changed
+
+* Bump driver.js from 1.9.0 to 1.10.1 in the npm-minor-and-patch group by @dependabot[bot] in https://github.com/simplestats-io/app/pull/391
+* Bump follow-redirects from 1.16.0 to 1.16.1 by @dependabot[bot] in https://github.com/simplestats-io/app/pull/392
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.2.0...v6.2.1
+
 ## v6.2.0 - 2026-10-19
 
 ### Upgrade notes
