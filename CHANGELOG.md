@@ -2,6 +2,22 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.3.0 - 2026-10-24
+
+### Upgrade notes
+
+- Contains a migration that recalculates the login and payment counters once. It runs automatically with `php artisan migrate` and takes a few seconds even on large databases.
+
+### Fixed
+
+- Paying Users, Reg-to-Pay, ARPPU and Time to Pay could be too high in projects whose payment ids also occur in another project. The nightly counter check now ranks payments per project, and affected dashboards refresh automatically.
+
+### Improved
+
+- Logins of paying users no longer discard the cached current period, so dashboards with month or year ranges stay fast throughout the day.
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.2.1...v6.3.0
+
 ## v6.2.1 - 2026-10-24
 
 ### Security
