@@ -13,6 +13,7 @@ use App\Models\StatsVisitor;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -22,7 +23,7 @@ class StatsIncrementService
     private const array INCREMENTABLE_KEYS = [
         'pd_visitor', 'lt_visitor',
         'pd_reg', 'lt_reg',
-        'pd_tau', 'pd_nau', 'lt_tau', 'pd_dau',
+        'pd_tau', 'pd_nau', 'lt_tau', 'pd_dau', 'pd_dapu', 'pd_daapu',
         'pd_gross', 'pd_net', 'lt_net',
     ];
 
@@ -64,9 +65,7 @@ class StatsIncrementService
     private function isIncrementable(BaseStat $stat): bool
     {
         return match (true) {
-            $stat instanceof StatsVisitor, $stat instanceof StatsUser => true,
-            // a login by a paying user can change pd_dapu/pd_daapu
-            $stat instanceof StatsLogin => ! $this->userHasPayment($stat),
+            $stat instanceof StatsVisitor, $stat instanceof StatsUser, $stat instanceof StatsLogin => true,
             // the first payment retroactively changes pd_dapu/pd_pu/pd_napu; a repeat
             // payment that reopens the daapu window (no prior payment within it) moves
             // the user back into pd_daapu, which is not an incrementable metric either.
@@ -112,8 +111,24 @@ class StatsIncrementService
 
         // dau counts any login (counter >= 1, including the registration login), distinct
         // per user: only the user's first login in the bucket increments it.
-        if ($this->isFirstActiveLoginInBucket($stat, $case, $bucketStart)) {
+        $isFirstLoginInBucket = $this->isFirstActiveLoginInBucket($stat, $case, $bucketStart);
+
+        if ($isFirstLoginInBucket) {
             $increments['pd_dau'] = 1;
+        }
+
+        if ($this->userHasPayment($stat)) {
+            // dapu counts a user with a payment at any time, so like dau only their first login in the bucket counts
+            if ($isFirstLoginInBucket) {
+                $increments['pd_dapu'] = 1;
+            }
+
+            // daapu needs a payment within the window before the login itself, so an earlier login
+            // of the same user in this bucket may not have qualified even though this one does
+            if ($this->isWithinDaapuWindow($stat)
+                && ($isFirstLoginInBucket || ! $this->hasOtherDaapuLoginInBucket($stat, $case, $bucketStart))) {
+                $increments['pd_daapu'] = 1;
+            }
         }
 
         if (empty($increments) || ! $user = $stat->statsUser) {
@@ -311,6 +326,36 @@ class StatsIncrementService
             ->where('time', '>=', $stat->time->subDays(StatsService::DAAPU_WINDOW_DAYS)->format('Y-m-d H:i:s'))
             ->where('time', '<=', $stat->time->format('Y-m-d H:i:s'))
             ->exists();
+    }
+
+    private function isWithinDaapuWindow(StatsLogin $stat): bool
+    {
+        // BaseStat casts time to datetime, but Larastan does not see the inherited cast on StatsLogin
+        /** @var CarbonInterface $loginTime */
+        $loginTime = $stat->getAttribute('time');
+
+        return StatsPayment::where('stats_user_id', $stat->stats_user_id)
+            ->where('project_id', $stat->project_id)
+            ->where('time', '>=', $loginTime->subDays(StatsService::DAAPU_WINDOW_DAYS)->format('Y-m-d H:i:s'))
+            ->where('time', '<=', $loginTime->format('Y-m-d H:i:s'))
+            ->exists();
+    }
+
+    private function hasOtherDaapuLoginInBucket(StatsLogin $stat, StatsRangeType $case, CarbonInterface $bucketStart): bool
+    {
+        return $this->withinBucket(
+            StatsLogin::where('stats_user_id', $stat->stats_user_id)
+                ->where('project_id', $stat->project_id)
+                ->whereKeyNot($stat->id),
+            $case,
+            $bucketStart,
+        )->whereExists(fn (QueryBuilder $query) => $query
+            ->from('stats_payments')
+            ->whereColumn('stats_payments.stats_user_id', 'stats_logins.stats_user_id')
+            ->whereColumn('stats_payments.project_id', 'stats_logins.project_id')
+            ->whereRaw('stats_payments.time >= stats_logins.time - make_interval(days => ?)', [StatsService::DAAPU_WINDOW_DAYS])
+            ->whereColumn('stats_payments.time', '<=', 'stats_logins.time')
+        )->exists();
     }
 
     private function isFirstActiveLoginInBucket(StatsLogin $stat, StatsRangeType $case, CarbonInterface $bucketStart): bool

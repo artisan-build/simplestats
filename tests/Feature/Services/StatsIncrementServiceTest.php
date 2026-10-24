@@ -71,6 +71,11 @@ function browserId(string $name): int
     return (int) DB::table('stats_device_browsers')->where('name', $name)->value('id');
 }
 
+function openDayBucketIsCached(StatsFilterDto $filters): bool
+{
+    return StatsAggregation::where('filter_hash', $filters->makeHash())->where('time', '2026-06-14')->exists();
+}
+
 /** Build aggregation cache for the given filters without recomputing afterwards. */
 function freshlyRecomputed(StatsAggregationsService $service, StatsFilterDto $filters): Collection
 {
@@ -223,28 +228,141 @@ it('does not double-count dau for a second login of the same user in the bucket'
         ->and($data['pd_tau'])->toBe($fresh['pd_tau']);
 });
 
-it('invalidates instead of incrementing for a login by a paying user', function (): void {
+it('increments dapu and daapu for a login by a user who paid within the daapu window', function (): void {
+    StatsObserver::$enabled = false;
+    $user = StatsUser::factory()->create(array_merge(nullDims(), [
+        'team_id' => $this->team->id, 'project_id' => $this->pid, 'device_browser' => 'Chrome', 'time' => $this->now,
+    ]));
+    StatsPayment::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'time' => '2026-06-10 12:00:00', 'counter' => 1, 'gross' => 100, 'net' => 80,
+    ]);
+    StatsObserver::$enabled = true;
+
+    $unfiltered = ($this->dayFilter)();
+    $chromeFilter = ($this->dayFilter)(['deviceBrowser' => browserId('Chrome')]);
+    $this->service->getAggregatedData($unfiltered);
+    $this->service->getAggregatedData($chromeFilter);
+
+    StatsLogin::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]);
+
+    expect(openDayBucketIsCached($unfiltered))->toBeTrue();
+
+    $row = $this->service->getAggregatedData($unfiltered)['2026-06-14'];
+    $chromeRow = $this->service->getAggregatedData($chromeFilter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe(1)
+        ->and($row['pd_daapu'])->toBe(1)
+        ->and($chromeRow['pd_dapu'])->toBe(1)
+        ->and($chromeRow['pd_daapu'])->toBe(1);
+
+    $fresh = freshlyRecomputed($this->service, $unfiltered)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe($fresh['pd_dapu'])
+        ->and($row['pd_daapu'])->toBe($fresh['pd_daapu'])
+        ->and($row['pd_dau'])->toBe($fresh['pd_dau']);
+});
+
+it('increments only dapu for a login by a user whose last payment is outside the daapu window', function (): void {
     StatsObserver::$enabled = false;
     $user = StatsUser::factory()->create(array_merge(nullDims(), [
         'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
     ]));
     StatsPayment::factory()->create([
         'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
-        'time' => $this->now, 'counter' => 1, 'gross' => 100, 'net' => 80,
+        'time' => '2026-05-20 12:00:00', 'counter' => 1, 'gross' => 100, 'net' => 80,
     ]);
     StatsObserver::$enabled = true;
 
     $filter = ($this->dayFilter)();
     $this->service->getAggregatedData($filter);
-    expect(StatsAggregation::where('filter_hash', $filter->makeHash())->count())->toBeGreaterThan(0);
 
     StatsLogin::factory()->create([
-        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
-        'time' => $this->now, 'counter' => 2,
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
     ]);
 
-    // the open bucket was invalidated (deleted), not incremented
-    expect(StatsAggregation::where('filter_hash', $filter->makeHash())->where('time', '2026-06-14')->count())->toBe(0);
+    expect(openDayBucketIsCached($filter))->toBeTrue();
+
+    $row = $this->service->getAggregatedData($filter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe(1)
+        ->and($row['pd_daapu'])->toBe(0);
+
+    $fresh = freshlyRecomputed($this->service, $filter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe($fresh['pd_dapu'])
+        ->and($row['pd_daapu'])->toBe($fresh['pd_daapu']);
+});
+
+it('increments daapu for a later login in the bucket once an earlier one fell outside the window', function (): void {
+    // The morning login came 25 days after the last payment, so it did not count for daapu.
+    // A payment at 10:00 (cached already) brings the user back into the window, so the
+    // noon login is the first daapu login of the day, while dapu was already counted.
+    StatsObserver::$enabled = false;
+    $user = StatsUser::factory()->create(array_merge(nullDims(), [
+        'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]));
+    StatsPayment::factory()->create([
+        'id' => 'old-pay', 'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'time' => '2026-05-20 12:00:00', 'counter' => 1, 'gross' => 100, 'net' => 80,
+    ]);
+    StatsLogin::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => '2026-06-14 09:00:00',
+    ]);
+    StatsPayment::factory()->create([
+        'id' => 'new-pay', 'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'time' => '2026-06-14 10:00:00', 'counter' => 2, 'gross' => 50, 'net' => 40,
+    ]);
+    StatsObserver::$enabled = true;
+
+    $filter = ($this->dayFilter)();
+    $before = $this->service->getAggregatedData($filter)['2026-06-14'];
+    expect($before['pd_dapu'])->toBe(1)
+        ->and($before['pd_daapu'])->toBe(0);
+
+    StatsLogin::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]);
+
+    expect(openDayBucketIsCached($filter))->toBeTrue();
+
+    $row = $this->service->getAggregatedData($filter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe(1)
+        ->and($row['pd_daapu'])->toBe(1);
+
+    $fresh = freshlyRecomputed($this->service, $filter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe($fresh['pd_dapu'])
+        ->and($row['pd_daapu'])->toBe($fresh['pd_daapu']);
+});
+
+it('does not double-count dapu and daapu for a second qualifying login in the bucket', function (): void {
+    StatsObserver::$enabled = false;
+    $user = StatsUser::factory()->create(array_merge(nullDims(), [
+        'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]));
+    StatsPayment::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid,
+        'time' => '2026-06-10 12:00:00', 'counter' => 1, 'gross' => 100, 'net' => 80,
+    ]);
+    StatsLogin::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => '2026-06-14 09:00:00',
+    ]);
+    StatsObserver::$enabled = true;
+
+    $filter = ($this->dayFilter)();
+    $this->service->getAggregatedData($filter);
+
+    StatsLogin::factory()->create([
+        'stats_user_id' => $user->id, 'team_id' => $this->team->id, 'project_id' => $this->pid, 'time' => $this->now,
+    ]);
+
+    expect(openDayBucketIsCached($filter))->toBeTrue();
+
+    $row = $this->service->getAggregatedData($filter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe(1)
+        ->and($row['pd_daapu'])->toBe(1);
+
+    $fresh = freshlyRecomputed($this->service, $filter)['2026-06-14'];
+    expect($row['pd_dapu'])->toBe($fresh['pd_dapu'])
+        ->and($row['pd_daapu'])->toBe($fresh['pd_daapu']);
 });
 
 it('increments revenue for a repeat payment and matches a full recompute', function (): void {
