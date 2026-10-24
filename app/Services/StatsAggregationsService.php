@@ -18,6 +18,7 @@ use App\Models\StatsAggregation;
 use App\Models\StatsCustomPropertyName;
 use App\Models\Team;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Carbon\CarbonPeriodImmutable;
 use Exception;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -562,21 +563,37 @@ class StatsAggregationsService
      */
     public function invalidateCaseByStatsUpdate(BaseStat $stat, StatsRangeType $case): void
     {
-        $start = $case->rangeStart($stat->time)->format($case->dateFormatClear()['php']);
+        $this->invalidateCaseSince($stat->team_id, $stat->project_id, $stat->time, $case);
+    }
+
+    /**
+     * Only the 'period' kind, for changes that cannot affect the MRR or engagement series.
+     */
+    public function invalidatePeriodsSince(int $teamId, int $projectId, CarbonInterface $time): void
+    {
+        foreach (StatsRangeType::cases() as $case) {
+            $this->invalidateCaseSince($teamId, $projectId, $time, $case, 'period');
+        }
+    }
+
+    private function invalidateCaseSince(int $teamId, int $projectId, CarbonInterface $time, StatsRangeType $case, ?string $kind = null): void
+    {
+        $start = $case->rangeStart($time)->format($case->dateFormatClear()['php']);
 
         StatsAggregation::where([
             ['time', '>=', $start],
             ['type', '=', $case->value],
-        ])->where(function ($query) use ($stat): void {
-            // stats must be re-aggregated on a team basis
-            $query->where(function ($query) use ($stat): void {
-                $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', null);
-            })
-            // stats must be re-aggregated on project basis
-                ->orWhere(function ($query) use ($stat): void {
-                    $query->where('team_id', '=', $stat->team_id)->where('project_id', '=', $stat->project_id);
-                });
-        })->delete();
+        ])->when($kind, fn (Builder $query) => $query->where('kind', $kind))
+            ->where(function ($query) use ($teamId, $projectId): void {
+                // stats must be re-aggregated on a team basis
+                $query->where(function ($query) use ($teamId): void {
+                    $query->where('team_id', '=', $teamId)->where('project_id', '=', null);
+                })
+                // stats must be re-aggregated on project basis
+                    ->orWhere(function ($query) use ($teamId, $projectId): void {
+                        $query->where('team_id', '=', $teamId)->where('project_id', '=', $projectId);
+                    });
+            })->delete();
     }
 
     public function clearByProject(Project $project): void
