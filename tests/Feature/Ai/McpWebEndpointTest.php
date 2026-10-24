@@ -116,3 +116,30 @@ it('lists only the token project as capability', function (): void {
         ->not->toContain('Other Client')
         ->not->toContain('All projects');
 });
+
+it('serves clients on the 2026-07-28 protocol revision', function (): void {
+    $meta = [
+        'io.modelcontextprotocol/protocolVersion' => '2026-07-28',
+        'io.modelcontextprotocol/clientCapabilities' => [],
+    ];
+
+    $this->postJson('/mcp', mcpRequest('server/discover', ['_meta' => $meta]), [
+        ...mcpHeaders($this->token),
+        'MCP-Protocol-Version' => '2026-07-28',
+        'Mcp-Method' => 'server/discover',
+    ])->assertOk()->assertJsonPath('result.supportedVersions', ['2026-07-28']);
+
+    $response = $this->postJson('/mcp', mcpRequest('tools/call', [
+        'name' => 'list-stats-capabilities',
+        'arguments' => [],
+        '_meta' => $meta,
+    ], 2), [
+        ...mcpHeaders($this->token),
+        'MCP-Protocol-Version' => '2026-07-28',
+        'Mcp-Method' => 'tools/call',
+        'Mcp-Name' => 'list-stats-capabilities',
+    ]);
+
+    $response->assertOk();
+    expect($response->getContent())->toContain($this->project->name);
+});
