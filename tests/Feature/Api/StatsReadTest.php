@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\Project;
+use App\Models\Team;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 beforeEach(function (): void {
     $this->seed();
@@ -166,6 +168,22 @@ test('stats groups returns data for valid statsType', function (): void {
                 '*' => ['id', 'name'],
             ],
         ]);
+});
+
+test('stats groups only returns page entries of the own team', function (): void {
+    $foreignTeam = Team::factory()->create();
+
+    DB::table('stats_page_entries')->insert([
+        ['team_id' => $this->project->team_id, 'name' => '/own-page', 'created_at' => now(), 'updated_at' => now()],
+        ['team_id' => $foreignTeam->id, 'name' => '/foreign-page', 'created_at' => now(), 'updated_at' => now()],
+    ]);
+
+    $response = $this->getJson('/api/v1/stats/groups?stats_type=page_entry', apiHeaders($this->token));
+
+    $response->assertOk();
+    $names = collect($response->json('data'))->pluck('name');
+    expect($names)->toContain('/own-page')
+        ->not->toContain('/foreign-page');
 });
 
 test('stats groups without statsType returns 422', function (): void {
