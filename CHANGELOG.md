@@ -2,6 +2,18 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.3.1 - 2026-10-26
+
+### Security
+
+- Entry pages are now correctly scoped to the current team. Previously the `GET /api/v1/stats/groups?stats_type=page_entry` endpoint could return entry pages that did not belong to the requesting team. Updating is recommended for all self-hosted installations.
+
+### Fixed
+
+- The groups endpoint for entry pages no longer runs out of memory on installations with many entry pages.
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.3.0...v6.3.1
+
 ## v6.3.0 - 2026-10-24
 
 ### Upgrade notes
