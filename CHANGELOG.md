@@ -2,6 +2,18 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.4.1 - 2026-10-26
+
+### Security
+
+- Session and XSRF cookies are now marked `secure` automatically when `APP_URL` uses `https://`. Before, they were only secure if `SESSION_SECURE_COOKIE` was set explicitly. An explicit `SESSION_SECURE_COOKIE` value still takes precedence.
+
+### Upgrade notes
+
+No action required. Docker installations pick up the fix with `docker compose pull && docker compose up -d`.
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.4.0...v6.4.1
+
 ## v6.4.0 - 2026-10-26
 
 ### Added
