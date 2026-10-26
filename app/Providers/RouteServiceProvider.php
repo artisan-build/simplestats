@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\HealthUpController;
 use App\Models\Project;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -64,6 +65,10 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function (): void {
+            // Outside the web group on purpose: container health probes hit it every
+            // few seconds and must not create a session per request.
+            Route::get('up', HealthUpController::class)->name('health.up');
+
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));

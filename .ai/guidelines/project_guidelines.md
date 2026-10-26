@@ -52,6 +52,18 @@ SimpleStats is a **server-side analytics SaaS** built specifically for Laravel a
    - Setup, maintenance, and troubleshooting are the operator's responsibility
    - Requires: PHP 8.3+, Laravel 12+, PostgreSQL 14+, Node.js 21.6+
 
+### Docker Image (Self-Hosted)
+
+Self-hosters are pointed to the official image `ghcr.io/simplestats-io/app` (built by `.github/workflows/docker.yml` on every published release, amd64 + arm64, tags `X.Y.Z` / `X.Y` / `X` / `latest`) and the root `docker-compose.yml` (app, horizon, scheduler, postgres, redis, optional Caddy via `--profile https`). Keep these in mind:
+
+- The image is the **self-hosted build** (`composer.json`), based on `serversideup/php` (nginx + PHP-FPM, Alpine). Its entrypoint runs `storage:link`, `migrate --force` and `optimize` on start of the `app` container (`AUTORUN_*` env vars).
+- **Never enable the view cache for self-hosted builds** (`view:cache`, plain `php artisan optimize`): it compiles every Blade file, and the SaaS-only views (Filament pages, og-image) reference components that do not exist without `composer.saas.json`, so the command fails. Use `php artisan optimize --except=views`; views compile lazily.
+- `VITE_*` values are baked into the bundle at image build time (`VITE_APP_NAME=SimpleStats`), runtime env cannot change them.
+- Configuration is runtime env only (`env_file: .env` next to the compose file, template `.env.docker.example`). Nothing environment-specific belongs in the image.
+- nginx FastCGI buffers are raised to 32k in the `Dockerfile`: the Vite preload `Link` headers exceed the 8k default and cause a 502.
+- New PHP extensions, required env vars or changed processes must be reflected in `Dockerfile`, `docker-compose.yml` and `.env.docker.example`. A change that forces self-hosters to edit their compose file or `.env` is a **major** release.
+- Reverse proxies are trusted via `TRUSTED_PROXIES` (`config/trustedproxy.php`, read by the framework's TrustProxies middleware). `/up` is the unauthenticated health probe, registered outside the `web` group so probes do not create sessions.
+
 ### Open Source Repo: Self-Hosted Is the Default Build
 
 The repo is public. Its default build is the self-hosted one, the SaaS is the special case:

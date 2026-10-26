@@ -62,19 +62,58 @@ Payments work the same way with the `TrackablePayment` contract. See the [docs](
 
 SimpleStats is a regular Laravel application. If you want to run it on your own infrastructure instead of using the hosted version, follow the steps below. The [self-hosted docs](https://simplestats.io/docs/self-hosted.html) compare both options and cover queues, scaling and database notes.
 
-### Requirements
+### Docker (recommended)
+
+The official image `ghcr.io/simplestats-io/app` contains everything the app needs. The [docker-compose.yml](docker-compose.yml) starts the web app, Horizon, the scheduler, PostgreSQL and Redis, and runs the database migrations on every start. All you need is Docker Engine with the Compose plugin.
+
+Download the compose file, the env template and the Caddyfile:
+
+```bash
+mkdir simplestats && cd simplestats
+curl -fsSLO https://raw.githubusercontent.com/simplestats-io/app/main/docker-compose.yml
+curl -fsSL -o .env https://raw.githubusercontent.com/simplestats-io/app/main/.env.docker.example
+mkdir docker && curl -fsSL -o docker/Caddyfile https://raw.githubusercontent.com/simplestats-io/app/main/docker/Caddyfile
+```
+
+Fill in `.env`: only `APP_URL`, `APP_KEY`, `DB_PASSWORD` and the mail settings are required. Generate the key once and never change it afterwards:
+
+```bash
+echo "base64:$(openssl rand -base64 32)"
+```
+
+Start the stack, either with the bundled Caddy handling HTTPS for `DOMAIN` (ports 80 and 443 must be free):
+
+```bash
+docker compose --profile https up -d
+```
+
+or behind your own reverse proxy, which forwards to `127.0.0.1:8080`:
+
+```bash
+docker compose up -d
+```
+
+Create the first user (it becomes the admin):
+
+```bash
+docker compose exec app php artisan app:create-new-user "Jane Doe" jane@example.com "a-secure-password"
+```
+
+To update, pin a release in `.env` (e.g. `SIMPLESTATS_VERSION=6`), then run `docker compose pull && docker compose up -d`. External databases, volumes and all other settings are covered in the [Docker docs](https://simplestats.io/docs/self-hosted.html#docker-recommended).
+
+### Manual installation
+
+SimpleStats is a regular Laravel application; it's built on top of Laravel 12 and uses Vue / Inertia.js / Tailwind CSS for the frontend (VILT stack). If you are familiar with Laravel, you should feel right at home.
+
+#### Requirements
 
 - **PHP:** 8.3 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip
-- **Laravel:** 11 or higher
+- **Laravel:** 12 or higher
 - **Database:** PostgreSQL 14 or higher
 - **Node.js** 21.6 (lower versions might work)
 
 Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
-
-### Installation
-
-SimpleStats is a regular Laravel application; it's build on top of Laravel 11 and uses Vue / Inertia.js / Tailwind CSS for the frontend (VILT stack). If you are familiar with Laravel, you should feel right at home.
 
 #### Repository
 
@@ -145,7 +184,7 @@ Make sure to run the Laravel [scheduler](https://laravel.com/docs/12.x/schedulin
 * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-### Post Installation
+#### Post Installation
 
 After the installation is finished, make sure to create the first user (it becomes the admin user, every user created after that is a regular one):
 
@@ -155,7 +194,7 @@ php artisan app:create-new-user {name} {email} {password}
 
 **Note:** in the self-hosted version, new users can only register an account with a team invitation.
 
-#### Client Package
+### Client Package
 
 In your application you want to track, install the [client package](https://simplestats.io/docs/installation.html) as described in [How it works](#how-it-works), and point it to your own instance:
 
@@ -165,7 +204,7 @@ SIMPLESTATS_API_URL=https://stats.example.com/api/v1/
 
 ### Deployment
 
-SimpleStats is a standard Laravel application, so deploy it the way you deploy your other Laravel apps (Forge, Cloud, Docker, plain servers, ...). Make sure the queue workers and the scheduler are running. See the [self-hosted docs](https://simplestats.io/docs/self-hosted.html) for queue, scaling and database notes.
+SimpleStats is a standard Laravel application, so deploy it the way you deploy your other Laravel apps (Docker, Forge, Cloud, plain servers, ...). Make sure the queue workers and the scheduler are running. See the [self-hosted docs](https://simplestats.io/docs/self-hosted.html) for queue, scaling and database notes.
 
 To update, check out the next [release](https://github.com/simplestats-io/app/releases) and redeploy. See [Updating](https://simplestats.io/docs/self-hosted.html#updating) for the steps.
 

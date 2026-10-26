@@ -1,0 +1,120 @@
+# SimpleStats self-hosted stack. Setup: https://simplestats.io/docs/self-hosted.html#docker
+#
+#   cp .env.docker.example .env   # fill in the required values
+#   docker compose up -d                  # app on 127.0.0.1:8080, bring your own reverse proxy
+#   docker compose --profile https up -d  # or let the bundled Caddy handle HTTPS for DOMAIN
+
+x-app: &app
+  image: ghcr.io/simplestats-io/app:${SIMPLESTATS_VERSION:-latest}
+  restart: unless-stopped
+  env_file: .env
+  environment: &app-env
+    APP_KEY: ${APP_KEY:?Set APP_KEY in .env, see .env.docker.example}
+    APP_URL: ${APP_URL:?Set APP_URL in .env}
+    APP_ENV: ${APP_ENV:-production}
+    DB_CONNECTION: pgsql
+    DB_HOST: ${DB_HOST:-postgres}
+    DB_PORT: ${DB_PORT:-5432}
+    DB_DATABASE: ${DB_DATABASE:-simplestats}
+    DB_USERNAME: ${DB_USERNAME:-simplestats}
+    DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    REDIS_HOST: ${REDIS_HOST:-redis}
+    QUEUE_CONNECTION: ${QUEUE_CONNECTION:-redis}
+    CACHE_STORE: ${CACHE_STORE:-redis}
+    SESSION_DRIVER: ${SESSION_DRIVER:-redis}
+    TRUSTED_PROXIES: ${TRUSTED_PROXIES:-*}
+  volumes:
+    - storage:/var/www/html/storage
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *app
+    environment:
+      <<: *app-env
+      AUTORUN_ENABLED: "true"
+      # view:cache compiles every view, including the SaaS-only Filament and og-image
+      # views whose components are missing in this build. Views compile lazily instead.
+      AUTORUN_LARAVEL_VIEW_CACHE: "false"
+    ports:
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-8080}:8080"
+
+  horizon:
+    <<: *app
+    command: ["php", "/var/www/html/artisan", "horizon"]
+    stop_signal: SIGTERM
+    environment:
+      <<: *app-env
+      PHP_MEMORY_LIMIT: 512M
+    healthcheck:
+      test: ["CMD", "healthcheck-horizon"]
+      start_period: 10s
+    depends_on:
+      app:
+        condition: service_healthy
+
+  scheduler:
+    <<: *app
+    command: ["php", "/var/www/html/artisan", "schedule:work"]
+    stop_signal: SIGTERM
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+      start_period: 10s
+    depends_on:
+      app:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-simplestats}
+      POSTGRES_USER: ${DB_USERNAME:-simplestats}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["https"]
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on:
+      - app
+
+volumes:
+  storage:
+  pgdata:
+  redisdata:
+  caddydata:
+  caddyconfig:

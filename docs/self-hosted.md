@@ -20,7 +20,48 @@ For most teams, including larger organizations, the **SaaS version** is the bett
 
 ## Installation
 
-SimpleStats is a regular Laravel application. Clone the [repository](https://github.com/simplestats-io/app) and follow the installation steps in its [README](https://github.com/simplestats-io/app#installation).
+SimpleStats is a regular Laravel application. The easiest way to run it is the official Docker image; if you prefer a classic server setup, follow the installation steps in the [README](https://github.com/simplestats-io/app#manual-installation).
+
+### Docker (recommended)
+
+The image `ghcr.io/simplestats-io/app` contains everything the app needs (PHP, extensions, built assets). The [docker-compose.yml](https://github.com/simplestats-io/app/blob/main/docker-compose.yml) starts the web app, Horizon, the scheduler, PostgreSQL and Redis. Database migrations run automatically on every start.
+
+1. Download the compose file, the env template and the Caddyfile:
+
+```bash
+mkdir simplestats && cd simplestats
+curl -fsSLO https://raw.githubusercontent.com/simplestats-io/app/main/docker-compose.yml
+curl -fsSL -o .env https://raw.githubusercontent.com/simplestats-io/app/main/.env.docker.example
+mkdir docker && curl -fsSL -o docker/Caddyfile https://raw.githubusercontent.com/simplestats-io/app/main/docker/Caddyfile
+```
+
+2. Fill in `.env`. Only `APP_URL`, `APP_KEY`, `DB_PASSWORD` and the mail settings are required. Generate the key once and never change it afterwards:
+
+```bash
+echo "base64:$(openssl rand -base64 32)"
+```
+
+3. Start the stack. Either let the bundled [Caddy](https://caddyserver.com) handle HTTPS (set `DOMAIN` in `.env`, ports 80 and 443 must be free):
+
+```bash
+docker compose --profile https up -d
+```
+
+or run it behind your own reverse proxy (Traefik, nginx, ...), which forwards to `127.0.0.1:8080`:
+
+```bash
+docker compose up -d
+```
+
+4. Create the first user (it becomes the admin):
+
+```bash
+docker compose exec app php artisan app:create-new-user "Jane Doe" jane@example.com "a-secure-password"
+```
+
+All other settings from [.env.example](https://github.com/simplestats-io/app/blob/main/.env.example) (branding, backups, AI assistant, GeoIP, Horizon tuning, ...) can be added to the same `.env`, it is passed to every container. The data lives in Docker volumes: `pgdata` (database), `storage` (uploads, imports, local backups) and `redisdata`.
+
+To use an external PostgreSQL or Redis, set `DB_HOST` / `REDIS_HOST` in `.env` and drop the bundled service in a `docker-compose.override.yml`.
 
 ## Updating
 
@@ -32,7 +73,16 @@ Releases follow [semantic versioning](https://semver.org):
 - **Minor** (`6.1.0`): new features, may include database migrations.
 - **Patch** (`6.0.1`): bug fixes.
 
-To update, read the release notes of every version between yours and the target, then:
+To update, read the release notes of every version between yours and the target.
+
+**Docker:** pin the release in `.env` (e.g. `SIMPLESTATS_VERSION=6`, which follows all 6.x releases), then pull and restart. Migrations run automatically:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+**Classic setup:**
 
 ```bash
 git fetch --tags
@@ -43,7 +93,7 @@ npm ci
 npm run build
 
 php artisan migrate --force
-php artisan optimize
+php artisan optimize --except=views
 php artisan queue:restart # or: php artisan horizon:terminate
 ```
 
@@ -52,12 +102,14 @@ php artisan queue:restart # or: php artisan horizon:terminate
 _**SimpleStats**_ Self-hosted requires:
 
 - **PHP:** 8.3 or higher
-- **Laravel:** 11 or higher
+- **Laravel:** 12 or higher
 - **Database:** PostgreSQL 14 or higher
 - **PHP Extensions:** ext-pdo, ext‑zip
 - **Node.js** 21.6 (lower versions might work)
 
-Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements).
+Plus the default [Laravel requirements](https://laravel.com/docs/12.x/deployment#server-requirements). With Docker, you only need Docker Engine with the Compose plugin.
+
+Behind a reverse proxy, set `TRUSTED_PROXIES` (`*` or the proxy IPs) so HTTPS and the client IP are detected correctly. The Docker setup does this already.
 
 Passkey sign-in only works over HTTPS, and `APP_URL` must be the exact URL your users open (e.g. `https://stats.example.com`). Passkeys are bound to that domain, so changing it later invalidates all registered passkeys.
 
