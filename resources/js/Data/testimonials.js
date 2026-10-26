@@ -59,5 +59,14 @@ export const testimonials = [
         "social_link": "https://x.com/jclermont",
         "avatar": "/images/people/joel_clermont.jpeg",
         "descr": "FYI, early days but you are counting at least 2x the traffic of what we’re seeing with Fathom Analytics",
+    },
+    {
+        "name": "Povilas Korop",
+        "title": "Laravel Educator",
+        "company": "Laravel Daily",
+        "company_link": "https://laraveldaily.com/",
+        "social_link": "https://x.com/PovilasKorop",
+        "avatar": "/images/people/povilas_korop.jpeg",
+        "descr": "Using SimpleStats heavily right now!"
     }
 ];
