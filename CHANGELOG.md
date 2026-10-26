@@ -2,6 +2,32 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.4.0 - 2026-10-26
+
+### Added
+
+- **Official Docker image and compose setup.** SimpleStats now ships as a prebuilt image (`ghcr.io/simplestats-io/app`, amd64 and arm64) together with a `docker-compose.yml` that runs the app, Horizon, the scheduler, PostgreSQL and Redis. An optional Caddy profile takes care of HTTPS. Migrations run automatically on start, and updating is `docker compose pull && docker compose up -d`. See [Docker](https://simplestats.io/docs/self-hosted.html#docker-recommended) in the self-hosted docs.
+- `/up` health endpoint for container and load balancer probes.
+- `TRUSTED_PROXIES` env variable to trust a reverse proxy, so HTTPS and client IPs are detected correctly behind Caddy, Traefik, nginx and the like.
+
+### Fixed
+
+- Horizon workers on the self-hosted build no longer crash with "The stop-when-empty-for option does not exist". Shared dependencies now resolve to the same versions as the hosted version.
+- `php artisan optimize` failed on the self-hosted build while caching views. The docs now use `php artisan optimize --except=views`.
+
+### Security
+
+- Updated `postcss-selector-parser` to 6.1.5 (GHSA-rj75-hqrm-r3gf). It is only used while building the frontend assets.
+
+### Upgrade notes
+
+No action required for existing installations. Recommended for classic (non Docker) setups:
+
+- Run `php artisan optimize --except=views` instead of `php artisan optimize` when deploying.
+- If SimpleStats runs behind a reverse proxy, set `TRUSTED_PROXIES` (`*` or the proxy IPs).
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.3.1...v6.4.0
+
 ## v6.3.1 - 2026-10-26
 
 ### Security
