@@ -210,12 +210,18 @@ class StatsService
         return $denominator == 0 ? 0 : $numerator / $denominator;
     }
 
-    public function getStatsStartingAt(array $filter): CarbonImmutable
+    /**
+     * Null until app:recalc-stats-starting-at has run for the project (nightly),
+     * so callers can fall back instead of treating "now" as the stats start.
+     */
+    public function getStatsStartingAt(array $filter): ?CarbonImmutable
     {
         // filter to remove 0 key value pairs...
         $where = collect($filter)->filter()->toArray();
 
-        return CarbonImmutable::parse(Project::where($where)->min('stats_starting_at'));
+        $startingAt = Project::where($where)->min('stats_starting_at');
+
+        return $startingAt === null ? null : CarbonImmutable::parse($startingAt);
     }
 
     /**

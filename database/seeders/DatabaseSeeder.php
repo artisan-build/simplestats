@@ -12,6 +12,7 @@ use App\Models\StatsVisitor;
 use App\Models\Team;
 use App\Models\User;
 use App\Observers\StatsObserver;
+use App\Services\StatsService;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -57,6 +58,10 @@ class DatabaseSeeder extends Seeder
         }
 
         StatsObserver::$enabled = true;
+
+        // Normally maintained by the nightly app:recalc-stats-starting-at; without it
+        // the "All Time" preset cannot reach back to the seeded history.
+        resolve(StatsService::class)->recalculateStatsStartingAt();
 
         // Custom properties for every project, assigned to the now-existing
         // stats users and visitors (runs last so it covers future data too).
