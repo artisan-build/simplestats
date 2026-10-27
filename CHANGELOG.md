@@ -2,6 +2,15 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.5.1 - 2026-10-27
+
+### Changed
+
+- `app:create-new-user` now prints a link to the GitHub repo after creating the first user of a self-hosted install. Nothing else changes, no action needed.
+- The docs now install the client, Filament and Statamic packages via their new install commands (`simplestats-client:install`, `simplestats-filament:install`, `simplestats-statamic:install`).
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.5.0...v6.5.1
+
 ## v6.5.0 - 2026-10-27
 
 ### Changed
