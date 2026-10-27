@@ -11,7 +11,7 @@ use App\Models\StatsTrackCampaign;
 use App\Models\StatsUser;
 use App\Models\StatsVisitor;
 use App\Models\User;
-use App\Services\StatsDetailsService;
+use App\Services\AdSpendService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Context;
@@ -33,6 +33,17 @@ class CampaignSeeder extends Seeder
     private const array TARGET_ROAS = [4.0, 2.0, 1.0, 0.6, 0.35];
 
     /**
+     * Campaigns whose spend lies long before the seeded stats, so they have no
+     * activity in any recent range and show up collapsed on the Campaigns page.
+     *
+     * @var array<int, array{name: string, months_ago: int, amount: int}>
+     */
+    private const array PAST_CAMPAIGNS = [
+        ['name' => 'Black Friday Retargeting', 'months_ago' => 23, 'amount' => 120000],
+        ['name' => 'Podcast Sponsorship', 'months_ago' => 18, 'amount' => 45000],
+    ];
+
+    /**
      * Demo marketing campaigns: for each project, wrap a few of the utm_campaign
      * values it actually drove traffic through into a named Campaign, link the utm
      * dimension to it, and add monthly ad spend sized to a per-campaign target ROAS
@@ -41,9 +52,9 @@ class CampaignSeeder extends Seeder
      */
     public function run(): void
     {
-        $statsDetails = resolve(StatsDetailsService::class);
+        $adSpendService = resolve(AdSpendService::class);
 
-        Project::with('team:id,currency')->get()->each(function (Project $project) use ($statsDetails): void {
+        Project::with('team:id,currency')->get()->each(function (Project $project) use ($adSpendService): void {
             $utmIds = StatsUser::where('project_id', $project->id)
                 ->whereNotNull('stats_track_campaign_id')
                 ->distinct()
@@ -80,21 +91,30 @@ class CampaignSeeder extends Seeder
                     return ['campaign' => $campaign, 'utm' => $utm];
                 });
 
-            $this->seedSpend($project, $linked, $statsDetails);
+            if ($linked->isEmpty()) {
+                return;
+            }
+
+            $this->seedSpend($project, $linked, $adSpendService);
+            $this->seedPastCampaigns($project);
         });
     }
 
     /**
      * Size each campaign's spend against the revenue the Campaigns page itself
-     * reports (same grouped track_campaign aggregation), so the displayed ROAS lands
+     * reports (same acquisition-cohort attribution), so the displayed ROAS lands
      * on the campaign's target. Computing it ourselves in SQL diverges from the
      * page's attribution, hence reusing the service.
      *
+     * Spend covers the project's whole stats history: customers acquired before
+     * the first spend entry would otherwise count as free and inflate the ROAS of
+     * every range reaching back that far ("All Time", "Last Year").
+     *
      * @param  Collection<int, array{campaign: Campaign, utm: StatsTrackCampaign}>  $linked
      */
-    private function seedSpend(Project $project, Collection $linked, StatsDetailsService $statsDetails): void
+    private function seedSpend(Project $project, Collection $linked, AdSpendService $adSpendService): void
     {
-        // The grouped aggregation resolves the team from context/auth; without it the
+        // The revenue query resolves the team from context/auth; without it the
         // team scope would be empty (CLI has no authenticated user).
         Context::add('team_id', $project->team_id);
 
@@ -102,35 +122,76 @@ class CampaignSeeder extends Seeder
             auth()->setUser($member);
         }
 
+        $months = $this->historyMonths($project);
+
         $filter = new StatsFilterDto(
             projectId: $project->id,
-            rangeAmount: self::MONTHS_BACK,
+            rangeAmount: $months,
             rangeType: StatsRangeType::MONTH,
             rangeStart: now(),
             comparison: '0',
         );
 
-        $netByUtm = collect($statsDetails->getGroupedData($filter, 'track_campaign', self::CAMPAIGNS_PER_PROJECT * 4, 'net'))
-            ->keyBy(fn (array $row): int => (int) ($row['type_id'] ?? 0))
-            ->map(fn (array $row): float => (float) ($row['net'] ?? 0));
-
         $currency = $project->team->currency ?? 'EUR';
         $rows = [];
 
         foreach ($linked as $index => $item) {
-            $net = $netByUtm->get($item['utm']->id, 0.0);
+            $net = $adSpendService->campaignSummary($filter, $item['campaign'])['net'];
 
             if ($net <= 0) {
                 continue;
             }
 
             $targetRoas = self::TARGET_ROAS[$index % count(self::TARGET_ROAS)];
-            array_push($rows, ...$this->monthlySpendRows($item['campaign'], (int) round($net / $targetRoas), $currency));
+            array_push($rows, ...$this->monthlySpendRows($item['campaign'], (int) round($net / $targetRoas), $months, $currency));
         }
 
         if ($rows !== []) {
             AdSpend::insert($rows);
         }
+    }
+
+    private function seedPastCampaigns(Project $project): void
+    {
+        foreach (self::PAST_CAMPAIGNS as $past) {
+            $campaign = Campaign::firstOrCreate([
+                'team_id' => $project->team_id,
+                'project_id' => $project->id,
+                'name' => $past['name'],
+            ]);
+
+            if ($campaign->adSpends()->exists()) {
+                continue;
+            }
+
+            $period = now()->startOfMonth()->subMonths($past['months_ago']);
+
+            // The list sorts by creation, so date the campaign to its run instead of the seed run.
+            $campaign->forceFill(['created_at' => $period])->save();
+
+            $campaign->adSpends()->create([
+                'team_id' => $project->team_id,
+                'amount' => $past['amount'],
+                'currency' => $project->team->currency ?? 'EUR',
+                'starts_on' => $period->startOfMonth()->toDateString(),
+                'ends_on' => $period->endOfMonth()->toDateString(),
+            ]);
+        }
+    }
+
+    /**
+     * Calendar months from the project's first stats up to the current month,
+     * matching how a MONTH range of that length is resolved.
+     */
+    private function historyMonths(Project $project): int
+    {
+        $start = $project->stats_starting_at;
+
+        if ($start === null) {
+            return self::MONTHS_BACK;
+        }
+
+        return max(1, (int) $start->startOfMonth()->diffInMonths(now()->startOfMonth()) + 1);
     }
 
     /**
@@ -140,14 +201,14 @@ class CampaignSeeder extends Seeder
      *
      * @return array<int, array<string, mixed>>
      */
-    private function monthlySpendRows(Campaign $campaign, int $totalSpend, string $currency): array
+    private function monthlySpendRows(Campaign $campaign, int $totalSpend, int $months, string $currency): array
     {
-        $perMonth = intdiv($totalSpend, self::MONTHS_BACK);
-        $remainder = $totalSpend - $perMonth * self::MONTHS_BACK;
+        $perMonth = intdiv($totalSpend, $months);
+        $remainder = $totalSpend - $perMonth * $months;
         $rows = [];
 
-        for ($month = 0; $month < self::MONTHS_BACK; $month++) {
-            $period = now()->subMonths($month);
+        for ($month = 0; $month < $months; $month++) {
+            $period = now()->startOfMonth()->subMonths($month);
 
             $rows[] = [
                 // Bulk insert skips model events, so the uuid must be set here.
