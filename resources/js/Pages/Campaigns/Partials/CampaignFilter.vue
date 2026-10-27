@@ -15,7 +15,9 @@ const props = defineProps({
     submitRouteParams: {type: Object, default: () => ({})},
 });
 
-const form = useForm(props.filters);
+// Inertia's useForm only serializes keys present at init. A range given via
+// range_* params carries no preset key, so picking a preset would never be sent.
+const form = useForm({...props.filters, preset: props.filters.preset ?? null});
 
 const rangeAmounts = Array.from({length: 60}, (_, i) => ({
     id: (i + 1).toString(),
