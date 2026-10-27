@@ -2,6 +2,34 @@
 
 All notable changes to `simplestats-io/app` will be documented in this file.
 
+## v6.5.0 - 2026-10-27
+
+### Changed
+
+- Campaign revenue is now attributed by acquisition date, like the ad platforms do: the selected range picks a campaign's ad spend and the customers it acquired in that range, and revenue is everything those customers have paid to date. Before, spend in the range was compared with payments in the range, which mixed the cost of one period with revenue from customers acquired in earlier periods. Pick "All Time" to see whether a campaign paid off overall. Recently acquired customers have had little time to pay yet, so short ranges show a lower ROAS.
+- CAC and CAC payback stay empty when a campaign has no ad spend in the selected range, instead of showing 0.
+
+### Added
+
+- Campaigns page: a "Runs" column shows the period covered by a campaign's ad spend entries.
+- Campaigns page: campaigns without spend, registrations or revenue in the selected range are collapsed below the active ones and marked "No activity in this range".
+
+### Fixed
+
+- The "All Time" range covered only the last two months for projects whose stats start had not been calculated yet (it is updated nightly). It now falls back to the start of last year until then.
+- Picking a range preset on the Campaigns page did nothing when the page had been opened with a range but without a preset.
+
+### Upgrade notes
+
+No action required. Docker installations pick up the release with `docker compose pull && docker compose up -d`.
+
+### What's Changed
+
+* Bump the github-actions group with 5 updates by @dependabot[bot] in https://github.com/simplestats-io/app/pull/395
+* Bump the npm-minor-and-patch group with 3 updates by @dependabot[bot] in https://github.com/simplestats-io/app/pull/394
+
+**Full Changelog**: https://github.com/simplestats-io/app/compare/v6.4.1...v6.5.0
+
 ## v6.4.1 - 2026-10-26
 
 ### Security
