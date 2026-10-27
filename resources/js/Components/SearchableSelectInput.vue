@@ -141,7 +141,7 @@ watch(open, (val) => {
                 </span>
             </ComboboxButton>
 
-            <ComboboxOptions as="div" :class="[normalizedOptions.length > 20 ? 'max-h-60' : '', props.optionsClass]" class="absolute z-10 mt-1 w-full overflow-auto rounded-md bg-white dark:bg-dark-800 shadow-lg ring-1 ring-black/5 focus:outline-none">
+            <ComboboxOptions as="div" :class="[normalizedOptions.length > 20 ? 'max-h-[min(30rem,70vh)]' : '', props.optionsClass]" class="absolute z-10 mt-1 w-full overflow-auto rounded-md bg-white dark:bg-dark-800 shadow-lg ring-1 ring-black/5 focus:outline-none">
                 <!-- The panel swallows mousedown to keep the input focused, which would
                      also stop clicks from placing the caret inside the search field. -->
                 <div class="sticky top-0 z-10 flex items-center gap-2 border-b border-gray-200 dark:border-dark-700 bg-white dark:bg-dark-800 px-3 py-2" @mousedown.stop>
