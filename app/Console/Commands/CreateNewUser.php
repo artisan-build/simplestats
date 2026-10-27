@@ -28,7 +28,9 @@ class CreateNewUser extends Command
      */
     public function handle(): int
     {
-        $user = DB::transaction(function (): User {
+        $isFirstUser = false;
+
+        $user = DB::transaction(function () use (&$isFirstUser): User {
             // The very first user becomes an admin, otherwise a fresh self-hosted
             // install has nobody who can reach the admin panel: registration needs
             // a team invitation and nothing else sets is_admin.
@@ -53,6 +55,14 @@ class CreateNewUser extends Command
         });
 
         $this->info("User {$user->name} created successfully.");
+
+        // Creating the first user is the one manual step of every self-hosted
+        // install (Docker included), so it is where we ask for a star. The URL is
+        // only printed: on a server there is no browser to open.
+        if ($isFirstUser && config('app.app_type') !== 'saas') {
+            $this->newLine();
+            $this->line('Enjoying '.config('app.name').'? Give us a star on GitHub: https://github.com/simplestats-io/app');
+        }
 
         return self::SUCCESS;
     }

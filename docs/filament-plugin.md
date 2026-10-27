@@ -64,7 +64,7 @@ SimplestatsPlugin::make()
 Optionally, publish the config file for environment-based settings:
 
 ```bash
-php artisan vendor:publish --tag="simplestats-filament-config"
+php artisan simplestats-filament:install
 ```
 
 This creates `config/simplestats-filament.php`:

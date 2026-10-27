@@ -30,10 +30,10 @@ After you registered an **account** and got an API token, you should publish the
 The **token** will be displayed right after registration or when you create a new project. You can also find it later on the projects page in the app.
 :::
 
-Publish the config file with:
+Publish the config file with the install command:
 
 ```bash
-php artisan vendor:publish --tag="simplestats-client-config"
+php artisan simplestats-client:install
 ```
 
 This is the default contents of the configuration (you may tweak it to your needs):

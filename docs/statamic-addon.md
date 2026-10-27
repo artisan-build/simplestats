@@ -43,7 +43,7 @@ All configuration is optional. The addon works out of the box with just an API t
 If you want to override the defaults, publish the config:
 
 ```bash
-php artisan vendor:publish --tag="simplestats-config"
+php artisan simplestats-statamic:install
 ```
 
 This creates `config/simplestats.php`:
