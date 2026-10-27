@@ -9,7 +9,8 @@ import InfoTooltip from "@/Components/InfoTooltip.vue";
 import DashboardIcon from "bootstrap-icons/icons/grid.svg?component";
 import Wallet2Icon from "bootstrap-icons/icons/wallet2.svg?component";
 import RetentionIcon from "bootstrap-icons/icons/activity.svg?component";
-import {ref} from "vue";
+import ExclamationCircleIcon from "bootstrap-icons/icons/exclamation-circle.svg?component";
+import {computed, ref} from "vue";
 import {router, usePage} from "@inertiajs/vue3";
 import {useUsage} from "@/Composables/useUsage.js";
 import {formatMap} from "@/Helpers/NumberHelpers.js";
@@ -46,11 +47,31 @@ const showsSubscription = currentProjectHasUsages(['subscription']);
 const showProjectColumn = props.projects.length > 1 && (props.filters.project_id ?? 0) === 0;
 const defaultProjectId = props.projects.find(project => project.uuid === props.filters.project_id)?.uuid ?? props.projects[0]?.uuid;
 
-const columnCount = 2 + (showProjectColumn ? 1 : 0) + (showsRevenue ? 3 : 0) + (showsRegistrations ? 1 : 0) + (showsSubscription ? 2 : 0);
+const columnCount = 3 + (showProjectColumn ? 1 : 0) + (showsRevenue ? 3 : 0) + (showsRegistrations ? 1 : 0) + (showsSubscription ? 2 : 0);
 
 const currency = (cents, code = page.props.teamCurrency) => formatMap.currency(cents, {notation: 'standard'}, code);
+const rangeCurrency = (row, cents) => row.has_activity ? currency(cents) : '–';
+
+// UTC because the backend sends plain dates, which `new Date()` parses as UTC midnight.
+const dateFormatter = new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'});
+const formatRuns = (row) => {
+    if (!row.runs_from) {
+        return 'No spend yet';
+    }
+
+    const from = dateFormatter.format(new Date(row.runs_from));
+
+    return row.runs_from === row.runs_until ? from : `${from} – ${dateFormatter.format(new Date(row.runs_until))}`;
+};
 
 const showCampaignModal = ref(false);
+
+const inactiveCount = computed(() => props.campaigns.data.filter(row => !row.has_activity).length);
+const showInactive = ref(false);
+const visibleRows = computed(() => [
+    ...props.campaigns.data.filter(row => row.has_activity),
+    ...(showInactive.value ? props.campaigns.data.filter(row => !row.has_activity) : []),
+]);
 
 const manageCampaign = (row) => {
     router.get(route('campaigns.show', {campaign: row.campaign_uuid, ...props.filters}));
@@ -104,7 +125,7 @@ const analyzeCampaignRetention = (row) => {
 
             <ActionTable :links="campaigns.links" maxWidth="max-w-none">
                 <template #title>Campaign profitability</template>
-                <template #description>Spend versus the revenue it generated, for the selected range. Click a campaign to manage its ad spend.</template>
+                <template #description>Spend in the selected range versus everything the customers it acquired have paid so far. Click a campaign to manage its ad spend.</template>
                 <template #aside>
                     <PrimaryButton class="shrink-0 whitespace-nowrap" @click="showCampaignModal = true">Track a campaign</PrimaryButton>
                 </template>
@@ -113,6 +134,9 @@ const analyzeCampaignRetention = (row) => {
                     <tr class="text-left font-bold text-gray-700 dark:text-dark-300">
                         <th class="pb-4 pt-6 px-6">Campaign</th>
                         <th v-if="showProjectColumn" class="pb-4 pt-6 px-6">Project</th>
+                        <th class="pb-4 pt-6 px-6">
+                            <span class="inline-flex items-center gap-1">Runs <InfoTooltip :title="metricInfo.runs.title" :text="metricInfo.runs.text" /></span>
+                        </th>
                         <th class="pb-4 pt-6 px-6 text-right">
                             <span class="inline-flex items-center justify-end gap-1">Spend <InfoTooltip :title="metricInfo.spend.title" :text="metricInfo.spend.text" /></span>
                         </th>
@@ -137,24 +161,28 @@ const analyzeCampaignRetention = (row) => {
                         <th class="pb-4 pt-6 px-6"></th>
                     </tr>
                     <tr
-                        v-for="row in campaigns.data"
+                        v-for="row in visibleRows"
                         :key="row.campaign_uuid + '-' + row.name"
-                        class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"
-                    >
+                        class="hover:bg-gray-50 dark:hover:bg-dark-700 text-gray-700 dark:text-dark-300"                    >
                         <td class="border-t px-6 py-4 font-medium">
                             <button type="button" class="text-left text-indigo-600 dark:text-indigo-400 hover:underline" v-tooltip="'Manage ad spend'" @click="manageCampaign(row)">
                                 {{ row.name }}
                             </button>
+                            <div v-if="!row.has_activity" class="mt-1 flex items-center gap-1 text-xs font-normal text-amber-600 dark:text-amber-400">
+                                <ExclamationCircleIcon class="size-3.5 shrink-0" />
+                                No activity in this range
+                            </div>
                         </td>
                         <td v-if="showProjectColumn" class="border-t px-6 py-4 text-gray-500 dark:text-dark-400">{{ row.project_name }}</td>
-                        <td class="border-t px-6 py-4 text-right tabular-nums">{{ currency(row.spend) }}</td>
-                        <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums">{{ currency(row.net) }}</td>
+                        <td class="border-t px-6 py-4 whitespace-nowrap text-gray-500 dark:text-dark-400">{{ formatRuns(row) }}</td>
+                        <td class="border-t px-6 py-4 text-right tabular-nums">{{ rangeCurrency(row, row.spend) }}</td>
+                        <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums">{{ rangeCurrency(row, row.net) }}</td>
                         <td
                             v-if="showsRevenue"
                             class="border-t px-6 py-4 text-right tabular-nums font-medium"
                             :class="profitClass(row.net_profit)"
                         >
-                            {{ currency(row.net_profit) }}
+                            {{ rangeCurrency(row, row.net_profit) }}
                         </td>
                         <td v-if="showsRevenue" class="border-t px-6 py-4 text-right tabular-nums font-medium" :class="roasClass(row.roas)">{{ roas(row.roas) }}</td>
                         <td v-if="showsRegistrations" class="border-t px-6 py-4 text-right tabular-nums" :class="[ltvCacClass(row.ltv_cac), row.ltv_cac !== null ? 'font-medium' : '']">{{ row.cac === null ? '–' : currency(row.cac) }}</td>
@@ -172,6 +200,13 @@ const analyzeCampaignRetention = (row) => {
                                     <RetentionIcon class="size-5" />
                                 </button>
                             </div>
+                        </td>
+                    </tr>
+                    <tr v-if="inactiveCount">
+                        <td class="border-t px-6 py-3" :colspan="columnCount + 1">
+                            <button type="button" class="text-sm text-gray-500 hover:text-indigo-600 dark:text-dark-400 dark:hover:text-indigo-400" @click="showInactive = !showInactive">
+                                {{ showInactive ? 'Hide' : 'Show' }} {{ inactiveCount }} {{ inactiveCount === 1 ? 'campaign' : 'campaigns' }} without activity in this range
+                            </button>
                         </td>
                     </tr>
                     <tr v-if="!campaigns.data.length">

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\StatsFilterDto;
 use App\Enums\StatsRangeType;
+use App\Helpers\AppHelper;
 use App\Models\AdSpend;
 use App\Models\Campaign;
 use App\Models\Project;
@@ -11,12 +12,12 @@ use App\Models\StatsTrackCampaign;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class AdSpendService
 {
-    private const int CAMPAIGN_LIMIT = 100;
-
     /**
      * Trailing window over which the subscription economics (ARPS, churn -> LTV)
      * behind LTV:CAC and CAC-payback are measured, independent of the UI range.
@@ -31,11 +32,16 @@ class AdSpendService
     ) {}
 
     /**
-     * Per-campaign profitability for the selected range. Each user-managed campaign
-     * bundles one or more tracked utm_campaign dimensions; its revenue is the sum of
-     * those dimensions' range-scoped revenue, its spend the overlap-allocated budget.
-     * All campaigns are listed (even at zero), so a freshly created one is visible.
-     * Paginated so the per-row LTV computation only runs for the visible page.
+     * Per-campaign profitability for the selected range, attributed by acquisition
+     * date like the ad platforms do: the range selects the spend and the customers
+     * the campaign acquired in it, and revenue is everything those customers paid
+     * to date. Comparing range spend with range payments instead would pit one
+     * month's cost against revenue of customers acquired months earlier.
+     *
+     * Each user-managed campaign bundles one or more tracked utm_campaign
+     * dimensions. All campaigns are listed (even at zero), so a freshly created one
+     * is visible. Paginated so the per-row LTV computation only runs for the
+     * visible page.
      *
      * @return LengthAwarePaginator<int, array<string, mixed>>
      */
@@ -43,11 +49,15 @@ class AdSpendService
     {
         [$windowStart, $windowEnd] = $this->resolveWindow($filters);
 
-        $revenueByUtm = $this->revenueByUtm($filters);
+        $campaigns = $this->campaignsForFilter($filters)->paginate($perPage);
 
-        return $this->campaignsForFilter($filters)
-            ->paginate($perPage)
-            ->through(fn (Campaign $campaign): array => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd, $filters));
+        $revenueByUtm = $this->cohortRevenueByUtm(
+            $campaigns->getCollection()->flatMap(fn (Campaign $campaign) => $campaign->statsTrackCampaigns->pluck('id'))->all(),
+            $windowStart,
+            $windowEnd,
+        );
+
+        return $campaigns->through(fn (Campaign $campaign): array => $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd, $filters));
     }
 
     /**
@@ -59,7 +69,9 @@ class AdSpendService
 
         $campaign->loadMissing(['statsTrackCampaigns:id,uuid,campaign_id,name', 'adSpends', 'project:id,uuid,name,usage']);
 
-        return $this->buildRow($campaign, $this->revenueByUtm($filters), $windowStart, $windowEnd, $filters);
+        $revenueByUtm = $this->cohortRevenueByUtm($campaign->statsTrackCampaigns->pluck('id')->all(), $windowStart, $windowEnd);
+
+        return $this->buildRow($campaign, $revenueByUtm, $windowStart, $windowEnd, $filters);
     }
 
     /**
@@ -122,19 +134,63 @@ class AdSpendService
     }
 
     /**
-     * Range-scoped revenue per tracked utm_campaign dimension, reused from the
-     * grouped track_campaign aggregation (already project- and range-filtered).
+     * Acquisition-cohort revenue per tracked utm_campaign dimension: users who
+     * registered in the window plus visitors who arrived in it, each with all
+     * their payments to date. Guest payments only count on the visitor leg
+     * (stats_user_id IS NULL), because a payment of a registered user is
+     * attributed to the user's registration tracking codes.
      *
-     * @return Collection<int, array<string, mixed>> utm id => {net, reg, visitors}
+     * @param  array<int, int>  $utmIds
+     * @return Collection<int, array{net: int, reg: int, visitors: int}> utm id => totals
      */
-    private function revenueByUtm(StatsFilterDto $filters): Collection
+    private function cohortRevenueByUtm(array $utmIds, CarbonImmutable $windowStart, CarbonImmutable $windowEnd): Collection
     {
-        return collect($this->statsDetailsService->getGroupedData($filters, 'track_campaign', self::CAMPAIGN_LIMIT, 'net'))
-            ->keyBy(fn (array $row): int => (int) ($row['type_id'] ?? 0));
+        if ($utmIds === []) {
+            return collect();
+        }
+
+        $window = [$windowStart->format('Y-m-d H:i:s'), $windowEnd->format('Y-m-d H:i:s')];
+        $teamId = AppHelper::getTeamId();
+
+        $users = DB::table('stats_users as su')
+            ->leftJoin('stats_payments as p', fn (JoinClause $join) => $join
+                ->on('p.stats_user_id', '=', 'su.id')
+                ->on('p.project_id', '=', 'su.project_id'))
+            ->where('su.team_id', $teamId)
+            ->where('su.registered', true)
+            ->whereIn('su.stats_track_campaign_id', $utmIds)
+            ->whereBetween('su.time', $window)
+            ->groupBy('su.stats_track_campaign_id')
+            ->select('su.stats_track_campaign_id as utm_id')
+            ->selectRaw('COUNT(DISTINCT su.id) as reg')
+            ->selectRaw('COALESCE(SUM(p.net), 0) as net')
+            ->get()
+            ->keyBy('utm_id');
+
+        $visitors = DB::table('stats_visitors as sv')
+            ->leftJoin('stats_payments as p', fn (JoinClause $join) => $join
+                ->on('p.stats_visitor_id', '=', 'sv.id')
+                ->on('p.project_id', '=', 'sv.project_id')
+                ->whereNull('p.stats_user_id'))
+            ->where('sv.team_id', $teamId)
+            ->whereIn('sv.stats_track_campaign_id', $utmIds)
+            ->whereBetween('sv.time', $window)
+            ->groupBy('sv.stats_track_campaign_id')
+            ->select('sv.stats_track_campaign_id as utm_id')
+            ->selectRaw('COUNT(DISTINCT sv.id) as visitors')
+            ->selectRaw('COALESCE(SUM(p.net), 0) as net')
+            ->get()
+            ->keyBy('utm_id');
+
+        return collect($utmIds)->mapWithKeys(fn (int $utmId): array => [$utmId => [
+            'net' => (int) round(($users->get($utmId)->net ?? 0) + ($visitors->get($utmId)->net ?? 0)),
+            'reg' => (int) ($users->get($utmId)->reg ?? 0),
+            'visitors' => (int) ($visitors->get($utmId)->visitors ?? 0),
+        ]]);
     }
 
     /**
-     * @param  Collection<int, array<string, mixed>>  $revenueByUtm
+     * @param  Collection<int, array{net: int, reg: int, visitors: int}>  $revenueByUtm
      * @return array<string, mixed>
      */
     private function buildRow(Campaign $campaign, Collection $revenueByUtm, CarbonImmutable $windowStart, CarbonImmutable $windowEnd, StatsFilterDto $filters): array
@@ -150,13 +206,14 @@ class AdSpendService
                 continue;
             }
 
-            $net += (int) round($revenue['net'] ?? 0);
-            $reg += (int) ($revenue['reg'] ?? 0);
-            $visitors += (int) ($revenue['visitors'] ?? 0);
+            $net += $revenue['net'];
+            $reg += $revenue['reg'];
+            $visitors += $revenue['visitors'];
         }
 
         $spend = (int) $campaign->adSpends->sum(fn (AdSpend $adSpend): int => $adSpend->allocatedFor($windowStart, $windowEnd));
-        $cac = $reg > 0 ? (int) round($spend / $reg) : null;
+        // Without spend in the range there is no acquisition cost to divide, not a free customer.
+        $cac = $spend > 0 && $reg > 0 ? (int) round($spend / $reg) : null;
 
         return [
             'campaign_id' => $campaign->id,
@@ -170,6 +227,10 @@ class AdSpendService
             'net' => $net,
             'spend' => $spend,
             'net_profit' => $net - $spend,
+            'runs_from' => $campaign->adSpends->min(fn (AdSpend $adSpend): string => $adSpend->starts_on->toDateString()),
+            'runs_until' => $campaign->adSpends->max(fn (AdSpend $adSpend): string => $adSpend->ends_on->toDateString()),
+            // Lets the UI tell "nothing happened in this range" apart from a genuine zero result.
+            'has_activity' => $spend > 0 || $reg > 0 || $net !== 0,
             'roas' => $spend > 0 ? round($net / $spend, 2) : null,
             'cac' => $cac,
             ...$this->subscriptionKpisFor($filters, $campaign, $cac),

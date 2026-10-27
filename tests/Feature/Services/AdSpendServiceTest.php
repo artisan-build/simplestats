@@ -191,6 +191,77 @@ it('leaves roas null for revenue without recorded spend', function (): void {
         ->and($rows[0]['net_profit'])->toBe(8000);
 });
 
+it('attributes revenue to the range in which the paying customer was acquired', function (): void {
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Newsletter');
+    $utm = makeTrackCampaign($this->team->id, 'newsletter', $campaign);
+
+    // acquired in the range, keeps paying after it: every payment to date counts
+    makeCampaignUser('u_new', $this->team->id, $this->pid, $utm, '2026-05-10 10:00:00');
+    makeCampaignPayment('p1', 'u_new', $this->team->id, $this->pid, 1000, '2026-05-10 10:00:00');
+    makeCampaignPayment('p2', 'u_new', $this->team->id, $this->pid, 1000, '2026-06-10 10:00:00');
+
+    // acquired before the range: its payment inside the range belongs to that earlier range
+    makeCampaignUser('u_old', $this->team->id, $this->pid, $utm, '2026-03-01 10:00:00');
+    makeCampaignPayment('p3', 'u_old', $this->team->id, $this->pid, 5000, '2026-05-12 10:00:00');
+
+    $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 10, '2026-05-15'));
+
+    expect($rows[0])->toMatchArray(['reg' => 1, 'net' => 2000]);
+});
+
+it('attributes guest payments by the visit date without double counting user payments', function (): void {
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Shop Ads');
+    $utm = makeTrackCampaign($this->team->id, 'shop_ads', $campaign);
+
+    $visit = fn (string $hash, string $time): int => DB::table('stats_visitors')->insertGetId([
+        'team_id' => $this->team->id,
+        'project_id' => $this->pid,
+        'visitor_hash' => $hash,
+        'stats_track_campaign_id' => $utm,
+        'time' => $time,
+        'time_utc' => $time,
+    ]);
+
+    $guest = $visit('guest', '2026-06-15 10:00:00');
+    $registered = $visit('registered', '2026-06-15 11:00:00');
+    $earlier = $visit('earlier', '2026-04-01 10:00:00');
+
+    $payment = fn (string $id, ?string $userId, int $visitorId, int $net): bool => DB::table('stats_payments')->insert([
+        'id' => $id, 'stats_user_id' => $userId, 'stats_visitor_id' => $visitorId, 'team_id' => $this->team->id,
+        'project_id' => $this->pid, 'gross' => $net, 'net' => $net, 'currency' => 'EUR', 'counter' => 1,
+        'time' => '2026-06-16 10:00:00', 'time_utc' => '2026-06-16 10:00:00',
+    ]);
+
+    makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 11:05:00');
+    $payment('p_guest', null, $guest, 3000);
+    $payment('p_user', 'u1', $registered, 2000);
+    $payment('p_earlier', null, $earlier, 9000);
+
+    $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'));
+
+    expect($rows[0])->toMatchArray(['visitors' => 2, 'reg' => 1, 'net' => 5000]);
+});
+
+it('leaves cac and payback null for registrations without spend in the range', function (): void {
+    $this->project->update(['usage' => Project::USAGE_VISITORS | Project::USAGE_USERS | Project::USAGE_PAYMENTS | Project::USAGE_SUBSCRIPTION]);
+
+    $campaign = makeCampaign($this->team->id, $this->pid, 'Finished Campaign');
+    $utm = makeTrackCampaign($this->team->id, 'finished', $campaign);
+    makeCampaignUser('u1', $this->team->id, $this->pid, $utm, '2026-06-15 10:00:00');
+
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id,
+        'campaign_id' => $campaign,
+        'amount' => 5000,
+        'starts_on' => '2026-01-01',
+        'ends_on' => '2026-01-31',
+    ]);
+
+    $rows = $this->service->getCampaignProfitability(rangeFilter($this->pid, 30, '2026-06-21'));
+
+    expect($rows[0])->toMatchArray(['reg' => 1, 'spend' => 0, 'cac' => null, 'cac_payback' => null, 'has_activity' => true]);
+});
+
 it('bundles revenue from multiple linked utm campaigns and sums spend entries', function (): void {
     $campaign = makeCampaign($this->team->id, $this->pid, 'Meta Ads');
     $utmA = makeTrackCampaign($this->team->id, 'meta_ads_a', $campaign);

@@ -28,11 +28,14 @@ class GetCampaignPerformance extends Tool
     private const array LEGEND = [
         'visitors' => 'Unique visitors the campaign brought in during the range',
         'reg' => 'New registrations attributed to the campaign during the range',
-        'net' => 'Net revenue (after fees) from customers this campaign brought in, during the range',
+        'net' => 'Net revenue (after fees) to date from the customers this campaign acquired during the range, including payments made after the range',
         'spend' => 'Ad spend paid for this campaign during the range (entered manually by the user)',
         'net_profit' => 'Revenue minus ad spend; positive means the campaign earned more than it cost',
-        'roas' => 'Return on ad spend: revenue / spend. 2.0 means 2 earned per 1 spent; above 1.0 is profitable',
-        'cac' => 'Customer acquisition cost: spend / registrations, the average cost of one new sign-up',
+        'roas' => 'Return on ad spend: revenue / spend. 2.0 means 2 earned per 1 spent; above 1.0 is profitable. Recently acquired customers have had little time to pay yet',
+        'cac' => 'Customer acquisition cost: spend / registrations, the average cost of one new sign-up. Null without spend in the range',
+        'runs_from' => 'First day covered by the campaign\'s ad spend entries, independent of the range',
+        'runs_until' => 'Last day covered by the campaign\'s ad spend entries, independent of the range',
+        'has_activity' => 'False when the campaign had no spend, registrations or revenue for the range',
         'ltv_cac' => 'Subscriber lifetime value / CAC. 3.0 or higher is healthy, below 1.0 loses money per customer. Null when the project does not track subscriptions or has no data',
         'cac_payback' => 'Months until a customer earns back their acquisition cost through recurring revenue. Under 12 is healthy, over 24 ties up cash. Null without subscription data',
     ];

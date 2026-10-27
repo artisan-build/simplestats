@@ -70,6 +70,49 @@ test('campaigns lists a campaign with its spend as a profitability row', functio
         );
 });
 
+test('campaigns exposes the run dates across all spend entries and flags activity in the range', function (): void {
+    $campaign = Campaign::factory()->create([
+        'team_id' => $this->team->id,
+        'project_id' => $this->project->id,
+    ]);
+
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id,
+        'campaign_id' => $campaign->id,
+        'amount' => 5000,
+        'starts_on' => '2026-03-02',
+        'ends_on' => '2026-03-08',
+    ]);
+
+    AdSpend::factory()->create([
+        'team_id' => $this->team->id,
+        'campaign_id' => $campaign->id,
+        'amount' => 3000,
+        'starts_on' => '2026-01-10',
+        'ends_on' => '2026-01-12',
+    ]);
+
+    $this->get(route('campaigns', ['range_type' => 'days', 'range_amount' => 7, 'range_start' => '2026-06-21']))
+        ->assertInertia(fn ($page) => $page
+            ->has('campaigns.data', 1, fn ($row) => $row
+                ->where('runs_from', '2026-01-10')
+                ->where('runs_until', '2026-03-08')
+                ->where('spend', 0)
+                ->where('has_activity', false)
+                ->etc()
+            )
+        );
+
+    $this->get(route('campaigns', ['range_type' => 'months', 'range_amount' => 6, 'range_start' => '2026-06-21']))
+        ->assertInertia(fn ($page) => $page
+            ->has('campaigns.data', 1, fn ($row) => $row
+                ->where('spend', 8000)
+                ->where('has_activity', true)
+                ->etc()
+            )
+        );
+});
+
 test('campaigns lists a freshly created campaign even without spend', function (): void {
     Campaign::factory()->create([
         'team_id' => $this->team->id,
