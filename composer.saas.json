@@ -82,6 +82,9 @@
             "@php artisan package:discover --ansi",
             "test ! -d .git || git config core.hooksPath .githooks"
         ],
+        "post-install-cmd": [
+            "@php -r \"is_dir('vendor/laravel/boost') && passthru(escapeshellarg(PHP_BINARY).' artisan boost:update --ansi');\""
+        ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
             "@php artisan boost:update --discover --ansi"

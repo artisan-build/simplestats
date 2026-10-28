@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# After switching branches: same as post-merge, based on the diff between both heads.
+
+# $3 is 1 for branch checkouts, 0 for file checkouts.
+[ "$3" = "1" ] || exit 0
+
+CHANGED=$(git diff --name-only "$1" "$2" 2>/dev/null)
+
+# Git hooks do not see the shell's `php` alias, and the bare Herd shim resolves
+# to the global PHP instead of the site-isolated one.
+PHP="php"
+if command -v herd >/dev/null 2>&1; then
+    PHP="herd php"
+fi
+
+if echo "$CHANGED" | grep -qE '^composer\.saas\.lock$'; then
+    echo "post-checkout: composer.saas.lock changed, running scripts/composer-saas.sh install..."
+    scripts/composer-saas.sh install
+elif echo "$CHANGED" | grep -qE '^(\.ai/|boost\.json$)'; then
+    echo "post-checkout: guidelines changed, running 'php artisan boost:update'..."
+    $PHP artisan boost:update
+fi
+
+exit 0

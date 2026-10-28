@@ -11,7 +11,7 @@ if command -v herd >/dev/null 2>&1; then
     PHP="herd php"
 fi
 
-if git diff --cached --name-only | grep -q '^\.ai/guidelines/'; then
+if git diff --cached --name-only | grep -qE '^(\.ai/|boost\.json$)'; then
     echo "Guidelines changed, running 'php artisan boost:update'..."
 
     if ! $PHP artisan boost:update; then

@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# After a pull or merge: install the SaaS dependencies if their lock changed
+# (that also runs boost:update), otherwise regenerate CLAUDE.md if only the
+# guidelines changed.
+
+CHANGED=$(git diff --name-only ORIG_HEAD HEAD 2>/dev/null)
+
+# Git hooks do not see the shell's `php` alias, and the bare Herd shim resolves
+# to the global PHP instead of the site-isolated one.
+PHP="php"
+if command -v herd >/dev/null 2>&1; then
+    PHP="herd php"
+fi
+
+if echo "$CHANGED" | grep -qE '^composer\.saas\.lock$'; then
+    echo "post-merge: composer.saas.lock changed, running scripts/composer-saas.sh install..."
+    scripts/composer-saas.sh install
+elif echo "$CHANGED" | grep -qE '^(\.ai/|boost\.json$)'; then
+    echo "post-merge: guidelines changed, running 'php artisan boost:update'..."
+    $PHP artisan boost:update
+fi
+
+exit 0
