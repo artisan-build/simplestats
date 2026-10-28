@@ -600,6 +600,17 @@ Announcement drafts live in `notes/announcements/*.md` and are sent via the Fila
 3. Document changes in CHANGELOG
 4. Tag release on GitHub
 
+**Never move or force-push a published tag** in any package repo. Packagist treats published stable versions as immutable: once it has read a tag, a changed reference is blocked and the version keeps pointing at the old commit. Fix forward with a new version instead.
+
+### Releasing the Statamic Addon
+
+The Statamic addon (`packages/simplestats-io/statamic-addon`) is the one package with a build step: its Control Panel assets (`resources/dist`) are gitignored on `main` and must be part of the tagged commit, otherwise customers install a version without JS/CSS. **Never release it with `gh release create`** (that tags plain `main`, without the dist). Release it through its `release.yml` workflow:
+
+1. `gh workflow run release.yml -R simplestats-io/statamic-addon -f version=vX.Y.Z`: builds the assets, commits them on a detached commit, pushes the tag **once** on that commit and creates a **draft** release with generated notes.
+2. Review the draft, then publish it yourself: `gh release edit vX.Y.Z -R simplestats-io/statamic-addon --notes-file notes.md --draft=false`. Publishing by hand matters: a release created by the workflow's `GITHUB_TOKEN` does not trigger `update-changelog.yml`, a release published with your own token does.
+
+Why: the old `build-dist-on-tag.yml` built the dist after the tag push and then force-moved the tag onto the dist commit. Packagist had already read the original tag, so v1.2.0 was published without assets and the moved tag was rejected (fixed with v1.2.1, v1.2.0 deleted on Packagist). laravel-client and filament-plugin have no build step and are released normally.
+
 ### Modifying Subscription Plans
 
 When changing plan features or limits in `config/spark.php`:
