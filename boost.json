@@ -4,8 +4,9 @@
     ],
     "cloud": false,
     "guidelines": true,
-    "herd_mcp": true,
+    "herd_mcp": false,
     "mcp": true,
+    "nightwatch": false,
     "nightwatch_mcp": false,
     "sail": false,
     "skills": [
